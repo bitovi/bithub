@@ -23,17 +23,10 @@ include EM
 ## Setup
 ##
 
-#HttpRequest.use Middleware::JSONResponse
-
 @log = Log4r::Logger.new('crawler')
 @log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
-
-# A few blocking calls to get things started
-# @latest_github = HTTParty.get('http://localhost:4567/events/github/latest')
-# @latest_forums = HTTParty.get('http://localhost:4567/events/github/latest')
-# @latest_blog = HTTParty.get('http://localhost:4567/events/blog/latest')
 
 ##
 ## Crawler
