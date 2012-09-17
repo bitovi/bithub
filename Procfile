@@ -1,1 +1,1 @@
-worker: ruby crawler.rb
+worker: bundle exec rake jobs:work 
