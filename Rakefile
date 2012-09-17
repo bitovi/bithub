@@ -35,10 +35,10 @@ namespace :jobs do
       end
 
       bot.start 
-    end
 
-  rescue Exception => e
-    puts e.inspect
-    e.backtrace.each { |line| puts line }
+    rescue Exception => e
+      puts e.inspect
+      e.backtrace.each { |line| puts line }
+    end
   end
 end
