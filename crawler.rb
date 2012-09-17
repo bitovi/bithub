@@ -1,20 +1,17 @@
 $: << File.dirname(__FILE__)
 
+# Theirs
 require 'bundler/setup'
-require 'debugger'
-
 require 'log4r'
-
 require 'yajl'
 require 'nokogiri'
 require 'nori'
-
 require 'em-http-request'
 require 'httparty'
-
 require 'zlib'
 require 'base64'
 
+# Ours
 require 'handler'
 
 include EM

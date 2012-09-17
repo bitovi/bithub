@@ -7,3 +7,7 @@ gem 'nokogiri'
 gem 'nori'
 gem 'log4r'
 gem 'httparty'
+
+group :development do
+  gem 'foreman'
+end
