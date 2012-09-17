@@ -1,1 +1,1 @@
-worker: ruby crawler/crawler.rb
+worker: ruby crawler.rb
