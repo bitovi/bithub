@@ -27,7 +27,6 @@ module Handler
       end
 
       store_events.callback do
-        File.open('log', 'w'){|f| f.write store_events.response }
         @log.info "#{feed}: #{events.size} events stored"
       end
 
