@@ -30,7 +30,7 @@ namespace :jobs do
           events = []
           events << event_hash
 
-          HTTParty.post('http://localhost:4567/events', {:body => {events: Yajl::Encoder.encode(events)}})
+          HTTParty.post('http://storer.herokuapp.com/events', {:body => {events: Yajl::Encoder.encode(events)}})
         end
       end
 
