@@ -7,5 +7,3 @@ gem 'nokogiri'
 gem 'nori'
 gem 'log4r'
 gem 'httparty'
-
-gem 'debugger'
