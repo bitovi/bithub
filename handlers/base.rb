@@ -20,7 +20,7 @@ module Handler
 
     def store(events)
       events_as_json = Yajl::Encoder.encode(events)
-      store_events = EventMachine::HttpRequest.new('http://localhost:4567/events').post(body: { events: events_as_json })
+      store_events = EventMachine::HttpRequest.new('http://storer.herokuapp.com/events').post(body: { events: events_as_json })
 
       store_events.errback do
         @log.error "Error: #{store_events.response_header.status}, header: #{store_events.response_header}, response: #{store_events.response}"
