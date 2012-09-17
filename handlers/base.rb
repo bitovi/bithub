@@ -1,0 +1,43 @@
+module Handler
+  class Base
+    attr_reader :initialized, :feed
+
+    def self.handler(log)
+      self.new(log).handler
+    end
+
+    def initialize(log)
+      @latest = []
+      @feed = self.class.to_s.gsub('Handler::','')
+      @log = log
+      @initialized = true
+      # bootstrap
+    end
+
+    def bootstrap
+      initialized = true
+    end
+
+    def store(events)
+      events_as_json = Yajl::Encoder.encode(events)
+      store_events = EventMachine::HttpRequest.new('http://localhost:4567/events').post(body: { events: events_as_json })
+
+      store_events.errback do
+        @log.error "Error: #{store_events.response_header.status}, header: #{store_events.response_header}, response: #{store_events.response}"
+      end
+
+      store_events.callback do
+        File.open('log', 'w'){|f| f.write store_events.response }
+        @log.info "#{feed}: #{events.size} events stored"
+      end
+
+      
+    end
+
+    def handler
+      proc do 
+        fetch if initialized
+      end
+    end
+  end
+end

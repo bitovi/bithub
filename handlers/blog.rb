@@ -1,0 +1,40 @@
+module Handler
+  class Blog < Base
+
+    # TODO
+    # def bootstrap
+    # end
+
+    def fetch
+      blog_events = HttpRequest.new('http://www.bitovi.com/blog.rss').get
+
+      blog_events.callback do
+        feed_items = Nori.parse(blog_events.response)['rss']['channel']['item']
+
+        links = feed_items.collect {|e| e['link']}
+        new_events = feed_items.reject {|e| @latest.include? e['link']}
+        @latest = links
+        
+        events = new_events.collect do |event| 
+          { timestamp: event['published'],
+            title: event['title'],
+            link: event['link'],
+            feed: 'blog'
+          }
+        end
+
+        if new_events.size > 0
+          @log.info "#{feed}: #{events.size} new events"
+          store(events)
+        else
+          @log.info "#{feed}: Nothing new"
+        end
+      end
+
+      blog_events.errback do
+        @log.error "Error: #{blog_events.response_header.status}, header: #{blog_events.response_header}, response: #{blog_events.response}"
+      end
+
+    end
+  end
+end

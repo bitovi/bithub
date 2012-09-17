@@ -1,0 +1,5 @@
+require 'handlers/base'
+require 'handlers/github'
+require 'handlers/forums'
+require 'handlers/blog'
+require 'handlers/disqus'
