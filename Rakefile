@@ -1,8 +1,9 @@
 $: << File.dirname(__FILE__)
 
 namespace :jobs do
+
   desc "Start the crawler"
-  task :work do
+  task :crawl do
 
     # Theirs
     require 'bundler/setup'
