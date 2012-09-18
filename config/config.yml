@@ -1,0 +1,5 @@
+development:
+  storer-url: http://localhost:4567/events
+
+production:
+  storer-url: http://storer.herokuapp.com/events

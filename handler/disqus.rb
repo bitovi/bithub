@@ -21,7 +21,9 @@ module Handler
             feed: 'disqus',
             link: event['url'],
             username: event['author']['name'],
-            timestamp: event['createdAt']
+            timestamp: event['createdAt'],
+            body: event['message'],
+            title: event['thread']['title']
           }
         end
 

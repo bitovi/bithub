@@ -1,10 +1,6 @@
 module Handler
   class Forums < Base
 
-    # TODO
-    # def bootstrap
-    # end
-
     def fetch
       forum_events = HttpRequest.new('http://forum.javascriptmvc.com/feed').get
 
@@ -39,3 +35,12 @@ module Handler
     end
   end
 end
+
+#
+## EVENT DEFINITION
+#
+# title: item.title
+# link: item.link
+# username: item.dc:createor
+#   link?
+# timestamp: item.pubDate
