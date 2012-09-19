@@ -38,29 +38,29 @@ module Handler
             username: event['actor']['login']
           }
       if event['type'] == 'IssuesEvent' 
-        hash['title'] = event['payload']['issue']['title']
+        hash['title'] = "raised an issue: #{event['payload']['issue']['title']}"
         hash['body'] = event['payload']['issue']['body']
         hash['link'] = event['payload']['issue']['html_url']
 
       elsif event['type'] == 'IssueCommentEvent'
-        hash['title'] = "#{event['payload']['comment']['user']['login']} commented on issue #{event['payload']['issue']['number']}"
+        hash['title'] = "commented on issue #{event['payload']['issue']['number']}"
         hash['body'] = event['payload']['comment']['body']
         hash['link'] = event['payload']['issue']['html_url']
 
       elsif event['type'] == 'ForkEvent'
-        hash['title'] = "#{event['actor']['login']} forked #{event['repo']['name']}"
+        hash['title'] = "forked #{event['repo']['name']}"
 
       elsif event['type'] == 'PushEvent'
         hash['body'] = event['payload']['body']
-        hash['title'] = "#{event['actor']['login']} pushed to #{event['repo']['name']}"
+        hash['title'] = "pushed to #{event['repo']['name']}"
 
       elsif event['type'] == 'PullRequestEvent'
-        hash['title'] = event['payload']['pull_request']['title']
+        hash['title'] = "requested a pull: #{event['payload']['pull_request']['title']}"
         hash['body'] = event['payload']['pull_request']['body']
         hash['link'] = event['payload']['pull_request']['html_url']
 
       elsif event['type'] == 'WatchEvent'
-        hash['title'] = "#{event['actor']['login']} started watching #{event['repo']['name']}"
+        hash['title'] = "started watching #{event['repo']['name']}"
       end
       hash
     end
