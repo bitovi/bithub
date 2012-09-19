@@ -1,1 +1,1 @@
-worker: bundle exec rake jobs:crawl 
+worker: bundle exec rake jobs:crawl

@@ -5,7 +5,6 @@ namespace :jobs do
   desc "Start the crawler"
   task :crawl do
 
-    ENV['ENV'] = 'development'
     require 'crawler'
 
     begin
