@@ -21,6 +21,7 @@ module Handler
 
     def store(events)
       events_as_json = Yajl::Encoder.encode(events)
+      @log.info "#{feed}: Sending data to #{@storer_url}"
       store_events = EventMachine::HttpRequest.new(@storer_url).post(body: { events: events_as_json })
 
       store_events.errback do
