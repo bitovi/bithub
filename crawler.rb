@@ -10,7 +10,6 @@ require 'em-http-request'
 require 'httparty'
 require 'zlib'
 require 'base64'
-require 'psych'
 
 # Ours
 require 'handler'
@@ -24,7 +23,7 @@ def start_crawler
     :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
   }))
 
-  storer_url = Psych.load_file('config/config.yml')[ENV['ENV']]['storer-url']
+  storer_url = YAML.load_file('config/config.yml')[ENV['ENV']]['storer-url']
   EM.run do
     stop = proc { puts "Terminating crawler"; EM.stop }
 
