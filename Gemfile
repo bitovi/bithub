@@ -10,4 +10,5 @@ gem 'httparty'
 
 group :development do
   gem 'foreman'
+  gem 'debugger'
 end

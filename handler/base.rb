@@ -1,3 +1,6 @@
+require 'digest/md5'
+require 'debugger'
+
 module Handler
   class Base
     attr_reader :initialized, :feed
@@ -21,7 +24,7 @@ module Handler
 
     def store(events)
       events_as_json = Yajl::Encoder.encode(events)
-      @log.info "#{feed}: Sending data to #{@storer_url}"
+      # @log.info "#{feed}: Sending data to #{@storer_url}"
       store_events = EventMachine::HttpRequest.new(@storer_url).post(body: { events: events_as_json })
 
       store_events.errback do
@@ -29,7 +32,7 @@ module Handler
       end
 
       store_events.callback do
-        @log.info "#{feed}: #{events.size} events stored"
+        @log.info "#{feed}: #{events.size} events sent"
       end
 
       

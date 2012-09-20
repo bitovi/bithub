@@ -17,13 +17,16 @@ module Handler
         @latest = ids
         
         events = new_events.collect do |event|
-          { raw_data: Base64::encode64(Yajl::Encoder.encode(event)),
-            feed: 'disqus',
+          event_json = Yajl::Encoder.encode(event)
+          feed = 'disqus'
+          { raw_data: Base64::encode64(event_json),
+            feed: feed,
             link: event['url'],
             username: event['author']['name'],
             timestamp: event['createdAt'],
             body: event['message'],
-            title: event['thread']['title']
+            title: event['thread']['title'],
+            hash_key: Digest::MD5.hexdigest(event['id']+feed)
           }
         end
 
