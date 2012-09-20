@@ -12,13 +12,13 @@ module Handler
         @latest = links
         
         events = new_events.collect do |event| 
-          event_json = Yajl::Encoder.encode(event)
+          # event_json = Yajl::Encoder.encode(event)
           { timestamp: event['published'],
             title: event['title'],
             link: event['link'],
             feed: 'blog',
-            raw_data: Base64::encode64(event_json),
             hash_key: Digest::MD5.hexdigest(event['link'])
+            # raw_data: Base64::encode64(event_json)
           }
         end
 

@@ -13,14 +13,14 @@ module Handler
         
 
         events = new_events.collect do |event| 
-          event_json = Yajl::Encoder.encode(event)
+          # event_json = Yajl::Encoder.encode(event)
           { title: event['title'],
             link: event['link'],
             username: event['dc:creator'],
             timestamp: event['pubDate'],
             feed: 'forums',
-            raw_data: Base64::encode64(event_json),
             hash_key: Digest::MD5.hexdigest(event['link'])
+            # raw_data: Base64::encode64(event_json)
           }
         end
         

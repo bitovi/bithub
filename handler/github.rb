@@ -30,15 +30,15 @@ module Handler
     end
 
     def handle_event_type(event)
-      event_json = Yajl::Encoder.encode(event)
+      # event_json = Yajl::Encoder.encode(event)
       feed = 'github'
       hash = {
-            raw_data: Base64::encode64(event_json),
             type: event['type'],
             feed: feed,
             timestamp: event['created_at'],
             username: event['actor']['login'],
             hash_key: Digest::MD5.hexdigest(event['id']+feed)
+            # raw_data: Base64::encode64(event_json)
           }
       if event['type'] == 'IssuesEvent' 
         hash['title'] = "raised an issue: #{event['payload']['issue']['title']}"
