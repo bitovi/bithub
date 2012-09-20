@@ -1,10 +1,6 @@
 module Handler
   class Blog < Base
 
-    # TODO
-    # def bootstrap
-    # end
-
     def fetch
       blog_events = HttpRequest.new('http://www.bitovi.com/blog.rss').get
 

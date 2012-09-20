@@ -1,5 +1,4 @@
 require 'digest/md5'
-require 'debugger'
 
 module Handler
   class Base
