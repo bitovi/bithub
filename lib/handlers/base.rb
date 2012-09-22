@@ -8,12 +8,12 @@ module Handler
       self.new(log, url).handler
     end
 
-    def initialize(log, storer_url)
+    def initialize(log, exchange)
       @latest = []
       @feed = self.class.to_s.gsub('Handler::','')
       @log = log
       @initialized = true
-      @storer_url = storer_url
+      @exchange = exchange
       # bootstrap
     end
 
@@ -23,18 +23,7 @@ module Handler
 
     def store(events)
       events_as_json = Yajl::Encoder.encode(events)
-      # @log.info "#{feed}: Sending data to #{@storer_url}"
-      store_events = EventMachine::HttpRequest.new(@storer_url).post(body: { events: events_as_json })
-
-      store_events.errback do
-        @log.error "Error: #{store_events.response_header.status}, header: #{store_events.response_header}, response: #{store_events.response}"
-      end
-
-      store_events.callback do
-        @log.info "#{feed}: #{events.size} events sent"
-      end
-
-      
+      @exchange.publish(events_as_json)
     end
 
     def handler

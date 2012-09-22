@@ -2,7 +2,7 @@ module Handler
   class Forums < Base
 
     def fetch
-      forum_events = HttpRequest.new('http://forum.javascriptmvc.com/feed').get
+      forum_events = EM::HttpRequest.new('http://forum.javascriptmvc.com/feed').get
 
       forum_events.callback do
         feed_items = Nori.parse(forum_events.response)['rss']['channel']['item']

@@ -2,7 +2,7 @@ module Handler
   class Blog < Base
 
     def fetch
-      blog_events = HttpRequest.new('http://www.bitovi.com/blog.rss').get
+      blog_events = EM::HttpRequest.new('http://www.bitovi.com/blog.rss').get
 
       blog_events.callback do
         feed_items = Nori.parse(blog_events.response)['rss']['channel']['item']

@@ -1,12 +1,11 @@
 source :rubygems
 
-gem 'em'
+gem 'amqp'
 gem 'em-http-request'
 gem 'yajl-ruby'
 gem 'nokogiri'
 gem 'nori'
 gem 'log4r'
-gem 'httparty'
 
 group :development do
   gem 'foreman'

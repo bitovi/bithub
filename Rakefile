@@ -5,7 +5,7 @@ namespace :jobs do
   desc "Start the crawler"
   task :crawl do
 
-    require 'crawler'
+    require 'lib/crawler'
 
     begin
       start_crawler

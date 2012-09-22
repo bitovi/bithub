@@ -2,8 +2,7 @@ module Handler
   class Github < Base
 
     def fetch
-      org_events = EventMachine::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events').get
-
+      org_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events').get
 
       org_events.callback do
         github_events = Yajl::Parser.parse(org_events.response)
@@ -18,7 +17,7 @@ module Handler
 
         if new_events.size > 0
           @log.info "#{feed}: #{events.size} new events"
-          store(events)
+          store(new_events)
         else
           @log.info "#{feed}: Nothing new"
         end
@@ -30,7 +29,6 @@ module Handler
     end
 
     def handle_event_type(event)
-      # event_json = Yajl::Encoder.encode(event)
       feed = 'github'
       hash = {
             type: event['type'],
@@ -71,7 +69,7 @@ module Handler
 
       elsif event['type'] == 'CreateEvent'
         hash['title'] = "created created a new #{event['payload']['ref_type']} | #{event['repo']['name']}"
-        hash['link'] = event['payload']['comment']['html_url']
+        #hash['link'] = event['payload']['comment']['html_url']
 
       end
       hash
@@ -79,32 +77,6 @@ module Handler
   end
 end
 
-
 # if new_events.size >= 25
 #   EM.add_timer(1.5, &github)
 # end
-
-#
-## EVENT DEFINITION
-#
-# user's page: GET actor.url and then response.html_url
-#
-# IssuesEvent
-#   username: GET(actor.url).html_url
-#   typeOfAction: payload.action
-#   title: payload.issue.title
-#   body: payload.issue.body
-#   link: payload.issue.html_url
-#
-# IssueCommentEvent
-#   username: GET(actor.url).html_url
-#   body: payload.comment.body
-#   link: payload.issue.html_url
-#
-# PushEvent
-#   content: payload.comment.body, 
-#
-# PullRequestEvent
-#   title: payload.pull_request.title
-#   body: payload.pull_request.body
-#   ...
