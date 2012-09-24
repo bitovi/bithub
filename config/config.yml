@@ -1,7 +1,0 @@
-development:
-  storer-url: http://localhost:4567/events
-  msg-queue: amqp://neektza:kerefeka@localhost
-
-production:
-  storer-url: http://storer.herokuapp.com/events
-  msg-queue: amqp://neektza:kerefeka@localhost

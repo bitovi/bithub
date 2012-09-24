@@ -1,0 +1,5 @@
+development:
+  msg-queue: amqp://neektza:kerefeka@localhost
+
+production:
+  msg-queue: amqp://app7670072_heroku.com:6BBuGpokvnaiwX_Fj9fLFbxKBM0j20eC@tiger.cloudamqp.com/app7670072_heroku.com
