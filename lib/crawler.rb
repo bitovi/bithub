@@ -15,7 +15,7 @@ require 'base64'
 require 'handlers'
 
 # Config address
-config = YAML.load_file('config/config.yml')
+config = YAML.load_file('config.yml')
 
 # Connection strings
 $mq_cs = config[ENV['ENV']]['msg-queue']
