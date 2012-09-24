@@ -15,12 +15,7 @@ module Handler
           handle_event_type(event)
         end
 
-        if new_events.size > 0
-          @log.info "#{feed}: #{events.size} new events"
-          store(new_events)
-        else
-          @log.info "#{feed}: Nothing new"
-        end
+        store(events) if events.size > 0
       end
 
       org_events.errback do

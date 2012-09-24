@@ -1,3 +1,1 @@
-1) CONTENT => tijelo poruke, link na sors, title itak ...
-2) LIVE UPDATE => SSE kad dodje novi kontent u bazu 
-3) TAG => tagabilnost svega ikad (kontenta, usera ...)
+* replace EM.defer (upon publishing to the exchange) with async calls

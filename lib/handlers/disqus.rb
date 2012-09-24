@@ -12,7 +12,6 @@ module Handler
         @latest = ids
         
         events = new_events.collect do |event|
-          # event_json = Yajl::Encoder.encode(event)
           feed = 'disqus'
           { feed: feed,
             link: event['url'],
@@ -25,12 +24,7 @@ module Handler
           }
         end
 
-        if new_events.size > 0
-          @log.info "#{feed}: #{events.size} new events"
-          store(events)
-        else
-          @log.info "#{feed}: Nothing new"
-        end
+        store(events) if events.size > 0
       end
 
       disqus_events.errback do

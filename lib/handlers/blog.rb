@@ -12,7 +12,6 @@ module Handler
         @latest = links
         
         events = new_events.collect do |event| 
-          # event_json = Yajl::Encoder.encode(event)
           { timestamp: event['published'],
             title: event['title'],
             link: event['link'],
@@ -22,12 +21,7 @@ module Handler
           }
         end
 
-        if new_events.size > 0
-          @log.info "#{feed}: #{events.size} new events"
-          store(events)
-        else
-          @log.info "#{feed}: Nothing new"
-        end
+        store(events) if events.size > 0
       end
 
       blog_events.errback do

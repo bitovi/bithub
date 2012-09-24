@@ -11,9 +11,7 @@ module Handler
         new_events = feed_items.reject {|e| @latest.include? e['link']}
         @latest = links
         
-
         events = new_events.collect do |event| 
-          # event_json = Yajl::Encoder.encode(event)
           { title: event['title'],
             link: event['link'],
             username: event['dc:creator'],
@@ -23,13 +21,8 @@ module Handler
             # raw_data: Base64::encode64(event_json)
           }
         end
-        
-        if new_events.size > 0
-          @log.info "#{feed}: #{events.size} new events"
-          store(events)
-        else
-          @log.info "#{feed}: Nothing new"
-        end
+
+        store(events) if events.size > 0
       end
 
       forum_events.errback do
