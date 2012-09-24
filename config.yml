@@ -2,4 +2,4 @@ development:
   msg-queue: amqp://neektza:kerefeka@localhost
 
 production:
-  msg-queue: amqp://app7670072_heroku.com:6BBuGpokvnaiwX_Fj9fLFbxKBM0j20eC@tiger.cloudamqp.com/app7670072_heroku.com
+  msg-queue: amqp://app7872452_heroku.com:ipTVYPP_usPyIGHhowX-OORB_midONKh@tiger.cloudamqp.com/app7872452_heroku.com 
