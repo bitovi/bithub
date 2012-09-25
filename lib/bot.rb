@@ -30,7 +30,7 @@ def start_bot
     @thaum.on :channel, // do |data|
       EM.defer do
         msg = { 
-          username: data[:user],
+          actor: data[:user],
           title: data[:message],
           feed: 'irc',
           type: data[:channel]
