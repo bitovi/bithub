@@ -1,4 +1,2 @@
-irc-bot
-=======
-
-irc-bot
+feeder-irc-bot
+==============
