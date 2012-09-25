@@ -17,7 +17,7 @@ def start_bot
     exchange = channel.fanout("e.events")
 
     @thaum = Ponder::Thaum.new do |thaum|
-      thaum.nick   = 'feeder-em-bot'
+      thaum.nick   = 'bitovi-bot'
       thaum.server = 'irc.freenode.net'
       thaum.port   = 6667
     end
