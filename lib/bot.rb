@@ -28,12 +28,14 @@ def start_bot
     end
 
     @thaum.on :channel, // do |data|
+      data[:time] = Time.now
       EM.defer do
         msg = { 
           actor: data[:user],
           title: data[:message],
           feed: 'irc',
-          type: data[:channel]
+          type: data[:channel],
+          timestamp: data[:time]
         }
         exchange.publish(Yajl::Encoder.encode(msg))
       end
