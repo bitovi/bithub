@@ -36,15 +36,6 @@ def start_crawler
     Signal.trap("INT",  &stop)
     Signal.trap("TERM", &stop)
 
-    
-
-    # Testing the queue (sending one message per second)
-    # ===
-    # send_message = proc do 
-    #   exchange.publish(Yajl::Encoder.encode({title: 'Something happen!', link:'http://someaddress.com'}))
-    # end
-    # EM.add_periodic_timer(1, &send_message)
-
     $log.info "Registering Github"
     EM.add_periodic_timer(5, &Handler::Github.handler($log, exchange))
 

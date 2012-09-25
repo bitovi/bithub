@@ -15,7 +15,7 @@ module Handler
           feed = 'disqus'
           { feed: feed,
             link: event['url'],
-            username: event['author']['name'],
+            actor: event['author']['name'],
             timestamp: event['createdAt'],
             body: event['message'],
             title: event['thread']['title'],

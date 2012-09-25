@@ -29,7 +29,7 @@ module Handler
             type: event['type'],
             feed: feed,
             timestamp: event['created_at'],
-            username: event['actor']['login'],
+            actor: event['actor']['login'],
             hash_key: Digest::MD5.hexdigest(event['id']+feed)
             # raw_data: Base64::encode64(event_json)
           }
