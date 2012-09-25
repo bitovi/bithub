@@ -1,6 +1,6 @@
 source :rubygems
 
-gem 'cinch'
-gem 'httparty'
+gem 'amqp'
+gem 'ponder'
 gem 'yajl-ruby'
 gem 'foreman'
