@@ -15,6 +15,7 @@ module Handler
           { title: event['title'],
             link: event['link'],
             timestamp: event['pubDate'],
+            actor: event['author'],
             feed: 'community_site',
             hash_key: Digest::MD5.hexdigest(event['link'])
             # raw_data: Base64::encode64(event_json)
