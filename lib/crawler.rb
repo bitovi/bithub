@@ -44,8 +44,11 @@ def start_crawler
 
     $log.info "Registering Forums"
     EM.add_periodic_timer(17, &Handler::Forums.handler($log, exchange))
-
+    
     $log.info "Registering Blog"
     EM.add_periodic_timer(22, &Handler::Blog.handler($log, exchange))
+
+    $log.info "Registering Community site"
+    EM.add_periodic_timer(47, &Handler::CommunitySite.handler($log, exchange))
   end
 end

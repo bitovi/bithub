@@ -1,8 +1,8 @@
 module Handler
-  class Forums < Base
+  class CommunitySite < Base
 
     def fetch
-      forum_events = EM::HttpRequest.new('http://forum.javascriptmvc.com/feed').get
+      forum_events = EM::HttpRequest.new('http://community.javascriptmvc.com/posts.rss').get
 
       forum_events.callback do
         feed_items = Nori.parse(forum_events.response)['rss']['channel']['item']
@@ -14,9 +14,8 @@ module Handler
         events = new_events.collect do |event| 
           { title: event['title'],
             link: event['link'],
-            actor: event['dc:creator'],
             timestamp: event['pubDate'],
-            feed: 'forums',
+            feed: 'community site',
             hash_key: Digest::MD5.hexdigest(event['link'])
             # raw_data: Base64::encode64(event_json)
           }

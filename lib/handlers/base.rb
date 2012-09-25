@@ -40,17 +40,3 @@ module Handler
     end
   end
 end
-
-
-# TODO
-# replace EM.defer with:
-#
-# n=0
-# do_work = proc {
-#   if n<1000 
-#     @exchange.publish()
-#     n+=1 
-#     EM.next_tick(&do_work) 
-#   end
-# }
-# EM.next_tick(&do_work)
