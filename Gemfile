@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'rake'
 gem 'amqp'
 gem 'em-http-request'
 gem 'yajl-ruby'
