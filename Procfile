@@ -1,1 +1,1 @@
-crawler: ruby app/crawler.rb
+crawler: ruby lib/crawler.rb
