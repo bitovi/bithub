@@ -5,6 +5,13 @@ require 'amqp'
 require 'ponder'
 require 'yajl'
 
+
+# Logging
+$log = Log4r::Logger.new('IRC-bot')
+$log.add(Log4r::StdoutOutputter.new('console', {
+  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
+}))
+
 # RabbitMQ connection string
 $mq_cs = ENV['MSGQ']
 
@@ -39,7 +46,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   @thaum.connect
 
-  stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
+  stop = proc { $log.info "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
 end
