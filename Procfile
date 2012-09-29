@@ -1,1 +1,1 @@
-worker: bundle exec rake jobs:listen
+irc_bot: ruby app/irc_bot.rb
