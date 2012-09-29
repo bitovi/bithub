@@ -1,1 +1,1 @@
-worker: bundle exec rake jobs:crawl
+crawler: ruby app/crawler.rb
