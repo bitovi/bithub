@@ -26,7 +26,8 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
-  exchange = channel.direct("e.preproc")
+  # exchange = channel.direct("e.events.preproc")
+  exchange = channel.fanout("e.events")
 
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
