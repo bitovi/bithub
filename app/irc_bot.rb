@@ -40,7 +40,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         type: data[:channel],
         timestamp: data[:time]
       }
-      exchange.publish(Yajl::Encoder.encode(msg))
+      exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
     end
   end
 
