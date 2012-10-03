@@ -17,7 +17,7 @@ $mq_cs = ENV['MSGQ']
 
 AMQP.start($mq_cs) do |connection, open_ok|
   channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout("e.events")
+  exchange = channel.fanout("e.events.preproc")
 
   @thaum = Ponder::Thaum.new do |thaum|
     thaum.nick   = 'bitovi-bot'
@@ -46,7 +46,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   @thaum.connect
 
-  stop = proc { $log.info "Terminating crawler"; connection.close { EM.stop } }
+  stop = proc { $log.info "Terminating the IRC bot"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
 end
