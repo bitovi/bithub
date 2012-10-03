@@ -25,7 +25,7 @@ module Handler
       @log.info "#{@feed}: sending #{events.size} events"
 
       enqueue_events = proc do
-        events.each { |e| @exchange.publish(Yajl::Encoder.encode(e)) }
+        events.each { |e| @exchange.publish(Yajl::Encoder.encode(e), routing_key: "tasks.taggify") }
       end
 
       # Sending (network IO) in a separate lightweight process

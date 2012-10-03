@@ -26,21 +26,11 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
-  # exchange = channel.direct("e.events.preproc")
-  exchange = channel.fanout("e.events")
+  exchange = channel.direct("e.events.preproc")
 
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
-
-
-  # msg = "CanJS,is DoneJS with can.js and canjs + canui at #{Time.now}"
-  # publish_sum_messages = proc {
-  #   exchange.publish msg, routing_key: "tasks.taggify"
-  #   $log.info "Publihed a dummy message!"
-  # }
-
-  # EM.add_periodic_timer(1, &publish_sum_messages)
 
   $log.info "Registering Github"
   EM.add_periodic_timer(5, &Handler::Github.handler($log, exchange))
