@@ -14,6 +14,7 @@ module Handler
         events = new_events.collect do |event| 
           { timestamp: event['published'],
             title: event['title'],
+            body: event['description'],
             link: event['link'],
             feed: 'blog',
             hash_key: Digest::MD5.hexdigest(event['link'])

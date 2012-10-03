@@ -13,6 +13,7 @@ module Handler
         
         events = new_events.collect do |event| 
           { title: event['title'],
+            body: event['description'],
             link: event['link'],
             actor: event['dc:creator'],
             timestamp: event['pubDate'],

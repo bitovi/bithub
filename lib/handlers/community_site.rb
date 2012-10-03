@@ -12,9 +12,10 @@ module Handler
         @latest = links
         
         events = new_events.collect do |event| 
-          { title: event['title'],
+          { timestamp: event['pubDate'],
+            title: event['title'],
+            body: event['description'],
             link: event['link'],
-            timestamp: event['pubDate'],
             actor: event['author'],
             feed: 'community_site',
             hash_key: Digest::MD5.hexdigest(event['link'])
