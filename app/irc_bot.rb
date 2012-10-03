@@ -4,7 +4,7 @@ require 'bundler/setup'
 require 'amqp'
 require 'ponder'
 require 'yajl'
-
+require 'log4r'
 
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
