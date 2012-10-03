@@ -17,7 +17,7 @@ $mq_cs = ENV['MSGQ']
 
 AMQP.start($mq_cs) do |connection, open_ok|
   channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout("e.events.preproc")
+  exchange = channel.direct("e.events.preproc")
 
   @thaum = Ponder::Thaum.new do |thaum|
     thaum.nick   = 'bitovi-bot'
