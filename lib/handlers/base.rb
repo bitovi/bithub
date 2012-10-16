@@ -4,21 +4,27 @@ module Handler
   class Base
     attr_reader :initialized, :feed
 
-    def self.handler(log, url)
-      self.new(log, url).handler
+    def self.handler(log, exchange)
+      self.new(log, exchange).handler
     end
 
     def initialize(log, exchange)
-      @latest = []
-      @feed = self.class.to_s.gsub('Handler::','')
+      @latest ||= []
+      @initialized ||= false
+      @feed = self.class.to_s.gsub('Handler::','').underscore.downcase
       @log = log
-      @initialized = true
       @exchange = exchange
-      # bootstrap
+      bootstrap('hash_key')
     end
 
-    def bootstrap
-      initialized = true
+    def fetch
+    end
+
+    # Compare key with items already fetched and set the last batch of keys as latest
+    def filter_old(feed_items)
+      new_events = feed_items.reject {|e| @latest.include? e['hash_key']}
+      @latest = feed_items.collect {|e| e['hash_key']}
+      new_events
     end
 
     def store(events)
@@ -33,9 +39,25 @@ module Handler
       EM.defer(enqueue_events)
     end
 
+    def bootstrap(qualifier)
+      request_string = "#{ENV['FEEDER_WEB']}/latest/#{@feed}?qualifier=#{qualifier}"
+      @log.info request_string
+
+      get_latest = EM::HttpRequest.new(request_string).get
+      get_latest.callback do
+        @latest = Yajl::Parser.parse(get_latest.response).map{|i| i[qualifier]}
+        @log.info "#{feed}: #{@latest}"
+        @initialized = true
+      end
+    end
+
     def handler
       proc do 
-        fetch if initialized
+        if @initialized
+          fetch
+        else
+          @log.info "#{feed}: Initiaizing..."
+        end
       end
     end
   end

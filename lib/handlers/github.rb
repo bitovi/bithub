@@ -2,37 +2,42 @@ module Handler
   class Github < Base
 
     def fetch
-      org_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events').get
+      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events').get
 
-      org_events.callback do
-        github_events = Yajl::Parser.parse(org_events.response)
+      get_github_events.callback do
+        github_events = Yajl::Parser.parse(get_github_events.response)
 
-        ids = github_events.collect {|e| e['id']}
-        new_events = github_events.reject {|e| @latest.include? e['id']}
-        @latest = ids
-
-        events = new_events.collect do |event|
-          handle_event_type(event)
-        end
-
-        store(events) if events.size > 0
+        new_events = filter_old github_events
+        events_to_store = rename_attrs_in new_events
+        store(events_to_store) if events_to_store.size > 0
       end
 
-      org_events.errback do
-        @log.error "Error: #{org_events.response_header.status}, header: #{org_events.response_header}, response: #{org_events.response}"
+      get_github_events.errback do
+        @log.error "#{feed} error: #{get_github_events.response_header.status}, header: #{get_github_events.response_header}, response: #{get_github_events.response}"
+      end
+    end
+    
+    def filter_old(feed_events)
+      feed_events.each {|e| e['hash_key'] = Digest::MD5.hexdigest(e['id']+self.feed)}
+      super(feed_events)
+    end
+
+    def rename_attrs_in(new_events)
+      new_events.collect do |event|
+        handle_event_type(event)
       end
     end
 
     def handle_event_type(event)
-      feed = 'github'
       hash = {
-            type: event['type'],
-            feed: feed,
-            timestamp: event['created_at'],
-            actor: event['actor']['login'],
-            hash_key: Digest::MD5.hexdigest(event['id']+feed)
-            # raw_data: Base64::encode64(event_json)
-          }
+        type: event['type'],
+        feed: feed,
+        timestamp: event['created_at'],
+        actor: event['actor']['login'],
+        hash_key: event['hash_key']
+        # raw_data: Base64::encode64(event_json)
+      }
+
       if event['type'] == 'IssuesEvent' 
         hash['title'] = "raised an issue: #{event['payload']['issue']['title']}"
         hash['body'] = event['payload']['issue']['body']
@@ -57,7 +62,7 @@ module Handler
 
       elsif event['type'] == 'WatchEvent'
         hash['title'] = "started watching #{event['repo']['name']}"
-      
+
       elsif event['type'] == 'CommitCommentEvent'
         hash['title'] = "commented on a commit in #{event['repo']['name']}"
         hash['link'] = event['payload']['comment']['html_url']

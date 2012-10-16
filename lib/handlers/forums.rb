@@ -2,33 +2,38 @@ module Handler
   class Forums < Base
 
     def fetch
-      forum_events = EM::HttpRequest.new('http://forum.javascriptmvc.com/feed').get
+      get_forum_events = EM::HttpRequest.new('http://forum.javascriptmvc.com/feed').get
 
-      forum_events.callback do
-        feed_items = Nori.parse(forum_events.response)['rss']['channel']['item']
-
-        links = feed_items.collect {|e| e['link']}
-        new_events = feed_items.reject {|e| @latest.include? e['link']}
-        @latest = links
-        
-        events = new_events.collect do |event| 
-          { title: event['title'],
-            body: event['description'],
-            link: event['link'],
-            actor: event['dc:creator'],
-            timestamp: event['pubDate'],
-            feed: 'forums',
-            hash_key: Digest::MD5.hexdigest(event['link'])
-            # raw_data: Base64::encode64(event_json)
-          }
-        end
-
-        store(events) if events.size > 0
+      get_forum_events.callback do
+        forum_events = Nori.parse(get_forum_events.response)['rss']['channel']['item']
+        new_events = filter_old forum_events
+        events_to_store = rename_attrs_in new_events
+        store(events_to_store) if events_to_store.size > 0
       end
 
-      forum_events.errback do
-        @log.error "Error: #{forum_events.response_header.status}, header: #{forum_events.response_header}, response: #{forum_events.response}"
+      get_forum_events.errback do
+        @log.error "#{feed} error: #{get_forum_events.response_header.status}, header: #{get_forum_events.response_header}, response: #{get_forum_events.response}"
       end
     end
+
+    def filter_old(feed_events)
+      feed_events.each {|e| e['hash_key'] = Digest::MD5.hexdigest(e['link']+self.feed)}
+      super(feed_events)
+    end
+
+    def rename_attrs_in(new_events)
+      new_events.map do |event| 
+        { title: event['title'],
+          body: event['description'],
+          link: event['link'],
+          actor: event['dc:creator'],
+          timestamp: event['pubDate'],
+          feed: feed,
+          hash_key: event['hash_key'] 
+        # raw_data: Base64::encode64(event_json)
+        }
+      end
+    end
+
   end
 end
