@@ -13,6 +13,7 @@ require 'base64'
 
 # Ours
 require 'handlers'
+require 'string'
 
 # Connection string
 $mq_cs = ENV['MSGQ']
@@ -33,17 +34,17 @@ AMQP.start($mq_cs) do |connection, open_ok|
   Signal.trap("TERM", &stop)
 
   $log.info "Registering Github"
-  EM.add_periodic_timer(5, &Handler::Github.handler($log, exchange))
+  EM.add_periodic_timer(9, &Handler::Github.handler($log, exchange))
 
   $log.info "Registering Disqus"
-  EM.add_periodic_timer(12, &Handler::Disqus.handler($log, exchange))
+  EM.add_periodic_timer(17, &Handler::Disqus.handler($log, exchange))
 
   $log.info "Registering Forums"
-  EM.add_periodic_timer(17, &Handler::Forums.handler($log, exchange))
+  EM.add_periodic_timer(23, &Handler::Forums.handler($log, exchange))
 
   $log.info "Registering Blog"
-  EM.add_periodic_timer(22, &Handler::Blog.handler($log, exchange))
+  EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
 
   $log.info "Registering Community site"
-  EM.add_periodic_timer(47, &Handler::CommunitySite.handler($log, exchange))
+  EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
 end
