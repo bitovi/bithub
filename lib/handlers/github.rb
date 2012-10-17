@@ -2,9 +2,12 @@ module Handler
   class Github < Base
 
     def fetch
-      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events').get
+      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events')
+                                         .get(:head => {"Authorization" => "token f5e07c1c541c31821e7c71219687a4c045c880a9"})
 
       get_github_events.callback do
+        # DEBUG (CHECKING RATELIMIT_REMAINING)
+        # @log.info get_github_events.response_header
         github_events = Yajl::Parser.parse(get_github_events.response)
 
         new_events = filter_old github_events

@@ -34,10 +34,10 @@ AMQP.start($mq_cs) do |connection, open_ok|
   Signal.trap("TERM", &stop)
 
   $log.info "Registering Github"
-  EM.add_periodic_timer(9, &Handler::Github.handler($log, exchange))
+  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
 
   $log.info "Registering Disqus"
-  EM.add_periodic_timer(17, &Handler::Disqus.handler($log, exchange))
+  EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
 
   $log.info "Registering Forums"
   EM.add_periodic_timer(23, &Handler::Forums.handler($log, exchange))
