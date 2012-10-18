@@ -6,13 +6,16 @@ require 'ponder'
 require 'yajl'
 require 'log4r'
 
+# channels = ['#watbot', '#heybot', '#ikojijos']
+channels = ['#bitovi', '#canjs']
+
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
-# RabbitMQ connection string
+# MSGQ connection string
 $mq_cs = ENV['MSGQ']
 
 AMQP.start($mq_cs) do |connection, open_ok|
@@ -20,14 +23,16 @@ AMQP.start($mq_cs) do |connection, open_ok|
   exchange = channel.direct("e.events.preproc")
 
   @thaum = Ponder::Thaum.new do |thaum|
-    thaum.nick   = 'bitovi-bot'
+    thaum.nick   = ENV['NICK']
     thaum.server = 'irc.freenode.net'
     thaum.port   = 6667
   end
 
   @thaum.on :connect do
-    @thaum.join '#bitovi'
-    @thaum.join '#canjs'
+    EM::Iterator.new(channels).each do |c, iter| 
+      @thaum.join c
+      iter.next
+    end
   end
 
   @thaum.on :channel, // do |data|
