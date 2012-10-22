@@ -40,12 +40,12 @@ module Handler
     end
 
     def bootstrap(qualifier)
-      request_string = "#{ENV['FEEDER_WEB']}/latest/#{@feed}?qualifier=#{qualifier}"
+      request_string = "#{ENV['FEEDER_WEB']}/latest.json?feed=#{@feed}&items=50"
       @log.info request_string
 
       get_latest = EM::HttpRequest.new(request_string).get
       get_latest.callback do
-        @latest = Yajl::Parser.parse(get_latest.response).map{|i| i[qualifier]}
+        @latest = Yajl::Parser.parse(get_latest.response)
         @log.info "#{feed}: #{@latest}"
         @initialized = true
       end
