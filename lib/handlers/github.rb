@@ -16,7 +16,7 @@ module Handler
       end
 
       get_github_events.errback do
-        @log.error "#{feed} error: #{get_github_events.response_header.status}, header: #{get_github_events.response_header}, response: #{get_github_events.response}"
+        @log.error "#{feed} error: Response: #{get_github_events.response}"
       end
     end
     
