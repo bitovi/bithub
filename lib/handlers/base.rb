@@ -56,6 +56,7 @@ module Handler
         if @initialized
           fetch
         else
+          bootstrap('hash_key')
           @log.info "#{feed}: Initiaizing..."
         end
       end
