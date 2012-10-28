@@ -40,7 +40,7 @@ module Handler
     end
 
     def bootstrap(qualifier)
-      request_string = "#{ENV['FEEDER_WEB']}/latest.json?feed=#{@feed}&items=50"
+      request_string = "#{ENV['FEEDER_WEB']}/hashes?feed=#{@feed}&items=50"
       @log.info request_string
 
       get_latest = EM::HttpRequest.new(request_string).get
