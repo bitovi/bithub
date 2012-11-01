@@ -6,8 +6,8 @@ require 'ponder'
 require 'yajl'
 require 'log4r'
 
-channels = ['#watbot']
-# channels = ['#bitovi', '#canjs']
+# channels = ['#watbot']
+channels = ['#bitovi', '#canjs']
 
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
@@ -38,15 +38,15 @@ AMQP.start($mq_cs) do |connection, open_ok|
   @thaum.on :channel, // do |data|
     data[:time] = Time.now
     EM.defer do
-      channel = data[:channel].gsub('#','')
       msg = { 
         actor: data[:user],
         title: data[:message],
         feed: 'irc',
         type: data[:channel],
         timestamp: data[:time],
-        link: "http://webchat.freenode.net/?channels=#{channel}"
+        link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
       }
+      # $log.info msg
       exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
     end
   end
