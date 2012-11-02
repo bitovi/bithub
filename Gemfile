@@ -2,6 +2,7 @@ source :rubygems
 
 gem 'amqp'
 gem 'em-http-request'
+gem 'em-twitter'
 gem 'yajl-ruby'
 gem 'nokogiri'
 gem 'nori'
