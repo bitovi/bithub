@@ -36,7 +36,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
   end
 
   @thaum.on :channel, // do |data|
-    data[:time] = Time.now
+    data[:time] = Time.now.strftime("%FT%T%z")
     EM.defer do
       msg = { 
         actor: data[:user],
