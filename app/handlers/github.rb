@@ -32,10 +32,11 @@ module Handler
     end
 
     def handle_event_type(event)
+      parsed_date = Time.strptime(event['created_at'], "%FT%T%Z")
       hash = {
         type: event['type'],
         feed: feed,
-        timestamp: event['created_at'],
+        timestamp: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],
         hash_key: event['hash_key']
         # raw_data: Base64::encode64(event_json)

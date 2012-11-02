@@ -6,7 +6,7 @@ module Handler
       hash = {
         actor: event['user']['screen_name'],
         feed: 'twitter',
-        timestamp: event['created_at'],
+        timestamp: Time.strptime(event['created_at'], "%a %b %m %T %z %Y").strftime("%FT%T%z"),
         link: event['source'],
         title: event['text'],
         hash_key: Digest::MD5.hexdigest(event['id'].to_s+'twitter')

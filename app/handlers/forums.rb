@@ -23,11 +23,15 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        { title: event['title'],
+        raw_date = event['pubDate'].gsub(',','')
+        # $log.info "RAW DATE: #{raw_date}"
+        parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
+        # $log.info "PARSED DATE: #{parsed_date}"
+        { actor: event['dc:creator'],
+          title: event['title'],
           body: event['description'],
           link: event['link'],
-          actor: event['dc:creator'],
-          timestamp: event['pubDate'],
+          timestamp: parsed_date.strftime("%FT%T%z"),
           feed: feed,
           hash_key: event['hash_key'] 
         # raw_data: Base64::encode64(event_json)

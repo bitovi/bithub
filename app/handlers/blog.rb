@@ -24,7 +24,10 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        { timestamp: event['published'],
+        # $log.info "RAW DATE: \"#{event['published']}\""
+        parsed_date = Time.strptime(event['published'], "%e %b %Y")
+        # $log.info "PARSED DATE: #{parsed_date}"
+        { timestamp: parsed_date.strftime("%FT%T%z"),
           title: event['title'],
           body: event['description'],
           link: event['link'],

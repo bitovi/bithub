@@ -31,8 +31,8 @@ twitter_options = {
   :oauth  => {
     :consumer_key     => ENV['TWITTER_CONSUMER_KEY'],
     :consumer_secret  => ENV['TWITTER_CONSUMER_SECRET'],
-    :token            => ENV['OAUTH_TOKEN'],
-    :token_secret     => ENV['OAUTH_TOKEN_SECRET']
+    :token            => ENV['TWITTER_OAUTH_TOKEN'],
+    :token_secret     => ENV['TWITTER_OAUTH_TOKEN_SECRET']
   }
 }
 
