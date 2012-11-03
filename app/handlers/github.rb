@@ -58,6 +58,7 @@ module Handler
       elsif event['type'] == 'PushEvent'
         hash['body'] = event['payload']['body']
         hash['title'] = "pushed to #{event['repo']['name']}"
+        hash['link'] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
 
       elsif event['type'] == 'PullRequestEvent'
         hash['title'] = "requested a pull: #{event['payload']['pull_request']['title']}"
@@ -80,7 +81,3 @@ module Handler
     end
   end
 end
-
-# if new_events.size >= 25
-#   EM.add_timer(1.5, &github)
-# end

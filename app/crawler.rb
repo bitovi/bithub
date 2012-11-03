@@ -45,28 +45,14 @@ AMQP.start($mq_cs) do |connection, open_ok|
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
-  
+
+  # --- Streamers
   client.each do |result|
-    Handler::Twitter.handle_event(exchange, result)
-    $log.info "twitter: new event"
+    $log.info "twitter: new event at "
+    Handler::Twitter.handle_event($log, exchange, result)
   end
 
-  $log.info "Registering Github"
-  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
-
-  $log.info "Registering Disqus"
-  EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
-
-  $log.info "Registering Forums"
-  EM.add_periodic_timer(23, &Handler::Forums.handler($log, exchange))
-
-  $log.info "Registering Blog"
-  EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
-
-  $log.info "Registering Community site"
-  EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
-
- client.on_error do |message|
+  client.on_error do |message|
     $log.error "oops: error: #{message}"
   end
 
@@ -118,4 +104,19 @@ AMQP.start($mq_cs) do |connection, open_ok|
     $log.error "oops: no_data_received"
   end
 
+  # --- Pollers
+  $log.info "Registering Github"
+  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
+
+  $log.info "Registering Disqus"
+  EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
+
+  $log.info "Registering Forums"
+  EM.add_periodic_timer(23, &Handler::Forums.handler($log, exchange))
+
+  $log.info "Registering Blog"
+  EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
+
+  $log.info "Registering Community site"
+  EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
 end

@@ -1,15 +1,16 @@
 module Handler
   class Twitter
-    def self.handle_event(exchange, raw_json)
+    def self.handle_event(log, exchange, raw_json)
       event = Yajl::Parser.parse(raw_json)
+      parsed_date = Time.strptime(event['created_at'], "%a %b %d %T %z %Y")
 
       hash = {
         actor: event['user']['screen_name'],
         feed: 'twitter',
-        timestamp: Time.strptime(event['created_at'], "%a %b %m %T %z %Y").strftime("%FT%T%z"),
+        timestamp: parsed_date.strftime("%FT%T%z"),
         link: event['source'],
         title: event['text'],
-        hash_key: Digest::MD5.hexdigest(event['id'].to_s+'twitter')
+        hash_key: Digest::MD5.hexdigest(event['id_str']+'twitter')
       }
 
       enqueue_events = proc do
