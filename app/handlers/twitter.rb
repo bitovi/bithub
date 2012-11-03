@@ -3,14 +3,16 @@ module Handler
     def self.handle_event(log, exchange, raw_json)
       event = Yajl::Parser.parse(raw_json)
       parsed_date = Time.strptime(event['created_at'], "%a %b %d %T %z %Y")
+      link =
 
       hash = {
         actor: event['user']['screen_name'],
         feed: 'twitter',
         timestamp: parsed_date.strftime("%FT%T%z"),
-        link: event['source'],
+        link: "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
         title: event['text'],
         hash_key: Digest::MD5.hexdigest(event['id_str']+'twitter')
+
       }
 
       enqueue_events = proc do
