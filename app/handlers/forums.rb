@@ -31,6 +31,7 @@ module Handler
           title: event['title'],
           body: event['description'],
           link: event['link'],
+          type: event['category'],
           timestamp: parsed_date.strftime("%FT%T%z"),
           feed: feed,
           hash_key: event['hash_key'] 
