@@ -27,7 +27,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 
 twitter_options = {
   :path   => '/1/statuses/filter.json',
-  :params => { :track => 'canjs,donejs,javascriptmvc,jvmc,jquerypp' },
+  :params => { :track => 'canjs,donejs,javascriptmvc,jmvc,jquerypp' },
   :oauth  => {
     :consumer_key     => ENV['TWITTER_CONSUMER_KEY'],
     :consumer_secret  => ENV['TWITTER_CONSUMER_SECRET'],
