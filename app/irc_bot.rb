@@ -14,7 +14,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 
 # RabbitMQ connection string
 $mq_cs = ENV['MSGQ']
-$irc_chans = ENV['IRCCHANS']
+$irc_channels = ENV['IRCCHANS']
 
 AMQP.start($mq_cs) do |connection, open_ok|
   channel  = AMQP::Channel.new(connection)
@@ -27,7 +27,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
   end
 
   @thaum.on :connect do
-    $irc_chans.split(',').each{|x| @thaum.join x }
+    $irc_channels.split(',').each{|channel| @thaum.join channel }
   end
 
   @thaum.on :channel, // do |data|
