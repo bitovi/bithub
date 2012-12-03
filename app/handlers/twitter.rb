@@ -7,6 +7,7 @@ module Handler
 
       hash = {
         actor: event['user']['screen_name'],
+        actor_id: event['user']['id_str'],
         feed: 'twitter',
         timestamp: parsed_date.strftime("%FT%T%z"),
         link: "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",

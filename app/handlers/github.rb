@@ -2,7 +2,7 @@ module Handler
   class Github < Base
 
     def fetch
-      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/jupiterjs/events')
+      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/bitovi/events')
                                          .get(:head => {"Authorization" => "token f5e07c1c541c31821e7c71219687a4c045c880a9"})
 
       get_github_events.callback do
@@ -38,6 +38,7 @@ module Handler
         feed: feed,
         timestamp: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],
+        actor_id: event['actor']['id'],
         hash_key: event['hash_key']
         # raw_data: Base64::encode64(event_json)
       }
