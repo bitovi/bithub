@@ -17,6 +17,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 
 # MSGQ connection string
 $mq_cs = ENV['MSGQ']
+$irc_channels = ENV['IRCCHANS']
 
 AMQP.start($mq_cs) do |connection, open_ok|
   channel  = AMQP::Channel.new(connection)
