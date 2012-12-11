@@ -6,9 +6,6 @@ require 'ponder'
 require 'yajl'
 require 'log4r'
 
-# channels = ['#watbot']
-channels = ['#bitovi', '#canjs']
-
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
 $log.add(Log4r::StdoutOutputter.new('console', {
@@ -17,7 +14,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 
 # MSGQ connection string
 $mq_cs = ENV['MSGQ']
-$irc_channels = ENV['IRCCHANS']
+$channels = ENV['IRCCHANS'].split(',')
 
 AMQP.start($mq_cs) do |connection, open_ok|
   channel  = AMQP::Channel.new(connection)
@@ -30,7 +27,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
   end
 
   @thaum.on :connect do
-    EM::Iterator.new(channels).each do |c, iter| 
+    EM::Iterator.new($channels).each do |c, iter| 
       @thaum.join c
       iter.next
     end
