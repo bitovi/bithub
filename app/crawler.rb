@@ -30,10 +30,10 @@ site_stream_opts = {
   :path   => '/1/statuses/filter.json',
   :params => { :track => 'canjs,donejs,javascriptmvc,jmvc,jquerypp' },
   :oauth  => {
-    :consumer_key     => ENV['TWITTER_CONSUMER_KEY'],
-    :consumer_secret  => ENV['TWITTER_CONSUMER_SECRET'],
-    :token            => ENV['TWITTER_OAUTH_TOKEN'],
-    :token_secret     => ENV['TWITTER_OAUTH_TOKEN_SECRET']
+    :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
+    :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
+    :token            => ENV['CANJS_OAUTH_TOKEN'],
+    :token_secret     => ENV['CANJS_OAUTH_TOKEN_SECRET']
   }
 }
 
@@ -103,7 +103,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
     end
   end
 
-  --- Pollers
+  # --- Pollers
   $log.info "Registering Github"
   EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
 
