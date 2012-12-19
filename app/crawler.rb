@@ -25,83 +25,82 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
-twitter_options = {
+site_stream_opts = {
+  :host   => 'sitestream.twitter.com',
   :path   => '/1/statuses/filter.json',
   :params => { :track => 'canjs,donejs,javascriptmvc,jmvc,jquerypp' },
   :oauth  => {
-    :consumer_key     => ENV['TWITTER_CONSUMER_KEY'],
-    :consumer_secret  => ENV['TWITTER_CONSUMER_SECRET'],
-    :token            => ENV['TWITTER_OAUTH_TOKEN'],
-    :token_secret     => ENV['TWITTER_OAUTH_TOKEN_SECRET']
+    :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
+    :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
+    :token            => ENV['CANJS_OAUTH_TOKEN'],
+    :token_secret     => ENV['CANJS_OAUTH_TOKEN_SECRET']
+  }
+}
+
+user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
+    :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
+    :token            => ENV['CANJS_OAUTH_TOKEN'],
+    :token_secret     => ENV['CANJS_OAUTH_TOKEN_SECRET']
   }
 }
 
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
-  channel = AMQP::Channel.new(connection)
-  exchange = channel.direct("e.events.preproc")
-  client = EM::Twitter::Client.connect(twitter_options)
-
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
 
-  # --- Streamers
-  client.each do |result|
-    $log.info "twitter: new event at "
-    Handler::Twitter.handle_event($log, exchange, result)
+  channel = AMQP::Channel.new(connection)
+  exchange = channel.direct("e.events.preproc")
+
+  # --- User stream ---
+  user_stream_client = EM::Twitter::Client.connect(user_stream_opts)
+
+  user_stream_client.each do |result|
+    $log.info "twitter: new user stream event"
+    Handler::Twitter.handle_user_stream_event($log, exchange, result)
+  end
+  
+  user_stream_client.on_error do |message|
+    $log.error "user stream oops: error: #{message}"
   end
 
-  client.on_error do |message|
-    $log.error "oops: error: #{message}"
+  # --- Site stream ---
+  site_stream_client = EM::Twitter::Client.connect(site_stream_opts)
+
+  site_stream_client.each do |result|
+    $log.info "twitter: new site stream event"
+    Handler::Twitter.handle_site_stream_event($log, exchange, result)
   end
 
-  client.on_unauthorized do
-    $log.error "oops: unauthorized"
+  site_stream_client.on_error do |message|
+    $log.error "site stream oops: error: #{message}"
   end
 
-  client.on_forbidden do
-    $log.error "oops: unauthorized"
-  end
+  # dynamically assign the rest of the errbacks
+  
+  clients = [user_stream_client, site_stream_client]
+  errbacks = [ "on_unauthorized", "on_forbidden",
+    "on_not_found", "on_not_acceptable",
+    "on_too_long", "on_no_data_received",
+    "on_close", "on_max_reconnects",
+    "on_enhance_your_calm", "on_service_unavailable", 
+    "on_range_unacceptable", "on_reconnect"
+  ]
 
-  client.on_not_found do
-    $log.error "oops: not_found"
-  end
 
-  client.on_not_acceptable do
-    $log.error "oops: not_acceptable"
-  end
+  clients.each do |client|
+    errbacks.each do |errback|
 
-  client.on_too_long do
-    $log.error "oops: too_long"
-  end
-
-  client.on_range_unacceptable do
-    $log.error "oops: range_unacceptable"
-  end
-
-  client.on_enhance_your_calm do
-    $log.error "oops: enhance_your_calm"
-  end
-
-  client.on_service_unavailable do
-    $log.error "oops: service_unavailable"
-  end
-
-  client.on_reconnect do
-    $log.error "oops: reconnect"
-  end
-
-  client.on_max_reconnects do
-    $log.error "oops: max_reconnects"
-  end
-
-  client.on_close do
-    $log.error "oops: close"
-  end
-
-  client.on_no_data_received do
-    $log.error "oops: no_data_received"
+      client.send(errback.to_sym) do
+        $log.error "#{client} stream oops: #{errback}"
+      end
+    end
   end
 
   # --- Pollers
