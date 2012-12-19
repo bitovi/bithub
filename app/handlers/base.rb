@@ -41,7 +41,7 @@ module Handler
 
     def bootstrap(qualifier)
       request_string = "#{ENV['FEEDER_WEB']}/api/events/hashes?feed=#{@feed}&items=50"
-      @log.info request_string
+      $log.info "REQ STR: " + request_string
 
       get_latest = EM::HttpRequest.new(request_string).get
       get_latest.callback do
