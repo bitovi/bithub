@@ -47,11 +47,15 @@ module Handler
         hash['title'] = "raised an issue: #{event['payload']['issue']['title']}"
         hash['body'] = event['payload']['issue']['body']
         hash['link'] = event['payload']['issue']['html_url']
+        hash['labels'] = event['payload']['issue']['labels']
+        hash['state'] = event['payload']['issue']['state']
+        hash['issue_id'] = event['payload']['issue']['id']
 
       elsif event['type'] == 'IssueCommentEvent'
         hash['title'] = "commented on issue #{event['payload']['issue']['number']}"
         hash['body'] = event['payload']['comment']['body']
         hash['link'] = event['payload']['issue']['html_url']
+        hash['issue_id'] = event['payload']['issue']['id']
 
       elsif event['type'] == 'ForkEvent'
         hash['title'] = "forked #{event['repo']['name']}"
