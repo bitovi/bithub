@@ -13,10 +13,13 @@ module Handler
         hash = {
           actor: event['user']['screen_name'],
           actor_id: event['user']['id_str'],
+          source_id: event['id_str'],
           feed: 'twitter',
+          type: 'status_event',
           timestamp: parsed_date.strftime("%FT%T%z"),
           link: "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
           title: event['text'],
+          source_data: event,
           hash_key: Digest::MD5.hexdigest(event['id_str']+'twitter')
         }
 
@@ -46,6 +49,7 @@ module Handler
           feed: 'twitter',
           type: 'follow_event',
           timestamp: parsed_date.strftime("%FT%T%z"),
+          source_data: event,
           title: "followed @canjs"
         }
 

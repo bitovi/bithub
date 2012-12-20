@@ -39,8 +39,9 @@ module Handler
         timestamp: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],
         actor_id: event['actor']['id'],
-        hash_key: event['hash_key']
-        # raw_data: Base64::encode64(event_json)
+        source_id: event['id'],
+        hash_key: event['hash_key'],
+        source_data: event
       }
 
       if event['type'] == 'IssuesEvent' 

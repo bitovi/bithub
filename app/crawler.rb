@@ -28,7 +28,8 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 site_stream_opts = {
   :host   => 'sitestream.twitter.com',
   :path   => '/1/statuses/filter.json',
-  :params => { :track => 'canjs,donejs,javascriptmvc,jmvc,jquerypp' },
+  :params => { :track => 'canjs,donejs,stealjs,javascriptmvc,jmvc,jquerypp' },
+  # :params => { :track => 'jquery,javascript' }, // FOR TESTING
   :oauth  => {
     :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
     :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
@@ -62,7 +63,6 @@ AMQP.start($mq_cs) do |connection, open_ok|
   user_stream_client = EM::Twitter::Client.connect(user_stream_opts)
 
   user_stream_client.each do |result|
-    $log.info "twitter: new user stream event"
     Handler::Twitter.handle_user_stream_event($log, exchange, result)
   end
   
@@ -74,7 +74,6 @@ AMQP.start($mq_cs) do |connection, open_ok|
   site_stream_client = EM::Twitter::Client.connect(site_stream_opts)
 
   site_stream_client.each do |result|
-    $log.info "twitter: new site stream event"
     Handler::Twitter.handle_site_stream_event($log, exchange, result)
   end
 
@@ -96,7 +95,6 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   clients.each do |client|
     errbacks.each do |errback|
-
       client.send(errback.to_sym) do
         $log.error "#{client} stream oops: #{errback}"
       end
