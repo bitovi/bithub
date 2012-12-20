@@ -51,6 +51,7 @@ module Handler
         hash['labels'] = event['payload']['issue']['labels']
         hash['state'] = event['payload']['issue']['state']
         hash['issue_id'] = event['payload']['issue']['id']
+        hash['action'] = event['payload']['action']
 
       elsif event['type'] == 'IssueCommentEvent'
         hash['title'] = "commented on issue #{event['payload']['issue']['number']}"
