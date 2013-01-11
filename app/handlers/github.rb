@@ -39,6 +39,7 @@ module Handler
         timestamp: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],
         actor_id: event['actor']['id'],
+        actor_gravatar: event['actor']['gravatar_id'],
         source_id: event['id'],
         hash_key: event['hash_key'],
         source_data: event
