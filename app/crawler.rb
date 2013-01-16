@@ -25,11 +25,13 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
+$failover_tags = ['canjs','donejs','stealjs','javascriptmvc','jquerypp','documentjs','shouldjs']
+
 site_stream_opts = {
-  :host   => 'sitestream.twitter.com',
-  :path   => '/1/statuses/filter.json',
-  :params => { :track => 'canjs,donejs,stealjs,javascriptmvc,jmvc,jquerypp,documentjs,shouldjs' },
-  # :params => { :track => 'jquery,javascript' }, // FOR TESTING
+  # :host   => 'sitestream.twitter.com',
+  :path   => '/1.1/statuses/filter.json',
+  :params => { :track => $failover_tags.join(',') },
+  # :params => { :track => 'jquery,javascript' }, # FOR TESTING
   :oauth  => {
     :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
     :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
