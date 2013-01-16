@@ -21,7 +21,9 @@ module Handler
     end
     
     def filter_old(feed_events)
-      feed_events.each {|e| e['hash_key'] = Digest::MD5.hexdigest(e['id']+self.feed)}
+      feed_events.each do |e|
+        e['hash_key'] = Digest::MD5.hexdigest(e['id'] + self.feed)
+      end
       super(feed_events)
     end
 
@@ -81,8 +83,10 @@ module Handler
         hash['link'] = event['payload']['comment']['html_url']
 
       elsif event['type'] == 'CreateEvent'
-        hash['title'] = "created created a new #{event['payload']['ref_type']} | #{event['repo']['name']}"
-        #hash['link'] = event['payload']['comment']['html_url']
+        hash['title'] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
+      
+      elsif event['type'] == 'DeleteEvent'
+        hash['title'] = "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
 
       end
       hash
