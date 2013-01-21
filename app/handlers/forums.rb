@@ -17,7 +17,7 @@ module Handler
     end
 
     def filter_old(feed_events)
-      feed_events.each {|e| e['hash_key'] = Digest::MD5.hexdigest(e['link']+self.feed)}
+      feed_events.each {|e| e['hash_key'] = Digest::MD5.hexdigest(e['link'] + self.feed)}
       super(feed_events)
     end
 
@@ -34,8 +34,8 @@ module Handler
           type: event['category'],
           timestamp: parsed_date.strftime("%FT%T%z"),
           feed: feed,
-          hash_key: event['hash_key'] 
-        # raw_data: Base64::encode64(event_json)
+          hash_key: event['hash_key'],
+          source_data: event
         }
       end
     end
