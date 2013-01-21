@@ -6,8 +6,6 @@ require 'log4r'
 require 'yajl'
 require 'nokogiri'
 require 'nori'
-require 'em-http-request'
-require 'em-twitter'
 require 'amqp'
 require 'zlib'
 require 'base64'
@@ -26,12 +24,12 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 }))
 
 $failover_tags = ['canjs','donejs','stealjs','javascriptmvc','jquerypp','documentjs','shouldjs']
+# $failover_tags = ['jquery', 'javascript']
 
-site_stream_opts = {
+public_stream_opts = {
   # :host   => 'sitestream.twitter.com',
   :path   => '/1.1/statuses/filter.json',
   :params => { :track => $failover_tags.join(',') },
-  # :params => { :track => 'jquery,javascript' }, # FOR TESTING
   :oauth  => {
     :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
     :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
@@ -61,47 +59,12 @@ AMQP.start($mq_cs) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
   exchange = channel.direct("e.events.preproc")
 
-  # --- User stream ---
-  user_stream_client = EM::Twitter::Client.connect(user_stream_opts)
-  user_stream_client.each do |result|
-    # $log.info "something on twitter happen"
-    Handler::Twitter.handle_user_stream_event($log, exchange, result)
-  end
-  
-  user_stream_client.on_error do |message|
-    $log.error "user stream oops: error: #{message}"
-  end
+  # --- Streams
+  $log.info "Registering public stream"
+  Handler::Twitter.connect($log, exchange, public_stream_opts)
 
-  # --- Site stream ---
-  site_stream_client = EM::Twitter::Client.connect(site_stream_opts)
-  site_stream_client.each do |result|
-    $log.info "a new tweet appears #{result}"
-    Handler::Twitter.handle_site_stream_event($log, exchange, result)
-  end
-
-  site_stream_client.on_error do |message|
-    $log.error "site stream oops: error: #{message}"
-  end
-
-  # dynamically assign the rest of the errbacks
-  
-  clients = [user_stream_client, site_stream_client]
-  errbacks = [ "on_unauthorized", "on_forbidden",
-    "on_not_found", "on_not_acceptable",
-    "on_too_long", "on_no_data_received",
-    "on_close", "on_max_reconnects",
-    "on_enhance_your_calm", "on_service_unavailable", 
-    "on_range_unacceptable", "on_reconnect"
-  ]
-
-
-  clients.each do |client|
-    errbacks.each do |errback|
-      client.send(errback.to_sym) do
-        $log.error "#{client} stream oops: #{errback}"
-      end
-    end
-  end
+  $log.info "Registering @canjs user stream"
+  Handler::Twitter.connect($log, exchange, user_stream_opts)
 
   # --- Pollers
   $log.info "Registering Github"
