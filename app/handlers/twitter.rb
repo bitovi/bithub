@@ -73,7 +73,7 @@ module Handler
         hash['actor_id'] = event['user']['id_str']
         hash['source_id'] = event['id_str']
         hash['type'] = 'status_event'
-        hash['link'] = "https] =//twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}"
+        hash['link'] = "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}"
         hash['title'] = event['text']
         hash['hash_key'] = Digest::MD5.hexdigest(event['id_str'] + feed) #event's id + feed
       end
