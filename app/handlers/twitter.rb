@@ -47,6 +47,7 @@ module Handler
     end
 
     def handle_event(raw_json)
+      sendit = false
       event = Yajl::Parser.parse(raw_json)
 
       if event['created_at']
@@ -67,6 +68,7 @@ module Handler
         hash['type'] = 'follow_event'
         hash['title'] = "followed @#{event['target']['screen_name']}"
         hash['hash_key'] = Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed) # actor's id + target's id + feed
+        sendit = true;
 
       elsif event['user']
         hash['actor'] = event['user']['screen_name']
@@ -76,14 +78,17 @@ module Handler
         hash['link'] = "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}"
         hash['title'] = event['text']
         hash['hash_key'] = Digest::MD5.hexdigest(event['id_str'] + feed) #event's id + feed
+        sendit = true;
       end
 
-      enqueue_events = proc do
-        @exchange.publish(Yajl::Encoder.encode(hash), routing_key: "tasks.taggify")
-      end
 
-      # Sending (network IO) in a separate lightweight process so we don't block the reactor loop 
-      EM.defer(enqueue_events)
+      if sendit
+        enqueue_events = proc do
+          @exchange.publish(Yajl::Encoder.encode(hash), routing_key: "tasks.taggify")
+        end
+        # Sending (network IO) in a separate lightweight process so we don't block the reactor loop 
+        EM.defer(enqueue_events)
+      end
     end
 
   end #Class
