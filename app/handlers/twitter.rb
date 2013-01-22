@@ -50,6 +50,7 @@ module Handler
       sendit = false
       event = Yajl::Parser.parse(raw_json)
 
+      @log.info "something on twitter happen!; it's alive!"
       if @is_user_stream && event['event'] == 'follow' && event['target']['screen_name']
         @log.info "new USER STREAM event that's not a tweet: #{event}"
         handle_user_stream_event(event)
