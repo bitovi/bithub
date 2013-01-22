@@ -61,10 +61,10 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   # --- Streams
   $log.info "Registering public stream"
-  Handler::Twitter.connect($log, exchange, public_stream_opts)
+  Handler::Twitter.connect($log, exchange, public_stream_opts, false)
 
   $log.info "Registering @canjs user stream"
-  Handler::Twitter.connect($log, exchange, user_stream_opts)
+  Handler::Twitter.connect($log, exchange, user_stream_opts, true)
 
   # --- Pollers
   $log.info "Registering Github"
