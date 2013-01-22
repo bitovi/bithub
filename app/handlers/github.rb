@@ -22,7 +22,7 @@ module Handler
     
     def filter_old(feed_events)
       feed_events.each do |e|
-        e['hash_key'] = Digest::MD5.hexdigest(e['id'] + self.feed)
+        e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + self.feed)
       end
       super(feed_events)
     end
