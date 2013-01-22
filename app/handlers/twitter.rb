@@ -68,7 +68,7 @@ module Handler
       }
 
       hash['actor'] = event['source']['screen_name']
-      hash['actor_id'] = event['source']['id_str']
+      hash['actor_id'] = event['source']['id']
       hash['type'] = 'follow_event'
       hash['title'] = "followed @#{event['target']['screen_name']}"
       hash['hash_key'] = Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed) # actor's id + target's id + feed
@@ -84,8 +84,8 @@ module Handler
       }
 
       hash['actor'] = event['user']['screen_name']
-      hash['actor_id'] = event['user']['id_str']
-      hash['source_id'] = event['id_str']
+      hash['actor_id'] = event['user']['id']
+      hash['source_id'] = event['id']
       hash['type'] = 'status_event'
       hash['link'] = "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}"
       hash['title'] = event['text']
