@@ -5,10 +5,11 @@ module Handler
     attr_reader :initialized, :feed
 
     def self.handler(log, exchange)
-      self.new(log, exchange).handler
+      new(log, exchange).handler
     end
 
     def initialize(log, exchange)
+      @parser = Nori.new(:parser => :nokogiri)
       @latest ||= []
       @initialized ||= false
       @feed = self.class.to_s.gsub('Handler::','').underscore.downcase

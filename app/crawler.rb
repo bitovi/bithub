@@ -23,22 +23,21 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
-$failover_tags = ['canjs','donejs','stealjs','javascriptmvc','jquerypp','documentjs','shouldjs']
+$failover_tags = ['canjs','donejs','stealjs','javascriptmvc','jquerypp','documentjs','shouldjs','jquery++']
 # $failover_tags = ['jquery', 'javascript']
 
 public_stream_opts = {
-  # :host   => 'sitestream.twitter.com',
   :path   => '/1.1/statuses/filter.json',
   :params => { :track => $failover_tags.join(',') },
   :oauth  => {
-    :consumer_key     => ENV['CANJS_CONSUMER_KEY'],
-    :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
-    :token            => ENV['CANJS_OAUTH_TOKEN'],
-    :token_secret     => ENV['CANJS_OAUTH_TOKEN_SECRET']
+    :consumer_key     => ENV['MY_CONSUMER_KEY'],
+    :consumer_secret  => ENV['MY_CONSUMER_SECRET'],
+    :token            => ENV['MY_OAUTH_TOKEN'],
+    :token_secret     => ENV['MY_OAUTH_TOKEN_SECRET']
   }
 }
 
-user_stream_opts = {
+canjs_user_stream_opts = {
   :host   => 'userstream.twitter.com',
   :method => 'GET',
   :path   => '/1.1/user.json',
@@ -47,6 +46,78 @@ user_stream_opts = {
     :consumer_secret  => ENV['CANJS_CONSUMER_SECRET'],
     :token            => ENV['CANJS_OAUTH_TOKEN'],
     :token_secret     => ENV['CANJS_OAUTH_TOKEN_SECRET']
+  }
+}
+
+jquerypp_user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['JQUERYPP_CONSUMER_KEY'],
+    :consumer_secret  => ENV['JQUERYPP_CONSUMER_SECRET'],
+    :token            => ENV['JQUERYPP_OAUTH_TOKEN'],
+    :token_secret     => ENV['JQUERYPP_OAUTH_TOKEN_SECRET']
+  }
+}
+
+funcunit_user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['FUNCUNIT_CONSUMER_KEY'],
+    :consumer_secret  => ENV['FUNCUNIT_CONSUMER_SECRET'],
+    :token            => ENV['FUNCUNIT_OAUTH_TOKEN'],
+    :token_secret     => ENV['FUNCUNIT_OAUTH_TOKEN_SECRET']
+  }
+}
+
+javascriptmvc_user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['JAVASCRIPTMVC_CONSUMER_KEY'],
+    :consumer_secret  => ENV['JAVASCRIPTMVC_CONSUMER_SECRET'],
+    :token            => ENV['JAVASCRIPTMVC_OAUTH_TOKEN'],
+    :token_secret     => ENV['JAVASCRIPTMVC_OAUTH_TOKEN_SECRET']
+  }
+}
+
+shouldjs_user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['SHOULDJS_CONSUMER_KEY'],
+    :consumer_secret  => ENV['SHOULDJS_CONSUMER_SECRET'],
+    :token            => ENV['SHOULDJS_OAUTH_TOKEN'],
+    :token_secret     => ENV['SHOULDJS_OAUTH_TOKEN_SECRET']
+  }
+}
+
+# documentjs_user_stream_opts = {
+#   :host   => 'userstream.twitter.com',
+#   :method => 'GET',
+#   :path   => '/1.1/user.json',
+#   :oauth  => {
+#     :consumer_key     => ENV['DOCUMENTJS_CONSUMER_KEY'],
+#     :consumer_secret  => ENV['DOCUMENTJS_CONSUMER_SECRET'],
+#     :token            => ENV['DOCUMENTJS_OAUTH_TOKEN'],
+#     :token_secret     => ENV['DOCUMENTJS_OAUTH_TOKEN_SECRET']
+#   }
+# }
+
+donejs_user_stream_opts = {
+  :host   => 'userstream.twitter.com',
+  :method => 'GET',
+  :path   => '/1.1/user.json',
+  :oauth  => {
+    :consumer_key     => ENV['DONEJS_CONSUMER_KEY'],
+    :consumer_secret  => ENV['DONEJS_CONSUMER_SECRET'],
+    :token            => ENV['DONEJS_OAUTH_TOKEN'],
+    :token_secret     => ENV['DONEJS_OAUTH_TOKEN_SECRET']
   }
 }
 
@@ -60,15 +131,27 @@ AMQP.start($mq_cs) do |connection, open_ok|
   exchange = channel.direct("e.events.preproc")
 
   # --- Streams
-  $log.info "Registering public stream"
+  $log.info "Registering to Twitter's public stream"
   Handler::Twitter.connect($log, exchange, public_stream_opts, false)
 
   $log.info "Registering @canjs user stream"
-  Handler::Twitter.connect($log, exchange, user_stream_opts, true)
+  Handler::Twitter.connect($log, exchange, canjs_user_stream_opts, true)
+
+  $log.info "Registering @jquerypp user stream"
+  Handler::Twitter.connect($log, exchange, jquerypp_user_stream_opts, true)
+
+  $log.info "Registering @funcunit user stream"
+  Handler::Twitter.connect($log, exchange, funcunit_user_stream_opts, true)
+  
+  $log.info "Registering @javascriptmvc user stream"
+  Handler::Twitter.connect($log, exchange, javascriptmvc_user_stream_opts, true)
+  
+  $log.info "Registering @donejs user stream"
+  Handler::Twitter.connect($log, exchange, donejs_user_stream_opts, true)
 
   # --- Pollers
   $log.info "Registering Github"
-  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
+  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bitovi/events'))
 
   $log.info "Registering Disqus"
   EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))

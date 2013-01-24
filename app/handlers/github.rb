@@ -1,8 +1,17 @@
 module Handler
   class Github < Base
 
+    def self.handler(log, exchange, endpoint)
+      new(log, exchange, endpoint).handler
+    end
+
+    def initialize(log, exchange, endpoint)
+      @endpoint = endpoint || 'https://api.github.com/orgs/bitovi/events'
+      super(log,exchange)
+    end
+
     def fetch
-      get_github_events = EM::HttpRequest.new('https://api.github.com/orgs/bitovi/events')
+      get_github_events = EM::HttpRequest.new(@endpoint)
                                          .get(:head => {"Authorization" => "token f5e07c1c541c31821e7c71219687a4c045c880a9"})
 
       get_github_events.callback do
@@ -22,7 +31,7 @@ module Handler
     
     def filter_old(feed_events)
       feed_events.each do |e|
-        e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + self.feed)
+        e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + feed)
       end
       super(feed_events)
     end
@@ -38,7 +47,7 @@ module Handler
       hash = {
         type: event['type'],
         feed: feed,
-        timestamp: parsed_date.strftime("%FT%T%z"),
+        created_ts: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],
         actor_id: event['actor']['id'],
         actor_gravatar: event['actor']['gravatar_id'],

@@ -27,7 +27,7 @@ module Handler
         { feed: feed,
           link: event['url'],
           actor: event['author']['name'],
-          timestamp: Time.strptime(event['createdAt']+"+0000", "%FT%T%z").strftime("%FT%T%z"),
+          created_ts: Time.strptime(event['createdAt']+"+0000", "%FT%T%z").strftime("%FT%T%z"),
           body: event['message'],
           title: event['thread']['title'],
           hash_key: event['hash_key']

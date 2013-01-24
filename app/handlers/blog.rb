@@ -1,11 +1,11 @@
 module Handler
   class Blog < Base
-
+    
     def fetch
       get_blog_events = EM::HttpRequest.new('http://www.bitovi.com/blog.rss').get
 
       get_blog_events.callback do
-        blog_events = Nori.parse(get_blog_events.response)['rss']['channel']['item']
+        blog_events = @parser.parse(get_blog_events.response)['rss']['channel']['item']
 
         new_events = filter_old blog_events
         events_to_store = rename_attrs_in new_events
@@ -27,7 +27,7 @@ module Handler
         # $log.info "RAW DATE: \"#{event['published']}\""
         parsed_date = Time.strptime(event['published'], "%e %b %Y")
         # $log.info "PARSED DATE: #{parsed_date}"
-        { timestamp: parsed_date.strftime("%FT%T%z"),
+        { created_ts: parsed_date.strftime("%FT%T%z"),
           title: event['title'],
           body: event['description'],
           link: event['link'],

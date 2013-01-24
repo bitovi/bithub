@@ -25,6 +25,7 @@ module Handler
       @feed = self.class.to_s.gsub('Handler::','').underscore.downcase
       @stream_auth_and_opts = stream_auth_and_opts
       @is_user_stream = is_user_stream
+      @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
     end
 
     def connect
@@ -35,26 +36,24 @@ module Handler
       end
 
       @stream.on_error do |message|
-        @log.error "#{@stream} ERROR: #{message}"
+        @log.error "#{@stream} connected as #{@connected_as} ERROR: #{message}"
       end
 
       # dynamically assign the rest of the errbacks
       ERRBACKS.each do |errback|
         @stream.send(errback.to_sym) do
-          @log.error "#{@stream} somethin happen: #{errback}"
+          @log.error "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
         end
       end
     end
 
     def handle_event(raw_json)
-      sendit = false
       event = Yajl::Parser.parse(raw_json)
 
-      @log.info "something on twitter happen!; it's alive!"
       if @is_user_stream && event['event'] == 'follow' && event['target']['screen_name']
-        @log.info "new USER STREAM event that's not a tweet: #{event}"
+        @log.info "follow_event: #{event['source']['screen_name']} followed #{event['target']['screen_name']}"
         handle_user_stream_event(event)
-      elsif !@is_user_stream && event['user']
+      elsif !@is_user_stream
         @log.info "new PUBLIC STREAM tweet: #{event}"
         handle_public_stream_event(event)
       end
@@ -64,7 +63,7 @@ module Handler
       hash = {
         feed: feed,
         source_data: event,
-        timestamp: parse_date(event).strftime("%FT%T%z"),
+        created_ts: parse_date(event).strftime("%FT%T%z"),
       }
 
       hash['actor'] = event['source']['screen_name']
@@ -80,7 +79,7 @@ module Handler
       hash = {
         feed: feed,
         source_data: event,
-        timestamp: parse_date(event).strftime("%FT%T%z"),
+        created_ts: parse_date(event).strftime("%FT%T%z"),
       }
 
       hash['actor'] = event['user']['screen_name']
