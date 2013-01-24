@@ -30,10 +30,10 @@ public_stream_opts = {
   :path   => '/1.1/statuses/filter.json',
   :params => { :track => $failover_tags.join(',') },
   :oauth  => {
-    :consumer_key     => ENV['MY_CONSUMER_KEY'],
-    :consumer_secret  => ENV['MY_CONSUMER_SECRET'],
-    :token            => ENV['MY_OAUTH_TOKEN'],
-    :token_secret     => ENV['MY_OAUTH_TOKEN_SECRET']
+    :consumer_key     => ENV['PUBLIC_FEED_CONSUMER_KEY'],
+    :consumer_secret  => ENV['PUBLIC_FEED_CONSUMER_SECRET'],
+    :token            => ENV['PUBLIC_FEED_OAUTH_TOKEN'],
+    :token_secret     => ENV['PUBLIC_FEED_OAUTH_TOKEN_SECRET']
   }
 }
 
@@ -96,18 +96,6 @@ shouldjs_user_stream_opts = {
     :token_secret     => ENV['SHOULDJS_OAUTH_TOKEN_SECRET']
   }
 }
-
-# documentjs_user_stream_opts = {
-#   :host   => 'userstream.twitter.com',
-#   :method => 'GET',
-#   :path   => '/1.1/user.json',
-#   :oauth  => {
-#     :consumer_key     => ENV['DOCUMENTJS_CONSUMER_KEY'],
-#     :consumer_secret  => ENV['DOCUMENTJS_CONSUMER_SECRET'],
-#     :token            => ENV['DOCUMENTJS_OAUTH_TOKEN'],
-#     :token_secret     => ENV['DOCUMENTJS_OAUTH_TOKEN_SECRET']
-#   }
-# }
 
 donejs_user_stream_opts = {
   :host   => 'userstream.twitter.com',
