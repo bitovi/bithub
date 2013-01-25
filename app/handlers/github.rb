@@ -31,7 +31,7 @@ module Handler
     
     def filter_old(feed_events)
       feed_events.each do |e|
-        e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + feed)
+        e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + feed.to_s)
       end
       super(feed_events)
     end
