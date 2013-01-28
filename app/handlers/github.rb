@@ -89,6 +89,7 @@ module Handler
 
       elsif event['type'] == 'CommitCommentEvent'
         hash['title'] = "commented on a commit in #{event['repo']['name']}"
+        hash['body'] = event['payload']['comment']['body']
         hash['link'] = event['payload']['comment']['html_url']
 
       elsif event['type'] == 'CreateEvent'
