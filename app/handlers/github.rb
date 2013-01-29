@@ -33,8 +33,8 @@ module Handler
       feed_events.each do |e|
         begin
           e['hash_key'] = Digest::MD5.hexdigest(e['id'].to_s + feed.to_s)
-        rescue TypeError => e
-          @log.error e
+        rescue TypeError => error
+          @log.error error
           @log.error "FEED: #{feed} | ID: #{e['id']}"
         end
       end
