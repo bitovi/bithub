@@ -5,8 +5,8 @@ module Handler
     # https://forum.javascriptmvc.com/feed/filter/questions
     # https://forum.javascriptmvc.com/feed/filter/ideas
     
-    def self.handler(log, exchange, endpoint)
-      new(log, exchange, endpoint).handler
+    def self.handler(log, exchange, endpoints)
+      new(log, exchange, endpoints).handler
     end
 
     def initialize(log, exchange, endpoints)
@@ -16,7 +16,7 @@ module Handler
 
 
     def fetch
-      @log.info "WAT?!"
+      @log.info "Fetching..."
       forum_multi_fetch = EventMachine::MultiRequest.new
       @endpoints.each do |ep_name, ep|
         forum_multi_fetch.add(ep_name, EventMachine::HttpRequest.new(ep).get)
@@ -56,6 +56,7 @@ module Handler
           body: event['description'],
           link: event['link'],
           type: event['category'],
+          filter_term: event['filter_term'],
           created_ts: parsed_date.strftime("%FT%T%z"),
           feed: feed,
           hash_key: event['hash_key'],
