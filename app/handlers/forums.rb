@@ -23,17 +23,18 @@ module Handler
       end
 
       forum_multi_fetch.callback do
-        questions = @parser.parse(forum_multi_fetch.responses[:callback][:questions].response)['rss']['channel']['item']
-        all = @parser.parse(forum_multi_fetch.responses[:callback][:all].response)['rss']['channel']['item']
+        if forum_multi_fetch.responses[:callback]
+          questions = @parser.parse(forum_multi_fetch.responses[:callback][:questions].response)['rss']['channel']['item']
+          all = @parser.parse(forum_multi_fetch.responses[:callback][:all].response)['rss']['channel']['item']
 
-        questions.each { |q| q['filter_term'] = 'question' }
-        forum_events = all.concat(questions)
+          questions.each { |q| q['filter_term'] = 'question' }
+          forum_events = all.concat(questions)
 
-        new_events = filter_old forum_events
-        events_to_store = rename_attrs_in new_events
-        store(events_to_store) if events_to_store.size > 0
+          new_events = filter_old forum_events
+          events_to_store = rename_attrs_in new_events
+          store(events_to_store) if events_to_store.size > 0
 
-        if forum_multi_fetch.responses[:errback]
+        elsif forum_multi_fetch.responses[:errback]
           forum_multi_fetch.responses[:errback].each do |r|
             @log.error "#{feed} ERROR: #{r.status}, header: #{r.response_header}"
           end

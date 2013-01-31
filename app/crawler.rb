@@ -119,30 +119,30 @@ AMQP.start($mq_cs) do |connection, open_ok|
   exchange = channel.direct("e.events.preproc")
 
   # --- Streams
-  # $log.info "Registering to Twitter's public stream"
-  # Handler::Twitter.connect($log, exchange, public_stream_opts, false)
+  $log.info "Registering to Twitter's public stream"
+  Handler::Twitter.connect($log, exchange, public_stream_opts, false)
 
-  # $log.info "Registering @canjs user stream"
-  # Handler::Twitter.connect($log, exchange, canjs_user_stream_opts, true)
+  $log.info "Registering @canjs user stream"
+  Handler::Twitter.connect($log, exchange, canjs_user_stream_opts, true)
 
-  # $log.info "Registering @jquerypp user stream"
-  # Handler::Twitter.connect($log, exchange, jquerypp_user_stream_opts, true)
+  $log.info "Registering @jquerypp user stream"
+  Handler::Twitter.connect($log, exchange, jquerypp_user_stream_opts, true)
 
-  # $log.info "Registering @funcunit user stream"
-  # Handler::Twitter.connect($log, exchange, funcunit_user_stream_opts, true)
+  $log.info "Registering @funcunit user stream"
+  Handler::Twitter.connect($log, exchange, funcunit_user_stream_opts, true)
   
-  # $log.info "Registering @javascriptmvc user stream"
-  # Handler::Twitter.connect($log, exchange, javascriptmvc_user_stream_opts, true)
+  $log.info "Registering @javascriptmvc user stream"
+  Handler::Twitter.connect($log, exchange, javascriptmvc_user_stream_opts, true)
   
-  # $log.info "Registering @donejs user stream"
-  # Handler::Twitter.connect($log, exchange, donejs_user_stream_opts, true)
+  $log.info "Registering @donejs user stream"
+  Handler::Twitter.connect($log, exchange, donejs_user_stream_opts, true)
 
   # --- Pollers
-  # $log.info "Registering Github"
-  # EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bitovi/events'))
+  $log.info "Registering Github"
+  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bitovi/events'))
 
-  # $log.info "Registering Disqus"
-  # EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
+  $log.info "Registering Disqus"
+  EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
 
 
   $log.info "Registering Forums"
@@ -153,9 +153,9 @@ AMQP.start($mq_cs) do |connection, open_ok|
   }
   EM.add_periodic_timer(5, &Handler::Forums.handler($log, exchange, forum_endpoints))
 
-  # $log.info "Registering Blog"
-  # EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
+  $log.info "Registering Blog"
+  EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
 
-  # $log.info "Registering Community site"
-  # EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
+  $log.info "Registering Community site"
+  EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
 end
