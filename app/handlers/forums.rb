@@ -51,7 +51,8 @@ module Handler
       new_events.map do |event| 
         raw_date = event['pubDate'].gsub(',','')
         parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
-        hash = { actor: event['dc:creator'],
+        hash = { 
+          actor: event['dc:creator'],
           title: event['title'],
           body: event['description'],
           link: event['link'],
@@ -62,8 +63,6 @@ module Handler
           hash_key: event['hash_key'],
           source_data: event
         }
-        @log.info hash
-        return hash
       end
     end
 

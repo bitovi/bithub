@@ -1,4 +1,4 @@
-source :rubygems
+source "http://rubygems.org"
 
 gem 'amqp'
 gem 'em-http-request'
@@ -7,6 +7,7 @@ gem 'yajl-ruby'
 gem 'nokogiri'
 gem 'nori'
 gem 'log4r'
+gem 'awesome_print'
 
 group :development do
   gem 'foreman'

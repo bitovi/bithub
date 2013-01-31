@@ -10,6 +10,7 @@ GEM
       amq-client (~> 0.9.5)
       amq-protocol (>= 0.9.4)
       eventmachine
+    awesome_print (1.1.0)
     columnize (0.3.6)
     cookiejar (0.3.0)
     debugger (1.2.4)
@@ -47,6 +48,7 @@ PLATFORMS
 
 DEPENDENCIES
   amqp
+  awesome_print
   debugger
   em-http-request
   em-twitter
