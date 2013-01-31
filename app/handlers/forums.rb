@@ -1,19 +1,45 @@
 module Handler
   class Forums < Base
 
-    def fetch
-      get_forum_events = EM::HttpRequest.new('http://forum.javascriptmvc.com/feed').get
+    ## Possible endpoints
+    # https://forum.javascriptmvc.com/feed/filter/questions
+    # https://forum.javascriptmvc.com/feed/filter/ideas
+    
+    def self.handler(log, exchange, endpoint)
+      new(log, exchange, endpoint).handler
+    end
 
-      get_forum_events.callback do
-        forum_events = @parser.parse(get_forum_events.response)['rss']['channel']['item']
+    def initialize(log, exchange, endpoints)
+      @endpoints = endpoints
+      super(log,exchange)
+    end
+
+
+    def fetch
+      @log.info "WAT?!"
+      forum_multi_fetch = EventMachine::MultiRequest.new
+      @endpoints.each do |ep_name, ep|
+        forum_multi_fetch.add(ep_name, EventMachine::HttpRequest.new(ep).get)
+      end
+
+      forum_multi_fetch.callback do
+        questions = @parser.parse(forum_multi_fetch.responses[:callback][:questions].response)['rss']['channel']['item']
+        all = @parser.parse(forum_multi_fetch.responses[:callback][:all].response)['rss']['channel']['item']
+
+        questions.each { |q| q['filter_term'] = 'question' }
+        forum_events = all.concat(questions)
+
         new_events = filter_old forum_events
         events_to_store = rename_attrs_in new_events
         store(events_to_store) if events_to_store.size > 0
+
+        if forum_multi_fetch.responses[:errback]
+          forum_multi_fetch.responses[:errback].each do |r|
+            @log.error "#{feed} ERROR: #{r.status}, header: #{r.response_header}"
+          end
+        end
       end
 
-      get_forum_events.errback do
-        @log.error "#{feed} error: #{get_forum_events.response_header.status}, header: #{get_forum_events.response_header}, response: #{get_forum_events.response}"
-      end
     end
 
     def filter_old(feed_events)
@@ -25,7 +51,7 @@ module Handler
       new_events.map do |event| 
         raw_date = event['pubDate'].gsub(',','')
         parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
-        { actor: event['dc:creator'],
+        hash = { actor: event['dc:creator'],
           title: event['title'],
           body: event['description'],
           link: event['link'],
@@ -35,6 +61,8 @@ module Handler
           hash_key: event['hash_key'],
           source_data: event
         }
+        @log.info hash
+        return hash
       end
     end
 
