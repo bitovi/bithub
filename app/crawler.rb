@@ -148,10 +148,9 @@ AMQP.start($mq_cs) do |connection, open_ok|
   $log.info "Registering Forums"
   forum_endpoints = {
     questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
-    ideas: 'https://forum.javascriptmvc.com/feed/filter/ideas',
     all: 'https://forum.javascriptmvc.com/feed'
   }
-  EM.add_periodic_timer(5, &Handler::Forums.handler($log, exchange, forum_endpoints))
+  EM.add_periodic_timer(25, &Handler::Forums.handler($log, exchange, forum_endpoints))
 
   $log.info "Registering Blog"
   EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))

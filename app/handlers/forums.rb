@@ -16,14 +16,13 @@ module Handler
 
 
     def fetch
-      @log.info "Fetching..."
       forum_multi_fetch = EventMachine::MultiRequest.new
       @endpoints.each do |ep_name, ep|
         forum_multi_fetch.add(ep_name, EventMachine::HttpRequest.new(ep).get)
       end
 
       forum_multi_fetch.callback do
-        if forum_multi_fetch.responses[:callback]
+        if forum_multi_fetch.responses && forum_multi_fetch.responses[:callback]
           questions = @parser.parse(forum_multi_fetch.responses[:callback][:questions].response)['rss']['channel']['item']
           all = @parser.parse(forum_multi_fetch.responses[:callback][:all].response)['rss']['channel']['item']
 
