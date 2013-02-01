@@ -50,7 +50,7 @@ module Handler
     def handle_event_type(event)
       parsed_date = Time.strptime(event['created_at'], "%FT%T%Z")
       hash = {
-        type: event['type'],
+        type: event['type'].downcase,
         feed: feed,
         created_ts: parsed_date.strftime("%FT%T%z"),
         actor: event['actor']['login'],

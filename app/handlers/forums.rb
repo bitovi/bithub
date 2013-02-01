@@ -56,7 +56,7 @@ module Handler
           title: event['title'],
           body: event['description'],
           link: event['link'],
-          type: event['category'],
+          type: event['category'].downcase,
           filter_term: event['filter_term'],
           created_ts: parsed_date.strftime("%FT%T%z"),
           feed: feed,

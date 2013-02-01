@@ -144,7 +144,6 @@ AMQP.start($mq_cs) do |connection, open_ok|
   $log.info "Registering Disqus"
   EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
 
-
   $log.info "Registering Forums"
   forum_endpoints = {
     questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
