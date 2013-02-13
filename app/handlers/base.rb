@@ -24,7 +24,11 @@ module Handler
     # Compare key with items already fetched and set the last batch of keys as latest
     def filter_old(feed_items)
       new_events = feed_items.reject {|e| @latest.include? e['hash_key']}
-      @latest = feed_items.collect {|e| e['hash_key']}
+      @latest += feed_items.collect {|e| e['hash_key']}
+      if @latest.length > 1000
+        diff = @latest.length - 1000
+        @latest.shift(diff)
+      end
       new_events
     end
 
