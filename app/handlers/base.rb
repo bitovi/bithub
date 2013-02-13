@@ -23,6 +23,11 @@ module Handler
 
     # Compare key with items already fetched and set the last batch of keys as latest
     def filter_old(feed_items)
+      feed_items.each do |item|
+        if !@latest.include? item.hash_key
+          @log.info "========> NOT IN LATEST: #{item.hash_key}"
+        end
+      end
       new_events = feed_items.reject {|e| @latest.include? e['hash_key']}
       @latest += feed_items.collect {|e| e['hash_key']}
       if @latest.length > 1000
