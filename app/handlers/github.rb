@@ -62,11 +62,12 @@ module Handler
       }
 
       if event['type'] == 'IssuesEvent' 
-        hash['title'] = "#{hash['state']} an issue: #{event['payload']['issue']['title']}"
+        state = event['payload']['issue']['state']
+        hash['title'] = "#{state} an issue: #{event['payload']['issue']['title']}"
         hash['body'] = event['payload']['issue']['body']
         hash['link'] = event['payload']['issue']['html_url']
         hash['labels'] = event['payload']['issue']['labels'].map { |l| l['name'] }
-        hash['state'] = event['payload']['issue']['state']
+        hash['state'] = state
         hash['issue_id'] = event['payload']['issue']['id']
         hash['action'] = event['payload']['action']
 
