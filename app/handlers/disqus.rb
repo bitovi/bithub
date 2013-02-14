@@ -5,7 +5,13 @@ module Handler
       get_disqus_events = EM::HttpRequest.new('http://disqus.com/api/3.0/posts/list.json?api_key=NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB&forum[]=jmvcs3&forum[]=bitovi&related[]=thread&related[]=forum').get
 
       get_disqus_events.callback do
-        disqus_events = Yajl::Parser.parse(get_disqus_events.response)['response']
+
+        begin
+          disqus_events = Yajl::Parser.parse(get_disqus_events.response)['response']
+        rescue Yajl::ParseError => error
+          @log.error error
+          @log.error "FEED: #{feed} | DATA: #{get_disqus_events}"
+        end
 
         new_events = filter_old disqus_events
         events_to_store = rename_attrs_in new_events
