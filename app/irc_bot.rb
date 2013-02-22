@@ -37,14 +37,13 @@ AMQP.start($mq_cs) do |connection, open_ok|
     data[:time] = Time.now.strftime("%FT%T%z")
     EM.defer do
       msg = { 
-        actor: data[:user],
+        actor: data[:nick],
         title: data[:message],
         feed: 'irc',
         type: data[:channel],
         timestamp: data[:time],
         link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
       }
-      # $log.info msg
       exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
     end
   end
