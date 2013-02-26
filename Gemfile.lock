@@ -39,6 +39,7 @@ GEM
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
     builder (3.0.4)
+    cancan (1.6.9)
     commonjs (0.2.6)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
@@ -129,6 +130,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.2)
+    rolify (3.2.0)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -160,6 +162,7 @@ DEPENDENCIES
   activerecord-postgres-array
   activerecord-postgres-hstore
   acts-as-taggable-on
+  cancan
   devise
   jquery-rails
   less-rails (~> 2.2.6)
@@ -169,6 +172,7 @@ DEPENDENCIES
   omniauth-twitter
   pg
   rails (= 3.2.12)
+  rolify
   therubyracer (~> 0.11.4)
   uglifier (>= 1.0.3)
   unicorn

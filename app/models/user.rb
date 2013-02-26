@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  rolify
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
