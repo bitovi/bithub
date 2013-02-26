@@ -14,12 +14,6 @@ test:
   database: bithub_test
   pool: 5
   username: bithub
-  password:
-
-production:
-  adapter: postgresql
-  encoding: unicode
-  database: bithub_production
-  pool: 5
-  username: bithub
-  password:
+  password: negativ1Q
+  host: localhost
+  port: 5432
