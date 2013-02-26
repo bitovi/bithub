@@ -7,7 +7,6 @@ class CreateEvents < ActiveRecord::Migration
       t.text :body
       t.references :author
       t.references :rule
-      t.references :category
 
       t.timestamps
     end

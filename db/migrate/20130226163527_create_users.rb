@@ -8,7 +8,6 @@ class CreateUsers < ActiveRecord::Migration
       t.string :postal
       t.string :state
       t.references :country
-      t.references :role
 
       t.timestamps
     end
