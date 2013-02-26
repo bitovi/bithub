@@ -5,6 +5,9 @@ gem 'pg'
 gem 'unicorn'
 gem 'jquery-rails'
 gem 'devise'
+gem 'omniauth'
+gem 'omniauth-twitter'
+gem 'omniauth-github'
 gem 'activerecord-postgres-hstore'
 
 # Gems used only for assets and not required
