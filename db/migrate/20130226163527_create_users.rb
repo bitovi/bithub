@@ -6,6 +6,9 @@ class CreateUsers < ActiveRecord::Migration
       t.string :address
       t.string :city
       t.string :postal
+      t.string :state
+      t.references :country
+      t.references :role
 
       t.timestamps
     end
