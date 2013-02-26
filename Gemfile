@@ -4,6 +4,8 @@ gem 'rails', '3.2.12'
 gem 'pg'
 gem 'unicorn'
 gem 'jquery-rails'
+gem 'devise'
+gem 'activerecord-postgres-hstore'
 
 # Gems used only for assets and not required
 # in production environments by default.
