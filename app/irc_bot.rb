@@ -5,6 +5,8 @@ require 'amqp'
 require 'ponder'
 require 'yajl'
 require 'log4r'
+require 'digest/md5'
+  
 
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
@@ -35,6 +37,8 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   @thaum.on :channel, // do |data|
     data[:time] = Time.now.strftime("%FT%T%z")
+    hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + data[:time])
+
     EM.defer do
       msg = { 
         actor: data[:nick],
@@ -42,6 +46,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         feed: 'irc',
         type: data[:channel],
         timestamp: data[:time],
+        hash_key: hash_key,
         link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
       }
       exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
