@@ -29,8 +29,6 @@ gem 'newrelic_rpm'
 
 # Gems for listener
 gem 'amqp'
-gem 'yajl-ruby'
-gem 'log4r'
 
 group :development do
   gem 'foreman'
