@@ -1,5 +1,5 @@
 # encoding: UTF-8
-rails_app_root = File.expand_path(File.dirname(__FILE__) + '/../..')
+rails_app_root = File.expand_path(File.dirname(__FILE__) + '/..')
 ENV['RAILS_ENV'] =ENV['RAILS_ENV'] || 'development'
 require "#{rails_app_root}/config/environment"
 
