@@ -3,7 +3,7 @@ class AddFkOnActivities < ActiveRecord::Migration
     execute <<-SQL
       ALTER TABLE activities 
         ADD CONSTRAINT fk_activities_events
-        FOREIGN KEY (applies_to_event_id) 
+        FOREIGN KEY (applies_to_id) 
         REFERENCES events(id)
     SQL
     execute <<-SQL

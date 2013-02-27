@@ -14,17 +14,14 @@
 ActiveRecord::Schema.define(:version => 20130226210054) do
 
   create_table "activities", :force => true do |t|
-    t.integer  "applies_to_event_id"
+    t.integer  "applies_to_id"
     t.integer  "actor_id"
     t.string   "type"
-    t.integer  "points"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
-  end
-
-  create_table "categories", :force => true do |t|
-    t.string "name"
-    t.string "display_name"
+    t.integer  "awarded_value"
+    t.integer  "staked_value"
+    t.boolean  "stake_fullfilled"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
   end
 
   create_table "countries", :force => true do |t|
@@ -40,9 +37,9 @@ ActiveRecord::Schema.define(:version => 20130226210054) do
     t.text     "body"
     t.integer  "author_id"
     t.integer  "rule_id"
-    t.integer  "category_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.integer  "parent_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "events_raw", :force => true do |t|
@@ -62,13 +59,13 @@ ActiveRecord::Schema.define(:version => 20130226210054) do
   add_index "roles", ["name"], :name => "index_roles_on_name"
 
   create_table "rules", :force => true do |t|
-    t.integer      "category_id"
-    t.integer      "points"
-    t.integer      "award"
-    t.string_array "required_tags", :limit => 255
+    t.string_array "required_tags",    :limit => 255
+    t.integer      "authorship_value"
+    t.integer      "award_value"
+    t.integer      "upvote_value"
     t.integer      "priority"
-    t.datetime     "created_at",                   :null => false
-    t.datetime     "updated_at",                   :null => false
+    t.datetime     "created_at",                      :null => false
+    t.datetime     "updated_at",                      :null => false
   end
 
   create_table "taggings", :force => true do |t|
@@ -96,7 +93,6 @@ ActiveRecord::Schema.define(:version => 20130226210054) do
     t.string   "postal"
     t.string   "state"
     t.integer  "country_id"
-    t.integer  "role_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
     t.datetime "remember_created_at"
