@@ -8,8 +8,9 @@ Bithub::Application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  # Enable serving static files because of Rack::Cache (HTTP
+  # cache invalidation is possible this way)
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -19,6 +20,20 @@ Bithub::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+  
+  # Use a different cache store in production
+  config.cache_store = :dalli_store
+
+  # Set up Rack::Cache to use Memcached store
+  config.action_dispatch.rack_cache = {
+    :metastore    => Dalli::Client.new,
+    :entitystore  => 'file:tmp/cache/rack/body',
+    :allow_reload => false
+  }
+
+  # Set the Cache-Control header
+  config.static_cache_control = "public, max-age=2592000"
+
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
@@ -39,8 +54,6 @@ Bithub::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
-  # Use a different cache store in production
-  # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
