@@ -8,8 +8,12 @@ class CreateEvents < ActiveRecord::Migration
       t.references :author
       t.references :rule
       t.references :parent
+      t.date :date
+      t.hstore :source_data
 
       t.timestamps
     end
+
+    add_index(:events, :hash_key)
   end
 end

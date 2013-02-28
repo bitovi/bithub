@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130226210054) do
+ActiveRecord::Schema.define(:version => 20130228171824) do
 
   create_table "activities", :force => true do |t|
     t.integer  "applies_to_id"
@@ -38,9 +38,12 @@ ActiveRecord::Schema.define(:version => 20130226210054) do
     t.integer  "author_id"
     t.integer  "rule_id"
     t.integer  "parent_id"
+    t.date     "date"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "events", ["hash_key"], :name => "index_events_on_hash_key"
 
   create_table "events_raw", :force => true do |t|
     t.integer "event_id"
@@ -101,7 +104,11 @@ ActiveRecord::Schema.define(:version => 20130226210054) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.string   "provider"
+    t.string   "uid"
   end
+
+  add_index "users", ["email"], :name => "index_users_on_email"
 
   create_table "users_roles", :id => false, :force => true do |t|
     t.integer "user_id"

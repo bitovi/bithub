@@ -1,6 +1,6 @@
 # encoding: UTF-8
 rails_app_root = File.expand_path(File.dirname(__FILE__) + '/..')
-ENV['RAILS_ENV'] =ENV['RAILS_ENV'] || 'development'
+ENV['RAILS_ENV'] = ENV['RAILS_ENV'] || 'development'
 require "#{rails_app_root}/config/environment"
 
 # Message queue (RabbitMQ) connection and event loop
