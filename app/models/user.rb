@@ -10,24 +10,37 @@ class User < ActiveRecord::Base
   has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
   has_many :authored_events, :foreign_key => "author_id", :class => "Event"
   
-  has_many :awarded_events, :finder_sql => proc { 
-    "SELECT * FROM users AS u, events AS e activities AS a" +
-    "WHERE u.id = e.author_id" +
-    "AND e.id = a.applies_to_id" +
+  # Received awards
+  has_many :awards, :finder_sql => proc {
+    "SELECT a.* FROM events AS e activities AS a" +
+    "WHERE e.id = a.applies_to_id" +
     "AND a.type = award" +
-    "AND u.id = #{id}"
-  }
-  
-  has_many :upvoted_events, :finder_sql => proc { 
-    "SELECT * FROM users AS u, events AS e, activities AS a" +
-    "WHERE u.id = e.author_id" +
-    "AND e.id = a.applies_to_id" +
-    "AND a.type = award" +
-    "AND u.id = #{id}"
+    "AND e.author_id = #{id}"
   }
 
-  has_many :upvoted_events, :through => :activities, :source => :events,
-    :conditions => ["activity.type = ?", 'upvote']
+  # Received upvotes
+  has_many :upvotes, :finder_sql => proc {
+    "SELECT a.* FROM events AS e activities AS a" +
+    "WHERE e.id = a.applies_to_id" +
+    "AND a.type = upvote" +
+    "AND e.author_id = #{id}"
+  }
+
+  # Events that the user awarded
+  has_many :events_awarded, :finder_sql => proc { 
+    "SELECT e.* FROM events AS e activities AS a" +
+    "WHERE e.id = a.applies_to_id" +
+    "AND a.type = award" +
+    "AND a.actor_id = #{id}"
+  }
+  
+  # Events that the user upvoted
+  has_many :events_upvoted, :finder_sql => proc { 
+    "SELECT e.* FROM events AS e, activities AS a" +
+    "WHERE e.id = a.applies_to_id" +
+    "AND a.type = upvote" +
+    "AND a.actor_id = #{id}"
+  }
 
   def self.find_or_create(auth, signed_in_resource=nil)
     user = User.where(:provider => auth.provider, :uid => auth.uid).first
