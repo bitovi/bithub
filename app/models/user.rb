@@ -9,6 +9,9 @@ class User < ActiveRecord::Base
 
   has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
   has_many :authored_events, :foreign_key => "author_id", :class => "Event"
+
+  validates :name, :email, :presence => true
+  validates :email, :uniqueness => true
   
   # Received awards
   has_many :awards, :finder_sql => proc {
@@ -41,6 +44,10 @@ class User < ActiveRecord::Base
     "AND a.type = upvote" +
     "AND a.actor_id = #{id}"
   }
+
+  # Syncing
+  def add_profile
+  end
 
   def self.find_or_create(auth, signed_in_resource=nil)
     user = User.where(:provider => auth.provider, :uid => auth.uid).first

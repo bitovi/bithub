@@ -32,4 +32,7 @@ gem 'amqp'
 
 group :development do
   gem 'foreman'
+  gem 'factory_girl_rails'
+  gem 'rspec-rails'
+  gem 'guard-rspec'
 end

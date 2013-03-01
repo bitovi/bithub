@@ -7,6 +7,8 @@ class Event < ActiveRecord::Base
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   has_many :activities, :foreign_key => "applies_to_id"
 
+  validates :date, :presence => true
+
   scope :chat, tagged_with('irc')
   scope :questions, tagged_with('question'
   scope :bugs, tagged_with('bug')
@@ -23,9 +25,6 @@ class Event < ActiveRecord::Base
   scope :tweets, tagged_with(['twitter', 'status_event'])
 
   def determine_rule
-  end
-
-  def determine_tags 
   end
 
   def group_if_forum_reply
