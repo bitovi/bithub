@@ -14,9 +14,9 @@
 ActiveRecord::Schema.define(:version => 20130228171824) do
 
   create_table "activities", :force => true do |t|
-    t.integer  "applies_to_id"
-    t.integer  "actor_id"
-    t.string   "type"
+    t.integer  "applies_to_id",    :null => false
+    t.integer  "actor_id",         :null => false
+    t.string   "type",             :null => false
     t.integer  "awarded_value"
     t.integer  "staked_value"
     t.boolean  "stake_fullfilled"
@@ -25,30 +25,27 @@ ActiveRecord::Schema.define(:version => 20130228171824) do
   end
 
   create_table "countries", :force => true do |t|
-    t.string "name"
+    t.string "name",         :null => false
     t.string "display_name"
-    t.string "iso"
+    t.string "iso",          :null => false
   end
 
   create_table "events", :force => true do |t|
+    t.string   "hash_key",   :null => false
     t.string   "title"
     t.string   "url"
-    t.string   "hash_key"
     t.text     "body"
     t.integer  "author_id"
-    t.integer  "rule_id"
+    t.integer  "rule_id",    :null => false
     t.integer  "parent_id"
-    t.date     "date"
+    t.date     "date",       :null => false
+    t.hstore   "props"
+    t.text     "raw_json",   :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
 
   add_index "events", ["hash_key"], :name => "index_events_on_hash_key"
-
-  create_table "events_raw", :force => true do |t|
-    t.integer "event_id"
-    t.hstore  "data"
-  end
 
   create_table "roles", :force => true do |t|
     t.string   "name"
@@ -89,7 +86,7 @@ ActiveRecord::Schema.define(:version => 20130228171824) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "name"
+    t.string   "name",                               :null => false
     t.string   "email"
     t.string   "address"
     t.string   "city"

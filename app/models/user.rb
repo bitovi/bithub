@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :provider, :uid
 
   has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
-  has_many :authored_events, :foreign_key => "author_id", :class => "Event"
+  has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
 
   validates :name, :email, :presence => true
   validates :email, :uniqueness => true
