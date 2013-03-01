@@ -59,9 +59,13 @@ module Handler
     def handler
       proc do 
         if @initialized
-          fetch
+          Exceptional.rescue do
+            fetch
+          end
         else
-          bootstrap('hash_key')
+          Exceptional.rescue do
+            bootstrap('hash_key')
+          end
           @log.info "#{feed}: Initiaizing..."
         end
       end

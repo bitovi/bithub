@@ -8,6 +8,8 @@ gem 'nokogiri'
 gem 'nori'
 gem 'log4r'
 gem 'awesome_print'
+gem 'exceptional'
+gem 'json'
 
 group :development do
   gem 'foreman'

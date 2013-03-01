@@ -33,12 +33,16 @@ GEM
       http_parser.rb (~> 0.5)
       simple_oauth (~> 0.1)
     eventmachine (1.0.0)
+    exceptional (2.0.33)
+      rack
     foreman (0.61.0)
       thor (>= 0.13.6)
     http_parser.rb (0.5.3)
+    json (1.7.7)
     log4r (1.1.10)
     nokogiri (1.5.6)
     nori (2.0.3)
+    rack (1.5.2)
     simple_oauth (0.2.0)
     thor (0.16.0)
     yajl-ruby (1.1.0)
@@ -52,7 +56,9 @@ DEPENDENCIES
   debugger
   em-http-request
   em-twitter
+  exceptional
   foreman
+  json
   log4r
   nokogiri
   nori

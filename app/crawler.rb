@@ -9,6 +9,8 @@ require 'nori'
 require 'amqp'
 require 'zlib'
 require 'base64'
+require 'rubygems'
+require 'exceptional'
 
 # Ours
 require 'handlers'
@@ -17,6 +19,13 @@ require 'string'
 # Connection string
 $mq_cs = ENV['MSGQ']
 
+# Exceptional
+Exceptional::Config.load("config/exceptional.yml")
+
+Exceptional.rescue do
+  raise "TEST"
+end
+
 # Logging
 $log = Log4r::Logger.new('crawler')
 $log.add(Log4r::StdoutOutputter.new('console', {
@@ -24,7 +33,6 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 }))
 
 $failover_tags = ['canjs','donejs','stealjs','javascriptmvc','jquerypp','documentjs','shouldjs','jquery++']
-# $failover_tags = ['jquery', 'javascript']
 
 public_stream_opts = {
   :path   => '/1.1/statuses/filter.json',
@@ -139,7 +147,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
   # --- Pollers
   $log.info "Registering Github"
-  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bitovi/events'))
+  EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bithub-test/events'))
 
   $log.info "Registering Disqus"
   EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
