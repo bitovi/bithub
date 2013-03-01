@@ -22,10 +22,6 @@ $mq_cs = ENV['MSGQ']
 # Exceptional
 Exceptional::Config.load("config/exceptional.yml")
 
-Exceptional.rescue do
-  raise "TEST"
-end
-
 # Logging
 $log = Log4r::Logger.new('crawler')
 $log.add(Log4r::StdoutOutputter.new('console', {
