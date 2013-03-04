@@ -8,6 +8,8 @@ class CreateEvents < ActiveRecord::Migration
       t.references :author
       t.references :rule, :null => false
       t.references :parent
+      t.references :feed, :null => false
+      t.references :category, :null => false
       t.date :date, :null => false
 
       t.hstore :props
