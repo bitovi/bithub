@@ -30,7 +30,7 @@ gem 'newrelic_rpm'
 # Gems for listener
 gem 'amqp'
 
-group :development do
+group :test, :development do
   gem 'foreman'
   gem 'factory_girl_rails'
   gem 'rspec-rails'
