@@ -10,7 +10,7 @@ class Event < ActiveRecord::Base
   validates :date, :presence => true
 
   scope :chat, tagged_with('irc')
-  scope :questions, tagged_with('question'
+  scope :questions, tagged_with('question')
   scope :bugs, tagged_with('bug')
   scope :comments, tagged_with('comments')
   
