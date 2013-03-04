@@ -1,10 +1,15 @@
 class Event < ActiveRecord::Base
-  attr_accessible :body, :hash_key, :title, :url
+  attr_accessible :body, :hash_key, :title, :url, :feed_id
+  attr_accessor :feed
   
   acts_as_taggable
   
-  belongs_to :rule
+  belongs_to :event, :foreign_key => "parent_id", :class_name => "Event"
+  belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
+  belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
+  belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
+
   has_many :activities, :foreign_key => "applies_to_id"
 
   validates :date, :presence => true
@@ -24,8 +29,54 @@ class Event < ActiveRecord::Base
   scope :commit_comments, tagged_with('commit_comments')
   scope :tweets, tagged_with(['twitter', 'status_event'])
 
-  def determine_rule
+  def self.cleanup(args)
+    args.each do |k, v|
+      if not Event.column_names.include? k.to_s
+        args.delete k
+      end
+    end
   end
+
+  def self.determine_author
+    #@author_id = User.find_or_create({:provider => feed, :uid => actor_id})
+  end
+
+  def self.determine_rule
+    rule_id = Rule.best_match(tags).id
+    self
+  end
+
+  def self.determine_feed(feed)
+    if tag = Tag.where(:name => feed).first
+      tag.id
+    else
+      puts "No feed matched"
+      nil
+    end
+  end
+
+  def self.determine_category
+  end
+
+  def self.build_and_cleanup(args)
+
+    if Event.where(:hash_key => args[:hash_key]).count > 0
+      puts "Drop event"
+    end
+
+    args[:feed_id] = determine_feed args[:feed]
+
+    # determine_author
+    # determine_category
+    # determine_rule
+
+    puts args
+
+    cleanup args
+
+    self.new(args)
+  end
+
 
   def group_if_forum_reply
     if tagged_with('forums')
