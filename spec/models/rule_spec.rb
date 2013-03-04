@@ -11,7 +11,7 @@ describe Rule do
     end
 
     context "when given tags" do
-      let (:a_rule) { build(:rule, :required_tags => ['a_tag', 'another_tag']) }
+      let (:a_rule) { create(:rule, :required_tags => ['a_tag', 'another_tag']) }
 
       it "tries to get the exact match" do
         expect(Rule.best_match(['a_tag', 'another_tag'])).to eq(a_rule)

@@ -3,16 +3,19 @@ class Rule < ActiveRecord::Base
   has_many :events
 
   def self.best_match(tags = [])
+    return Rule.default_rule unless tags && tags.count > 0
 
     # Try to find exact match
     match = Rule.where("required_tags = ?", tags.to_postgres_array(true)).first
 
     # otherwise try to find best match
-    if not match
+    if match.nil?
       score = -1 # will match default rule created by migrations
 
-      self.find_each do |rule|
-        if (count = (tags & rule.required_tags).count) > score
+      Rule.find_each do |rule|
+        count = (tags & rule.required_tags).count
+        puts rule
+        if count > score
           match = rule
           score = count
         end
