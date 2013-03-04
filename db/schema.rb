@@ -31,18 +31,20 @@ ActiveRecord::Schema.define(:version => 20130304122257) do
   end
 
   create_table "events", :force => true do |t|
-    t.string   "hash_key",   :null => false
+    t.string   "hash_key",    :null => false
     t.string   "title"
     t.string   "url"
     t.text     "body"
     t.integer  "author_id"
-    t.integer  "rule_id",    :null => false
+    t.integer  "rule_id",     :null => false
     t.integer  "parent_id"
-    t.date     "date",       :null => false
+    t.integer  "feed_id",     :null => false
+    t.integer  "category_id", :null => false
+    t.date     "date",        :null => false
     t.hstore   "props"
-    t.text     "raw_json",   :null => false
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.text     "raw_json",    :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   add_index "events", ["hash_key"], :name => "index_events_on_hash_key"
