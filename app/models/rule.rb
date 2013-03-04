@@ -2,7 +2,7 @@ class Rule < ActiveRecord::Base
   attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value
   has_many :events
 
-  def self.best_match(tags)
+  def self.best_match(tags = [])
 
     # Try to find exact match
     match = Rule.where("required_tags = ?", tags.to_postgres_array(true)).first
@@ -20,6 +20,10 @@ class Rule < ActiveRecord::Base
     end
 
     return match
+  end
+
+  def self.default_rule
+    Rule.first
   end
 
 end
