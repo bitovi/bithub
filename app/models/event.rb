@@ -1,6 +1,11 @@
 class Event < ActiveRecord::Base
-  attr_accessible :hash_key, :title, :body, :url, :created_at, :updated_at, :props, :raw_json
-  attr_accessible :author_id, :rule_id, :feed_id, :category_id
+  attr_accessible :hash_key,
+    :body, :title, :url,
+    :feed, :category, :props,
+    :origin_date, :origin_ts,
+    :raw_json
+
+  attr_accessor :author_id, :rule_id, :feed_id, :category_id
   
   acts_as_taggable
   
@@ -12,7 +17,7 @@ class Event < ActiveRecord::Base
 
   has_many :activities, :foreign_key => "applies_to_id"
 
-  validates :date, :presence => true
+  validates :origin_date, :origin_ts, :feed, :category, :presence => true
   validates :hash_key, :uniqueness => true
 
   scope :chat, tagged_with('irc')
@@ -39,10 +44,6 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def determine_feed
-    self.feed_id = Tag.find_or_create_by_name(props[:feed])
-  end
-
   def determine_author
     self.author_id = User.find_or_create({:provider => props[:feed], :uid => props[:origin_author_id]})
   end
@@ -51,8 +52,12 @@ class Event < ActiveRecord::Base
     self.rule_id = Rule.best_match(props[:tags]).id
   end
 
-  def determine_category
-    #self.category_id = Tag.find_or_create_by_name(props[:])
+  def self.determine_feed
+    self.feed = Tag.find_or_create({:name => self.props['feed'], :is_feed => true})
+  end
+
+  def self.determine_category
+    self.category = Tag.find_or_create({:name => self.props['category'], :is_category => true})
   end
 
 

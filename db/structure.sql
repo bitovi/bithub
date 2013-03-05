@@ -273,8 +273,8 @@ CREATE TABLE tags (
     name character varying(255),
     display_name character varying(255),
     aliases character varying[],
-    is_category boolean DEFAULT false,
-    is_feed boolean DEFAULT false,
+    is_category boolean,
+    is_feed boolean,
     priority integer
 );
 
