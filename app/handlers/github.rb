@@ -49,63 +49,65 @@ module Handler
 
     def handle_event_type(event)
       parsed_date = Time.strptime(event['created_at'], "%FT%T%Z")
-      hash = {
-        type: event['type'].downcase,
-        feed: feed,
-        created_ts: parsed_date.strftime("%FT%T%z"),
-        actor: event['actor']['login'],
-        actor_id: event['actor']['id'],
-        actor_gravatar: event['actor']['gravatar_id'],
-        source_id: event['id'],
+      event_hash = {
+        props: {
+          type: event['type'].snake_case,
+          feed: feed,
+          origin_id: event['id'],
+          origin_author_name: event['actor']['login'],
+          origin_author_id: event['actor']['id'],
+          origin_author_gravatar: event['actor']['gravatar_id'],
+        },
+        origin_ts: parsed_date.strftime("%FT%T%z"),
         hash_key: event['hash_key'],
-        source_data: event
+        raw_json: event
       }
 
       if event['type'] == 'IssuesEvent' 
         state = event['payload']['issue']['state']
-        hash['title'] = "#{state} an issue: #{event['payload']['issue']['title']}"
-        hash['body'] = event['payload']['issue']['body']
-        hash['link'] = event['payload']['issue']['html_url']
-        hash['labels'] = event['payload']['issue']['labels'].map { |l| l['name'] }
-        hash['state'] = state
-        hash['issue_id'] = event['payload']['issue']['id']
-        hash['action'] = event['payload']['action']
+        event_hash['title'] = "#{state} an issue: #{event['payload']['issue']['title']}"
+        event_hash['body'] = event['payload']['issue']['body']
+        event_hash['url'] = event['payload']['issue']['html_url']
+        event_hash['props']['labels'] = event['payload']['issue']['labels'].map { |l| l['name'] }
+        event_hash['props']['state'] = state
+        event_hash['props']['issue_id'] = event['payload']['issue']['id']
+        event_hash['props']['action'] = event['payload']['action']
 
       elsif event['type'] == 'IssueCommentEvent'
-        hash['title'] = "commented on issue #{event['payload']['issue']['number']}"
-        hash['body'] = event['payload']['comment']['body']
-        hash['link'] = event['payload']['issue']['html_url']
-        hash['issue_id'] = event['payload']['issue']['id']
+        event_hash['title'] = "commented on issue #{event['payload']['issue']['number']}"
+        event_hash['body'] = event['payload']['comment']['body']
+        event_hash['url'] = event['payload']['issue']['html_url']
+        event_hash['props']['issue_id'] = event['payload']['issue']['id']
 
       elsif event['type'] == 'ForkEvent'
-        hash['title'] = "forked #{event['repo']['name']}"
+        event_hash['title'] = "forked #{event['repo']['name']}"
 
       elsif event['type'] == 'PushEvent'
-        hash['body'] = event['payload']['body']
-        hash['title'] = "pushed to #{event['repo']['name']}"
-        hash['link'] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
+        event_hash['title'] = "pushed to #{event['repo']['name']}"
+        event_hash['body'] = event['payload']['body']
+        event_hash['url'] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
 
       elsif event['type'] == 'PullRequestEvent'
-        hash['title'] = "requested a pull: #{event['payload']['pull_request']['title']}"
-        hash['body'] = event['payload']['pull_request']['body']
-        hash['link'] = event['payload']['pull_request']['html_url']
+        event_hash['title'] = "requested a pull: #{event['payload']['pull_request']['title']}"
+        event_hash['body'] = event['payload']['pull_request']['body']
+        event_hash['url'] = event['payload']['pull_request']['html_url']
 
       elsif event['type'] == 'WatchEvent'
-        hash['title'] = "started watching #{event['repo']['name']}"
+        event_hash['title'] = "started watching #{event['repo']['name']}"
 
       elsif event['type'] == 'CommitCommentEvent'
-        hash['title'] = "commented on a commit in #{event['repo']['name']}"
-        hash['body'] = event['payload']['comment']['body']
-        hash['link'] = event['payload']['comment']['html_url']
+        event_hash['title'] = "commented on a commit in #{event['repo']['name']}"
+        event_hash['body'] = event['payload']['comment']['body']
+        event_hash['url'] = event['payload']['comment']['html_url']
 
       elsif event['type'] == 'CreateEvent'
-        hash['title'] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
+        event_hash['title'] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
       
       elsif event['type'] == 'DeleteEvent'
-        hash['title'] = "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
+        event_hash['title'] = "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
 
       end
-      hash
+      event_hash
     end
   end
 end

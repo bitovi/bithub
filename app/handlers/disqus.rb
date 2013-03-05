@@ -30,17 +30,19 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event|
-        { feed: feed,
-          link: event['url'],
-          actor: event['author']['name'],
-          created_ts: Time.strptime(event['createdAt']+"+0000", "%FT%T%z").strftime("%FT%T%z"),
-          body: event['message'],
+        {
+          props: {
+            feed: feed,
+            origin_author_name: event['author']['name'],
+          },
           title: event['thread']['title'],
+          body: event['message'],
+          url: event['url'],
+          origin_ts: Time.strptime(event['createdAt']+"+0000", "%FT%T%z").strftime("%FT%T%z"),
           hash_key: event['hash_key']
-        # raw_data: Base64::encode64(event_json)
+          raw_json: Base64::encode64(event_json)
         }
       end
     end
-
   end
 end

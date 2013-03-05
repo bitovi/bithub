@@ -22,7 +22,7 @@ module Handler
       @log = log
       @initialized ||= true
       @exchange = exchange
-      @feed = self.class.to_s.gsub('Handler::','').underscore.downcase
+      @feed = self.class.to_s.gsub('Handler::','').snake_case
       @stream_auth_and_opts = stream_auth_and_opts
       @is_user_stream = is_user_stream
       @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
@@ -60,37 +60,38 @@ module Handler
     end
 
     def handle_user_stream_event(event)
-      hash = {
-        feed: feed,
-        source_data: event,
-        created_ts: parse_date(event).strftime("%FT%T%z"),
+      event_hash = {
+        props: {
+          origin_author_name: event['source']['screen_name'],
+          origin_author_id: event['source']['id'],
+          type: 'follow_event',
+          feed: feed
+        },
+        title: "followed @#{event['target']['screen_name']}",
+        hash_key: Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed),
+        origin_ts: parse_date(event).strftime("%FT%T%z"),
+        raw_json: event
       }
-
-      hash['actor'] = event['source']['screen_name']
-      hash['actor_id'] = event['source']['id']
-      hash['type'] = 'follow_event'
-      hash['title'] = "followed @#{event['target']['screen_name']}"
-      hash['hash_key'] = Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed) # actor's id + target's id + feed
-
-      publish(hash)
+      publish(event_hash)
     end
 
     def handle_public_stream_event(event)
-      hash = {
-        feed: feed,
-        source_data: event,
-        created_ts: parse_date(event).strftime("%FT%T%z"),
+      event_hash = {
+        props: {
+          origin_author_name: event['user']['screen_name'],
+          origin_author_id: event['user']['id'],
+          origin_id: event['id'],
+          type: 'status_event',
+          feed: feed,
+        },
+        title: event['text'],
+        url: "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
+        origin_ts: parse_date(event).strftime("%FT%T%z"),
+        hash_key: Digest::MD5.hexdigest(event['id_str'] + feed),
+        raw_json: event,
       }
-
-      hash['actor'] = event['user']['screen_name']
-      hash['actor_id'] = event['user']['id']
-      hash['source_id'] = event['id']
-      hash['type'] = 'status_event'
-      hash['link'] = "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}"
-      hash['title'] = event['text']
-      hash['hash_key'] = Digest::MD5.hexdigest(event['id_str'] + feed) #event's id + feed
-
-      publish(hash)
+      
+      publish(event_hash)
     end
 
     def parse_date(event)
