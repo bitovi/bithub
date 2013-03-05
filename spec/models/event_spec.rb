@@ -43,5 +43,71 @@ describe Event do
     end
 
     it "tries to find an author, and if there is none, creates a dummy one"
+
+    context "when grouping forum event" do
+
+      before :each do
+        @starter = {
+          title: "Thread starter",
+          url: "http://forums/thread",
+          origin_date: Date.today,
+          origin_ts: Time.now,
+          props: {
+            feed: "forums",
+            category: "question",
+            tags: ["forums", "questions"]
+          }
+        }
+        @reply_1 = {
+          title: "Thread reply no.1",
+          url: "http://forums/thread#1",
+          origin_date: Date.today,
+          origin_ts: Time.now,
+          props: {
+            feed: "forums",
+            category: "comment",
+            tags: ["forums"]
+          }
+        }
+        @reply_2 = {
+          title: "Thread reply no.2",
+          url: "http://forums/thread#2",
+          origin_date: Date.today,
+          origin_ts: Time.now,
+          props: {
+            feed: "forums",
+            category: "comment",
+            tags: ["forums"]
+          }
+        }
+        @other = {
+          title: "Other thread",
+          url: "http://forums/other-thred",
+          origin_date: Date.today,
+          origin_ts: Time.now,
+          props: {
+            feed: "forums",
+            category: "question",
+            tags: ["forums", "questions"]
+          }
+        }
+      end
+
+      it "without hashtag in url should be thread starter (without children)" do
+        starter = Event.new(@starter).group_if_forum_reply
+        expect(starter.parent).to eql(nil)
+      end
+
+      it "without hashtag in url should be thread starter (with 2 children events)" do
+        Event.new(@reply_1).save
+        Event.new(@reply_2).save
+        Event.new(@other).save
+        starter = Event.new(@starter).group_if_forum_reply
+        starter.save
+        expect(starter.children.count).to eql(2)
+      end
+      
+    end
+
   end
 end
