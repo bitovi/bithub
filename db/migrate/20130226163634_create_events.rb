@@ -10,7 +10,8 @@ class CreateEvents < ActiveRecord::Migration
       t.references :parent
       t.references :feed, :null => false
       t.references :category, :null => false
-      t.date :date, :null => false
+      t.datetime :origin_ts, :null => false
+      t.date :origin_date, :null => false
 
       t.hstore :props
       t.text :raw_json, :null => false
@@ -19,5 +20,6 @@ class CreateEvents < ActiveRecord::Migration
     end
 
     add_index(:events, :hash_key)
+    add_index(:events, :origin_date)
   end
 end
