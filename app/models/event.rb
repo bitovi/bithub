@@ -52,11 +52,11 @@ class Event < ActiveRecord::Base
     self.rule_id = Rule.best_match(props[:tags]).id
   end
 
-  def self.determine_feed
+  def determine_feed
     self.feed = Tag.find_or_create({:name => self.props['feed'], :is_feed => true})
   end
 
-  def self.determine_category
+  def determine_category
     self.category = Tag.find_or_create({:name => self.props['category'], :is_category => true})
   end
 

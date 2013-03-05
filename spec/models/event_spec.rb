@@ -18,13 +18,12 @@ describe Event do
         }
     }
 
-    it "assigns the attrs propertly" do
-      new_event = Event.new(@event_hash)
-      expect(new_event)
+    it "raises an error on save! b/c there is no feed or category" do
+      expect{Event.new(@event_hash).save!}.to raise_error
     end
 
     it "determines a feed" do
-      new_event = Event.new(@event_hash).determine_feed.save
+      new_event = Event.new(@event_hash).determine_feed
       feed = Tag.find_or_create({:name => @event_hash.props.feed})
       expect(new_event.feed).to eql(feed)
     end
