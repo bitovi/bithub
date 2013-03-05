@@ -122,6 +122,8 @@ CREATE TABLE events (
     author_id integer,
     rule_id integer NOT NULL,
     parent_id integer,
+    feed_id integer NOT NULL,
+    category_id integer NOT NULL,
     date date NOT NULL,
     props hstore,
     raw_json text NOT NULL,
@@ -540,6 +542,22 @@ ALTER TABLE ONLY activities
 
 
 --
+-- Name: fk_events_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT fk_events_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
+
+
+--
+-- Name: fk_events_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT fk_events_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
+
+
+--
 -- Name: fk_events_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -581,6 +599,8 @@ INSERT INTO schema_migrations (version) VALUES ('20130226172258');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226172558');
 
+INSERT INTO schema_migrations (version) VALUES ('20130226172658');
+
 INSERT INTO schema_migrations (version) VALUES ('20130226172928');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226173857');
@@ -588,8 +608,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130226173857');
 INSERT INTO schema_migrations (version) VALUES ('20130226174642');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226200831');
-
-INSERT INTO schema_migrations (version) VALUES ('20130226210054');
 
 INSERT INTO schema_migrations (version) VALUES ('20130228171824');
 

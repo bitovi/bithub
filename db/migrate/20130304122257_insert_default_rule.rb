@@ -1,4 +1,4 @@
-class InsertPrepopulateRules < ActiveRecord::Migration
+class InsertDefaultRule < ActiveRecord::Migration
   def up
     execute <<-SQL
       INSERT INTO rules (required_tags, authorship_value, award_value, upvote_value, created_at, updated_at)

@@ -1,5 +1,5 @@
 class Rule < ActiveRecord::Base
-  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value
+  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value, :priority
   has_many :events
 
   def self.best_match(tags = [])
@@ -14,7 +14,6 @@ class Rule < ActiveRecord::Base
 
       Rule.find_each do |rule|
         count = (tags & rule.required_tags).count
-        puts rule
         if count > score
           match = rule
           score = count
@@ -26,7 +25,7 @@ class Rule < ActiveRecord::Base
   end
 
   def self.default_rule
-    Rule.first
+    Rule.where("required_tags = ? AND upvote_value = ? AND award_value = ? AND authorship_value = ? AND priority = ?", [].to_postgres_array(true), 0, 0, 0, 0).first
   end
 
 end

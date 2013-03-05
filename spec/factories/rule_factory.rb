@@ -8,8 +8,4 @@ FactoryGirl.define do
     priority 0
   end
 
-  # uneeded?
-  factory :default_rule do
-  end
-
 end

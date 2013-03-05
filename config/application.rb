@@ -24,6 +24,6 @@ module Bithub
     config.assets.version = '1.0'
 
     # Log to STDOUT
-    config.logger = Logger.new(STDOUT)
+    # config.logger = Logger.new(STDOUT)
   end
 end
