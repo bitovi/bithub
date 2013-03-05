@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
     :origin_date, :origin_ts,
     :raw_json
 
-  attr_accessor :author_id, :rule_id, :feed_id, :category_id
+  attr_accessor :author_id, :rule_id, :feed_id, :category_id, :props
   
   acts_as_taggable
   
@@ -35,6 +35,7 @@ class Event < ActiveRecord::Base
   scope :commit_comments, tagged_with('commit_comments')
   scope :tweets, tagged_with(['twitter', 'status_event'])
 
+  serialize :props, ActiveRecord::Coders::Hstore
 
   def cleanup(args)
     args.each do |k, v|
@@ -46,18 +47,22 @@ class Event < ActiveRecord::Base
 
   def determine_author
     self.author_id = User.find_or_create({:provider => props[:feed], :uid => props[:origin_author_id]})
+    self
   end
 
   def determine_rule
-    self.rule_id = Rule.best_match(props[:tags]).id
+    self.rule = Rule.best_match(props[:tags])
+    self
   end
 
   def determine_feed
-    self.feed = Tag.find_or_create({:name => self.props['feed'], :is_feed => true})
+    self.feed = Tag.find_or_create(self.props[:feed], false, true)
+    self
   end
 
   def determine_category
-    self.category = Tag.find_or_create({:name => self.props['category'], :is_category => true})
+    self.category = Tag.find_or_create(self.props[:category], true, false)
+    self
   end
 
 
