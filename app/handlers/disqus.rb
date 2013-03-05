@@ -39,7 +39,7 @@ module Handler
           body: event['message'],
           url: event['url'],
           origin_ts: Time.strptime(event['createdAt']+"+0000", "%FT%T%z").strftime("%FT%T%z"),
-          hash_key: event['hash_key']
+          hash_key: event['hash_key'],
           raw_json: Base64::encode64(event_json)
         }
       end

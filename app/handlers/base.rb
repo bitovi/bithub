@@ -12,7 +12,7 @@ module Handler
       @parser = Nori.new(:parser => :nokogiri)
       @latest ||= []
       @initialized ||= false
-      @feed = self.class.to_s.gsub('Handler::','').underscore.downcase
+      @feed = self.class.to_s.gsub('Handler::','').snake_case
       @log = log
       @exchange = exchange
       bootstrap('hash_key')
