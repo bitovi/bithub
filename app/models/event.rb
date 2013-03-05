@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  attr_accessible :hash_key,
+  attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :props,
     :origin_date, :origin_ts,
@@ -9,7 +9,9 @@ class Event < ActiveRecord::Base
   
   acts_as_taggable
   
-  belongs_to :event, :foreign_key => "parent_id", :class_name => "Event"
+  belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event"
+  has_many :children, :foreign_key => "parent_id", :class_name => "Event"
+
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
@@ -36,6 +38,15 @@ class Event < ActiveRecord::Base
   scope :tweets, tagged_with(['twitter', 'status_event'])
 
   serialize :props, ActiveRecord::Coders::Hstore
+
+  def self.next_id
+    ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
+  end
+
+  def initialize(args)
+   args[:id] = Event.next_id
+    super
+  end
 
   def cleanup(args)
     args.each do |k, v|
@@ -69,33 +80,34 @@ class Event < ActiveRecord::Base
     self.tags = self.props.tags
     self
   end
+  
+  def adopt_children_for_forum_thread_starter
+    thread_url = url.split("#")[0]
 
-  def group_if_forum_reply
-    if tagged_with('forums')
-      new_event_split_url = url.split('#')[0]
-      new_event_thread_url = new_event_split_url[0]
-      new_event_thread_reply_nmb = split_url[1] if new_event_split_url[1] 
-      
-      if existing_forum_post = Event.from_forums.where("url LIKE ?", new_event_thread_url, hash_key).first
-        existing_event_split_url = existing_forum_post.url.split('#')
-        existing_event_thread_url = existing_event_split_url[0]
-        existing_event_thread_reply_nmb = existing_event_split_url[1] if existing_event_split_url[1]
-
-        # Existing event is a thread starter, new event is a reply, or both are replies
-        if !existing_event_thread_reply_nmb || (existing_event_thread_reply_nmb && new_event_thread_reply_nmb)
-          existing_forum_post.add_to_thread(self)
-
-        # New event is a thread starter, and a reply already exists
-        elsif !new_event_thread_reply_nmb && existing_event_thread_reply_nmb
-          existing_forum_post.add_to_thread(self)
-          make_thread_starter
-        end
-      end
-
-    else
-      return false
+    Event.from_forums.where("url LIKE ?", thread_url).each do |event|
+      self.children << event
     end
   end
+
+  def group_if_forum_reply
+    if tags.include?('forums')
+      thread_url, thread_reply_nmb = url.split('#')
+
+      if not thread_reply_nmb
+        puts "STARTER!"
+        adopt_children_for_forum_thread_starter
+      elsif Event.from_forums.where(:url => thread_url).first
+        puts "CHILD!"
+        self.parent = Event.from_forums.where(:url => thread_url).first
+      else
+        puts "SIBLING!"
+        self.parent = Event.from_forums.where("url LIKE ?", thread_url).first
+      end
+    end
+    self
+  end
+
+
 
   def group_if_commit_comment
     if tagged_with(['github', 'commit_comment_event'])
@@ -154,6 +166,10 @@ class Event < ActiveRecord::Base
     else
       return false
     end
+  end
+
+  def siblings
+    parent.children
   end
 
 end
