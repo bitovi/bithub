@@ -124,7 +124,8 @@ CREATE TABLE events (
     parent_id integer,
     feed_id integer NOT NULL,
     category_id integer NOT NULL,
-    date date NOT NULL,
+    origin_ts timestamp without time zone NOT NULL,
+    origin_date date NOT NULL,
     props hstore,
     raw_json text NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -271,7 +272,10 @@ CREATE TABLE tags (
     id integer NOT NULL,
     name character varying(255),
     display_name character varying(255),
-    aliases character varying[]
+    aliases character varying[],
+    is_category boolean DEFAULT false,
+    is_feed boolean DEFAULT false,
+    priority integer
 );
 
 
@@ -474,6 +478,13 @@ ALTER TABLE ONLY users
 --
 
 CREATE INDEX index_events_on_hash_key ON events USING btree (hash_key);
+
+
+--
+-- Name: index_events_on_origin_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_events_on_origin_date ON events USING btree (origin_date);
 
 
 --
