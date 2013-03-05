@@ -4,10 +4,10 @@ class Tag < ActiveRecord::Base
   validates :name, :presence => true
 
   def self.find_or_create(name, is_category = false, is_feed = false)
-    if tag = Tag.where(:name => name).first
-    else
+    tag = Tag.where(:name => name).first
+    if !tag
       tag = Tag.new({:name => name, :is_category => is_category, :is_feed => is_feed})
-      tag.save
+      tag.save!
     end
     tag
   end
