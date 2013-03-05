@@ -65,6 +65,10 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def determine_tags
+    self.tags = self.props.tags
+    self
+  end
 
   def group_if_forum_reply
     if tagged_with('forums')

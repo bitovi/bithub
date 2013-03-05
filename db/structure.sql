@@ -153,6 +153,37 @@ ALTER SEQUENCE events_id_seq OWNED BY events.id;
 
 
 --
+-- Name: identities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE identities (
+    id integer NOT NULL,
+    uid character varying(255),
+    provider character varying(255),
+    user_id integer
+);
+
+
+--
+-- Name: identities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE identities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: identities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -318,9 +349,7 @@ CREATE TABLE users (
     current_sign_in_at timestamp without time zone,
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255),
-    provider character varying(255),
-    uid character varying(255)
+    last_sign_in_ip character varying(255)
 );
 
 
@@ -372,6 +401,13 @@ ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq
 --
 
 ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_seq'::regclass);
 
 
 --
@@ -434,6 +470,14 @@ ALTER TABLE ONLY events
 
 
 --
+-- Name: identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -485,6 +529,13 @@ CREATE INDEX index_events_on_hash_key ON events USING btree (hash_key);
 --
 
 CREATE INDEX index_events_on_origin_date ON events USING btree (origin_date);
+
+
+--
+-- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --
@@ -620,8 +671,8 @@ INSERT INTO schema_migrations (version) VALUES ('20130226174642');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226200831');
 
-INSERT INTO schema_migrations (version) VALUES ('20130228171824');
-
 INSERT INTO schema_migrations (version) VALUES ('20130304111726');
 
 INSERT INTO schema_migrations (version) VALUES ('20130304122257');
+
+INSERT INTO schema_migrations (version) VALUES ('20130305172111');

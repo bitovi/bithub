@@ -5,10 +5,10 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me
   attr_accessible :address, :city, :email, :name, :postal
-  attr_accessible :provider, :uid
 
   has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
   has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
+  has_many :identities
 
   validates :name, :email, :presence => true
   validates :email, :uniqueness => true
@@ -44,10 +44,6 @@ class User < ActiveRecord::Base
     "AND a.type = upvote" +
     "AND a.actor_id = #{id}"
   }
-
-  # Syncing
-  def add_profile
-  end
 
   def self.find_or_create(auth, signed_in_resource=nil)
     user = User.where(:provider => auth.provider, :uid => auth.uid).first
