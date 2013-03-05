@@ -1,6 +1,6 @@
 class Event < ActiveRecord::Base
-  attr_accessible :body, :hash_key, :title, :url, :feed_id
-  attr_accessor :feed
+  attr_accessible :hash_key, :title, :body, :url, :created_at, :updated_at, :props, :raw_json
+  attr_accessible :author_id, :rule_id, :feed_id, :category_id
   
   acts_as_taggable
   
@@ -13,6 +13,7 @@ class Event < ActiveRecord::Base
   has_many :activities, :foreign_key => "applies_to_id"
 
   validates :date, :presence => true
+  validates :hash_key, :uniqueness => true
 
   scope :chat, tagged_with('irc')
   scope :questions, tagged_with('question')
@@ -29,7 +30,8 @@ class Event < ActiveRecord::Base
   scope :commit_comments, tagged_with('commit_comments')
   scope :tweets, tagged_with(['twitter', 'status_event'])
 
-  def self.cleanup(args)
+
+  def cleanup(args)
     args.each do |k, v|
       if not Event.column_names.include? k.to_s
         args.delete k
@@ -37,44 +39,20 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def self.determine_author
-    #@author_id = User.find_or_create({:provider => feed, :uid => actor_id})
+  def determine_feed
+    self.feed_id = Tag.find_or_create_by_name(props[:feed])
   end
 
-  def self.determine_rule
-    rule_id = Rule.best_match(tags).id
-    self
+  def determine_author
+    self.author_id = User.find_or_create({:provider => props[:feed], :uid => props[:origin_author_id]})
   end
 
-  def self.determine_feed(feed)
-    if tag = Tag.where(:name => feed).first
-      tag.id
-    else
-      puts "No feed matched"
-      nil
-    end
+  def determine_rule
+    self.rule_id = Rule.best_match(props[:tags]).id
   end
 
-  def self.determine_category
-  end
-
-  def self.build_and_cleanup(args)
-
-    if Event.where(:hash_key => args[:hash_key]).count > 0
-      puts "Drop event"
-    end
-
-    args[:feed_id] = determine_feed args[:feed]
-
-    # determine_author
-    # determine_category
-    # determine_rule
-
-    puts args
-
-    cleanup args
-
-    self.new(args)
+  def determine_category
+    #self.category_id = Tag.find_or_create_by_name(props[:])
   end
 
 
