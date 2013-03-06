@@ -1,7 +1,5 @@
 Devise.setup do |config|
-
   require 'devise/orm/active_record'
-
   require "omniauth-twitter"
   require "omniauth-github"
 

@@ -3,14 +3,13 @@ class User < ActiveRecord::Base
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
-  attr_accessible :address, :city, :email, :name, :postal
+  attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
 
   has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
   has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
-  has_many :identities
+  has_many :identities, :dependent => :destroy
 
-  validates :name, :email, :presence => true
+  validates :name, :presence => true
   validates :email, :uniqueness => true
   
   # Received awards
@@ -44,23 +43,4 @@ class User < ActiveRecord::Base
     "AND a.type = upvote" +
     "AND a.actor_id = #{id}"
   }
-
-  def self.find_or_create(auth, signed_in_resource=nil)
-    user = User.where(:provider => auth.provider, :uid => auth.uid).first
-    if not user
-      user = User.create(name:auth.extra.raw_info.name, provider:auth.provider, uid:auth.uid, email:auth.info.email)
-    end
-    user
-  end
-
-  def self.new_with_session(params, session)
-    Rails.logger.info "SESSION: #{session["devise.twitter_data"]}"
-
-    super.tap do |user|
-      if data = session["devise.twitter_data"] && session["devise.twitter_data"]["extra"]["raw_info"]
-        user.email = data["email"] if user.email.blank?
-      end
-    end
-  end
-
 end

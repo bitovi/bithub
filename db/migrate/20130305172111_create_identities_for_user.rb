@@ -3,6 +3,7 @@ class CreateIdentitiesForUser < ActiveRecord::Migration
     create_table :identities do |t|
       t.string :uid
       t.string :provider
+      t.text :raw_json
       t.references :user
     end
 

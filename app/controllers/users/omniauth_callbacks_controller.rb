@@ -1,27 +1,55 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  def twitter
-    @identity = Identity.find_with_omniauth(request.env['omniauth.auth'])
-
-    if @identity && @identity.persisted?
-      sign_in_and_redirect(@identity.user, :event => :authentication) #this will throw if @user is not activated
-      set_flash_message(:notice, :success, :kind => "Twitter") if is_navigational_format?
-    else
-      session["devise.facebook_data"] = request.env["omniauth.auth"]
-      redirect_to new_user_registration_url
-    end
-  end
-
   def github
-    @user = User.find_or_create(request.env["omniauth.auth"], current_user)
-
-    if @user.persisted?
-      sign_in_and_redirect @user, :event => :authentication #this will throw if @user is not activated
-      set_flash_message(:notice, :success, :kind => "GitHub") if is_navigational_format?
-    else
-      session["devise.facebook_data"] = request.env["omniauth.auth"]
-      redirect_to new_user_registration_url
-    end
+    oauthorize "github"
   end
 
+  def twitter
+    oauthorize "twitter"
+  end
+
+  def passthru
+    render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
+  end
+
+  private
+
+  def oauthorize(kind)
+    @user = find_or_create_with_ouath(kind, env["omniauth.auth"], current_user)
+    if @user
+      flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => kind
+      session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]
+      sign_in @user, :event => :authentication
+      render :text => "SIGNED ID"
+    end    
+  end
+
+  def find_or_create_with_ouath(provider, oauth_data, resource=nil)
+    user, email, name, uid, auth_attr = nil, nil, nil, {}
+
+    case provider
+    when "github"
+      email = oauth_data['info']['email']
+      name = oauth_data['info']['name']
+    when "twitter"
+      name = oauth_data['info']['name']
+    else
+      raise "Provider #{provider} not handled"
+    end
+
+    identity = Identity.find_with_omniauth(oauth_data)
+    if user_signed_in? && resource
+      resource.identities.create!(uid: oauth_data['uid'], provider: oauth_data['provider'], raw_json: oauth_data['info']) unless identity
+      user = resource
+    else
+      identity = Identity.create(uid: oauth_data['uid'], provider: oauth_data['provider'], raw_json: oauth_data['info']) unless identity
+      if !identity.user
+        identity.build_user({name: name, email: email})
+        identity.save!
+      end
+      user = identity.user
+    end
+
+    return user
+  end
 end

@@ -160,6 +160,7 @@ CREATE TABLE identities (
     id integer NOT NULL,
     uid character varying(255),
     provider character varying(255),
+    raw_json text,
     user_id integer
 );
 
