@@ -7,7 +7,8 @@ class Event < ActiveRecord::Base
 
   attr_accessor :props
 
-  acts_as_taggable
+  #acts_as_taggable
+  acts_as_taggable_on :tags
 
   belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
@@ -58,7 +59,13 @@ class Event < ActiveRecord::Base
   end
 
   def whole_chain
-    self.determine_tags.determine_feed.determine_category.determine_rule.group_if_forum_reply
+    self
+      .determine_tags
+      .determine_feed
+      .determine_category
+      .determine_rule
+      .group_if_forum_reply
+
     self
   end
 
@@ -68,7 +75,7 @@ class Event < ActiveRecord::Base
   end
 
   def determine_rule
-    self.rule = Rule.best_match(props[:tags])
+    self.rule = Rule.best_match(tags)
     self
   end
 
@@ -83,7 +90,7 @@ class Event < ActiveRecord::Base
   end
 
   def determine_tags
-    self.tag_list = self.props[:tags].join(',')
+    self.tag_list = self.props[:tags]
     self
   end
 
@@ -98,16 +105,14 @@ class Event < ActiveRecord::Base
   end
 
   def group_if_forum_reply
-    if tags.include?('forums')
+    if tag_list.include?('forums')
       thread_url, thread_reply_nmb = url.split('#')
+
       if not thread_reply_nmb
-        Rails.logger.info "STARTER!"
         adopt_children_for_forum_thread_starter
       elsif Event.from_forums.where(:url => thread_url).first
-        Rails.logger.info "CHILD!"
         self.parent = Event.from_forums.where(:url => thread_url).first
       else
-        Rails.logger.info  "SIBLING!"
         self.parent = Event.from_forums.where("url LIKE ?", thread_url).first
       end
 

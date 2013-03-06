@@ -11,7 +11,7 @@ FactoryGirl.define do
       props({
         :feed => "forums",
         :category => "question",
-        :tags => ["forums", "question", "canjs"]
+        :tags => "forums,question,canjs"
       })
 
       trait :forum_question do
@@ -35,7 +35,7 @@ FactoryGirl.define do
       props({
         :feed => "twitter",
         :type => "status_event",
-        :tags => ["twitter", "status_event", "canjs"]
+        :tags => "twitter,status_event,canjs"
       })
 
       trait :tweet do
@@ -60,7 +60,7 @@ FactoryGirl.define do
           :feed => "github",
           :type => "issues_event",
           :category => "issue",
-          :tags => ["github", "issues_event", "issue", "canjs"]
+          :tags => "github,issues_event,issue,canjs"
         })
       end
 
@@ -71,7 +71,7 @@ FactoryGirl.define do
           :feed => "github",
           :type => "issue_comment_event",
           :category => "comment",
-          :tags => ["github", "issue_comment_event", "comment", "canjs"]
+          :tags => "github,issue_comment_event,comment,canjs"
         })
       end
 
@@ -82,7 +82,7 @@ FactoryGirl.define do
           :feed => "github",
           :type => "commit_comment_event",
           :category => "comment",
-          :tags => ["github", "comment_comment_event", "comment", "canjs"]
+          :tags => "github,comment_comment_event,comment,canjs"
         })
       end
 

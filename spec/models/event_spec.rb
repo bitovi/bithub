@@ -16,7 +16,7 @@ describe Event do
     it "determines tags" do
       generic_event = build(:github_issue).determine_tags
       another_one = build(:github_issue)
-      expect(generic_event.tag_list).to eq(another_one.props[:tags])
+      expect(generic_event.tag_list).to eq(another_one.props[:tags].split(','))
     end
 
     it "determines a feed" do
@@ -33,7 +33,7 @@ describe Event do
     
     it "determines a rule" do
       generic_event = build(:github_issue).determine_rule
-      rule = Rule.best_match(generic_event.props[:tags])
+      rule = Rule.best_match(generic_event.props[:tags].split(','))
       expect(generic_event.rule).to eql(rule)
     end
 
@@ -55,9 +55,6 @@ describe Event do
         @starter.whole_chain.save!
         @reply1.whole_chain.save!
         @reply2.whole_chain.save!
-        # puts @starter.inspect.to_yaml
-        # puts @reply1.inspect.to_yaml
-        # puts @reply2.inspect.to_yaml
         expect(@starter.children.count).to eql(2)
       end
     end
