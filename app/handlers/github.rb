@@ -87,6 +87,12 @@ module Handler
         event_hash['body'] = event['payload']['body']
         event_hash['url'] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
 
+        # hstore doesn't support arrays as value so CSV will do fine till native JSON support
+        event_hash['props']['commits'] = ""
+        for event['payload']['commits'].each do |commit|
+          event_hash['props']['commits'] + = commit['sha'] + ","
+        end
+
       elsif event['type'] == 'PullRequestEvent'
         event_hash['title'] = "requested a pull: #{event['payload']['pull_request']['title']}"
         event_hash['body'] = event['payload']['pull_request']['body']
@@ -99,6 +105,7 @@ module Handler
         event_hash['title'] = "commented on a commit in #{event['repo']['name']}"
         event_hash['body'] = event['payload']['comment']['body']
         event_hash['url'] = event['payload']['comment']['html_url']
+        event_hash['props']['commit_id'] = event['payload']['comment']['commit_id']
 
       elsif event['type'] == 'CreateEvent'
         event_hash['title'] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
