@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
     ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
   end
 
-  def initialize(args)
+  def initialize(args = {})
     args[:id] = Event.next_id
     super
   end
@@ -54,6 +54,11 @@ class Event < ActiveRecord::Base
         args.delete k
       end
     end
+  end
+
+  def whole_chain
+    self.determine_tags.determine_feed.determine_category.determine_rule.group_if_forum_reply
+    self
   end
 
   def determine_author
@@ -92,15 +97,14 @@ class Event < ActiveRecord::Base
   def group_if_forum_reply
     if tags.include?('forums')
       thread_url, thread_reply_nmb = url.split('#')
-
       if not thread_reply_nmb
-        puts "STARTER!"
+        Rails.logger.info "STARTER!"
         adopt_children_for_forum_thread_starter
       elsif Event.from_forums.where(:url => thread_url).first
-        puts "CHILD!"
+        Rails.logger.info "CHILD!"
         self.parent = Event.from_forums.where(:url => thread_url).first
       else
-        puts "SIBLING!"
+        Rails.logger.info  "SIBLING!"
         self.parent = Event.from_forums.where("url LIKE ?", thread_url).first
       end
     end

@@ -1,120 +1,65 @@
 require 'spec_helper'
+require 'digest/md5'
 
 describe Event do
 
   context "upon creation" do
-
     before :each do
-      @event_hash = {
-        title: "raised issue #7",
-        body: "I'm the man, and I raised an issue.",
-        url: "http://github.com/bitovi/canjs/issues/7",
-        origin_date: Date.today,
-        origin_ts: Time.now,
-        hash_key: '123abc456def',
-        raw_json: 'watwatinthebut',
-        props: {
-          feed: "github",
-          type: "issues_event",
-          category: "issue",
-          tags: ["github", "issues_event", "issue"]
-        }
-      }
+      create(:rule)
     end
 
     it "raises an error on save! b/c there is no feed or category" do
-      expect{Event.new(@event_hash).save!}.to raise_error
+      generic_event = build(:github_issue)
+      expect{generic_event.save!}.to raise_error
     end
 
     it "determines tags" do
-      new_event = Event.new(@event_hash).determine_tags
-      expect(new_event.tag_list).to eq(@event_hash[:props][:tags])
+      generic_event = build(:github_issue).determine_tags
+      another_one = build(:github_issue)
+      expect(generic_event.tag_list).to eq(another_one.props[:tags])
     end
 
     it "determines a feed" do
-      new_event = Event.new(@event_hash).determine_feed
-      feed = Tag.find_or_create(@event_hash[:props][:feed])
-      expect(new_event.feed).to eql(feed)
+      generic_event = build(:github_issue).determine_feed
+      feed = Tag.find_or_create(generic_event.props[:feed])
+      expect(generic_event.feed).to eql(feed)
     end
 
     it "determines a category" do
-      new_event = Event.new(@event_hash).determine_category
-      category = Tag.find_or_create(@event_hash[:props][:category])
-      expect(new_event.category).to eql(category)
+      generic_event = build(:github_issue).determine_category
+      category = Tag.find_or_create(generic_event.props[:category])
+      expect(generic_event.category).to eql(category)
     end
     
     it "determines a rule" do
-      new_event = Event.new(@event_hash).determine_rule
-      rule = Rule.best_match(@event_hash[:props][:tags])
-      expect(new_event.rule).to eql(rule)
+      generic_event = build(:github_issue).determine_rule
+      rule = Rule.best_match(generic_event.props[:tags])
+      expect(generic_event.rule).to eql(rule)
     end
 
     it "tries to find an author, and if there is none, creates a dummy one"
 
-    context "when grouping forum event" do
-
+    context "when grouping forum events" do
       before :each do
-        @starter = {
-          title: "Thread starter",
-          url: "http://forums/thread",
-          origin_date: Date.today,
-          origin_ts: Time.now,
-          props: {
-            feed: "forums",
-            category: "question",
-            tags: ["forums", "questions"]
-          }
-        }
-        @reply_1 = {
-          title: "Thread reply no.1",
-          url: "http://forums/thread#1",
-          origin_date: Date.today,
-          origin_ts: Time.now,
-          props: {
-            feed: "forums",
-            category: "comment",
-            tags: ["forums"]
-          }
-        }
-        @reply_2 = {
-          title: "Thread reply no.2",
-          url: "http://forums/thread#2",
-          origin_date: Date.today,
-          origin_ts: Time.now,
-          props: {
-            feed: "forums",
-            category: "comment",
-            tags: ["forums"]
-          }
-        }
-        @other = {
-          title: "Other thread",
-          url: "http://forums/other-thred",
-          origin_date: Date.today,
-          origin_ts: Time.now,
-          props: {
-            feed: "forums",
-            category: "question",
-            tags: ["forums", "questions"]
-          }
-        }
+        @starter = build(:forum_thread_starter)
+        @reply1 = build(:forum_child)
+        @reply2 = build(:forum_child)
       end
 
       it "without hashtag in url should be thread starter (without children)" do
-        starter = Event.new(@starter).group_if_forum_reply
-        expect(starter.parent).to eql(nil)
+        @starter.whole_chain.save!
+        expect(@starter.parent).to be_nil
       end
 
       it "without hashtag in url should be thread starter (with 2 children events)" do
-        Event.new(@reply_1).save
-        Event.new(@reply_2).save
-        Event.new(@other).save
-        starter = Event.new(@starter).group_if_forum_reply
-        starter.save
-        expect(starter.children.count).to eql(2)
+        @starter.whole_chain.save!
+        @reply1.whole_chain.save!
+        @reply2.whole_chain.save!
+        # puts @starter.inspect.to_yaml
+        # puts @reply1.inspect.to_yaml
+        # puts @reply2.inspect.to_yaml
+        expect(@starter.children.count).to eql(2)
       end
-      
     end
-
   end
 end
