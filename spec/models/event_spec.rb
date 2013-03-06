@@ -11,17 +11,24 @@ describe Event do
         url: "http://github.com/bitovi/canjs/issues/7",
         origin_date: Date.today,
         origin_ts: Time.now,
+        hash_key: '123abc456def',
+        raw_json: 'watwatinthebut',
         props: {
           feed: "github",
           type: "issues_event",
           category: "issue",
           tags: ["github", "issues_event", "issue"]
-          }
+        }
       }
     end
 
     it "raises an error on save! b/c there is no feed or category" do
       expect{Event.new(@event_hash).save!}.to raise_error
+    end
+
+    it "determines tags" do
+      new_event = Event.new(@event_hash).determine_tags
+      expect(new_event.tag_list).to eq(@event_hash[:props][:tags])
     end
 
     it "determines a feed" do

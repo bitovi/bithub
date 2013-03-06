@@ -1,32 +1,32 @@
 class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
-    :feed, :category, :props,
+    :feed, :category, :props, :tags,
     :origin_date, :origin_ts,
     :raw_json
 
-  attr_accessor :author_id, :rule_id, :feed_id, :category_id, :props
-  
+  attr_accessor :props
+
   acts_as_taggable
-  
+
   belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
 
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
-  belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
+  belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
   has_many :activities, :foreign_key => "applies_to_id"
 
-  validates :origin_date, :origin_ts, :feed, :category, :presence => true
+  validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true
 
   scope :chat, tagged_with('irc')
   scope :questions, tagged_with('question')
   scope :bugs, tagged_with('bug')
   scope :comments, tagged_with('comments')
-  
+
   scope :from_twitter, tagged_with('twitter')
   scope :from_forums, tagged_with('forums')
   scope :from_github, tagged_with('github')
@@ -44,7 +44,7 @@ class Event < ActiveRecord::Base
   end
 
   def initialize(args)
-   args[:id] = Event.next_id
+    args[:id] = Event.next_id
     super
   end
 
@@ -77,10 +77,10 @@ class Event < ActiveRecord::Base
   end
 
   def determine_tags
-    self.tags = self.props.tags
+    self.tag_list = self.props[:tags].join(',')
     self
   end
-  
+
   def adopt_children_for_forum_thread_starter
     thread_url = url.split("#")[0]
 
@@ -114,10 +114,10 @@ class Event < ActiveRecord::Base
       if existing_push_event = Event.from_github.pushes # + where 'source_data.payload.commit ...
         existing_push_event.add_to_thread(self)
 
-      # Append the new commit comment to the existing comment
+        # Append the new commit comment to the existing comment
       elsif existing_commit_comment_event = Event.from_github.pushes # + where 'source_data.payload.comment.commit_id': self.getCommitId()
-				existing_commit_comment_event.add_to_thread(self);
-				existing_commit_comment_event.save
+        existing_commit_comment_event.add_to_thread(self);
+        existing_commit_comment_event.save
       end
     else
       return false
@@ -132,7 +132,7 @@ class Event < ActiveRecord::Base
           existing_issue.add_to_thread(self);
           existing_issue.state = self.state;
 
-        # The new event is a comment on a existing issue
+          # The new event is a comment on a existing issue
         elsif tagged_with('issue_comment_event')
           existing_issue.add_to_thread(self)
         end
@@ -143,7 +143,7 @@ class Event < ActiveRecord::Base
           existing_issue_comment.add_to_thread(self)
           make_thread_starter
 
-        # New event is a comment, and there is no issues_event to append it to
+          # New event is a comment, and there is no issues_event to append it to
         elsif tagged_with('issue_comment_event')
           existing_issue_comment.add_to_thread(self)
         end
