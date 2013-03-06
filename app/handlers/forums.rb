@@ -52,16 +52,18 @@ module Handler
         raw_date = event['pubDate'].gsub(',','')
         parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
         hash = { 
-          actor: event['dc:creator'],
+          props: {
+            origin_author_name: event['dc:creator'],
+            type: event['category'].snake_case,
+            filter_term: event['filter_term'],
+            feed: feed,
+          },
           title: event['title'],
           body: event['description'],
-          link: event['link'],
-          type: event['category'].downcase,
-          filter_term: event['filter_term'],
-          created_ts: parsed_date.strftime("%FT%T%z"),
-          feed: feed,
+          url: event['link'],
+          origin_ts: parsed_date.strftime("%FT%T%z"),
           hash_key: event['hash_key'],
-          source_data: event
+          raw_json: event
         }
       end
     end

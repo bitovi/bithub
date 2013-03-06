@@ -11,15 +11,7 @@ GEM
       amq-protocol (>= 0.9.4)
       eventmachine
     awesome_print (1.1.0)
-    columnize (0.3.6)
     cookiejar (0.3.0)
-    debugger (1.2.4)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.1.1)
-      debugger-ruby_core_source (~> 1.1.7)
-    debugger-linecache (1.1.2)
-      debugger-ruby_core_source (>= 1.1.1)
-    debugger-ruby_core_source (1.1.7)
     em-http-request (1.0.3)
       addressable (>= 2.2.3)
       cookiejar
@@ -53,7 +45,6 @@ PLATFORMS
 DEPENDENCIES
   amqp
   awesome_print
-  debugger
   em-http-request
   em-twitter
   exceptional

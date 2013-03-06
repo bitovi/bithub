@@ -27,13 +27,16 @@ module Handler
         # $log.info "RAW DATE: \"#{event['published']}\""
         parsed_date = Time.strptime(event['published'], "%e %b %Y")
         # $log.info "PARSED DATE: #{parsed_date}"
-        { created_ts: parsed_date.strftime("%FT%T%z"),
+        {
+          props: {
+            feed: feed,
+          },
+          origin_ts: parsed_date.strftime("%FT%T%z"),
           title: event['title'],
           body: event['description'],
-          link: event['link'],
-          feed: feed,
+          url: event['link'],
           hash_key: event['hash_key'],
-          source_data: event
+          raw_json: event
         }
       end
     end
