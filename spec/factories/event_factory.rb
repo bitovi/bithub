@@ -31,7 +31,7 @@ FactoryGirl.define do
 
     end
 
-    trait :twitter_event do
+    factory :twitter_event do
       props({
         :feed => "twitter",
         :type => "status_event",
