@@ -65,7 +65,6 @@ class Event < ActiveRecord::Base
   end
 
   def determine_rule
-    puts "=======================> METATAGS: #{meta[:tags]}"
     self.rule = Rule.best_match(meta[:tags])
     self
   end
@@ -116,7 +115,7 @@ class Event < ActiveRecord::Base
   end
 
   def adopt_children_for_github_issue
-    issue_id = raw_json[:issue_id]
+    issue_id = meta[:issue_id]
     Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
       self.children << event
     end
@@ -124,8 +123,8 @@ class Event < ActiveRecord::Base
   end
 
   def group_if_issue_or_issue_comment
-    if tag_list.include?('github') && raw_json[:issue_id]
-      issue_id = raw_json[:issue_id]
+    if tag_list.include?('github') && meta[:issue_id]
+      issue_id = meta[:issue_id]
       # check if issue or comment
       if tag_list.include?('issues_event')
         # update of existing event or a new one?
