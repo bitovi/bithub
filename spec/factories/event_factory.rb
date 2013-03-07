@@ -64,16 +64,18 @@ FactoryGirl.define do
           :feed => "github",
           :type => "issues_event",
           :category => "issue",
+          :issue_id => "111",
           :tags => ['github','issues_event','issue','canjs']
         })
       end
 
       trait :issue_comment do
         title "commented on issue #1"
-        body "Here's a comment to your issue"
+        sequence(:body) {|n| "Here's a comment no. ##{n} to your issue" }
         raw_json({
           :feed => "github",
           :type => "issue_comment_event",
+          :issue_id => "111",
           :tags => ['github','issue_comment_event','comment','canjs'],
           :category => "comment"
         })

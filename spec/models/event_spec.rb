@@ -60,7 +60,23 @@ describe Event do
         @reply2.whole_chain.save!
         expect(@reply1.children.count).to eql(1)
       end
+    end
+
+    context "when grouping github issues" do
+      before :each do
+        @issue = build(:github_issue)
+        @issue_comment1 = build(:github_issue_comment)
+        @issue_comment2 = build(:github_issue_comment)
+      end
+
+      it "there should be issue with 2 comments" do
+        @issue.whole_chain.save!
+        @issue_comment1.whole_chain.save!
+        @issue_comment2.whole_chain.save!
+        expect(@issue.children.count).to eql(2)
+      end
 
     end
+
   end
 end

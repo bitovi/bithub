@@ -48,6 +48,7 @@ class Event < ActiveRecord::Base
     determine_category
     determine_rule
     group_if_forum_reply
+    group_if_issue_or_issue_comment
     self
   end
 
@@ -116,31 +117,31 @@ class Event < ActiveRecord::Base
   end
 
   def adopt_children_for_github_issue
-    issue_id = props[:issue_id]
-    Event.from_github.issue_comments.where("props -> 'issue_id' = '#{issue_id}'").each do |event|
+    issue_id = raw_json[:issue_id]
+    Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
       self.children << event
     end
     self
   end
 
   def group_if_issue_or_issue_comment
-    if tags.include?('github') && props[:issue_id]
-      issue_id = props[:issue_id]
+    if tag_list.include?('github') && raw_json[:issue_id]
+      issue_id = raw_json[:issue_id]
       # check if issue or comment
-      if tags.include?('issues_event')
+      if tag_list.include?('issues_event')
         # update of existing event or a new one?
-        if Event.from_github.issues.where("props -> 'issue_id' = '#{issue_id}'").first
+        if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
           # WHAT TO DO? update existing or insert a new one into thread ? 
-          self.parent = Event.from_github.issues.where("props -> 'issue_id' = '#{issue_id}'").first
+          self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
         else
           adopt_children_for_github_issue
         end
-      elsif tags.include?('issue_comment_event')
+      elsif tag_list.include?('issue_comment_event')
         # try to find issue or closest comment with same issue_id
-        if Event.from_github.issues.where("props -> 'issue_id' = '#{issue_id}'").first
-          self.parent = Event.from_github.issues.where("props -> 'issue_id' = '#{issue_id}'").first
+        if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+          self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
         elsif
-          self.parent = Event.from_github.issue_comments.where("props -> 'issue_id' = '#{issue_id}'").first
+          self.parent = Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
         end
       end
 
