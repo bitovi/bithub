@@ -17,9 +17,9 @@ describe Event do
       generic_event = build(:event)
       generic_event.whole_chain
       generic_event.save!
-      feed = Tag.find_or_create(generic_event.raw_json[:feed])
-      category = Tag.find_or_create(generic_event.raw_json[:category])
-      rule = Rule.best_match(generic_event.raw_json[:tags])
+      feed = Tag.find_or_create(generic_event.meta[:feed])
+      category = Tag.find_or_create(generic_event.meta[:category])
+      rule = Rule.best_match(generic_event.meta[:tags])
 
       expect(generic_event.feed).to eq(feed)
       expect(generic_event.category).to eq(category)

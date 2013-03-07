@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(:version => 20130304122257) do
     t.integer  "category_id", :null => false
     t.date     "date",        :null => false
     t.hstore   "props"
-    t.text     "raw_json",    :null => false
+    t.text     "source_data",    :null => false
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end

@@ -1,14 +1,13 @@
 class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
-    :feed, :category, :props, :tags,
+    :feed, :category, :tags,
     :origin_date, :origin_ts,
-    :raw_json
+    :props, :source_data
 
-  attr_accessor :props
+  attr_accessor :meta
 
-  #acts_as_taggable
-  acts_as_taggable_on :tags
+  acts_as_taggable
 
   belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
@@ -24,7 +23,7 @@ class Event < ActiveRecord::Base
   validates :hash_key, :uniqueness => true
 
   serialize :props, ActiveRecord::Coders::Hstore
-  serialize :raw_json, JSON
+  serialize :source_data, JSON
 
   def self.new_with_checks(args ={})
     ev = self.new(args)
@@ -37,7 +36,6 @@ class Event < ActiveRecord::Base
   end
 
   def initialize(args = {})
-    args[:raw_json] = args.clone # deep copy of args so we can serialize without self-refs
     args[:id] = Event.next_id
     super
   end
@@ -52,31 +50,32 @@ class Event < ActiveRecord::Base
   end
 
   def pluck_props
-    # pluck attrs from raw_json that we'll need later
+    # pluck attrs from source_data that we'll need later
   end
 
   def determine_tags
-    self.tag_list = raw_json[:tags].is_a?(Array) ? raw_json[:tags].join(',') : raw_json[:tags]
+    self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
 
   def determine_author
-    self.author = Identity.find_by_provider_and_uid(raw_json[:feed], raw_json[:origin_author_id]).user
+    self.author = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id]).user
     self
   end
 
   def determine_rule
-    self.rule = Rule.best_match(self.tags)
+    puts "=======================> METATAGS: #{meta[:tags]}"
+    self.rule = Rule.best_match(meta[:tags])
     self
   end
 
   def determine_feed
-    self.feed = Tag.find_or_create(self.raw_json[:feed], false, true)
+    self.feed = Tag.find_or_create(meta[:feed], false, true)
     self
   end
 
   def determine_category
-    self.category = Tag.find_or_create(self.raw_json[:category], true, false)
+    self.category = Tag.find_or_create(meta[:category], true, false)
     self
   end
 

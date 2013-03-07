@@ -39,10 +39,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     identity = Identity.find_with_omniauth(oauth_data)
     if user_signed_in? && resource
-      resource.identities.create!(uid: oauth_data['uid'], provider: oauth_data['provider'], raw_json: oauth_data['info']) unless identity
+      resource.identities.create!(uid: oauth_data['uid'], provider: oauth_data['provider'], source_data: oauth_data['info']) unless identity
       user = resource
     else
-      identity = Identity.create(uid: oauth_data['uid'], provider: oauth_data['provider'], raw_json: oauth_data['info']) unless identity
+      identity = Identity.create(uid: oauth_data['uid'], provider: oauth_data['provider'], source_data: oauth_data['info']) unless identity
       if !identity.user
         identity.build_user({name: name, email: email})
         identity.save!

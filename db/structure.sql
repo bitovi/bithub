@@ -127,7 +127,7 @@ CREATE TABLE events (
     origin_ts timestamp without time zone NOT NULL,
     origin_date date NOT NULL,
     props hstore,
-    raw_json text NOT NULL,
+    source_data text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -160,7 +160,7 @@ CREATE TABLE identities (
     id integer NOT NULL,
     uid character varying(255),
     provider character varying(255),
-    raw_json text,
+    source_data text,
     user_id integer
 );
 

@@ -14,7 +14,7 @@ class CreateEvents < ActiveRecord::Migration
       t.date :origin_date, :null => false
 
       t.hstore :props
-      t.text :raw_json, :null => false
+      t.text :source_data, :null => false
 
       t.timestamps
     end

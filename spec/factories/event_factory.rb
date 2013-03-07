@@ -6,14 +6,14 @@ FactoryGirl.define do
     origin_date Date.today
     origin_ts Time.now
     sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }
-    raw_json({
+    meta({
       :feed => "some_feed",
       :category => "some_category",
       :tags => ['some_feed','some_category','some_content_tag']
     })
 
     factory :forum_event do
-      raw_json({
+      meta({
         :feed => "forums",
         :category => "question",
         :tags => ['forums','question','canjs']
@@ -36,7 +36,7 @@ FactoryGirl.define do
     end
 
     factory :twitter_event do
-      raw_json({
+      meta({
         :feed => "twitter",
         :type => "status_event",
         :tags => ['twitter','status_event','canjs']
@@ -60,7 +60,7 @@ FactoryGirl.define do
       trait :issue do
         title "raised issue #1"
         body "I'm awesome because I raised an issue."
-        raw_json({
+        meta({
           :feed => "github",
           :type => "issues_event",
           :category => "issue",
@@ -71,7 +71,7 @@ FactoryGirl.define do
       trait :issue_comment do
         title "commented on issue #1"
         body "Here's a comment to your issue"
-        raw_json({
+        meta({
           :feed => "github",
           :type => "issue_comment_event",
           :tags => ['github','issue_comment_event','comment','canjs'],
@@ -82,7 +82,7 @@ FactoryGirl.define do
       trait :commit_comment do
         title "commented on a commit 3sdaf4s"
         body "This is an awesome comment"
-        raw_json({
+        meta({
           :feed => "github",
           :type => "commit_comment_event",
           :tags => ['github','comment_comment_event','comment','canjs'],

@@ -11,7 +11,7 @@ AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
   queue.subscribe do |metadata, payload|
     EM.defer do
       event_hash = ActiveSupport::JSON.decode(payload)
-      Event.new_with_checks(event_hash)
+      Event.new(event_hash).whole_chain.save!
     end
   end
 end
