@@ -47,6 +47,7 @@ class Event < ActiveRecord::Base
     determine_rule
     process_forums
     process_github
+    process_twitter
     self
   end
 
@@ -117,20 +118,42 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def process_twitter    
+    if tag_list.include?('twitter') && tag_list.include?('status_event')
+
+      props[:tweet_id] = meta[:tweet_id]
+      if meta[:retweeted_id]
+        props[:retweeted_id] = meta[:retweeted_id]
+        group_if_retweet
+      else
+        group_if_tweet
+      end
+    end
+
+    self
+  end
+
 
   ### TWITTER methods
 
   def group_if_retweet
+    retweeted_id = props[:retweeted_id]
 
-    if tags.include?('twitter') && tags.include?('status_event')
-      if tags.include?('retweet') && original_tweet = Event.tweets # + where 'source_data.id': self.source_data.retweeted_status.id'
-        original_tweet.add_to_thread(self)
-      elsif tags.include?('retweet') && another_retweet = Event.tweets # + where 'source_data.retweeted_status.id': self.source_data.retweeted_status.id'
-        another_retweet.add_to_thread(self)
-      elsif !tags.include?('retweet') && retweet_of_this_tweet = Event.tweets # + where 'source_data.retweeted_status.id' : self.source_id
-        retweet_of_this_tweet.add_to_thread(self)
-        self.make_thread_starter
-      end
+    orig_tweet = Event.tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{retweeted_id}'").first
+
+    if orig_tweet
+      self.parent = orig_tweet
+    else
+      parent = Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{retweeted_id}'").first
+    end
+    self
+  end
+
+  def group_if_tweet
+    tweet_id = props[:tweet_id]
+
+    Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'").each do |event|
+      self.children << event
     end
     self
   end

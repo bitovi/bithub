@@ -95,7 +95,23 @@ describe Event do
         expect(@commit_comment1.reload.parent_id).to eql(@push.id)
         expect(@commit_comment2.reload.parent_id).to eql(@push.id)
       end
+    end
 
+    context "when grouping (re)tweets" do
+      before :each do
+        @tweet = build(:twitter_tweet)
+        @retweet1 = build(:twitter_retweet1)
+        @retweet2 = build(:twitter_retweet2)
+      end
+
+      it "there should be tweet with 2 retweets" do
+        @retweet1.whole_chain.save!
+        @tweet.whole_chain.save!
+        @retweet2.whole_chain.save!
+        expect(@tweet.reload.children.count).to eql(2)
+        expect(@retweet1.reload.parent_id).to eql(@tweet.id)
+        expect(@retweet2.reload.parent_id).to eql(@tweet.id)
+      end
     end
 
   end

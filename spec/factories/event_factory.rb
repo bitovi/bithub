@@ -36,31 +36,49 @@ FactoryGirl.define do
     end
 
     factory :twitter_event do
-      meta({
-        :feed => "twitter",
-        :type => "status_event",
-        :tags => ['twitter','status_event','canjs']
-      })
 
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
       end
 
-      trait :retweet do
+      trait :retweet1 do
         title "RT: A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "101",
+          :retweeted_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
+      end
+
+      trait :retweet2 do
+        title "RT: A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "102",
+          :retweeted_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
       end
 
       factory :twitter_tweet, traits: [:tweet]
-      factory :twitter_retweet, traits: [:retweet]
+      factory :twitter_retweet1, traits: [:retweet1]
+      factory :twitter_retweet2, traits: [:retweet2]
     end
 
     factory :github_event do
       title "Some generic title"
-      ignore do
-        commit1 "3sdaf4s"
-        commit2 "43a2aa8"
-        commit3 "295aa54"
-      end
 
       trait :issue do
         title "raised issue #1"
@@ -98,6 +116,7 @@ FactoryGirl.define do
         })
       end
 
+      # how to generate commit hashes? (to avoid c/p)
       trait :commit_comment1 do
         title "commented on a commit 43a2aa8"
         body "This is an awesome comment"
