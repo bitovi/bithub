@@ -41,17 +41,10 @@ describe Event do
         expect(@starter.parent).to be_nil
       end
 
-      it "there should be thread starter with 2 children events that came afterwards" do
-        @starter.whole_chain.save!
+      it "there should be thread starter with 2 replies" do
         @reply1.whole_chain.save!
-        @reply2.whole_chain.save!
-        expect(@starter.children.count).to eql(2)
-      end
-
-      it "there should be thread starter with 2 children events that came before" do
-        @reply1.whole_chain.save!
-        @reply2.whole_chain.save!
         @starter.whole_chain.save!
+        @reply2.whole_chain.save!
         expect(@starter.children.count).to eql(2)
       end
 
@@ -70,10 +63,12 @@ describe Event do
       end
 
       it "there should be issue with 2 comments" do
-        @issue.whole_chain.save!
         @issue_comment1.whole_chain.save!
+        @issue.whole_chain.save!
         @issue_comment2.whole_chain.save!
         expect(@issue.children.count).to eql(2)
+        expect(@issue_comment1.parent_id).to eql(@issue.id)
+        expect(@issue_comment2.parent_id).to eql(@issue.id)
       end
 
     end

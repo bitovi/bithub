@@ -71,7 +71,6 @@ FactoryGirl.define do
 
       trait :issue_comment do
         title "commented on issue #1"
-        body "Here's a comment to your issue"
         sequence(:body) {|n| "Here's a comment no. ##{n} to your issue" }
         meta({
           :feed => "github",

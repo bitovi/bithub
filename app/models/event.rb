@@ -118,13 +118,15 @@ class Event < ActiveRecord::Base
     issue_id = meta[:issue_id]
     Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
       self.children << event
+      event.parent = self
     end
     self
   end
 
   def group_if_issue_or_issue_comment
     if tag_list.include?('github') && meta[:issue_id]
-      issue_id = meta[:issue_id]
+      issue_id = props[:issue_id] = meta[:issue_id]
+
       # check if issue or comment
       if tag_list.include?('issues_event')
         # update of existing event or a new one?
@@ -134,6 +136,7 @@ class Event < ActiveRecord::Base
         else
           adopt_children_for_github_issue
         end
+
       elsif tag_list.include?('issue_comment_event')
         # try to find issue or closest comment with same issue_id
         if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
