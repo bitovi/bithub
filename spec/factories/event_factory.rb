@@ -1,17 +1,22 @@
 FactoryGirl.define do
 
   factory :event do
+    title "Title"
+    body "Body"
     origin_date Date.today
     origin_ts Time.now
-    hash_key { Digest::MD5.hexdigest(title + body) }
-    raw_json "{}"
-    props({})
+    sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }
+    raw_json({
+      :feed => "some_feed",
+      :category => "some_category",
+      :tags => ['some_feed','some_category','some_content_tag']
+    })
 
     factory :forum_event do
-      props({
+      raw_json({
         :feed => "forums",
         :category => "question",
-        :tags => "forums,question,canjs"
+        :tags => ['forums','question','canjs']
       })
 
       trait :forum_question do
@@ -28,14 +33,13 @@ FactoryGirl.define do
 
       factory :forum_thread_starter, traits: [:forum_question]
       factory :forum_child, traits: [:forum_reply]
-
     end
 
     factory :twitter_event do
-      props({
+      raw_json({
         :feed => "twitter",
         :type => "status_event",
-        :tags => "twitter,status_event,canjs"
+        :tags => ['twitter','status_event','canjs']
       })
 
       trait :tweet do
@@ -56,33 +60,33 @@ FactoryGirl.define do
       trait :issue do
         title "raised issue #1"
         body "I'm awesome because I raised an issue."
-        props({
+        raw_json({
           :feed => "github",
           :type => "issues_event",
           :category => "issue",
-          :tags => "github,issues_event,issue,canjs"
+          :tags => ['github','issues_event','issue','canjs']
         })
       end
 
       trait :issue_comment do
         title "commented on issue #1"
         body "Here's a comment to your issue"
-        props({
+        raw_json({
           :feed => "github",
           :type => "issue_comment_event",
-          :category => "comment",
-          :tags => "github,issue_comment_event,comment,canjs"
+          :tags => ['github','issue_comment_event','comment','canjs'],
+          :category => "comment"
         })
       end
 
       trait :commit_comment do
         title "commented on a commit 3sdaf4s"
         body "This is an awesome comment"
-        props({
+        raw_json({
           :feed => "github",
           :type => "commit_comment_event",
-          :category => "comment",
-          :tags => "github,comment_comment_event,comment,canjs"
+          :tags => ['github','comment_comment_event','comment','canjs'],
+          :category => "comment"
         })
       end
 

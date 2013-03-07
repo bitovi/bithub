@@ -36,5 +36,5 @@ Bithub::Application.configure do
   config.assets.debug = true
 
   # Log to STDOUT
-  config.logger = Logger.new(STDOUT)
+  # config.logger = Logger.new(STDOUT)
 end

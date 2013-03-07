@@ -10,8 +10,8 @@ AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
 
   queue.subscribe do |metadata, payload|
     EM.defer do
-      event = ActiveSupport::JSON.decode(payload)
-      Rails.logger.info event
+      event_hash = ActiveSupport::JSON.decode(payload)
+      Event.new_with_checks(event_hash)
     end
   end
 end
