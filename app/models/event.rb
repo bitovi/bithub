@@ -89,10 +89,16 @@ class Event < ActiveRecord::Base
   def process_github
     if tag_list.include?('github')
 
-      # issues and issue comments
-      if tag_list.include?('issues_event') || tag_list.include?('issue_comment_event')
+      # issues
+      if tag_list.include?('issues_event')
         props[:issue_id] = meta[:issue_id]
-        group_if_issue_or_issue_comment    
+        group_if_issue
+      end
+
+      # issue comments
+      if tag_list.include?('issue_comment_event')
+        props[:issue_id] = meta[:issue_id]
+        group_if_issue_comment    
       end
 
       # push
@@ -165,28 +171,28 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_issue_or_issue_comment
+  def group_if_issue
+    issue_id = props[:issue_id]
+
+    # update of existing event or a new one?
+    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+      # WHAT TO DO? update existing or insert a new one into thread ? 
+      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    else
+      adopt_children_for_github_issue
+    end
+    self
+  end
+
+  def group_if_issue_comment
     issue_id = props[:issue_id]
     
-    # check if issue or comment
-    if tag_list.include?('issues_event')
-      # update of existing event or a new one?
-      if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-        # WHAT TO DO? update existing or insert a new one into thread ? 
-        self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-      else
-        adopt_children_for_github_issue
-      end
-      
-    elsif tag_list.include?('issue_comment_event')
-      # try to find issue or closest comment with same issue_id
-      if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-        self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-      elsif
-        self.parent = Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-      end
-    end
-    
+    # try to find issue or closest comment with same issue_id
+    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    elsif
+      self.parent = Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    end  
     self
   end
 
