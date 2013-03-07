@@ -66,9 +66,9 @@ describe Event do
         @issue_comment1.whole_chain.save!
         @issue.whole_chain.save!
         @issue_comment2.whole_chain.save!
-        expect(@issue.children.count).to eql(2)
-        expect(@issue_comment1.parent_id).to eql(@issue.id)
-        expect(@issue_comment2.parent_id).to eql(@issue.id)
+        expect(@issue.reload.children.count).to eql(2)
+        expect(@issue_comment1.reload.parent_id).to eql(@issue.id)
+        expect(@issue_comment2.reload.parent_id).to eql(@issue.id)
       end
 
     end
