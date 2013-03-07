@@ -78,6 +78,23 @@ describe Event do
         @issue_comment2.whole_chain.save!
         expect(@issue_comment2.reload.parent_id).to eql(@issue_comment1.id)        
       end
+    end
+
+    context "when grouping commit comments" do
+      before :each do
+        @push = build(:github_push)
+        @commit_comment1 = build(:github_commit_comment1)
+        @commit_comment2 = build(:github_commit_comment2)
+      end
+          
+      it "there should be push event with 2 commit comments" do
+        @commit_comment1.whole_chain.save!
+        @push.whole_chain.save!
+        @commit_comment2.whole_chain.save!
+        expect(@push.reload.children.count).to eql(2)
+        expect(@commit_comment1.reload.parent_id).to eql(@push.id)
+        expect(@commit_comment2.reload.parent_id).to eql(@push.id)
+      end
 
     end
 

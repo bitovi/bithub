@@ -95,6 +95,12 @@ class Event < ActiveRecord::Base
         group_if_issue_or_issue_comment    
       end
 
+      # push
+      if tag_list.include?('push_event')
+        props[:commits] = meta[:commits]
+        group_if_push
+      end
+
       # commit comments
       if tag_list.include?('commit_comment_event')
         props[:commit_id] = meta[:commit_id]
@@ -155,7 +161,6 @@ class Event < ActiveRecord::Base
     issue_id = props[:issue_id]
     Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
       self.children << event
-      event.parent = self
     end
     self
   end
@@ -185,13 +190,22 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def group_if_push
+    commits = props[:commits]
+    Event.tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").each do |event|
+      self.children << event
+    end
+    self
+  end
+
   def group_if_commit_comment
-    commit_id = props['commit_id']
+    commit_id = props[:commit_id]
+
     # find push event containg wanted commit or closest commit comment
-    if Event.from_github.pushes.where("props -> 'commits' LIKE #{commit_id}").first
-      self.parent = Event.from_github.pushes.where("props -> 'commits' LIKE #{commit_id}").first
+    if Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
+      self.parent = Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
     else
-      self.parent = Event.from_github.commit_comments.where("props -> 'commit_id' = #{commit_id}").first
+      self.parent = Event.tagged_with(['github','commit_comment_event']).where("props -> 'commit_id' = '#{commit_id}'").first
     end
     
     self

@@ -56,7 +56,12 @@ FactoryGirl.define do
 
     factory :github_event do
       title "Some generic title"
-      
+      ignore do
+        commit1 "3sdaf4s"
+        commit2 "43a2aa8"
+        commit3 "295aa54"
+      end
+
       trait :issue do
         title "raised issue #1"
         body "I'm awesome because I raised an issue."
@@ -81,20 +86,47 @@ FactoryGirl.define do
         })
       end
 
-      trait :commit_comment do
-        title "commented on a commit 3sdaf4s"
+      trait :push do
+        title ""
+        body ""
+        meta({
+          :feed => "github",
+          :type => "push_event",
+          :commits => "3sdaf4s,43a2aa8,295aa54",
+          :tags => ['github','push_event','code','canjs'],
+          :category => "code"
+        })
+      end
+
+      trait :commit_comment1 do
+        title "commented on a commit 43a2aa8"
         body "This is an awesome comment"
         meta({
           :feed => "github",
           :type => "commit_comment_event",
-          :tags => ['github','comment_comment_event','comment','canjs'],
+          :commit_id => "43a2aa8",
+          :tags => ['github','commit_comment_event','comment','canjs'],
+          :category => "comment"
+        })
+      end
+
+      trait :commit_comment2 do
+        title "commented on a commit 295aa54"
+        body "This is an awesome comment"
+        meta({
+          :feed => "github",
+          :type => "commit_comment_event",
+          :commit_id => "295aa54",
+          :tags => ['github','commit_comment_event','comment','canjs'],
           :category => "comment"
         })
       end
 
       factory :github_issue, traits: [:issue]
       factory :github_issue_comment, traits: [:issue_comment]
-      factory :github_commit_comment, traits: [:commit_comment]
+      factory :github_push, traits: [:push]
+      factory :github_commit_comment1, traits: [:commit_comment1]
+      factory :github_commit_comment2, traits: [:commit_comment2]
     end
   end
 end
