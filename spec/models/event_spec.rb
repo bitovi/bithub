@@ -36,17 +36,47 @@ describe Event do
         @reply2 = build(:forum_child)
       end
 
-      it "without hashtag in url should be thread starter (without children)" do
+      it "there should be a thread starter without children" do
         @starter.whole_chain.save!
         expect(@starter.parent).to be_nil
       end
 
-      it "without hashtag in url should be thread starter (with 2 children events)" do
+      it "there should be thread starter with 2 children events that came afterwards" do
         @starter.whole_chain.save!
         @reply1.whole_chain.save!
         @reply2.whole_chain.save!
         expect(@starter.children.count).to eql(2)
       end
+
+      it "there should be thread starter with 2 children events that came before" do
+        @reply1.whole_chain.save!
+        @reply2.whole_chain.save!
+        @starter.whole_chain.save!
+        expect(@starter.children.count).to eql(2)
+      end
+
+      it "there should be two children grouped without starter" do
+        @reply1.whole_chain.save!
+        @reply2.whole_chain.save!
+        expect(@reply1.children.count).to eql(1)
+      end
     end
+
+    context "when grouping github issues" do
+      before :each do
+        @issue = build(:github_issue)
+        @issue_comment1 = build(:github_issue_comment)
+        @issue_comment2 = build(:github_issue_comment)
+      end
+
+      it "there should be issue with 2 comments" do
+        @issue.whole_chain.save!
+        @issue_comment1.whole_chain.save!
+        @issue_comment2.whole_chain.save!
+        expect(@issue.children.count).to eql(2)
+      end
+
+    end
+
   end
 end
