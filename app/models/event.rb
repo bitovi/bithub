@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
   def self.new_with_checks(args ={})
     ev = self.new(args)
     ev.whole_chain
-    ev.save!
+    self
   end
 
   def self.next_id
