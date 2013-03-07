@@ -10,12 +10,14 @@ require 'models/user_mongo'
 
 Mongoid.load!("config/mongoid.yml")
 
-EventMongo.all.each do |e|
+EventMongo.all[0..10].reject{|e| !e.category || !e.feed || !e.type }.each do |e|
   event_hash = {
     body: e.body,
     title: e.title,
     url: e.link,
-    origin_ts: e.created_ts,
+    origin_ts: Time.new(e.created_ts),
+    origin_date: Date.new(e.created_ts),
+    hash_key: e.hash_key,
     source_data: e.source_data
   }
 
@@ -32,6 +34,6 @@ EventMongo.all.each do |e|
 
   ev = Event.new(event_hash)
   ev.meta = meta
-  puts ev.to_yaml
   ev.whole_chain
+  ev.save!
 end
