@@ -82,7 +82,7 @@ class Event < ActiveRecord::Base
 
   def adopt_children_for_forum_thread_starter
     thread_url = url.split("#")[0]
-    Event.tagged_with('forums').where("url LIKE ?", thread_url).each do |event|
+    Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").each do |event|
       self.children << event
     end
     self
@@ -96,7 +96,7 @@ class Event < ActiveRecord::Base
       elsif Event.tagged_with('forums').where(:url => thread_url).first
         self.parent = Event.tagged_with('forums').where(:url => thread_url).first
       else
-        self.parent = Event.tagged_with('forums').where("url LIKE ?", thread_url).first
+        self.parent = Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").first
       end
     end
     self
