@@ -63,7 +63,7 @@ class Event < ActiveRecord::Base
 
   def determine_author
     ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
-    ident = Identity.create(meta[:feed], meta[:origin_author_id]) if !ident && ['twitter', 'github'].include? meta[:feed]
+    ident = Identity.create(meta[:feed], meta[:origin_author_id]) if !ident && ['twitter', 'github'].include?(meta[:feed])
     ident.create_user unless ident.user
     self.author = ident.user
     self
