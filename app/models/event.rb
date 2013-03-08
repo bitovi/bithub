@@ -45,6 +45,7 @@ class Event < ActiveRecord::Base
     determine_feed
     determine_category
     determine_rule
+    determine_author
     process_forums
     process_github
     process_twitter
@@ -61,10 +62,10 @@ class Event < ActiveRecord::Base
   end
 
   def determine_author
-    self.author = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id]).user
-    if ['twitter', 'github'].include? meta[:feed]
-      identity = Identity.create(meta[:feed], meta[:origin_author_id])
-    end
+    ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
+    ident = Identity.create(meta[:feed], meta[:origin_author_id]) if !ident && ['twitter', 'github'].include? meta[:feed]
+    ident.create_user unless ident.user
+    self.author = ident.user
     self
   end
 

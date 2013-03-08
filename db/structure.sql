@@ -336,7 +336,7 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 CREATE TABLE users (
     id integer NOT NULL,
-    name character varying(255) NOT NULL,
+    name character varying(255),
     email character varying(255),
     address character varying(255),
     city character varying(255),

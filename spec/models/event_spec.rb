@@ -26,8 +26,24 @@ describe Event do
       expect(generic_event.rule).to eq(rule)
     end
 
+    context "when there is an author in the system" do
+      it "associates it" do
+        generic_event = build(:twitter_tweet)
+        generic_user = create(:author)
+        generic_event.determine_author
+        generic_event.save!
+        expect(generic_event.author).to eq(generic_user)
+      end
+    end
 
-    it "tries to find an author, and if there is none, creates a dummy one"
+    context "when there is no author in the system" do
+      it "creates it and associates it with the event" do
+        generic_event = build(:twitter_tweet)
+        generic_event.determine_author
+        generic_event.save!
+        expect(generic_event.author).to be
+      end
+    end
 
     context "when grouping forum events" do
       before :each do

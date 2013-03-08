@@ -9,7 +9,6 @@ class User < ActiveRecord::Base
   has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
   has_many :identities, :dependent => :destroy
 
-  validates :name, :presence => true
   validates :email, :uniqueness => true
   
   # Received awards
@@ -34,8 +33,8 @@ class User < ActiveRecord::Base
     "WHERE e.id = a.applies_to_id" +
     "AND a.type = award" +
     "AND a.actor_id = #{id}"
-  }
-  
+  }  
+   
   # Events that the user upvoted
   has_many :events_upvoted, :finder_sql => proc { 
     "SELECT e.* FROM events AS e, activities AS a" +
@@ -43,4 +42,5 @@ class User < ActiveRecord::Base
     "AND a.type = upvote" +
     "AND a.actor_id = #{id}"
   }
+
 end

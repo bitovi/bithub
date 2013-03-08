@@ -45,6 +45,7 @@ FactoryGirl.define do
           :type => "status_event",
           :category => "twitter",
           :tags => ['twitter','status_event','canjs']
+          :origin_author_id => 123456789
         })
       end
 
