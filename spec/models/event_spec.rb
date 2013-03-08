@@ -41,14 +41,16 @@ describe Event do
         expect(@starter.parent).to be_nil
       end
 
-      it "there should be thread starter with 2 replies" do
+      it "there should be thread with 2 replies" do
         @reply1.whole_chain.save!
         @starter.whole_chain.save!
         @reply2.whole_chain.save!
-        expect(@starter.children.count).to eql(2)
+        expect(@starter.reload.children.count).to eql(2)
+        expect(@reply1.reload.parent_id).to eql(@starter.id)
+        expect(@reply2.reload.parent_id).to eql(@starter.id)
       end
 
-      it "there should be two children grouped without starter" do
+      it "there should be two replies grouped without thread" do
         @reply1.whole_chain.save!
         @reply2.whole_chain.save!
         expect(@reply1.children.count).to eql(1)
@@ -71,6 +73,45 @@ describe Event do
         expect(@issue_comment2.reload.parent_id).to eql(@issue.id)
       end
 
+      it "there should be 2 grouped comments without issue" do
+        @issue_comment1.whole_chain.save!
+        @issue_comment2.whole_chain.save!
+        expect(@issue_comment2.reload.parent_id).to eql(@issue_comment1.id)        
+      end
+    end
+
+    context "when grouping commit comments" do
+      before :each do
+        @push = build(:github_push)
+        @commit_comment1 = build(:github_commit_comment1)
+        @commit_comment2 = build(:github_commit_comment2)
+      end
+          
+      it "there should be push event with 2 commit comments" do
+        @commit_comment1.whole_chain.save!
+        @push.whole_chain.save!
+        @commit_comment2.whole_chain.save!
+        expect(@push.reload.children.count).to eql(2)
+        expect(@commit_comment1.reload.parent_id).to eql(@push.id)
+        expect(@commit_comment2.reload.parent_id).to eql(@push.id)
+      end
+    end
+
+    context "when grouping (re)tweets" do
+      before :each do
+        @tweet = build(:twitter_tweet)
+        @retweet1 = build(:twitter_retweet1)
+        @retweet2 = build(:twitter_retweet2)
+      end
+
+      it "there should be tweet with 2 retweets" do
+        @retweet1.whole_chain.save!
+        @tweet.whole_chain.save!
+        @retweet2.whole_chain.save!
+        expect(@tweet.reload.children.count).to eql(2)
+        expect(@retweet1.reload.parent_id).to eql(@tweet.id)
+        expect(@retweet2.reload.parent_id).to eql(@tweet.id)
+      end
     end
 
   end

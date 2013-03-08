@@ -36,27 +36,50 @@ FactoryGirl.define do
     end
 
     factory :twitter_event do
-      meta({
-        :feed => "twitter",
-        :type => "status_event",
-        :tags => ['twitter','status_event','canjs']
-      })
 
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
       end
 
-      trait :retweet do
+      trait :retweet1 do
         title "RT: A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "101",
+          :retweeted_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
+      end
+
+      trait :retweet2 do
+        title "RT: A hashtag #canjs and a @canjs mention."
+        meta({
+          :tweet_id => "102",
+          :retweeted_id => "100",
+          :feed => "twitter",
+          :type => "status_event",
+          :category => "twitter",
+          :tags => ['twitter','status_event','canjs']
+        })
       end
 
       factory :twitter_tweet, traits: [:tweet]
-      factory :twitter_retweet, traits: [:retweet]
+      factory :twitter_retweet1, traits: [:retweet1]
+      factory :twitter_retweet2, traits: [:retweet2]
     end
 
     factory :github_event do
       title "Some generic title"
-      
+
       trait :issue do
         title "raised issue #1"
         body "I'm awesome because I raised an issue."
@@ -81,20 +104,48 @@ FactoryGirl.define do
         })
       end
 
-      trait :commit_comment do
-        title "commented on a commit 3sdaf4s"
+      trait :push do
+        title ""
+        body ""
+        meta({
+          :feed => "github",
+          :type => "push_event",
+          :commits => "3sdaf4s,43a2aa8,295aa54",
+          :tags => ['github','push_event','code','canjs'],
+          :category => "code"
+        })
+      end
+
+      # how to generate commit hashes? (to avoid c/p)
+      trait :commit_comment1 do
+        title "commented on a commit 43a2aa8"
         body "This is an awesome comment"
         meta({
           :feed => "github",
           :type => "commit_comment_event",
-          :tags => ['github','comment_comment_event','comment','canjs'],
+          :commit_id => "43a2aa8",
+          :tags => ['github','commit_comment_event','comment','canjs'],
+          :category => "comment"
+        })
+      end
+
+      trait :commit_comment2 do
+        title "commented on a commit 295aa54"
+        body "This is an awesome comment"
+        meta({
+          :feed => "github",
+          :type => "commit_comment_event",
+          :commit_id => "295aa54",
+          :tags => ['github','commit_comment_event','comment','canjs'],
           :category => "comment"
         })
       end
 
       factory :github_issue, traits: [:issue]
       factory :github_issue_comment, traits: [:issue_comment]
-      factory :github_commit_comment, traits: [:commit_comment]
+      factory :github_push, traits: [:push]
+      factory :github_commit_comment1, traits: [:commit_comment1]
+      factory :github_commit_comment2, traits: [:commit_comment2]
     end
   end
 end
