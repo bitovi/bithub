@@ -8,22 +8,62 @@ describe Event do
       create(:rule)
     end
 
-    it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
-      generic_event = build(:event)
-      expect{generic_event.save!}.to raise_error
+    describe "#save" do
+      it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
+        generic_event = build(:event)
+        expect{generic_event.save!}.to raise_error
+      end
     end
 
-    it "determines feed, category, rule and tags" do
-      generic_event = build(:event)
-      generic_event.whole_chain
-      generic_event.save!
-      feed = Tag.find_or_create(generic_event.meta[:feed])
-      category = Tag.find_or_create(generic_event.meta[:category])
-      rule = Rule.best_match(generic_event.meta[:tags])
+    describe "#determine_feed" do
+      it "determines feed" do
+        event = build(:event_with_tags_and_category_and_rule)        
+        event.determine_feed.save!
+        feed = Tag.find_by_name(event.meta[:feed])
+        expect(event.feed).to eq(feed)
+      end
+    end
 
-      expect(generic_event.feed).to eq(feed)
-      expect(generic_event.category).to eq(category)
-      expect(generic_event.rule).to eq(rule)
+    describe "#determine_category" do
+      it "determines category" do
+        event = build(:event_with_tags_and_feed_and_rule)        
+        event.determine_category.save!
+        category = Tag.find_by_name(event.meta[:category])
+        expect(event.category).to eq(category)
+      end
+    end
+
+    describe "#determine_rule" do
+      it "determines rule" do
+        event = build(:event_with_tags_and_feed_and_category)        
+        event.determine_rule.save!
+        rule = Rule.best_match(event.meta[:tags])
+        expect(event.rule).to eq(rule)
+      end
+    end
+
+    describe "#determine_tags" do
+      it "determines tags" do
+        event = build(:event_with_feed_and_category_and_rule)
+        event.determine_tags.save!
+        expect(event.tags.count).to eq(event.meta[:tags].count)        
+      end
+    end
+
+    describe "#determine_all" do
+      it "determines feed, category, rule and tags" do
+        event = build(:event)
+        event.whole_chain
+        event.save!
+        feed = Tag.find_or_create(event.meta[:feed])
+        category = Tag.find_or_create(event.meta[:category])
+        rule = Rule.best_match(event.meta[:tags])
+        
+        expect(event.feed).to eq(feed)
+        expect(event.category).to eq(category)
+        expect(event.rule).to eq(rule)
+        expect(event.tags.count).to eq(event.meta[:tags].count)        
+      end
     end
 
     context "when there is an author in the system" do

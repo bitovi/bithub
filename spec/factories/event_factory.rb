@@ -12,6 +12,31 @@ FactoryGirl.define do
       :tags => ['some_feed','some_category','some_content_tag']
     })
 
+    trait :with_determined_feed do
+      association :feed, factory: :tag, name: "some_feed"
+    end
+
+    trait :with_determined_category do
+      association :category, factory: :tag, name: "some_category"
+    end
+
+    trait :with_determined_rule do
+      association :rule, factory: :rule
+    end
+
+    trait :with_determined_tags do
+      tag_list ['some_feed','some_category','some_content_tag']
+    end
+
+    factory :event_with_feed_and_category_and_rule, traits: [:with_determined_feed, :with_determined_category, :with_determined_rule]
+
+    factory :event_with_tags_and_category_and_rule, traits: [:with_determined_tags, :with_determined_category, :with_determined_rule]
+
+    factory :event_with_tags_and_feed_and_rule, traits: [:with_determined_tags, :with_determined_feed, :with_determined_rule]
+
+    factory :event_with_tags_and_feed_and_category, traits: [:with_determined_tags, :with_determined_feed, :with_determined_category]
+
+
     factory :forum_event do
       meta({
         :feed => "forums",

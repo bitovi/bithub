@@ -41,11 +41,7 @@ class Event < ActiveRecord::Base
   end
 
   def whole_chain
-    determine_tags
-    determine_feed
-    determine_category
-    determine_rule
-    determine_author
+    determine
     process_forums
     process_github
     process_twitter
@@ -55,6 +51,16 @@ class Event < ActiveRecord::Base
   def pluck_props
     # pluck attrs from source_data that we'll need later
   end
+
+  def determine
+    determine_tags
+    determine_feed
+    determine_category
+    determine_rule
+    #determine_author
+    self
+  end
+
 
   def determine_tags
     self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
@@ -86,7 +92,7 @@ class Event < ActiveRecord::Base
 
   def process_forums
     if tag_list.include?('forums')
-      self.group_if_forum_reply
+      self.group_forum_reply
     end
     self
   end
@@ -97,25 +103,25 @@ class Event < ActiveRecord::Base
       # issues
       if tag_list.include?('issues_event')
         props[:issue_id] = meta[:issue_id]
-        group_if_issue
+        group_issue
       end
 
       # issue comments
       if tag_list.include?('issue_comment_event')
         props[:issue_id] = meta[:issue_id]
-        group_if_issue_comment    
+        group_issue_comment    
       end
 
       # push
       if tag_list.include?('push_event')
         props[:commits] = meta[:commits]
-        group_if_push
+        group_push
       end
 
       # commit comments
       if tag_list.include?('commit_comment_event')
         props[:commit_id] = meta[:commit_id]
-        group_if_commit_comment
+        group_commit_comment
       end
 
     end
@@ -128,9 +134,9 @@ class Event < ActiveRecord::Base
       props[:tweet_id] = meta[:tweet_id]
       if meta[:retweeted_id]
         props[:retweeted_id] = meta[:retweeted_id]
-        group_if_retweet
+        group_retweet
       else
-        group_if_tweet
+        group_tweet
       end
     end
 
@@ -140,7 +146,7 @@ class Event < ActiveRecord::Base
 
   ### TWITTER methods
 
-  def group_if_retweet
+  def group_retweet
     retweeted_id = props[:retweeted_id]
 
     orig_tweet = Event.tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{retweeted_id}'").first
@@ -153,7 +159,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_tweet
+  def group_tweet
     tweet_id = props[:tweet_id]
 
     Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'").each do |event|
@@ -173,7 +179,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_forum_reply
+  def group_forum_reply
     thread_url, thread_reply_nmb = url.split('#')
 
     if not thread_reply_nmb
@@ -198,7 +204,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_issue
+  def group_issue
     issue_id = props[:issue_id]
 
     # update of existing event or a new one?
@@ -211,7 +217,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_issue_comment
+  def group_issue_comment
     issue_id = props[:issue_id]
     
     # try to find issue or closest comment with same issue_id
@@ -223,7 +229,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_push
+  def group_push
     commits = props[:commits]
     Event.tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").each do |event|
       self.children << event
@@ -231,7 +237,7 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def group_if_commit_comment
+  def group_commit_comment
     commit_id = props[:commit_id]
 
     # find push event containg wanted commit or closest commit comment
