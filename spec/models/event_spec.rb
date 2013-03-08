@@ -75,7 +75,7 @@ describe Event do
     describe "#determine_all" do
       it "determines a feed, a category, a rule, tags and an author" do
         event = build(:event)
-        event.whole_chain
+        event.determine_all
         event.save!
         feed = Tag.find_or_create(event.meta[:feed])
         category = Tag.find_or_create(event.meta[:category])
@@ -97,22 +97,22 @@ describe Event do
       end
 
       it "there should be a thread starter without children" do
-        @starter.whole_chain.save!
+        @starter.process_forums.save!
         expect(@starter.parent).to be_nil
       end
 
       it "there should be thread with 2 replies" do
-        @reply1.whole_chain.save!
-        @starter.whole_chain.save!
-        @reply2.whole_chain.save!
+        @reply1.process_forums.save!
+        @starter.process_forums.save!
+        @reply2.process_forums.save!
         expect(@starter.reload.children.count).to eql(2)
         expect(@reply1.reload.parent_id).to eql(@starter.id)
         expect(@reply2.reload.parent_id).to eql(@starter.id)
       end
 
       it "there should be two replies grouped without thread" do
-        @reply1.whole_chain.save!
-        @reply2.whole_chain.save!
+        @reply1.process_forums.save!
+        @reply2.process_forums.save!
         expect(@reply1.children.count).to eql(1)
       end
     end
@@ -125,17 +125,17 @@ describe Event do
       end
 
       it "there should be issue with 2 comments" do
-        @issue_comment1.whole_chain.save!
-        @issue.whole_chain.save!
-        @issue_comment2.whole_chain.save!
+        @issue_comment1.process_github.save!
+        @issue.process_github.save!
+        @issue_comment2.process_github.save!
         expect(@issue.reload.children.count).to eql(2)
         expect(@issue_comment1.reload.parent_id).to eql(@issue.id)
         expect(@issue_comment2.reload.parent_id).to eql(@issue.id)
       end
 
       it "there should be 2 grouped comments without issue" do
-        @issue_comment1.whole_chain.save!
-        @issue_comment2.whole_chain.save!
+        @issue_comment1.process_github.save!
+        @issue_comment2.process_github.save!
         expect(@issue_comment2.reload.parent_id).to eql(@issue_comment1.id)        
       end
     end
@@ -148,9 +148,9 @@ describe Event do
       end
           
       it "there should be push event with 2 commit comments" do
-        @commit_comment1.whole_chain.save!
-        @push.whole_chain.save!
-        @commit_comment2.whole_chain.save!
+        @commit_comment1.process_github.save!
+        @push.process_github.save!
+        @commit_comment2.process_github.save!
         expect(@push.reload.children.count).to eql(2)
         expect(@commit_comment1.reload.parent_id).to eql(@push.id)
         expect(@commit_comment2.reload.parent_id).to eql(@push.id)
@@ -165,9 +165,9 @@ describe Event do
       end
 
       it "there should be tweet with 2 retweets" do
-        @retweet1.whole_chain.save!
-        @tweet.whole_chain.save!
-        @retweet2.whole_chain.save!
+        @retweet1.process_twitter.save!
+        @tweet.process_twitter.save!
+        @retweet2.process_twitter.save!
         expect(@tweet.reload.children.count).to eql(2)
         expect(@retweet1.reload.parent_id).to eql(@tweet.id)
         expect(@retweet2.reload.parent_id).to eql(@tweet.id)

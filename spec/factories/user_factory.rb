@@ -3,9 +3,9 @@ FactoryGirl.define do
     name "Nikica"
     email "neektza@gmail.com"
 
-
     after :build do |user|
-      FactoryGirl.create_list(:identity, 2, user: user)
+      user.identities << FactoryGirl.create(:identity_from_github, user: user)
+      user.identities << FactoryGirl.create(:identity_from_twitter, user: user)
     end
   end
 end

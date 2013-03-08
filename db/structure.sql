@@ -302,11 +302,9 @@ ALTER SEQUENCE taggings_id_seq OWNED BY taggings.id;
 
 CREATE TABLE tags (
     id integer NOT NULL,
-    name character varying(255),
+    name character varying(255) NOT NULL,
     display_name character varying(255),
     aliases character varying[],
-    is_category boolean DEFAULT false,
-    is_feed boolean DEFAULT false,
     priority integer
 );
 

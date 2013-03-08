@@ -21,6 +21,7 @@ class Event < ActiveRecord::Base
 
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true
+  validates :tag_list, :presence => true
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
@@ -66,6 +67,16 @@ class Event < ActiveRecord::Base
     self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
+  
+  def determine_feed
+    self.feed = Tag.find_or_create_with_like_by_name(meta[:feed])
+    self
+  end
+
+  def determine_category
+    self.category = Tag.find_or_create_with_like_by_name(meta[:category])
+    self
+  end
 
   def determine_author
     ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
@@ -77,16 +88,6 @@ class Event < ActiveRecord::Base
 
   def determine_rule
     self.rule = Rule.best_match(meta[:tags])
-    self
-  end
-
-  def determine_feed
-    self.feed = Tag.find_or_create(meta[:feed], false, true)
-    self
-  end
-
-  def determine_category
-    self.category = Tag.find_or_create(meta[:category], true, false)
     self
   end
 
