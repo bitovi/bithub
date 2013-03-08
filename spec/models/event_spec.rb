@@ -16,8 +16,8 @@ describe Event do
     end
 
     describe "#determine_feed" do
-      it "determines feed" do
-        event = build(:event_with_tags_and_category_and_rule)        
+      it "determines a feed" do
+        event = build(:event_wo_feed)        
         event.determine_feed.save!
         feed = Tag.find_by_name(event.meta[:feed])
         expect(event.feed).to eq(feed)
@@ -25,8 +25,8 @@ describe Event do
     end
 
     describe "#determine_category" do
-      it "determines category" do
-        event = build(:event_with_tags_and_feed_and_rule)        
+      it "determines a category" do
+        event = build(:event_wo_category)        
         event.determine_category.save!
         category = Tag.find_by_name(event.meta[:category])
         expect(event.category).to eq(category)
@@ -34,8 +34,8 @@ describe Event do
     end
 
     describe "#determine_rule" do
-      it "determines rule" do
-        event = build(:event_with_tags_and_feed_and_category)        
+      it "determines a rule" do
+        event = build(:event_wo_rule)        
         event.determine_rule.save!
         rule = Rule.best_match(event.meta[:tags])
         expect(event.rule).to eq(rule)
@@ -44,14 +44,36 @@ describe Event do
 
     describe "#determine_tags" do
       it "determines tags" do
-        event = build(:event_with_feed_and_category_and_rule)
+        event = build(:event_wo_tags)
         event.determine_tags.save!
         expect(event.tags.count).to eq(event.meta[:tags].count)        
       end
     end
+    
+    describe "#determine_author" do
+      context "when there is an author in the system" do
+        it "associates it" do
+          generic_event = build(:event_wo_author)
+          generic_user = create(:user)
+          generic_event.determine_author
+          generic_event.save!
+          expect(generic_event.author).to eq(generic_user)
+        end
+      end
+
+      context "when there is no author in the system" do
+        it "creates it and associates it with the event" do
+          generic_event = build(:event_wo_author)
+          generic_event.determine_author
+          generic_event.save!
+          expect(generic_event.author).to be
+        end
+      end
+
+    end
 
     describe "#determine_all" do
-      it "determines feed, category, rule and tags" do
+      it "determines a feed, a category, a rule, tags and an author" do
         event = build(:event)
         event.whole_chain
         event.save!
@@ -63,25 +85,7 @@ describe Event do
         expect(event.category).to eq(category)
         expect(event.rule).to eq(rule)
         expect(event.tags.count).to eq(event.meta[:tags].count)        
-      end
-    end
-
-    context "when there is an author in the system" do
-      it "associates it" do
-        generic_event = build(:twitter_tweet)
-        generic_user = create(:author)
-        generic_event.determine_author
-        generic_event.save!
-        expect(generic_event.author).to eq(generic_user)
-      end
-    end
-
-    context "when there is no author in the system" do
-      it "creates it and associates it with the event" do
-        generic_event = build(:twitter_tweet)
-        generic_event.determine_author
-        generic_event.save!
-        expect(generic_event.author).to be
+        expect(event.tags.count).to eq(event.meta[:tags].count)        
       end
     end
 

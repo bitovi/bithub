@@ -1,4 +1,7 @@
 FactoryGirl.define do
+  sequence :origin_author_id do |n|
+    n
+  end
 
   factory :event do
     title "Title"
@@ -9,7 +12,8 @@ FactoryGirl.define do
     meta({
       :feed => "some_feed",
       :category => "some_category",
-      :tags => ['some_feed','some_category','some_content_tag']
+      :tags => ['some_feed','some_category','some_content_tag'],
+      :origin_author_id => proc { origin_author_id } 
     })
 
     trait :with_determined_feed do
@@ -28,14 +32,15 @@ FactoryGirl.define do
       tag_list ['some_feed','some_category','some_content_tag']
     end
 
-    factory :event_with_feed_and_category_and_rule, traits: [:with_determined_feed, :with_determined_category, :with_determined_rule]
+    trait :with_determined_author do
+      association :author, factory: :user
+    end
 
-    factory :event_with_tags_and_category_and_rule, traits: [:with_determined_tags, :with_determined_category, :with_determined_rule]
-
-    factory :event_with_tags_and_feed_and_rule, traits: [:with_determined_tags, :with_determined_feed, :with_determined_rule]
-
-    factory :event_with_tags_and_feed_and_category, traits: [:with_determined_tags, :with_determined_feed, :with_determined_category]
-
+    factory :event_wo_tags     , traits: [:with_determined_feed , :with_determined_category , :with_determined_rule     , :with_determined_author]
+    factory :event_wo_feed     , traits: [:with_determined_tags , :with_determined_category , :with_determined_rule     , :with_determined_author]
+    factory :event_wo_category , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_rule     , :with_determined_author]
+    factory :event_wo_rule     , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_category , :with_determined_author]
+    factory :event_wo_author   , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_category , :with_determined_rule]
 
     factory :forum_event do
       meta({

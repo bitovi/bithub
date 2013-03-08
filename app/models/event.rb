@@ -41,7 +41,7 @@ class Event < ActiveRecord::Base
   end
 
   def whole_chain
-    determine
+    determine_all
     process_forums
     process_github
     process_twitter
@@ -52,12 +52,12 @@ class Event < ActiveRecord::Base
     # pluck attrs from source_data that we'll need later
   end
 
-  def determine
+  def determine_all
     determine_tags
     determine_feed
     determine_category
     determine_rule
-    #determine_author
+    determine_author
     self
   end
 
