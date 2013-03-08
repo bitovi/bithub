@@ -67,8 +67,10 @@ FactoryGirl.define do
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
         meta({
+          :feed => 'twitter',
           :tweet_id => "100",
           :type => "status_event",
+          :origin_author_id => 123456
         })
       end
 
@@ -105,8 +107,10 @@ FactoryGirl.define do
         association :category, factory: :tag, name: 'issue'
         tag_list ['github','issues_event','issue','canjs']
         meta({
+          :feed => 'github',
           :type => "issues_event",
           :issue_id => "111",
+          :origin_author_id => 456789
         })
       end
 
@@ -117,7 +121,7 @@ FactoryGirl.define do
         sequence(:body) {|n| "Here's a comment no. ##{n} to your issue" }
         meta({
           :type => "issue_comment_event",
-          :issue_id => "111",
+          :issue_id => "111"
         })
       end
 

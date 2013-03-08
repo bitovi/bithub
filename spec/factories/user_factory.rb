@@ -4,6 +4,7 @@ FactoryGirl.define do
     email "neektza@gmail.com"
 
     after :build do |user|
+      user.identities << FactoryGirl.create(:identity, user: user)
       user.identities << FactoryGirl.create(:identity_from_github, user: user)
       user.identities << FactoryGirl.create(:identity_from_twitter, user: user)
     end

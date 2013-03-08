@@ -52,12 +52,20 @@ describe Event do
     
     describe "#determine_author" do
       context "when there is an author in the system" do
-        it "associates it" do
-          generic_event = build(:event_wo_author)
-          generic_user = create(:user)
-          generic_event.determine_author
-          generic_event.save!
-          expect(generic_event.author).to eq(generic_user)
+        it "associates it with a github event" do
+          ghe = build(:github_issue)
+          usr = create(:user)
+          ghe.determine_author
+          ghe.save!
+          expect(ghe.author).to eq(usr)
+        end
+
+        it "associates it with a twitter event" do
+          twe = build(:twitter_tweet)
+          usr = create(:user)
+          twe.determine_author
+          twe.save!
+          expect(twe.author).to eq(usr)
         end
       end
 
@@ -77,8 +85,8 @@ describe Event do
         event = build(:event)
         event.determine_all
         event.save!
-        feed = Tag.find_or_create(event.meta[:feed])
-        category = Tag.find_or_create(event.meta[:category])
+        feed = Tag.find_by_name(event.meta[:feed])
+        category = Tag.find_by_name(event.meta[:category])
         rule = Rule.best_match(event.meta[:tags])
         
         expect(event.feed).to eq(feed)

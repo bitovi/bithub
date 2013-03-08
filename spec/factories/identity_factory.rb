@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :identity do
-    uid 7
+    uid 123 
     provider 'some_feed'
 
     trait :twitter do
@@ -9,7 +9,7 @@ FactoryGirl.define do
     end
 
     trait :github do
-      uid 45678
+      uid 456789
       provider 'github'
     end
 
