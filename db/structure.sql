@@ -50,10 +50,10 @@ CREATE TABLE activities (
     id integer NOT NULL,
     applies_to_id integer NOT NULL,
     actor_id integer NOT NULL,
-    type character varying(255) NOT NULL,
-    awarded_value integer,
-    staked_value integer,
-    stake_fullfilled boolean,
+    identificator character varying(255) DEFAULT 'internal'::character varying NOT NULL,
+    value integer,
+    fullfilled boolean DEFAULT true,
+    description character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

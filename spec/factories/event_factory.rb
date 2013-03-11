@@ -37,6 +37,9 @@ FactoryGirl.define do
     factory :event_wo_category , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_rule     , :with_determined_author]
     factory :event_wo_rule     , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_category , :with_determined_author]
     factory :event_wo_author   , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_category , :with_determined_rule]
+    factory :event_determined  , traits: [:with_determined_tags , :with_determined_feed     , :with_determined_category , :with_determined_rule, :with_determined_author]
+
+    ### Forum event
 
     factory :forum_event do
       association :feed, factory: :tag, name: 'forums'
@@ -58,6 +61,8 @@ FactoryGirl.define do
       factory :forum_thread_starter, traits: [:forum_question, :with_determined_rule]
       factory :forum_child, traits: [:forum_reply, :with_determined_rule]
     end
+
+    ### Twitter event
 
     factory :twitter_event do
       association :feed, factory: :tag, name: 'twitter'
@@ -96,6 +101,8 @@ FactoryGirl.define do
       factory :twitter_retweet1, traits: [:retweet1, :with_determined_rule]
       factory :twitter_retweet2, traits: [:retweet2, :with_determined_rule]
     end
+
+    ### Github event
 
     factory :github_event do
       title "Some generic title"

@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   has_many :awards, :finder_sql => proc {
     "SELECT a.* FROM events AS e activities AS a" +
     "WHERE e.id = a.applies_to_id" +
-    "AND a.type = award" +
+    "AND a.identificator = award" +
     "AND e.author_id = #{id}"
   }
 
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   has_many :upvotes, :finder_sql => proc {
     "SELECT a.* FROM events AS e activities AS a" +
     "WHERE e.id = a.applies_to_id" +
-    "AND a.type = upvote" +
+    "AND a.identificator = upvote" +
     "AND e.author_id = #{id}"
   }
 
@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
   has_many :events_awarded, :finder_sql => proc { 
     "SELECT e.* FROM events AS e activities AS a" +
     "WHERE e.id = a.applies_to_id" +
-    "AND a.type = award" +
+    "AND a.identificator = award" +
     "AND a.actor_id = #{id}"
   }  
    
@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   has_many :events_upvoted, :finder_sql => proc { 
     "SELECT e.* FROM events AS e, activities AS a" +
     "WHERE e.id = a.applies_to_id" +
-    "AND a.type = upvote" +
+    "AND a.identificator = upvote" +
     "AND a.actor_id = #{id}"
   }
 

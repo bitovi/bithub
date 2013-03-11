@@ -3,10 +3,10 @@ class CreateActivities < ActiveRecord::Migration
     create_table :activities do |t|
       t.references :applies_to, :null => false
       t.references :actor, :null => false
-      t.string :type, :null => false
-      t.integer :awarded_value
-      t.integer :staked_value
-      t.boolean :stake_fullfilled
+      t.string :identificator, :null => false, :default => "internal"
+      t.integer :value
+      t.boolean :fullfilled, :default => true
+      t.string :description
 
       t.timestamps
     end
