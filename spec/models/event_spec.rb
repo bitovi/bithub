@@ -181,6 +181,5 @@ describe Event do
         expect(@retweet2.reload.parent_id).to eql(@tweet.id)
       end
     end
-
   end
 end

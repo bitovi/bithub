@@ -1,4 +1,6 @@
 class Event < ActiveRecord::Base
+  class EventHasNoParentError < Error; end
+
   attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :tags,
@@ -17,7 +19,7 @@ class Event < ActiveRecord::Base
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
-  has_many :activities, :foreign_key => "applies_to_id"
+  has_many :activities, :foreign_key => "applies_to_id", :autosave => true
 
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true
@@ -251,6 +253,30 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def upvote(actor)
+    Activity.create_upvote(actor, self)
+    self
+  end
+
+  def place_stake(actor, stake_value)
+    Activity.place_stake(actor, self, stake_value)
+    self
+  end
+
+  def fullfill_stakes
+    Activity.fullfill_stake(self)
+    self
+  end
+
+  def award(actor)
+    Activity.award(actor, self)
+    self
+  end
+
+  def donate(actor, donation_value)
+    Activity.donate(actor, self, donation_value)
+    self
+  end
 
   def siblings
     parent.children
