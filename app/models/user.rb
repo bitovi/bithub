@@ -43,4 +43,18 @@ class User < ActiveRecord::Base
     "AND a.actor_id = #{id}"
   }
 
+  def sum_points
+    self.points = 0
+    authored_events.each do |ev|
+      points += ev.rule.authorship_value                                       # authorships
+             +  ev.activities.upvotes.sum('value')                             # upvotes 
+             +  ev.activites.awards.sum('value')                               # awards
+             -  self.activities.stakes.where(:fullfilled => true).sum('value') # subtract fullfilled stakes
+    end
+    self
+  end
+
+  def self.top(n=10)
+  end
+
 end
