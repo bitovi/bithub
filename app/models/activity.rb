@@ -13,13 +13,14 @@ class Activity < ActiveRecord::Base
   scope :awards, where(identificator: 'award')
   scope :stakes, where(identificator: 'stake')
   scope :stakes_and_upvotes, where(identificator: ['stake', 'upvote'])
+  scope :fullfilled_stakes, where(identificator: :stake, fullfilled: true)
 
   def self.create_upvote(actor, event)
     Activity.create({:actor => actor, :applies_to => event, :identificator => 'upvote', :value => event.rule.upvote_value})
   end
 
   def self.create_stake(actor, event, stake_value)
-    raise UserNotEnoughPoints if actor.total_points < stake_value
+    #raise UserNotEnoughPoints if actor.sum_points < stake_value
     activity = Activity.create({:actor => actor, :applies_to => event, :identificator => 'stake', :value => stake_value, :fullfilled => false})
     activity
   end

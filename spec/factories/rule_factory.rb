@@ -10,7 +10,7 @@ FactoryGirl.define do
     factory :rule_with_award do
       award_value 100
     end
-
+    
   end
 
 end
