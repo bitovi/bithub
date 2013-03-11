@@ -11,6 +11,7 @@ class Activity < ActiveRecord::Base
 
   validates :applies_to, :presence => true
   
+  #enumerize :identificator, in: [:donation, :upvote, :award, :internal, :stake], default: :internal, scope: true
   enumerize :identificator,
     :in => { :donation => 0,
              :upvote => 1,
@@ -20,15 +21,24 @@ class Activity < ActiveRecord::Base
     },
     :default => :internal,
     :scope => true
+
   
-  scope :stakes, where(identificator: :stake)
-  scope :upvotes, where(identificator: :upvote)
-  scope :donations, where(identificator: :donation)
-  scope :awards, where(identificator: :award)
-  scope :internal, where(identificator: :internal)
-  scope :fullfilled_stakes, where(identificator: :stake, fullfilled: true)
-  scope :unfullfiled_stakes, where(identificator: :stake, fullfilled: false)
-  scope :stakes_and_upvotes, where(identificator: [:stake, :upvote])
+  #scope :stakes, where(identificator: :stake)
+  #scope :upvotes, where(identificator: :upvote)
+  #scope :donations, where(identificator: :donation)
+  #scope :awards, where(identificator: :award)
+  #scope :internal, where(identificator: :internal)
+  #scope :fullfilled_stakes, where(identificator: :stake, fullfilled: true)
+  #scope :unfullfiled_stakes, where(identificator: :stake, fullfilled: false)
+  #scope :stakes_and_upvotes, where(identificator: [:stake, :upvote])
+  scope :stakes, where(identificator: 4)
+  scope :upvotes, where(identificator: 1)
+  scope :donations, where(identificator: 0)
+  scope :awards, where(identificator: 2)
+  scope :internal, where(identificator: 3)
+  scope :fullfilled_stakes, where(identificator: 4, fullfilled: true)
+  scope :unfullfiled_stakes, where(identificator: 4, fullfilled: false)
+  scope :stakes_and_upvotes, where(identificator: [4, 1])
 
   def self.create_upvote(actor, event)
     Activity.create({:actor => actor, :applies_to => event, :identificator => :upvote, :value => event.rule.upvote_value})
