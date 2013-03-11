@@ -18,7 +18,7 @@ gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'enumerize'
 gem 'meta_search'
-gem 'squeel'
+#gem 'squeel'
 gem 'jbuilder'
 
 # Gems used only for assets and not required
