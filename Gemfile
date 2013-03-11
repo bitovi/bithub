@@ -16,6 +16,7 @@ gem 'mongoid'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
+gem 'enumerize'
 
 # Gems used only for assets and not required
 # in production environments by default.

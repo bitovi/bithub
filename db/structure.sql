@@ -50,7 +50,7 @@ CREATE TABLE activities (
     id integer NOT NULL,
     applies_to_id integer NOT NULL,
     actor_id integer NOT NULL,
-    identificator character varying(255) DEFAULT 'internal'::character varying NOT NULL,
+    identificator integer NOT NULL,
     value integer,
     fullfilled boolean DEFAULT true,
     description character varying(255),

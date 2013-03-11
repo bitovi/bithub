@@ -3,7 +3,7 @@ class CreateActivities < ActiveRecord::Migration
     create_table :activities do |t|
       t.references :applies_to, :null => false
       t.references :actor, :null => false
-      t.string :identificator, :null => false, :default => "internal"
+      t.integer :identificator, :null => false
       t.integer :value
       t.boolean :fullfilled, :default => true
       t.string :description
