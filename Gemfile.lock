@@ -120,6 +120,9 @@ GEM
     moped (1.4.3)
     multi_json (1.6.1)
     multipart-post (1.2.0)
+    muster (0.0.6)
+      activesupport (~> 3.0)
+      rack (~> 1.4)
     newrelic_rpm (3.5.7.59)
     oauth (0.4.7)
     oauth2 (0.8.1)
@@ -252,6 +255,7 @@ DEPENDENCIES
   less-rails (~> 2.2.6)
   memcachier
   mongoid
+  muster
   newrelic_rpm
   omniauth
   omniauth-github
