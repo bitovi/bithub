@@ -9,7 +9,7 @@ FactoryGirl.define do
       :feed => "some_feed",
       :category => "some_category",
       :tags => ['some_feed','some_category','some_content_tag'],
-      :origin_author_id => 1 
+      :origin_author_id => "1"
     })
 
     trait :with_determined_feed do
@@ -75,7 +75,7 @@ FactoryGirl.define do
           :feed => 'twitter',
           :tweet_id => "100",
           :type => "status_event",
-          :origin_author_id => 123456
+          :origin_author_id => "123456"
         })
       end
 
@@ -117,7 +117,7 @@ FactoryGirl.define do
           :feed => 'github',
           :type => "issues_event",
           :issue_id => "111",
-          :origin_author_id => 456789
+          :origin_author_id => "456789"
         })
       end
 
