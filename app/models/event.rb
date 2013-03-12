@@ -94,9 +94,7 @@ class Event < ActiveRecord::Base
   end
 
   def process_forums
-    if tag_list.include?('forums')
-      self.group_forum_reply
-    end
+    group_forum_reply if tag_list.include?('forums')
     self
   end
 
@@ -118,7 +116,7 @@ class Event < ActiveRecord::Base
       # push
       if tag_list.include?('push_event')
         props[:commits] = meta[:commits]
-        group_push
+        group_push_event
       end
 
       # commit comments
@@ -143,113 +141,6 @@ class Event < ActiveRecord::Base
       end
     end
 
-    self
-  end
-
-
-  ### TWITTER methods
-
-  def group_retweet
-    retweeted_id = props[:retweeted_id]
-
-    orig_tweet = Event.tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{retweeted_id}'").first
-
-    if orig_tweet
-      self.parent = orig_tweet
-    else
-      parent = Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{retweeted_id}'").first
-    end
-    self
-  end
-
-  def group_tweet
-    tweet_id = props[:tweet_id]
-
-    Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'").each do |event|
-      self.children << event
-    end
-    self
-  end
-
-
-  ### FORUMS methods
-  
-  def adopt_children_for_forum_thread_starter
-    thread_url = url.split("#")[0]
-    Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").each do |event|
-      self.children << event
-    end
-    self
-  end
-
-  def group_forum_reply
-    thread_url, thread_reply_nmb = url.split('#')
-
-    if not thread_reply_nmb
-      adopt_children_for_forum_thread_starter
-    elsif Event.tagged_with('forums').where(:url => thread_url).first
-      self.parent = Event.tagged_with('forums').where(:url => thread_url).first
-    else
-      self.parent = Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").first
-    end
-
-    self
-  end
-
-
-  ### GITHUB methods
-
-  def adopt_children_for_github_issue
-    issue_id = props[:issue_id]
-    Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
-      self.children << event
-    end
-    self
-  end
-
-  def group_issue
-    issue_id = props[:issue_id]
-
-    # update of existing event or a new one?
-    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-      # WHAT TO DO? update existing or insert a new one into thread ? 
-      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-    else
-      adopt_children_for_github_issue
-    end
-    self
-  end
-
-  def group_issue_comment
-    issue_id = props[:issue_id]
-    
-    # try to find issue or closest comment with same issue_id
-    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-    elsif
-      self.parent = Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-    end  
-    self
-  end
-
-  def group_push
-    commits = props[:commits]
-    Event.tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").each do |event|
-      self.children << event
-    end
-    self
-  end
-
-  def group_commit_comment
-    commit_id = props[:commit_id]
-
-    # find push event containg wanted commit or closest commit comment
-    if Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
-      self.parent = Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
-    else
-      self.parent = Event.tagged_with(['github','commit_comment_event']).where("props -> 'commit_id' = '#{commit_id}'").first
-    end
-    
     self
   end
 
@@ -280,6 +171,103 @@ class Event < ActiveRecord::Base
 
   def siblings
     parent.children
+  end
+
+  private
+
+  ### TWITTER methods
+  def group_retweet
+    retweeted_id = props[:retweeted_id]
+    orig_tweet = Event.tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{retweeted_id}'").first
+    if orig_tweet
+      self.parent = orig_tweet
+    else
+      parent = Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{retweeted_id}'").first
+    end
+    self
+  end
+
+  def group_tweet
+    tweet_id = props[:tweet_id]
+    Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'").each do |event|
+      self.children << event
+    end
+    self
+  end
+
+
+  ### FORUMS methods
+  def adopt_children_for_forum_thread_starter
+    thread_url = url.split("#")[0]
+    Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").each do |event|
+      self.children << event
+    end
+    self
+  end
+
+  def group_forum_reply
+    thread_url, thread_reply_nmb = url.split('#')
+    if not thread_reply_nmb
+      adopt_children_for_forum_thread_starter
+    elsif Event.tagged_with('forums').where(:url => thread_url).first
+      self.parent = Event.tagged_with('forums').where(:url => thread_url).first
+    else
+      self.parent = Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").first
+    end
+
+    self
+  end
+
+
+  ### GITHUB methods
+  def adopt_children_for_github_issue
+    issue_id = props[:issue_id]
+    Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").each do |event|
+      self.children << event
+    end
+    self
+  end
+
+  def group_issue
+    issue_id = props[:issue_id]
+    # update of existing event or a new one?
+    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+      # WHAT TO DO? update existing or insert a new one into thread ? 
+      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    else
+      adopt_children_for_github_issue
+    end
+    self
+  end
+
+  def group_issue_comment
+    issue_id = props[:issue_id]
+    # try to find issue or closest comment with same issue_id
+    if Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+      self.parent = Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    elsif
+      self.parent = Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+    end  
+    self
+  end
+
+  def group_push_event
+    commits = props[:commits]
+    Event.tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").each do |event|
+      self.children << event
+    end
+    self
+  end
+
+  def group_commit_comment
+    commit_id = props[:commit_id]
+    # find push event containg wanted commit or closest commit comment
+    if Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
+      self.parent = Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
+    else
+      self.parent = Event.tagged_with(['github','commit_comment_event']).where("props -> 'commit_id' = '#{commit_id}'").first
+    end
+    self
   end
 
 end
