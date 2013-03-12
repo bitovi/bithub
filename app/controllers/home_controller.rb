@@ -1,11 +1,11 @@
 class HomeController < ApplicationController
 
   def latest
-    render :json => { penis: 'je recentan' }
+    render :json => { foo: 'bar' }
   end
 
   def greatest
-    render :json => { penis: 'je velik' }
+    render :json => { foo: 'baz' }
   end
 
 end
