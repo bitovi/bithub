@@ -48,10 +48,29 @@ class User < ActiveRecord::Base
     authored_events.each do |ev|
       sum += ev.rule.authorship_value                        # authorships
           +  ev.activities.upvotes.sum('value')              # upvotes
-          +  ev.activities.awards.sum('value')                # awards
-          -  self.activities.fullfilled_stakes.sum('value')   # subtract fullfilled stakes
+          +  ev.activities.awards.sum('value')               # awards
+          -  self.activities.fullfilled_stakes.sum('value')  # subtract fullfilled stakes
     end
     sum
+  end
+
+  def sum_points_sql # temp
+    query = %{
+      SELECT rules.authorship_value + SUM(acts_add.value) - SUM(acts_sub.value) AS sum
+        FROM users
+          LEFT JOIN events
+            ON events.author_id=#{id}
+          LEFT JOIN rules 
+            ON events.rule_id=rules.id
+          LEFT JOIN activities AS acts_add 
+            ON acts_add.applies_to_id=events.id AND acts_add.fullfilled=true AND acts_add.identificator != ANY('{4}')
+          LEFT JOIN activities AS acts_sub 
+            ON acts_sub.actor_id=#{id} AND acts_sub.fullfilled=true AND acts_sub.identificator = ANY('{4}')
+          WHERE users.id=#{id}
+          GROUP BY events.id, rules.authorship_value
+    }
+
+    result = ActiveRecord::Base.connection.execute(query).first['sum'].to_
   end
 
   def self.top(n=10)
