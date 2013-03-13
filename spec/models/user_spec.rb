@@ -35,4 +35,18 @@ describe User do
     end
   end
 
+  describe ".top" do
+    it "returns list of top n users sorted by score" do
+      user1 = create(:user); user1.stub(:sum_points) {1}
+      user2 = create(:user); user2.stub(:sum_points) {2}
+      user3 = create(:user); user3.stub(:sum_points) {3}
+      user4 = create(:user); user4.stub(:sum_points) {4}
+      user5 = create(:user); user5.stub(:sum_points) {5}
+      user6 = create(:user); user6.stub(:sum_points) {6}
+      
+      top_users = User.top(3)      
+      expect(top_users).to eq([user6, user5, user4])
+    end
+  end
+
 end

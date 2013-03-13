@@ -55,6 +55,27 @@ class User < ActiveRecord::Base
   end
 
   def self.top(n=10)
+
+    # calculate scores for all users
+    scores = []
+    all.each do |user|
+      scores << {:id => user.id, :score => user.sum_points}
+    end
+
+    scores.each do |s|
+      puts s
+    end
+
+    # sort scores by score
+    scores.sort_by{|s| -s[:score]}.reverse
+
+    # get top n users
+    top_users = []
+    (0..n-1).each do |i|
+      top_users << self.find(scores[i][:id])
+    end
+
+    top_users 
   end
 
 end
