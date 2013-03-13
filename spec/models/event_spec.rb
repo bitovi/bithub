@@ -8,6 +8,15 @@ describe Event do
       create(:rule)
     end
 
+    describe "#initialize" do
+      it "sets event id from DB sequence before saving" do
+        event = build(:event_determined)
+        id = event.id
+        event.save!
+        expect(event.reload.id).to eq(id)          
+      end
+    end
+
     describe "#save" do
       it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
         generic_event = build(:event)
