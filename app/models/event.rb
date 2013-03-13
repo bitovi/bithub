@@ -19,7 +19,9 @@ class Event < ActiveRecord::Base
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
-  has_many :activities, :foreign_key => "applies_to_id", :autosave => true
+  has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Upvote"
+  has_many :stakes, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Stake"
+  has_many :awards, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Award"
 
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true

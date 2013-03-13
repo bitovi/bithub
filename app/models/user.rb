@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
 
-  has_many :activities, :foreign_key => "actor_id", :dependent => :destroy
+  has_many :stakes, :foreign_key => "actor_id", :dependent => :destroy, :class_name => "Stake"
   has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
   has_many :identities, :dependent => :destroy
 
@@ -46,10 +46,10 @@ class User < ActiveRecord::Base
   def sum_points
     sum = 0
     authored_events.each do |ev|
-      sum += ev.rule.authorship_value                        # authorships
-          +  ev.activities.upvotes.sum('value')              # upvotes
-          +  ev.activities.awards.sum('value')               # awards
-          -  self.activities.fullfilled_stakes.sum('value')  # subtract fullfilled stakes
+      sum += ev.rule.authorship_value                             # authorships
+          +  ev.upvotes.sum('value')                              # upvotes
+          +  ev.awards.sum('value')                               # awards
+          -  self.stakes.fullfilled.sum('value')  # subtract fullfilled stakes
     end
     sum
   end
@@ -60,10 +60,6 @@ class User < ActiveRecord::Base
     scores = []
     all.each do |user|
       scores << {:id => user.id, :score => user.sum_points}
-    end
-
-    scores.each do |s|
-      puts s
     end
 
     # sort scores by score

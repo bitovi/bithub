@@ -43,27 +43,24 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: activities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: awards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE activities (
+CREATE TABLE awards (
     id integer NOT NULL,
     applies_to_id integer NOT NULL,
     actor_id integer NOT NULL,
-    identificator integer NOT NULL,
     value integer,
-    fullfilled boolean DEFAULT true,
-    description character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
 
 
 --
--- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: awards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE activities_id_seq
+CREATE SEQUENCE awards_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -72,10 +69,10 @@ CREATE SEQUENCE activities_id_seq
 
 
 --
--- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: awards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE activities_id_seq OWNED BY activities.id;
+ALTER SEQUENCE awards_id_seq OWNED BY awards.id;
 
 
 --
@@ -185,6 +182,40 @@ ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 
 --
+-- Name: internal; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE internal (
+    id integer NOT NULL,
+    actor_id integer NOT NULL,
+    receiver_id integer NOT NULL,
+    applies_to_id integer,
+    value integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: internal_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE internal_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: internal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE internal_id_seq OWNED BY internal.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -262,6 +293,40 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: stakes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE stakes (
+    id integer NOT NULL,
+    applies_to_id integer NOT NULL,
+    actor_id integer NOT NULL,
+    value integer,
+    fullfilled boolean DEFAULT false,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stakes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stakes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stakes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stakes_id_seq OWNED BY stakes.id;
+
+
+--
 -- Name: taggings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -329,6 +394,39 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 
 --
+-- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE upvotes (
+    id integer NOT NULL,
+    applies_to_id integer NOT NULL,
+    actor_id integer NOT NULL,
+    value integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: upvotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE upvotes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: upvotes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -385,7 +483,7 @@ CREATE TABLE users_roles (
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY activities ALTER COLUMN id SET DEFAULT nextval('activities_id_seq'::regclass);
+ALTER TABLE ONLY awards ALTER COLUMN id SET DEFAULT nextval('awards_id_seq'::regclass);
 
 
 --
@@ -413,6 +511,13 @@ ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY internal ALTER COLUMN id SET DEFAULT nextval('internal_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
 
 
@@ -421,6 +526,13 @@ ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regcl
 --
 
 ALTER TABLE ONLY rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stakes ALTER COLUMN id SET DEFAULT nextval('stakes_id_seq'::regclass);
 
 
 --
@@ -441,15 +553,22 @@ ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclas
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY upvotes ALTER COLUMN id SET DEFAULT nextval('upvotes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: awards_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY activities
-    ADD CONSTRAINT activities_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY awards
+    ADD CONSTRAINT awards_pkey PRIMARY KEY (id);
 
 
 --
@@ -477,6 +596,14 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: internal_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY internal
+    ADD CONSTRAINT internal_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -493,6 +620,14 @@ ALTER TABLE ONLY rules
 
 
 --
+-- Name: stakes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY stakes
+    ADD CONSTRAINT stakes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: taggings_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -506,6 +641,14 @@ ALTER TABLE ONLY taggings
 
 ALTER TABLE ONLY tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: upvotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY upvotes
+    ADD CONSTRAINT upvotes_pkey PRIMARY KEY (id);
 
 
 --
@@ -587,19 +730,19 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: fk_activities_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_awards_events; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY activities
-    ADD CONSTRAINT fk_activities_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+ALTER TABLE ONLY awards
+    ADD CONSTRAINT fk_awards_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
 
 
 --
--- Name: fk_activities_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_awards_users; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY activities
-    ADD CONSTRAINT fk_activities_users FOREIGN KEY (actor_id) REFERENCES users(id);
+ALTER TABLE ONLY awards
+    ADD CONSTRAINT fk_awards_users FOREIGN KEY (actor_id) REFERENCES users(id);
 
 
 --
@@ -632,6 +775,54 @@ ALTER TABLE ONLY events
 
 ALTER TABLE ONLY events
     ADD CONSTRAINT fk_events_users FOREIGN KEY (author_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_internal_actor_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY internal
+    ADD CONSTRAINT fk_internal_actor_users FOREIGN KEY (actor_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_internal_receiver_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY internal
+    ADD CONSTRAINT fk_internal_receiver_users FOREIGN KEY (receiver_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_stakes_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stakes
+    ADD CONSTRAINT fk_stakes_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+
+
+--
+-- Name: fk_stakes_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stakes
+    ADD CONSTRAINT fk_stakes_users FOREIGN KEY (actor_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_upvotes_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY upvotes
+    ADD CONSTRAINT fk_upvotes_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+
+
+--
+-- Name: fk_upvotes_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY upvotes
+    ADD CONSTRAINT fk_upvotes_users FOREIGN KEY (actor_id) REFERENCES users(id);
 
 
 --
