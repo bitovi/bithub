@@ -14,7 +14,11 @@ Bithub::Application.routes.draw do
   get 'greatest' => 'home#greatest'
   
   resources :events, :except => ['edit', 'new']
-  resources :users, :except => ['edit', 'new']
+
+  resources :users, :except => ['edit', 'new'] do
+    get 'activities', :on => :member
+  end
+
   resources :tags, :except => ['edit', 'new']
 
   namespace :admin do
