@@ -15,7 +15,6 @@ module Handler
       @feed = self.class.to_s.gsub('Handler::','').snake_case
       @log = log
       @exchange = exchange
-      bootstrap('hash_key')
     end
 
     def fetch
@@ -44,24 +43,12 @@ module Handler
       EM.defer(enqueue_events)
     end
 
-    def bootstrap(qualifier)
-      request_string = "#{ENV['FEEDER_WEB']}/api/events/hashes?feed=#{@feed}&items=50&sortby=new"
-      $log.info "REQ STR: " + request_string
-
-      get_latest = EM::HttpRequest.new(request_string).get
-      get_latest.callback do
-        @latest = Yajl::Parser.parse(get_latest.response)
-        @log.info "#{feed}: #{@latest}"
-        @initialized = true
-      end
-    end
-
     def handler
       proc do 
         if @initialized
           fetch
         else
-          bootstrap('hash_key')
+          @initialized = true
           @log.info "#{feed}: Initiaizing..."
         end
       end

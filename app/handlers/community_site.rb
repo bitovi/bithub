@@ -29,16 +29,17 @@ module Handler
         # $log.info "PARSED DATE: #{parsed_date}"
 
         {
-          props: {
-            origin_author_name: event['author'],
-            feed: feed,
+          :props => {
+            :origin_author_name => event['author'],
+            :feed => feed,
           },
-          title: event['title'],
-          body: event['description'],
-          url: event['link'],
-          origin_ts: parsed_date.strftime("%FT%T%z"),
-          raw_json: event,
-          hash_key: event['hash_key']
+          :title => event['title'],
+          :body => event['description'],
+          :url => event['link'],
+          :origin_ts => parsed_date.strftime("%FT%T%z"),
+          :origin_date => parsed_date.strftime("%Y-%m-%d"),
+          :raw_json => event,
+          :hash_key => event['hash_key']
         }
       end
     end

@@ -61,34 +61,38 @@ module Handler
 
     def handle_user_stream_event(event)
       event_hash = {
-        props: {
-          origin_author_name: event['source']['screen_name'],
-          origin_author_id: event['source']['id'],
-          type: 'follow_event',
-          feed: feed
+        :props => {
+          :origin_author_name => event['source']['screen_name'],
+          :origin_author_id => event['source']['id'],
+          :type => 'follow_event',
+          :feed => feed
         },
-        title: "followed @#{event['target']['screen_name']}",
-        hash_key: Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed),
-        origin_ts: parse_date(event).strftime("%FT%T%z"),
-        raw_json: event
+        :title => "followed @#{event['target']['screen_name']}",
+        :hash_key => Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed),
+        :origin_ts => parse_date(event).strftime("%FT%T%z"),
+        :origin_date => parsed_date.strftime("%Y-%m-%d"),
+        :raw_json => event
       }
       publish(event_hash)
     end
 
     def handle_public_stream_event(event)
+      parsed_date =  parse_date(event)
+
       event_hash = {
-        props: {
-          origin_author_name: event['user']['screen_name'],
-          origin_author_id: event['user']['id'],
-          origin_id: event['id'],
-          type: 'status_event',
-          feed: feed,
+        :props => {
+          :origin_author_name => event['user']['screen_name'],
+          :origin_author_id => event['user']['id'],
+          :origin_id => event['id'],
+          :type => 'status_event',
+          :feed => feed,
         },
-        title: event['text'],
-        url: "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
-        origin_ts: parse_date(event).strftime("%FT%T%z"),
-        hash_key: Digest::MD5.hexdigest(event['id_str'] + feed),
-        raw_json: event,
+        :title => event['text'],
+        :url => "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
+        :origin_ts => parsed_date.strftime("%FT%T%z"),
+        :origin_date => parsed_date.strftime("%Y-%m-%d"),
+        :hash_key => Digest::MD5.hexdigest(event['id_str'] + feed),
+        :raw_json => event,
       }
       
       publish(event_hash)

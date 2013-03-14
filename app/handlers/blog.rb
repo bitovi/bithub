@@ -28,15 +28,16 @@ module Handler
         parsed_date = Time.strptime(event['published'], "%e %b %Y")
         # $log.info "PARSED DATE: #{parsed_date}"
         {
-          props: {
-            feed: feed,
+          :props => {
+            :feed => feed,
           },
-          origin_ts: parsed_date.strftime("%FT%T%z"),
-          title: event['title'],
-          body: event['description'],
-          url: event['link'],
-          hash_key: event['hash_key'],
-          raw_json: event
+          :origin_ts => parsed_date.strftime("%FT%T%z"),
+          :origin_date => parsed_date.strftime("%Y-%m-%d"),
+          :title => event['title'],
+          :body => event['description'],
+          :url => event['link'],
+          :hash_key => event['hash_key'],
+          :raw_json => event
         }
       end
     end
