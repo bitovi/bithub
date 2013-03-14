@@ -1,4 +1,5 @@
 class Event < ActiveRecord::Base
+  VALID_FEEDS_FOR_IDENT = ['github', 'twitter', 'some_feed']
   class EventHasNoParentError < Error; end
 
   attr_accessible :hash_key, :id,
@@ -30,10 +31,10 @@ class Event < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
 
-  def self.new_with_checks(args ={})
+  def self.new_with_checks(args ={}, meta)
     ev = self.new(args)
+    ev.meta = meta
     ev.whole_chain
-    self
   end
 
   def self.next_id
@@ -83,10 +84,10 @@ class Event < ActiveRecord::Base
   end
 
   def determine_author
+    props[:origin_author_id] = meta[:origin_author_id]
+    props[:origin_author_username] = meta[:origin_author_username]
     ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
-    ident = Identity.create({provider: meta[:feed], uid: meta[:origin_author_id]}) if !ident && ['some_feed', 'twitter', 'github'].include?(meta[:feed])
-    ident.user = ident.create_user if !ident.user
-    self.author = ident.user ? ident.user : nil
+    ident = Identity.create({provider: meta[:feed], uid: meta[:origin_author_id]}) if !ident && VALID_FEEDS_FOR_IDENT.include?(meta[:feed])
     self
   end
 
@@ -96,6 +97,7 @@ class Event < ActiveRecord::Base
   end
 
   def process_forums
+    puts "TAGS: #{tag_list}"
     group_forum_reply if tag_list.include?('forums')
     self
   end
@@ -106,6 +108,7 @@ class Event < ActiveRecord::Base
       # issues
       if tag_list.include?('issues_event')
         props[:issue_id] = meta[:issue_id]
+        props[:state] = meta[:state]
         group_issue
       end
 
@@ -162,7 +165,7 @@ class Event < ActiveRecord::Base
   end
 
   def award(actor)
-    Activity.award(actor, self)
+    Activity.create_award(actor, self)
     self
   end
 

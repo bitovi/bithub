@@ -113,8 +113,8 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 CREATE TABLE events (
     id integer NOT NULL,
     hash_key character varying(255) NOT NULL,
-    title character varying(255),
-    url character varying(255),
+    title text,
+    url text,
     body text,
     author_id integer,
     rule_id integer NOT NULL,
@@ -155,10 +155,10 @@ ALTER SEQUENCE events_id_seq OWNED BY events.id;
 
 CREATE TABLE identities (
     id integer NOT NULL,
-    uid character varying(255),
     provider character varying(255),
     source_data text,
-    user_id integer
+    user_id integer,
+    uid bigint
 );
 
 

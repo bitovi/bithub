@@ -1,0 +1,88 @@
+znaci ti predlazes nesto ovako:
+
+activities
+==========
+
+actor: nikica | affected: nikica | applies_to: thread_starter | cost: 0  | value: 50       | ident: authorship (bug raise)
+actor: veljko | affected: nikica | applies_to: thread_starter | cost: 0  | value: 1        | ident: upvote
+actor: david  | affected: nikica | applies_to: thread_starter | cost: 0  | value: 1        | ident: upvote
+actor: veljko | affected: veljko | applies_to: thread_starter | cost: 25 | value: 0        | ident: stake (prvo unfulfilled, pa fulfilled kad dodje award - ali ne treba nam taj podatak)
+actor: justin | affected: justin | applies_to: thread_reply   | cost: 0  | value: 0        | ident: authorship (helpful reply)
+actor: david  | affected: justin | applies_to: thread_reply   | cost: 0  | value: 1        | ident: upvote
+actor: alexis | affected: justin | applies_to: thread_reply   | cost: 0  | value: 1        | ident: upvote
+actor: brian  | affected: justin | applies_to: thread_reply   | cost: 0  | value: 1        | ident: upvote
+actor: admin  | affected: justin | applies_to: thread_reply   | cost: 0  | value: 25+2+100 | ident: award (bug fix)
+
+
+iskreno, to mi se ne svidja jer uopce nemamo ortogonalnost podataka
+sve trpamo u jednu tablicu, iako pri citanju u prosjeku (ovisno o tipu) trebamo samo pola tih podataka (za stakeove jedan skup, za awardove drugi ...)
+tablica ce biti velika jer svi tipovi idu u nju (+ autorstva), a kompleksnost trazenja po njoj ce biti = broj tipova * broj aktivitija za svaki tip
+
+po meni, bolje bi onda bilo razdvojiti activities u 4 tablice => upvotes, stakes, awards, internal
+i imati posebnu logiku za svaki tip aktivitija (neki oduzimaju neki daju)
+
+onda imamo ovu situaciju (redosljedom dodavanja, vremenskim redosljedom kao i gore)
+
+events
+======
+author: nikica | rule: bug (value 50) - thread_starter
+
+upvotes
+=======
+actor: veljko | applies_to: thread_starter | value: 1
+actor: david  | applies_to: thread_starter | value: 1
+
+stakes
+======
+actor: veljko | applies_to: thread_starter | value: 25
+actor: david  | applies_to: thread_starter | value: 40
+
+events
+======
+author: nikica | rule: bug (value 50) - thread_starter
+author: justin | rule: comment (value 0) - thread_reply
+
+upvotes 
+=======
+actor: veljko | applies_to: thread_starter | value: 1
+actor: david  | applies_to: thread_starter | value: 1
+actor: david  | applies_to: thread_reply   | value: 1
+actor: alexis | applies_to: thread_reply   | value: 1
+actor: brian  | applies_to: thread_reply   | value: 1
+
+awards
+======
+actor: admin | applies_to: thread_reply | value: 100 + 2 upvotes + 65 claims (bug fix)
+
+internal
+========
+actor: admin | receiver: veljko | value: 150
+
+
+ovaj nacin mi se cini bolji jer:
+
+* uvodimo ortogonalnost podataka
+* nema straha od ponavljanja kombinacija u joinu jer su podaci ortogonalni
+* pretraga awards i stakes i sl. manjih tablica bila bi brza (opet, ortogonalnost)
+* lako dodamo novi tip ako bude potrebe jer ne trebamo mjenjati postojece podatke vec samo dodati drugu tablicu (i racunanje za tu tablicu)
+* implementacija logike za racunanje svake tablice je posebna jer svaka od tih tabica ima drugo znacenje (premda su sve one aktivnosti, imaju drukciju semantiku):
+	- upvotes i awards - uvijek povecavaju bodove autoru eventa
+	- stakes - uvijek smanjuju bodove actoru (fulfilled ili unfulfilled nam sluzi samo da sprijecimo brisanje kad je jednom stake fulfilled - za pribrajanje nam ne sluzi jer se pribraja se tek sa awardom)
+	- internal - oduzimaju ili dodaju bodove receiveru
+* jos uvijek to mozemo dohvacati kroz activities kao virtualni atribut na aplikacijskoj razini (activities uzima sve sto se odnosi na usera, a mi odlucujemo sto se odnosi, jer svaka tablica se odnosi drugacije)
+* svakoj tablici mozemo dodati sto vec odlucimo dodati u odredjenom trenutku bez da pollutamo sve ostale tablice / objekte:
+	- internal tablica ima receivera, jer to ima smisla, ali receiver u upvotes nema smisla
+
+query bi onda bio:
+
+select user.id, SUM(rules.authorship_value) +
+(select sum(value) from upvotes where upvotes.applies_to_id = events.id) +
+(select sum(value) from awards where awards.applies_to_id = events.id) -
+(select sum(value) from stakes where stakes.actor_id = users.id) +
+(select sum(value) from internal where internal.receiver = users.id)
+as point_sum
+from users, events, rules
+where users.id = events.author_id
+and rules.id = events.rule_id
+group by users.id
+order by point_sum desc;
