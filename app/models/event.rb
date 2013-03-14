@@ -24,6 +24,40 @@ class Event < ActiveRecord::Base
   has_many :anteups, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Anteup"
   has_many :awards, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Award"
 
+  has_many :activities, :finder_sql => proc { <<-SQL
+    SELECT 
+        'award' AS type,
+        awards.value AS value,
+        users.id AS user_id,
+        users.name AS user_name,
+        awards.updated_at AS ts
+      FROM awards
+        LEFT JOIN users ON users.id=awards.actor_id
+        WHERE awards.applies_to_id=#{id}
+    UNION
+    SELECT 
+        'anteup' AS type, 
+        anteups.value AS value,
+        users.id AS user_id,
+        users.name AS user_name,
+        anteups.updated_at AS ts
+      FROM anteups 
+        LEFT JOIN users ON users.id=anteups.actor_id
+        WHERE anteups.applies_to_id=#{id}
+    UNION
+    SELECT 
+        'upvote' AS type,
+        value AS value,
+        users.id AS user_id,
+        users.name AS user_name,
+        upvotes.updated_at AS ts
+      FROM upvotes 
+        LEFT JOIN users ON users.id=upvotes.actor_id
+        WHERE upvotes.applies_to_id=#{id}
+    ORDER BY ts DESC;
+  SQL
+  }
+
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true
   validates :tag_list, :presence => true

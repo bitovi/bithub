@@ -36,14 +36,14 @@ class User < ActiveRecord::Base
         WHERE events.author_id=#{id}
     UNION
     SELECT 
-        'stake' AS type, 
-        stakes.applies_to_id,
+        'anteup' AS type, 
+        anteups.applies_to_id,
         events.title AS event_title,
-        stakes.value AS value,
-        stakes.updated_at AS ts
-      FROM stakes 
-        LEFT JOIN events ON events.id=stakes.applies_to_id
-        WHERE stakes.actor_id=#{id} AND fullfilled='t'
+        anteups.value AS value,
+        anteups.updated_at AS ts
+      FROM anteups 
+        LEFT JOIN events ON events.id=anteups.applies_to_id
+        WHERE anteups.actor_id=#{id} AND fullfilled='t'
     UNION
     SELECT 
         'internal' AS type,
