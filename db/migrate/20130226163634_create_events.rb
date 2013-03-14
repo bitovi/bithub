@@ -2,8 +2,8 @@ class CreateEvents < ActiveRecord::Migration
   def change
     create_table :events do |t|
       t.string :hash_key, :null => false
-      t.string :title
-      t.string :url
+      t.text :title
+      t.text :url
       t.text :body
       t.references :author
       t.references :rule, :null => false

@@ -1,12 +1,12 @@
 class CreateIdentitiesForUser < ActiveRecord::Migration
   def up
     create_table :identities do |t|
-      t.string :uid
       t.string :provider
       t.text :source_data
       t.references :user
     end
 
+    add_column :identities, :uid, :bigint
     add_index :identities, :user_id
   end
 

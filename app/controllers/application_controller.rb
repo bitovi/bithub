@@ -3,8 +3,7 @@ class ApplicationController < ActionController::Base
 
   def query
     q = request.env['muster.query']
-    Rails.logger.info "==== QUERY ====" 
-    Rails.logger.info q 
+    Rails.logger.info "QUERY: #{q}" 
     render :text => q
   end
 end

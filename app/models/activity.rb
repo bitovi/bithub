@@ -32,8 +32,6 @@ class Stake < ActiveRecord::Base
   def self.fullfill_by_event(event)
     Stake.update_all({fullfilled: true}, {applies_to_id: event.id})
   end
-  
-
 end
 
 
@@ -54,5 +52,4 @@ class Award < ActiveRecord::Base
     Stake.fullfill_by_event(event.parent) if activity
     activity
   end
-
 end
