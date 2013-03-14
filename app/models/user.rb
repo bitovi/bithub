@@ -17,11 +17,12 @@ class User < ActiveRecord::Base
     SELECT 
        'authorship' AS type,
         events.id AS event_id,
-        events.title AS event_title, 
-        rules.authorship_value AS value, 
+        events.title AS event_title,
+        rules.authorship_value + (SELECT SUM(value) FROM upvotes WHERE upvotes.applies_to_id=events.id) AS value, 
         events.origin_ts AS ts
       FROM events 
         LEFT JOIN rules ON events.rule_id=rules.id
+        LEFT JOIN upvotes ON upvotes.applies_to_id=events.id
         WHERE events.author_id=#{id}
     UNION
     SELECT 
