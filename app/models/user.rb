@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
 
-  has_many :stakes, :foreign_key => "actor_id", :dependent => :destroy, :class_name => "Stake"
+  has_many :anteups, :foreign_key => "actor_id", :dependent => :destroy, :class_name => "Anteup"
   has_many :upvotes, :foreign_key => "actor_id", :dependent => :destroy, :class_name => "Upvote"
   has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
   has_many :identities, :dependent => :destroy
@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
       sum += ev.rule.authorship_value             # authorships
           +  ev.upvotes.sum('value')              # upvotes
           +  ev.awards.sum('value')               # awards
-          -  self.stakes.fullfilled.sum('value')  # subtract fullfilled stakes
+          -  self.anteups.fullfilled.sum('value') # subtract fullfilled anteups
     end
     sum
   end

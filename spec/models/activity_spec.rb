@@ -21,7 +21,7 @@ describe Upvote do
 end
 
 
-describe Stake do
+describe Anteup do
 
   before :each do
     create(:rule)
@@ -29,26 +29,26 @@ describe Stake do
     @event = create(:event_determined)
   end
 
-  describe ".create_stake" do
-    it "places stake on event" do 
-      stake_value = 25
-      stake = Stake.create_stake(@actor, @event, stake_value)
-      expect(stake.applies_to).to eq(@event)
-      expect(stake.actor).to eq(@actor)
-      expect(stake.value).to eq(stake_value)
-      expect(stake.fullfilled).to eq(false)
+  describe ".create_anteup" do
+    it "places anteup on event" do 
+      anteup_value = 25
+      anteup = Anteup.create_anteup(@actor, @event, anteup_value)
+      expect(anteup.applies_to).to eq(@event)
+      expect(anteup.actor).to eq(@actor)
+      expect(anteup.value).to eq(anteup_value)
+      expect(anteup.fullfilled).to eq(false)
     end
   end
 
-  describe ".fullfill_stakes" do
-    it "sets fullfill to true on stakes belonging to an event" do 
-      stake_value = 25
+  describe ".fullfill_anteups" do
+    it "sets fullfill to true on anteups belonging to an event" do 
+      anteup_value = 25
       @event2 = create(:event_determined)
-      stake = Stake.create_stake(@actor, @event, stake_value)
-      stake2 = Stake.create_stake(@actor, @event2, stake_value)
-      Stake.fullfill_by_event(@event)
-      expect(stake.reload.fullfilled).to eq(true)
-      expect(stake2.reload.fullfilled).to eq(false)
+      anteup = Anteup.create_anteup(@actor, @event, anteup_value)
+      anteup2 = Anteup.create_anteup(@actor, @event2, anteup_value)
+      Anteup.fullfill_by_event(@event)
+      expect(anteup.reload.fullfilled).to eq(true)
+      expect(anteup2.reload.fullfilled).to eq(false)
     end
   end
 
@@ -57,19 +57,19 @@ end
 describe Award do
 
   describe ".create_award" do
-    it "awards event author with parent event points, upvotes and stakes" do
+    it "awards event author with parent event points, upvotes and anteups" do
       @rule = create(:rule_with_award)
       @event = create(:event_determined, rule: @rule)
       @reply = create(:event_determined, parent: @event)
       upvote = create(:upvote, applies_to: @event)
-      stake = create(:stake, applies_to: @event)
+      anteup = create(:anteup, applies_to: @event)
       award = Award.create_award(@actor, @reply)
 
-      sum = upvote.value + stake.value + @event.rule.award_value
+      sum = upvote.value + anteup.value + @event.rule.award_value
       expect(award.applies_to).to eq(@reply)
       expect(award.actor).to eq(@actor)
       expect(award.value).to eq(sum)
-      # check if stakes are fullfilled?
+      # check if anteups are fullfilled?
     end
   end
 end

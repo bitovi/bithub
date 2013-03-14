@@ -15,16 +15,16 @@ class AddFkOnActivities < ActiveRecord::Migration
         REFERENCES users(id)
     SQL
 
-    # stakes
+    # anteups
     execute <<-SQL
-      ALTER TABLE stakes 
-        ADD CONSTRAINT fk_stakes_events
+      ALTER TABLE anteups 
+        ADD CONSTRAINT fk_anteups_events
         FOREIGN KEY (applies_to_id) 
         REFERENCES events(id)
     SQL
     execute <<-SQL
-      ALTER TABLE stakes 
-        ADD CONSTRAINT fk_stakes_users
+      ALTER TABLE anteups 
+        ADD CONSTRAINT fk_anteups_users
         FOREIGN KEY (actor_id) 
         REFERENCES users(id)
     SQL
@@ -70,14 +70,14 @@ class AddFkOnActivities < ActiveRecord::Migration
         DROP CONSTRAINT fk_upvotes_users
     SQL
 
-    # stakes
+    # anteups
     execute <<-SQL
-      ALTER TABLE stakes 
-        DROP CONSTRAINT fk_stakes_events
+      ALTER TABLE anteups 
+        DROP CONSTRAINT fk_anteups_events
     SQL
     execute <<-SQL
-      ALTER TABLE stakes 
-        DROP CONSTRAINT fk_stakes_users
+      ALTER TABLE anteups 
+        DROP CONSTRAINT fk_anteups_users
     SQL
 
     # awards

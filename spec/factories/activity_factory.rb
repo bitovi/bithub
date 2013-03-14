@@ -6,7 +6,7 @@ FactoryGirl.define do
     value 1
   end
 
-  factory :stake do
+  factory :anteup do
     association :applies_to, factory: :event, title: "Some event"
     association :actor, factory: :user
     value 25

@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
   has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Upvote"
-  has_many :stakes, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Stake"
+  has_many :anteups, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Anteup"
   has_many :awards, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Award"
 
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
@@ -150,27 +150,22 @@ class Event < ActiveRecord::Base
   end
 
   def upvote(actor)
-    Activity.create_upvote(actor, self)
+    Upvote.create_upvote(actor, self)
     self
   end
 
-  def place_stake(actor, stake_value)
-    Activity.place_stake(actor, self, stake_value)
+  def place_anteup(actor, value)
+    Anteup.create_anteup(actor, self, value)
     self
   end
 
-  def fullfill_stakes
-    Activity.fullfill_stake(self)
+  def fullfill_anteups
+    Anteup.fullfill_by_event(self)
     self
   end
 
   def award(actor)
-    Activity.create_award(actor, self)
-    self
-  end
-
-  def donate(actor, donation_value)
-    Activity.donate(actor, self, donation_value)
+    Award.create_award(actor, self)
     self
   end
 

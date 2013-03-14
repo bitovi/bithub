@@ -13,7 +13,7 @@ class Upvote < ActiveRecord::Base
 end
 
 
-class Stake < ActiveRecord::Base
+class Anteup < ActiveRecord::Base
   class UserNotEnoughPoints < Error; end
   attr_accessible :actor, :applies_to, :value, :fullfilled
 
@@ -25,12 +25,12 @@ class Stake < ActiveRecord::Base
 
   scope :fullfilled, where(:fullfilled => true)
 
-  def self.create_stake(actor, event, stake)
-    Stake.create({:actor => actor, :applies_to => event, :value => stake, :fullfilled => false})
+  def self.create_anteup(actor, event, value)
+    Anteup.create({:actor => actor, :applies_to => event, :value => value, :fullfilled => false})
   end
 
   def self.fullfill_by_event(event)
-    Stake.update_all({fullfilled: true}, {applies_to_id: event.id})
+    Anteup.update_all({fullfilled: true}, {applies_to_id: event.id})
   end
 end
 
@@ -47,9 +47,9 @@ class Award < ActiveRecord::Base
   
   def self.create_award(actor, event)
     raise EventHasNoParentError if !event.parent
-    total_value = event.parent.rule.award_value + event.parent.upvotes.sum('value') + event.parent.stakes.sum('value')
+    total_value = event.parent.rule.award_value + event.parent.upvotes.sum('value') + event.parent.anteups.sum('value')
     activity = Award.create({:actor => actor, :applies_to => event, :value => total_value})
-    Stake.fullfill_by_event(event.parent) if activity
+    Anteup.fullfill_by_event(event.parent) if activity
     activity
   end
 end

@@ -8,7 +8,7 @@ class CreateActivities < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :stakes do |t|
+    create_table :anteups do |t|
       t.references :applies_to, :null => false
       t.references :actor, :null => false
       t.integer :value

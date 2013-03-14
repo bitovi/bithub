@@ -22,14 +22,14 @@ describe User do
 
       upvote = Upvote.create_upvote(admin, event)
       upvote_reply = Upvote.create_upvote(admin, event_reply)
-      stake = Stake.create_stake(admin, event, 25)
+      anteup = Anteup.create_anteup(admin, event, 25)
       award = Award.create_award(admin, event_reply)
-      stake_other = Stake.create_stake(author_reply, event_other, 20)        
+      anteup_other = Anteup.create_anteup(author_reply, event_other, 20)        
 
       sum = event_reply.rule.authorship_value
       + event_reply.upvotes.sum('value')
       + event_reply.awards.sum('value')
-      - author_reply.stakes.fullfilled.sum('value')
+      - author_reply.anteups.fullfilled.sum('value')
 
       expect(author_reply.sum_points).to eq(sum)
     end
