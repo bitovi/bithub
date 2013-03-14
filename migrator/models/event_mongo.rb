@@ -18,5 +18,7 @@ class EventMongo
   field :votes            # total nmb of upvotes
   field :points           # authorship_value
   field :state            # open/closed
+
+  field :children
 end
 
