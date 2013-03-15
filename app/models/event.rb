@@ -131,7 +131,7 @@ class Event < ActiveRecord::Base
   end
 
   def process_forums
-    puts "TAGS: #{tag_list}"
+    #puts "TAGS: #{tag_list}"
     group_forum_reply if tag_list.include?('forums')
     self
   end

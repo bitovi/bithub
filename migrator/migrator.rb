@@ -10,66 +10,247 @@ require 'models/user_mongo'
 
 Mongoid.load!("config/mongoid.yml")
 
+
+class String
+  def snake_case
+    self.gsub(/::/, '/').
+    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+    gsub(/([a-z\d])([A-Z])/,'\1_\2').
+    tr("-", "_").
+    downcase
+  end
+end
+
+
+# counters
+$count = 0
 $saved = 0
 $failed = 0
 $rejected = 0
-$children = 0
+
+$children_count = 0
+$children_saved = 0
+$children_failed = 0
+$children_rejected = 0
+
+$duplicates = 0
+
+# DISTINCT from Mongo
+
+$feeds = {
+  "github" => "github",
+  "disqus" => "disqus",
+  "forums" => "forums",
+  "community_site" => "community_site",
+  "irc" => "irc",
+  "twitter" => "twitter",
+  "bithub" => "bithub",
+  "blog" => "blog"
+}
+
+$types = {
+  "watchevent" => "watch_event",
+  "deleteevent" => "delete_event",
+  "pushevent" => "push_event",
+  "pullrequestevent" => "pull_request_event",
+  "createevent" => "create_event",
+  "issuesevent" => "issues_event",
+  "commitcommentevent" => "commit_comment_event",
+  "issuecommentevent" => "issue_comment_event",
+  "canjs" => "canjs",
+  "general javascriptmvc" => "general_javascriptmvc",
+  "#canjs" => "canjs",
+  "forkevent" => "fork_event",
+  "follow_event" => "follow_event",
+  "status_event" => "status_event",
+  "app" => "app",
+  "gollumevent" => "gollum_event",
+  "pullrequestreviewcommentevent" => "pull_request_review_comment_event",
+  "stealjs" => "stealjs",
+  "jquerymx" => "jquerymx",
+  "funcunit" => "funcunit",
+  "article" => "article",
+  "jquery++" => "jquerypp",
+  "publicevent" => "public_event",
+  "plugin" => "plugin",
+  "#bitovi" => "bitovi"
+}
+
+$categories = {
+  "digest" => "digest",
+  "code" => "code",
+  "comment" => "comment",
+  "chat" => "chat",
+  "twitter" => "twitter",
+  #null,
+  "bug" => "bug",
+  "question" => "question",
+  "article" => "article",
+  "plugin" => "plugin",
+  "app" => "app"
+}
+
+def determine_category(meta)
+
+  # twitter
+  if meta[:feed] == 'twitter'
+    if meta[:type] == 'follow_event'
+      meta[:category] = 'digest'
+    else
+      meta[:category] = 'twitter'
+    end
+
+  # github
+  elsif meta[:feed] == 'github'
+    if ['commit_comment_event', 'issue_comment_event', 'pull_request_review_comment_event'].include?(meta[:type])
+      meta[:category] = 'comment'
+    elsif ['fork_event', 'watch_event'].include?(meta[:type])
+      meta[:category] = 'digest'
+    elsif ['push_event', 'create_event', 'delete_event', 'pull_request_event'].include?(meta[:type])
+      meta[:category] = 'code'
+    elsif meta[:labels]
+      if (meta[:labels] & ['bug', 'Bug']).length > 0
+        meta[:category] = 'bug'
+      elsif (meta[:labels] & ['feature', 'Feature', 'feature-request','enhancement']).length > 0
+        meta[:category] = 'feature'
+      elsif (meta[:labels] & ['question', 'Question']).length > 0
+        meta[:category] = 'question'
+      end
+    elsif ['closed', 'open', 'reopened'].include?(meta[:state])
+      meta[:category] = 'bug'
+    end
+
+  # irc
+  elsif meta[:feed] == 'irc'
+    meta[:category] = 'chat'
+
+  # disqus
+  elsif meta[:feed] == 'disqus'
+    meta[:category] = 'comment'
+
+  # blog
+  elsif meta[:feed] == 'blog'
+    meta[:category] = 'article'
+
+  # forums
+  elsif meta[:feed] == 'forums'
+    meta[:category] = 'question'
+  end
+
+  # failover
+  meta[:category] = 'unknown' unless meta[:category]
+  
+  meta[:category]
+end
 
 
-def prepare_and_save(e)
+def prepare_and_build(event)
 
-  if !e[:created_ts]
-    $rejected += 1
-    return
+  if !event['hash_key']
+    return false
+  end
+
+  if Event.where(:hash_key => event['hash_key']).length > 0
+    $duplicates += 1
+    return false
   end
 
   event_hash = {
-    body: e[:body],
-    title: e[:title],
-    url: e[:link],
-    origin_ts: e[:created_ts].to_datetime,
-    origin_date: e[:created_ts].to_date,
-    hash_key: e[:hash_key],
-    source_data: e[:source_data]
+    body: event['body'],
+    title: event['title'],
+    url: event['link'],
+    origin_ts: event['created_ts'].to_datetime,
+    origin_date: event['created_ts'].to_date,
+    hash_key: event['hash_key'],
+    source_data: event['source_data']
   }
 
   meta = {
-    tags: e[:tags].push(e.category).push(e.feed),
-    state: e[:state],
-    origin_author_id: e[:actor_id],
-    origin_author_gravatar_hash: e[:actor_gravatar],
-    origin_author_username: e[:actor],
-    feed: e[:feed],
-    type: e[:type],
-    category: e[:category]
+    #tags: event[:tags].push(event[:category]).push(event[:feed]).push(event[:type]),
+    state: event['state'],
+    origin_author_id: event['actor_id'],
+    origin_author_gravatar_hash: event['actor_gravatar'],
+    origin_author_username: event['actor'],
+    #feed: event[:feed],
+    #type: event[:type],
+    #category: event[:category]
   }
 
-  ev = Event.new_with_checks(event_hash, meta)
+  # tags
+  meta[:tags] = event['tags']
 
-  if ev.save
-    $saved += 1
-  else
-    $failed += 1
+  # feed
+  meta[:feed] = $feeds[event['feed']]
+  meta[:tags].push(meta[:feed])
+
+  # type
+  if event['type'] then 
+    meta[:type] = $types[event['type']] 
+    meta[:tags].push(meta[:type])
+  end
+  
+  # category
+  if !meta[:category]
+    meta[:category] = determine_category(meta)
+  end
+  meta[:tags].push(meta[:category])
+  
+  # PRINT OUT events with undetermined category
+  if meta[:category] == 'unknown'
+    puts "CATEGORY: #{meta[:category]} \tFEED: #{meta[:feed]} \tTYPE: #{meta[:type]} \tLABELS: #{meta[:labels]} \tSTATE: #{meta[:state]}"
   end
 
-  ev
+  Event.new_with_checks(event_hash, meta)
 end
 
 EventMongo.all.each do |e|
+  $count += 1
 
-  if !e.hash_key || !e.category || !e.feed || !e.type
-    $rejected += 1
-  else
+  # prepare event/parent
+  if parent = prepare_and_build(e)
+
+    # iter children
     e.children.each do |c|
-      $children += 1
-      prepare_and_save(c)
-    end    
-    prepare_and_save(e)
-  end
+      $children_count += 1
 
-end
+      # prepare child
+      if child = prepare_and_build(c)
+        child.parent_id = parent.id
+        # save child
+        if child.save!
+          $children_saved += 1
+        else
+          $children_failed += 1
+        end
+      else
+        $children_rejected += 1
+      end
+    end
+
+    # save
+    if parent.save
+      $saved += 1
+    else
+      $failed += 1
+    end
+
+  else
+    $rejected += 1
+  end
   
-puts "SAVED #{$saved}"
-puts "FAILED #{$failed}"
-puts "REJECTED #{$rejected}"
-puts "CHILDREN  #{$children}"
+end
+
+
+puts "PARENT COUNT #{$count}"
+puts "PARENT SAVED #{$saved}"
+puts "PARENT FAILED #{$failed}"
+puts "PARENT REJECTED #{$rejected}"
+
+puts "============"
+puts "CHILDREN COUNT  #{$children_count}"
+puts "CHILDREN SAVED  #{$children_saved}"
+puts "CHILDREN REJECTED  #{$children_rejected}"
+puts "CHILDREN FAILED  #{$children_failed}"
+
+puts "============"
+puts "DUPLICATES  #{$duplicates}"
