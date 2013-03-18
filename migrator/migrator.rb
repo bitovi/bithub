@@ -195,11 +195,24 @@ def prepare_and_build(event)
   end
   meta[:tags].push(meta[:category])
 
-
   # update origin_ts for forum events
   if meta[:feed] == 'forums'
     event_hash[:origin_ts] = event['source_data']['pubDate'].to_datetime
     event_hash[:origin_date] = event['source_data']['pubDate'].to_date
+  end
+
+  # for twitter set up tweet_id and retweeted_id
+  if meta[:type] == 'status_event'
+    meta[:tweet_id] = event['source_data']['id_str']
+    if event['source_data']['retweeted_status']
+      meta[:retweeted_id] = event['source_data']['retweeted_status']['id_str'] 
+    end
+  end
+
+
+  # set issue_id for github issues events
+  if ['issues_event','issue_comment_event'].include?(meta[:type])
+    meta[:issue_id] = event['issue_id']
   end
   
   # PRINT OUT events with undetermined category
