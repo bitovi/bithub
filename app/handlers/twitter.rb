@@ -61,7 +61,7 @@ module Handler
 
     def handle_user_stream_event(event)
       event_hash = {
-        :props => {
+        :meta => {
           :origin_author_name => event['source']['screen_name'],
           :origin_author_id => event['source']['id'],
           :type => 'follow_event',
@@ -80,7 +80,7 @@ module Handler
       parsed_date =  parse_date(event)
 
       event_hash = {
-        :props => {
+        :meta => {
           :origin_author_name => event['user']['screen_name'],
           :origin_author_id => event['user']['id'],
           :origin_id => event['id'],
@@ -98,7 +98,7 @@ module Handler
 
       # add original tweet id -> used later for grouping retweets
       if event['retweeted_status']
-        event_hash[:props][:retweeted_id] = event['retweeted_status']['id_str']
+        event_hash[:meta][:retweeted_id] = event['retweeted_status']['id_str']
       end
 
       publish(event_hash)

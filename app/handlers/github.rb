@@ -1,4 +1,4 @@
-module Handler
+ Handler
   class Github < Base
 
     def self.handler(log, exchange, endpoint)
@@ -50,7 +50,7 @@ module Handler
     def handle_event_type(event)
       parsed_date = Time.strptime(event['created_at'], "%FT%T%Z")
       event_hash = {
-        :props => {
+        :meta => {
           :type => event['type'].snake_case,
           :feed => feed,
           :origin_id => event['id'],
@@ -69,16 +69,16 @@ module Handler
         event_hash[:title] = "#{state} an issue: #{event['payload']['issue']['title']}"
         event_hash[:body] = event['payload']['issue']['body']
         event_hash[:url] = event['payload']['issue']['html_url']
-        event_hash[:props][:labels] = event['payload']['issue']['labels'].map { |l| l['name'] }
-        event_hash[:props][:state] = state
-        event_hash[:props][:issue_id] = event['payload']['issue']['id']
-        event_hash[:props][:action] = event['payload']['action']
+        event_hash[:meta][:labels] = event['payload']['issue']['labels'].map { |l| l['name'] }
+        event_hash[:meta][:state] = state
+        event_hash[:meta][:issue_id] = event['payload']['issue']['id']
+        event_hash[:meta][:action] = event['payload']['action']
 
       elsif event['type'] == 'IssueCommentEvent'
         event_hash[:title] = "commented on issue #{event['payload']['issue']['number']}"
         event_hash[:body] = event['payload']['comment']['body']
         event_hash[:url] = event['payload']['issue']['html_url']
-        event_hash[:props][:issue_id] = event['payload']['issue']['id']
+        event_hash[:meta][:issue_id] = event['payload']['issue']['id']
 
       elsif event['type'] == 'ForkEvent'
         event_hash[:title] = "forked #{event['repo']['name']}"
@@ -89,9 +89,9 @@ module Handler
         event_hash[:url] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
 
         # hstore doesn't support arrays as value so CSV will do fine till native JSON support
-        event_hash[:props][:commits] = ""
+        event_hash[:meta][:commits] = ""
         event['payload']['commits'].each do |commit|
-          event_hash[:props][commits] += commit['sha'] + ","
+          event_hash[:meta][commits] += commit['sha'] + ","
         end
 
       elsif event['type'] == 'PullRequestEvent'
@@ -107,7 +107,7 @@ module Handler
         event_hash[:body] = event['payload']['comment']['body']
         event_hash[:url] = event['payload']['comment']['html_url']
         puts event_hash
-        event_hash[:props][:commit_id] = event['payload']['comment']['commit_id']
+        event_hash[:meta][:commit_id] = event['payload']['comment']['commit_id']
         puts event_hash
 
       elsif event[:type] == 'CreateEvent'

@@ -28,7 +28,7 @@ module Handler
         parsed_date = Time.strptime(event['published'], "%e %b %Y")
         # $log.info "PARSED DATE: #{parsed_date}"
         {
-          :props => {
+          :meta => {
             :feed => feed,
           },
           :origin_ts => parsed_date.strftime("%FT%T%z"),

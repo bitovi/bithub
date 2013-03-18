@@ -32,7 +32,7 @@ module Handler
       new_events.map do |event|
         parsed_date = Time.strptime(event['createdAt']+"+0000", "%FT%T%z")
         {
-          :props => {
+          :meta => {
             :feed => feed,
             :origin_author_name => event['author']['name'],
           },

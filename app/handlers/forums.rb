@@ -52,7 +52,7 @@ module Handler
         raw_date = event['pubDate'].gsub(',','')
         parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
         hash = { 
-          :props => {
+          :meta => {
             :origin_author_name => event['dc:creator'],
             :type => event['category'].snake_case,
             :filter_term => event['filter_term'],
