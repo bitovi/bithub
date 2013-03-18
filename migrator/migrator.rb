@@ -209,10 +209,20 @@ def prepare_and_build(event)
     end
   end
 
-
   # set issue_id for github issues events
   if ['issues_event','issue_comment_event'].include?(meta[:type])
     meta[:issue_id] = event['issue_id']
+  end
+
+  # set commit_id for github push_event and commit_comment_event
+  if meta[:type] == 'push_event'
+    meta[:commits] = ""
+    event['source_data']['payload']['commits'].each do |commit|
+      meta[:commits] += commit['sha'] + ','
+    end
+  end
+  if meta[:type] == 'commit_comment_event'
+    meta[:commit_id] = event['source_data']['payload']['comment']['commit_id']
   end
   
   # PRINT OUT events with undetermined category
