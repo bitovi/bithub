@@ -194,6 +194,36 @@ def prepare_and_build(event)
     meta[:category] = determine_category(meta)
   end
   meta[:tags].push(meta[:category])
+
+  # update origin_ts for forum events
+  if meta[:feed] == 'forums'
+    event_hash[:origin_ts] = event['source_data']['pubDate'].to_datetime
+    event_hash[:origin_date] = event['source_data']['pubDate'].to_date
+  end
+
+  # for twitter set up tweet_id and retweeted_id
+  if meta[:type] == 'status_event'
+    meta[:tweet_id] = event['source_data']['id_str']
+    if event['source_data']['retweeted_status']
+      meta[:retweeted_id] = event['source_data']['retweeted_status']['id_str'] 
+    end
+  end
+
+  # set issue_id for github issues events
+  if ['issues_event','issue_comment_event'].include?(meta[:type])
+    meta[:issue_id] = event['issue_id']
+  end
+
+  # set commit_id for github push_event and commit_comment_event
+  if meta[:type] == 'push_event'
+    meta[:commits] = ""
+    event['source_data']['payload']['commits'].each do |commit|
+      meta[:commits] += commit['sha'] + ','
+    end
+  end
+  if meta[:type] == 'commit_comment_event'
+    meta[:commit_id] = event['source_data']['payload']['comment']['commit_id']
+  end
   
   # PRINT OUT events with undetermined category
   if meta[:category] == 'unknown'
@@ -209,13 +239,19 @@ EventMongo.all.each do |e|
   # prepare event/parent
   if parent = prepare_and_build(e)
 
+    # save
+    if parent.save!
+      $saved += 1
+    else
+      $failed += 1
+    end
+
     # iter children
     e.children.each do |c|
       $children_count += 1
 
       # prepare child
       if child = prepare_and_build(c)
-        child.parent_id = parent.id
         # save child
         if child.save!
           $children_saved += 1
@@ -225,13 +261,6 @@ EventMongo.all.each do |e|
       else
         $children_rejected += 1
       end
-    end
-
-    # save
-    if parent.save
-      $saved += 1
-    else
-      $failed += 1
     end
 
   else
