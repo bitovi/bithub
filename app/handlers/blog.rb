@@ -37,7 +37,7 @@ module Handler
           :body => event['description'],
           :url => event['link'],
           :hash_key => event['hash_key'],
-          :raw_json => event
+          :source_data => event
         }
       end
     end

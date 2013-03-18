@@ -61,7 +61,7 @@ module Handler
         :origin_ts => parsed_date.strftime("%FT%T%z"),
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
         :hash_key => event['hash_key'],
-        :raw_json => event
+        :source_data => event
       }
 
       if event['type'] == 'IssuesEvent' 

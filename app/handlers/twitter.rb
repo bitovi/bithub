@@ -71,7 +71,7 @@ module Handler
         :hash_key => Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed),
         :origin_ts => parse_date(event).strftime("%FT%T%z"),
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
-        :raw_json => event
+        :source_data => event
       }
       publish(event_hash)
     end
@@ -93,7 +93,7 @@ module Handler
         :origin_ts => parsed_date.strftime("%FT%T%z"),
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
         :hash_key => Digest::MD5.hexdigest(event['id_str'] + feed),
-        :raw_json => event,
+        :source_data => event,
       }
 
       # add original tweet id -> used later for grouping retweets

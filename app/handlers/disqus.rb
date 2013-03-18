@@ -42,7 +42,7 @@ module Handler
           :origin_ts => parsed_date.strftime("%FT%T%z"),
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
           :hash_key => event['hash_key'],
-          :raw_json => Base64::encode64(event.to_json)
+          :source_data => Base64::encode64(event.to_json)
         }
       end
     end

@@ -38,7 +38,7 @@ module Handler
           :url => event['link'],
           :origin_ts => parsed_date.strftime("%FT%T%z"),
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
-          :raw_json => event,
+          :source_data => event,
           :hash_key => event['hash_key']
         }
       end
