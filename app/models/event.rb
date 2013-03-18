@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  VALID_FEEDS_FOR_IDENT = ['github', 'twitter', 'some_feed']
+  VALID_FEEDS_FOR_IDENT = %w(github twitter some_feed)
   class EventHasNoParentError < Error; end
 
   attr_accessible :hash_key, :id,
@@ -20,43 +20,9 @@ class Event < ActiveRecord::Base
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
-  has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Upvote"
-  has_many :anteups, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Anteup"
-  has_many :awards, :foreign_key => "applies_to_id", :autosave => true, :class_name => "Award"
-
-  has_many :activities, :finder_sql => proc { <<-SQL
-    SELECT 
-        'award' AS type,
-        awards.value AS value,
-        users.id AS user_id,
-        users.name AS user_name,
-        awards.updated_at AS ts
-      FROM awards
-        LEFT JOIN users ON users.id=awards.actor_id
-        WHERE awards.applies_to_id=#{id}
-    UNION
-    SELECT 
-        'anteup' AS type, 
-        anteups.value AS value,
-        users.id AS user_id,
-        users.name AS user_name,
-        anteups.updated_at AS ts
-      FROM anteups 
-        LEFT JOIN users ON users.id=anteups.actor_id
-        WHERE anteups.applies_to_id=#{id}
-    UNION
-    SELECT 
-        'upvote' AS type,
-        value AS value,
-        users.id AS user_id,
-        users.name AS user_name,
-        upvotes.updated_at AS ts
-      FROM upvotes 
-        LEFT JOIN users ON users.id=upvotes.actor_id
-        WHERE upvotes.applies_to_id=#{id}
-    ORDER BY ts DESC;
-  SQL
-  }
+  has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true
+  has_many :anteups, :foreign_key => "applies_to_id", :autosave => true
+  has_many :awards, :foreign_key => "applies_to_id", :autosave => true
 
   validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
   validates :hash_key, :uniqueness => true
@@ -207,6 +173,13 @@ class Event < ActiveRecord::Base
     parent.children
   end
 
+  def activities
+    activities = []
+    activities.concat(self.awards)
+    activities.concat(self.upvotes)
+    activities.concat(self.anteups)
+  end
+  
   private
 
   ### TWITTER methods
