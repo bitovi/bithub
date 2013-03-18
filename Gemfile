@@ -43,4 +43,5 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'guard-rspec'
   gem 'faker'
+  gem 'debugger'
 end
