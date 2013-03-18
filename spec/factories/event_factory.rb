@@ -50,12 +50,14 @@ FactoryGirl.define do
         title "How do you do this?"
         body "I need help about an issue, and what to do ?"
         url "http://forums.com/some-question"
+        origin_ts Time.now
       end
 
       trait :forum_reply do 
         title "Re: How do you do this?"
         sequence(:body) {|n| "#{n}. way to do this..." }
         sequence(:url) {|n| "http://forums.com/some-question##{n}" }
+        sequence(:origin_ts) {|n| Time.now + (n+1).hour}
       end
 
       factory :forum_thread_starter, traits: [:forum_question, :with_determined_rule]

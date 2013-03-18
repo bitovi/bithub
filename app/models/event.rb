@@ -240,13 +240,15 @@ class Event < ActiveRecord::Base
   end
 
   def group_forum_reply
-    thread_url, thread_reply_nmb = url.split('#')
-    if not thread_reply_nmb
-      adopt_children_for_forum_thread_starter
-    elsif Event.tagged_with('forums').where(:url => thread_url).first
-      self.parent = Event.tagged_with('forums').where(:url => thread_url).first
-    else
-      self.parent = Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").first
+    thread_url = url.split('#')[0]
+    replies = Event.tagged_with('forums').where("url LIKE '#{thread_url}%'").order('origin_ts ASC')
+
+    if replies.length > 0
+      if self.origin_ts > replies.first.origin_ts
+        self.parent_id = replies.first.id
+      else
+        adopt_children_for_forum_thread_starter
+      end
     end
 
     self
