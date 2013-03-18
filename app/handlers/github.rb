@@ -1,4 +1,4 @@
- Handler
+module Handler
   class Github < Base
 
     def self.handler(log, exchange, endpoint)
