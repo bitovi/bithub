@@ -67,7 +67,7 @@ class Event < ActiveRecord::Base
 
   def self.new_with_checks(args ={}, meta)
     ev = self.new(args)
-    ev.meta = meta
+    ev.meta = meta.symbolize_keys
     ev.whole_chain
   end
 
@@ -108,6 +108,7 @@ class Event < ActiveRecord::Base
   end
   
   def determine_feed
+    puts "=========================================== #{meta[:feed]}, #{meta['feed']}"
     self.feed = Tag.find_or_create_with_like_by_name(meta[:feed])
     self
   end
