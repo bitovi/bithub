@@ -86,6 +86,7 @@ module Handler
           :origin_id => event['id'],
           :type => 'status_event',
           :feed => feed,
+          :tweet_id => event['id_str']
         },
         :title => event['text'],
         :url => "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
@@ -94,7 +95,12 @@ module Handler
         :hash_key => Digest::MD5.hexdigest(event['id_str'] + feed),
         :raw_json => event,
       }
-      
+
+      # add original tweet id -> used later for grouping retweets
+      if event['retweeted_status']
+        event_hash[:props][:retweeted_id] = event['retweeted_status']['id_str']
+      end
+
       publish(event_hash)
     end
 
