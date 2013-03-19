@@ -25,9 +25,8 @@ class Rule < ActiveRecord::Base
   end
 
   def self.default_rule
-    Rule.first # the first one is inserted by migration
-
-    #Rule.where("required_tags = ? AND upvote_value = ? AND award_value = ? AND authorship_value = ? AND priority = ?", [].to_postgres_array(true), 0, 0, 0, 0).first
+    # inserted by migration
+    Rule.order('id ASC').first
   end
 
 end

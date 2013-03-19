@@ -12,8 +12,10 @@ AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
   queue.subscribe do |metadata, payload|
     EM.defer do
       event_hash = ActiveSupport::JSON.decode(payload)
-      meta = event_hash.delete(:meta)
-      Event.new_with_checks(event_hash, meta).save!
+      meta = event_hash.delete('meta')
+      ev = Event.new_with_checks(event_hash, meta)
+      ev.save
+      ev.connection.close
     end
   end
 end
