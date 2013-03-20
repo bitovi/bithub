@@ -194,7 +194,12 @@ class Event < ActiveRecord::Base
   end
 
   def self.nest_by(field)
-    events = all
+    events = []
+    if Event.reflect_on_all_associations.map{|x| x.name}.include? field.to_sym
+      events = includes(field).all
+    elsif Event.column_names.include?(field)
+      events = all
+    end
     remapped = Event.remap_field(field)
     ret_hash = {}
     events.map{|e| e[remapped] }.uniq.each do |dv|
