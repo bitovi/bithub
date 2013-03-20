@@ -35,6 +35,12 @@ class Event < ActiveRecord::Base
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
+  after_validation {log_invalid.info "#{self.title}; #{self.meta}; #{self.errors.messages}" if self.invalid?}
+
+  def log_invalid
+    @@log_invalid ||= Logger.new("#{Rails.root}/log/invalid_events.log")
+  end
+
   def self.new_with_checks(args ={}, meta)
     ev = self.new(args)
     ev.meta = meta.symbolize_keys
@@ -73,12 +79,14 @@ class Event < ActiveRecord::Base
 
 
   def determine_tags
+    meta[:tags] << meta[:feed] 
+    meta[:tags] << meta[:type] if meta[:type]
+
     self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
   
   def determine_feed
-    puts "=========================================== #{meta[:feed]}, #{meta['feed']}"
     self.feed = Tag.find_or_create_with_like_by_name(meta[:feed])
     self
   end
@@ -102,7 +110,6 @@ class Event < ActiveRecord::Base
   end
 
   def process_forums
-    #puts "TAGS: #{tag_list}"
     group_forum_reply if tag_list.include?('forums')
     self
   end

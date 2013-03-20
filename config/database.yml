@@ -2,7 +2,7 @@ development:
   adapter: postgresql
   encoding: unicode
   database: bithub_development
-  pool: 5
+  pool: 50
   username: bithub
   password: negativ1Q
   host: localhost
