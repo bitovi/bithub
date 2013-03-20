@@ -42,4 +42,5 @@ group :test, :development do
   gem 'guard-rspec'
   gem 'faker'
   gem 'debugger'
+  gem 'pry-rails'
 end
