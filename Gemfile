@@ -17,9 +17,9 @@ gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'rabl'
-gem 'muster'
 gem 'inherited_resources'
-gem "active_model_serializers"
+
+gem 'muster', :path => "vendor/gems/muster"
 
 # Gems used only for assets and not required
 # in production environments by default.

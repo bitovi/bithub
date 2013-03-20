@@ -1,3 +1,10 @@
+PATH
+  remote: vendor/gems/muster
+  specs:
+    muster (0.0.8)
+      activesupport (~> 3.0)
+      rack (~> 1.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -14,8 +21,6 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    active_model_serializers (0.7.0)
-      activemodel (>= 3.0)
     activemodel (3.2.12)
       activesupport (= 3.2.12)
       builder (~> 3.0.0)
@@ -129,9 +134,6 @@ GEM
     moped (1.4.3)
     multi_json (1.6.1)
     multipart-post (1.2.0)
-    muster (0.0.8)
-      activesupport (~> 3.0)
-      rack (~> 1.4)
     newrelic_rpm (3.5.8.72)
     oauth (0.4.7)
     oauth2 (0.8.1)
@@ -241,7 +243,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_model_serializers
   activerecord-postgres-array
   activerecord-postgres-hstore
   acts-as-taggable-on
@@ -259,7 +260,7 @@ DEPENDENCIES
   less-rails (~> 2.2.6)
   memcachier
   mongoid
-  muster
+  muster!
   newrelic_rpm
   omniauth
   omniauth-github

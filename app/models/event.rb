@@ -31,6 +31,10 @@ class Event < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
 
+  scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
+  scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
+  scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
+
   def self.new_with_checks(args ={}, meta)
     ev = self.new(args)
     ev.meta = meta.symbolize_keys
