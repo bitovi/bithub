@@ -1,0 +1,75 @@
+
+:twitter:
+  :streams:
+    :canjs:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: 9VZWeQSrGsfrzLiqoEd5A
+        :consumer_secret: 67NROCX4HziM9AhUvoRTMu2aDQghADfC5sNr13Gb8
+        :oauth_token: 523041627-B0tPRwmpfCPZ693zvX5kftRP1anV4arBS6Lg25Ds
+        :oauth_token_secret: rNCfGtKK2BIJWCG4ZHLVBp3jJqjdZOLbnwxiJk71cQ
+
+    :jquerypp:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: MTeNZiruhab4HE5EVyDCMQ
+        :consumer_secret: vEdickOreYXRSWWXkgtV2pF9r0UDfyoMYYBw1aUG28A
+        :oauth_token: 589215872-qUNeQ4OIA6kOojCwYhIFRtl8rgL2vcbj1eIeeXV8
+        :oauth_token_secret: IqYFgxHsshrvKUWyd9IuuPSNGjy3IvPdalWzjAw
+
+    :javascriptmvc:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: NgiHaCZmoYN9MpxpHJxEQ
+        :consumer_secret: QxOoqnvl4lbdSvQPGwxbR8VikqCZQ7EfsZhnk6QsYp8
+        :oauth_token: 56956664-LTFrBPcJIpHyMAHLQh5BYoCnzybEig5uHc0cz1wmk
+        :oauth_token_secret: 6xKgXZbAzGQe96iv8Laro1qetNB9MIbPH60nfP3kJYA
+
+    :funcunit:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: wWgOit4boWMzmEcn0PFivg
+        :consumer_secret: XQPonXsp1unYrtk5zwJ1ry1Cwm5km0mGgO7cevrXrU
+        :oauth_token: 171351462-hAVH5kjxXvZPPoHqiGNKyyD0DFymq0NUMkTg4w
+        :oauth_token_secret: ylBERnBC9erWNwhORnBFED2nrxlYWfPlC1NOwjo
+
+    :shouldjs:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: AKGtWqhdoPwXyfL2hAZQ
+        :consumer_secret: lXLkURlTlXERfIE9So6ctG5fjIqehSbzFOioTQ7X52w
+        :oauth_token: 1114713660-7WzrwVrBFH0ziCY5noNXMab3EaLip2oINLHq69S
+        :oauth_token_secret: dFLOqjTZ1zb4PyhQiW94RR7D0dbV0r8iKfCq33JdyE
+
+    :donejs:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: Mt3ubgC6Io9E8KJualvtw
+        :consumer_secret: 4fo2fE9omMxqiHxSfu1zOuQx5xs1WwX833G2OoraNHo
+        :oauth_token: 184072309-2SNVapTMfLfw8vCtOkf2Cnn7P4R6QaYtzm9JE4U3
+        :oauth_token_secret: iSc8VzRwY48jsOqQIBIZhexWkGmRBL2kqHIWLWbc
+
+    :public_feed:
+      :host: userstream.twitter.com
+      :method: GET
+      :path: /1.1/user.json
+      :oauth:
+        :consumer_key: huCmG0TZ7vs6leLqLNlGQ
+        :consumer_secret: X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ
+        :oauth_token: 55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw
+        :oauth_token_secret: XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE
+      :params:
+        :track: canjs,donejs,stealjs,javascriptmvc,jquerypp,documentjs,shouldjs,jquery++
+
