@@ -16,7 +16,7 @@ gem 'mongoid'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
-gem 'rabl'
+gem 'jbuilder'
 gem 'inherited_resources'
 
 gem 'muster', :path => "vendor/gems/muster"

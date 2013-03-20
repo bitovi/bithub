@@ -196,9 +196,11 @@ class Event < ActiveRecord::Base
   def self.nest_by(field)
     events = all
     remapped = Event.remap_field(field)
-    events.map{|e| e[remapped] }.uniq.map do |dv|
-      Hash[Event.name_for(field, dv), events.reject{|e| e[remapped] != dv}]
+    ret_hash = {}
+    events.map{|e| e[remapped] }.uniq.each do |dv|
+      ret_hash[Event.name_for(field, dv)] = events.reject{|e| e[remapped] != dv}
     end
+    ret_hash
   end
 
   
