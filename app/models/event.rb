@@ -1,6 +1,7 @@
 class Event < ActiveRecord::Base
   VALID_FEEDS_FOR_IDENT = %w(github twitter some_feed)
   class EventHasNoParentError < Error; end
+  class DistinctFieldNotKnown < Error; end
 
   attr_accessible :hash_key, :id,
     :body, :title, :url,
@@ -85,7 +86,7 @@ class Event < ActiveRecord::Base
     self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
-  
+
   def determine_feed
     self.feed = Tag.find_or_create_with_like_by_name(meta[:feed])
     self
@@ -191,8 +192,39 @@ class Event < ActiveRecord::Base
     activities.concat(self.upvotes)
     activities.concat(self.anteups)
   end
+
+  def self.nest_by(field)
+    events = all
+    remapped = Event.remap_field(field)
+    events.map{|e| e[remapped] }.uniq.map do |dv|
+      Hash[Event.name_for(field, dv), events.reject{|e| e[remapped] != dv}]
+    end
+  end
+
   
   private
+    
+  def self.remap_field(field)
+    case field.to_sym
+    when :category
+      :category_id
+    when :feed
+      :feed_id
+    else
+      field
+    end
+  end
+
+  def self.name_for(field, val)
+    case field
+    when :category
+      Tag.find(val).name
+    when :feed
+      Tag.find(val).name
+    else
+      val
+    end
+  end
 
   ### TWITTER methods
   def group_retweet

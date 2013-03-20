@@ -7,4 +7,12 @@ class Tag < ActsAsTaggableOn::Tag
   def to_s
     name
   end
+
+  def self.category_ids
+    Tag.where(:name => CATEGORIES).pluck(:id)
+  end
+
+  def self.feed_ids
+    Tag.where(:name => FEEDS).pluck(:id)
+  end
 end
