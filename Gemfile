@@ -18,6 +18,7 @@ gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'jbuilder'
 gem 'inherited_resources'
+gem 'draper'
 
 gem 'muster', :path => "vendor/gems/muster"
 
