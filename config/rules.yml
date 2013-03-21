@@ -38,10 +38,10 @@
 :chat:
   :irc: 1
 
-:article
+:article:
   :blog: 1
 
-:bug
+:bug:
   github: 1
   bug: 1
 

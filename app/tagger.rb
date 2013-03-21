@@ -3,7 +3,7 @@ module Tagger
   require 'levenshtein'
   require 'sanitize'
 
-  #class Base
+  #class Base  
 
   # check if given hash has all the keys
   def self.include_keys?(hash, keys)
@@ -12,7 +12,7 @@ module Tagger
 
   # tokenize text into array of words
   def tokenize(text, delimiter=/[ ,.!?;]/)
-    text.split(delimiter).reject(&:empty?).map {|w| w.downcase }
+    text.downcase.split(delimiter).reject(&:empty?)
   end
 
   # search for tags within plain text
@@ -28,59 +28,23 @@ module Tagger
     end
   end
 
-  # determines category based on tags
-  def self.determine_category(rules, tags)
-    
+  # calculates scores for every category
+  def self.calculate_scores(rules, tags)
     rules.map do |category, rule|
       {
-        category => (tags & rule.keys).reduce(0) do |score, key|
-          score += rule[key]
-        end
+        :name => category,
+        :score => (tags & rule.keys).reduce(0) {|score, key| score += rule[key]}
       }
-    end    
+    end
   end
 
-  def self.determine_category_old(tags)
-    
-    case
-    when tags.include?('twitter')
-      case 
-      when tags.include?('follow_event') 
-        'digest'
-      else 'twitter'
-      end
-      
-    when tags.include?('github')
-      case
-      when (tags & ['commit_comment_event', 'issue_comment_event', 'pull_request_review_comment_event']).any?
-        'comment'
-      when (tags & ['fork_event', 'watch_event']).any?
-        'digest'
-      when (tags & ['push_event', 'create_event', 'delete_event', 'pull_request_event']).any?
-        'code'
-      when (tags & ['feature', 'feature-request','enhancement']).any?
-        'feature'
-      when tags.include?('question')
-        'question'
-      when tags.include?('bug')
-        'bug'
-      end
+  # determines category based on tags
+  def self.determine_category(rules, tags)
 
-    when tags.include?('irc')
-      'chat'
+    # picks first one if more categories share the same score
+    category = self.calculate_scores(rules, tags).max {|a,b| a[:score] <=> b[:score]}
 
-    when tags.include?('disqus')
-      'comment'
-
-    when tags.include?('blog')
-      'article'
-      
-    when tags.include?('forums')
-      'question'
-
-    else false
-    end
-
+    (category[:score] == 0) ? 'unknown' : category[:name]
   end
 
 end
