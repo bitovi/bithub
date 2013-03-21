@@ -29,7 +29,18 @@ module Tagger
   end
 
   # determines category based on tags
-  def self.determine_category(tags)
+  def self.determine_category(rules, tags)
+    
+    rules.map do |category, rule|
+      {
+        category => (tags & rule.keys).reduce(0) do |score, key|
+          score += rule[key]
+        end
+      }
+    end    
+  end
+
+  def self.determine_category_old(tags)
     
     case
     when tags.include?('twitter')
