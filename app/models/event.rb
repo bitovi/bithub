@@ -13,8 +13,8 @@ class Event < ActiveRecord::Base
 
   acts_as_taggable_on :tags
 
-  belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event", :autosave => true
-  has_many :children, :foreign_key => "parent_id", :class_name => "Event", :autosave => true
+  belongs_to :parent, :class_name => "Event"
+  has_many :children, :foreign_key => "parent_id", :class_name => "Event"
 
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"

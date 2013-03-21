@@ -10,6 +10,7 @@ class Api::EventsController < ApplicationController
     scope = scope.includes(@muster_query[:includes]) if !@muster_query[:includes].blank?
     scope = scope.order(@muster_query[:order]) if !@muster_query[:order].blank?
     scope = scope.limit(@muster_query[:limit])
+    scope = scope.offset(@muster_query[:offset])
     
     if !@muster_query[:where].blank?
       tags = @muster_query[:where].values.uniq
