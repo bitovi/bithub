@@ -19,6 +19,7 @@ class Event < ActiveRecord::Base
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
+
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
 
   has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true
@@ -80,9 +81,6 @@ class Event < ActiveRecord::Base
 
 
   def determine_tags
-    meta[:tags] << meta[:feed] 
-    meta[:tags] << meta[:type] if meta[:type]
-
     self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
@@ -200,9 +198,10 @@ class Event < ActiveRecord::Base
     elsif Event.column_names.include?(field)
       events = all
     end
+
     remapped = Event.remap_field(field)
     ret_hash = {}
-    events.map{|e| e[remapped] }.uniq.each do |dv|
+    events.map{|e| e[remapped]}.uniq.each do |dv|
       ret_hash[Event.name_for(field, dv)] = events.reject{|e| e[remapped] != dv}
     end
     ret_hash
@@ -212,10 +211,10 @@ class Event < ActiveRecord::Base
   private
     
   def self.remap_field(field)
-    case field.to_sym
-    when :category
+    field = field.to_sym
+    if field == :category
       :category_id
-    when :feed
+    elsif field == :feed
       :feed_id
     else
       field
@@ -223,10 +222,11 @@ class Event < ActiveRecord::Base
   end
 
   def self.name_for(field, val)
-    case field
-    when :category
+    if field == :category || field == 'category'
       Tag.find(val).name
-    when :feed
+    elsif field == :feed || field == 'feed'
+      Tag.find(val).name
+    elsif field == :tag || field == 'tag'
       Tag.find(val).name
     else
       val
