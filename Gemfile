@@ -10,6 +10,8 @@ gem 'log4r'
 gem 'awesome_print'
 gem 'exceptional'
 gem 'json'
+gem 'levenshtein-ffi', :require => 'levenshtein'
+gem 'sanitize'
 
 group :development do
   gem 'foreman'
