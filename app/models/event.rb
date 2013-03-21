@@ -11,7 +11,7 @@ class Event < ActiveRecord::Base
 
   attr_accessor :meta
 
-  acts_as_taggable
+  acts_as_taggable_on :tags
 
   belongs_to :parent, :foreign_key => "parent_id", :class_name => "Event", :autosave => true
   has_many :children, :foreign_key => "parent_id", :class_name => "Event", :autosave => true

@@ -1,6 +1,6 @@
 class Tag < ActsAsTaggableOn::Tag 
-  CATEGORIES = %w(code comment plugin app article)
-  FEEDS = %w(github twitter disqus)
+  CATEGORIES = %w(code comment plugin app article chat bug feature)
+  FEEDS = %w(github twitter disqus irc forums)
   attr_accessible :name, :display_name, :aliases, :priority
   validates :name, :presence => true, :uniqueness => true
 
