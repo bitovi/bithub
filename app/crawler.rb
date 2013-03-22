@@ -35,7 +35,6 @@ $proj_root = File.expand_path(File.join(File.dirname(__FILE__), '../'))
 # Load feeds config 
 $feeds = YAML::load_file(File.join($proj_root, 'config/feeds.yml'))
 
-
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
   puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
