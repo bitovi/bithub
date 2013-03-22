@@ -1,5 +1,6 @@
 class Api::EventsController < ApplicationController
   respond_to :json
+  protect_from_forgery :except => [:create, :update]
 
   def index
     @muster_query = request.env['muster.query']
@@ -30,6 +31,24 @@ class Api::EventsController < ApplicationController
   def show
     @event = EventDecorator.decorate(Event.find(params[:id]))
     render :show
+  end
+
+  def create
+    @event = Event.new(params[:event])
+    if @event.save
+      render :status => 200
+    else
+      render :json => @event.errors.messages, :status => 500
+    end
+  end
+
+  def update
+    @event = Event.find(params[:id])
+    if Event.update(params[:event])
+      render :status => 200
+    else
+      render :json => @event.errors.messages, :status => 500
+    end
   end
 
 end

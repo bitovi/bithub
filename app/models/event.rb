@@ -5,7 +5,7 @@ class Event < ActiveRecord::Base
 
   attr_accessible :hash_key, :id,
     :body, :title, :url,
-    :feed, :category, :tags,
+    :feed, :category, :tag_list,
     :origin_date, :origin_ts,
     :props, :source_data
 
@@ -19,16 +19,13 @@ class Event < ActiveRecord::Base
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
-
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
+  has_many :upvotes, :foreign_key => "applies_to_id"
+  has_many :anteups, :foreign_key => "applies_to_id"
+  has_many :awards, :foreign_key => "applies_to_id"
 
-  has_many :upvotes, :foreign_key => "applies_to_id", :autosave => true
-  has_many :anteups, :foreign_key => "applies_to_id", :autosave => true
-  has_many :awards, :foreign_key => "applies_to_id", :autosave => true
-
-  validates :origin_date, :origin_ts, :hash_key, :feed, :category, :rule, :presence => true
+  validates :origin_date, :origin_ts, :hash_key, :feed, :category, :tag_list, :rule, :presence => true
   validates :hash_key, :uniqueness => true
-  validates :tag_list, :presence => true
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
@@ -36,12 +33,6 @@ class Event < ActiveRecord::Base
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
-
-  #after_validation {log_invalid.info "#{self.title}; #{self.meta}; #{self.errors.messages}" if self.invalid?}
-
-  def log_invalid
-    @@log_invalid ||= Logger.new("#{Rails.root}/log/invalid_events.log")
-  end
 
   def self.new_with_checks(args ={}, meta)
     ev = self.new(args)
