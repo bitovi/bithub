@@ -1,11 +1,11 @@
 module Handler
   class Github < Base
 
-    def self.handler(log, exchange, endpoint)
+    def self.handler(log, exchange, endpoint=nil)
       new(log, exchange, endpoint).handler
     end
 
-    def initialize(log, exchange, endpoint)
+    def initialize(log, exchange, endpoint=nil)
       @endpoint = endpoint || 'https://api.github.com/orgs/bitovi/events'
       super(log,exchange)
     end
@@ -91,7 +91,7 @@ module Handler
         # hstore doesn't support arrays as value so CSV will do fine till native JSON support
         event_hash[:meta][:commits] = ""
         event['payload']['commits'].each do |commit|
-          event_hash[:meta][commits] += commit['sha'] + ","
+          event_hash[:meta][:commits] += commit['sha'] + ","
         end
 
       elsif event['type'] == 'PullRequestEvent'
@@ -102,18 +102,16 @@ module Handler
       elsif event['type'] == 'WatchEvent'
         event_hash[:title] = "started watching #{event['repo']['name']}"
 
-      elsif event[:type] == 'CommitCommentEvent'
+      elsif event['type'] == 'CommitCommentEvent'
         event_hash[:title] = "commented on a commit in #{event['repo']['name']}"
         event_hash[:body] = event['payload']['comment']['body']
         event_hash[:url] = event['payload']['comment']['html_url']
-        puts event_hash
         event_hash[:meta][:commit_id] = event['payload']['comment']['commit_id']
-        puts event_hash
 
-      elsif event[:type] == 'CreateEvent'
+      elsif event['type'] == 'CreateEvent'
         event_hash[:title] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
       
-      elsif event[:type] == 'DeleteEvent'
+      elsif event['type'] == 'DeleteEvent'
         event_hash[:title] = "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
 
       end

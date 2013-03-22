@@ -38,6 +38,8 @@ $feeds = YAML::load_file(File.join($proj_root, 'config/feeds.yml'))
 
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
+  puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
+
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
   Signal.trap("TERM", &stop)
@@ -46,28 +48,28 @@ AMQP.start($mq_cs) do |connection, open_ok|
   exchange = channel.direct("e.events.preproc")
 
   # --- Streams
-  $log.info "Registering to Twitter's public stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
+  #$log.info "Registering to Twitter's public stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
 
-  $log.info "Registering @canjs user stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
+  #$log.info "Registering @canjs user stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
 
-  $log.info "Registering @jquerypp user stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
+  #$log.info "Registering @jquerypp user stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
 
-  $log.info "Registering @funcunit user stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
+  #$log.info "Registering @funcunit user stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
   
-  $log.info "Registering @javascriptmvc user stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
+  #$log.info "Registering @javascriptmvc user stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
   
-  $log.info "Registering @donejs user stream"
-  Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
+  #$log.info "Registering @donejs user stream"
+  #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
 
   Exceptional.rescue do
     # --- Pollers
     $log.info "Registering Github"
-    EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange, 'https://api.github.com/orgs/bithub-test/events'))
+    EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
     
     $log.info "Registering Disqus"
     EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
