@@ -55,7 +55,7 @@ module Handler
           :meta => {
             :origin_author_name => event['dc:creator'],
             :type => event['category'].snake_case,
-            :filter_term => event['filter_term'],
+            :category => event['filter_term'],
             :feed => feed,
           },
           :title => event['title'],

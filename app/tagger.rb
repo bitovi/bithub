@@ -5,7 +5,6 @@ require 'bundler/setup'
 require 'log4r'
 require 'yajl'
 require 'amqp'
-require 'json'
 
 # Ours
 require 'tagger/tagger'
@@ -39,23 +38,29 @@ AMQP.start($mq_cs) do |connection, open_ok|
   # MQ receiver
   channel = AMQP::Channel.new(connection)
   queue = channel.queue("q.events.tagger").bind("e.events.preproc", {:routing_key => "tasks.taggify"})
+
+  # MQ producer
+  exchange = channel.direct("e.events")
+
   queue.subscribe do |metadata, payload|
     EM.defer do
-      event = JSON.parse(payload, {:symbolize_names => true})
+      event = Yajl::Parser.parse(payload, :symbolize_keys => true)
 
       # set tags over event url, title and body
       search_text = (event[:url] || '') + ' ' + event[:title] + ' ' + (event[:body] || '')
       event[:meta][:tags] = tagger.find_tags(search_text)
 
       # determine category from event tags, feed and type
-      search_tags = event[:meta][:tags].clone
-      search_tags <<= event[:meta][:feed]
-      search_tags <<= event[:meta][:type] if event[:meta][:type]
-      event[:meta][:category] = tagger.determine_category(search_tags)
-      
+      if !event[:meta][:category]
+        search_tags = event[:meta][:tags].clone
+        search_tags <<= event[:meta][:feed]
+        search_tags <<= event[:meta][:type] if event[:meta][:type]
+        event[:meta][:category] = tagger.determine_category(search_tags)
+      end
+
+      exchange.publish(Yajl::Encoder.encode(event))
     end
   end
 
-  # produce
-  #exchange = channel.fanout("e.events")  
 end
+
