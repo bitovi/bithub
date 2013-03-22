@@ -37,7 +37,7 @@ class Event < ActiveRecord::Base
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
-  after_validation {log_invalid.info "#{self.title}; #{self.meta}; #{self.errors.messages}" if self.invalid?}
+  #after_validation {log_invalid.info "#{self.title}; #{self.meta}; #{self.errors.messages}" if self.invalid?}
 
   def log_invalid
     @@log_invalid ||= Logger.new("#{Rails.root}/log/invalid_events.log")

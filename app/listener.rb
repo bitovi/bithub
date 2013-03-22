@@ -6,6 +6,11 @@ require "./app/models/event"
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
+  
+  stop = proc { puts "Terminating the listener"; connection.close { EM.stop } }
+  Signal.trap("INT",  &stop)
+  Signal.trap("TERM", &stop)
+
   channel = AMQP::Channel.new(connection)
   queue = channel.queue("q.events.web").bind("e.events")
 
@@ -20,6 +25,3 @@ AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
   end
 end
 
-stop = proc { puts "Terminating the listener"; connection.close { EM.stop } }
-Signal.trap("INT",  &stop)
-Signal.trap("TERM", &stop)
