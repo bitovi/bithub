@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'sanitize'
 
 module Handler
   class Base
@@ -6,6 +7,10 @@ module Handler
 
     def self.handler(log, exchange)
       new(log, exchange).handler
+    end
+
+    def sanitize(html)
+      Sanitize.clean(html, Sanitize::Config::RELAXED)
     end
 
     def initialize(log, exchange)

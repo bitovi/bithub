@@ -34,7 +34,7 @@ module Handler
           :origin_ts => parsed_date.strftime("%FT%T%z"),
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
           :title => event['title'],
-          :body => event['description'],
+          :body => self.sanitize(event['description']),
           :url => event['link'],
           :hash_key => event['hash_key'],
           :source_data => event
