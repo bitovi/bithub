@@ -83,7 +83,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
     $log.info "Registering Blog"
     EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
     
-    #$log.info "Registering Community site"
-    #EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
+    $log.info "Registering Community site"
+    EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
   end
 end
