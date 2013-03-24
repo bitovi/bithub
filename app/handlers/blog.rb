@@ -24,15 +24,15 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        # $log.info "RAW DATE: \"#{event['published']}\""
+        # Blog RSS provides date in format: "07 Feb 2013"
         parsed_date = Time.strptime(event['published'], "%e %b %Y")
-        # $log.info "PARSED DATE: #{parsed_date}"
+        ts = Time.utc(parsed_date.year, parsed_date.month, parsed_date.day, 0, 0, 1)
         {
           :meta => {
             :feed => feed,
           },
-          :origin_ts => parsed_date.strftime("%FT%T%z"),
-          :origin_date => parsed_date.strftime("%Y-%m-%d"),
+          :origin_ts => ts.iso8601,
+          :origin_date => ts.strftime("%Y-%m-%d"),
           :title => event['title'],
           :body => self.sanitize(event['description']),
           :url => event['link'],

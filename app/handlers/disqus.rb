@@ -30,7 +30,8 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event|
-        parsed_date = Time.strptime(event['createdAt']+"+0000", "%FT%T%z")
+        # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
+        parsed_date = Time.parse(event['createdAt']+"Z").utc
         {
           :meta => {
             :feed => feed,
@@ -39,7 +40,7 @@ module Handler
           :title => event['thread']['title'],
           :body => event['message'],
           :url => event['url'],
-          :origin_ts => parsed_date.strftime("%FT%T%z"),
+          :origin_ts => parsed_date.iso8601,
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
           :hash_key => event['hash_key'],
           :source_data => Base64::encode64(event.to_json)

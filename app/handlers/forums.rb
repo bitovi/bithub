@@ -49,8 +49,8 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        raw_date = event['pubDate'].gsub(',','')
-        parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
+        # Zoho forums RSS provides time in format: "Sat, 23 Mar 2013 15:02:26 -0700"
+        parsed_date = Time.parse(event['pubDate']).utc
         hash = { 
           :meta => {
             :origin_author_name => event['dc:creator'],
@@ -61,7 +61,7 @@ module Handler
           :title => event['title'],
           :body => self.sanitize(event['description']),
           :url => event['link'],
-          :origin_ts => parsed_date.strftime("%FT%T%z"),
+          :origin_ts => parsed_date.iso8601,
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
           :hash_key => event['hash_key'],
           :source_data => event

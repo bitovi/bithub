@@ -48,7 +48,8 @@ module Handler
     end
 
     def handle_event_type(event)
-      parsed_date = Time.strptime(event['created_at'], "%FT%T%Z")
+      # Github provides date in format: "2013-02-14T22:47:29Z"
+      parsed_date = Time.parse(event['created_at']).utc
       event_hash = {
         :meta => {
           :type => event['type'].snake_case,
@@ -58,7 +59,7 @@ module Handler
           :origin_author_id => event['actor']['id'],
           :origin_author_gravatar => event['actor']['gravatar_id']
         },
-        :origin_ts => parsed_date.strftime("%FT%T%z"),
+        :origin_ts => parsed_date.iso8601,
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
         :hash_key => event['hash_key'],
         :source_data => event

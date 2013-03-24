@@ -60,6 +60,8 @@ module Handler
     end
 
     def handle_user_stream_event(event)
+      parsed_date =  parse_date(event)
+
       event_hash = {
         :meta => {
           :origin_author_name => event['source']['screen_name'],
@@ -69,7 +71,7 @@ module Handler
         },
         :title => "followed @#{event['target']['screen_name']}",
         :hash_key => Digest::MD5.hexdigest(event['source']['id_str'] + event['target']['id_str'] + feed),
-        :origin_ts => parse_date(event).strftime("%FT%T%z"),
+        :origin_ts => parsed_date.iso8601,
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
         :source_data => event
       }
@@ -90,7 +92,7 @@ module Handler
         },
         :title => event['text'],
         :url => "https://twitter.com/#{event['user']['screen_name']}/status/#{event['id_str']}",
-        :origin_ts => parsed_date.strftime("%FT%T%z"),
+        :origin_ts => parsed_date.iso8601,
         :origin_date => parsed_date.strftime("%Y-%m-%d"),
         :hash_key => Digest::MD5.hexdigest(event['id_str'] + feed),
         :source_data => event,
@@ -106,7 +108,9 @@ module Handler
 
     def parse_date(event)
       if event['created_at']
-        parsed_date = Time.strptime(event['created_at'], "%a %b %d %T %z %Y")
+        # Twitter provides date in format: "Tue Jan 29 20:55:35 +0000 2013"
+        parsed_date = Time.strptime(event['created_at']).utc # "%a %b %d %T %z %Y"
+        # http://ruby-doc.org/stdlib-1.9.3/libdoc/time/rdoc/Time.html#method-c-iso8601
       else
         parsed_date = Time.now
       end

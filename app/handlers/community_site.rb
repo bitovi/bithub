@@ -23,11 +23,9 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        raw_date = event['pubDate'].gsub(',','')
-        # $log.info "RAW DATE: #{raw_date}"
-        parsed_date = Time.strptime(raw_date, "%a %e %b %Y %T %z")
-        # $log.info "PARSED DATE: #{parsed_date}"
-
+        # Community site RSS provides date in format: "Tue, 22 May 2012 12:55:35 +0000"
+        # ',' after day is sufficient, but doesn't breaks Time.parse
+        parsed_date = Time.parse(event['pubDate']).utc
         {
           :props => {
             :origin_author_name => event['author'],
@@ -36,7 +34,7 @@ module Handler
           :title => event['title'],
           :body => self.sanitize(event['description']),
           :url => event['link'],
-          :origin_ts => parsed_date.strftime("%FT%T%z"),
+          :origin_ts => parsed_date.iso8601,
           :origin_date => parsed_date.strftime("%Y-%m-%d"),
           :source_data => event,
           :hash_key => event['hash_key']
