@@ -18,7 +18,7 @@ require 'handlers'
 require 'string'
 
 # Connection string
-$mq_cs = ENV['MSGQ']
+$mq_cs = ENV['CLOUDAMQP_URL']
 
 # Exceptional
 Exceptional::Config.load("config/exceptional.yml")
