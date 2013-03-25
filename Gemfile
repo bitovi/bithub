@@ -21,7 +21,7 @@ gem 'jbuilder'
 gem 'draper'
 gem 'newrelic_rpm'
 
-gem 'muster', :path => "vendor/gems/muster"
+gem 'muster', :path => "vendor/gems/muster/muster-0.0.8.gem"
 
 # Gems used only for assets and not required
 # in production environments by default.
