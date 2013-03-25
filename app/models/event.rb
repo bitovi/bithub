@@ -90,7 +90,11 @@ class Event < ActiveRecord::Base
     props[:origin_author_id] = meta[:origin_author_id]
     props[:origin_author_username] = meta[:origin_author_username]
     ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
-    ident = Identity.create({provider: meta[:feed], uid: meta[:origin_author_id]}) if !ident && VALID_FEEDS_FOR_IDENT.include?(meta[:feed])
+    if ident && ident.user
+      self.author = ident.user
+    elsif !ident && VALID_FEEDS_FOR_IDENT.include?(meta[:feed])
+      ident = Identity.create({provider: meta[:feed], uid: meta[:origin_author_id]})
+    end
     self
   end
 

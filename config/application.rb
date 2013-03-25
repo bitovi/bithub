@@ -7,11 +7,9 @@ if defined?(Bundler)
   Bundler.require(*Rails.groups(:assets => %w(development test)))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
-  Bundler.setup
-end
 
-if defined?(Muster)
-  puts "MUSTER VERSION: #{Muster::VERSION}"
+  # for Muster to be available at the time of loading
+  Bundler.setup
 end
 
 module Bithub

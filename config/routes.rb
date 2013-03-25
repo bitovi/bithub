@@ -24,4 +24,5 @@ Bithub::Application.routes.draw do
     resources :rules
   end
 
+  root :to => "application#home"
 end

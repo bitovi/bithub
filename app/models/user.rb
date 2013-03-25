@@ -46,4 +46,15 @@ class User < ActiveRecord::Base
     top_users 
   end
 
+  def collect_authored_events
+    identities.each do |ident|
+      events = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
+      if events
+        events.each do |event|
+          event.update_attribute(:author_id, self.id)
+        end
+      end
+    end
+  end
+
 end
