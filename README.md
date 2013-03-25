@@ -1,4 +1,4 @@
-feeder-crawler
+bithub-crawler
 ==============
 
 Date formats
@@ -15,3 +15,4 @@ blog :: 03 Apr 2012
 github :: 2012-10-31T23:26:50Z
 
 disqus :: 2012-08-14T18:12:20
+
