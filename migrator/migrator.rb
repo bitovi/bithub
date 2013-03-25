@@ -7,20 +7,9 @@ require "#{rails_app_root}/config/environment"
 require 'mongoid'
 require 'models/event_mongo'
 require 'models/user_mongo'
+require 'string'
 
 Mongoid.load!("config/mongoid.yml")
-
-
-class String
-  def snake_case
-    self.gsub(/::/, '/').
-    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-    gsub(/([a-z\d])([A-Z])/,'\1_\2').
-    tr("-", "_").
-    downcase
-  end
-end
-
 
 # counters
 $count = 0
