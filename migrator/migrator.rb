@@ -236,19 +236,21 @@ EventMongo.all.each do |e|
     end
 
     # iter children
-    e.children.each do |c|
-      $children_count += 1
+    if e.children
+      e.children.each do |c|
+        $children_count += 1
 
-      # prepare child
-      if child = prepare_and_build(c)
-        # save child
-        if child.save!
-          $children_saved += 1
+        # prepare child
+        if child = prepare_and_build(c)
+          # save child
+          if child.save!
+            $children_saved += 1
+          else
+            $children_failed += 1
+          end
         else
-          $children_failed += 1
+          $children_rejected += 1
         end
-      else
-        $children_rejected += 1
       end
     end
 
