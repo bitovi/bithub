@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.12'
+gem 'amqp'
 gem 'pg'
 gem 'memcachier'
 gem 'dalli'
@@ -17,8 +18,8 @@ gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'jbuilder'
-gem 'inherited_resources'
 gem 'draper'
+gem 'newrelic_rpm'
 
 gem 'muster', :path => "vendor/gems/muster"
 
@@ -29,12 +30,6 @@ group :assets do
   gem "less-rails", "~> 2.2.6"
   gem 'uglifier', '>= 1.0.3'
 end
-
-# Monitoring with NewRelic
-gem 'newrelic_rpm'
-
-# Gems for listener
-gem 'amqp'
 
 group :test, :development do
   gem 'foreman'
