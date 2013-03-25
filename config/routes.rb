@@ -9,6 +9,11 @@ Bithub::Application.routes.draw do
   namespace :api, :defaults => { :format => 'json' } do
     resources :events, :except => ['edit', 'new'] do
       get 'activities', :on => :member
+      member do
+        post 'upvote', :to => 'activities'
+        post 'anteup', :to => 'activities'
+        post 'award', :to => 'activities'
+      end
     end
 
     resources :users, :except => ['edit', 'new'] do
