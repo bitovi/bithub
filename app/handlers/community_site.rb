@@ -27,7 +27,7 @@ module Handler
         # ',' after day is sufficient, but doesn't breaks Time.parse
         parsed_date = Time.parse(event['pubDate']).utc
         {
-          :props => {
+          :meta => {
             :origin_author_name => event['author'],
             :feed => feed,
           },
