@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:neektza/muster.git
+  remote: git://github.com/neektza/muster.git
   revision: ca38bb5d0ce3b3ca37374b6462437e4c078548d1
   specs:
     muster (0.0.8)
