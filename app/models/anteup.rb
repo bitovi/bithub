@@ -10,7 +10,8 @@ class Anteup < ActiveRecord::Base
 
   scope :fullfilled, where(:fullfilled => true)
 
-  def self.create_anteup(actor, event, value)
+  def self.create_anteup(actor, event, value=nil)
+    value ||= 25
     Anteup.create({:actor => actor, :applies_to => event, :value => value, :fullfilled => false})
   end
 
