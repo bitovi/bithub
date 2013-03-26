@@ -1,0 +1,110 @@
+<div class="event" id="<%= event._id %>" data-event_id="<%= event._id %>">
+
+  <div class="span1 votes ">
+	<div class="uparrow"></div>
+	<div class="count"><%= event.votes %></div>
+	<div class="voteup <% if (myself.status && myself.status.upvotes.indexOf(event._id) > 0) { %>upvoted<% } %>"><span class="upvote-caret"></span>Vote Up</div>
+	<% if (event._closed_by) { %><div class="awarded">awarded</div><% } %>
+	<div class="clearfix"></div>
+  </div>
+
+  <div class="span7 content">
+	<div class="row">
+
+	  <% if (event.feed == 'twitter') { %>
+	  <div class="twitter-profile-pic pull-left">
+		<a href="https://twitter.com/<%= event.actor %>"><img src="<%= templateHelpers.twitterAvatarSrc(event) %>" alt="" /></a>
+	  </div>
+	  <% } %>
+
+	  <% if (event.image) { %>
+	  <img src="<%= templateHelpers.makeUrlForImage(event.image, 60) %>" class="thumb" alt="post image" >
+	  <% } %>
+
+	  <h5 class="title"><%== templateHelpers.compositeTitle(event) %></h5>
+
+	  <div class="body">
+		<%== templateHelpers.compositeBody(event) %>
+	  </div>
+
+	  <div class="clearfix"></div>
+	</div>
+
+	<div class="status row">
+
+	  <div class="pull-right">
+
+		<% if (event.feed == 'twitter' && event._children.length > 0) { %>
+		<div class="retweets-container pull-left">
+		  <img class='retweet-icon' src="/img/icon-retweet.png" />
+		  <% $.each(event._children, function(i, c) { %>
+		  <a href='https://twitter.com/<%= c.actor %>'><img class='profile-icon' src='<%= c.source_data.user.profile_image_url %>'/></a>
+		  <% }) %>
+		</div>
+		<% } %>
+
+		<div class="event-metadata pull-right">
+		  <%== templateHelpers.compositeMetadata(event) %>
+		</div>
+	  </div>
+
+	  <% if (event.feed == 'twitter') { %>
+	  <!-- <div class="twitter-actions-list nav">
+		<div class="twitter-action reply"></div>
+		<div class="twitter-action retweet"></div>
+		<div class="twitter-action star"></div>
+		<div class="clearfix"> </div>
+	  </div> -->
+
+	  <% } else { %>
+	  <% if (event._children && event._children.length > 0) { %>
+	  <a class="expand-replies"><span class="icon"></span>Earlier (<%= event._children.length %>)</a>
+	  <% } %>
+	  <% } %>
+
+	  <ul class="tag-list nav">
+		<% $.each(event.tags, function (i, tag) { %>
+		<% if (tag) { %><li><small><%= tag %></small></li><% } %>
+		<% }); %>
+	  </ul>
+
+	  <div class="clearfix"></div>
+	</div>
+
+
+	<% if (event.feed !== 'twitter') { %>
+	<div class="replies row">
+	  <span class="replies-caret"></span>
+
+	  <% $.each(event._children, function (i, ch) { %>
+	  <div class="reply-event row <% if (i%2==0) {%>even<% } %>"  data-event_id="<%= ch._id %>">
+		<% if (event.award && !event._closed_by) { %>
+		  <div class="award-btn"><a href="#"><span class="caret"></span>Award</a></div>
+		<% }%>
+		<% if (ch.awarded) { %>
+		  <div class="awarded-badge"></div>
+		<% } %>
+
+		<div class="votes">
+		  <div class="uparrow"></div>
+		  <div class="count"><%= ch.votes %></div>
+		</div>
+		<div class="body reply">
+		  <% if (ch.body) { %>
+		  <%== templateHelpers.cleanHtml(ch.body) %>
+		  <div class="event-metadata pull-right"><%== templateHelpers.compositeReplyMetadata(event) %></div>
+		  <% } else { %>
+		  <%= ch.title %>>
+		  <% } %>
+		</div>
+	  </div>
+	  <% }); %>
+
+	  <div class="clearfix"></div>
+	</div>
+	<% } %>
+
+  </div>
+
+  <div class="clearfix"></div>
+</div>

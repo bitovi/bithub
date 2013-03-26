@@ -1,0 +1,90 @@
+<div class="day" data-timestamp="<%= dayStr %>">
+
+	<div class="sep-wrapper wrapper" style="height: 42px;">
+	  <div class="sep blue">
+		<h4 class="flag blue"><%= templateHelpers.formatForTitle(dayStr) %></h4>
+	  </div>
+	</div>
+
+	<div class="category-feature" style="<%= templateHelpers.hideIfNone(eventsInDay['feature']) %>">
+	  <h3 class="features-icon">Features</h3>
+	  <div class="trucated">
+		<% eventsInDay['feature'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-bug" style="<%= templateHelpers.hideIfNone(eventsInDay['bug']) %>">
+	  <h3 class="bugs-icon">Bugs</h3>
+	  <div class="truncated">
+		<% eventsInDay['bug'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-article" style="<%= templateHelpers.hideIfNone(eventsInDay['article']) %>">
+	  <h3 class="articles-icon">Articles</h3>
+	  <div>
+		<% eventsInDay['article'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-plugin" style="<%= templateHelpers.hideIfNone(eventsInDay['plugin']) %>">
+	  <h3 class="plugins-icon">Plugins</h3>
+	  <div class="truncated">
+		<% eventsInDay['plugin'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-app" style="<%= templateHelpers.hideIfNone(eventsInDay['app']) %>">
+	  <h3 class="apps-icon">Apps</h3>
+	  <div class="truncated">
+		<% eventsInDay['app'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+	
+	<div class="category-code" style="<%= templateHelpers.hideIfNone(eventsInDay['code']) %>">
+	  <h3 class="code-icon">Code</h3>
+	  <div class="truncated">
+		<% eventsInDay['code'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-question" style="<%= templateHelpers.hideIfNone(eventsInDay['question']) %>">
+	  <h3 class="questions-icon">Questions</h3>
+	  <div class="truncated">
+		<% eventsInDay['question'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+	<div class="category-comment" style="<%= templateHelpers.hideIfNone(eventsInDay['comment']) %>">
+	  <h3 class="comments-icon">Comments</h3>
+	  <div class="truncated">
+		<% eventsInDay['comment'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+	
+	<div class="category-twitter" style="<%= templateHelpers.hideIfNone(eventsInDay['twitter']) %>">
+	  <h3 class="twitter-icon">Twitter</h3>
+	  <div class="truncated">
+		<% eventsInDay['twitter'].map(function(event) { %>
+		<%== can.view.render('/app/views/_event', {event: event}) %>
+		<% }) %>
+	  </div>
+	</div>
+
+</div>
