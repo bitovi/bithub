@@ -1,6 +1,6 @@
 class Api::EventsController < ApplicationController
   respond_to :json
-  protect_from_forgery :except => [:create, :update]
+  before_filter :authenticate_user!, :only => ['create', 'update']
 
   def index
     @muster_query = request.env['muster.query']

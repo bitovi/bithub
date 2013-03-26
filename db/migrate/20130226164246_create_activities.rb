@@ -25,7 +25,7 @@ class CreateActivities < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :internal do |t|
+    create_table :internals do |t|
       t.references :actor, :null => false
       t.references :receiver, :null => false
       t.references :applies_to

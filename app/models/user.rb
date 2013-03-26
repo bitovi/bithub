@@ -5,15 +5,30 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
 
-  has_many :anteups, :foreign_key => "actor_id", :dependent => :destroy
-  has_many :upvotes, :foreign_key => "actor_id", :dependent => :destroy
+  has_many :anteups_as_actor, :foreign_key => "actor_id", :dependent => :destroy
+  has_many :upvotes_as_actor, :foreign_key => "actor_id", :dependent => :destroy
+  has_many :awards_as_actor, :foreign_key => "actor_id", :dependent => :destroy
+
+  has_many :events, :foreign_key => "author_id", :class_name => "Event"
+  has_many :anteups, :through => :events
+  has_many :upvotes, :through => :events
+  has_many :awards, :through => :events
+
   has_many :internals, :foreign_key => "receiver_id", :autosave => true
-  has_many :authored_events, :foreign_key => "author_id", :class_name => "Event"
   has_many :identities, :dependent => :destroy
 
   validates :email, :uniqueness => true
   
   # type, actor_id, applies_to, value, ts
+  
+  def activities
+    activities = []
+    activities.concat(self.awards)
+    activities.concat(self.upvotes)
+    activities.concat(self.anteups)
+    activities.concat(self.internals)
+    activities.sort {|x, y| x.origin_ts <=> y.origin_ts}
+  end
 
   def sum_points
     sum = 0
