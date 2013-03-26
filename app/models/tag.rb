@@ -1,11 +1,19 @@
 class Tag < ActsAsTaggableOn::Tag 
   CATEGORIES = %w(code comment plugin app article chat bug feature)
-  FEEDS = %w(github twitter disqus irc forums)
+  FEEDS = %w(github twitter disqus irc forums community_site)
   attr_accessible :name, :display_name, :aliases, :priority
   validates :name, :presence => true, :uniqueness => true
 
   def to_s
     name
+  end
+
+  def self.categories
+    Tag.where(:name => CATEGORIES)
+  end
+  
+  def self.feeds
+    Tag.where(:name => FEEDS)
   end
 
   def self.category_ids

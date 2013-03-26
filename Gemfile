@@ -20,6 +20,7 @@ gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'jbuilder'
 gem 'draper'
+gem 'inherited_resources'
 gem 'newrelic_rpm'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
