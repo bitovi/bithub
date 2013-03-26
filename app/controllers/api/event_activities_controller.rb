@@ -16,7 +16,7 @@ class Api::EventActivitiesController < ApplicationController
       upvote = Upvote.create_upvote(current_user, event)
       render :json => upvote
     else
-      render :json => {:errors => ['Already upvoted']}
+      render :json => {:error => t('errors.messages.already_upvoted')}, :status => 500
     end
   end
 
@@ -27,7 +27,7 @@ class Api::EventActivitiesController < ApplicationController
       anteup = Anteup.create_anteup(current_user, event, params[:value])
       render :json => anteup
     else
-      render :json => {:errors => ['Anteup already placed']}
+      render :json => {:error => t('errors.messages.already_anteuped')}, :status => 500
     end
   end
 
@@ -38,8 +38,15 @@ class Api::EventActivitiesController < ApplicationController
       award = Award.create_award(current_user, event)
       render :json => award
     else
-      render :json => {:errors => ['Event already awarded']}
+      render :json => {:error => t('errors.messages.already_awarded')}, :status => 500
     end
+  end
+
+
+  private
+
+  def show_errors(e)
+    render :json => {:error => e.message}, :status => 500
   end
 
 end

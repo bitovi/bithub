@@ -3,3 +3,8 @@
 
 en:
   hello: "Hello world"
+  errors:
+    messages:
+      already_upvoted: "Already upvoted"
+      already_anteuped: "Anteup already placed"
+      already_awarded: "Already awarded"
