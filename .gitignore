@@ -14,4 +14,7 @@
 /log/*.log
 /tmp
 
+# Ignore compiled assets
+/public/assets/
+
 .DS_Store

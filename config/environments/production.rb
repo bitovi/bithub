@@ -77,4 +77,9 @@ Bithub::Application.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
+
+  # required by heroku: http://guides.rubyonrails.org/asset_pipeline.html#precompiling-assets
+  config.assets.initialize_on_precompile = false
+
 end
