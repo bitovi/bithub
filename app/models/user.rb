@@ -1,26 +1,26 @@
+require 'digest/md5'
+
 class User < ActiveRecord::Base
   rolify
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
+  serialize :props, ActiveRecord::Coders::Hstore
 
-  has_many :anteups_as_actor, :foreign_key => "actor_id", :dependent => :destroy
-  has_many :upvotes_as_actor, :foreign_key => "actor_id", :dependent => :destroy
-  has_many :awards_as_actor, :foreign_key => "actor_id", :dependent => :destroy
-
+  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
+  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
+  has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :events, :foreign_key => "author_id", :class_name => "Event"
+  has_many :internals, :foreign_key => "receiver_id"
   has_many :anteups, :through => :events
   has_many :upvotes, :through => :events
   has_many :awards, :through => :events
-
-  has_many :internals, :foreign_key => "receiver_id", :autosave => true
   has_many :identities, :dependent => :destroy
-
   validates :email, :uniqueness => true
   
-  # type, actor_id, applies_to, value, ts
-  
+  before_save :calculate_gravatar_hash
+
   def activities
     activities = []
     activities.concat(self.awards)
@@ -42,7 +42,6 @@ class User < ActiveRecord::Base
   end
 
   def self.top(n=10)
-
     # calculate scores for all users
     scores = []
     all.each do |user|
@@ -72,4 +71,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def update_blank_oauth_attrs(args)
+    Rails.logger.info "JEVEM TI MATETETET =============> " 
+    name = args[:name] if (name.blank? && !args[:name].blank?)
+    email = args[:email] if (email.blank? && !args[:email].blank?)
+    save!
+  end
+
+  private
+  def calculate_gravatar_hash
+    if email
+      self.props[:gravatar_url] = "https://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
+    end
+  end
 end
