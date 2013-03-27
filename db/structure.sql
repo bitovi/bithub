@@ -216,10 +216,10 @@ ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 
 --
--- Name: internal; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: internals; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE internal (
+CREATE TABLE internals (
     id integer NOT NULL,
     actor_id integer NOT NULL,
     receiver_id integer NOT NULL,
@@ -231,10 +231,10 @@ CREATE TABLE internal (
 
 
 --
--- Name: internal_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: internals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE internal_id_seq
+CREATE SEQUENCE internals_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -243,10 +243,10 @@ CREATE SEQUENCE internal_id_seq
 
 
 --
--- Name: internal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: internals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE internal_id_seq OWNED BY internal.id;
+ALTER SEQUENCE internals_id_seq OWNED BY internals.id;
 
 
 --
@@ -438,6 +438,7 @@ CREATE TABLE users (
     city character varying(255),
     postal character varying(255),
     state character varying(255),
+    props hstore,
     country_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -518,7 +519,7 @@ ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY internal ALTER COLUMN id SET DEFAULT nextval('internal_id_seq'::regclass);
+ALTER TABLE ONLY internals ALTER COLUMN id SET DEFAULT nextval('internals_id_seq'::regclass);
 
 
 --
@@ -604,11 +605,11 @@ ALTER TABLE ONLY identities
 
 
 --
--- Name: internal_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: internals_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY internal
-    ADD CONSTRAINT internal_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY internals
+    ADD CONSTRAINT internals_pkey PRIMARY KEY (id);
 
 
 --
@@ -794,19 +795,19 @@ ALTER TABLE ONLY events
 
 
 --
--- Name: fk_internal_actor_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_internals_actor_users; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY internal
-    ADD CONSTRAINT fk_internal_actor_users FOREIGN KEY (actor_id) REFERENCES users(id);
+ALTER TABLE ONLY internals
+    ADD CONSTRAINT fk_internals_actor_users FOREIGN KEY (actor_id) REFERENCES users(id);
 
 
 --
--- Name: fk_internal_receiver_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_internals_receiver_users; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY internal
-    ADD CONSTRAINT fk_internal_receiver_users FOREIGN KEY (receiver_id) REFERENCES users(id);
+ALTER TABLE ONLY internals
+    ADD CONSTRAINT fk_internals_receiver_users FOREIGN KEY (receiver_id) REFERENCES users(id);
 
 
 --
