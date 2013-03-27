@@ -16,5 +16,5 @@
 
 # Ignore compiled assets
 /public/assets/
-
+*.sass-cache*
 .DS_Store
