@@ -45,21 +45,20 @@ class AddFkOnActivities < ActiveRecord::Migration
 
     # internal
     execute <<-SQL
-      ALTER TABLE internal 
-        ADD CONSTRAINT fk_internal_actor_users
+      ALTER TABLE internals
+        ADD CONSTRAINT fk_internals_actor_users
         FOREIGN KEY (actor_id) 
         REFERENCES users(id)
     SQL
     execute <<-SQL
-      ALTER TABLE internal 
-        ADD CONSTRAINT fk_internal_receiver_users
+      ALTER TABLE internals
+        ADD CONSTRAINT fk_internals_receiver_users
         FOREIGN KEY (receiver_id) 
         REFERENCES users(id)
     SQL
   end
 
   def down
-
     # upvotes
     execute <<-SQL
       ALTER TABLE upvotes 
@@ -90,14 +89,14 @@ class AddFkOnActivities < ActiveRecord::Migration
         DROP CONSTRAINT fk_awards_users
     SQL
 
-    # internal
+    # internals
     execute <<-SQL
-      ALTER TABLE internal 
-        DROP CONSTRAINT fk_internal_actor_users
+      ALTER TABLE internals
+        DROP CONSTRAINT fk_internals_actor_users
     SQL
     execute <<-SQL
       ALTER TABLE internal 
-        DROP CONSTRAINT fk_internal_receiver_users
+        DROP CONSTRAINT fk_internals_receiver_users
     SQL
   end
 end

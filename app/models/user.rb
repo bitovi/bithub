@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
 
   def sum_points
     sum = 0
-    authored_events.each do |ev|
+    self.events.each do |ev|
       sum += ev.rule.authorship_value             # authorships
           +  ev.upvotes.sum('value')              # upvotes
           +  ev.awards.sum('value')               # awards
@@ -72,10 +72,9 @@ class User < ActiveRecord::Base
   end
 
   def update_blank_oauth_attrs(args)
-    Rails.logger.info "JEVEM TI MATETETET =============> " 
-    name = args[:name] if (name.blank? && !args[:name].blank?)
-    email = args[:email] if (email.blank? && !args[:email].blank?)
-    save!
+    self.name = args[:name] if self.name.blank? && !args[:name].blank?
+    self.email = args[:email] if self.email.blank? && !args[:email].blank?
+    save! if self.changed?
   end
 
   private

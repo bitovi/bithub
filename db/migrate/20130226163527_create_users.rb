@@ -7,6 +7,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :city
       t.string :postal
       t.string :state
+      t.hstore :props
       t.references :country
 
       t.timestamps

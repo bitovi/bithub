@@ -29,6 +29,8 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 group :assets do
   gem "therubyracer", "~> 0.11.4"
   gem "less-rails", "~> 2.2.6"
+  gem 'sass-rails'
+  gem 'compass-rails'
   gem 'uglifier', '>= 1.0.3'
 end
 
@@ -38,6 +40,5 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'guard-rspec'
   gem 'faker'
-  gem 'debugger'
   gem 'pry-rails'
 end

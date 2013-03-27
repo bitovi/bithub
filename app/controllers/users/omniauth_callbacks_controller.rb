@@ -39,9 +39,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     identity = Identity.find_with_omniauth(oauth_data)
     if user_signed_in? && resource
-      if identity && !resource.identities.include?(identity)
-        resource.identities << identities
-        resource.save!
+      resource.update_blank_oauth_attrs({name: name, email: email})
+      if identity
+        identity.update_source_data_if_blank(oauth_data['info'])
+        resource.identities << identity if identity.user.blank?
+        resource.save! if resource.changed?
       elsif !identity
         resource.identities.create(uid: oauth_data['uid'], provider: oauth_data['provider'], source_data: oauth_data['info'])
       end

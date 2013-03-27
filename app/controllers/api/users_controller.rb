@@ -8,7 +8,7 @@ class Api::UsersController < ApplicationController
     muster_query = request.env['muster.query']
     Rails.logger.info muster_query
 
-    @users = User.all
+    @users = UserDecorator.decorate_collection(User.all)
     render :index
   end
 

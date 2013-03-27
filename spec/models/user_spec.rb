@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe User do
 
-  context "upon creation / first sign in" do
-    describe "#get_all_events" do
-    end
-  end
-
   describe "#sum_points" do
     it "calculates total points" do
       rule = create(:rule, authorship_value: 100, award_value: 1000)
@@ -24,7 +19,7 @@ describe User do
       upvote_reply = Upvote.create_upvote(admin, event_reply)
       anteup = Anteup.create_anteup(admin, event, 25)
       award = Award.create_award(admin, event_reply)
-      anteup_other = Anteup.create_anteup(author_reply, event_other, 20)        
+      anteup_other = Anteup.create_anteup(author_reply, event_other, 20)
 
       sum = event_reply.rule.authorship_value
       + event_reply.upvotes.sum('value')
@@ -32,6 +27,14 @@ describe User do
       - author_reply.anteups.fullfilled.sum('value')
 
       expect(author_reply.sum_points).to eq(sum)
+    end
+  end
+
+  describe "#update_blank_oauth_attrs" do
+    it "updates the user's attrs if they're blank" do
+      user = create(:user, name: "Nikica Jokic", email: nil)
+      user.update_blank_oauth_attrs({name: "Nikica Prdovic", email: "neektza@gmail.com"})
+      expect(user.reload.email).to eq ("neektza@gmail.com")
     end
   end
 
@@ -43,10 +46,12 @@ describe User do
       user4 = create(:user); user4.stub(:sum_points) {4}
       user5 = create(:user); user5.stub(:sum_points) {5}
       user6 = create(:user); user6.stub(:sum_points) {6}
-      
-      top_users = User.top(3)      
-      #expect(top_users).to eq([user6, user5, user4])
+
+      top_users = User.top(3)
     end
   end
 
+  describe "#collect_authored_events" do
+    it "collects all events with matching props->origin_author_id"
+  end
 end
