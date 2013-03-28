@@ -21,6 +21,8 @@ gem 'jbuilder'
 gem 'draper'
 gem 'inherited_resources'
 gem 'newrelic_rpm'
+gem 'kaminari'
+gem 'best_in_place'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
