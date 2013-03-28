@@ -1,6 +1,7 @@
 class Tag < ActsAsTaggableOn::Tag 
   CATEGORIES = %w(code comment plugin app article chat bug feature)
   FEEDS = %w(github twitter disqus irc forums community_site)
+  PROJECTS = %w(canjs donejs jquerypp)
   attr_accessible :name, :display_name, :aliases, :priority
   validates :name, :presence => true, :uniqueness => true
 
@@ -9,6 +10,10 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories
+    Tag.where(:name => CATEGORIES)
+  end
+  
+  def self.projects
     Tag.where(:name => CATEGORIES)
   end
   

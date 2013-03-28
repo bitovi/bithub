@@ -327,4 +327,11 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def self.has_an_attribute?(attr)
+    Event.reflections.include?(attr) ||
+    Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
+    Event.attribute_names.include?(attr) ||
+    Event.attribute_names.include?(attr.to_s.pluralize.to_sym)
+  end
+
 end

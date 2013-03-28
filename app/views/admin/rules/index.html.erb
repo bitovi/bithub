@@ -1,0 +1,21 @@
+<h1>Rules</h1>
+ 
+<table class="table table-stripped table-hover">
+  <tr>
+    <th>Required tags</th>
+    <th>Authorship value</th>
+    <th>Award value</th>
+    <th>Upvote value</th>
+  </tr>
+ 
+<% @rules.each do |r| %>
+  <tr>
+    <td><%= r.required_tags %></td>
+    <td><%= r.authorship_value %></td>
+    <td><%= r.award_value %></td>
+    <td><%= r.upvote_value %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= paginate @rules %>

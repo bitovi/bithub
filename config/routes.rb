@@ -39,8 +39,10 @@ Bithub::Application.routes.draw do
     
   namespace :admin do
     resources :users
+    resources :events
     resources :tags
     resources :rules
+    root :to => "rules#index"
   end
 
   root :to => "application#home"

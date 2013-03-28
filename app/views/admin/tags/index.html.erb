@@ -1,0 +1,17 @@
+<h1>Tags</h1>
+ 
+<table class="table table-stripped table-hover">
+  <tr>
+    <th>Name</th>
+    <th>Aliases</th>
+  </tr>
+ 
+<% @tags.each do |t| %>
+  <tr>
+    <td><%= link_to t.name, admin_tag_path(t) %></td>
+    <td><%= t.aliases %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= paginate @tags %>

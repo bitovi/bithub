@@ -1,4 +1,5 @@
 class Api::EventsController < ApplicationController
+  TAG_FIELDS = ['tag', 'feed', 'category']
   respond_to :json
   before_filter :authenticate_user!, :only => ['create', 'update']
 
@@ -12,20 +13,12 @@ class Api::EventsController < ApplicationController
     scope = scope.order(@muster_query[:order]) if !@muster_query[:order].blank?
     scope = scope.offset(@muster_qu1gtery[:offset]) if !@muster_query[:offset].blank?
     scope = scope.limit(@muster_query[:limit])
+    scope = scope.where(all_others(params))
+    scope = scope.tagged_with(only_tags(params))
     
-    if !@muster_query[:where].blank?
-      tags = @muster_query[:where].values.uniq
-      scope = scope.tagged_with(tags)
-    end
-
-    if !@muster_query[:group].blank?
-      @decorated_events_in_groups = Hash[scope.nest_by(@muster_query[:group]).map {|group, coll| [group, EventDecorator.decorate_collection(coll)] }]
-      render :grouped_index
-    else
-      @events = scope.all
-      @events = EventDecorator.decorate_collection(@events)
-      render :index
-    end
+    @events = scope.all
+    @events = EventDecorator.decorate_collection(@events)
+    render :index
   end
 
   def show
@@ -49,6 +42,19 @@ class Api::EventsController < ApplicationController
     else
       render :json => @event.errors.messages, :status => 500
     end
+  end
+
+  private
+  def only_tags(params)
+    params.find_all{|el| TAG_FIELDS.include?(el[0])}.map{|el| el[1]}.flatten
+  end
+
+  def all_others(params)
+    h = Hash.new
+    params.each do |k,v|
+      h[k] = v if Event.has_an_attribute?(k) && !TAG_FIELDS.include?(k)
+    end
+    return h
   end
 
 end
