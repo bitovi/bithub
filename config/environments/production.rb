@@ -80,5 +80,4 @@ Bithub::Application.configure do
 
   # required by heroku: http://guides.rubyonrails.org/asset_pipeline.html#precompiling-assets
   config.assets.initialize_on_precompile = false
-
 end
