@@ -333,5 +333,4 @@ class Event < ActiveRecord::Base
     Event.attribute_names.include?(attr) ||
     Event.attribute_names.include?(attr.to_s.pluralize.to_sym)
   end
-
 end
