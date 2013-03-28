@@ -1,43 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>BitHub | activity on our open-source projects</title>
+  <title>Bithub</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
-  <div id="container">
-	
-	<div id="navbar" class="navbar">
-	  <%= render "shared/navbar" %>
-	</div>
+<%= yield %>
 
-	<div id="new-post-form-wrapper">
-	  <div id="new-post-form-container" class="hidden">
-		<div class="container">
-		  <%= render "shared/new_post" %>
-		</div>
-	  </div>
-	  <div id="new-post-bottom-separator"></div>
-	</div>
-	
-	<div id="content-container" class="container">
-	  <div class="row">		
-		<div class="span8 left-content" id="events">
-		  <%= yield %>
-		</div>
-
-		<div class="span4" id="other-stuff">
-		  <%= render "shared/sidebar" %>
-		</div>
-
-	  </div>
-	</div>
-	
-  </div>
-  
 </body>
 </html>
