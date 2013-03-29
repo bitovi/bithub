@@ -279,6 +279,7 @@ DEPENDENCIES
   guard-rspec
   inherited_resources
   jbuilder
+  jquery-rails
   kaminari
   less-rails (~> 2.2.6)
   memcachier

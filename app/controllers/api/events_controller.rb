@@ -14,7 +14,7 @@ class Api::EventsController < ApplicationController
     scope = scope.offset(@muster_qu1gtery[:offset]) if !@muster_query[:offset].blank?
     scope = scope.limit(@muster_query[:limit])
     scope = scope.where(all_others(params))
-    scope = scope.tagged_with(only_tags(params))
+    scope = scope.tagged_with(only_tags(params)) if only_tags(params).length > 0
     
     @events = scope.all
     @events = EventDecorator.decorate_collection(@events)
@@ -45,6 +45,7 @@ class Api::EventsController < ApplicationController
   end
 
   private
+
   def only_tags(params)
     params.find_all{|el| TAG_FIELDS.include?(el[0])}.map{|el| el[1]}.flatten
   end
