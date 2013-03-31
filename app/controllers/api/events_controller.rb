@@ -14,10 +14,11 @@ class Api::EventsController < ApplicationController
     scope = scope.offset(@muster_qu1gtery[:offset]) if !@muster_query[:offset].blank?
     scope = scope.limit(@muster_query[:limit])
     scope = scope.where(all_others(params))
-    scope = scope.tagged_with(only_tags(params)) if only_tags(params).length > 0
+    scope = scope.tagged_with(only_tags(params)) if !only_tags(params).empty?
     
     @events = scope.all
     @events = EventDecorator.decorate_collection(@events)
+
     render :index
   end
 
