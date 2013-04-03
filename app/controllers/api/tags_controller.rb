@@ -13,6 +13,11 @@ class Api::TagsController < ApplicationController
     @tags = Tag.categories.all
     render :index
   end
+
+  def projects
+    @tags = Tag.projects.all
+    render :index
+  end
   
   def feeds
     @tags = Tag.feeds.all

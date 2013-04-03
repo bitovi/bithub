@@ -33,6 +33,7 @@ Bithub::Application.routes.draw do
       collection do
         get :feeds
         get :categories
+        get :projects
       end
     end
   end
