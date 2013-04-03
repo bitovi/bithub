@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Upvote do
-
   before :each do
     create(:rule)
     @actor = create(:user, name: "Some user")
@@ -17,12 +16,10 @@ describe Upvote do
       #expect(@event.reload.author.events_upvoted).to include(activity.applies_to)
     end
   end
-
 end
 
 
 describe Anteup do
-
   before :each do
     create(:rule)
     @actor = create(:user, name: "Some user")
@@ -55,9 +52,9 @@ describe Anteup do
 end
 
 describe Award do
-
   describe ".create_award" do
     it "awards event author with parent event points, upvotes and anteups" do
+      @actor = create(:user, name: "Some user")
       @rule = create(:rule_with_award)
       @event = create(:event_determined, rule: @rule)
       @reply = create(:event_determined, parent: @event)
@@ -73,18 +70,3 @@ describe Award do
     end
   end
 end
-
-<<-COMMENT
-  describe ".donate" do
-    it "transfers points from actor to author of event" do
-      donation = 25
-      activity = Activity.donate(@actor, @event, donation)
-      expect(activity.identificator).to eq('donation')
-      expect(activity.applies_to).to eq(@event)
-      expect(activity.actor).to eq(@actor)
-      expect(activity.value).to eq(donation)
-      expect(activity.fullfilled).to eq(true)
-    end
-  end
-end
-COMMENT

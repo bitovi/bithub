@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  VALID_FEEDS_FOR_IDENT = %w(github twitter some_feed)
+  VALID_FEEDS_FOR_IDENT = %w(github twitter)
   class EventHasNoParentError < Error; end
   class DistinctFieldNotKnown < Error; end
 
@@ -94,6 +94,8 @@ class Event < ActiveRecord::Base
       self.author = ident.user
     elsif !ident && VALID_FEEDS_FOR_IDENT.include?(meta[:feed])
       ident = Identity.create({provider: meta[:feed], uid: meta[:origin_author_id]})
+      ident.create_user({name: meta[:origin_author_username]})
+      self.author = ident.user
     end
     self
   end

@@ -1,16 +1,22 @@
 FactoryGirl.define do
+
+  factory :meta, class:Hash do
+    feed "some_feed"
+    category "some_category"
+    tags ['some_feed','some_category','some_content_tag']
+    origin_author_id "1"
+    origin_author_username "some_user"
+
+    initialize_with { attributes }
+  end
+
   factory :event do
     title "Title"
     body "Body"
     origin_date Date.today
     origin_ts Time.now
     sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }
-    meta({
-      :feed => "some_feed",
-      :category => "some_category",
-      :tags => ['some_feed','some_category','some_content_tag'],
-      :origin_author_id => "1"
-    })
+    meta FactoryGirl.build(:meta)
 
     trait :with_determined_feed do
       association :feed, factory: :tag, name: "some_feed"
@@ -77,7 +83,8 @@ FactoryGirl.define do
           :feed => 'twitter',
           :tweet_id => "100",
           :type => "status_event",
-          :origin_author_id => "123456"
+          :origin_author_id => "123456",
+          :origin_author_username => "some_user"
         })
       end
 
@@ -113,13 +120,14 @@ FactoryGirl.define do
       trait :issue do
         title "raised issue #1"
         body "I'm awesome because I raised an issue."
-        association :category, factory: :tag, name: 'issue'
-        tag_list ['github','issues_event','issue','canjs']
+        association :category, factory: :tag, name: 'bug'
+        tag_list ['github','issues_event','issue','canjs','bug']
         meta({
           :feed => 'github',
           :type => "issues_event",
           :issue_id => "111",
-          :origin_author_id => "456789"
+          :origin_author_id => "456789",
+          :origin_author_username => "some_user"
         })
       end
 

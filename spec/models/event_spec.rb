@@ -63,22 +63,35 @@ describe Event do
       context "when there is an author in the system" do
         it "associates it with a github event" do
           ghe = build(:github_issue)
-          usr = create(:user)
+          ident = create(:identity, uid: 456789, provider: "github")
+          usr = build(:user)
+          usr.identities << ident
+          usr.save!
           ghe.determine_author
           ghe.save!
           expect(ghe.author).to eq(usr)
         end
         it "associates it with a twitter event" do
           twe = build(:twitter_tweet)
-          usr = create(:user)
+          ident = create(:identity, uid: 123456, provider: "twitter")
+          usr = build(:user)
+          usr.identities << ident
+          usr.save!
           twe.determine_author
           twe.save!
           expect(twe.author).to eq(usr)
         end
       end
       context "when there is no author in the system" do
-        it "creates it and associates it with the event" do
-          generic_event = build(:event_wo_author)
+        it "creates it (from github) and associates it with the event" do
+          generic_event = build(:github_issue)
+          generic_event.determine_author
+          generic_event.save!
+          expect(generic_event.author).to be
+        end
+        
+        it "creates it (from twitter) and associates it with the event" do
+          generic_event = build(:twitter_tweet)
           generic_event.determine_author
           generic_event.save!
           expect(generic_event.author).to be
