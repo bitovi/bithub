@@ -14,7 +14,7 @@ class Tag < ActsAsTaggableOn::Tag
   end
   
   def self.projects
-    Tag.where(:name => CATEGORIES)
+    Tag.where(:name => PROJECTS)
   end
   
   def self.feeds
