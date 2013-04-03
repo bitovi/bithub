@@ -12,7 +12,7 @@ class Api::UsersController < ApplicationController
     scope = scope.joins(@muster_query[:joins]) if !@muster_query[:joins].blank?
     scope = scope.includes(@muster_query[:includes]) if !@muster_query[:includes].blank?
     scope = scope.order(@muster_query[:order]) if !@muster_query[:order].blank?
-    scope = scope.offset(@muster_qu1gtery[:offset]) if !@muster_query[:offset].blank?
+    scope = scope.offset(@muster_query[:offset]) if !@muster_query[:offset].blank?
     scope = scope.limit(@muster_query[:limit])
     scope = scope.where(attr_queries(params))
     
