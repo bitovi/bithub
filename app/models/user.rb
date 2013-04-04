@@ -45,6 +45,10 @@ class User < ActiveRecord::Base
     sum
   end
 
+  def avatar
+    props['gravatar_url'] || '/assets/images/icon-user.png'
+  end
+
   def self.top(n=10)
     users = self.all
     n = users.count if users.count < n
