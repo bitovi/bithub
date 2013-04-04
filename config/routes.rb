@@ -24,6 +24,9 @@ Bithub::Application.routes.draw do
     resources :users, :except => [:new, :edit] do
       resources 'activities', :only => :index, :to => 'users#activities'
       resources 'events', :only => :index, :to => 'users#events'
+      collection do
+        get :top
+      end
     end
 
     # /api/tags
