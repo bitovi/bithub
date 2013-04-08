@@ -1,5 +1,4 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-
   def github
     oauthorize "github"
   end
@@ -20,8 +19,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => kind
       session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]
       sign_in @user, :event => :authentication
-      render :text => "SIGNED ID"
-    end    
+      render :template => 'special/close_oauth_popup.html'
+    else
+      #FIXME respond with error from a locale file
+      render :json => { message: 'error' }, :status => 500
+    end
   end
 
   def find_or_create_with_ouath(provider, oauth_data, resource=nil)
