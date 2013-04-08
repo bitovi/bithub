@@ -37,12 +37,9 @@ class User < ActiveRecord::Base
   def sum_points
     sum = 0
     self.events.each do |ev|
-      sum += ev.rule.authorship_value             # authorships
-          +  ev.upvotes.sum('value')              # upvotes
-          +  ev.awards.sum('value')               # awards
-          -  self.anteups.fullfilled.sum('value') # subtract fullfilled anteups
+      sum += ev.rule.authorship_value + ev.upvotes.sum('value') + ev.awards.sum('value')
     end
-    sum
+    sum + self.internals.sum('value') - self.anteups.fullfilled.sum('value')
   end
 
   def avatar
