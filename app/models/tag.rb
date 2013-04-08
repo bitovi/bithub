@@ -9,22 +9,27 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories
-    Tag.where(:name => @tags[:categories])
+    Tag.where(:name => @tags[:category])
   end
   
   def self.projects
-    Tag.where(:name => @tags[:projects])
+    Tag.where(:name => @tags[:project])
   end
   
   def self.feeds
-    Tag.where(:name => @tags[:feeds])
+    Tag.where(:name => @tags[:feed])
   end
 
   def self.category_ids
-    Tag.where(:name => @tags[:categories]).pluck(:id)
+    Tag.where(:name => @tags[:category]).pluck(:id)
   end
 
   def self.feed_ids
-    Tag.where(:name => @tags[:feeds]).pluck(:id)
+    Tag.where(:name => @tags[:feed]).pluck(:id)
   end
+
+  def self.types
+    @tags.keys().map{|tag| tag.to_s}
+  end
+
 end
