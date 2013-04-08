@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     activities.sort {|x, y| x.origin_ts <=> y.origin_ts}
   end
 
+  def score
+    sum_points
+  end
+
   def sum_points
     sum = 0
     self.events.each do |ev|
@@ -41,10 +45,17 @@ class User < ActiveRecord::Base
     sum
   end
 
+  def avatar
+    props['gravatar_url'] || '/assets/images/icon-user.png'
+  end
+
   def self.top(n=10)
+    users = self.all
+    n = users.count if users.count < n
+
     # calculate scores for all users
     scores = []
-    all.each do |user|
+    users.each do |user|
       scores << {:id => user.id, :score => user.sum_points}
     end
 
@@ -53,6 +64,7 @@ class User < ActiveRecord::Base
 
     # get top n users
     top_users = []
+    
     (0..n-1).each do |i|
       top_users << self.find(scores[i][:id])
     end

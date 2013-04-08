@@ -1,7 +1,7 @@
 class Api::UsersController < ApplicationController
   respond_to :json
-  rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
-  rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
+  #rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
+  #rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
 
   def index
     @muster_query = request.env['muster.query']
@@ -33,6 +33,12 @@ class Api::UsersController < ApplicationController
   def events
     @events = EventDecorator.decorate_collection(User.find(params[:user_id]).events)
     render 'api/events/index'
+  end
+
+  def top
+    @users = User.top(params[:n] || 10)
+    @users = UserDecorator.decorate_collection(@users)
+    render :index
   end
   
   private
