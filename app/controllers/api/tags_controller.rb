@@ -5,22 +5,13 @@ class Api::TagsController < ApplicationController
   before_filter :authenticate_user!, :only => ['create', 'update']
 
   def index
-    @tags = Tag.all
-    render :index
-  end
 
-  def categories
-    @tags = Tag.categories.all
-    render :index
-  end
+    if (params[:type]) && Tag.types.include?(params[:type])
+      @tags = Tag.send(params[:type].pluralize).all      
+    else
+      @tags = Tag.all
+    end
 
-  def projects
-    @tags = Tag.projects.all
-    render :index
-  end
-  
-  def feeds
-    @tags = Tag.feeds.all
     render :index
   end
 

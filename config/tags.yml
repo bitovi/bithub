@@ -1,4 +1,4 @@
-:feeds:
+:feed:
   - github
   - twitter
   - disqus
@@ -6,7 +6,7 @@
   - forums
   - community_site
 
-:projects:
+:project:
   - donejs
   - javascriptmvc
   - canjs
@@ -16,7 +16,7 @@
   - funcunit
   - documentjs
 
-:categories:
+:category:
   - bug
   - twitter
   - feature
