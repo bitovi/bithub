@@ -1,0 +1,29 @@
+:feeds:
+  - github
+  - twitter
+  - disqus
+  - irc
+  - forums
+  - community_site
+
+:projects:
+  - donejs
+  - javascriptmvc
+  - canjs
+  - canui
+  - jquerypp
+  - stealjs
+  - funcunit
+  - documentjs
+
+:categories:
+  - bug
+  - twitter
+  - feature
+  - question
+  - plugin
+  - article
+  - app
+  - chat
+  - code
+  - comment

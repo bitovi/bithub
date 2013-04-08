@@ -1,7 +1,6 @@
 class Tag < ActsAsTaggableOn::Tag 
-  CATEGORIES = %w(code comment plugin app article chat bug feature)
-  FEEDS = %w(github twitter disqus irc forums community_site)
-  PROJECTS = %w(canjs donejs jquerypp)
+  @tags = YAML::load_file(Rails.root.join('config', 'tags.yml'))
+
   attr_accessible :name, :display_name, :aliases, :priority
   validates :name, :presence => true, :uniqueness => true
 
@@ -10,22 +9,22 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories
-    Tag.where(:name => CATEGORIES)
+    Tag.where(:name => @tags[:categories])
   end
   
   def self.projects
-    Tag.where(:name => PROJECTS)
+    Tag.where(:name => @tags[:projects])
   end
   
   def self.feeds
-    Tag.where(:name => FEEDS)
+    Tag.where(:name => @tags[:feeds])
   end
 
   def self.category_ids
-    Tag.where(:name => CATEGORIES).pluck(:id)
+    Tag.where(:name => @tags[:categories]).pluck(:id)
   end
 
   def self.feed_ids
-    Tag.where(:name => FEEDS).pluck(:id)
+    Tag.where(:name => @tags[:feeds]).pluck(:id)
   end
 end
