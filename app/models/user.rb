@@ -46,29 +46,6 @@ class User < ActiveRecord::Base
     props['gravatar_url'] || '/assets/images/icon-user.png'
   end
 
-  def self.top(n=10)
-    users = self.all
-    n = users.count if users.count < n
-
-    # calculate scores for all users
-    scores = []
-    users.each do |user|
-      scores << {:id => user.id, :score => user.sum_points}
-    end
-
-    # sort scores by score
-    scores.sort_by{|s| -s[:score]}.reverse
-
-    # get top n users
-    top_users = []
-    
-    (0..n-1).each do |i|
-      top_users << self.find(scores[i][:id])
-    end
-
-    top_users 
-  end
-
   def collect_authored_events
     identities.each do |ident|
       events = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)

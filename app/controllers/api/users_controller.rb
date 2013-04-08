@@ -6,7 +6,6 @@ class Api::UsersController < ApplicationController
   def index
     @muster_query = request.env['muster.query']
     Rails.logger.info @muster_query
-    pluck_virtual_attrs(@muster_query[:order])
 
     scope = User.scoped
     scope = scope.joins(@muster_query[:joins]) if !@muster_query[:joins].blank?
@@ -16,11 +15,10 @@ class Api::UsersController < ApplicationController
     scope = scope.limit(@muster_query[:limit])
     scope = scope.where(attr_queries(params))
     
-    # Ordering by virtual calculated attributes (only first one matters currently)
-    va = pluck_virtual_attrs(@muster_query[:order])
+    # Ordering by virtual calculated attributes (can order by only one attr)
+    va = take_first(pluck_virtual_attrs(@muster_query[:order]))
     if va
       name, direction = va.split
-      Rails.logger.info "#{name} ::::::: #{direction}"
       @users = scope.all.sort{|u1, u2| u1.send(name) <=> u2.send(name)}
       @users.reverse! if direction == "desc"
     else
@@ -45,12 +43,6 @@ class Api::UsersController < ApplicationController
     render 'api/events/index'
   end
 
-  def top
-    @users = User.top(params[:n] || 10)
-    @users = UserDecorator.decorate_collection(@users)
-    render :index
-  end
-  
   private
   def attr_queries(params)
     h = Hash.new
@@ -62,12 +54,16 @@ class Api::UsersController < ApplicationController
 
   private
 
+  def take_first(query)
+    query[0]
+  end
+
   def filter_order_query(query)
     query.reject{|p| !User.has_an_attribute?(p.split[0])}
   end
 
   def pluck_virtual_attrs(query)
-    query.select{|p| !User.has_an_attribute?(p.split[0])}[0]
+    query.select{|p| !User.has_an_attribute?(p.split[0])}
   end
 
 end
