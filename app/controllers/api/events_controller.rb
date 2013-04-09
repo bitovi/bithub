@@ -12,14 +12,19 @@ class Api::EventsController < ApplicationController
     scope = scope.includes(@muster_query[:includes]) if !@muster_query[:includes].blank?
     scope = scope.order(@muster_query[:order]) if !@muster_query[:order].blank?
     scope = scope.offset(@muster_query[:offset]) if !@muster_query[:offset].blank?
-    scope = scope.limit(@muster_query[:limit])
+    scope = scope.limit(@muster_query[:limit]) if @muster_query[:count].blank?
     scope = scope.where(all_others(params))
     scope = scope.tagged_with(only_tags(params)) if !only_tags(params).empty?
-    
-    @events = scope.all
-    @events = EventDecorator.decorate_collection(@events)
 
-    render :index
+    if !@muster_query[:count].blank?
+      @object = {:count => scope.count(@muster_query[:count]) }
+      render :json => @object
+    else
+      @events = scope.all
+      @events = EventDecorator.decorate_collection(@events)
+      render :index
+    end
+    
   end
 
   def show

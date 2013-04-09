@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/neektza/muster.git
-  revision: ca38bb5d0ce3b3ca37374b6462437e4c078548d1
+  revision: b8643fb65d4c87a2a41adb157ec07e4e726c1d77
   specs:
     muster (0.0.8)
       activesupport (~> 3.0)
