@@ -17,11 +17,12 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 # MSGQ connection string
 $mq_cs = ENV['MSGQ']
 $channels = ENV['IRCCHANS'].split(',')
+$nicks = []
 
 # API calls available
 class API < Sinatra::Base
   get '/nicks' do
-    "THESE ARE YOUR NICKNAMES"
+    Yajl::Encoder.encode($nicks.uniq)
   end
 end
 
@@ -36,19 +37,29 @@ EM.next_tick do
       thaum.port   = 6667
     end
 
-    # $log.info "METHODS: #{@thaum}"
-    $log.info "INSPECT on INIT: #{@thaum.inspect}"
-
     @thaum.on :connect do
-      @thaum.console_logger.info "INSPECT on CONNECT: #{@thaum.inspect}"
       EM::Iterator.new($channels).each do |c, iter| 
         @thaum.join c
         iter.next
       end
     end
 
+    @thaum.on :part do |data|
+      nick = data[:part].user.nick
+      $nicks.delete(nick)
+      $log.info "ALL: #{$nicks}"
+    end
+
+
+    @thaum.on :join do |data|
+      @thaum.user_list.users.each do |u|
+        $nicks.push(u.nick)
+      end
+      $nicks.uniq!
+      $log.info "ALL: #{$nicks}"
+    end
+
     @thaum.on :channel, // do |data|
-      @thaum.console_logger.info "INSPECT on CHANNEL: #{@thaum.inspect}"
       data[:time] = Time.now.strftime("%FT%T%z")
       hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + data[:time])
 
