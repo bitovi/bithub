@@ -1,1 +1,1 @@
-irc_bot: ruby app/irc_bot.rb
+irc_bot: bundle exec thin start

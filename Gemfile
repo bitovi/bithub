@@ -1,5 +1,7 @@
 source :rubygems
 
+gem 'thin'
+gem 'sinatra'
 gem 'amqp'
 gem 'ponder'
 gem 'yajl-ruby'

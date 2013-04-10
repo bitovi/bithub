@@ -1,13 +1,13 @@
 $: << File.dirname(__FILE__)
 
 require 'bundler/setup'
+require 'sinatra'
 require 'amqp'
 require 'ponder'
 require 'yajl'
 require 'log4r'
 require 'digest/md5'
   
-
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
 $log.add(Log4r::StdoutOutputter.new('console', {
@@ -18,44 +18,59 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 $mq_cs = ENV['MSGQ']
 $channels = ENV['IRCCHANS'].split(',')
 
-AMQP.start($mq_cs) do |connection, open_ok|
-  channel  = AMQP::Channel.new(connection)
-  exchange = channel.direct("e.events.preproc")
-
-  @thaum = Ponder::Thaum.new do |thaum|
-    thaum.nick   = ENV['NICK']
-    thaum.server = 'irc.freenode.net'
-    thaum.port   = 6667
+# API calls available
+class API < Sinatra::Base
+  get '/nicks' do
+    "THESE ARE YOUR NICKNAMES"
   end
+end
 
-  @thaum.on :connect do
-    EM::Iterator.new($channels).each do |c, iter| 
-      @thaum.join c
-      iter.next
+EM.next_tick do
+  AMQP.connect($mq_cs) do |connection, open_ok|
+    channel  = AMQP::Channel.new(connection)
+    exchange = channel.direct("e.events.preproc")
+
+    @thaum = Ponder::Thaum.new do |thaum|
+      thaum.nick   = ENV['NICK']
+      thaum.server = 'irc.freenode.net'
+      thaum.port   = 6667
     end
-  end
 
-  @thaum.on :channel, // do |data|
-    data[:time] = Time.now.strftime("%FT%T%z")
-    hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + data[:time])
+    # $log.info "METHODS: #{@thaum}"
+    $log.info "INSPECT on INIT: #{@thaum.inspect}"
 
-    EM.defer do
-      msg = { 
-        actor: data[:nick],
-        title: data[:message],
-        feed: 'irc',
-        type: data[:channel],
-        timestamp: data[:time],
-        hash_key: hash_key,
-        link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
-      }
-      exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
+    @thaum.on :connect do
+      @thaum.console_logger.info "INSPECT on CONNECT: #{@thaum.inspect}"
+      EM::Iterator.new($channels).each do |c, iter| 
+        @thaum.join c
+        iter.next
+      end
     end
+
+    @thaum.on :channel, // do |data|
+      @thaum.console_logger.info "INSPECT on CHANNEL: #{@thaum.inspect}"
+      data[:time] = Time.now.strftime("%FT%T%z")
+      hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + data[:time])
+
+      EM.defer do
+        msg = { 
+          actor: data[:nick],
+          title: data[:message],
+          feed: 'irc',
+          type: data[:channel],
+          timestamp: data[:time],
+          hash_key: hash_key,
+          link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
+        }
+
+        exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
+      end
+    end
+
+    @thaum.connect
+
+    stop = proc { $log.info "Terminating the IRC bot"; connection.close { EM.stop } }
+    Signal.trap("INT",  &stop)
+    Signal.trap("TERM", &stop)
   end
-
-  @thaum.connect
-
-  stop = proc { $log.info "Terminating the IRC bot"; connection.close { EM.stop } }
-  Signal.trap("INT",  &stop)
-  Signal.trap("TERM", &stop)
 end
