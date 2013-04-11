@@ -12,10 +12,10 @@ Bithub::Application.routes.draw do
 
     # (CRUD) /api/events
     # GET /api/events/:event_id/activities - all activities on an event
-    # POST /api/events/:event_id/(upvotes|award|anteup) - activity creation
+    # POST /api/events/:event_id/(upvote|award|anteup) - activity creation
     resources :events, :except => [:new, :edit] do
       resources 'activities', :only => :index, :to => 'event_activities#index'
-      resources 'upvotes', :only => :create, :to => 'event_activities#create_upvote'
+      resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'
       resource 'award', :only => :create, :to => 'event_activities#create_award'
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
     end

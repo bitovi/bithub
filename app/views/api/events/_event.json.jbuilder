@@ -1,4 +1,4 @@
-json.(event, :id, :title, :body, :origin_ts, :origin_date)
+json.(event, :id, :title, :body, :origin_ts, :origin_date, :url)
 
 json.category event.category_name
 json.feed event.feed_name
