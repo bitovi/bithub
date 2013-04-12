@@ -4,7 +4,7 @@ json.category event.category_name
 json.feed event.feed_name
 json.tags event.tag_names
 
-json.upvotes event.upvotes.count
+json.upvotes event.upvotes
 json.award event.rule.award_value
 json.anteups event.anteups.sum(:value)
 json.awarded event.awards.first

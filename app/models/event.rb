@@ -157,26 +157,6 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def upvote(actor)
-    Upvote.create_upvote(actor, self)
-    self
-  end
-
-  def place_anteup(actor, value)
-    Anteup.create_anteup(actor, self, value)
-    self
-  end
-
-  def fullfill_anteups
-    Anteup.fullfill_by_event(self)
-    self
-  end
-
-  def award(actor)
-    Award.create_award(actor, self)
-    self
-  end
-
   def siblings
     parent.children
   end
@@ -188,48 +168,11 @@ class Event < ActiveRecord::Base
     activities.concat(self.anteups)
   end
 
-  def self.nest_by(field)
-    events = []
-    if Event.reflect_on_all_associations.map{|x| x.name}.include? field.to_sym
-      events = includes(field).all
-    elsif Event.column_names.include?(field)
-      events = all
-    end
-
-    remapped = Event.remap_field(field)
-    ret_hash = {}
-    events.map{|e| e[remapped]}.uniq.each do |dv|
-      ret_hash[Event.name_for(field, dv)] = events.reject{|e| e[remapped] != dv}
-    end
-    ret_hash
+  def self.select_with_upvotes
+    Event.select("events.*, (SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes")
   end
 
-  
   private
-    
-  def self.remap_field(field)
-    field = field.to_sym
-    if field == :category
-      :category_id
-    elsif field == :feed
-      :feed_id
-    else
-      field
-    end
-  end
-
-  def self.name_for(field, val)
-    if field == :category || field == 'category'
-      Tag.find(val).name
-    elsif field == :feed || field == 'feed'
-      Tag.find(val).name
-    elsif field == :tag || field == 'tag'
-      Tag.find(val).name
-    else
-      val
-    end
-  end
-
   ### TWITTER methods
   def group_retweet
     retweeted_id = props[:retweeted_id]
