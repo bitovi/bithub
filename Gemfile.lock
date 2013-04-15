@@ -16,11 +16,25 @@ GEM
       amq-client (~> 0.9.4)
       amq-protocol (>= 0.9.4)
       eventmachine
+    capistrano (2.14.2)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     daemons (1.1.9)
     eventmachine (1.0.0)
     foreman (0.59.0)
       thor (>= 0.13.6)
+    highline (1.6.17)
     log4r (1.1.10)
+    net-scp (1.1.0)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.6.7)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
@@ -41,6 +55,7 @@ PLATFORMS
 
 DEPENDENCIES
   amqp
+  capistrano
   foreman
   log4r
   ponder!
