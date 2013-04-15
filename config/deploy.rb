@@ -23,14 +23,8 @@ set(:default_stage, 'staging')
 
 server "69.164.216.88", :app, :web, :db, :primary => true
 
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
-
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
-
+namespace :deploy do
+  task :start { run "#{try_sudo} service bithub-#{application}-#{app_env} start" }
+  task :stop { run "#{try_sudo} service bithub-#{application}-#{app_env} stop" }
+  task :restart { run "#{try_sudo} service bithub-#{application}-#{app_env} restart" }
+end
