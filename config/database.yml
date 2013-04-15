@@ -13,8 +13,17 @@ test:
   encoding: unicode
   database: bithub_test
   pool: 5
-  username: bithub-staging
+  username: bithub
   password:
+
+staging:
+  adapter: postgresql
+  encoding: unicode
+  database: bithub_staging
+  pool: 5
+  username: bithub
+  password: Chooth5z
+  socket: /var/run/postgresql/.s.PGSQL.5432
 
 production:
   adapter: postgresql
@@ -22,4 +31,5 @@ production:
   database: bithub
   pool: 5
   username: bithub
-  password:
+  password: Chooth5z
+  socket: /var/run/postgresql/.s.PGSQL.5432
