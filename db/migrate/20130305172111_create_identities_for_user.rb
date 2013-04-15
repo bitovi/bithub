@@ -10,7 +10,8 @@ class CreateIdentitiesForUser < ActiveRecord::Migration
     add_index :identities, :user_id
     
     execute <<-SQL
-      CONSTRAINT unique_uid_provider_combination
+      ALTER TABLE identities
+        ADD CONSTRAINT unique_uid_provider_combination
         UNIQUE (provider, uid);
     SQL
   end
