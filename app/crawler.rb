@@ -18,7 +18,7 @@ require 'handlers'
 require 'string'
 
 # Connection string
-$mq_cs = ENV['CLOUDAMQP_URL']
+$mq_cs = ENV['RABBITMQ_URI']
 
 # Exceptional
 Exceptional::Config.load("config/exceptional.yml")
