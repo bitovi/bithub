@@ -7,7 +7,7 @@ set(:bundle_flags, "--deployment --quiet --binstubs")
 
 set(:user, "bithub")
 set(:application, "web")
-set(:repository, "git@github.com:bitovi/bithub-rewrite.git")
+set(:repository, "git@github.com:bitovi/bithub.git")
 
 set(:branch, "master")
 set(:deploy_via, :remote_cache)
