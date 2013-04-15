@@ -23,6 +23,8 @@ gem 'draper'
 gem 'newrelic_rpm'
 gem 'kaminari'
 gem 'best_in_place'
+gem 'capistrano'
+gem 'capistrano-ext'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
