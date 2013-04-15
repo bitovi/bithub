@@ -12,16 +12,20 @@ AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
   Signal.trap("TERM", &stop)
 
   channel = AMQP::Channel.new(connection)
-  queue = channel.queue("q.events.web").bind("e.events")
 
-  queue.subscribe do |metadata, payload|
-    EM.defer do
-      event_hash = ActiveSupport::JSON.decode(payload)
-      meta = event_hash.delete('meta')
-      ev = Event.new_with_checks(event_hash, meta)
-      ev.save
-      ev.connection.close
+  channel.direct("e.events") do |exchange|  
+    queue = channel.queue("q.events.web").bind(exchange)
+
+    queue.subscribe do |metadata, payload|
+      EM.defer do
+        event_hash = ActiveSupport::JSON.decode(payload)
+        meta = event_hash.delete('meta')
+        ev = Event.new_with_checks(event_hash, meta)
+        ev.save
+        ev.connection.close
+      end
     end
   end
+  
 end
 
