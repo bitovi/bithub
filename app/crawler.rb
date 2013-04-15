@@ -44,7 +44,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
   Signal.trap("TERM", &stop)
 
   channel = AMQP::Channel.new(connection)
-  channel.direct("e.events.preproc") do |exchange|
+  channel.fanout("e.events.preproc") do |exchange|
 
     # --- Streams
     $log.info "Registering to Twitter's public stream"
