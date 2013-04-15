@@ -16,7 +16,7 @@ test:
   username: bithub-staging
   password:
 
-test:
+production:
   adapter: postgresql
   encoding: unicode
   database: bithub
