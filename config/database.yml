@@ -13,7 +13,13 @@ test:
   encoding: unicode
   database: bithub_test
   pool: 5
+  username: bithub-staging
+  password:
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: bithub
+  pool: 5
   username: bithub
-  password: negativ1Q
-  host: localhost
-  port: 5432
+  password:
