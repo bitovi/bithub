@@ -25,6 +25,7 @@ gem 'kaminari'
 gem 'best_in_place'
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'foreman'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
@@ -39,7 +40,6 @@ group :assets do
 end
 
 group :test, :development do
-  gem 'foreman'
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'guard-rspec'
