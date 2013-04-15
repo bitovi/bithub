@@ -5,7 +5,7 @@ require "#{rails_app_root}/config/environment"
 require "./app/models/event"
 
 # Message queue (RabbitMQ) connection and event loop
-AMQP.start(ENV['CLOUDAMQP_URL']) do |connection, open_ok|
+AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   
   stop = proc { puts "Terminating the listener"; connection.close { EM.stop } }
   Signal.trap("INT",  &stop)
