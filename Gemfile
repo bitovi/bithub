@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 gem 'amqp'
 gem 'em-http-request'
@@ -10,8 +10,10 @@ gem 'log4r'
 gem 'awesome_print'
 gem 'exceptional'
 gem 'sanitize'
-gem 'rspec'
+gem 'capistrano'
+gem 'capistrano-ext'
+gem 'foreman'
 
 group :development do
-  gem 'foreman'
+  gem 'rspec'
 end
