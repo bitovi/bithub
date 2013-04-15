@@ -4,27 +4,29 @@ class Api::EventsController < ApplicationController
   before_filter :authenticate_user!, :only => ['create', 'update']
 
   def index
-    @muster_query = request.env['muster.query']
-    Rails.logger.info @muster_query
+    muster_query = request.env['muster.query']
+    Rails.logger.info muster_query
 
-    scope = Event.includes(:tags).scoped
-    scope = scope.joins(@muster_query[:joins]) if !@muster_query[:joins].blank?
-    scope = scope.includes(@muster_query[:includes]) if !@muster_query[:includes].blank?
-    scope = scope.order(@muster_query[:order]) if !@muster_query[:order].blank?
-    scope = scope.offset(@muster_query[:offset]) if !@muster_query[:offset].blank?
-    scope = scope.limit(@muster_query[:limit]) if @muster_query[:count].blank?
+    scope = Event.scoped
+    # scope = scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
+    # scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
+    scope = scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
+    scope = scope.limit(muster_query[:limit]) if muster_query[:count].blank?
     scope = scope.where(all_others(params))
     scope = scope.tagged_with(only_tags(params)) if !only_tags(params).empty?
+    scope = scope.select_with_upvotes
 
-    if !@muster_query[:count].blank?
-      @object = {:count => scope.count(@muster_query[:count]) }
-      render :json => @object
+    if !muster_query[:count].blank?
+      render :json => {:count => scope.count(muster_query[:count]) }
     else
-      @events = scope.all
-      @events = EventDecorator.decorate_collection(@events)
+      if !muster_query[:order].blank?
+        attribute, direction = muster_query[:order].first.split
+        attribute = "total_upvotes" if attribute == "upvotes"
+        scope = scope.order("#{attribute} #{direction}")
+      end
+      @events = EventDecorator.decorate_collection(scope.all)
       render :index
     end
-    
   end
 
   def show
@@ -63,5 +65,4 @@ class Api::EventsController < ApplicationController
     end
     return h
   end
-
 end

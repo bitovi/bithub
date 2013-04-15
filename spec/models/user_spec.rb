@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe User do
 
-  describe "#sum_points" do
-    it "calculates total points" do
+  describe "#score" do
+    it "calculates total points for a user" do
       rule = create(:rule, authorship_value: 100, award_value: 1000)
       rule_reply = create(:rule, authorship_value: 10)
 
@@ -26,7 +26,7 @@ describe User do
       + event_reply.awards.sum('value')
       - author_reply.anteups.fullfilled.sum('value')
 
-      expect(author_reply.sum_points).to eq(sum)
+      expect(author_reply.score).to eq(sum)
     end
   end
 
@@ -40,12 +40,12 @@ describe User do
 
   describe ".top" do
     it "returns list of top n users sorted by score" do
-      user1 = create(:user); user1.stub(:sum_points) {1}
-      user2 = create(:user); user2.stub(:sum_points) {2}
-      user3 = create(:user); user3.stub(:sum_points) {3}
-      user4 = create(:user); user4.stub(:sum_points) {4}
-      user5 = create(:user); user5.stub(:sum_points) {5}
-      user6 = create(:user); user6.stub(:sum_points) {6}
+      user1 = create(:user); user1.stub(:score) {1}
+      user2 = create(:user); user2.stub(:score) {2}
+      user3 = create(:user); user3.stub(:score) {3}
+      user4 = create(:user); user4.stub(:score) {4}
+      user5 = create(:user); user5.stub(:score) {5}
+      user6 = create(:user); user6.stub(:score) {6}
 
       top_users = User.top(3)
     end

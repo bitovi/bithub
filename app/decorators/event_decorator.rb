@@ -13,4 +13,24 @@ class EventDecorator < Draper::Decorator
     tags.map {|t| t.name}
   end
 
+  def award_value
+    source.rule.award_value
+  end
+
+  def awarded
+    source.awards.first
+  end
+
+  def anteups
+    source.anteups.sum(:value)
+  end
+
+  def upvotes
+    if source.methods.include?(:total_upvotes)
+      source.total_upvotes.to_i
+    else
+      source.upvotes.reduce(0) { |acc, u| acc += u.value }
+    end
+  end
+
 end

@@ -2,6 +2,16 @@ worker_processes 3
 timeout 30
 preload_app true
 
+# Unix socket
+listen "/home/bithub/web/production/shared/tmp/sockets/unicorn.sock", :backlog => 64
+
+# PID
+pid "/home/bithub/web/production/shared/tmp/pids/unicorn.pid"
+
+# Logs
+stderr_path "/home/bithub/web/production/shared/log/unicorn.stderr.log"
+stdout_path "/home/bithub/web/production/shared/log/unicorn.stdout.log"
+
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.connection.disconnect!

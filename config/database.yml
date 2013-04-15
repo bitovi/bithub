@@ -14,6 +14,22 @@ test:
   database: bithub_test
   pool: 5
   username: bithub
-  password: negativ1Q
-  host: localhost
-  port: 5432
+  password:
+
+staging:
+  adapter: postgresql
+  encoding: unicode
+  database: bithub_staging
+  pool: 5
+  username: bithub
+  password: Chooth5z
+  socket: /var/run/postgresql/.s.PGSQL.5432
+
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: bithub
+  pool: 5
+  username: bithub
+  password: Chooth5z
+  socket: /var/run/postgresql/.s.PGSQL.5432

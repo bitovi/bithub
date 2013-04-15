@@ -31,19 +31,11 @@ class User < ActiveRecord::Base
   end
 
   def score
-    sum_points
-  end
-
-  def sum_points
-    sum = 0
-    self.events.each do |ev|
-      sum += ev.rule.authorship_value + ev.upvotes.sum('value') + ev.awards.sum('value')
-    end
-    sum + self.internals.sum('value') - self.anteups.fullfilled.sum('value')
-  end
-
-  def avatar
-    props['gravatar_url'] || '/assets/images/icon-user.png'
+    self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
+    + self.upvotes.sum('value')
+    + self.awards.sum('value')
+    + self.internals.sum('value')
+    - self.anteups.fullfilled.sum('value')
   end
 
   def collect_authored_events

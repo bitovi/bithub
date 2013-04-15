@@ -1,2 +1,2 @@
-web: bundle exec unicorn -p $PORT -c ./config/unicorn.rb
+web: ./bin/unicorn -c ./config/unicorn.rb
 listener: ruby ./app/listener.rb
