@@ -6,7 +6,7 @@ GIT
       eventmachine (>= 0.12.10)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     amq-client (0.9.4)
       amq-protocol (>= 0.9.4)
