@@ -26,7 +26,7 @@ server "69.164.216.88", :app, :web, :db, :primary => true
 namespace :deploy do
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
-    run "kill -s USR2 `cat #{shared_path}/tmp/pids/unicorn.pid`"
+    run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
     run "sudo /usr/bin/service bithub-listener-#{app_env} restart"
   end
 
@@ -38,7 +38,7 @@ namespace :deploy do
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
-    run "kill -s QUIT `cat #{shared_path}/tmp/pids/unicorn.pid`"
+    run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
     run "sudo /usr/bin/service bithub-listener-#{app_env} stop"
   end
 end
