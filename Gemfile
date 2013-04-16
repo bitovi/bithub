@@ -6,10 +6,10 @@ gem 'amqp'
 gem 'ponder', :github => 'tbuehlmann/ponder'
 gem 'yajl-ruby'
 gem 'log4r'
-gem 'capistrano'
-gem 'capistrano-ext'
+gem 'foreman'
 
 group :development do
-  gem 'foreman'
+  gem 'capistrano'
+  gem 'capistrano-ext'
 end
 
