@@ -23,8 +23,6 @@ gem 'draper'
 gem 'newrelic_rpm'
 gem 'kaminari'
 gem 'best_in_place'
-gem 'capistrano'
-gem 'capistrano-ext'
 gem 'foreman'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
@@ -45,4 +43,9 @@ group :test, :development do
   gem 'guard-rspec'
   gem 'faker'
   gem 'pry-rails'
+end
+
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-ext'
 end

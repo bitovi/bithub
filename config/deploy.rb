@@ -18,7 +18,7 @@ set(:default_environment, {
   'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'production'])
+set(:stages, ['staging', 'prod'])
 set(:default_stage, 'staging')
 
 server "69.164.216.88", :app, :web, :db, :primary => true
