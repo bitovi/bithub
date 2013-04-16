@@ -1,1 +1,1 @@
-irc_bot: bundle exec thin start
+irc_bot: ./bin/thin start
