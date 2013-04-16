@@ -144,7 +144,6 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    memcachier (0.0.2)
     method_source (0.8.1)
     mime-types (1.22)
     mongoid (3.1.2)
@@ -162,7 +161,6 @@ GEM
     net-ssh (2.6.7)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
-    newrelic_rpm (3.6.0.83)
     oauth (0.4.7)
     oauth2 (0.8.1)
       faraday (~> 0.8)
@@ -294,10 +292,8 @@ DEPENDENCIES
   jquery-rails
   kaminari
   less-rails (~> 2.2.6)
-  memcachier
   mongoid
   muster!
-  newrelic_rpm
   omniauth
   omniauth-github
   omniauth-twitter

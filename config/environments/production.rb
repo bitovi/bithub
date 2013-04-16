@@ -27,7 +27,7 @@ Bithub::Application.configure do
   # Set up Rack::Cache to use Memcached store
   config.action_dispatch.rack_cache = {
     :metastore    => Dalli::Client.new,
-    :entitystore  => 'file:tmp/cache/rack/body',
+    :entitystore  => 'file:/var/cache/rack/body',
     :allow_reload => false
   }
 
