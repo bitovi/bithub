@@ -15,7 +15,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 }))
 
 # MSGQ connection string
-$mq_cs = ENV['MSGQ']
+$mq_cs = ENV['RABBITMQ_URI']
 $channels = ENV['IRCCHANS'].split(',')
 $nicks = []
 
