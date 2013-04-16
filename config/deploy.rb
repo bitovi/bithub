@@ -27,18 +27,18 @@ namespace :deploy do
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
     run "kill -s USR2 `cat #{shared_path}/tmp/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener-#{app_env} start"
+    run "sudo /usr/bin/service bithub-listener-#{app_env} restart"
   end
 
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
     run "cd #{current_path} ; ./bin/unicorn_rails -c config/unicorn.rb -D -E production"
-    run "sudo /usr/bin/service bithub-listener-#{app_env} stop"
+    run "sudo /usr/bin/service bithub-listener-#{app_env} start"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/tmp/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener-#{app_env} restart" }
+    run "sudo /usr/bin/service bithub-listener-#{app_env} stop"
   end
 end
