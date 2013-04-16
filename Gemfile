@@ -7,6 +7,7 @@ gem 'ponder', :github => 'tbuehlmann/ponder'
 gem 'yajl-ruby'
 gem 'log4r'
 gem 'capistrano'
+gem 'capistrano-ext'
 
 group :development do
   gem 'foreman'

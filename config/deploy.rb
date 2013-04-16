@@ -1,19 +1,30 @@
+require 'capistrano/ext/multistage'
 require 'bundler/capistrano'
-set :bundle_flags, "--deployment --quiet --binstubs"
 
-set :application, "irc-bot"
-set :repository,  "git@github.com:jupiterjs/irc-bot.git"
+set(:use_sudo, false)
+set(:ssh_options, { :forward_agent => true })
+set(:bundle_flags, "--deployment --quiet --binstubs")
 
-role :web, "69.164.216.88"
-role :app, "69.164.216.88"
+set(:user, "bithub")
+set(:application, "irc-bot")
+set(:repository, "git@github.com:jupiterjs/irc-bot.git")
 
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
+set(:branch, "master")
+set(:deploy_via, :remote_cache)
+set(:deploy_to) { "/home/#{user}/#{application}/#{app_env}" }
 
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
+set(:normalize_asset_timestamps, false)
+set(:default_environment, {
+  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+})
+
+set(:stages, ['staging', 'prod'])
+set(:default_stage, 'staging')
+
+server "69.164.216.88", :app, :web, :db, :primary => true
+
+namespace :deploy do
+  task(:start) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} start" }
+  task(:stop) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} stop" }
+  task(:restart) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} restart" }
+end
