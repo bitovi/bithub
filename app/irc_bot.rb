@@ -39,7 +39,7 @@ EM.next_tick do
 
     @thaum.on :connect do
       EM::Iterator.new($channels).each do |c, iter| 
-        @thaum.join c
+        @thaum.join '#' + c
         iter.next
       end
     end
