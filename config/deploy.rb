@@ -18,13 +18,13 @@ set(:default_environment, {
   'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'production'])
+set(:stages, ['staging', 'prod'])
 set(:default_stage, 'staging')
 
 server "69.164.216.88", :app, :web, :db, :primary => true
 
-# namespace :deploy do
-#   task(:start) { run "sudo service bithub-#{application}-#{app_env} start" }
-#   task(:stop) { run "sudo service bithub-#{application}-#{app_env} stop" }
-#   task(:restart) { run "sudo service bithub-#{application}-#{app_env} restart" }
-# end
+namespace :deploy do
+  task(:start) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} start" }
+  task(:stop) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} stop" }
+  task(:restart) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} restart" }
+end
