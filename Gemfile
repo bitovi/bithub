@@ -10,10 +10,10 @@ gem 'log4r'
 gem 'awesome_print'
 gem 'exceptional'
 gem 'sanitize'
-gem 'capistrano'
-gem 'capistrano-ext'
 gem 'foreman'
 
 group :development do
   gem 'rspec'
+  gem 'capistrano'
+  gem 'capistrano-ext'
 end
