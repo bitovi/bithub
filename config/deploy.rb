@@ -4,7 +4,6 @@ require 'bundler/capistrano'
 set(:use_sudo, false)
 set(:ssh_options, { :forward_agent => true })
 set(:bundle_flags, "--deployment --quiet --binstubs")
-set(:normalize_asset_timestamps, false)
 
 set(:user, "bithub")
 set(:application, "web")
@@ -14,6 +13,10 @@ set(:branch, "master")
 set(:deploy_via, :remote_cache)
 set(:deploy_to) { "/home/#{user}/#{application}/#{app_env}" }
 
+set(:normalize_asset_timestamps, false)
+set(:default_environment, {
+  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+})
 
 set(:stages, ['staging', 'prod'])
 set(:default_stage, 'staging')
