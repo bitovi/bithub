@@ -31,7 +31,7 @@ namespace :deploy do
 
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
-    run "cd #{current_path} ; ./bin/unicorn_rails -c config/unicorn.rb -D -E production"
+    run "cd #{current_path} ; ./bin/unicorn_rails -c config/unicorn.rb"
   end
 
   desc "Stop unicorn"
