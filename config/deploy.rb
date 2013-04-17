@@ -29,7 +29,7 @@ namespace :deploy do
   task(:restart) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} restart" }
 
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-#{application}-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.prod upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub-#{application}-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile upstart /etc/init"
   end
 end
 
