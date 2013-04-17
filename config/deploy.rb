@@ -19,7 +19,7 @@ set(:default_environment, {
 })
 
 set(:stages, ['staging', 'prod'])
-set(:default_stage, 'staging')
+set(:default_stage, 'prod')
 
 server "69.164.216.88", :app, :web, :db, :primary => true
 
@@ -27,4 +27,10 @@ namespace :deploy do
   task(:start) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} start" }
   task(:stop) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} stop" }
   task(:restart) { run "sudo /usr/bin/service bithub-#{application}-#{app_env} restart" }
+
+  task(:recreate_upstart_conf) do
+    run "#{current_path}/bin/foreman export --app bithub-#{application}-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile upstart /etc/init"
+  end
 end
+
+after('deploy:update_code', 'deploy:recreate_upstart_conf')
