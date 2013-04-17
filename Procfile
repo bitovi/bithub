@@ -1,1 +1,1 @@
-irc_bot: ./bin/thin start -S $SOCKET -P $PID -l $LOG
+irc_bot: ./bin/thin start -p $PORT
