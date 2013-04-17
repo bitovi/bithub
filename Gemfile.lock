@@ -54,9 +54,6 @@ GEM
       eventmachine
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
-    best_in_place (2.1.0)
-      jquery-rails
-      rails (~> 3.1)
     builder (3.0.4)
     cancan (1.6.9)
     capistrano (2.14.2)
@@ -277,7 +274,6 @@ DEPENDENCIES
   activerecord-postgres-hstore
   acts-as-taggable-on
   amqp
-  best_in_place
   cancan
   capistrano
   capistrano-ext

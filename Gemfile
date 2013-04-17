@@ -21,7 +21,7 @@ gem 'acts-as-taggable-on'
 gem 'jbuilder'
 gem 'draper'
 gem 'kaminari'
-gem 'best_in_place'
+gem 'log4r'
 gem 'foreman'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
