@@ -30,22 +30,27 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event|
-        # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
-        parsed_date = Time.parse(event['createdAt']+"Z").utc
-        {
-          :meta => {
-            :feed => feed,
-            :origin_author_name => event['author']['name'],
-          },
-          :title => event['thread']['title'],
-          :body => event['message'],
-          :url => event['url'],
-          :origin_ts => parsed_date.iso8601,
-          :origin_date => parsed_date.strftime("%Y-%m-%d"),
-          :hash_key => event['hash_key'],
-          :source_data => Base64::encode64(event.to_json)
-        }
+        self.class.prepare_event(event, {:feed => feed})
       end
     end
+
+    def self.prepare_event(event, opts)
+      # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
+      parsed_date = Time.parse(event['createdAt']+"Z").utc
+      {
+        :meta => {
+          :feed => opts[:feed],
+          :origin_author_name => event['author']['name'],
+        },
+        :title => event['thread']['title'],
+        :body => event['message'],
+        :url => event['url'],
+        :origin_ts => parsed_date.iso8601,
+        :origin_date => parsed_date.strftime("%Y-%m-%d"),
+        :hash_key => event['hash_key'],
+        :source_data => Base64::encode64(event.to_json)
+      }
+    end
+
   end
 end

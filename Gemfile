@@ -13,6 +13,7 @@ gem 'sanitize'
 gem 'capistrano'
 gem 'capistrano-ext'
 gem 'foreman'
+gem 'mongoid'
 
 group :development do
   gem 'rspec'

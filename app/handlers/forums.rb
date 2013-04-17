@@ -49,24 +49,28 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        # Zoho forums RSS provides time in format: "Sat, 23 Mar 2013 15:02:26 -0700"
-        parsed_date = Time.parse(event['pubDate']).utc
-        hash = { 
-          :meta => {
-            :origin_author_name => event['dc:creator'],
-            :type => event['category'].snake_case,
-            :category => event['filter_term'],
-            :feed => feed,
-          },
-          :title => event['title'],
-          :body => self.sanitize(event['description']),
-          :url => event['link'],
-          :origin_ts => parsed_date.iso8601,
-          :origin_date => parsed_date.strftime("%Y-%m-%d"),
-          :hash_key => event['hash_key'],
-          :source_data => event
-        }
+        self.class.prepare_event(event, {:feed => feed})
       end
+    end
+
+    def self.prepare_event(event, opts)
+      # Zoho forums RSS provides time in format: "Sat, 23 Mar 2013 15:02:26 -0700"
+      parsed_date = Time.parse(event['pubDate']).utc
+      hash = { 
+        :meta => {
+          :origin_author_name => event['dc:creator'],
+          :type => event['category'].snake_case,
+          :category => event['filter_term'],
+          :feed => opts[:feed],
+        },
+        :title => event['title'],
+        :body => Sanitize.clean(event['description'], Sanitize::Config::RELAXED),
+        :url => event['link'],
+        :origin_ts => parsed_date.iso8601,
+        :origin_date => parsed_date.strftime("%Y-%m-%d"),
+        :hash_key => event['hash_key'],
+        :source_data => event
+      }
     end
 
   end

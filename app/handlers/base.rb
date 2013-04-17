@@ -10,10 +10,6 @@ module Handler
       new(log, exchange).handler
     end
 
-    def sanitize(html)
-      Sanitize.clean(html, Sanitize::Config::RELAXED)
-    end
-
     def initialize(log, exchange)
       @parser = Nori.new(:parser => :nokogiri)
       @latest ||= []
