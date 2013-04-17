@@ -19,7 +19,7 @@ set(:default_environment, {
 })
 
 set(:stages, ['staging', 'prod'])
-set(:default_stage, 'staging')
+set(:default_stage, 'prod')
 
 server "69.164.216.88", :app, :web, :db, :primary => true
 
@@ -41,4 +41,10 @@ namespace :deploy do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
     run "sudo /usr/bin/service bithub-listener-#{app_env} stop"
   end
+
+  task(:recreate_upstart_conf) do
+    run "#{current_path}/bin/foreman export --app bithub-listener-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile upstart /etc/init"
+  end
 end
+
+after('deploy:update_code', 'deploy:recreate_upstart_conf')
