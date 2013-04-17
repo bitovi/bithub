@@ -1,13 +1,13 @@
 $: << File.dirname(__FILE__)
 
 require 'bundler/setup'
-require 'sinatra'
 require 'amqp'
 require 'ponder'
 require 'yajl'
 require 'log4r'
 require 'digest/md5'
-  
+require 'time'
+
 # Logging
 $log = Log4r::Logger.new('IRC-bot')
 $log.add(Log4r::StdoutOutputter.new('console', {
@@ -19,17 +19,9 @@ $mq_cs = ENV['RABBITMQ_URI']
 $channels = ENV['IRCCHANS'].split(',')
 $nicks = []
 
-# API calls available
-class API < Sinatra::Base
-  get '/nicks' do
-    Yajl::Encoder.encode($nicks.uniq)
-  end
-end
-
-EM.next_tick do
-  AMQP.connect($mq_cs) do |connection, open_ok|
-    channel  = AMQP::Channel.new(connection)
-    exchange = channel.direct("e.events.preproc")
+AMQP.start($mq_cs) do |connection, open_ok|
+  channel  = AMQP::Channel.new(connection)
+  channel.fanout("e.events.preproc") do |exchange|
 
     @thaum = Ponder::Thaum.new do |thaum|
       thaum.nick   = ENV['NICK']
@@ -60,20 +52,26 @@ EM.next_tick do
     end
 
     @thaum.on :channel, // do |data|
-      data[:time] = Time.now.strftime("%FT%T%z")
-      hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + data[:time])
+      now = Time.now.utc
 
       EM.defer do
-        msg = { 
-          actor: data[:nick],
-          title: data[:message],
+        hash_key = Digest::MD5.hexdigest(data[:channel] + data[:nick] + now.to_s)
+
+        msg = {
+          :meta => {
+          origin_author_name: data[:nick],
           feed: 'irc',
           type: data[:channel],
-          timestamp: data[:time],
+          category: 'chat'
+        },
+          title: data[:message].body,
+          origin_ts: now.iso8601,
+          origin_date: Date.today.strftime('%Y-%m-%d'),
           hash_key: hash_key,
           link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
         }
 
+        $log.info "NEW MSG: #{msg}"
         exchange.publish(Yajl::Encoder.encode(msg), routing_key: "tasks.taggify")
       end
     end

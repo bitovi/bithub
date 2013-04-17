@@ -1,1 +1,1 @@
-irc_bot: ./bin/thin start -p $PORT
+irc_bot: ruby app/irc_bot.rb

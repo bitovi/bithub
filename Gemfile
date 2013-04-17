@@ -1,7 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'thin'
-gem 'sinatra'
 gem 'amqp'
 gem 'ponder', :github => 'tbuehlmann/ponder'
 gem 'yajl-ruby'
