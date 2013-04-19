@@ -59,16 +59,16 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
         msg = {
           :meta => {
-          origin_author_name: data[:nick],
-          feed: 'irc',
-          type: data[:channel],
-          category: 'chat'
-        },
+            origin_author_name: data[:nick],
+            feed: 'irc',
+            type: data[:channel],
+            category: 'chat'
+          },
           title: data[:message].body,
           origin_ts: now.iso8601,
           origin_date: Date.today.strftime('%Y-%m-%d'),
           hash_key: hash_key,
-          link: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
+          url: "http://webchat.freenode.net/?channels=#{data[:channel].gsub('#','')}"
         }
 
         $log.info "NEW MSG: #{msg}"
