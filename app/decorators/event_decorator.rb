@@ -33,8 +33,15 @@ class EventDecorator < Draper::Decorator
     end
   end
 
+  def actor
+    if author
+      author['name']
+    else
+      props['origin_author_name']
+    end
+  end
+
   def commits
-    #if source_data.include?('payload') and source_data['payload'].include?('commits')
     if tag_list.include?('push_event')
       source_data['payload']['commits']
     else

@@ -3,6 +3,7 @@ json.(event, :id, :title, :body, :origin_ts, :origin_date, :url)
 json.category event.category_name
 json.feed event.feed_name
 json.tags event.tag_names
+json.actor event.actor
 
 json.upvotes event.upvotes
 json.anteups event.anteups
