@@ -1,14 +1,10 @@
 #!/usr/bin/env ruby
 
 app_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-env_path = File.join(app_root, 'config', 'environment')
-require env_path
-
 require "log4r"
 require "#{app_root}/config/environment"
-require "./app/models/event"
 
-$log = Log4r::Logger.new('tagger')
+$log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
