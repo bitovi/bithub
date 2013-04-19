@@ -5,7 +5,7 @@ env_path = File.join(app_root, 'config', 'environment')
 require env_path
 
 require "log4r"
-require "#{rails_app_root}/config/environment"
+require "#{app_root}/config/environment"
 require "./app/models/event"
 
 $log = Log4r::Logger.new('tagger')
@@ -26,17 +26,18 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   channel.direct("e.events") do |exchange|  
     queue = channel.queue("q.events.web").bind(exchange)
     queue.subscribe do |metadata, payload|
-      $log.info "New message"
-      EM.defer do
-        event_hash = ActiveSupport::JSON.decode(payload)
-        meta = event_hash.delete('meta')
 
-        $log.info "New event | META: #{meta}"
-
+      event_hash = ActiveSupport::JSON.decode(payload)
+      meta = event_hash.delete('meta')
+      
+      begin
         ev = Event.new_with_checks(event_hash, meta)
-        ev.save
-        ev.connection.close
+        ev.save!
+      rescue ActiveRecord::RecordInvalid => invalid
+        $log.info "Save failed | META: #{meta}"
+        $log.info invalid.record.errors.messages.to_yaml
       end
+
     end
   end
 end
