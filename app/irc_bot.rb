@@ -61,7 +61,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
           :meta => {
             origin_author_name: data[:nick],
             feed: 'irc',
-            type: data[:channel],
+            type: data[:channel].gsub('#',''),
             category: 'chat'
           },
           title: data[:message].body,
