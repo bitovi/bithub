@@ -23,7 +23,6 @@ gem 'draper'
 gem 'kaminari'
 gem 'log4r'
 gem 'foreman'
-gem 'delayed_job_active_record'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
