@@ -13,9 +13,14 @@ module Handler
           @log.error "FEED: #{feed} | DATA: #{get_disqus_events}"
         end
 
-        new_events = filter_old disqus_events
-        events_to_store = rename_attrs_in new_events
-        store(events_to_store) if events_to_store.size > 0
+        begin
+          new_events = filter_old disqus_events
+          events_to_store = rename_attrs_in new_events
+          store(events_to_store) if events_to_store.size > 0
+        rescue NoMethodError => error
+          @log.error "#{self.feed} ERROR: #{error}"
+        end
+
       end
 
       get_disqus_events.errback do

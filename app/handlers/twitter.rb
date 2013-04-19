@@ -50,12 +50,16 @@ module Handler
     def handle_event(raw_json)
       event = Yajl::Parser.parse(raw_json)
 
-      if @is_user_stream && event['event'] == 'follow' && event['target']['screen_name']
-        @log.info "follow_event: #{event['source']['screen_name']} followed #{event['target']['screen_name']}"
-        handle_user_stream_event(event)
-      elsif !@is_user_stream
-        @log.info "new PUBLIC STREAM tweet: #{event}"
-        handle_public_stream_event(event)
+      begin
+        if @is_user_stream && event['event'] == 'follow' && event['target']['screen_name']
+          @log.info "follow_event: #{event['source']['screen_name']} followed #{event['target']['screen_name']}"
+          handle_user_stream_event(event)
+        elsif !@is_user_stream
+          @log.info "new PUBLIC STREAM tweet: #{event}"
+          handle_public_stream_event(event)
+        end
+      rescue NoMethodError => error
+        @log.error "#{self.feed} ERROR: #{error}"
       end
     end
 

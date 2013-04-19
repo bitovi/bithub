@@ -1,6 +1,7 @@
 require 'digest/md5'
 require 'sanitize'
 require 'rexml/document'
+require 'time'
 
 module Handler
   class Base
