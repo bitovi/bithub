@@ -645,6 +645,14 @@ ALTER TABLE ONLY tags
 
 
 --
+-- Name: unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT unique_uid_provider_combination UNIQUE (provider, uid);
+
+
+--
 -- Name: upvotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 

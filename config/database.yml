@@ -14,7 +14,9 @@ test:
   database: bithub_test
   pool: 5
   username: bithub
-  password:
+  password: negativ1Q
+  host: localhost
+  port: 5432
 
 staging:
   adapter: postgresql
