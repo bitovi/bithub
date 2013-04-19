@@ -50,6 +50,7 @@ class Event < ActiveRecord::Base
   end
 
   def whole_chain
+    pluck_props
     determine_all
     process_forums
     process_github
@@ -58,7 +59,9 @@ class Event < ActiveRecord::Base
   end
 
   def pluck_props
-    # pluck attrs from source_data that we'll need later
+    props[:origin_author_name] = meta[:origin_author_name] if meta[:origin_author_name]
+    props[:origin_author_id] = meta[:origin_author_id] if meta[:origin_author_id]
+    props[:image] = meta[:image] if meta[:image]
   end
 
   def determine_all
@@ -72,7 +75,12 @@ class Event < ActiveRecord::Base
 
 
   def determine_tags
-    self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
+    tags = meta[:tags]
+    tags << meta[:feed]
+    tags << meta[:type]
+    self.tag_list = tags.join(', ')
+
+    #self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
     self
   end
 
@@ -89,6 +97,7 @@ class Event < ActiveRecord::Base
   def determine_author
     props[:origin_author_id] = meta[:origin_author_id]
     props[:origin_author_username] = meta[:origin_author_username]
+
     ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
     if ident && ident.user
       self.author = ident.user
