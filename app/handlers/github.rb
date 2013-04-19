@@ -43,17 +43,17 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.collect do |event|
-        handle_event_type(event)
+        self.class.prepare_event(event, {:feed => feed})
       end
     end
 
-    def handle_event_type(event)
+    def self.prepare_event(event, opts)
       # Github provides date in format: "2013-02-14T22:47:29Z"
       parsed_date = Time.parse(event['created_at']).utc
       event_hash = {
         :meta => {
           :type => event['type'].snake_case,
-          :feed => feed,
+          :feed => opts[:feed],
           :origin_id => event['id'],
           :origin_author_name => event['actor']['login'],
           :origin_author_id => event['actor']['id'],

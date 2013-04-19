@@ -11,6 +11,7 @@ gem 'awesome_print'
 gem 'exceptional'
 gem 'sanitize'
 gem 'foreman'
+gem 'mongoid'
 
 group :development do
   gem 'rspec'

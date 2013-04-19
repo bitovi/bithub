@@ -23,23 +23,27 @@ module Handler
 
     def rename_attrs_in(new_events)
       new_events.map do |event| 
-        # Community site RSS provides date in format: "Tue, 22 May 2012 12:55:35 +0000"
-        # ',' after day is sufficient, but doesn't breaks Time.parse
-        parsed_date = Time.parse(event['pubDate']).utc
-        {
-          :meta => {
-            :origin_author_name => event['author'],
-            :feed => feed,
-          },
-          :title => event['title'],
-          :body => self.sanitize(event['description']),
-          :url => event['link'],
-          :origin_ts => parsed_date.iso8601,
-          :origin_date => parsed_date.strftime("%Y-%m-%d"),
-          :source_data => event,
-          :hash_key => event['hash_key']
-        }
+        self.class.prepare_event(event, {:feed => feed})
       end
+    end
+
+    def self.prepare_event(event, opts)
+      # Community site RSS provides date in format: "Tue, 22 May 2012 12:55:35 +0000"
+      # ',' after day is sufficient, but doesn't breaks Time.parse
+      parsed_date = Time.parse(event['pubDate']).utc
+      {
+        :meta => {
+          :origin_author_name => event['author'],
+          :feed => opts[:feed],
+        },
+        :title => event['title'],
+        :body => Sanitize.clean(event['description'], Sanitize::Config::RELAXED),
+        :url => event['link'],
+        :origin_ts => parsed_date.iso8601,
+        :origin_date => parsed_date.strftime("%Y-%m-%d"),
+        :source_data => event,
+        :hash_key => event['hash_key']
+      }
     end
 
   end

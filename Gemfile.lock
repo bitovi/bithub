@@ -1,6 +1,12 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (3.2.12)
+      activesupport (= 3.2.12)
+      builder (~> 3.0.0)
+    activesupport (3.2.12)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
     addressable (2.3.2)
     amq-client (0.9.10)
       amq-protocol (>= 0.9.4)
@@ -11,6 +17,7 @@ GEM
       amq-protocol (>= 0.9.4)
       eventmachine
     awesome_print (1.1.0)
+    builder (3.0.4)
     capistrano (2.14.2)
       highline
       net-scp (>= 1.0.0)
@@ -40,7 +47,15 @@ GEM
       thor (>= 0.13.6)
     highline (1.6.17)
     http_parser.rb (0.5.3)
+    i18n (0.6.4)
     log4r (1.1.10)
+    mongoid (3.1.2)
+      activemodel (~> 3.2)
+      moped (~> 1.4.2)
+      origin (~> 1.0)
+      tzinfo (~> 0.3.22)
+    moped (1.4.5)
+    multi_json (1.7.2)
     net-scp (1.1.0)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.1)
@@ -50,6 +65,7 @@ GEM
       net-ssh (>= 2.6.5)
     nokogiri (1.5.6)
     nori (2.0.3)
+    origin (1.0.11)
     rack (1.5.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -64,6 +80,7 @@ GEM
       nokogiri (>= 1.4.4, < 1.6)
     simple_oauth (0.2.0)
     thor (0.16.0)
+    tzinfo (0.3.37)
     yajl-ruby (1.1.0)
 
 PLATFORMS
@@ -79,6 +96,7 @@ DEPENDENCIES
   exceptional
   foreman
   log4r
+  mongoid
   nokogiri
   nori
   rspec

@@ -12,6 +12,7 @@ require 'base64'
 require 'rubygems'
 require 'exceptional'
 require 'json'
+require 'sanitize'
 
 # Ours
 require 'handlers'
