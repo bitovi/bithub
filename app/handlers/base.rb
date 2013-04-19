@@ -10,13 +10,17 @@ module Handler
       new(log, exchange).handler
     end
 
-    def initialize(log, exchange)
+    def sanitize(html)
+      Sanitize.clean(html, Sanitize::Config::RELAXED)
+    end
+
+    def initialize(log, exchange, backlog_size = 100)
       @parser = Nori.new(:parser => :nokogiri)
       @latest ||= []
-      @initialized ||= false
       @feed = self.class.to_s.gsub('Handler::','').snake_case
       @log = log
       @exchange = exchange
+      @backlog_size = backlog_size
     end
 
     def fetch
@@ -25,10 +29,9 @@ module Handler
     # Compare key with items already fetched and set the last batch of keys as latest
     def filter_old(feed_items)
       new_events = feed_items.reject {|e| @latest.include? e['hash_key']}
-      @latest += feed_items.collect {|e| e['hash_key']}
-      if @latest.length > 1000
-        diff = @latest.length - 1000
-        @latest.shift(diff)
+      @latest += new_events.collect {|e| e['hash_key']}
+      if @latest.length > @backlog_size
+        @latest.shift(@latest.length - @backlog_size)
       end
       new_events
     end
@@ -40,20 +43,11 @@ module Handler
         events.each { |e| @exchange.publish(Yajl::Encoder.encode(e), routing_key: "tasks.taggify") }
       end
 
-      # Sending (network IO) in a separate lightweight process
-      # so that the reactor loop can continue
       EM.defer(enqueue_events)
     end
 
     def handler
-      proc do 
-        if @initialized
-          fetch
-        else
-          @initialized = true
-          @log.info "#{feed}: Initiaizing..."
-        end
-      end
+      proc { fetch }
     end
   end
 end

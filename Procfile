@@ -1,3 +1,2 @@
-crawler: ruby app/crawler.rb
-#migrator: ruby app/migrator.rb
-
+crawler: ruby ./app/crawler.rb
+#migrator: ruby ./app/migrator.rb
