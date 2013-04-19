@@ -34,7 +34,8 @@ class EventDecorator < Draper::Decorator
   end
 
   def commits
-    if source_data.include?('payload') and source_data['payload'].include?('commits')
+    #if source_data.include?('payload') and source_data['payload'].include?('commits')
+    if tag_list.include?('push_event')
       source_data['payload']['commits']
     else
       []
