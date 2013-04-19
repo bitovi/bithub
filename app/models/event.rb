@@ -78,6 +78,7 @@ class Event < ActiveRecord::Base
     tags = meta[:tags]
     tags << meta[:feed]
     tags << meta[:type]
+    tags << meta[:category]
     self.tag_list = tags.join(', ')
 
     #self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
