@@ -12,7 +12,7 @@ class Api::EventsController < ApplicationController
     scope = scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
     scope = scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
-    scope = scope.limit(muster_query[:limit]) if muster_query[:limit].blank?
+    scope = scope.limit(muster_query[:limit]) if !muster_query[:limit].blank?
 
     scope = apply_regular_params_to_scope(scope, params)
     scope = apply_taggables_to_scope(scope, params)
