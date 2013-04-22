@@ -135,8 +135,8 @@ class Api::EventsController < ApplicationController
         higher = DateTime.parse(higher_str)
       end
     elsif type == :integer
-      lower = lower_str.to_i
-      higher = higher_str.to_i
+      lower = lower_str && !lower_str.blank? ? lower_str.to_i : -(2**(0.size * 8 -2)) # Platform MIN_INT
+      higher = higher_str ? higher_str.to_i : (2**(0.size * 8 -2) -1) # Platform MAX_INT
     else
       klass = Object.const_get(type.capitalize)
       lower = klass.new(lower_str)
