@@ -9,29 +9,19 @@ class Api::EventsController < ApplicationController
     Rails.logger.info muster_query
 
     scope = Event.scoped
-    # scope = scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
-    # scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
+    scope = scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
+    scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
     scope = scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
     scope = scope.limit(muster_query[:limit]) if muster_query[:count].blank?
 
-    Rails.logger.info "TAGGABLES : #{pluck_taggables(params)}"
-    Rails.logger.info "ALL OTHERS : #{translate_params(params)}"
-
-    scope = scope.where(translate_params(params))
-
-    taggables = pluck_taggables(params)
-    scope = scopefiy_taggables(scope, taggables) if !taggables.empty?
-
-    scope = scope.select_with_upvotes(!taggables[:any])
-
+    scope = apply_regular_params_to_scope(scope, params)
+    scope = apply_taggables_to_scope(scope, params)
+    scope = calculate_upvotes(scope, params)
+    
     if !muster_query[:count].blank?
-      render :json => {:count => scope.count(muster_query[:count]) }
+      render :json => { :count => scope.count(muster_query[:count]) }
     else
-      if !muster_query[:order].blank?
-        attribute, direction = pluck_order(muster_query[:order])
-        attribute = "total_upvotes" if attribute == "upvotes"
-        scope = scope.order("#{attribute} #{direction}")
-      end
+      scope = apply_order_to_scope(scope, muster_query)
       @events = EventDecorator.decorate_collection(scope.all)
       render :index
     end
@@ -62,10 +52,27 @@ class Api::EventsController < ApplicationController
 
   private
 
+  def apply_order_to_scope(scope, muster_query)
+    if !muster_query[:order].blank?
+      attribute, direction = muster_query[:order].first.split
+      attribute = "total_upvotes" if attribute == "upvotes" # total_upvotes => calculated field
+      scope = scope.order("#{attribute} #{direction}")
+    end
+    scope
+  end
+
+  def calculate_upvotes(scope, params)
+    scope = scope.select_with_upvotes(include_events_in_upvote_calc?(params))
+    scope
+  end
+
   # /events/?category=article|plugin|app&order=upvotes:desc&limit=3
-  def scopefiy_taggables(scope, taggables)
-    scope = scope.tagged_with(taggables[:any], :any => true) if taggables[:any]
-    scope = scope.tagged_with(taggables[:all]) if taggables[:all]
+  def apply_taggables_to_scope(scope, params)
+    taggables = pluck_taggables(params)
+    if taggables
+      scope = scope.tagged_with(taggables[:any], :any => true) if taggables[:any]
+      scope = scope.tagged_with(taggables[:all]) if taggables[:all]
+    end
     scope
   end
 
@@ -90,21 +97,27 @@ class Api::EventsController < ApplicationController
     end
     hash
   end
+
+  def apply_regular_params_to_scope(scope, params)
+    regpar = pluck_regular_params(params)
+    scope = scope.where(regpar) if regpar
+    scope
+  end
   
-  def translate_params(params)
-    h = Hash.new
+  def pluck_regular_params(params)
+    hash = Hash.new
     params.each do |k,v|
       if Event.has_an_attribute?(k) && !TAG_FIELDS.include?(k)
         if v.include? DELIMITERS[:between]
-          h[k] = handle_between(k,v)
+          hash[k] = handle_between(k,v)
         elsif v.include? DELIMITERS[:or]
-          h[k] = handle_or(k,v)
+          hash[k] = handle_or(k,v)
         else
-          h[k] = v
+          hash[k] = v
         end
       end
     end
-    return h
+    return hash
   end
 
   def handle_between(key, val)
@@ -131,13 +144,14 @@ class Api::EventsController < ApplicationController
     end
     lower..higher
   end
+
+  def include_events_in_upvote_calc?(params)
+    taggables = pluck_taggables(params)
+    taggables && !taggables[:any]
+  end
   
   def handle_or(key, val)
     val.split(DELIMITERS[:or])
   end
 
-  # Only looks for the first order field (no multiple ordering)
-  def pluck_order(order_field)
-    order_field.first.split
-  end
 end
