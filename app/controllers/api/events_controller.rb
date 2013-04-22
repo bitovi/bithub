@@ -1,5 +1,6 @@
 class Api::EventsController < ApplicationController
   TAG_FIELDS = ['tag', 'feed', 'category']
+  DELIMITERS = { :and => ',', :or => '|', :between => ':' }
   respond_to :json
   before_filter :authenticate_user!, :only => ['create', 'update']
 
@@ -12,15 +13,22 @@ class Api::EventsController < ApplicationController
     # scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
     scope = scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
     scope = scope.limit(muster_query[:limit]) if muster_query[:count].blank?
-    scope = scope.where(all_others(params))
-    scope = scope.tagged_with(only_tags(params)) if !only_tags(params).empty?
-    scope = scope.select_with_upvotes
+
+    Rails.logger.info "TAGGABLES : #{pluck_taggables(params)}"
+    Rails.logger.info "ALL OTHERS : #{translate_params(params)}"
+
+    scope = scope.where(translate_params(params))
+
+    taggables = pluck_taggables(params)
+    scope = scopefiy_taggables(scope, taggables) if !taggables.empty?
+
+    scope = scope.select_with_upvotes(!taggables[:any])
 
     if !muster_query[:count].blank?
       render :json => {:count => scope.count(muster_query[:count]) }
     else
       if !muster_query[:order].blank?
-        attribute, direction = muster_query[:order].first.split
+        attribute, direction = pluck_order(muster_query[:order])
         attribute = "total_upvotes" if attribute == "upvotes"
         scope = scope.order("#{attribute} #{direction}")
       end
@@ -54,15 +62,82 @@ class Api::EventsController < ApplicationController
 
   private
 
-  def only_tags(params)
-    params.find_all{|el| TAG_FIELDS.include?(el[0])}.map{|el| el[1]}.flatten
+  # /events/?category=article|plugin|app&order=upvotes:desc&limit=3
+  def scopefiy_taggables(scope, taggables)
+    scope = scope.tagged_with(taggables[:any], :any => true) if taggables[:any]
+    scope = scope.tagged_with(taggables[:all]) if taggables[:all]
+    scope
   end
 
-  def all_others(params)
+  # get taggables and put them in a hash, eg. { :any => [...], :all => [...] }
+  def pluck_taggables(params)
+    hash = Hash.new 
+    params.find_all{|el| TAG_FIELDS.include?(el[0])}.each{|el| handle_taggables(hash, el)}
+    hash
+  end
+
+  # eg. tag=code|article (OR), tag=code,github (AND)
+  def handle_taggables(hash, keyval)
+    key = keyval[0]; val = keyval[1]
+    if val.include? DELIMITERS[:or]
+      hash[:any] = val.split(DELIMITERS[:or])
+    elsif val.include? DELIMITERS[:and]
+      hash[:all] = val.split(DELIMITERS[:and])
+    elsif val.kind_of?(Array)
+      hash[:all] = val
+    else
+      hash[:all] = Array.wrap(val)
+    end
+    hash
+  end
+  
+  def translate_params(params)
     h = Hash.new
     params.each do |k,v|
-      h[k] = v if Event.has_an_attribute?(k) && !TAG_FIELDS.include?(k)
+      if Event.has_an_attribute?(k) && !TAG_FIELDS.include?(k)
+        if v.include? DELIMITERS[:between]
+          h[k] = handle_between(k,v)
+        elsif v.include? DELIMITERS[:or]
+          h[k] = handle_or(k,v)
+        else
+          h[k] = v
+        end
+      end
     end
     return h
+  end
+
+  def handle_between(key, val)
+    lower_str, higher_str = val.split(DELIMITERS[:between])
+    type = Event.columns_hash[key].type
+    if type == :datetime || type == :date
+      if !lower_str || lower_str.blank?
+        lower = Date.new(0) + 1.year # Good enough minimum
+      else
+        lower = DateTime.parse(lower_str)
+      end
+      if !higher_str || higher_str.blank?
+        higher = DateTime.tomorrow # Good enough maximum
+      else
+        higher = DateTime.parse(higher_str)
+      end
+    elsif type == :integer
+      lower = lower_str.to_i
+      higher = higher_str.to_i
+    else
+      klass = Object.const_get(type.capitalize)
+      lower = klass.new(lower_str)
+      higher = klass.new(higher_str)
+    end
+    lower..higher
+  end
+  
+  def handle_or(key, val)
+    val.split(DELIMITERS[:or])
+  end
+
+  # Only looks for the first order field (no multiple ordering)
+  def pluck_order(order_field)
+    order_field.first.split
   end
 end

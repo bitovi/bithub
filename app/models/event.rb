@@ -178,8 +178,12 @@ class Event < ActiveRecord::Base
     activities.concat(self.anteups)
   end
 
-  def self.select_with_upvotes
-    Event.select("events.*, (SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes")
+  def self.select_with_upvotes(with_events)
+    query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
+    if with_events
+      query_string = "events.*, " + query_string
+    end
+    select(query_string)
   end
 
   private
