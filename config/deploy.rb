@@ -43,7 +43,7 @@ namespace :deploy do
   end
 
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub-listener-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 end
 
