@@ -1,14 +1,6 @@
-NOTE: times are noted in absolute terms (combined, not per person)
+TODO:
+=====
 
-* filterbar: filter categories reordering in session (LRU filter) [1 day]
-* finish the event list [5 days]
-	- indivitual templates for each event type/category
-	- awards
-* profile pages [3 days]
-	- user's info (show and edit in place)
-	- user's history
-* new post form [3 days]
-* connecting to the live service from the client (live updating) [not sure, needs discussion]
-* admin iterface - render on server? [needs discussion]
-* check that all create/update/destroy API calls are secured and generally check all API calls [1 day]
-* optimize SQL queries [2 days]
+* translate BETWEEN params `(origin_date=date1:date2)` ; semicolon is BETWEEN
+* translate OR params `(category=c1|c2|c3)` ; pipe is OR
+* translate AND params `(tag[]=t1&tag[]=t2&category=c1,c2)` ; array of args or csv is AND
