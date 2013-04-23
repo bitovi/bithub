@@ -10,9 +10,7 @@ json.anteups event.anteups
 json.award_value event.award_value
 json.awarded event.awarded
 
-if event.commits
-   json.commits event.commits
-end
+json.props event.ext_props
 
 json.children EventDecorator.decorate_collection(event.children) do |c|
   json.partial! "api/events/child_event", event: c
