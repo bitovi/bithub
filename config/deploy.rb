@@ -32,7 +32,10 @@ namespace :deploy do
 
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
-    run "cd #{current_path} ; ./bin/unicorn_rails -c config/unicorn.rb -D -E production"
+    env_str = ""
+    File.readlines(File.join('.', ".env_#{app_env}")).each { |line| env_str += "export #{line.strip} && " }
+
+    run "cd #{current_path} && #{env_str} ./bin/unicorn_rails -D -c config/unicorn.rb"
     run "sudo /usr/bin/service bithub-listener-#{app_env} start"
   end
 
