@@ -1,10 +1,14 @@
 Devise.setup do |config|
   require 'devise/orm/active_record'
-  require "omniauth-twitter"
-  require "omniauth-github"
+  require 'omniauth-twitter'
+  require 'omniauth-github'
+  require 'omniauth-meetup'
+  
+  config.omniauth_path_prefix = '/api/auth'
 
-  config.omniauth :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
   config.omniauth :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
+  config.omniauth :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
+  config.omniauth :meetup, ENV['MEETUP_KEY'], ENV['MEETUP_SECRET']
 
   config.case_insensitive_keys = [ :email ]
   config.strip_whitespace_keys = [ :email ]

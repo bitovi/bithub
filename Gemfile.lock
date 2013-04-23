@@ -172,6 +172,9 @@ GEM
     omniauth-github (1.1.0)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.1)
+    omniauth-meetup (0.0.6)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
     omniauth-oauth (1.0.1)
       oauth
       omniauth (~> 1.0)
@@ -294,6 +297,7 @@ DEPENDENCIES
   muster!
   omniauth
   omniauth-github
+  omniauth-meetup
   omniauth-twitter
   pg
   pry-rails

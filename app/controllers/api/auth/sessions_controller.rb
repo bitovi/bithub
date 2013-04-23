@@ -1,4 +1,4 @@
-class Users::SessionsController < ApplicationController
+class Api::Auth::SessionsController < ApplicationController
   def index
   end
   

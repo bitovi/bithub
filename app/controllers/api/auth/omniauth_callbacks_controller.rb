@@ -1,10 +1,15 @@
-class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+
   def github
     oauthorize "github"
   end
 
   def twitter
     oauthorize "twitter"
+  end
+  
+  def meetup
+    oauthorize "meetup"
   end
 
   def passthru
@@ -31,9 +36,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     case provider
     when "github"
-      email = oauth_data['info']['email']
       name = oauth_data['info']['name']
+      email = oauth_data['info']['email']
     when "twitter"
+      name = oauth_data['info']['name']
+    when "meetup"
       name = oauth_data['info']['name']
     else
       raise "Provider #{provider} not handled"
