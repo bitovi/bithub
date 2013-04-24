@@ -32,10 +32,9 @@ namespace :deploy do
 
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
-    env_str = ""
-    File.readlines(File.join('.', ".env_#{app_env}")).each { |line| env_str += "export #{line.strip} && " }
-
-    run "cd #{current_path} && #{env_str} ./bin/unicorn_rails -D -c config/unicorn.rb"
+    envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
+    env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
+    run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
     run "sudo /usr/bin/service bithub-listener-#{app_env} start"
   end
 
