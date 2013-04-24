@@ -12,6 +12,8 @@ json.awarded event.awarded
 json.author event.author_deco
 json.props event.props_deco
 
+json.has_parent event.has_parent
+
 json.actor event.actor					# deprecated, use props.origin_author_name
 
 json.children EventDecorator.decorate_collection(event.children) do |c|
