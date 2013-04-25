@@ -11,7 +11,7 @@ set(:repository, "git@github.com:bitovi/bithub.git")
 
 set(:branch, "master")
 set(:deploy_via, :remote_cache)
-set(:deploy_to) { "/home/#{user}/#{application}/#{app_env}" }
+set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
 set(:default_environment, {
@@ -21,13 +21,11 @@ set(:default_environment, {
 set(:stages, ['staging', 'prod'])
 set(:default_stage, 'prod')
 
-server "69.164.216.88", :app, :web, :db, :primary => true
-
 namespace :deploy do
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
     run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener-#{app_env} restart"
+    run "sudo /usr/bin/service bithub-listener restart"
   end
 
   desc "Start unicorn"
@@ -35,17 +33,17 @@ namespace :deploy do
     envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
     env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
     run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
-    run "sudo /usr/bin/service bithub-listener-#{app_env} start"
+    run "sudo /usr/bin/service bithub-listener start"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener-#{app_env} stop"
+    run "sudo /usr/bin/service bithub-listener stop"
   end
 
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener-#{app_env} --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 end
 
