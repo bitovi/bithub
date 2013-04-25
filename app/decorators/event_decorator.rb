@@ -42,6 +42,10 @@ class EventDecorator < Draper::Decorator
     end
   end
 
+  def has_parent
+    parent ? true : false
+  end
+
   def author_deco
     if author
       {
