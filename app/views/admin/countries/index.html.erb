@@ -1,0 +1,21 @@
+<h1>Countries</h1>
+<%= link_to 'New country', new_admin_country_path, { class: 'btn' } %>
+ 
+<table class="table table-stripped table-hover">
+  <tr>
+    <th>Name</th>
+    <th>Display name</th>
+    <th>ISO code</th>
+  </tr>
+ 
+<% @countries.each do |c| %>
+  <tr>
+    <td><%= c.name %></td>
+    <td><%= c.display_name %></td>
+    <td><%= c.iso %></td>
+	<td><%= link_to '[edit]', edit_admin_country_path(r) %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= paginate @countries %>
