@@ -219,7 +219,7 @@ def prepare_and_build(event)
     puts "CATEGORY: #{meta[:category]} \tFEED: #{meta[:feed]} \tTYPE: #{meta[:type]} \tLABELS: #{meta[:labels]} \tSTATE: #{meta[:state]}"
   end
 
-  Event.new_with_checks(event_hash, meta)
+  Event.new_from_crawler(event_hash, meta)
 end
 
 EventMongo.all.each do |e|
