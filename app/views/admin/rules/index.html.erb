@@ -14,8 +14,10 @@
     <td><%= r.authorship_value %></td>
     <td><%= r.award_value %></td>
     <td><%= r.upvote_value %></td>
+	<td><%= link_to '[edit]', edit_admin_rule_path(r) %></td>
   </tr>
 <% end %>
 </table>
 
 <%= paginate @rules %>
+<%= link_to 'New rule', new_admin_rule_path %>

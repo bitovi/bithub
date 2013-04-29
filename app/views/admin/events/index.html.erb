@@ -3,6 +3,7 @@
 <table class="table table-stripped table-hover">
   <tr>
     <th>Title</th>
+    <th>Tags</th>
     <th>Category</th>
     <th>Feed</th>
     <th>Timestamp</th>
@@ -11,9 +12,11 @@
   <% @events.each do |e| %>
     <tr>
       <td><%= truncate(e.title) %></td>
+      <td><%= e.tag_list %></td>
       <td><%= e.category.name %></td>
       <td><%= e.feed.name %></td>
       <td><%= e.origin_ts %></td>
+	  <td><%= link_to '[e]', edit_admin_event_path(e) %></td>
     </tr>
   <% end %>
 </table>
