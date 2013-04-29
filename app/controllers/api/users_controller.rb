@@ -1,4 +1,4 @@
-class Api::UsersController < ApplicationController
+class Api::UsersController < Api::ApiController
   respond_to :json
   rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
   rescue_from ActiveRecord::RecordNotFound, :with => :show_errors

@@ -1,4 +1,4 @@
-class Api::EventsController < ApplicationController
+class Api::EventsController < Api::ApiController
   TAG_FIELDS = ['tag', 'feed', 'category']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
   respond_to :json

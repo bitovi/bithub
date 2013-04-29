@@ -1,12 +1,13 @@
 Bithub::Application.routes.draw do
 
+  as :user do 
+    get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+    get '/admin/logout', :to => 'devise/sessions#destroy', :as => :admin_logout
+  end
+
   devise_for :users,
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" },
     defaults: { format: 'json' }
-  
-  as :user do 
-    get '/api/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
-  end
 
   namespace :api, :defaults => { :format => 'json' } do
     resources :events, :except => [:new, :edit] do
@@ -19,9 +20,6 @@ Bithub::Application.routes.draw do
     resources :users, :except => [:new, :edit] do
       resources 'activities', :only => :index, :to => 'users#activities'
       resources 'events', :only => :index, :to => 'users#events'
-      collection do
-        get :top
-      end
     end
 
     resources :tags, :except => [:new, :edit] do
@@ -33,7 +31,7 @@ Bithub::Application.routes.draw do
     end
 
     match '/session' => 'session_info#current_session'
-    root :to => "application#home"
+    root :to => "api#home"
   end
 
   namespace :admin do
@@ -44,5 +42,5 @@ Bithub::Application.routes.draw do
     root :to => "rules#index"
   end
 
-  root :to => "application#home"
+  root :to => "api#home"
 end
