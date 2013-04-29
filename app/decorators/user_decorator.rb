@@ -4,7 +4,7 @@ class UserDecorator < Draper::Decorator
   def avatar_url
     if !source.props['gravatar_url'].blank?
       source.props['gravatar_url']
-    elsif source.identities.map{|ident| ident.source_data['image']}.first
+    elsif source.identities && source.identities.map{|ident| ident.source_data['image'] if ident.source_data}.first
       source.identities.map{|ident| ident.source_data['image']}.first
     else
       '/bithub-client/bithub/assets/images/icon-user.png'
