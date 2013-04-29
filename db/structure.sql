@@ -160,7 +160,11 @@ CREATE TABLE events (
     props hstore,
     source_data text NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    image_file_name character varying(255),
+    image_content_type character varying(255),
+    image_file_size integer,
+    image_updated_at timestamp without time zone
 );
 
 
@@ -226,7 +230,8 @@ CREATE TABLE internals (
     applies_to_id integer,
     value integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    comment character varying(255)
 );
 
 
@@ -875,3 +880,7 @@ INSERT INTO schema_migrations (version) VALUES ('20130304111726');
 INSERT INTO schema_migrations (version) VALUES ('20130304122257');
 
 INSERT INTO schema_migrations (version) VALUES ('20130305172111');
+
+INSERT INTO schema_migrations (version) VALUES ('20130429181415');
+
+INSERT INTO schema_migrations (version) VALUES ('20130429201314');

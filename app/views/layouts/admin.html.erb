@@ -13,15 +13,16 @@
         <a class="brand" href="/admin">Admin</a>
         <ul class="nav">
           <li class="divider-vertical"></li>
-          <li><a href="/admin/events/">Events</a></li>
           <li><a href="/admin/rules/">Rules</a></li>
-          <li><a href="/admin/users/">Users</a></li>
           <li><a href="/admin/tags/">Tags</a></li>
+          <li><a href="/admin/events/">Events</a></li>
+          <li><a href="/admin/users/">Users</a></li>
+          <li><a href="/admin/countries/">Countries</a></li>
         </ul>
 
         <ul class="nav pull-right">
-          <li><a><%= current_user.name %></a></li>
-          <a href="/sign_out" class="btn btn-primary">Logout</a>
+          <%# <li><a><%= current_user.name %1></a></li> %>
+		  <%= link_to 'Logout', admin_logout_path %>
         </ul>
 
       </div>		

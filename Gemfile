@@ -10,12 +10,12 @@ gem 'log4r'
 gem 'jquery-rails'
 gem 'cancan'
 gem 'rolify'
+gem 'paperclip'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
 gem 'omniauth-meetup'
-gem 'mongoid'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
@@ -32,9 +32,8 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 group :assets do
   gem "therubyracer", "~> 0.11.4"
   gem "less-rails", "~> 2.2.6"
-  gem 'sass-rails'
-  gem 'compass-rails'
   gem 'uglifier', '>= 1.0.3'
+  gem "twitter-bootstrap-rails"
 end
 
 group :test, :development do

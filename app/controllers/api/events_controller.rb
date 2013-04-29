@@ -1,8 +1,7 @@
-class Api::EventsController < ApplicationController
+class Api::EventsController < Api::ApiController
   TAG_FIELDS = ['tag', 'feed', 'category']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
   respond_to :json
-  before_filter :authenticate_user!, :only => ['create', 'update']
 
   def index
     muster_query = request.env['muster.query']
@@ -33,9 +32,9 @@ class Api::EventsController < ApplicationController
   end
 
   def create
-    @event = Event.new(params[:event])
+    @event = Event.new_from_bithub(params[:event])
     if @event.save
-      render :status => 200
+      render :json => @event, :status => 200
     else
       render :json => @event.errors.messages, :status => 500
     end

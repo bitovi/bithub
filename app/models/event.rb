@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class Event < ActiveRecord::Base
   VALID_FEEDS_FOR_IDENT = %w(github twitter)
   class EventHasNoParentError < Error; end
@@ -7,11 +9,15 @@ class Event < ActiveRecord::Base
     :body, :title, :url,
     :feed, :category, :tag_list,
     :origin_date, :origin_ts,
-    :props, :source_data
+    :props, :source_data, :image
 
   attr_accessor :meta
 
   acts_as_taggable_on :tags
+  has_attached_file :image,
+    :styles => { :thumb => "100x100>" },
+    :default_url => "/images/:style/missing.png"
+end
 
   belongs_to :parent, :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
@@ -34,10 +40,27 @@ class Event < ActiveRecord::Base
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
-  def self.new_with_checks(args ={}, meta)
+  def self.new_from_crawler(args = {}, meta)
     ev = self.new(args)
     ev.meta = meta.symbolize_keys
     ev.whole_chain
+  end
+
+  def self.new_from_bithub(args)
+    args.delete(:image) #TMP
+    event = self.new
+    event.tag_list    = [args[:category], args[:feed], args[:project]].join(',')
+    event.feed        = Event.determine_feed(args[:feed])
+    event.category    = Event.determine_category(args[:category])
+    event.rule        = Event.determine_rule(event.tags)
+    event.hash_key    = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+    event.origin_date = Date.today
+    event.origin_ts   = Time.now
+    args.delete(:category)
+    args.delete(:feed)
+    args.delete(:project)
+    event.assign_attributes(args)
+    event
   end
 
   def self.next_id
@@ -65,33 +88,45 @@ class Event < ActiveRecord::Base
   end
 
   def determine_all
-    determine_tags
-    determine_feed
-    determine_category
-    determine_rule
+    determine_tags_from_meta
+    determine_feed_from_meta
+    determine_category_from_meta
+    determine_rule_from_meta
     determine_author
     self
   end
 
 
-  def determine_tags
-    tags = meta[:tags]
-    tags << meta[:feed]
-    tags << meta[:type]
-    tags << meta[:category]
-    self.tag_list = tags.join(', ')
+  def self.determine_feed(feed_name)
+    Tag.find_or_create_with_like_by_name(feed_name)
+  end
 
-    #self.tag_list = meta[:tags].is_a?(Array) ? meta[:tags].join(',') : meta[:tags]
+  def self.determine_category(category_name)
+    Tag.find_or_create_with_like_by_name(category_name)
+  end
+  
+  def self.determine_rule(tag_arr)
+    Rule.best_match(tag_arr)
+  end
+
+  def determine_tags_from_meta
+    tags = meta[:tags] << meta[:feed] << meta[:type] << meta[:category]
+    self.tag_list = tags.join(',')
     self
   end
 
-  def determine_feed
-    self.feed = Tag.find_or_create_with_like_by_name(meta[:feed])
+  def determine_feed_from_meta
+    self.feed = Event.determine_feed(meta[:feed])
     self
   end
 
-  def determine_category
-    self.category = Tag.find_or_create_with_like_by_name(meta[:category])
+  def determine_category_from_meta
+    self.category = Event.determine_category(meta[:category])
+    self
+  end
+
+  def determine_rule_from_meta
+    self.rule = Event.determine_rule(meta[:tags])
     self
   end
 
@@ -107,11 +142,6 @@ class Event < ActiveRecord::Base
       ident.create_user({name: meta[:origin_author_username]})
       self.author = ident.user
     end
-    self
-  end
-
-  def determine_rule
-    self.rule = Rule.best_match(meta[:tags])
     self
   end
 

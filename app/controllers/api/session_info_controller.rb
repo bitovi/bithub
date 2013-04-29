@@ -1,13 +1,10 @@
-class Api::SessionInfoController < ApplicationController
+class Api::SessionInfoController < Api::ApiController
   respond_to :json
+  before_filter :authenticate_user!
+
 
   def current_session
-    if user_signed_in?
-      @user = UserDecorator.decorate(current_user)
-      render 'api/users/show'
-    else
-      #FIXME replace custom message with locale message
-      render :json => { message: 'Unauthenticated' }, :status => 401
-    end
+    @user = UserDecorator.decorate(current_user)
+    render 'api/users/show'
   end
 end

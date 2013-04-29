@@ -1,0 +1,3 @@
+<%= form_for @rule, url: admin_rule_path(@rule) do |form| %>
+	<%= render :partial => 'form', locals: { f: form, rule: @rule } %>
+<% end %>

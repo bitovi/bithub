@@ -23,38 +23,62 @@ describe Event do
         expect{generic_event.save!}.to raise_error
       end
     end
-
+    
     describe "#determine_feed" do
+      it "determines a feed using the name of the feed" do
+        feed = Event.determine_feed("some_feed")
+        tag_feed = Tag.find_by_name("some_feed")
+        expect(feed).to eq(tag_feed)
+      end
+    end
+    
+    describe "#determine_category" do
+      it "determines a category using the name of the category" do
+        category = Event.determine_category("some_category")
+        tag_category = Tag.find_by_name("some_category")
+        expect(category).to eq(tag_category)
+      end
+    end
+    
+    describe "#determine_rule" do
+      it "determines a rule using an array of tags" do
+        rule = Event.determine_rule(['some_feed','some_category','some_project'])
+        tag_rule = Rule.best_match(['some_feed','some_category','some_project'])
+        expect(rule).to eq(tag_rule)
+      end
+    end
+
+    describe "#determine_feed_from_meta" do
       it "determines a feed" do
         event = build(:event_wo_feed)        
-        event.determine_feed.save!
+        event.determine_feed_from_meta.save!
         feed = Tag.find_by_name(event.meta[:feed])
         expect(event.feed).to eq(feed)
       end
     end
 
-    describe "#determine_category" do
+    describe "#determine_category_from_meta" do
       it "determines a category" do
         event = build(:event_wo_category)        
-        event.determine_category.save!
+        event.determine_category_from_meta.save!
         category = Tag.find_by_name(event.meta[:category])
         expect(event.category).to eq(category)
       end
     end
 
-    describe "#determine_rule" do
+    describe "#determine_rule_from_meta" do
       it "determines a rule" do
         event = build(:event_wo_rule)        
-        event.determine_rule.save!
+        event.determine_rule_from_meta.save!
         rule = Rule.best_match(event.meta[:tags])
         expect(event.rule).to eq(rule)
       end
     end
 
-    describe "#determine_tags" do
+    describe "#determine_tags_from_meta" do
       it "determines tags" do
         event = build(:event_wo_tags)
-        event.determine_tags.save!
+        event.determine_tags_from_meta.save!
         expect(event.tags.count).to eq(event.meta[:tags].count)        
       end
     end

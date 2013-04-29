@@ -28,7 +28,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         meta = event_hash.delete('meta')
 
         begin
-          ev = Event.new_with_checks(event_hash, meta)
+          ev = Event.new_from_crawler(event_hash, meta)
           ev.save!
           liveservice_exchange.publish(ev)
         rescue ActiveRecord::RecordInvalid => invalid

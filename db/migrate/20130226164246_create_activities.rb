@@ -30,7 +30,6 @@ class CreateActivities < ActiveRecord::Migration
       t.references :receiver, :null => false
       t.references :applies_to
       t.integer :value
-
       t.timestamps
     end
 
