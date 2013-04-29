@@ -35,10 +35,13 @@ Bithub::Application.routes.draw do
   end
 
   namespace :admin do
-    resources :users
+    resources :users do
+      resources :activities, only: [:destroy]
+    end
     resources :events
     resources :tags
     resources :rules
+    resources :countries
     root :to => "rules#index"
   end
 
