@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me
   serialize :props, ActiveRecord::Coders::Hstore
 
+  belongs_to :country
+
   has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy

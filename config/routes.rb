@@ -32,6 +32,8 @@ Bithub::Application.routes.draw do
       end
     end
 
+    resources :countries, :only => :index
+
     match '/session' => 'session_info#current_session'
     root :to => "application#home"
   end
