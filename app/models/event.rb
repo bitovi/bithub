@@ -14,7 +14,9 @@ class Event < ActiveRecord::Base
   attr_accessor :meta
 
   acts_as_taggable_on :tags
-  has_attached_file :image, :styles => { :thumb => "100x100>" }, :default_url => "/images/:style/missing.png"
+  has_attached_file :image,
+    :styles => { :thumb => "100x100>" },
+    :default_url => "/images/:style/missing.png"
 
   belongs_to :parent, :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
