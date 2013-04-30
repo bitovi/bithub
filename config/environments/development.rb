@@ -29,9 +29,10 @@ Bithub::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  # Do not compress assets
-  config.assets.compress = false
-
-  # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.precompile += ['admin.js', 'admin.css']
+  config.assets.initialize_on_precompile = false
+  config.assets.prefix = "assets-dev"
+  config.assets.compress = true
+  config.assets.compile = false
+  config.assets.debug = false
 end
