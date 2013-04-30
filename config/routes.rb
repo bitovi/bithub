@@ -9,7 +9,7 @@ Bithub::Application.routes.draw do
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
     end
 
-    resources :users, :except => [:new, :edit] do
+    resources :users, :except => [:new] do
       resources 'activities', :only => :index, :to => 'users#activities'
       resources 'events', :only => :index, :to => 'users#events'
     end
