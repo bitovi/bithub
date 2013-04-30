@@ -33,6 +33,16 @@ class Api::UsersController < Api::ApiController
     render :show
   end
 
+  def update
+    filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
+
+    if User.update(params[:id], filtered_params)
+      render :status => 200, :json => {:id => params[:id]}
+    else
+      render :json => @event.errors.messages, :status => 500
+    end
+  end
+
   def activities
     @activities = ActivityDecorator.decorate_collection(User.find(params[:user_id]).activities)
     render 'api/activities/index'
@@ -44,6 +54,7 @@ class Api::UsersController < Api::ApiController
   end
 
   private
+
   def attr_queries(params)
     h = Hash.new
     params.each do |k,v|
