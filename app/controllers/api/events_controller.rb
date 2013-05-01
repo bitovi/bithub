@@ -33,6 +33,7 @@ class Api::EventsController < Api::ApiController
 
   def create
     @event = Event.new_from_bithub(params[:event])
+    @event.author = current_user
     if @event.save
       render :json => @event, :status => 200
     else

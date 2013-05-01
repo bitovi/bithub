@@ -64,10 +64,9 @@ GEM
       net-ssh-gateway (>= 1.1.0)
     capistrano-ext (1.2.1)
       capistrano (>= 1.0.0)
-    climate_control (0.0.3)
-      activesupport (>= 3.0)
-    cocaine (0.5.1)
-      climate_control (>= 0.0.3, < 1.0)
+    carrierwave (0.8.0)
+      activemodel (>= 3.2.0)
+      activesupport (>= 3.2.0)
     coderay (1.0.9)
     commonjs (0.2.6)
     dalli (2.6.2)
@@ -175,12 +174,6 @@ GEM
       multi_json (~> 1.3)
       omniauth-oauth (~> 1.0)
     orm_adapter (0.4.0)
-    paperclip (3.4.1)
-      activemodel (>= 3.0.0)
-      activerecord (>= 3.0.0)
-      activesupport (>= 3.0.0)
-      cocaine (~> 0.5.0)
-      mime-types
     pg (0.15.1)
     pg-hstore (1.1.7)
     polyglot (0.3.3)
@@ -218,6 +211,7 @@ GEM
       json (~> 1.4)
     ref (1.0.4)
     request_store (1.0.5)
+    rmagick (2.13.2)
     rolify (3.2.0)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -274,6 +268,7 @@ DEPENDENCIES
   cancan
   capistrano
   capistrano-ext
+  carrierwave
   dalli
   devise
   draper
@@ -291,10 +286,10 @@ DEPENDENCIES
   omniauth-github
   omniauth-meetup
   omniauth-twitter
-  paperclip
   pg
   pry-rails
   rails (= 3.2.12)
+  rmagick
   rolify
   rspec-rails
   therubyracer (~> 0.11.4)

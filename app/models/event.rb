@@ -14,9 +14,7 @@ class Event < ActiveRecord::Base
   attr_accessor :meta
 
   acts_as_taggable_on :tags
-  has_attached_file :image,
-    :styles => { :thumb => "100x100>" },
-    :default_url => "/images/:style/missing.png"
+  mount_uploader :image, EventImageUploader
 
   belongs_to :parent, :class_name => "Event"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
@@ -46,7 +44,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.new_from_bithub(args)
-    args.delete(:image) #TMP
+    Rails.logger.info args[:image] 
     event = self.new
     event.tag_list    = [args[:category], args[:feed], args[:project]].join(',')
     event.feed        = Event.determine_feed(args[:feed])
@@ -55,6 +53,7 @@ class Event < ActiveRecord::Base
     event.hash_key    = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
     event.origin_date = Date.today
     event.origin_ts   = Time.now
+    event.image       = args[:image]
     args.delete(:category)
     args.delete(:feed)
     args.delete(:project)

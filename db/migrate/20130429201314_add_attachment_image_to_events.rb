@@ -1,11 +1,11 @@
 class AddAttachmentImageToEvents < ActiveRecord::Migration
   def self.up
     change_table :events do |t|
-      t.attachment :image
+      add_column :events, :image, :string
     end
   end
 
   def self.down
-    drop_attached_file :events, :image
+    remove_column :events, :image
   end
 end
