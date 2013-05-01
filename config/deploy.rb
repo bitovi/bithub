@@ -21,6 +21,8 @@ set(:default_environment, {
 set(:stages, ['staging', 'prod'])
 set(:default_stage, 'prod')
 
+set(:shared_children, shared_children + %w{public/uploads})
+
 namespace :deploy do
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
@@ -45,6 +47,11 @@ namespace :deploy do
   task(:recreate_upstart_conf) do
     run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
+
+  task :symlink_uploads do
+     run "ln -nfs #{shared_path}/uploads  #{release_path}/public/uploads"
+   end
 end
 
 before('deploy:restart', 'deploy:recreate_upstart_conf')
+before('deploy:restart', 'deploy:symlink_uploads')
