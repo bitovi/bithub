@@ -25,10 +25,12 @@ class User < ActiveRecord::Base
 
   def activities
     activities = []
-    activities.concat(self.awards)
-    activities.concat(self.upvotes)
-    activities.concat(self.anteups)
-    activities.concat(self.internals)
+    activities.concat( self.events.select([:id, :title, :origin_ts]).map {|e| e.attributes.merge({:type => "authored"}) } )
+    activities.concat( self.awards.map {|e| e.attributes.merge({:type => "award"})} )
+    activities.concat( self.upvotes.map {|e| e.attributes.merge({:type => "upvote"})} )
+    activities.concat( self.anteups.map {|e| e.attributes.merge({:type => "anteup"})} )
+    activities.concat( self.internals.map {|e| e.attributes.merge({:type => "internal"})} )
+
     activities.sort {|x, y| x.origin_ts <=> y.origin_ts}
   end
 
