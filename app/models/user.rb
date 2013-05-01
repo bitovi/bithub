@@ -24,16 +24,26 @@ class User < ActiveRecord::Base
   before_save :calculate_gravatar_hash
 
   def activities
+
+    # fetch from DB
+    events = self.events.joins(:rule).select(['events.id','events.title', 'events.created_at', 'rules.authorship_value'])
+    upvotes = self.upvotes.includes(:applies_to).select(['upvotes.*', 'events.title'])
+    awards = self.awards.includes(:applies_to).select(['awards.*', 'events.title'])
+    anteups = self.anteups.includes(:applies_to).select(['anteups.*', 'events.title'])
+    internals = self.internals.includes(:applies_to).select(['internals.*'])
+
+    # merge and decorate
     activities = []
-    activities.concat( self.events.select([:id, :title, :origin_ts]).map {|e| e.attributes.merge({:type => "authored"}) } )
-    activities.concat( self.awards.map {|e| e.attributes.merge({:type => "award"})} )
-    activities.concat( self.upvotes.map {|e| e.attributes.merge({:type => "upvote"})} )
-    activities.concat( self.anteups.map {|e| e.attributes.merge({:type => "anteup"})} )
-    activities.concat( self.internals.map {|e| e.attributes.merge({:type => "internal"})} )
+    activities.concat( events.map {|e| e.attributes.merge({:type => "authored", :value => e[:authorship_value]}) } )
+    activities.concat( awards.map {|e| e.attributes.merge({:type => "awarded"}) } )
+    activities.concat( upvotes.map {|e| e.attributes.merge({:type => "upvoted"}) } )
+    activities.concat( anteups.map {|e| e.attributes.merge({:type => "anteup"}) } )
+    activities.concat( internals.map {|e| e.attributes.merge({:type => "internal", :title => e[:comment]}) } )
 
-    activities.sort {|x, y| x.origin_ts <=> y.origin_ts}
+    # return sorted
+    activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
-
+  
   def score
     self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
     + self.upvotes.sum('value')
