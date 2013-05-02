@@ -34,7 +34,17 @@ class Api::UsersController < Api::ApiController
   end
 
   def update
+    country = params['country'].to_i > 0 ? params['country'].to_i : params['country']
     filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
+
+    # try to match by iso/name/display_name or by id or set to Nil
+    if country.is_a? String
+      filtered_params['country'] = Country.where("iso='#{country}' OR display_name='#{country}' OR name='#{country}'").first    
+    elsif country.is_a? Integer
+      filtered_params['country'] = Country.find(country)
+    else
+      filtered_params['country'] = nil
+    end
 
     if User.update(params[:id], filtered_params)
       render :status => 200, :json => {:id => params[:id]}
