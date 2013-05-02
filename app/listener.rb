@@ -30,7 +30,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         begin
           ev = Event.new_from_crawler(event_hash, meta)
           ev.save!
-          liveservice_exchange.publish(ev)
+          liveservice_exchange.publish(ActiveSupport::JSON.encode(ev))
         rescue ActiveRecord::RecordInvalid => invalid
           $log.info "Save failed | META: #{meta}"
           $log.info invalid.record.errors.messages.to_yaml
