@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me, :country
+  attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me, :state, :country
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
