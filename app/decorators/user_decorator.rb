@@ -7,7 +7,7 @@ class UserDecorator < Draper::Decorator
     elsif source.identities && source.identities.map{|ident| ident.source_data['image'] if ident.source_data}.first
       source.identities.map{|ident| ident.source_data['image']}.first
     else
-      '/bithub-client/bithub/assets/images/icon-user.png'
+      '/assets/images/icon-user.png'
     end
   end
 
