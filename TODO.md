@@ -1,7 +1,7 @@
 TODO:
 =====
 
-*
+* COMPLETE request specs
 * extract ScopeApplier to /lib
 * prevent visibility of /admin
 * fine tune the API
