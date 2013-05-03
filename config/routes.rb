@@ -1,4 +1,12 @@
 Bithub::Application.routes.draw do
+  
+  devise_for :users,
+    controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
+  
+  as :user do 
+    get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+  end
+
   namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'session_info#current_session'
 
@@ -27,6 +35,7 @@ Bithub::Application.routes.draw do
     root :to => "api#home"
   end
 
+  # NEEDS TO BE BELOW ALL API ROUTES !!!
   namespace :admin do
     resources :users do
       resources :activities, only: [:destroy]
@@ -39,13 +48,4 @@ Bithub::Application.routes.draw do
   end
 
   root :to => "api#home"
-
-  as :user do 
-    get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
-    get '/admin/logout', :to => 'devise/sessions#destroy', :as => :admin_logout
-  end
-
-  devise_for :users,
-    controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" },
-    defaults: { format: 'json' }
 end

@@ -1,2 +1,2 @@
 listener: ruby ./app/listener.rb
-web: bundle exec rails server -p 4567
+web: unicorn_rails -c config/unicorn_dev.rb

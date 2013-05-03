@@ -1,4 +1,5 @@
 class Admin::TagsController < Admin::AdminController
+
   def index
     @tags = Tag.page params[:page]
     render 'index'

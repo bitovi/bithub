@@ -1,4 +1,5 @@
 class Admin::RulesController < Admin::AdminController
+
   def index
     @rules = Rule.page params[:page]
     render 'index'

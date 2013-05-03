@@ -1,9 +1,9 @@
 TODO:
 =====
 
-* meetup.com integration
+*
 * extract ScopeApplier to /lib
-* ensure that all create/update/destroy API calls are secured
+* prevent visibility of /admin
 * fine tune the API
 	- mainly, optimize acts_as_taggable b/c its causing the N+1 query problem
 	- optimize other possibly slow SQL queries
