@@ -49,7 +49,7 @@ namespace :deploy do
   end
 
   task :symlink_uploads do
-     run "ln -nfs #{shared_path}/uploads  #{release_path}/public/uploads"
+     run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
    end
 end
 
