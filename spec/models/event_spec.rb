@@ -22,8 +22,12 @@ describe Event do
         expect{generic_event.save!}.to raise_error
       end
     end
+
+    describe ".has_an_attribute?" do
+      it "determines if the Event model has the provided attribute"
+    end
     
-    describe "#determine_feed" do
+    describe ".determine_feed" do
       it "determines a feed using the name of the feed" do
         feed = Event.determine_feed("some_feed")
         tag_feed = Tag.find_by_name("some_feed")
@@ -31,7 +35,7 @@ describe Event do
       end
     end
     
-    describe "#determine_category" do
+    describe ".determine_category" do
       it "determines a category using the name of the category" do
         category = Event.determine_category("some_category")
         tag_category = Tag.find_by_name("some_category")
@@ -39,7 +43,7 @@ describe Event do
       end
     end
     
-    describe "#determine_rule" do
+    describe ".determine_rule" do
       it "determines a rule using an array of tags" do
         rule = Event.determine_rule(['some_feed','some_category','some_project'])
         tag_rule = Rule.best_match(['some_feed','some_category','some_project'])
@@ -199,6 +203,5 @@ describe Event do
         end
       end
     end
-
   end
 end

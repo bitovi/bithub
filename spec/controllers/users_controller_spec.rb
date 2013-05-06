@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Api::UsersController do
-  describe "#index" do
-    it "applies muster query segments to the scope"
-    it "applies regular params to scope"
-    it "applies taggables to scope"
+  describe "#apply_tag_based_params_to_scope" do
+    it "adds tag based param expressions to the scope"
   end
 end
