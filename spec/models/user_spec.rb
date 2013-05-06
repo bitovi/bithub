@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe User do
-
   describe "#score" do
     it "calculates total points for a user" do
       rule = create(:rule, authorship_value: 100, award_value: 1000)
@@ -35,19 +34,6 @@ describe User do
       user = create(:user, name: "Nikica Jokic", email: nil)
       user.update_blank_oauth_attrs({name: "Nikica Prdovic", email: "neektza@gmail.com"})
       expect(user.reload.email).to eq ("neektza@gmail.com")
-    end
-  end
-
-  describe ".top" do
-    it "returns list of top n users sorted by score" do
-      user1 = create(:user); user1.stub(:score) {1}
-      user2 = create(:user); user2.stub(:score) {2}
-      user3 = create(:user); user3.stub(:score) {3}
-      user4 = create(:user); user4.stub(:score) {4}
-      user5 = create(:user); user5.stub(:score) {5}
-      user6 = create(:user); user6.stub(:score) {6}
-
-      top_users = User.top(3)
     end
   end
 

@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'digest/md5'
 
 describe Event do
-
   context "upon creation" do
     before :each do
       create(:rule)
@@ -79,7 +78,8 @@ describe Event do
       it "determines tags" do
         event = build(:event_wo_tags)
         event.determine_tags_from_meta.save!
-        expect(event.tags.count).to eq(event.meta[:tags].count)        
+        tags = Tag.find_or_create_all_with_like_by_name(event.meta[:tags])
+        expect(event.tags).to eq(tags)        
       end
     end
 
@@ -120,22 +120,6 @@ describe Event do
           generic_event.save!
           expect(generic_event.author).to be
         end
-      end
-    end
-
-    describe "#determine_all" do
-      it "determines a feed, a category, a rule, tags and an author" do
-        event = build(:event)
-        event.determine_all
-        event.save!
-        feed = Tag.find_by_name(event.meta[:feed])
-        category = Tag.find_by_name(event.meta[:category])
-        rule = Rule.best_match(event.meta[:tags])
-        expect(event.feed).to eq(feed)
-        expect(event.category).to eq(category)
-        expect(event.rule).to eq(rule)
-        expect(event.tags.count).to eq(event.meta[:tags].count)        
-        expect(event.tags.count).to eq(event.meta[:tags].count)        
       end
     end
 
