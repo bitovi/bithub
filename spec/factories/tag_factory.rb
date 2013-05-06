@@ -5,5 +5,4 @@ FactoryGirl.define do
     name "a_tag"
     display_name "A tag"
   end
-
 end
