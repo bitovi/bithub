@@ -11,12 +11,13 @@ server/backend
 
 client/frontend
 ---------------
+* Live service connection
+* Manage bar for updating tags and category
 * LRU menu
-* Admin manage bar for updating tags and category
 
 manual work
 -----------
 * Make additional twitter apps (OAuth keys/tokens) for each user stream we follow (CanJS, JqueryPP ..) ; we could just turn off the old bithub connections and transfer them to the new Bithub, but I'd like to keep the old one running one more week, just in case
+* Bootstrap a staging server
 * Define rules with authorship/award/upvote values 
 * Apply defined rules to migrated events
-* Bootstrap a staging server
