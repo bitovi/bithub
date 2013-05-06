@@ -1,15 +1,19 @@
 class Award < ActiveRecord::Base
   class EventHasNoParentError < Error; end
+  class ThreadAlreadyAwardedError < Error; end
+
   attr_accessible :actor, :applies_to, :value
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
 
   validates :applies_to, :presence => true
-  validates :applies_to, :uniqueness => { :scope => :id }
+  #validates :applies_to, :uniqueness => { :scope => :id }
   # validates :actor, :presence => true  
   
   def self.create_award(actor, event)
     raise EventHasNoParentError if !event.parent
+    raise ThreadAlreadyAwardedError if (event.parent.children.select {|e| e.awards.length > 0}).length > 0
+
     total_value = event.parent.rule.award_value + event.parent.upvotes.sum('value') + event.parent.anteups.sum('value')
     activity = Award.create({:actor => actor, :applies_to => event, :value => total_value})
     Anteup.fullfill_by_event(event.parent) if activity
