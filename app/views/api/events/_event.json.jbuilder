@@ -7,7 +7,6 @@ json.tags event.tag_names
 json.upvotes event.upvotes
 json.anteups event.anteups
 json.award_value event.award_value
-json.awarded event.awarded
 
 json.author event.author
 json.props event.props

@@ -53,6 +53,10 @@ class EventDecorator < Draper::Decorator
       source.props[:origin_author_avatar_url] = source.source_data['actor']['avatar_url']
     end
 
+    if source.parent
+      source.props[:awarded] = source.awards.first ? true : false
+    end
+
     source.props
   end
 
