@@ -10,5 +10,4 @@ class UserDecorator < Draper::Decorator
       '/bithub/assets/images/icon-user.png'
     end
   end
-
 end
