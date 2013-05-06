@@ -31,10 +31,10 @@ class EventDecorator < Draper::Decorator
   end
 
   def author
-    { :id => author[:id],
-      :name => author[:name],
-      :created_at => author[:created_at],
-    } if author
+    { :id => source.author[:id],
+      :name => source.author[:name],
+      :created_at => source.author[:created_at],
+    } if source.author
   end
 
   def props

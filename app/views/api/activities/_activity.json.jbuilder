@@ -1,1 +1,4 @@
-json.(activity, :id, :value, :actor_id, :applies_to_id, :type)
+json.(activity, :id, :value, :type)
+
+json.actor			activity.actor
+json.applies_to		activity.applies_to

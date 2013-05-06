@@ -1,27 +1,18 @@
 class Api::UsersController < Api::ApiController
   respond_to :json
-  rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
-  rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
 
   def index
-    @muster_query = request.env['muster.query']
-    Rails.logger.info @muster_query
-
-    scope = User.scoped
-    scope = scope.joins(@muster_query[:joins]) if !@muster_query[:joins].blank?
-    scope = scope.includes(@muster_query[:includes]) if !@muster_query[:includes].blank?
-    scope = scope.order(filter_order_query(@muster_query[:order])) if !@muster_query[:order].blank?
-    scope = scope.offset(@muster_query[:offset]) if !@muster_query[:offset].blank?
-    scope = scope.limit(@muster_query[:limit])
-    scope = scope.where(attr_queries(params))
+    muster_query = request.env['muster.query']
+    scope = build_scope(muster_query, params)
     
     # Ordering by virtual calculated attributes (can order by only one attr)
-    va = take_first(pluck_virtual_attrs(@muster_query[:order]))
-    if va
-      name, direction = va.split
-      @users = scope.all.sort{|u1, u2| u1.send(name) <=> u2.send(name)}
+    virtual_attrs = take_first(pluck_virtual_attrs(muster_query[:order]))
+    if virtual_attrs
+      attribute, direction = virtual_attrs.split
+      @users = scope.all.sort{|u1, u2| u1.send(attribute) <=> u2.send(attribute)}
       @users.reverse! if direction == "desc"
     else
+      scope = scope.order(filter_order_query(muster_query[:order])) if !muster_query[:order].blank?
       @users = scope.all
     end
     @users = UserDecorator.decorate_collection(@users)
@@ -29,7 +20,7 @@ class Api::UsersController < Api::ApiController
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = UserDecorator.decorate(User.find(params[:id]))
     render :show
   end
 
@@ -48,28 +39,14 @@ class Api::UsersController < Api::ApiController
     end
   end
 
-  def activities
-    @activities = ActivityDecorator.decorate_collection(User.find(params[:user_id]).activities)
-    render 'api/activities/index'
-  end
-
-  def events
-    @events = EventDecorator.decorate_collection(User.find(params[:user_id]).events)
-    render 'api/events/index'
-  end
-
   private
-
-  def attr_queries(params)
-    h = Hash.new
-    params.each do |k,v|
-      h[k] = v if User.has_an_attribute?(k)
-    end
-    return h
+  def build_scope(muster_query, params)
+    scope = User.scoped ; logic_analyzer = QueryLogicAnalyzer.new(User)
+    scope = ScopeApplier.apply_muster_query_to_scope(scope, muster_query)
+    scope = ScopeApplier.apply_regular_params_to_scope(logic_analyzer, scope, params)
+    scope
   end
-
-  private
-
+  
   def take_first(query)
     query[0]
   end
@@ -81,5 +58,4 @@ class Api::UsersController < Api::ApiController
   def pluck_virtual_attrs(query)
     query.select{|p| !User.has_an_attribute?(p.split[0])}
   end
-
 end

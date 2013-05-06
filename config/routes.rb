@@ -19,8 +19,8 @@ Bithub::Application.routes.draw do
     end
 
     resources :users, :except => [:new] do
-      resources 'activities', :only => :index, :to => 'users#activities'
-      resources 'events', :only => :index, :to => 'users#events'
+      resources 'activities', :only => :index, :to => 'user_activities#index'
+      resources 'events', :only => :index, :to => 'user_events#index'
     end
 
     resources :tags, :except => [:new, :edit] do
