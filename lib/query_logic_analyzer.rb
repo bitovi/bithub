@@ -1,4 +1,4 @@
-class QueryLogicAnalizer
+class QueryLogicAnalyzer
   TAG_FIELD_NAMES = ['tag', 'feed', 'category']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
 
@@ -6,25 +6,7 @@ class QueryLogicAnalizer
     @model = model
   end
 
-  def apply_muster_query_to_scope(scope, muster_query)
-    scope = scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
-    scope = scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-    scope = scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
-    scope = scope.limit(muster_query[:limit]) if muster_query[:count].blank?
-    scope
-  end
-
-
   # =========> Tag based params
-
-  def apply_tag_based_params_to_scope!(scope, params)
-    taggables = pluck_and_process_tag_based_params(params)
-    if taggables
-      scope = scope.tagged_with(taggables[:any], :any => true) if taggables[:any]
-      scope = scope.tagged_with(taggables[:all]) if taggables[:all]
-    end
-    scope
-  end
 
   def pluck_and_process_tag_based_params(params)
     process_tag_based_params(pluck_tag_based_params(params))
@@ -60,12 +42,6 @@ class QueryLogicAnalizer
   end
 
   # =========> Regular params
-
-  def apply_regular_params_to_scope!(scope, params)
-    regpars = pluck_and_process_regular_params(params)
-    scope = scope.where(regpars) if regpars
-    scope
-  end
 
   def pluck_and_process_regular_params(params)
     process_regular_params(pluck_regular_params(params))
