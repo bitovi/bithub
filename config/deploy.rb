@@ -9,7 +9,6 @@ set(:user, "bithub")
 set(:application, "crawler")
 set(:repository, "git@github.com:bitovi/bithub-crawler.git")
 
-set(:branch, "master")
 set(:deploy_via, :remote_cache)
 set(:deploy_to) { "/home/#{user}/#{application}" }
 
