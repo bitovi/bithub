@@ -1,2 +1,2 @@
 set :app_env, 'staging'
-server "TBD", :app, :web, :db, :primary => true
+server "173.230.136.135", :app, :web, :db, :primary => true

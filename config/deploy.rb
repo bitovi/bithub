@@ -8,7 +8,6 @@ set(:bundle_flags, "--deployment --quiet --binstubs")
 set(:user, "bithub")
 set(:application, "irc-bot")
 set(:repository, "git@github.com:jupiterjs/irc-bot.git")
-
 set(:branch, "master")
 set(:deploy_via, :remote_cache)
 set(:deploy_to) { "/home/#{user}/#{application}" }
