@@ -18,3 +18,5 @@ json.actor event.actor
 json.children EventDecorator.decorate_collection(event.children) do |c|
   json.partial! "api/events/event", event: c
 end
+
+json.source_data event.source_data
