@@ -94,7 +94,6 @@ class Event < ActiveRecord::Base
     self
   end
 
-
   def self.determine_feed(feed_name)
     Tag.find_or_create_with_like_by_name(feed_name)
   end
@@ -108,7 +107,7 @@ class Event < ActiveRecord::Base
   end
 
   def determine_tags_from_meta
-    tags = meta[:tags] << meta[:feed] << meta[:type] << meta[:category]
+    tags = (meta[:tags] << meta[:feed] << meta[:type] << meta[:category]).reject {|el| el.nil?}
     self.tag_list = tags.join(',')
     self
   end
@@ -317,7 +316,7 @@ class Event < ActiveRecord::Base
   def self.has_an_attribute?(attr)
     Event.reflections.include?(attr) ||
     Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    Event.attribute_names.include?(attr) ||
-    Event.attribute_names.include?(attr.to_s.pluralize.to_sym)
+    Event.attribute_names.include?(attr.to_s) ||
+    Event.attribute_names.include?(attr.to_s.pluralize)
   end
 end

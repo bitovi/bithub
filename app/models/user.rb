@@ -23,32 +23,40 @@ class User < ActiveRecord::Base
   before_save :calculate_gravatar_hash
 
   def activities
-
-    # fetch from DB
-    events = self.events.joins(:rule).select(['events.id','events.title', 'events.created_at', 'rules.authorship_value'])
-    upvotes = self.upvotes.includes(:applies_to).select(['upvotes.*', 'events.title'])
-    awards = self.awards.includes(:applies_to).select(['awards.*', 'events.title'])
-    anteups = self.anteups.includes(:applies_to).select(['anteups.*', 'events.title'])
-    internals = self.internals.includes(:applies_to).select(['internals.*'])
-
-    # merge and decorate
-    activities = []
-    activities.concat( events.map {|e| e.attributes.merge({:type => "authored", :value => e[:authorship_value]}) } )
-    activities.concat( awards.map {|e| e.attributes.merge({:type => "awarded"}) } )
-    activities.concat( upvotes.map {|e| e.attributes.merge({:type => "upvoted"}) } )
-    activities.concat( anteups.map {|e| e.attributes.merge({:type => "anteup"}) } )
-    activities.concat( internals.map {|e| e.attributes.merge({:type => "internal", :title => e[:comment]}) } )
-
-    # return sorted
-    activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
+    self.events.joins(:rule).select(['events.id','events.title', 'events.created_at', 'rules.authorship_value'])
+    .concat(self.upvotes.includes(:applies_to).select(['upvotes.*', 'events.title']))
+    .concat(self.awards.includes(:applies_to).select(['awards.*', 'events.title']))
+    .concat(self.anteups.includes(:applies_to).select(['anteups.*', 'events.title']))
+    .concat(self.internals.includes(:applies_to).select(['internals.*']))
+    .sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
   
   def score
+    authored_events_total
+    + upvotes_total
+    + awards_total
+    + internals_total
+    - fulfilled_anteups_total
+  end
+
+  def authored_events_total
     self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
-    + self.upvotes.sum('value')
-    + self.awards.sum('value')
-    + self.internals.sum('value')
-    - self.anteups.fullfilled.sum('value')
+  end
+
+  def upvotes_total
+    self.upvotes.sum('value')
+  end
+
+  def awards_total
+    self.awards.sum('value')
+  end
+
+  def internals_total
+    self.internals.sum('value')
+  end
+
+  def fulfilled_anteups_total
+    self.anteups.fullfilled.sum('value')
   end
 
   def collect_authored_events
