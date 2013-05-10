@@ -23,6 +23,62 @@ describe Event do
       end
     end
 
+    describe "#new_from_bithub" do
+      let(:args) { original_args }
+      let(:ev) { Event.new_from_bithub(args) }
+
+      it "determines tags" do
+        expect(ev.tag_list).to be_instance_of(ActsAsTaggableOn::TagList)
+      end
+
+      it "determines a feed" do
+        expect(ev.feed).to be_instance_of(Tag)
+      end
+
+      it "determines a category" do
+        expect(ev.category).to be_instance_of(Tag)
+      end
+
+      it "assigns the body" do
+        expect(ev.body).to be_instance_of(String)
+      end
+
+      it "assigns the title" do
+        expect(ev.title).to be_instance_of(String)
+      end
+
+      it "calculates the hash key" do
+        expect(ev.hash).to be
+      end
+
+      it "sets the origin_date" do
+        expect(ev.origin_date).to be
+      end
+
+      it "sets the origin_ts" do
+        expect(ev.origin_ts).to be
+      end
+    end
+
+    describe "#update_from_github" do
+      before(:each) do
+        @ev = Event.new_from_bithub(original_args)
+        @ev.update_from_bithub!(updated_args)
+      end
+
+      it "re-determines the feed" do
+        expect(@ev.feed).to eq(Event.determine_feed(updated_args[:feed]))
+      end
+
+      it "re-determines the category" do
+        expect(@ev.category).to eq(Event.determine_category(updated_args[:category]))
+      end
+
+      it "re-determines tags" do
+        expect(@ev.tag_list).to eq(Event.determine_tags(only_tags(updated_args)))
+      end
+    end
+
     describe ".has_an_attribute?" do
       it "determines if the Event model has the provided attribute"
     end
@@ -91,38 +147,19 @@ describe Event do
       context "when there is an author in the system" do
         it "associates it with a github event" do
           ghe = build(:github_issue)
-          ident = create(:identity, uid: 456789, provider: "github")
           usr = build(:user)
-          usr.identities << ident
+          ident = create(:identity, uid: 456789, provider: "github", user: usr)
           usr.save!
-          ghe.determine_author
-          ghe.save!
+          ghe.determine_author_from_meta.save!
           expect(ghe.author).to eq(usr)
         end
         it "associates it with a twitter event" do
           twe = build(:twitter_tweet)
-          ident = create(:identity, uid: 123456, provider: "twitter")
           usr = build(:user)
-          usr.identities << ident
+          ident = create(:identity, uid: 123456, provider: "twitter", user: usr)
           usr.save!
-          twe.determine_author
-          twe.save!
+          twe.determine_author_from_meta.save!
           expect(twe.author).to eq(usr)
-        end
-      end
-      context "when there is no author in the system" do
-        it "creates it (from github) and associates it with the event" do
-          generic_event = build(:github_issue)
-          generic_event.determine_author
-          generic_event.save!
-          expect(generic_event.author).to be
-        end
-        
-        it "creates it (from twitter) and associates it with the event" do
-          generic_event = build(:twitter_tweet)
-          generic_event.determine_author
-          generic_event.save!
-          expect(generic_event.author).to be
         end
       end
     end
@@ -204,4 +241,28 @@ describe Event do
       end
     end
   end
+end
+
+def original_args
+  {
+    title: 'A new event arrives!',
+    body: 'Whasaaap?',
+    category: 'comment',
+    feed: 'github',
+    tags: ['issue_comment_event', 'canjs']
+  }
+end
+
+def updated_args
+  {
+    title: 'Changed title',
+    body: 'Changed body',
+    category: 'code',
+    feed: 'twitter',
+    tags: ['push_event', 'jquerypp']
+  }
+end
+
+def only_tags(args)
+  Array[args[:category], args[:feed]].concat(args[:tags])
 end
