@@ -165,6 +165,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         event.children.each do |child|
           child_prepared = prepare(child)
           if child_prepared
+            child_prepared[:meta][:mongo_id] = child[:_id].to_s
             send2mq(exchange, child_prepared)
           end
         end
@@ -173,6 +174,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
       # prepare parent
       prepared = prepare(event)
       if prepared
+        prepared[:meta][:mongo_id] = event[:_id].to_s
         send2mq(exchange, prepared)
       else
         $log.info "NOT SENT | #{event['_id']}, #{event['feed']}, #{event['title']}"

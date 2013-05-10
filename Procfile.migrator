@@ -1,0 +1,1 @@
+migrator: ruby ./app/migrator.rb
