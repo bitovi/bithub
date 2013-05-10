@@ -121,7 +121,7 @@ class Event < ActiveRecord::Base
 
   def determine_tags_from_meta
     tags = (meta[:tags] << meta[:feed] << meta[:type] << meta[:category]).reject {|el| el.nil?}
-    self.tag_list = tags.join(',')
+    self.tag_list = ActsAsTaggableOn::TagList.new(tags)
     self
   end
 
