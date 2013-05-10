@@ -18,7 +18,6 @@ class User < ActiveRecord::Base
   has_many :upvotes, :through => :events
   has_many :awards, :through => :events
   has_many :identities, :dependent => :destroy
-  validates :email, :uniqueness => true
   
   before_save :calculate_gravatar_hash
 
