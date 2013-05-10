@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe QueryLogicAnalizer do
-  let(:qla) { QueryLogicAnalizer.new(Event) }
+describe QueryLogicAnalyzer do
+  let(:qla) { QueryLogicAnalyzer.new(Event) }
   let(:lower_date_limit_str) { "2013-1-1" }
   let(:higher_date_limit_str) { "2013-5-1" }
   let(:date_range) { DateTime.parse(lower_date_limit_str)..DateTime.parse(higher_date_limit_str) }
