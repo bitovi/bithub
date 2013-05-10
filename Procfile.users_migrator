@@ -1,0 +1,1 @@
+migrate_users: ruby ./users_migrator/users_migrator.rb
