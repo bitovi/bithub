@@ -80,7 +80,13 @@ describe Event do
     end
 
     describe ".has_an_attribute?" do
-      it "determines if the Event model has the provided attribute"
+      it "confirms that the Event model indeed has an attribute" do
+        expect(Event.has_an_attribute?(:title)).to be_true
+      end
+      
+      it "denies that the Event model has a non-existent attribute" do
+        expect(Event.has_an_attribute?(:some_attr)).to be_false
+      end
     end
     
     describe ".determine_feed" do
