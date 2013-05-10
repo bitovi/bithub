@@ -6,7 +6,7 @@ class UserMongo
   field :email
 
   #field :email_hash
-  #field :joined_ts
+  field :joined_ts, type: DateTime
   #field :points
 
   field :providers # :twitter._json, :github._json
@@ -17,5 +17,5 @@ class UserMongo
   field :stateProvince
   field :country
 
-  field :upvotes #[ObjectId]
+  field :upvotes, type: Array
 end
