@@ -34,12 +34,29 @@ UserMongo.all().each do |mongo_user|
 
   begin
     new_user.save!
-    $log.info "SUCCESS | #{new_user[:name]}, #{new_user[:email]}"
-    # mongo_user.upvotes.each do |event_id| ...
+    $log.info "USER SAVED | #{new_user[:name]}, #{new_user[:email]}"
   rescue ActiveRecord::RecordInvalid => invalid
-    $log.info "FAILURE | #{new_user[:name]}, #{new_user[:email]}"
+    $log.info "USER INVALID | #{new_user[:name]}, #{new_user[:email]}"
     $log.info invalid.record.errors.messages.to_yaml
   end
+
+  if mongo_user.upvotes
+    mongo_user.upvotes.each do |event_id|
+      id = event_id.to_s
+      if Event.where("props -> 'mongo_id' = '#{id}'").length > 0
+        event = Event.where("props -> 'mongo_id' = '#{id}'").first
+        upvote = Upvote.new({:actor => new_user, :applies_to => event, :value => 1})
+        begin
+          upvote.save!
+          $log.info "UPVOTE SAVED | #{new_user.name}, #{event.title}"
+        rescue ActiveRecord::RecordInvalid => invalid
+          $log.info "UPVOTE INVALID | #{new_user.name}, #{event.title}"
+          $log.info invalid.record.errors.messages.to_yaml
+        end
+      end
+    end
+  end
+
 
 end
 
