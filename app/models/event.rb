@@ -84,6 +84,7 @@ class Event < ActiveRecord::Base
     props[:origin_author_name] = meta[:origin_author_name] if meta[:origin_author_name]
     props[:origin_author_id] = meta[:origin_author_id] if meta[:origin_author_id]
     props[:image] = meta[:image] if meta[:image]
+    props[:mongo_id] = meta[:mongo_id] if meta[:mongo_id]
   end
 
   def determine_all!(args)
