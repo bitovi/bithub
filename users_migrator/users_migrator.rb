@@ -13,14 +13,10 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 # Mongo connection
 Mongoid.load!("config/mongoid.yml")
 
-# iter all events
-#UserMongo.all.each do |user|
-#end
-
 UserMongo.all().each do |mongo_user|
   new_user_hash = {
     :name => mongo_user[:name],
-    :email => mongo_user[:email],
+    :email => (mongo_user[:email] && mongo_user[:email].include?('@')) ? mongo_user[:email] : nil, # dummy check
     :address => mongo_user[:address],
     :city => mongo_user[:city],
     :postal => mongo_user[:postalCode],
@@ -28,18 +24,20 @@ UserMongo.all().each do |mongo_user|
     #:country => mongo_user[:country],
   }
 
-  @new_user = User.new(new_user_hash)
+  new_user = User.new(new_user_hash)
   
   if mongo_user.providers
     mongo_user.providers.each do |key, provider|
-      @new_user.identities << Identity.new({:provider => key, :source_data => provider['_json'], :uid => provider['id'].to_s })
+      new_user.identities << Identity.new({:provider => key, :source_data => provider['_json'], :uid => provider['id'].to_s })
     end
   end
 
   begin
-    @new_user.save!
+    new_user.save!
+    $log.info "SUCCESS | #{new_user[:name]}, #{new_user[:email]}"
+    # mongo_user.upvotes.each do |event_id| ...
   rescue ActiveRecord::RecordInvalid => invalid
-    $log.info "Save failed | META: #{@new_user}"
+    $log.info "FAILURE | #{new_user[:name]}, #{new_user[:email]}"
     $log.info invalid.record.errors.messages.to_yaml
   end
 
