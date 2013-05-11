@@ -6,8 +6,8 @@ FactoryGirl.define do
 
     trait :with_ident do
       after :build do |user|
-        user.identities << FactoryGirl.create(:identity, user: user, provider: 'github')
-        user.identities << FactoryGirl.create(:identity, user: user, provider: 'twitter')
+        FactoryGirl.create(:identity, user: user, provider: 'github', uid: 123456789)
+        FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
       end
     end
   end

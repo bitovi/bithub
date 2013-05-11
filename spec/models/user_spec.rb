@@ -111,6 +111,19 @@ describe User do
   end
 
   describe "#collect_authored_events" do
-    it "collects all events with matching props -> origin_author_id"
+    it "collects all events with matching props -> origin_author_id" do
+      user = build(:user, name: 'Floppy', email: 'floppy@qua.wat')
+      user.identities << build(:identity, uid: 123456789, provider: 'twitter')
+      user.identities << build(:identity, uid: 987654321, provider: 'github')
+      user.save!
+
+      e1 = create(:event_determined, title: "First event", props: { origin_author_id: 123456789 })
+      e2 = create(:event_determined, title: "Second event", props: { origin_author_id: 987654321 })
+      e3 = create(:event_determined, title: "Third event", props: { origin_author_id: 123456789 })
+
+      events = [e1, e2, e3]
+      user.collect_authored_events
+      user.events.should =~ events
+    end
   end
 end
