@@ -38,7 +38,10 @@ UserMongo.all().each do |mongo_user|
   rescue ActiveRecord::RecordInvalid => invalid
     $log.info "USER INVALID | #{new_user[:name]}, #{new_user[:email]}"
     $log.info invalid.record.errors.messages.to_yaml
+    next
   end
+
+  new_user.collect_authored_events
 
   if mongo_user.upvotes
     mongo_user.upvotes.each do |event_id|
