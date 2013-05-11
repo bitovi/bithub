@@ -11,5 +11,4 @@ FactoryGirl.define do
     association :actor, factory: :user
     value 25
   end
-
 end

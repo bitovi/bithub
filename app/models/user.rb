@@ -31,11 +31,7 @@ class User < ActiveRecord::Base
   end
   
   def score
-    authored_events_total
-    + upvotes_total
-    + awards_total
-    + internals_total
-    - fulfilled_anteups_total
+    self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
 
   def authored_events_total
@@ -55,7 +51,7 @@ class User < ActiveRecord::Base
   end
 
   def fulfilled_anteups_total
-    self.anteups.fullfilled.sum('value')
+    self.anteups_as_actor.fullfilled.sum('value')
   end
 
   def collect_authored_events
@@ -69,10 +65,19 @@ class User < ActiveRecord::Base
     end
   end
 
-  def update_blank_oauth_attrs(args)
+  def update_blank_oauth_attrs!(args)
     self.name = args[:name] if self.name.blank? && !args[:name].blank?
     self.email = args[:email] if self.email.blank? && !args[:email].blank?
     save! if self.changed?
+  end
+
+  def merge_identities!(identity)
+    other_user = identity.user if identity.user
+    if !self.identities.include?(identity)
+      self.identities << identity 
+      other_user.destroy if self.save && other_user
+    end
+    self
   end
 
   private

@@ -4,10 +4,11 @@ FactoryGirl.define do
     sequence(:name) {|n| "User ##{n}" }
     sequence(:email) {|n| "user#{n}@bitovi.com" }
 
-    after :build do |user|
-      user.identities << FactoryGirl.create(:identity_from_github, user: user)
-      user.identities << FactoryGirl.create(:identity_from_twitter, user: user)
+    trait :with_ident do
+      after :build do |user|
+        FactoryGirl.create(:identity, user: user, provider: 'github', uid: 123456789)
+        FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
+      end
     end
   end
-
 end

@@ -6,7 +6,7 @@ class Rule < ActiveRecord::Base
     return Rule.default_rule unless tags && tags.count > 0
 
     # Try to find exact match
-    match = Rule.where("required_tags = ?", tags.to_postgres_array(true)).first
+    match = Rule.exact_match(tags)
 
     # otherwise try to find best match
     if match.nil?
@@ -25,8 +25,10 @@ class Rule < ActiveRecord::Base
   end
 
   def self.default_rule
-    # inserted by migration
-    Rule.order('id ASC').first
+    Rule.where("required_tags = ?", [].to_postgres_array(true)).first
   end
 
+  def self.exact_match(tags)
+    Rule.where("required_tags = ?", tags.to_postgres_array(true)).first
+  end
 end
