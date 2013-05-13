@@ -8,8 +8,18 @@ class Identity < ActiveRecord::Base
     self.source_data = source_data if self.source_data.blank? && !source_data.blank?
     save! if self.changed?
   end
-  
-  def self.find_with_omniauth(auth)
-    find_by_provider_and_uid(auth['provider'], auth['uid'])
+
+  def has_assigned_user?
+    !!self.user
+  end
+
+  def self.find_or_create_with_oauth_data(oauth_data)
+    identity = self.find_by_provider_and_uid(oauth_data['provider'], oauth_data['uid'])
+    if identity
+      identity.update_source_data_if_blank(oauth_data['info'])
+    else
+      identity = self.create(uid: oauth_data['uid'], provider: oauth_data['provider'], source_data: oauth_data['info'])
+    end
+    identity
   end
 end
