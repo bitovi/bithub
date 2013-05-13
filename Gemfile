@@ -42,7 +42,6 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
   gem 'guard-rspec'
-  gem 'faker'
   gem 'pry-rails'
   gem 'better_errors'
 end
