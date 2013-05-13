@@ -29,6 +29,33 @@ class User < ActiveRecord::Base
     .concat(self.internals.includes(:applies_to).select(['internals.*']))
     .sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
+
+  def self.select_with_score(include_users)
+    query_string = <<-SQL
+    (
+      (select coalesce(sum(rules.authorship_value),0) from events, rules
+      where events.rule_id = rules.id
+      and events.author_id = users.id)
+      +
+      (select coalesce(sum(upvotes.value),0) from events, upvotes
+      where upvotes.applies_to_id = events.id
+      and events.author_id = users.id)
+      +
+      (select coalesce(sum(awards.value),0) from events, awards
+      where awards.applies_to_id = events.id
+      and events.author_id = users.id)
+      +
+      (select coalesce(sum(internals.value),0) from internals
+      where internals.receiver_id = users.id)
+      -
+      (select coalesce(sum(anteups.value),0) from anteups
+      where anteups.actor_id = users.id
+      and anteups.fullfilled = true)
+    ) as total_score
+    SQL
+    query_string = "users.*, " + query_string if include_users
+    select(query_string)
+  end
   
   def score
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
@@ -77,7 +104,6 @@ class User < ActiveRecord::Base
       self.identities << identity 
       other_user.destroy if self.save && other_user
     end
-    self
   end
 
   private

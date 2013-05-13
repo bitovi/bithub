@@ -67,6 +67,26 @@ describe User do
     end
   end
 
+  describe ".select_with_score" do
+    it "calculates total points" do
+      admin = create(:user); author = create(:user); solver = create(:user)
+      rule = create(:rule, authorship_value: 100, award_value: 1000, upvote_value: 1)
+      rule_reply = create(:rule, authorship_value: 10, upvote_value: 1)
+      event = create(:event_determined, rule: rule, author: author)
+      event_reply = create(:event_determined, rule: rule_reply, author: solver, parent: event)
+
+      Upvote.create_upvote(admin, event)
+      Upvote.create_upvote(admin, event_reply)
+      Anteup.create_anteup(author, event, 25)
+      Award.create_award(admin, event_reply)
+
+      u1 = User.where(id: author.id).select_with_score(true).first
+      u2 = User.where(id: solver.id).select_with_score(true).first
+      expect(u1.total_score.to_i).to eq(100+1-25)
+      expect(u2.total_score.to_i).to eq(10+1+26+1000)
+    end
+  end
+
   describe "#update_blank_oauth_attrs" do
     it "updates the user's attrs if they're blank" do
       user = create(:user, name: "Nikica Jokic", email: nil)

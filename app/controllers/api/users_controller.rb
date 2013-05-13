@@ -5,18 +5,14 @@ class Api::UsersController < Api::ApiController
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
     
-    # Ordering by virtual calculated attributes (can order by only one attr)
-    virtual_attrs = take_first(pluck_virtual_attrs(muster_query[:order]))
-    if virtual_attrs
-      attribute, direction = virtual_attrs.split
-      @users = scope.all.sort{|u1, u2| u1.send(attribute) <=> u2.send(attribute)}
-      @users.reverse! if direction == "desc"
+    if !muster_query[:count].blank?
+      render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = scope.order(filter_order_query(muster_query[:order])) if !muster_query[:order].blank?
-      @users = scope.all
+      scope = apply_score_calculation_to_scope(scope)
+      scope = apply_order_to_scope(scope, muster_query)
+      @users = UserDecorator.decorate_collection(scope.all)
+      render :index
     end
-    @users = UserDecorator.decorate_collection(@users)
-    render :index
   end
 
   def show
@@ -47,15 +43,16 @@ class Api::UsersController < Api::ApiController
     scope
   end
   
-  def take_first(query)
-    query[0]
+  def apply_score_calculation_to_scope(scope)
+    scope = scope.select_with_score(true)
   end
-
-  def filter_order_query(query)
-    query.reject{|p| !User.has_an_attribute?(p.split[0])}
-  end
-
-  def pluck_virtual_attrs(query)
-    query.select{|p| !User.has_an_attribute?(p.split[0])}
+  
+  def apply_order_to_scope(scope, muster_query)
+    if !muster_query[:order].blank?
+      attribute, direction = muster_query[:order].first.split
+      attribute = "total_score" if attribute == "score" # total_score => calculated field
+      scope = scope.order("#{attribute} #{direction}")
+    end
+    scope
   end
 end
