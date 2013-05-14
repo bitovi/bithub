@@ -58,7 +58,7 @@ namespace :db do
   desc "Determine a name for the dump file"
   task :backup_name, :roles => :db, :only => { :primary => true } do
     backup_time = Time.now.strftime("%Y%m%d-%H%M%S")
-    set :backup_file, "/backups/#{app_env}-dbsnapshots/#{backup_time}.sql"
+    set :backup_file, "/backups/#{app_env}-dbsnapshots/#{backup_time}.backup"
   end
 
   desc "Backup PostgreSQL database to /backups/prod-snapshots/"
@@ -72,7 +72,7 @@ namespace :db do
     dbhost = @environment_info['host']
 
     run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
-    run "pg_dump -W -c -U #{dbuser} #{environment_database} | bzip2 -c > #{backup_file}.bz2" do |ch, stream, out |
+    run "pg_dump -W -Fc -c -U #{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out |
       ch.send_data "#{dbpass}\n" if out=~ /^Password:/
     end
   end
