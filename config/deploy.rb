@@ -49,9 +49,50 @@ namespace :deploy do
   end
 
   task :symlink_uploads do
-     run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
-   end
+    run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
+  end
+end
+
+namespace :db do
+
+  desc "Determine a name for the dump file"
+  task :backup_name, :roles => :db, :only => { :primary => true } do
+    backup_time = Time.now.strftime("%Y%m%d-%H%M%S")
+    set :backup_file, "/backups/#{app_env}-dbsnapshots/#{backup_time}.sql"
+  end
+
+  desc "Backup PostgreSQL database to /backups/prod-snapshots/"
+  task :dump, :roles => :db, :only => {:primary => true} do
+    backup_name
+
+    run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
+    dbuser = @environment_info['username']
+    dbpass = @environment_info['password']
+    environment_database = @environment_info['database']
+    dbhost = @environment_info['host']
+
+    run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
+    run "pg_dump -W -c -U #{dbuser} #{environment_database} | bzip2 -c > #{backup_file}.bz2" do |ch, stream, out |
+      ch.send_data "#{dbpass}\n" if out=~ /^Password:/
+    end
+  end
+
+
+  desc "Sync your production database to your local workstation"
+  task :download_dump, :roles => :db, :only => {:primary => true} do
+    backup_name
+    dump
+    get "#{backup_file}.bz2", "/tmp/#{application}.sql.bz2"
+    development_info = YAML.load_file("config/database.yml")['development']
+    run_str = "PGPASSWORD=#{development_info['password']} bzcat /tmp/#{application}.sql.bz2 | psql -U #{development_info['username']} -h #{development_info['host']} #{development_info['database']}"
+    %x!#{run_str}!
+  end
+
+  task :upload_dump, :roles => :db, :only => {:primary => true} do
+  end
+
 end
 
 before('deploy:restart', 'deploy:recreate_upstart_conf')
 before('deploy:restart', 'deploy:symlink_uploads')
+after('deploy', 'db:dump')
