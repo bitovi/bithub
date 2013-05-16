@@ -1,4 +1,4 @@
 load 'deploy'
 	
 load 'config/deploy'
-load 'config/deploy_database'
+load 'config/deploy/database'
