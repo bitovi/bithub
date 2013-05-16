@@ -23,6 +23,18 @@ describe Event do
       end
     end
 
+    describe ".select_with_upvotes" do
+      it "calculates total nmb of upvotes for each event" do
+        usr1 = create(:user); usr2 = create(:user)
+        event = create(:event_determined)
+        Upvote.create_upvote(usr1, event)
+        Upvote.create_upvote(usr2, event)
+
+        ev = Event.where(id: event.id).select_with_upvotes(true).first
+        expect(ev.total_upvotes.to_i).to eq(2)
+      end
+    end
+
     describe "#new_from_bithub" do
       let(:args) { original_args }
       let(:ev) { Event.new_from_bithub(args) }
@@ -88,7 +100,7 @@ describe Event do
         expect(Event.has_an_attribute?(:some_attr)).to be_false
       end
     end
-    
+
     describe ".determine_feed" do
       it "determines a feed using the name of the feed" do
         feed = Event.determine_feed("some_feed")
