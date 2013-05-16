@@ -69,14 +69,10 @@ namespace :db do
     end
   end
 
-  desc "Sync your production database to your local workstation"
-  task :download_backup, :roles => :db, :only => {:primary => true} do
-    backup_name
-    dump
-    get "#{backup_file}.bz2", "/tmp/#{application}.sql.bz2"
-    development_info = YAML.load_file("config/database.yml")['development']
-    run_str = "PGPASSWORD=#{development_info['password']} bzcat /tmp/#{application}.sql.bz2 | psql -U #{development_info['username']} -h #{development_info['host']} #{development_info['database']}"
-    %x!#{run_str}!
+  desc "Sync database with production"
+  task :sync_with_prod, :roles => :db, :only => {:primary => true} do
+    dbname = 'bithub_staging' unless dbname
+    run "pg_dump -Fc -w -h 69.164.216.88 bithub | pg_restore -c -d bithub_staging"
   end
 
 end
