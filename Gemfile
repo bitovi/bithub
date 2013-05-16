@@ -29,6 +29,10 @@ gem 'mongoid'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
+# Gems for ThirdPartyInformer
+gem 'twitter'
+gem 'github_api'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

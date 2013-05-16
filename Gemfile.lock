@@ -97,6 +97,12 @@ GEM
     foreman (0.62.0)
       thor (>= 0.13.6)
     formatador (0.2.4)
+    github_api (0.9.7)
+      faraday (~> 0.8.1)
+      hashie (>= 1.2)
+      multi_json (~> 1.4)
+      nokogiri (~> 1.5.2)
+      oauth2
     guard (1.7.0)
       formatador (>= 0.2.4)
       listen (>= 0.6.0)
@@ -155,6 +161,7 @@ GEM
     net-ssh (2.6.7)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    nokogiri (1.5.9)
     oauth (0.4.7)
     oauth2 (0.8.1)
       faraday (~> 0.8)
@@ -236,6 +243,7 @@ GEM
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
       rspec-mocks (~> 2.13.0)
+    simple_oauth (0.2.0)
     slop (3.4.4)
     sprockets (2.2.2)
       hike (~> 1.2)
@@ -250,6 +258,10 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
+    twitter (4.6.2)
+      faraday (~> 0.8, < 0.10)
+      multi_json (~> 1.0)
+      simple_oauth (~> 0.2)
     twitter-bootstrap-rails (2.2.6)
       actionpack (>= 3.1)
       execjs
@@ -283,6 +295,7 @@ DEPENDENCIES
   draper
   factory_girl_rails
   foreman
+  github_api
   guard-rspec
   jbuilder
   jquery-rails
@@ -302,6 +315,7 @@ DEPENDENCIES
   rolify
   rspec-rails
   therubyracer (~> 0.11.4)
+  twitter
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
   unicorn
