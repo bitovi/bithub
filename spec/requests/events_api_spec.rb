@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe "Events REST API" do
-  describe "GET /api/events" do
 
+  # GET /api/events
+  describe "GET /api/events" do
     context "without a query string" do
       it "should get all events, paginated and decorated" do
         event = create(:event_determined)
@@ -64,16 +65,56 @@ describe "Events REST API" do
       it "should filter by numeric ranges"
     end
 
+    # GET /api/events/:id
     describe "GET /api/events/:id" do
       it "should respond with a JSON encoded event"
     end
 
+    # P0ST /api/events
     describe "POST /api/events" do
-      it "should create a new event"
+      context "user is not logged in" do
+        it "should deny the event creation" do
+          post "/api/events", event: {
+            title: "Wassup?",
+            body: "Nuthin' much."
+          }
+          expect(response.code).to eq("401")
+        end
+      end
+
+      context "user is logged in" do
+        before do
+          get "/api/auth/twitter"
+          request.env["devise.mapping"] = Devise.mappings[:user]
+          request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:facebook]
+        end
+
+        it "should create a new event"
+      end
     end
 
+    # PUT /api/events/:id
     describe "PUT /api/events/:id" do
-      it "should update an existing event"
+      context "user is not logged in" do
+        it "should deny the event updation" do
+          put "/api/events/123", event: {
+            title: "Wassup?",
+            body: "Nuthin' much."
+          }
+          expect(response.code).to eq("401")
+        end
+      end
+
+      context "when user is logged in" do
+        before do
+          get "/api/auth/twitter"
+          request.env["devise.mapping"] = Devise.mappings[:user]
+          request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:facebook]
+        end
+
+        it "should update an existing event"
+      end
     end
+
   end
 end
