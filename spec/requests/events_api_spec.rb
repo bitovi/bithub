@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe "Events REST API" do
-  describe "GET index" do
+  describe "GET /api/events" do
 
-    context "without params" do
-      it "should get all events, decorated" do
+    context "without a query string" do
+      it "should get all events, paginated and decorated" do
         event = create(:event_determined)
         another_event = create(:event_determined)
         get "/api/events"
@@ -17,7 +17,7 @@ describe "Events REST API" do
       end
     end
 
-    context "with arbitrary params" do
+    context "with a query string" do
       it "should ignore non existend params" do
         create(:github_issue)
         create(:twitter_tweet)
@@ -59,7 +59,21 @@ describe "Events REST API" do
         get "/api/events", :tag => "canjs", :feed => "github", :category => "code"
         expect(assigns(:events).length).to eq(1)
       end
+
+      it "should filter by date ranges"
+      it "should filter by numeric ranges"
     end
 
+    describe "GET /api/events/:id" do
+      it "should respond with a JSON encoded event"
+    end
+
+    describe "POST /api/events" do
+      it "should create a new event"
+    end
+
+    describe "PUT /api/events/:id" do
+      it "should update an existing event"
+    end
   end
 end
