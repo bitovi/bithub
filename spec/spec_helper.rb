@@ -3,8 +3,6 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
-require 'query_logic_analyzer'
-require 'account_manager'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -19,15 +17,18 @@ RSpec.configure do |config|
 end
 
 OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({
-  :provider => 'twitter',
-  :uid => '987654321',
-  :info => { :email => "neektza@gmail.com", :name => "Nikica" }
+  'provider' => 'twitter',
+  'uid' => '987654321',
+  'info' => {
+    'email' => 'neektza@gmail.com',
+    'name' => 'Nikica Jokic'
+  }
 })
 
 OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new({
-  :provider => 'github',
-  :uid => '123456789',
-  :info => { :email => "neektza@gmail.com" }
+  'provider' => 'github',
+  'uid' => '123456789',
+  'info' => { 'email' => "neektza@gmail.com" }
 })
 
 OmniAuth.config.test_mode = true
