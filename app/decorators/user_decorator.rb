@@ -10,4 +10,14 @@ class UserDecorator < Draper::Decorator
       '/bithub/assets/images/icon-user.png'
     end
   end
+
+  def position
+    position = nil
+    users = User.select_with_score.sort {|a, b| b.score <=> a.score}
+    
+    users.each_with_index {|user, index|  position = index+1 if user.id == self.id }
+
+    return position
+  end
+
 end
