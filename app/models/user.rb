@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     .sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
 
-  def self.select_with_score(include_users)
+  def self.select_with_score(include_users=true)
     query_string = <<-SQL
     (
       (select coalesce(sum(rules.authorship_value),0) from events, rules
