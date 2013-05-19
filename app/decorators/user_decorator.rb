@@ -11,13 +11,13 @@ class UserDecorator < Draper::Decorator
     end
   end
 
-  def position
-    position = nil
+  def rank
+    rank = nil
     users = User.select_with_score.sort {|a, b| b.score <=> a.score}
     
-    users.each_with_index {|user, index|  position = index+1 if user.id == self.id }
+    users.each_with_index {|user, index|  rank = index+1 if user.id == self.id }
 
-    return position
+    return rank
   end
 
 end
