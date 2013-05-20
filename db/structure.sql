@@ -252,6 +252,19 @@ ALTER SEQUENCE internals_id_seq OWNED BY internals.id;
 
 
 --
+-- Name: leaderboard; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE leaderboard (
+    user_id integer,
+    user_name character varying(255),
+    user_email character varying(255),
+    user_gravatar_url character varying(255),
+    user_score integer
+);
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -883,3 +896,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130429181415');
 INSERT INTO schema_migrations (version) VALUES ('20130429201314');
 
 INSERT INTO schema_migrations (version) VALUES ('20130510181611');
+
+INSERT INTO schema_migrations (version) VALUES ('20130520040320');
