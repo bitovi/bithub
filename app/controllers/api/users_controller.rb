@@ -2,16 +2,20 @@ class Api::UsersController < Api::ApiController
   respond_to :json
 
   def index
-    muster_query = request.env['muster.query']
-    scope = build_scope(muster_query, params)
-    
-    if !muster_query[:count].blank?
-      render :json => { :count => scope.count(muster_query[:count]) }
+    if params[:cached] == "true"
+      @users = Leaderboard.all
+      render :index_cached
     else
-      scope = apply_score_calculation_to_scope(scope)
-      scope = scope_applier.apply_order_to_scope(scope, muster_query)
-      @users = UserDecorator.decorate_collection(scope.all)
-      render :index
+      muster_query = request.env['muster.query']
+      scope = build_scope(muster_query, params)
+      if !muster_query[:count].blank?
+        render :json => { :count => scope.count(muster_query[:count]) }
+      else
+        scope = apply_score_calculation_to_scope(scope)
+        scope = scope_applier.apply_order_to_scope(scope, muster_query)
+        @users = UserDecorator.decorate_collection(scope.all)
+        render :index
+      end
     end
   end
 
