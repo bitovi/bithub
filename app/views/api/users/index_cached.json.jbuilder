@@ -4,6 +4,6 @@ json.set! :data do
 	json.name u.user_name
 	json.email u.user_email
 	json.score u.user_score
-	json.gravatar_url u.user_gravatar_url
+	json.avatar_url u.user_gravatar_url
   end
 end
