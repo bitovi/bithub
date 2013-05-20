@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     .sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
 
+  def cached_score
+    Leaderboard.where(user_id: self.id).first.user_score || 0
+  end
+
   def self.select_with_score(include_users=true)
     query_string = <<-SQL
     (

@@ -14,9 +14,7 @@ class UserDecorator < Draper::Decorator
   def rank
     rank = nil
     users = User.select_with_score.sort {|a, b| b.score <=> a.score}
-    
     users.each_with_index {|user, index|  rank = index+1 if user.id == self.id }
-
     return rank
   end
 
