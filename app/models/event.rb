@@ -363,6 +363,12 @@ class Event < ActiveRecord::Base
   end
 
   def tags_from_args(args)
-    [args[:category], args[:feed], args[:project], args[:type]].concat(args[:tags])
+    tags = []
+    tags.push args[:category] if args[:category]
+    tags.push args[:feed] if args[:feed]
+    tags.push args[:project] if args[:project]
+    tags.push args[:type] if args[:type]
+    tags.concat args[:tags] if args[:tags]
+    tags
   end
 end
