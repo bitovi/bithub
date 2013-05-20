@@ -25,7 +25,6 @@ gem 'draper'
 gem 'kaminari'
 gem 'log4r'
 gem 'foreman'
-gem 'mongoid'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
