@@ -8,7 +8,7 @@ Bithub::Application.routes.draw do
   end
 
   namespace :api, :defaults => { :format => 'json' } do
-    match '/auth/session' => 'session_info#current_session'
+    match '/auth/session' => 'auth/session_info#current_session'
 
     resources :events, :except => [:new, :edit] do
       resources 'activities', :only => :index, :to => 'event_activities#index'

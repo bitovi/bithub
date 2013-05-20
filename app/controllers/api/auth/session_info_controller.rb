@@ -1,4 +1,4 @@
-class Api::SessionInfoController < Api::ApiController
+class Api::Auth::SessionInfoController < Api::ApiController
   respond_to :json
   before_filter :authenticate_user!
 
