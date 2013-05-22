@@ -77,6 +77,7 @@ class Event < ActiveRecord::Base
     process_forums
     process_github
     process_twitter
+    self.parent.touch if self.parent
     self
   end
 
