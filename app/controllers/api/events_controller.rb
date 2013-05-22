@@ -42,6 +42,7 @@ class Api::EventsController < Api::ApiController
   private # SCOPE BUILDING
   def build_scope(muster_query, params)
     scope = Event.scoped
+    scope = scope.includes(:children)
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope = scope_applier.apply_tag_based_params_to_scope(scope, params)

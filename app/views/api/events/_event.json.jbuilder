@@ -1,23 +1,25 @@
-json.(event, :id, :title, :body, :origin_ts, :origin_date, :url)
+json.cache! event do
+	json.(event, :id, :title, :body, :origin_ts, :origin_date, :url)
 
-json.category event.category.name
-json.feed event.feed.name
-json.tags event.tag_names
+	json.category event.category.name
+	json.feed event.feed.name
+	json.tags event.tag_names
 
-json.upvotes event.upvotes
-json.anteups event.anteups
-json.award_value event.award_value
+	json.upvotes event.upvotes
+	json.anteups event.anteups
+	json.award_value event.award_value
 
-json.author event.author
-json.props event.props
+	json.author event.author
+	json.props event.props
 
-json.has_parent event.has_parent
+	json.has_parent event.has_parent
 
-json.actor event.actor
-json.image_url event.image.url(:thumb)
+	json.actor event.actor
+	json.image_url event.image.url(:thumb)
 
-json.children EventDecorator.decorate_collection(event.children) do |c|
-  json.partial! "api/events/event", event: c
+	json.children EventDecorator.decorate_collection(event.children) do |c|
+		json.partial! "api/events/event", event: c
+	end
+
+	json.source_data event.source_data
 end
-
-json.source_data event.source_data

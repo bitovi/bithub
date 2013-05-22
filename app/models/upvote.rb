@@ -7,5 +7,6 @@ class Upvote < ActiveRecord::Base
 
   def self.create_upvote(actor, event)
     Upvote.create({:actor => actor, :applies_to => event, :value => event.rule.upvote_value})
+    event.touch # For fragment cache invalidation
   end
 end
