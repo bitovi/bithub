@@ -8,7 +8,13 @@ class Anteup < ActiveRecord::Base
   scope :fullfilled, where(:fullfilled => true)
 
   def self.create_anteup(actor, event, value=25)
-    Anteup.create({:actor => actor, :applies_to => event, :value => value, :fullfilled => false})
+    anteup = Anteup.new({:actor => actor, :applies_to => event, :value => value, :fullfilled => false})
+    if anteup.save
+      event.touch
+      return anteup
+    else
+      return nil
+    end
   end
 
   def self.fullfill_all_for_event(event)
