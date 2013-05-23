@@ -1,4 +1,6 @@
 class EventDecorator < Draper::Decorator
+  S3_PREFIX = "http://s3.amazonaws.com/bithub"
+  
   delegate_all
 
   def tag_names
@@ -37,6 +39,16 @@ class EventDecorator < Draper::Decorator
     } if source.author
   end
 
+  # thumb, large, original
+  def image_url(size = nil)
+    case
+    when has_s3_image?(source)
+      S3_PREFIX + props_image_path(source.props['image'], size)    
+    else
+      local_prefix + source.image.url(size)
+    end
+  end
+
   def props
     if source.category.name == 'digest'
       source.props[:repo] = source.source_data['repo']['name'] if tag_list.include?('watch_event') || tag_list.include?('fork_event')
@@ -60,4 +72,31 @@ class EventDecorator < Draper::Decorator
     source.props
   end
 
+  private
+  def has_s3_image?(event)
+    !!source.props['image']
+  end
+
+  def props_image_path(img_string, size)
+    if !img_string.blank?
+      if size == :thumb
+        img_string.gsub(/(?<ext>\.\w+)$/,'_60\k<ext>')
+      elsif size == :large
+        img_string.gsub(/(?<ext>\.\w+)$/,'_800\k<ext>')
+      else
+        img_string.gsub(/(?<ext>\.\w+)$/,'_200\k<ext>')
+      end
+    end
+  end
+
+  def local_prefix
+    case Rails.env
+    when 'production'
+      "http://bithub.com/bithub"
+    when 'staging'
+      "http://staging.bithub.com/bithub"
+    when 'development'
+      "http://bithub.dev/bithub"
+    end
+  end
 end

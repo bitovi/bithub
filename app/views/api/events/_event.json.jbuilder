@@ -15,7 +15,7 @@ json.cache! event do
 	json.has_parent event.has_parent
 
 	json.actor event.actor
-	json.image_url event.image.url(:thumb)
+	json.image_url event.image_url(:thumb)
 
 	json.children EventDecorator.decorate_collection(event.children) do |c|
 		json.partial! "api/events/event", event: c
