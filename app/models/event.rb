@@ -110,11 +110,11 @@ class Event < ActiveRecord::Base
   end
 
   def self.determine_feed(feed_name)
-    Tag.find_or_create_with_like_by_name(feed_name)
+    Tag.find_by_name(feed_name) || Tag.find_or_create_with_like_by_name(feed_name)
   end
 
   def self.determine_category(category_name)
-    Tag.find_or_create_with_like_by_name(category_name)
+    Tag.find_by_name(category_name) || Tag.find_or_create_with_like_by_name(category_name)
   end
   
   def self.determine_rule(tags)
