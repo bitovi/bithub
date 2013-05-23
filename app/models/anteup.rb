@@ -1,16 +1,18 @@
 class Anteup < ActiveRecord::Base
   class UserNotEnoughPoints < Error; end
+
   attr_accessible :actor, :applies_to, :value, :fullfilled
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
-  validates :applies_to, :presence => true
-  # validates :actor, :presence => true
-  #
+  validates :applies_to_id, :actor_id, :presence => true
   scope :fullfilled, where(:fullfilled => true)
 
-  def self.create_anteup(actor, event, value=nil)
-    value ||= 25
+  def self.create_anteup(actor, event, value=25)
     Anteup.create({:actor => actor, :applies_to => event, :value => value, :fullfilled => false})
+  end
+
+  def self.fullfill_all_for_event(event)
+    fullfill_by_event(event)
   end
 
   def self.fullfill_by_event(event)

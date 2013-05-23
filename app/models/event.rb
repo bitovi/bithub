@@ -219,6 +219,14 @@ class Event < ActiveRecord::Base
     select(query_string)
   end
 
+  def self.only_parent_events
+    where("parent_id IS NULL")
+  end
+
+  def awarded?
+    self.awards.length > 0
+  end
+
   private
   ### TWITTER methods
   def group_retweet
