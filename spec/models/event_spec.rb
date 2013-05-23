@@ -72,7 +72,7 @@ describe Event do
       end
     end
 
-    describe "#update_from_github" do
+    describe "#update_from_bithub" do
       before(:each) do
         @ev = Event.new_from_bithub(original_args)
         @ev.update_from_bithub!(updated_args)
@@ -163,21 +163,20 @@ describe Event do
 
     describe "#determine_author" do
       context "when there is an author in the system" do
+        before(:each) do
+          @usr = create(:user, name: "Nikica")
+          ident = create(:identity, uid: 123456, provider: "twitter", user: @usr)
+          ident = create(:identity, uid: 456789, provider: "github", user: @usr)
+        end
         it "associates it with a github event" do
           ghe = build(:github_issue)
-          usr = build(:user)
-          ident = create(:identity, uid: 456789, provider: "github", user: usr)
-          usr.save!
           ghe.determine_author_from_meta.save!
-          expect(ghe.author).to eq(usr)
+          expect(ghe.author).to eq(@usr)
         end
         it "associates it with a twitter event" do
           twe = build(:twitter_tweet)
-          usr = build(:user)
-          ident = create(:identity, uid: 123456, provider: "twitter", user: usr)
-          usr.save!
           twe.determine_author_from_meta.save!
-          expect(twe.author).to eq(usr)
+          expect(twe.author).to eq(@usr)
         end
       end
     end
