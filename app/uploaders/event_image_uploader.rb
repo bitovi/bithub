@@ -11,7 +11,8 @@ class EventImageUploader < CarrierWave::Uploader::Base
   end
 
   def default_url
-    "/uploads/fallback/" + [version_name, "default.png"].compact.join('_')
+    # "/uploads/fallback/" + [version_name, "default.png"].compact.join('_')
+    ""
   end
 
   def extension_white_list

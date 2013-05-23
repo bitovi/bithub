@@ -44,8 +44,10 @@ class EventDecorator < Draper::Decorator
     case
     when has_s3_image?(source)
       S3_PREFIX + props_image_path(source.props['image'], size)    
-    else
+    when !source.image.url(size).blank?
       local_prefix + source.image.url(size)
+    else
+      ""
     end
   end
 
