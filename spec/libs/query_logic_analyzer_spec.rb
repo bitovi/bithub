@@ -6,6 +6,20 @@ describe QueryLogicAnalyzer do
   let(:higher_date_limit_str) { "2013-5-1" }
   let(:date_range) { DateTime.parse(lower_date_limit_str)..DateTime.parse(higher_date_limit_str) }
 
+  describe ".process_negted_attributes" do
+    it "removes the ! from the beginning of the value part" do
+      params = { title: "!Some title", other_attr: "An ! in the middle" }
+      expect(qla.process_negated_attributes(params)).to eq({title: "Some title", other_attr: 'An ! in the middle'})
+    end
+  end
+
+  describe ".pluck_negted_attributes" do
+    it "returns all regular attrs that contain a '!' in the value part" do
+      params = { exclude: "source_data", title: "!Some title", origin_date: "2013-01-01:2013-02-02", feed: "github", category: "code" }
+      expect(qla.pluck_negated_attributes(params)).to eq({title: "!Some title"})
+    end
+  end
+
   describe ".pluck_excluded_attributes" do
     it "plucks excluded query items from the params" do
       params = { exclude: "source_data", title: "Some title", origin_date: "2013-01-01:2013-02-02", feed: "github", category: "code" }
@@ -14,9 +28,9 @@ describe QueryLogicAnalyzer do
   end
 
   describe ".pluck_regular_params" do
-    it "plucks regular query items from the params" do
+    it "plucks regular query items from the params (ie. not relying on ActsAsTaggable)" do
       params = { title: "Some title", origin_date: "2013-01-01", feed: "github", category: "code" }
-      expect(qla.pluck_regular_params(params)).to eq({title: "Some title", origin_date: "2013-1-1"})
+      expect(qla.pluck_regular_params(params)).to eq({title: "Some title", origin_date: "2013-01-01"})
     end
   end
 

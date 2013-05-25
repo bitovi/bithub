@@ -2,9 +2,29 @@ class QueryLogicAnalyzer
   TAG_FIELD_NAMES = ['tag', 'feed', 'category']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
   OPTIONAL_LOGIC = { :exclude => 'exclude' }
+  NEGATION = '!'
 
   def initialize(model)
     @model = model
+  end
+
+  # =========> Attr negation
+
+  def pluck_and_process_negated_params(params)
+    process_negated_attributes(pluck_negated_attributes)
+  end
+  
+  def process_negated_attributes(params)
+    Hash[params.map{|k,v| [k, v.gsub(/^!(.*)$/, '\1')]}]
+  end
+
+  def pluck_negated_attributes(params)
+    pluck_regular_params(params).select{|k,v| qi=[k,v]; negated_query_item?(qi)}
+  end
+
+  def negated_query_item?(query_item)
+    _, qi_value = query_item
+    qi_value[0] == NEGATION
   end
 
   # =========> Attr exclusion
