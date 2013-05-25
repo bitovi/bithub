@@ -55,6 +55,6 @@ class Api::UsersController < Api::ApiController
   end
 
   def scope_applier
-    @scope_applier ||= ScopeApplier.new(QueryLogicAnalyzer.new(User)) 
+    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
   end
 end
