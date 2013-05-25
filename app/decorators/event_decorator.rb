@@ -44,7 +44,7 @@ class EventDecorator < Draper::Decorator
     case
     when has_s3_image?(source)
       S3_PREFIX + props_image_path(source.props['image'], size)    
-    when !source.image.url(size).blank?
+    when has_local_image?(source)
       local_prefix + source.image.url(size)
     else
       ""
@@ -74,9 +74,22 @@ class EventDecorator < Draper::Decorator
     source.props
   end
 
+  # TODO replace with method_missing + delegate
+  def source_data
+    if excluded_attributes_include?('source_data')
+      nil
+    else
+      source.source_data
+    end
+  end
+
   private
   def has_s3_image?(event)
-    !!source.props['image']
+    !!event.props['image']
+  end
+
+  def has_local_image?(event)
+    !event.image.url.blank?
   end
 
   def props_image_path(img_string, size)
@@ -100,5 +113,11 @@ class EventDecorator < Draper::Decorator
     when 'development'
       "http://bithub.dev/bithub"
     end
+  end
+
+  def excluded_attributes_include?(attr)
+    context[:excluded_attributes] && (
+      context[:excluded_attributes].include?(attr.to_sym) ||
+      context[:excluded_attributes].include?(attr.to_s))
   end
 end

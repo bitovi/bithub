@@ -1,9 +1,21 @@
 class QueryLogicAnalyzer
   TAG_FIELD_NAMES = ['tag', 'feed', 'category']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
+  OPTIONAL_LOGIC = { :exclude => 'exclude' }
 
   def initialize(model)
     @model = model
+  end
+
+  # =========> Attr exclusion
+
+  def pluck_excluded_attributes(params)
+    @excluded_attributes = params.select{|k,v| qi=[k,v]; exclusion_query_item?(qi)}.collect{|_,v| v}
+  end
+  
+  def exclusion_query_item?(query_item)
+    qi_name, _ = query_item
+    OPTIONAL_LOGIC[:exclude] == qi_name || OPTIONAL_LOGIC[:exclude] == qi_name.to_s
   end
 
   # =========> Tag based params
@@ -25,12 +37,12 @@ class QueryLogicAnalyzer
   end
 
   def tag_based_query_item?(query_item)
-    qi_name, * = query_item 
+    qi_name, _ = query_item 
     TAG_FIELD_NAMES.include?(qi_name.to_s)
   end
 
   def process_query_logic_for_tag_based_items(query_item)
-    *, qi_value = query_item 
+    _, qi_value = query_item 
     case
     when or_query?(query_item)
       [:any, extract_alternatives(query_item)]
@@ -56,7 +68,7 @@ class QueryLogicAnalyzer
   end
 
   def regular_and_valid_query_item?(query_item)
-    qi_name, * = query_item
+    qi_name, _ = query_item
     @model.has_an_attribute?(qi_name) and !tag_based_query_item?(query_item)
   end
 
@@ -94,12 +106,12 @@ class QueryLogicAnalyzer
   end
 
   def extract_alternatives(query_item)
-    *, qi_value = query_item
+    _, qi_value = query_item
     qi_value.split(DELIMITERS[:or])
   end
 
   def extract_conjuctions(query_item)
-    *, qi_value = query_item
+    _, qi_value = query_item
     qi_value.is_a?(Array) ? qi_value : qi_value.split(DELIMITERS[:and])
   end
 
@@ -107,17 +119,17 @@ class QueryLogicAnalyzer
   # =========> Checking methods
 
   def between_query?(query_item)
-    *, qi_value = query_item
+    _, qi_value = query_item
     qi_value.include?(DELIMITERS[:between])
   end
 
   def or_query?(query_item)
-    *, qi_value = query_item
+    _, qi_value = query_item
     qi_value.include?(DELIMITERS[:or])
   end
 
   def and_query?(query_item)
-    *, qi_value = query_item
+    _, qi_value = query_item
     qi_value.include?(DELIMITERS[:and]) || qi_value.is_a?(Array)
   end
 

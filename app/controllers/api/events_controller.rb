@@ -10,7 +10,9 @@ class Api::EventsController < Api::ApiController
     else
       scope = apply_upvote_calculation_to_scope(scope, params)
       scope = scope_applier.apply_order_to_scope(scope, muster_query)
-      @events = EventDecorator.decorate_collection(scope.all)
+      @events = EventDecorator.decorate_collection(scope.all, {
+        context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
+      })
       render :index
     end
   end
@@ -52,12 +54,12 @@ class Api::EventsController < Api::ApiController
     taggables = logic_analyzer.pluck_and_process_tag_based_params(params)
     scope = scope.select_with_upvotes(taggables && !taggables[:any])
   end
-  
+
   def logic_analyzer
     @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
   end
 
   def scope_applier
-    @scope_applier ||= ScopeApplier.new(QueryLogicAnalyzer.new(Event)) 
+    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
   end
 end
