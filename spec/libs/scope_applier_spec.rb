@@ -6,7 +6,7 @@ describe ScopeApplier do
     @scope_applier = ScopeApplier.new(logic_analyzer)
   end
 
-  describe '#apply_muster_query_to_scope' do
+  describe '.apply_muster_query_to_scope' do
     it 'should apply muster params to the scope' do
       scope_to_test = Event.scoped; params = { includes: 'activities', joins: 'rules' }
       scope_to_test = @scope_applier.apply_muster_query_to_scope(scope_to_test, params)
@@ -15,12 +15,20 @@ describe ScopeApplier do
     end
   end
 
-  describe '#apply_tag_based_params_to_scope' do
+  describe '.apply_tag_based_params_to_scope' do
     it 'should apply tag based filtering params to the scope'
     # Don't know how to test scopes after tagged_with
   end
 
-  describe '#apply_regular_params_to_scope' do
+  describe ".apply_negated_attrs_to_scope" do
+    it "should apply negated attrs to the scope" do
+      scope_to_test = Event.scoped; params = { title: 'Some title', url: '!http://some.link.com'}
+      scope_to_test = @scope_applier.apply_negated_attrs_to_scope(scope_to_test, params)
+      expect(scope_to_test.where_values).to eq(["events.url <> 'http://some.link.com'"])
+    end
+  end
+
+  describe '.apply_regular_params_to_scope' do
     it 'should apply regular filtering params to the scope' do
       scope_to_test = Event.scoped; params = { id: '1', title: 'Whats up?'}
       scope_to_test = @scope_applier.apply_regular_params_to_scope(scope_to_test, params)
@@ -28,7 +36,7 @@ describe ScopeApplier do
     end
   end
   
-  describe '#apply_order_to_scope' do
+  describe '.apply_order_to_scope' do
     context 'when handling virtual attrs' do
       it 'should replace virtual attrs with calculated ones and apply a modified statement to the scope' do
         scope_to_test = Event.scoped; muster_query = Hash[:order, ['score asc', 'upvotes desc']]

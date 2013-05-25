@@ -8,10 +8,14 @@ class QueryLogicAnalyzer
     @model = model
   end
 
+  def table_name
+    @model.table_name
+  end
+
   # =========> Attr negation
 
-  def pluck_and_process_negated_params(params)
-    process_negated_attributes(pluck_negated_attributes)
+  def pluck_and_process_negated_attributes(params)
+    process_negated_attributes(pluck_negated_attributes(params))
   end
   
   def process_negated_attributes(params)
@@ -19,12 +23,12 @@ class QueryLogicAnalyzer
   end
 
   def pluck_negated_attributes(params)
-    pluck_regular_params(params).select{|k,v| qi=[k,v]; negated_query_item?(qi)}
+    params.select{|k,v| qi=[k,v]; negated_query_item?(qi)}
   end
 
   def negated_query_item?(query_item)
     _, qi_value = query_item
-    qi_value[0] == NEGATION
+    native_query_item?(query_item) && qi_value[0] == NEGATION
   end
 
   # =========> Attr exclusion
@@ -89,7 +93,7 @@ class QueryLogicAnalyzer
 
   def regular_and_valid_query_item?(query_item)
     qi_name, _ = query_item
-    @model.has_an_attribute?(qi_name) and !tag_based_query_item?(query_item)
+    native_query_item?(query_item) and !negated_query_item?(query_item) and !tag_based_query_item?(query_item)
   end
 
   def process_query_logic_for_regular_query_items(query_item)
@@ -158,6 +162,11 @@ class QueryLogicAnalyzer
   end
 
   # ========> Helper methods
+
+  def native_query_item?(query_item)
+    qi_name, _ = query_item
+    @model.has_an_attribute?(qi_name)
+  end
 
   def merge_with_existing_keys(hash, qi)
     qi_key, qi_val = qi

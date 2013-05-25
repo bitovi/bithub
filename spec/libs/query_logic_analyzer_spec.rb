@@ -20,6 +20,11 @@ describe QueryLogicAnalyzer do
     end
   end
 
+  describe ".negated_query_item?" do
+    it "asserts that the query item is negated and is native" do
+    end
+  end
+
   describe ".pluck_excluded_attributes" do
     it "plucks excluded query items from the params" do
       params = { exclude: "source_data", title: "Some title", origin_date: "2013-01-01:2013-02-02", feed: "github", category: "code" }
@@ -68,11 +73,31 @@ describe QueryLogicAnalyzer do
   end
   
   describe ".tag_based_query_item?" do
-    it "asserts that the query item's name is of the taggable type" do
+    it "confrims that attributes that are stored as tags are of the taggable type" do
       taggable_query_item = ["feed", "twitter,github"]
-      regular_query_item = ["title", "Some title"]
       expect(qla.tag_based_query_item? taggable_query_item).to eq(true)
+    end
+    
+    it "denies that regular attributes are of the taggable type" do
+      regular_query_item = ["title", "Some title"]
       expect(qla.tag_based_query_item? regular_query_item).to eq(false)
+    end
+  end
+
+  describe ".native_query_item?" do
+    it "confirms that regular items are indeed native" do
+      regular_query_item = ["title", "Some title"]
+      expect(qla.native_query_item? regular_query_item).to eq(true)
+    end
+    
+    it "confirms that tag based items are also native (via associations)" do
+      taggable_query_item = ["feed", "twitter,github"]
+      expect(qla.native_query_item? taggable_query_item).to eq(true)
+    end
+
+    it "denies that non existent query items are native" do
+      non_existent_query_item = ["not_existing", "non_existent_value"]
+      expect(qla.native_query_item? non_existent_query_item).to eq(false)
     end
   end
 

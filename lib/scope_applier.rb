@@ -17,6 +17,14 @@ class ScopeApplier
     scope = scope.limit(muster_query[:limit]) if muster_query[:count].blank?
     scope
   end
+
+  def apply_negated_attrs_to_scope(scope, params)
+    negated_attrs = logic_analyzer.pluck_and_process_negated_attributes(params)
+    negated_attrs.each do |na_name, na_value|
+      scope = scope.where("#{logic_analyzer.table_name}.#{na_name} <> ?", na_value)
+    end if negated_attrs
+    scope
+  end
   
   def apply_tag_based_params_to_scope(scope, params)
     taggables = @logic_analyzer.pluck_and_process_tag_based_params(params)

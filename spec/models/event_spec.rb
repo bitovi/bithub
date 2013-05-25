@@ -7,6 +7,10 @@ describe Event do
       create(:rule)
     end
 
+    describe "#bumb_thread" do
+      it "updates event's updated_at attr"
+    end
+
     describe "#initialize" do
       it "sets event id from DB sequence before saving" do
         event = build(:event_determined)
@@ -92,12 +96,24 @@ describe Event do
     end
 
     describe ".has_an_attribute?" do
-      it "confirms that the Event model indeed has an attribute" do
-        expect(Event.has_an_attribute?(:title)).to be_true
+      context "symbol given" do
+        it "confirms that the Event model indeed has an attribute" do
+          expect(Event.has_an_attribute?(:title)).to be_true
+        end
+
+        it "denies that the Event model has a non-existent attribute" do
+          expect(Event.has_an_attribute?(:titles)).to be_false
+        end
       end
       
-      it "denies that the Event model has a non-existent attribute" do
-        expect(Event.has_an_attribute?(:some_attr)).to be_false
+      context "string given" do
+        it "confirms that the Event model indeed has an attribute" do
+          expect(Event.has_an_attribute?("title")).to be_true
+        end
+
+        it "denies that the Event model has a non-existent attribute" do
+          expect(Event.has_an_attribute?("titles")).to be_false
+        end
       end
     end
 
