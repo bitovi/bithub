@@ -45,11 +45,12 @@ class Api::EventsController < Api::ApiController
   def build_scope(muster_query, params)
     scope = Event.scoped
     scope = scope.includes(:children)
+    scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
   end
-  
+
   def apply_upvote_calculation_to_scope(scope, params)
     taggables = logic_analyzer.pluck_and_process_tag_based_params(params)
     scope = scope.select_with_upvotes(taggables && !taggables[:any])
