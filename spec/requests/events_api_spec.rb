@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe "Events REST API" do
   before(:all) do
-    create(:rule, required_tags: [], authorship_value: 0, upvote_value: 1, award_value: 0, priority: 0)
+    @default_rule = create(:rule, required_tags: [], authorship_value: 0, upvote_value: 1, award_value: 0, priority: 0)
+  end
+
+  after(:all) do
+    @default_rule.destroy
   end
 
   # ========> NOT LOGGED IN
