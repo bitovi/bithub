@@ -52,22 +52,22 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
     # --- Streams
     $log.info "Registering to Twitter's public stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
     
     $log.info "Registering @canjs user stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
     
     $log.info "Registering @jquerypp user stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
     
     $log.info "Registering @funcunit user stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
   
     $log.info "Registering @javascriptmvc user stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
     
     $log.info "Registering @donejs user stream"
-    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
+    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
 
     # --- Pollers
     $feeds[:github][:events].each do |project, repo|
