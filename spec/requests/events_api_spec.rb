@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe "Events REST API" do
+  before(:all) do
+    create(:rule, required_tags: [], authorship_value: 0, upvote_value: 1, award_value: 0, priority: 0)
+  end
 
   # ========> NOT LOGGED IN
   context "when there is no session" do
@@ -72,7 +75,11 @@ describe "Events REST API" do
 
     # GET /api/events/:id
     describe "GET /api/events/:id" do
-      it "should respond with a JSON encoded event"
+      it "should respond with a JSON encoded event" do
+        ev = create(:event_determined)
+        get "/api/events/#{ev.id}"
+        expect(response.body) =~ "many many words in it"
+      end
     end
 
     # P0ST /api/events
@@ -96,8 +103,7 @@ describe "Events REST API" do
   context "when user is authenticated" do
     before :each do
       get_via_redirect "/api/auth/twitter"
-      # request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:twitter]
-      request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:github]
+      request.env["omniauth.auth"] = OmniAuth.config.mock_auth[:twitter]
       request.env["devise.mapping"] = Devise.mappings[:user]
     end
 
@@ -126,6 +132,7 @@ def event_info
     body: "Nuthin' much.",
     feed: "github",
     category: "code",
+    project: "canjs",
     tags: ["canjs", "donejs"]
   }
 end

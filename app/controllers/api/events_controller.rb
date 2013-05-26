@@ -24,21 +24,23 @@ class Api::EventsController < Api::ApiController
   end
 
   def create
-    @event = Event.new_from_bithub(params[:event])
-    @event.author = current_user
-    if @event.save
-      render :json => @event, :status => 200
+    e = Event.new_from_bithub(params[:event])
+    e.author = current_user
+    if e.save
+      @event = EventDecorator.decorate(e)
+      render :show
     else
-      render :json => @event.errors.messages, :status => 500
+      render :json => e.errors.messages, :status => 406
     end
   end
 
   def update
-    @event = Event.find(params[:id])
-    if @event.update_from_bithub!(params[:event])
-      render :status => 200
+    e = Event.find(params[:id])
+    if e.update_from_bithub(params[:event])
+      @event = EventDecorator.decorate(e)
+      render :show
     else
-      render :json => @event.errors.messages, :status => 500
+      render :json => e.errors.messages, :status => 406
     end
   end
 

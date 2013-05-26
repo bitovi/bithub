@@ -36,3 +36,10 @@ OmniAuth.config.test_mode = true
 def oauth_data_hash(provider = 'github', uid = 123456789, email = 'neektza@gmail.com', name = 'Nikica Jokic')
   Hash["omniauth.auth", Hash["provider", provider, "uid", uid, 'info', Hash["email", email, "name", name]]]
 end
+
+def show_me(response)
+  File.open("/tmp/debug.html", "w") do |f|
+    f.puts response.body
+  end
+  system "open /tmp/debug.html"
+end
