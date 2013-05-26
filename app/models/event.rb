@@ -27,7 +27,7 @@ class Event < ActiveRecord::Base
   has_many :anteups, :foreign_key => "applies_to_id"
   has_many :awards, :foreign_key => "applies_to_id"
 
-  validates :origin_date, :origin_ts, :hash_key, :feed, :category, :tag_list, :rule, :title, :presence => true
+  validates :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title, :presence => true
   validates :hash_key, :uniqueness => true
 
   serialize :props, ActiveRecord::Coders::Hstore
@@ -45,19 +45,19 @@ class Event < ActiveRecord::Base
 
   def self.new_from_bithub(args)
     event             = self.new
-    event.determine_all!(args)
     event.hash_key    = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
     event.origin_date = Date.today
     event.origin_ts   = DateTime.now
     event.image       = args[:image]
-    args.delete(:category); args.delete(:feed); args.delete(:project); args.delete(:tags)
+    event.determine_all(args)
+    Event.clean_args_after_determination!(args)
     event.assign_attributes(args)
     event
   end
 
-  def update_from_bithub!(args)
-    self.determine_all!(args)
-    args.delete(:category); args.delete(:feed); args.delete(:project); args.delete(:tags)
+  def update_from_bithub(args)
+    self.determine_all(args)
+    Event.clean_args_after_determination!(args)
     self.assign_attributes(args)
     self.save
   end
@@ -88,7 +88,7 @@ class Event < ActiveRecord::Base
     props[:mongo_id] = meta[:mongo_id] if meta[:mongo_id]
   end
 
-  def determine_all!(args)
+  def determine_all(args)
     self.tag_list    = Event.determine_tags(tags_from_args(args))
     self.feed        = Event.determine_feed(args[:feed])
     self.category    = Event.determine_category(args[:category])
@@ -371,12 +371,19 @@ class Event < ActiveRecord::Base
     Event.find_tweet_by_tweet_id(retweeted_id)
   end
 
+  def self.clean_args_after_determination!(args)
+    args.delete(:category)
+    args.delete(:feed)
+    args.delete(:project)
+    args.delete(:tags)
+    args
+  end
+
   def tags_from_args(args)
     tags = []
     tags.push args[:category] if args[:category]
     tags.push args[:feed] if args[:feed]
     tags.push args[:project] if args[:project]
-    tags.push args[:type] if args[:type]
     tags.concat args[:tags] if args[:tags]
     tags
   end
