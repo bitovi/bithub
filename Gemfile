@@ -47,6 +47,7 @@ group :test, :development do
   gem 'guard-rspec'
   gem 'pry-rails'
   gem 'better_errors'
+  gem 'dotenv-rails'
 end
 
 group :development do

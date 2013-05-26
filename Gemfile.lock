@@ -79,6 +79,9 @@ GEM
       railties (~> 3.1)
       warden (~> 1.2.1)
     diff-lcs (1.2.3)
+    dotenv (0.7.0)
+    dotenv-rails (0.7.0)
+      dotenv (= 0.7.0)
     draper (1.2.0)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
@@ -285,6 +288,7 @@ DEPENDENCIES
   carrierwave
   dalli
   devise
+  dotenv-rails
   draper
   factory_girl_rails
   foreman
