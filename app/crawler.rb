@@ -36,6 +36,9 @@ $proj_root = File.expand_path(File.join(File.dirname(__FILE__), '../'))
 # Load feeds config 
 $feeds = YAML::load_file(File.join($proj_root, 'config/feeds.yml'))
 
+$timer = 6
+def next_timer; $timer += 6; end
+
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
   puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
@@ -49,41 +52,43 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
     # --- Streams
     $log.info "Registering to Twitter's public stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
     
     $log.info "Registering @canjs user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
     
     $log.info "Registering @jquerypp user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
     
     $log.info "Registering @funcunit user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
   
     $log.info "Registering @javascriptmvc user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
     
     $log.info "Registering @donejs user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
+    #Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
 
     # --- Pollers
-    $log.info "Registering Github"
-    EM.add_periodic_timer(6, &Handler::Github.handler($log, exchange))
+    $feeds[:github][:events].each do |project, repo|
+      $log.info "Registering Github handler for \"#{project}\" at \"#{repo[:endpoint]}\""
+      EM.add_periodic_timer(next_timer(), &Handler::Github.handler($log, exchange, repo[:endpoint]))
+    end
 
     $log.info "Registering Disqus"
-    EM.add_periodic_timer(11, &Handler::Disqus.handler($log, exchange))
+    EM.add_periodic_timer(next_timer(), &Handler::Disqus.handler($log, exchange))
 
     $log.info "Registering Forums"
     forum_endpoints = {
       questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
       all: 'https://forum.javascriptmvc.com/feed'
     }
-    EM.add_periodic_timer(25, &Handler::Forums.handler($log, exchange, forum_endpoints))
+    EM.add_periodic_timer(next_timer(), &Handler::Forums.handler($log, exchange, forum_endpoints))
 
     $log.info "Registering Blog"
-    EM.add_periodic_timer(31, &Handler::Blog.handler($log, exchange))
+    EM.add_periodic_timer(next_timer(), &Handler::Blog.handler($log, exchange))
 
     $log.info "Registering Community site"
-    EM.add_periodic_timer(46, &Handler::CommunitySite.handler($log, exchange))
+    EM.add_periodic_timer(next_timer(), &Handler::CommunitySite.handler($log, exchange))
   end
 end

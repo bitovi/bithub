@@ -69,7 +69,7 @@
         :consumer_secret: 3TzgETml6h7M5IQURJXvPLZ6exKGcEOUffEaFARg
         :token: 1114713660-2JzAeM3PZRyPvmzsgkExnD7GASoyBenmw4A10nb
         :token_secret: PoONtKAmLEM18pY0uY0SaXZsx7OdLe6KKoB0H6sTMg
-    
+
     :stealjs:
       :host: userstream.twitter.com
       :method: GET
@@ -79,3 +79,22 @@
         :consumer_secret: G8lXrrYWS3B7E9aRSjyl5VFMaSNLVpAKfKkGb6wcTU
         :token: 1114748720-Oy5Y61k7rsABQtIqZu42uFEfDaprvq4u41H8tZ8
         :token_secret: IGJLpsd5uvRqxuHEVjnIEkY4CzWoot2OhjYdwWsUyk
+
+:github:
+  :events:
+    :canjs:
+      :endpoint: 'https://api.github.com/repos/bitovi/canjs/events'
+    :steal:
+      :endpoint: 'https://api.github.com/repos/bitovi/steal/events'
+    :documentjs:
+      :endpoint: 'https://api.github.com/repos/bitovi/documentjs/events'
+    :jquerypp:
+      :endpoint: 'https://api.github.com/repos/bitovi/jquerypp/events'
+    :canui:
+      :endpoint: 'https://api.github.com/repos/bitovi/canui/events'
+    :funcunit:
+      :endpoint: 'https://api.github.com/repos/bitovi/funcunit/events'
+    :donejs:
+      :endpoint: 'https://api.github.com/repos/bitovi/donejs/events'
+    :javascriptmvc:
+      :endpoint: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
