@@ -12,7 +12,7 @@ FactoryGirl.define do
 
   factory :event do
     title "Title"
-    body "Body"
+    body "A body that has many many words in it."
     origin_date Date.today
     origin_ts Time.now
     sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }

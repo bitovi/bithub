@@ -6,11 +6,6 @@ FactoryGirl.define do
     upvote_value 1
     award_value 0
     priority 0
-
-    factory :rule_with_award do
-      award_value 100
-    end
-    
   end
 
 end

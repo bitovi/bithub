@@ -79,7 +79,7 @@ describe Event do
     describe "#update_from_bithub" do
       before(:each) do
         @ev = Event.new_from_bithub(original_args)
-        @ev.update_from_bithub!(updated_args)
+        @ev.update_from_bithub(updated_args)
       end
 
       it "re-determines the feed" do
