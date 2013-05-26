@@ -17,4 +17,5 @@ group :development do
   gem 'rspec'
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'factory_girl'
 end

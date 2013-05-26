@@ -43,6 +43,8 @@ GEM
     eventmachine (1.0.0)
     exceptional (2.0.33)
       rack
+    factory_girl (4.2.0)
+      activesupport (>= 3.0.0)
     foreman (0.61.0)
       thor (>= 0.13.6)
     highline (1.6.17)
@@ -94,6 +96,7 @@ DEPENDENCIES
   em-http-request
   em-twitter
   exceptional
+  factory_girl
   foreman
   log4r
   mongoid
