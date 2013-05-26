@@ -15,7 +15,7 @@ Bithub::Application.routes.draw do
       resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'
       resource 'award', :only => :create, :to => 'event_activities#create_award'
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
-      get :image, :on => :member
+      get :summary, :on => :collection
     end
 
     resources :users, :except => [:new] do

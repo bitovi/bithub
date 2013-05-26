@@ -1,4 +1,5 @@
 class Api::EventsController < Api::ApiController
+  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github']
   respond_to :json
 
   def index
@@ -39,6 +40,12 @@ class Api::EventsController < Api::ApiController
     else
       render :json => @event.errors.messages, :status => 500
     end
+  end
+
+  def summary
+    cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
+    @summary = Hash[cats_to_sum.map{|el| [el, Event.tagged_with(el).count]}]
+    render :json => { data: @summary }
   end
 
   private # SCOPE BUILDING
