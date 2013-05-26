@@ -25,17 +25,17 @@ class Api::UsersController < Api::ApiController
   end
 
   def update
-    filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
-
     if params[:countryISO]
       country = Country.where({:iso => params[:countryISO]}).first
-      filtered_params[:country] = country if country
+      params[:country] = country if country
     end
 
-    if User.update(params[:id], filtered_params)
-      render :status => 200, :json => {:id => params[:id]}
+    u = User.find(params[:id])
+    if u.update_attributes(params[:user])
+      @user = UserDecorator.decorate(u)
+      render :show
     else
-      render :json => @event.errors.messages, :status => 500
+      render :json => @event.errors.messages, :status => 406
     end
   end
 
