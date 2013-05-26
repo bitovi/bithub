@@ -4,13 +4,11 @@ class Api::TagsController < Api::ApiController
   rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
 
   def index
-
     if (params[:type]) && Tag.types.include?(params[:type])
       @tags = Tag.send(params[:type].pluralize).all      
     else
       @tags = Tag.all
     end
-
     render :index
   end
 
@@ -24,8 +22,12 @@ class Api::TagsController < Api::ApiController
   end
 
   def update
-    @tag = Tag.update_params(params[:tag])
-    render :show
+    @tag = Tag.find(params[:id])
+    if @tag.update_attributes(params[:tag])
+      render :show
+    else
+      reder json: { error: @tag.errors.messages }
+    end
   end
 
 end
