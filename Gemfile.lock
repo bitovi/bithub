@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/neektza/jpbuilder.git
-  revision: ff46c75a3a001cb691fa89fefc0d7298e549766b
+  revision: 4c88c8791ca40c5e06bac4e7a741f62c36ce4336
   specs:
-    jpbuilder (0.2.2)
+    jpbuilder (0.2.3)
       jbuilder
 
 GIT

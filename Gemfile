@@ -28,6 +28,7 @@ gem 'foreman'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
+# gem 'jpbuilder'
 
 # Gems for ThirdPartyInformer
 gem 'twitter'
