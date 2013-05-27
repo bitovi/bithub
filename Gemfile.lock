@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/neektza/jpbuilder.git
-  revision: 4c88c8791ca40c5e06bac4e7a741f62c36ce4336
-  specs:
-    jpbuilder (0.2.3)
-      jbuilder
-
-GIT
   remote: git://github.com/neektza/muster.git
   revision: e3aeca8fd858486bbf41f4fa043d58c18a8cc94a
   specs:
@@ -131,6 +124,8 @@ GEM
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     journey (1.0.4)
+    jpbuilder (0.2.2)
+      jbuilder
     jquery-rails (2.2.1)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
@@ -302,7 +297,7 @@ DEPENDENCIES
   github_api
   guard-rspec
   jbuilder
-  jpbuilder!
+  jpbuilder
   jquery-rails
   kaminari
   less-rails (~> 2.2.6)

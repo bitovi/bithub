@@ -21,14 +21,14 @@ gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'acts-as-taggable-on'
 gem 'jbuilder'
+gem 'jpbuilder'
 gem 'draper'
 gem 'kaminari'
 gem 'log4r'
 gem 'foreman'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
-gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
-# gem 'jpbuilder'
+# gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
 # Gems for ThirdPartyInformer
 gem 'twitter'
