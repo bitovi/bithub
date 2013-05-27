@@ -1,6 +1,7 @@
 class Api::EventsController < Api::ApiController
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github']
   respond_to :json
+  helper_method :custom_cache_key
 
   def index
     muster_query = request.env['muster.query']
@@ -77,5 +78,14 @@ class Api::EventsController < Api::ApiController
     scope = Event.scoped.tagged_with(tag)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope.count
+  end
+
+  def custom_cache_key(event)
+    qs = CGI.parse(request.query_string)
+    if !qs.blank?
+      event.cache_key + '/' + fragment_cache_key(qs.sort)
+    else
+      event.cache_key
+    end
   end
 end
