@@ -74,6 +74,8 @@ describe "Events REST API" do
         it "should filter by regular params"
         it "should filter by date ranges"
         it "should filter by numeric ranges"
+        it "should filter by negated attributes"
+        it "should exclude attr on exclude query param"
       end
     end
 
