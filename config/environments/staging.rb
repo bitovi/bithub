@@ -8,10 +8,6 @@ Bithub::Application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Enable serving static files because of Rack::Cache (HTTP
-  # cache invalidation is possible this way)
-  config.serve_static_assets = true
-
   # Compress JavaScripts and CSS
   config.assets.compress = true
 
@@ -23,17 +19,6 @@ Bithub::Application.configure do
   
   # Use a different cache store in production
   config.cache_store = :dalli_store
-
-  # Set up Rack::Cache to use Memcached store
-  config.action_dispatch.rack_cache = {
-    :metastore    => Dalli::Client.new,
-    :entitystore  => 'file:/var/cache/rack/body',
-    :allow_reload => false
-  }
-
-  # Set the Cache-Control header
-  config.static_cache_control = "public, max-age=2592000"
-
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
