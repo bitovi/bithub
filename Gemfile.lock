@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/neektza/jpbuilder.git
+  revision: ff46c75a3a001cb691fa89fefc0d7298e549766b
+  specs:
+    jpbuilder (0.2.2)
+      jbuilder
+
+GIT
   remote: git://github.com/neektza/muster.git
   revision: e3aeca8fd858486bbf41f4fa043d58c18a8cc94a
   specs:
@@ -295,6 +302,7 @@ DEPENDENCIES
   github_api
   guard-rspec
   jbuilder
+  jpbuilder!
   jquery-rails
   kaminari
   less-rails (~> 2.2.6)
