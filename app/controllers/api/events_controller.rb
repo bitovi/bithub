@@ -48,7 +48,7 @@ class Api::EventsController < Api::ApiController
   def summary
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
     @summary = Hash[cats_to_sum.map{|cat| [ cat, date_filtered_sumamry(cat) ]}]
-    render :json => { data: @summary }
+    render :summary
   end
 
   private # SCOPE BUILDING
