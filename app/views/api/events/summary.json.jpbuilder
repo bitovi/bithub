@@ -1,3 +1,1 @@
-json.set! :data do
-  json.hash! @summary
-end
+json.data @summary
