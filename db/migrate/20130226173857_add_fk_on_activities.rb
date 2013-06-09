@@ -1,6 +1,5 @@
 class AddFkOnActivities < ActiveRecord::Migration
   def up
-
     # upvotes
     execute <<-SQL
       ALTER TABLE upvotes 

@@ -1,9 +1,5 @@
 class AddCommentToInternalActivities < ActiveRecord::Migration
-  def up
+  def change
     add_column :internals, :comment, :string
-  end
-  
-  def down
-    remove_column :internals, :comment
   end
 end
