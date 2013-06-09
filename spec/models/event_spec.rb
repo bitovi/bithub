@@ -7,10 +7,6 @@ describe Event do
       create(:rule)
     end
 
-    describe "#bumb_thread" do
-      it "updates event's updated_at attr"
-    end
-
     describe "#initialize" do
       it "sets event id from DB sequence before saving" do
         event = build(:event_determined)
@@ -29,7 +25,8 @@ describe Event do
 
     describe ".select_with_upvotes" do
       it "calculates total nmb of upvotes for each event" do
-        usr1 = create(:user); usr2 = create(:user)
+        usr1 = create(:user, name: "Nikica")
+        usr2 = create(:user, name: "Veljko")
         event = create(:event_determined)
         Upvote.create_upvote(usr1, event)
         Upvote.create_upvote(usr2, event)
@@ -241,9 +238,9 @@ describe Event do
       end
       context "when grouping commit comments" do
         before :each do
-          @push = build(:github_push)
-          @commit_comment1 = build(:github_commit_comment1)
-          @commit_comment2 = build(:github_commit_comment2)
+          @push = build(:github_push, title: "Printing a string raises an error, here's a code sample")
+          @commit_comment1 = build(:github_commit_comment1, title: "Are you mad? It's just printing a string")
+          @commit_comment2 = build(:github_commit_comment2, title: "He's right, it does.")
         end
         it "groups a push event with 2 commit comments" do
           @commit_comment1.process_github.save!
@@ -259,9 +256,9 @@ describe Event do
     describe "#process_twitter" do
       context "when grouping (re)tweets" do
         before :each do
-          @tweet = build(:twitter_tweet)
-          @retweet1 = build(:twitter_retweet1)
-          @retweet2 = build(:twitter_retweet2)
+          @tweet = build(:twitter_tweet, title: "Hey, check this out, http:///canjs.com")
+          @retweet1 = build(:twitter_retweet1, title: "RT: Hey, check this out, http:///canjs.com")
+          @retweet2 = build(:twitter_retweet2, title: "RT Hey, check this out, http:///canjs.com")
         end
         it "groups a tweet with 2 retweets" do
           @retweet1.process_twitter.save!
@@ -272,6 +269,27 @@ describe Event do
           expect(@retweet2.reload.parent_id).to eql(@tweet.id)
         end
       end
+    end
+
+    describe "#bump_thread" do
+      before(:each) do
+        @ie = create(:github_issue, title: "Why is this happening?")
+        @ice1 = create(:github_issue_comment, title: "I don't care.", parent: @ie)
+        @ice2 = create(:github_issue_comment, title: "Wat? Qua?", parent: @ie)
+        @ice3 = create(:github_issue_comment, title: "Foo, bar.", parent: @ie)
+      end
+
+      it "updates thread_updated_at attribute for the parent event" do
+        @ice1.bump_thread
+        @ie.thread_updated_at.should > @ie.created_at
+      end
+      
+      it "updates thread_updated_at attribute for all sibling events" do
+        @ice1.bump_thread
+        @ice2.reload.thread_updated_at.should > @ie.created_at
+        @ice3.reload.thread_updated_at.should > @ie.created_at
+      end
+
     end
   end
 end

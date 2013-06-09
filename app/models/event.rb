@@ -8,7 +8,8 @@ class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :tag_list,
-    :origin_date, :origin_ts,
+    :origin_date, :origin_ts, :thread_updated_at,
+    :created_at, :updated_at,
     :props, :source_data, :image
 
   attr_accessor :meta
@@ -77,7 +78,7 @@ class Event < ActiveRecord::Base
     process_forums
     process_github
     process_twitter
-    self.parent.touch if self.parent
+    bump_thread
     self
   end
 
@@ -220,11 +221,21 @@ class Event < ActiveRecord::Base
   end
 
   def self.only_parent_events
-    where("parent_id IS NULL")
+    where("parent_id IS NULL") # excludes events that have parent_id set
   end
 
   def awarded?
     self.awards.length > 0
+  end
+
+  def bump_thread
+    now = Time.now
+    if self.parent_id
+      self.parent.update_attribute(:thread_updated_at, now)
+      Event.where(:parent_id => self.parent_id).update_all(:thread_updated_at => now)
+    else
+      self.update_attribute(:thread_updated_at, now)
+    end
   end
 
   private
