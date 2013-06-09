@@ -39,6 +39,16 @@ class Api::UsersController < Api::ApiController
     end
   end
 
+  def from_github
+    res = user_apis.from_github(params[:query])
+    render :json => { data: res }
+  end
+
+  def from_twitter
+    res = user_apis.from_twitter(params[:query])
+    render :json => { data: res }
+  end
+
   private # SCOPE BUILDING
   def build_scope(muster_query, params)
     scope = User.scoped
@@ -56,5 +66,9 @@ class Api::UsersController < Api::ApiController
 
   def scope_applier
     @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  end
+
+  def user_apis
+    @user_apis ||= ThirdPartyUserInformer.new
   end
 end

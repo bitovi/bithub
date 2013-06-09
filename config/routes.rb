@@ -21,6 +21,10 @@ Bithub::Application.routes.draw do
     resources :users, :except => [:new] do
       resources 'activities', :only => :index, :to => 'user_activities#index'
       resources 'events', :only => :index, :to => 'user_events#index'
+      collection do
+        get 'twitter/:query', :to => 'users#from_twitter'
+        get 'github/:query', :to => 'users#from_github'
+      end
     end
 
     resources :tags, :except => [:new, :edit] do

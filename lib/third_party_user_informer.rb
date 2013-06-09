@@ -8,7 +8,7 @@ class ThirdPartyUserInformer
       config.oauth_token_secret = ENV['TWITTER_OAUTH_TOKEN_SECRET']
     end
 
-    @github = Github.new basic_auth: 'neektza:ahn8Choo'
+    @github = Github.new(basic_auth: 'neektza:ahn8Choo')
   end
 
   def from_twitter(q)
