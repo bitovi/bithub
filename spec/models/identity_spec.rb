@@ -11,22 +11,21 @@ describe Identity do
     end
   end
 
-  describe ".find_or_create_with_oauth_data" do
-    let(:oauth_data) { oauth_data_hash }
-
+  describe ".find_or_create_with_provider_and_uid" do
     context "when identity exists" do
       it "should find an existing identity" do
-        existing_identity = create(:identity, uid: oauth_data['uid'], provider: oauth_data['provider'])
-        identity = Identity.find_or_create_with_oauth_data(oauth_data)
+        existing_identity = create(:identity, uid: 123456789, provider: 'twitter')
+        identity = Identity.find_or_create_with_provider_and_uid('twitter', 123456789)
         expect(identity).to eq(existing_identity)
       end
     end
 
     context "when identity does not exist" do
       it "should create a new identity" do
-        identity = Identity.find_or_create_with_oauth_data(oauth_data)
+        identity = Identity.find_or_create_with_provider_and_uid('twitter', 123456789)
         expect(identity).to be
       end
     end
   end
+
 end

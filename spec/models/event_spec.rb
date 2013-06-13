@@ -138,6 +138,15 @@ describe Event do
       end
     end
 
+    describe ".determine_author" do
+      it "determines the author based on origin_author_id and origin_author_feed attributes" do
+        user = create(:user, name: 'Nikica Jokic')
+        ident = create(:identity, uid: 123456789, provider: 'bithub', user: user)
+        author = Event.determine_author('bithub', 123456789)
+        expect(author).to eq(user)
+      end
+    end
+
     describe "#determine_feed_from_meta" do
       it "determines a feed" do
         event = build(:event_wo_feed)        

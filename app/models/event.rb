@@ -94,6 +94,7 @@ class Event < ActiveRecord::Base
     self.feed        = Event.determine_feed(args[:feed])
     self.category    = Event.determine_category(args[:category])
     self.rule        = Event.determine_rule(self.tag_list)
+    self.author      = Event.determine_author(args[:origin_author_feed], args[:origin_author_id])
     self
   end
 
@@ -120,6 +121,11 @@ class Event < ActiveRecord::Base
   
   def self.determine_rule(tags)
     Rule.best_match(tags)
+  end
+
+  def self.determine_author(provider, uid)
+    ident = Identity.find_or_create_with_provider_and_uid(provider, uid)
+    ident.user
   end
 
   def determine_tags_from_meta
@@ -387,6 +393,8 @@ class Event < ActiveRecord::Base
     args.delete(:feed)
     args.delete(:project)
     args.delete(:tags)
+    args.delete(:origin_author_feed)
+    args.delete(:origin_author_id)
     args
   end
 
