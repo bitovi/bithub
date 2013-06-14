@@ -29,9 +29,9 @@ Bithub::Application.routes.draw do
 
     resources :tags, :except => [:new, :edit] do
       collection do
-        get :feeds
-        get :categories
-        get :projects
+        get :feeds, :to => 'tags#index'
+        get :categories, :to => 'tags#index'
+        get :projects, :to => 'tags#index'
       end
     end
 
