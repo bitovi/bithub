@@ -107,11 +107,11 @@ class EventDecorator < Draper::Decorator
   def local_prefix
     case Rails.env
     when 'production'
-      "http://bithub.com/bithub"
+      "http://bithub.com"
     when 'staging'
-      "http://staging.bithub.com/bithub"
+      "http://staging.bithub.com"
     when 'development'
-      "http://bithub.dev/bithub"
+      "http://bithub.dev"
     end
   end
 
