@@ -66,14 +66,14 @@ describe AccountManager, "creates/finds/syncs accounts" do
       data.should =~ ['Nikica Jokic', 'neektza@gmail.com']
     end
   end
-  
+
   describe ".name_from" do
     it "plucks a name from oauth_data" do
       name = AccountManager.name_from(github_oauth_data)
       expect(name).to eq("Nikica Jokic")
     end
   end
-  
+
   describe ".email_from" do
     it "plucks an email from oauth_data" do
       email = AccountManager.email_from github_oauth_data

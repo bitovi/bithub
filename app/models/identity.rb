@@ -23,6 +23,6 @@ class Identity < ActiveRecord::Base
   end
 
   def self.find_or_create_with_oauth_data(oauth_data)
-    self.find_or_create_with_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
+    self.find_or_create_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
   end
 end
