@@ -50,6 +50,7 @@ namespace :deploy do
     run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 
+  desc "Symling uploads from shared to public folder"
   task :symlink_uploads do
     run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
   end
