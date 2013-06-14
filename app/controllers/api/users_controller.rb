@@ -41,12 +41,12 @@ class Api::UsersController < Api::ApiController
 
   def from_github
     res = user_apis.from_github(params[:query])
-    render :json => { data: res }
+    render :json => res
   end
 
   def from_twitter
     res = user_apis.from_twitter(params[:query])
-    render :json => { data: res }
+    render :json => res
   end
 
   private # SCOPE BUILDING

@@ -25,8 +25,9 @@ class Api::EventsController < Api::ApiController
   end
 
   def create
+    posted_for_different_user = (params[:event][:origin_author_id] && params[:event][:origin_author_feed])
     e = Event.new_from_bithub(params[:event])
-    e.author = current_user
+    e.author = current_user if !current_user.has_role?(:admin) || !posted_for_different_user
     if e.save
       @event = EventDecorator.decorate(e)
       render :show
