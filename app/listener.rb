@@ -34,6 +34,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         rescue ActiveRecord::RecordInvalid => invalid
           $log.info "Save failed | META: #{meta}"
           $log.info invalid.record.errors.messages.to_yaml
+        rescue ActiveRecord::RecordNotUnique => duplicate 
+          $log.info "Save failed | META: #{meta}"
+          $log.info duplicate.record.errors.messages.to_yaml
         end
         ev.connection.close
       end
