@@ -35,8 +35,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           $log.info "Invalid record: #{invalid}"
         rescue ActiveRecord::RecordNotUnique => duplicate 
           $log.info "Duplicate record: #{duplicate}"
+        ensure
+          ev.connection.close if ev && ev.connection
         end
-        ev.connection.close
       end
     end
   end
