@@ -32,11 +32,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           ev.save!
           liveservice_exchange.publish(ActiveSupport::JSON.encode(ev))
         rescue ActiveRecord::RecordInvalid => invalid
-          $log.info "Save failed | META: #{meta}"
-          $log.info invalid.record.errors.messages.to_yaml
+          $log.info "Invalid record: #{invalid}"
         rescue ActiveRecord::RecordNotUnique => duplicate 
-          $log.info "Save failed | META: #{meta}"
-          $log.info duplicate.record.errors.messages.to_yaml
+          $log.info "Duplicate record: #{duplicate}"
         end
         ev.connection.close
       end
