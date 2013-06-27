@@ -51,6 +51,11 @@ class Api::EventsController < Api::ApiController
     end
   end
 
+  def destroy
+    Event.find(params[:id]).destroy
+    render :json => { error: t('api.events.destroy.success') }
+  end
+
   def summary
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
     @summary = Hash[cats_to_sum.map{|cat| [ cat, date_filtered_sumamry(cat) ]}]
