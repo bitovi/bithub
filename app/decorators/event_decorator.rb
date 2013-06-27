@@ -23,6 +23,21 @@ class EventDecorator < Draper::Decorator
     source.respond_to?(:total_upvotes) ? source.total_upvotes.to_i : source.upvotes.reduce(0) { |acc, u| acc += u.value }
   end
 
+  def body
+    if source.body
+      markdown = Redcarpet::Markdown.new(
+        Redcarpet::Render::HTML,
+        :fenced_code_blocks => true,
+        :no_intra_emphasis => true,
+        :tables => true,
+        :autolink => true,
+        :strikethrough => true,
+        :space_after_headers => true
+      )
+      markdown.render(source.body)
+    end
+  end
+
   # deprecated: use 'author' or 'props.origin_author_*' attrs
   def actor
     author ? author['name'] : source.props['origin_author_name']
