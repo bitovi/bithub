@@ -94,7 +94,7 @@ class AddFkOnActivities < ActiveRecord::Migration
         DROP CONSTRAINT fk_internals_actor_users
     SQL
     execute <<-SQL
-      ALTER TABLE internal 
+      ALTER TABLE internals
         DROP CONSTRAINT fk_internals_receiver_users
     SQL
   end
