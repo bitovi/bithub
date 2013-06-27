@@ -21,7 +21,7 @@ class Admin::CountriesController < Admin::AdminController
     if @country.save
       redirect_to admin_countries_path
     else
-      render :text => 'jebiga'
+      render :json => { error: @country.errors.messages }, status: 406
     end
   end
 
@@ -30,10 +30,8 @@ class Admin::CountriesController < Admin::AdminController
     if @country.update_attribute(params[:country])
       redirect_to admin_countries_path
     else
-      render :text => 'jebiga'
+      render :json => { error: @country.errors.messages }, status: 406
     end
   end
 
-  def destroy
-  end
 end

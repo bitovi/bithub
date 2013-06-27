@@ -1,7 +1,8 @@
 class Api::TagsController < Api::ApiController
   respond_to :json
-  rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
-  rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
+
+  rescue_from ActiveRecord::RecordNotFound, with: :show_404
+  rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
     if (params[:type]) && Tag.types.include?(params[:type])
@@ -17,7 +18,8 @@ class Api::TagsController < Api::ApiController
     if @tag.save
       render :show
     else
-      render :text => "some error"
+      render :json => { error: t('api.tags.create.error') }, :status => 406
+      #render json: { error: @tag.errors.messages }
     end
   end
 
@@ -26,7 +28,8 @@ class Api::TagsController < Api::ApiController
     if @tag.update_attributes(params[:tag])
       render :show
     else
-      reder json: { error: @tag.errors.messages }
+      render :json => { error: t('api.tags.create.error') }, :status => 406
+      #reder json: { error: @tag.errors.messages }
     end
   end
 

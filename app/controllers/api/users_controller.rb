@@ -1,6 +1,9 @@
 class Api::UsersController < Api::ApiController
   respond_to :json
 
+  rescue_from ActiveRecord::RecordNotFound, with: :show_404
+  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+
   def index
     if params[:cached] == "true"
       @users = Leaderboard.all
@@ -35,7 +38,8 @@ class Api::UsersController < Api::ApiController
       @user = UserDecorator.decorate(u)
       render :show
     else
-      render :json => @event.errors.messages, :status => 406
+      render :json => { error: t('api.users.update.error') }, :status => 406
+      #render :json => @event.errors.messages, :status => 406
     end
   end
 

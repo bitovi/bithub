@@ -3,8 +3,39 @@
 
 en:
   hello: "Hello world"
-  errors:
-    messages:
-      already_upvoted: "Already upvoted"
-      already_anteuped: "Anteup already placed"
-      already_awarded: "Already awarded"
+  api:
+    events:
+      create:
+        success: "Event created."
+        error: "Error during event creation."
+      update:
+        success: "Event updated."
+        error: "Error during event update"
+      destroy:
+        success: "Event deleted."
+        error: "Error during event deletion."
+    users:
+      create:
+        success: "User created."
+        error: "Error during user creation."
+      update:
+        success: "User updated."
+        error: "Error during user update"
+      destroy:
+        success: "User deleted."
+        error: "Error during user deletion."
+    tags:
+      create:
+        success: "Tag created."
+        error: "Error during tag creation."
+      update:
+        success: "Tag updated."
+        error: "Error during tag update"
+      destroy:
+        success: "Tag deleted."
+        error: "Error during tag deletion."
+    event_activities:
+      errors:
+        already_upvoted: "Already upvoted"
+        already_anteuped: "Anteup already placed"
+        already_awarded: "Already awarded"

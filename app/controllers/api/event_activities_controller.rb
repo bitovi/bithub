@@ -1,7 +1,8 @@
 class Api::EventActivitiesController < Api::ApiController
   respond_to :json
-  rescue_from ActiveRecord::RecordInvalid, :with => :show_errors
-  rescue_from ActiveRecord::RecordNotFound, :with => :show_errors
+
+  rescue_from ActiveRecord::RecordNotFound, with: :show_404
+  rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
     @activities = ActivityDecorator.decorate_collection(Event.find(params[:event_id]).activities)
@@ -14,7 +15,7 @@ class Api::EventActivitiesController < Api::ApiController
       upvote = Upvote.create_upvote(current_user, event)
       render :json => upvote
     else
-      render :json => {:error => t('errors.messages.already_upvoted')}, :status => 406
+      render :json => { error: t('api.event_activities.errors.already_upvoted') },:status => 406
     end
   end
 
@@ -24,7 +25,7 @@ class Api::EventActivitiesController < Api::ApiController
       anteup = Anteup.create_anteup(current_user, event, params[:value])
       render :json => anteup
     else
-      render :json => {:error => t('errors.messages.already_anteuped')}, :status => 406
+      render :json => { error: t('api.event_activities.errors.already_anteuped') }, :status => 406
     end
   end
 
@@ -34,13 +35,8 @@ class Api::EventActivitiesController < Api::ApiController
       award = Award.create_award(current_user, event)
       render :json => award
     else
-      render :json => {:error => t('errors.messages.already_awarded')}, :status => 406
+      render :json => { error: t('api.event_activities.errors.already_awarded') }, :status => 406
     end
   end
 
-
-  private
-  def show_errors(e)
-    render :json => {:error => e.message}, :status => 500
-  end
 end

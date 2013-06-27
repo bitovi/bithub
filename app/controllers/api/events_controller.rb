@@ -3,6 +3,9 @@ class Api::EventsController < Api::ApiController
   respond_to :json
   helper_method :custom_cache_key
 
+  rescue_from ActiveRecord::RecordNotFound, with: :show_404
+  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+
   def index
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
@@ -32,7 +35,8 @@ class Api::EventsController < Api::ApiController
       @event = EventDecorator.decorate(e)
       render :show
     else
-      render :json => e.errors.messages, :status => 406
+      render :json => { error: t('api.events.create.error'), :status => 406 }
+      #render :json => e.errors.messages, :status => 406
     end
   end
 
@@ -42,7 +46,8 @@ class Api::EventsController < Api::ApiController
       @event = EventDecorator.decorate(e)
       render :show
     else
-      render :json => e.errors.messages, :status => 406
+      render :json => { error: t('api.events.update.error'), :status => 406 }
+      #render :json => e.errors.messages, :status => 406
     end
   end
 
