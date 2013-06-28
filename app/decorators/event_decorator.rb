@@ -25,8 +25,8 @@ class EventDecorator < Draper::Decorator
 
   def body
     if source.body
-      markdown = ::Redcarpet::Markdown.new(
-        ::Redcarpet::Render::HTML,
+      markdown = Redcarpet::Markdown.new(
+        Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
         :no_intra_emphasis => true,
         :tables => true,
