@@ -25,10 +25,12 @@ namespace :db do
 
   desc "List database backups"
   task :list_backups, :roles => :db, :only => {:primary => true} do
-    run("ls -lh #{db_backups_path}/*.backup") do |channel, stream, data|
+    run("ls -lh #{db_backups_path}*.backup") do |channel, stream, data|
 
       data.split(/\r?\n/).each do |row|
         attrs = row.split()
+        next if attrs.length != 9 
+
         name = File.basename(attrs[8], ".backup")
         puts "Version: #{name} [#{attrs[4]}] [#{attrs[5]} #{attrs[6]} #{attrs[7]}]"
       end
