@@ -5,31 +5,18 @@ require 'responses/responses.rb'
 describe Handler::Twitter do
 
   shared_examples_for "every Twitter event" do
-    it "has title" do
-      expect(@prepared[:title]).to be
-    end
 
-    it "parses timestamp" do
-      expect(@prepared[:origin_ts]).to be
-      expect(@prepared[:origin_date]).to be
-    end
+    it_should_behave_like "every event"
 
     it "generates unique hash key" do
       expect(@prepared[:hash_key].length).to eq(32)
     end
 
     it "has some meta proporties" do 
-      expect(@prepared[:meta]).to be
       expect(@prepared[:meta][:type]).to be
-      expect(@prepared[:meta][:feed]).to be
       expect(@prepared[:meta][:origin_author_name]).to be
       expect(@prepared[:meta][:origin_author_id]).to be
     end
-
-    it "has source data" do
-      expect(@prepared[:source_data]).to be
-    end
-
   end
 
   context "upon fetching Twitter event" do
