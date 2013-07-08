@@ -4,7 +4,7 @@ require 'responses/responses.rb'
 
 describe Handler::Github do
 
-  shared_examples_for "has default attributes" do
+  shared_examples_for "every Github event" do
     it "has title" do
       expect(@prepared[:title]).to be
     end
@@ -41,7 +41,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('CommitCommentEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
 
       it "has body and url" do
         expect(@prepared[:body]).to be
@@ -58,7 +58,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('DeleteEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
     end
 
     describe "#prepare_event (ForkEvent)" do
@@ -66,7 +66,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('ForkEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
     end
 
     describe "#prepare_event (IssueCommentEvent)" do
@@ -74,7 +74,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('IssueCommentEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
 
       it "has body and url" do
         expect(@prepared[:body]).to be
@@ -91,7 +91,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('IssuesEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
 
       it "has body and url" do
         expect(@prepared[:body]).to be
@@ -111,7 +111,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('PullRequestEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
 
       it "has body and url" do
         expect(@prepared[:body]).to be
@@ -124,7 +124,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('WatchEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
     end
 
     describe "#prepare_event (PushEvent)" do
@@ -132,7 +132,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('PushEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
 
       it "has url" do
         expect(@prepared[:url]).to be
@@ -148,7 +148,7 @@ describe Handler::Github do
         @prepared = load_and_prepare('CreateEvent')
       end
 
-      it_should_behave_like "has default attributes"
+      it_should_behave_like "every Github event"
     end
     
   end

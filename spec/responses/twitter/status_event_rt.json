@@ -20,8 +20,7 @@
 		"geo": null,
 		"lang": "en",
 		"retweet_count": 1,
-		"text": "How to build a large,
-single-page javascript application with #JavascriptMVC   http://t.co/RnY3iA0s",
+		"text": "How to build a large, single-page javascript application with #JavascriptMVC   http://t.co/RnY3iA0s",
 		"id_str": "294835253284061184",
 		"in_reply_to_user_id_str": null,
 		"user": {
@@ -76,7 +75,8 @@ single-page javascript application with #JavascriptMVC   http://t.co/RnY3iA0s",
 				"expanded_url": "http://ow.ly/h82aA",
 				"url": "http://t.co/RnY3iA0s"
 			}],
-			"hashtags": [{"indices": [62.0, 76.0], "text": "JavascriptMVC"}]}
+			"hashtags": [{"indices": [62.0, 76.0], "text": "JavascriptMVC"}]
+		}
 	},
 	"in_reply_to_status_id": null,
 	"geo": null,
