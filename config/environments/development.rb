@@ -32,7 +32,7 @@ Bithub::Application.configure do
 
   config.assets.precompile += ['admin.js', 'admin.css']
   config.assets.initialize_on_precompile = false
-  config.assets.prefix = "assets-dev"
+  config.assets.prefix = "assets"
   config.assets.compress = true
   config.assets.compile = false
   config.assets.debug = false
