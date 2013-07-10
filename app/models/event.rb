@@ -50,6 +50,8 @@ class Event < ActiveRecord::Base
     event.origin_date = Date.today
     event.origin_ts   = DateTime.now
     event.image       = args[:image]
+    event.props[:location] = args[:location] if args[:location]
+    event.props[:scheduled_for] = DateTime.parse(args[:datetime]) if args[:datetime]
     event.determine_all(args)
     Event.clean_args_after_determination!(args)
     event.assign_attributes(args)
@@ -411,6 +413,8 @@ class Event < ActiveRecord::Base
     args.delete(:tags)
     args.delete(:origin_author_feed)
     args.delete(:origin_author_id)
+    args.delete(:location)
+    args.delete(:datetime)
     args
   end
 
