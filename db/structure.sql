@@ -161,7 +161,8 @@ CREATE TABLE events (
     source_data text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    image character varying(255)
+    image character varying(255),
+    thread_updated_at timestamp without time zone
 );
 
 
@@ -684,13 +685,6 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_events_on_hash_key; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_events_on_hash_key ON events USING btree (hash_key);
-
-
---
 -- Name: index_events_on_origin_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -744,6 +738,13 @@ CREATE INDEX index_users_on_email ON users USING btree (email);
 --
 
 CREATE INDEX index_users_roles_on_user_id_and_role_id ON users_roles USING btree (user_id, role_id);
+
+
+--
+-- Name: unique_hash_key; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX unique_hash_key ON events USING btree (hash_key);
 
 
 --
@@ -898,3 +899,9 @@ INSERT INTO schema_migrations (version) VALUES ('20130429201314');
 INSERT INTO schema_migrations (version) VALUES ('20130510181611');
 
 INSERT INTO schema_migrations (version) VALUES ('20130520040320');
+
+INSERT INTO schema_migrations (version) VALUES ('20130607045446');
+
+INSERT INTO schema_migrations (version) VALUES ('20130617164515');
+
+INSERT INTO schema_migrations (version) VALUES ('20130618110729');
