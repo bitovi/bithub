@@ -56,8 +56,9 @@ class Event < ActiveRecord::Base
   def self.new_from_bithub(args)
     event             = self.new
     event.hash_key    = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-    event.origin_date = Date.today
-    event.origin_ts   = DateTime.now
+    event.origin_date       = Date.today
+    event.origin_ts         = DateTime.now
+    event.thread_updated_at = DateTime.now
     event.image       = args[:image]
     event.props[:location] = args[:location] if args[:location]
     event.props[:scheduled_for] = DateTime.parse(args[:datetime]) if args[:datetime]
