@@ -38,6 +38,15 @@ class Event < ActiveRecord::Base
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
+  scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from events)") }
+  scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from events)") }
+
+  scope :only_parents, lambda { where("id IN (SELECT parent_id from events WHERE parent_id IS NOT NULL)") }
+  scope :only_children, lambda { where("parent_id IS NOT NULL") }
+
+  scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
+  scope :not_children, lambda { where("parent_id IS NULL") }
+
   def self.new_from_crawler(args = {}, meta)
     ev = self.new(args)
     ev.meta = meta.symbolize_keys
@@ -226,10 +235,6 @@ class Event < ActiveRecord::Base
     query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
     query_string = "events.*, " + query_string if include_events
     select(query_string)
-  end
-
-  def self.only_parent_events
-    where("parent_id IS NULL") # excludes events that have parent_id set
   end
 
   def awarded?
