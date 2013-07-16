@@ -101,9 +101,6 @@ class Api::EventsController < Api::ApiController
   end
 
   def posting_for_antoher_user?(params)
-    params[:event][:origin_author_id] &&
-      !params[:event][:origin_author_id].blank? &&
-      params[:event][:origin_author_feed] &&
-      !params[:event][:origin_author_feed].blank?
+    params["postas"] && !params["postas"].blank?
   end
 end
