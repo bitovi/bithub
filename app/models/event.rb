@@ -54,14 +54,14 @@ class Event < ActiveRecord::Base
   end
 
   def self.new_from_bithub(args)
-    event             = self.new
-    event.hash_key    = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-    event.origin_date       = Date.today
-    event.origin_ts         = DateTime.now
-    event.thread_updated_at = DateTime.now
-    event.image       = args[:image]
-    event.props[:location] = args[:location] if args[:location]
-    event.props[:scheduled_for] = DateTime.parse(args[:datetime]) if args[:datetime]
+    event                        = self.new
+    event.hash_key               = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+    event.origin_date            = Date.today
+    event.origin_ts              = DateTime.now
+    event.thread_updated_at      = DateTime.now
+    event.image                  = args[:image]
+    event.props[:location]       = args[:location] if args[:location]
+    event.props[:scheduled_for]  = DateTime.parse(args[:datetime]) if args[:datetime]
     event.determine_all(args)
     Event.clean_args_after_determination!(args)
     event.assign_attributes(args)
@@ -251,12 +251,10 @@ class Event < ActiveRecord::Base
   end
 
   def bump_thread
-    now = Time.now
-    if self.parent_id
-      self.parent.update_attribute(:thread_updated_at, now)
-      Event.where(:parent_id => self.parent_id).update_all(:thread_updated_at => now)
-    else
-      self.update_attribute(:thread_updated_at, now)
+    now = DateTime.now
+    self.thread.each do |e|
+      e.update_attribute(:thread_updated_at, now)
+      e.update_attribute(:thread_updated_date, now.to_date)
     end
   end
 

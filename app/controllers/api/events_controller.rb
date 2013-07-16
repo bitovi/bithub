@@ -31,6 +31,7 @@ class Api::EventsController < Api::ApiController
     e = Event.new_from_bithub(params[:event])
     e.author = current_user if !current_user.has_role?(:admin) || !posting_for_antoher_user?(params)
     if e.save
+      e.bump_thread
       @event = EventDecorator.decorate(e)
       render :show
     else
