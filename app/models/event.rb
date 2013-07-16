@@ -221,6 +221,14 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def thread
+    if self.parent_id # When an event is a child
+      Event.where("id = ? OR parent_id = ?", self.parent_id, self.parent_id)
+    else # When an event is a parent
+      Event.where("id = ? OR parent_id = ?", self.id, self.id)
+    end
+  end
+
   def siblings
     parent.children
   end
