@@ -6,13 +6,15 @@ require 'time'
 module Handler
   class Base
     attr_reader :initialized, :feed
+    CUSTOM_RULESET = Sanitize::Config::RELAXED
+    CUSTOM_RULESET[:elements] << "div"
 
     def self.handler(log, exchange)
       new(log, exchange).handler
     end
 
     def sanitize(html)
-      Sanitize.clean(html, Sanitize::Config::RELAXED)
+      Sanitize.clean(html, CUSTOM_RULESET)
     end
 
     def initialize(log, exchange, backlog_size = 100)
