@@ -24,7 +24,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def body
-    if source.body
+    if source.tag_list.include?('github') && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
@@ -35,6 +35,8 @@ class EventDecorator < Draper::Decorator
         :space_after_headers => true
       )
       markdown.render(add_newline_before_fenced_code_block(source.body))
+    else
+      source.body
     end
   end
 
