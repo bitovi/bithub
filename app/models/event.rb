@@ -54,14 +54,16 @@ class Event < ActiveRecord::Base
   end
 
   def self.new_from_bithub(args)
-    event                        = self.new
-    event.hash_key               = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-    event.origin_date            = Date.today
-    event.origin_ts              = DateTime.now.utc
-    event.thread_updated_at      = DateTime.now.utc
-    event.image                  = args[:image]
-    event.props[:location]       = args[:location] if args[:location]
-    event.props[:scheduled_for]  = DateTime.parse(args[:datetime]) if args[:datetime] && !args[:datetime].blank?
+    now                         = DateTime.now
+    event                       = self.new
+    event.hash_key              = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+    event.origin_ts             = now.utc
+    event.origin_date           = now.utc.to_date
+    event.thread_updated_at     = now.utc
+    event.thread_updated_date   = now.utc.to_date
+    event.image                 = args[:image]
+    event.props[:location]      = args[:location] if args[:location]
+    event.props[:scheduled_for] = DateTime.parse(args[:datetime]) if args[:datetime] && !args[:datetime].blank?
     event.determine_all(args)
     Event.clean_args_after_determination!(args)
     event.assign_attributes(args)
