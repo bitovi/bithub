@@ -5,11 +5,7 @@ namespace :data do
     puts "Total # of events: #{total_events_cnt}"
 
     Event.all.each do |e|
-      max_tua_ts = e.thread.pluck(:origin_ts).max
-      e.thread.each do |te|
-        te.update_attribute(:thread_updated_at, max_tua_ts)
-        te.update_attribute(:thread_updated_date, max_tua_ts.to_date);
-      end
+      e.bump_thread
       cnt += 1
 
       if (progress = (cnt % 1000)) == 0

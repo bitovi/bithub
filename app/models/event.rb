@@ -240,22 +240,30 @@ class Event < ActiveRecord::Base
     activities.concat(self.anteups)
   end
 
+
+  # Thread activity timestamps
+  # --------------------------
+  def bump_thread
+    latest_origin_ts = self.thread.pluck(:origin_ts).max
+    self.thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
+  end
+
+  def update_thread_attrs(ts)
+    self.update_attribute(:thread_updated_at, ts)
+    self.update_attribute(:thread_updated_date, ts.to_date);
+  end
+
+
+  # Awards & Upvotes
+  # ----------------
+  def awarded?
+    self.awards.length > 0
+  end
+  
   def self.select_with_upvotes(include_events = true)
     query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
     query_string = "events.*, " + query_string if include_events
     select(query_string)
-  end
-
-  def awarded?
-    self.awards.length > 0
-  end
-
-  def bump_thread
-    now = DateTime.now
-    self.thread.each do |e|
-      e.update_attribute(:thread_updated_at, now)
-      e.update_attribute(:thread_updated_date, now.to_date)
-    end
   end
 
   def cache_key
