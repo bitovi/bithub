@@ -92,7 +92,6 @@ class Event < ActiveRecord::Base
     process_forums
     process_github
     process_twitter
-    bump_thread
     self
   end
 
