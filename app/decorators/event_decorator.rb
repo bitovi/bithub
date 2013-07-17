@@ -34,7 +34,7 @@ class EventDecorator < Draper::Decorator
         :strikethrough => true,
         :space_after_headers => true
       )
-      markdown.render(source.body)
+      markdown.render(add_newline_before_fenced_code_block(source.body))
     end
   end
 
@@ -134,5 +134,11 @@ class EventDecorator < Draper::Decorator
     context[:excluded_attributes] && (
       context[:excluded_attributes].include?(attr.to_sym) ||
       context[:excluded_attributes].include?(attr.to_s))
+  end
+  
+  # NOTE: this is a quick fix, would be better to add newlines only when they're missing
+  def add_newline_before_fenced_code_block(text)
+    i=0;
+    text.split("```").map {|l| val = (i%2==0) ? l + "\r\n" : l; i+=1; val}.join('```')
   end
 end
