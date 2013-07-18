@@ -23,6 +23,14 @@ class EventDecorator < Draper::Decorator
     source.respond_to?(:total_upvotes) ? source.total_upvotes.to_i : source.upvotes.reduce(0) { |acc, u| acc += u.value }
   end
 
+  def title
+    if source.tag_list.include?('status_event') && !source.source_data['entities']['urls'].blank?
+      apply_hyperlinks(source.title, source.source_data['entities']['urls'])
+    else
+      source.title
+    end
+  end
+
   def body
     if source.tag_list.include?('github') && source.body
       markdown = Redcarpet::Markdown.new(
@@ -136,6 +144,13 @@ class EventDecorator < Draper::Decorator
     context[:excluded_attributes] && (
       context[:excluded_attributes].include?(attr.to_sym) ||
       context[:excluded_attributes].include?(attr.to_s))
+  end
+
+  def apply_hyperlinks(text, urls)
+    urls.reduce(text) do |acc, url|
+      range = url['indices']; link = text.slice(*range)
+      text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>") 
+    end
   end
   
   # NOTE: this is a quick fix, would be better to add newlines only when they're missing
