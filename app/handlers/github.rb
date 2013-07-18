@@ -67,7 +67,7 @@ module Handler
 
       if event['type'] == 'IssuesEvent' 
         state = event['payload']['issue']['state']
-        event_hash[:title] = "#{state} an issue: #{event['payload']['issue']['title']}"
+        event_hash[:title] = event['payload']['issue']['title']
         event_hash[:body] = event['payload']['issue']['body']
         event_hash[:url] = event['payload']['issue']['html_url']
         event_hash[:meta][:labels] = event['payload']['issue']['labels'].map { |l| l['name'] }
