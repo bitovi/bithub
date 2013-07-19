@@ -118,6 +118,7 @@ GEM
     hashie (2.0.3)
     highline (1.6.17)
     hike (1.2.2)
+    htmlentities (4.3.1)
     httpauth (0.2.0)
     i18n (0.6.4)
     jbuilder (1.3.0)
@@ -299,6 +300,7 @@ DEPENDENCIES
   foreman
   github_api
   guard-rspec
+  htmlentities
   jbuilder
   jpbuilder
   jquery-rails

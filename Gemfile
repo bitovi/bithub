@@ -28,6 +28,7 @@ gem 'kaminari'
 gem 'log4r'
 gem 'foreman'
 gem 'sanitize'
+gem 'htmlentities'
 
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"

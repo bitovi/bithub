@@ -8,9 +8,11 @@ namespace :data do
     cnt = 0; step = 10 ** Math.log10(total_events_cnt / 10).round
     puts "Total # of events: #{total_events_cnt}"
 
+    htmlEscaper = HTMLEntities.new
     Event.tagged_with('forums').each do |e|
-      raw_body = e.source_data["description"] 
-      e.update_attribute(:body, Sanitize.clean(raw_body, CUSTOM_RULESET))
+      raw_body = htmlEscaper.encode(e.source_data["description"])
+      cleaned_body = Sanitize.clean(raw_body, CUSTOM_RULESET)
+      e.update_attribute(:body, htmlEscaper.decode(cleaned_body))
     end
 
     if (progress = (cnt % step)) == 0
