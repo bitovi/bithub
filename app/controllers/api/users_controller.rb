@@ -44,12 +44,12 @@ class Api::UsersController < Api::ApiController
   end
 
   def from_github
-    res = user_apis.from_github(params[:query])
+    res = user_apis.from_github(params[:user])
     render :json => res
   end
 
   def from_twitter
-    res = user_apis.from_twitter(params[:query])
+    res = user_apis.from_twitter(params[:user])
     render :json => res
   end
 
