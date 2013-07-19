@@ -31,4 +31,5 @@ insert into leaderboard
 			and anteups.fullfilled = true)
 	) as total_score
 	from users
+	where name is not null
 	order by total_score desc);
