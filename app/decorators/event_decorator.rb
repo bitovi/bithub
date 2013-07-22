@@ -32,7 +32,8 @@ class EventDecorator < Draper::Decorator
   end
 
   def body
-    if source.tag_list.include?('github') && source.body
+    tags = ['github','bithub']
+    if (source.tag_list & tags).length && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
@@ -42,7 +43,7 @@ class EventDecorator < Draper::Decorator
         :strikethrough => true,
         :space_after_headers => true
       )
-      markdown.render(add_newline_before_fenced_code_block(source.body))
+      markdown.render(add_newline_before_fenced_code_block(source.body)).rstrip()
     else
       source.body
     end
