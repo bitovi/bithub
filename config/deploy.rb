@@ -29,6 +29,18 @@ namespace :deploy do
   task :restart, :except => { :no_release => true } do
     run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
     run "sudo /usr/bin/service bithub-listener restart"
+
+    timeout = 10
+    puts "Waiting for #{timeout} seconds before killing old unicorn master processes"
+    sleep timeout
+
+    run "ps aux |grep \"[m]aster (old)\"" do |channel, stream, data|
+      data.split(/\r?\n/).each do |row|
+        attrs = row.split()
+        puts "Killing old unicorn_rails master with PID #{attrs[1]}"
+        run "kill #{attrs[1]}"
+      end
+    end
   end
 
   desc "Start unicorn"
