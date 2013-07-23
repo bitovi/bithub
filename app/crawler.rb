@@ -1,4 +1,4 @@
-$: << File.dirname(__FILE__)
+$: << File.expand_path(File.join(File.dirname(__FILE__), '../'))
 
 # Theirs
 require 'bundler/setup'
@@ -10,19 +10,16 @@ require 'amqp'
 require 'zlib'
 require 'base64'
 require 'rubygems'
-require 'exceptional'
 require 'json'
 require 'sanitize'
 
 # Ours
-require 'handlers'
-require 'string'
+require 'app/handlers'
+require 'lib/string'
+require 'lib/proc'
 
 # Connection string
 $mq_cs = ENV['RABBITMQ_URI']
-
-# Exceptional
-Exceptional::Config.load("config/exceptional.yml")
 
 # Logging
 $log = Log4r::Logger.new('crawler')
@@ -30,11 +27,8 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
-# Calculate project root path
-$proj_root = File.expand_path(File.join(File.dirname(__FILE__), '../'))
-
 # Load feeds config 
-$feeds = YAML::load_file(File.join($proj_root, 'config/feeds.yml'))
+$feeds = YAML::load_file('config/feeds.yml')
 
 $timer = 6
 def next_timer; $timer += 6; end
