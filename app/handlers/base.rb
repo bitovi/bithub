@@ -1,5 +1,6 @@
 require 'digest/md5'
 require 'sanitize'
+require 'htmlentities'
 require 'rexml/document'
 require 'time'
 
@@ -14,7 +15,7 @@ module Handler
     end
 
     def sanitize(html)
-      Sanitize.clean(html, CUSTOM_RULESET)
+      decode(cleanup(encode(html)))
     end
 
     def initialize(log, exchange, backlog_size = 100)
@@ -29,7 +30,7 @@ module Handler
     def fetch
     end
 
-    # Compare key with items already fetched and set the last batch of keys as latest
+    # Compare key wth items already fetched and set the last batch of keys as latest
     def filter_old(feed_items)
       new_events = feed_items.reject {|e| @latest.include? e['hash_key']}
       @latest += new_events.collect {|e| e['hash_key']}
@@ -51,6 +52,20 @@ module Handler
 
     def handler
       proc { fetch }
+    end
+
+    def encode(text)
+      @htmlEscaper ||= HTMLEntities.new
+      @htmlEscaper.encode(text)
+    end
+
+    def decode(text)
+      @htmlEscaper ||= HTMLEntities.new
+      @htmlEscaper.decode(text)
+    end
+
+    def cleanup(text)
+      Sanitize.clean(@htmlEscaper.encode(text), CUSTOM_RULESET)
     end
   end
 end
