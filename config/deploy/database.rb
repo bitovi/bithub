@@ -4,7 +4,7 @@ namespace :db do
 
   desc "Determine a name for the backup file"
   task :backup_name, :roles => :db, :only => { :primary => true } do
-    backup_time = Time.now.strftime("%Y%m%d-%H%M%S")
+    set :backup_time, Time.now.strftime("%Y%m%d-%H%M%S")
     set :backup_file, File.join(db_backups_path, backup_time + '.backup')
   end
 
@@ -71,10 +71,39 @@ namespace :db do
     end
   end
 
-  desc "Sync database with production"
+  desc "Sync staging with production"
   task :sync_with_prod, :roles => :db, :only => {:primary => true} do
     dbname = 'bithub_staging' unless dbname
     run "pg_dump -Fc -w -h 69.164.216.88 bithub | pg_restore -c -d bithub_staging"
+  end
+
+  task :pass_var, :roles => :db, :only => {:primary => true} do
+    puts "#{foobar}"
+  end
+
+  desc "Sync local db"
+  task :sync_local_db, :roles => :db, :only => {:primary => true} do
+
+    # create backup to /tmp/
+    set :db_backups_path, '/tmp/'
+    backup
+
+    # download backup to local /tmp/
+    src = File.join(db_backups_path, backup_time + ".backup")      
+    dest = File.join('/tmp/', backup_time + ".backup")      
+    top.download(src, dest, :via => :scp, &block)
+
+    # restore to which local db
+    if not exists? :local_db
+      puts "You can specify to which local db to restore to. Hint: use \"cap db:sync_local -s local_db=__db_name__\""
+      puts "Using 'bithub_development'!"
+      restore_db = 'bithub_development'
+    else
+      restore_db = local_db
+    end
+
+    # restore to local db
+    run_locally "pg_restore -Fc -c -d #{restore_db} #{dest}"
   end
 
 end
