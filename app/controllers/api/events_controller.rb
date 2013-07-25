@@ -14,7 +14,8 @@ class Api::EventsController < Api::ApiController
       render :json => { :count => scope.count(muster_query[:count]) }
     else
       scope = apply_upvote_calculation_to_scope(scope, params)
-      scope = scope_applier.apply_order_to_scope(scope, muster_query)
+      categories_order = Event.select("distinct(category_id)").pluck(:category_id).sort;
+      scope = scope_applier.apply_order_to_scope(scope, params, categories_order)
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
       })

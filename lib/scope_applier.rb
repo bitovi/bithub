@@ -1,11 +1,6 @@
 class ScopeApplier
   attr_reader :logic_analyzer
 
-  VIRTUAL_ATTRS = {
-    'upvotes' => 'total_upvotes',
-    'score' => 'total_score'
-  }
-
   def initialize(query_logic_analyzer)
     @logic_analyzer = query_logic_analyzer
   end
@@ -41,10 +36,16 @@ class ScopeApplier
     scope
   end
   
-  def apply_order_to_scope(scope, muster_query)
-    if !muster_query[:order].blank?
-      muster_query[:order].each do |str_pair|
-        attribute, direction = replace_attr_if_virt(str_pair)
+  def apply_order_to_scope(scope, params, categories_order)
+    virtual_attr_pairs = {
+      'upvotes' => 'total_upvotes',
+      'score' => 'total_score',
+      'categories' => "idx(array#{categories_order}, category_id)"
+    }
+
+    if !params[:order].blank?
+      params[:order].map{|el| el.gsub(':', ' ')}.each do |str_pair|
+        attribute, direction = replace_attr_if_virt(str_pair, virtual_attr_pairs)
         scope = scope.order("#{attribute} #{direction}")
       end
     end
@@ -52,10 +53,10 @@ class ScopeApplier
   end
 
   private
-  def replace_attr_if_virt(pair)
+  def replace_attr_if_virt(pair, virtual_attr_pairs)
     attribute, direction = pair.split
-    if VIRTUAL_ATTRS[attribute]
-      [VIRTUAL_ATTRS[attribute], direction]
+    if virtual_attr_pairs[attribute]
+      [virtual_attr_pairs[attribute], direction]
     else
       [attribute, direction]
     end
