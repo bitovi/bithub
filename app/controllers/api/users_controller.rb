@@ -30,11 +30,13 @@ class Api::UsersController < Api::ApiController
   def update
     if params[:countryISO]
       country = Country.where({:iso => params[:countryISO]}).first
-      params[:country] = country if country
+      params[:country] = country ? country : nil
     end
 
     u = User.find(params[:id])
-    if u.update_attributes(params[:user])
+    filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
+
+    if u.update_attributes(filtered_params)
       @user = UserDecorator.decorate(u)
       render :show
     else
