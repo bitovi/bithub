@@ -44,6 +44,7 @@ class ScopeApplier
     }
 
     if !params[:order].blank?
+      params[:order] = [params[:order]] unless params[:order].kind_of?(Array)
       params[:order].map{|el| el.gsub(':', ' ')}.each do |str_pair|
         attribute, direction = replace_attr_if_virt(str_pair, virtual_attr_pairs)
         scope = scope.order("#{attribute} #{direction}")
