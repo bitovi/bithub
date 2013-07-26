@@ -32,7 +32,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def body
-    if subset?(source.tag_list, ['github','bithub']) && source.body
+    if (source.tag_list & ['github','bithub']).length > 0 && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
