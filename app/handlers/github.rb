@@ -21,10 +21,16 @@ module Handler
         }
       },
       "DownloadEvent" => lambda {|event|
-        {}
+        {
+          :title => "download #{event['payload']['download']['name']} created",
+          :body => event['payload']['download']['description'],
+          :url => event['payload']['download']['html_url']
+        }
       },
       "FollowEvent" => lambda {|event|
-        {}
+        {
+          :title => "followed #{event['repo']['name']}"
+        }
       },
       "ForkEvent" => lambda {|event|
         {
@@ -32,13 +38,28 @@ module Handler
         }
       },
       "ForkApplyEvent" => lambda {|event|
-        {}
+        {
+          :title => "patch applied on #{event['repo']['name']}"
+        }
       },
       "GistEvent" => lambda {|event|
-        {}
+        {
+          :title => "Gist #{event['payload']['action']}: #{event['payload']['gist']['description']}",
+          :url => event['payload']['gist']['url'],
+          :meta => {
+            action => event['payload']['action']
+          }
+        }
       },
       "GollumEvent" => lambda {|event|
-        {}
+        event_hash = {
+          :title => "gollum event",
+          :meta => { :pages => [] }
+        }
+        event['payload']['pages'].each do |page|
+          event_hash[:meta][:pages].push({:title => page['title'], :url => page['html_url']})
+        end
+        event_hash
       },
       "IssueCommentEvent" => lambda {|event|
         {
@@ -63,10 +84,14 @@ module Handler
         }
       },
       "MemberEvent" => lambda {|event|
-        {}
+        {
+          :title => "Member #{event['payload']['member']['login']} added to #{event['repo']['name']}"
+        }
       },
       "PublicEvent" => lambda {|event|
-        {}
+        {
+          :title => "Repository #{event['repo']['name']} goes public!"
+        }
       },
       "PullRequestEvent" => lambda {|event|
         {
@@ -76,7 +101,11 @@ module Handler
         }
       },
       "PullRequestReviewCommentEvent" => lambda {|event|
-        {}
+        {
+          :title => "commented on pull request review #{event['payload']['issue']['number']}",
+          :url => event['payload']['comment']['_links']['html'],
+          :body => event['payload']['comment']['body']
+        }
       },
       "PushEvent" => lambda {|event|
         event_hash = {
@@ -93,7 +122,9 @@ module Handler
         event_hash
       },
       "TeamAddEvent" => lambda {|event|
-        {}
+        {
+          :title => "team add event"
+        }
       },
       "WatchEvent" => lambda {|event|
         {
