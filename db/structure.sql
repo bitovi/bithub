@@ -36,6 +36,20 @@ CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
 COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
 
 
+--
+-- Name: intarray; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS intarray WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION intarray; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-D arrays of integers';
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -908,3 +922,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130617164515');
 INSERT INTO schema_migrations (version) VALUES ('20130618110729');
 
 INSERT INTO schema_migrations (version) VALUES ('20130716113111');
+
+INSERT INTO schema_migrations (version) VALUES ('20130723090829');
