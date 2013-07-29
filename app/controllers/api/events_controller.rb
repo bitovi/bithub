@@ -5,6 +5,9 @@ class Api::EventsController < Api::ApiController
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
+		
+  CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
+  CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
 
   def index
     muster_query = request.env['muster.query']
@@ -14,8 +17,7 @@ class Api::EventsController < Api::ApiController
       render :json => { :count => scope.count(muster_query[:count]) }
     else
       scope = apply_upvote_calculation_to_scope(scope, params)
-      categories_order = Event.select("distinct(category_id)").pluck(:category_id).sort;
-      scope = scope_applier.apply_order_to_scope(scope, params, categories_order)
+      scope = scope_applier.apply_order_to_scope(scope, params, CATEGORIES_ID_ORDER)
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
       })
