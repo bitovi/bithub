@@ -40,6 +40,14 @@ describe Handler::Github do
       end
     end
 
+    describe "#prepare_event (CreateEvent)" do
+      before do
+        @prepared = load_and_prepare('CreateEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
     describe "#prepare_event (DeleteEvent)" do
       before do
         @prepared = load_and_prepare('DeleteEvent')
@@ -48,9 +56,49 @@ describe Handler::Github do
       it_should_behave_like "every Github event"
     end
 
+    describe "#prepare_event (DownloadEvent)" do
+      before do
+        @prepared = load_and_prepare('DownloadEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (FollowEvent)" do
+      before do
+        @prepared = load_and_prepare('FollowEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
     describe "#prepare_event (ForkEvent)" do
       before do
         @prepared = load_and_prepare('ForkEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (ForkApplyEvent)" do
+      before do
+        @prepared = load_and_prepare('ForkApplyEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (GistEvent)" do
+      before do
+        @prepared = load_and_prepare('GistEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (GollumEvent)" do
+      before do
+        @prepared = load_and_prepare('GollumEvent')
       end
 
       it_should_behave_like "every Github event"
@@ -93,6 +141,22 @@ describe Handler::Github do
       end
     end
 
+    describe "#prepare_event (MemberEvent)" do
+      before do
+        @prepared = load_and_prepare('MemberEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (PublicEvent)" do
+      before do
+        @prepared = load_and_prepare('PublicEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
     describe "#prepare_event (PullRequestEvent)" do
       before do
         @prepared = load_and_prepare('PullRequestEvent')
@@ -104,6 +168,14 @@ describe Handler::Github do
         expect(@prepared[:body]).to be
         expect(@prepared[:url]).to be
       end      
+    end
+
+    describe "#prepare_event (PullRequestReviewCommentEvent)" do
+      before do
+        @prepared = load_and_prepare('PullRequestReviewCommentEvent')
+      end
+
+      it_should_behave_like "every Github event"
     end
 
     describe "#prepare_event (WatchEvent)" do
@@ -130,9 +202,17 @@ describe Handler::Github do
       end
     end
 
-    describe "#prepare_event (CreateEvent)" do
+    describe "#prepare_event (TeamAddEvent)" do
       before do
-        @prepared = load_and_prepare('CreateEvent')
+        @prepared = load_and_prepare('TeamAddEvent')
+      end
+
+      it_should_behave_like "every Github event"
+    end
+
+    describe "#prepare_event (WatchEvent)" do
+      before do
+        @prepared = load_and_prepare('WatchEvent')
       end
 
       it_should_behave_like "every Github event"

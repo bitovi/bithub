@@ -47,7 +47,7 @@ module Handler
           :title => "Gist #{event['payload']['action']}: #{event['payload']['gist']['description']}",
           :url => event['payload']['gist']['url'],
           :meta => {
-            action => event['payload']['action']
+            :action => event['payload']['action']
           }
         }
       },
