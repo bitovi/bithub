@@ -1,5 +1,6 @@
 require 'json'
-require './app/string.rb'
+require './lib/string.rb'
+require './lib/hash.rb'
 
 module Response
 
