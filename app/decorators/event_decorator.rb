@@ -32,7 +32,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def body
-    if (source.tag_list & ['github','bithub']).length > 0 && source.body
+    if (contains? source.tag_list, ['github','bithub']) && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
@@ -159,8 +159,8 @@ class EventDecorator < Draper::Decorator
     text.split("```").map {|l| val = (i%2==0) ? l + "\r\n" : l; i+=1; val}.join('```')
   end
 
-  def subset?(arr, elems)
-    (arr & elems).length == elems.length
+  def contains?(arr, elems)
+    (arr & elems).length > 0
   end
 
 end
