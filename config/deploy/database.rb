@@ -74,7 +74,7 @@ namespace :db do
   desc "Sync staging with production"
   task :sync_with_prod, :roles => :db, :only => {:primary => true} do
     dbname = 'bithub_staging' unless dbname
-    run "pg_dump -Fc -w -h 69.164.216.88 bithub | pg_restore -c -d bithub_staging"
+    run "pg_dump -Fc -w -h 69.164.216.88 bithub | pg_restore -c -n public -d bithub_staging"
   end
 
   task :pass_var, :roles => :db, :only => {:primary => true} do
@@ -103,7 +103,7 @@ namespace :db do
     end
 
     # restore to local db
-    run_locally "pg_restore -Fc -c -d #{restore_db} #{dest}"
+    run_locally "pg_restore -Fc -c -n public -d #{restore_db} #{dest}"
   end
 
 end
