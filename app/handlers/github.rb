@@ -1,6 +1,107 @@
 module Handler
   class Github < Base
 
+    @event_types = {
+      "CommitCommentEvent" => lambda {|event|
+        {
+          :title => "commented on a commit in #{event['repo']['name']}",
+          :body => event['payload']['comment']['body'],
+          :url => event['payload']['comment']['html_url'],
+          :meta => {:commit_id => event['payload']['comment']['commit_id'] }
+        }
+      },                                    
+      "CreateEvent" => lambda {|event|
+        {
+          :title => "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
+        }
+      },
+      "DeleteEvent" => lambda {|event|
+        {
+          :title => "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
+        }
+      },
+      "DownloadEvent" => lambda {|event|
+        {}
+      },
+      "FollowEvent" => lambda {|event|
+        {}
+      },
+      "ForkEvent" => lambda {|event|
+        {
+          :title => "forked #{event['repo']['name']}"
+        }
+      },
+      "ForkApplyEvent" => lambda {|event|
+        {}
+      },
+      "GistEvent" => lambda {|event|
+        {}
+      },
+      "GollumEvent" => lambda {|event|
+        {}
+      },
+      "IssueCommentEvent" => lambda {|event|
+        {
+          :title => "commented on issue #{event['payload']['issue']['number']}",
+          :body => event['payload']['comment']['body'],
+          :url => event['payload']['issue']['html_url'],
+          :meta => {:issue_id => event['payload']['issue']['id'] }
+        }
+      },
+      "IssuesEvent" => lambda {|event|
+        state = event['payload']['issue']['state']
+        {
+          :title => event['payload']['issue']['title'],
+          :body => event['payload']['issue']['body'],
+          :url => event['payload']['issue']['html_url'],
+          :meta => {
+            :labels => event['payload']['issue']['labels'].map { |l| l['name'] },
+            :state => state,
+            :issue_id => event['payload']['issue']['id'],
+            :action => event['payload']['action']
+          }
+        }
+      },
+      "MemberEvent" => lambda {|event|
+        {}
+      },
+      "PublicEvent" => lambda {|event|
+        {}
+      },
+      "PullRequestEvent" => lambda {|event|
+        {
+          :title => "requested a pull: #{event['payload']['pull_request']['title']}",
+          :body => event['payload']['pull_request']['body'],
+          :url => event['payload']['pull_request']['html_url']
+        }
+      },
+      "PullRequestReviewCommentEvent" => lambda {|event|
+        {}
+      },
+      "PushEvent" => lambda {|event|
+        event_hash = {
+          :title => "pushed to #{event['repo']['name']}",
+          :body => event['payload']['body'],
+          :url => "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}",
+          :meta => {:commits => ""}
+        }
+
+        event['payload']['commits'].each do |commit|
+          event_hash[:meta][:commits] += commit['sha'] + ","
+        end
+
+        event_hash
+      },
+      "TeamAddEvent" => lambda {|event|
+        {}
+      },
+      "WatchEvent" => lambda {|event|
+        {
+          :title => "started watching #{event['repo']['name']}"
+        }
+      }
+    }
+
     def self.handler(log, exchange, endpoint=nil)
       new(log, exchange, endpoint).handler
     end
@@ -48,8 +149,10 @@ module Handler
     end
 
     def self.prepare_event(event, opts)
+
       # Github provides date in format: "2013-02-14T22:47:29Z"
       parsed_date = Time.parse(event['created_at']).utc
+
       event_hash = {
         :meta => {
           :type => event['type'].snake_case,
@@ -65,58 +168,8 @@ module Handler
         :source_data => event
       }
 
-      if event['type'] == 'IssuesEvent' 
-        state = event['payload']['issue']['state']
-        event_hash[:title] = event['payload']['issue']['title']
-        event_hash[:body] = event['payload']['issue']['body']
-        event_hash[:url] = event['payload']['issue']['html_url']
-        event_hash[:meta][:labels] = event['payload']['issue']['labels'].map { |l| l['name'] }
-        event_hash[:meta][:state] = state
-        event_hash[:meta][:issue_id] = event['payload']['issue']['id']
-        event_hash[:meta][:action] = event['payload']['action']
-
-      elsif event['type'] == 'IssueCommentEvent'
-        event_hash[:title] = "commented on issue #{event['payload']['issue']['number']}"
-        event_hash[:body] = event['payload']['comment']['body']
-        event_hash[:url] = event['payload']['issue']['html_url']
-        event_hash[:meta][:issue_id] = event['payload']['issue']['id']
-
-      elsif event['type'] == 'ForkEvent'
-        event_hash[:title] = "forked #{event['repo']['name']}"
-
-      elsif event['type'] == 'PushEvent'
-        event_hash[:title] = "pushed to #{event['repo']['name']}"
-        event_hash[:body] = event['payload']['body']
-        event_hash[:url] = "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}"
-
-        # hstore doesn't support arrays as value so CSV will do fine till native JSON support
-        event_hash[:meta][:commits] = ""
-        event['payload']['commits'].each do |commit|
-          event_hash[:meta][:commits] += commit['sha'] + ","
-        end
-
-      elsif event['type'] == 'PullRequestEvent'
-        event_hash[:title] = "requested a pull: #{event['payload']['pull_request']['title']}"
-        event_hash[:body] = event['payload']['pull_request']['body']
-        event_hash[:url] = event['payload']['pull_request']['html_url']
-
-      elsif event['type'] == 'WatchEvent'
-        event_hash[:title] = "started watching #{event['repo']['name']}"
-
-      elsif event['type'] == 'CommitCommentEvent'
-        event_hash[:title] = "commented on a commit in #{event['repo']['name']}"
-        event_hash[:body] = event['payload']['comment']['body']
-        event_hash[:url] = event['payload']['comment']['html_url']
-        event_hash[:meta][:commit_id] = event['payload']['comment']['commit_id']
-
-      elsif event['type'] == 'CreateEvent'
-        event_hash[:title] = "created created a new #{event['payload']['ref_type']} in #{event['repo']['name']}"
-      
-      elsif event['type'] == 'DeleteEvent'
-        event_hash[:title] = "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}"
-
-      end
-      event_hash
+      event_hash.deep_merge(@event_types[event['type']].call event)
     end
+
   end
 end

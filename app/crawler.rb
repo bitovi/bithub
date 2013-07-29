@@ -17,6 +17,7 @@ require 'sanitize'
 require 'app/handlers'
 require 'lib/string'
 require 'lib/proc'
+require 'lib/hash'
 
 # Connection string
 $mq_cs = ENV['RABBITMQ_URI']
