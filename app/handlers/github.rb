@@ -116,13 +116,16 @@ module Handler
                                          .get(:head => {"Authorization" => "token f5e07c1c541c31821e7c71219687a4c045c880a9"})
 
       get_github_events.callback do
-        # DEBUG (CHECKING RATELIMIT_REMAINING)
-        # @log.info get_github_events.response_header
-        github_events = Yajl::Parser.parse(get_github_events.response)
 
-        new_events = filter_old github_events
-        events_to_store = rename_attrs_in new_events
-        store(events_to_store) if events_to_store.size > 0
+        if get_github_events.response_header.status.to_s == "200"
+          github_events = Yajl::Parser.parse(get_github_events.response)
+          new_events = filter_old github_events
+          events_to_store = rename_attrs_in new_events
+          store(events_to_store) if events_to_store.size > 0
+        else
+          # sometimes github API returns 500
+          @log.error "SKIPPING -> Github API returned HTTP response with code #{get_github_events.response_header.status}"
+        end
       end
 
       get_github_events.errback do
