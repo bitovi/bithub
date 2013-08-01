@@ -5,7 +5,7 @@ insert into leaderboard
 	( 
 		case
 			when ((char_length(props -> 'gravatar_url')) > 0) then props -> 'gravatar_url'
-			else 'http://bithub.com/bithub/assets/images/icon-user.png'
+			else 'http://bithub.com/assets/images/icon-user.png'
 		end
 
 	) as avatar_url,
@@ -30,6 +30,7 @@ insert into leaderboard
 			where anteups.actor_id = users.id
 			and anteups.fullfilled = true)
 	) as total_score
-	from users
+	from users left join users_roles on users.id = users_roles.user_id
 	where name is not null
+	and role_id is null or role_id not in (select id from roles where name = 'bitovian' or name = 'admin')
 	order by total_score desc);
