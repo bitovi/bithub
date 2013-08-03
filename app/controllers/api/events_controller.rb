@@ -1,5 +1,5 @@
 class Api::EventsController < Api::ApiController
-  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github']
+  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   respond_to :json
   helper_method :custom_cache_key
 
