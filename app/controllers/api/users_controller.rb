@@ -1,5 +1,6 @@
 class Api::UsersController < Api::ApiController
   before_filter :authenticate_user!, :only => ['add_role', 'remove_role']
+
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
