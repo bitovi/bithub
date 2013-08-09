@@ -42,8 +42,7 @@ class Api::UsersController < Api::ApiController
       @user = UserDecorator.decorate(u)
       render :show
     else
-      render :json => { error: t('api.users.update.error') }, :status => 406
-      #render :json => @event.errors.messages, :status => 406
+      render :json => msg_hash(u, 'update'), :status => 406
     end
   end
 
