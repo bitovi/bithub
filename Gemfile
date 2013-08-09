@@ -36,15 +36,6 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 gem 'twitter'
 gem 'github_api'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem "therubyracer", "~> 0.11.4"
-  gem "less-rails", "~> 2.2.6"
-  gem 'uglifier', '>= 1.0.3'
-  gem "twitter-bootstrap-rails"
-end
-
 group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
