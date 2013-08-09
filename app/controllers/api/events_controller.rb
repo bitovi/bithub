@@ -1,11 +1,14 @@
 class Api::EventsController < Api::ApiController
-  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
+  load_and_authorize_resource
+  skip_load_and_authorize_resource :only => [:index, :show]
+  
   respond_to :json
   helper_method :custom_cache_key
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 		
+  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
   CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
 

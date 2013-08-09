@@ -1,4 +1,5 @@
 class Api::CountriesController < ApplicationController
+  load_and_authorize_resource
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404

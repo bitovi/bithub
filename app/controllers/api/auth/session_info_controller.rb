@@ -1,6 +1,6 @@
 class Api::Auth::SessionInfoController < Api::ApiController
-  respond_to :json
   before_filter :authenticate_user!
+  respond_to :json
 
   def current_session
     @user = UserDecorator.decorate(current_user)

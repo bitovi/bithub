@@ -1,6 +1,4 @@
 class Api::ApiController < ActionController::Base
-  before_filter :authenticate_user!, :only => ['create', 'update', 'destroy']
-  load_and_authorize_resource
 
   def home
     render :text => "Bithub API v1"

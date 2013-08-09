@@ -1,4 +1,5 @@
 class Api::Auth::SessionsController < Api::ApiController
+
   def index
   end
   
@@ -9,4 +10,5 @@ class Api::Auth::SessionsController < Api::ApiController
     sign_out
     redirect_to root_url
   end
+
 end

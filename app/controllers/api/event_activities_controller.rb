@@ -1,4 +1,6 @@
 class Api::EventActivitiesController < Api::ApiController
+  load_and_authorize_resource
+  skip_load_and_authorize_resource :only => :index
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404

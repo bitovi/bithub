@@ -1,6 +1,6 @@
 class Api::UsersController < Api::ApiController
-  before_filter :authenticate_user!, :only => ['add_role', 'remove_role']
-
+  load_and_authorize_resource
+  skip_load_and_authorize_resource only: [:index, :show, :from_github, :from_twitter]
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404

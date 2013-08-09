@@ -1,4 +1,7 @@
 class Api::TagsController < Api::ApiController
+  load_and_authorize_resource
+  skip_load_and_authorize_resource only: [:index, :show]
+
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
@@ -11,6 +14,11 @@ class Api::TagsController < Api::ApiController
       @tags = Tag.all
     end
     render :index
+  end
+  
+  def show
+    @tag = Tag.find(params[:id])
+    render :show
   end
 
   def create
