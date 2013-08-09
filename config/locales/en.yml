@@ -24,6 +24,9 @@ en:
       destroy:
         success: "User deleted."
         error: "Error during user deletion."
+      role_management:
+        success: "User's roles updated"
+        error: "Error during role management."
     tags:
       create:
         success: "Tag created."

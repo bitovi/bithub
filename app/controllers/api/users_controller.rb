@@ -55,6 +55,26 @@ class Api::UsersController < Api::ApiController
     render :json => res
   end
 
+  def add_role
+    user = User.find(params[:id])
+    if user && user.add_role(params[:role])
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'role_management'), :status => 406
+    end
+  end
+
+  def remove_role
+    user = User.find(params[:id])
+    if user && user.remove_role(params[:role])
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'role_management'), :status => 406
+    end
+  end
+
   private # SCOPE BUILDING
   def build_scope(muster_query, params)
     scope = User.scoped
