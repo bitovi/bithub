@@ -36,7 +36,7 @@ class ScopeApplier
     scope
   end
   
-  def apply_order_to_scope(scope, params, categories_order)
+  def apply_order_to_scope(scope, params, categories_order = nil)
     virtual_attr_pairs = {
       'upvotes' => 'total_upvotes',
       'score' => 'total_score',
