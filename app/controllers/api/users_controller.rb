@@ -79,6 +79,7 @@ class Api::UsersController < Api::ApiController
   private # SCOPE BUILDING
   def build_scope(muster_query, params)
     scope = User.scoped
+    scope = scope.only_not_null_names
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
   end

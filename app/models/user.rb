@@ -21,6 +21,8 @@ class User < ActiveRecord::Base
   
   before_save :calculate_gravatar_hash
 
+  scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
+
   def activities
     self.events.joins(:rule).select(['events.id','events.title', 'events.created_at', 'rules.authorship_value'])
     .concat(self.upvotes.includes(:applies_to).select(['upvotes.*', 'events.title']))
