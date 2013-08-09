@@ -34,6 +34,19 @@ en:
       destroy:
         success: "Tag deleted."
         error: "Error during tag deletion."
+    rewards:
+      create:
+        success: "Reward created."
+        error: "Error during reward creation."
+      update:
+        success: "Reward created."
+        error: "Error during reward creation"
+      update:
+        success: "Reward updated."
+        error: "Error during reward update"
+      destroy:
+        success: "Reward deleted."
+        error: "Error during reward deletion."
     event_activities:
       errors:
         already_upvoted: "Already upvoted"

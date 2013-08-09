@@ -12,4 +12,11 @@ class Api::ApiController < ActionController::Base
   def show_406
     render json: exception, status: 406
   end
+  
+  def msg_hash(ar_obj, t_action, t_outcome = "error")
+      resp_hash = {}; t_key = ar_obj.class.to_s.downcase + "s"
+      resp_hash[:message] = t("api.#{t_key}.#{t_action}.#{t_outcome}")
+      resp_hash[:errors] = ar_obj.errors.full_messages if !ar_obj.errors.blank?
+      resp_hash
+  end
 end

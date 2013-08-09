@@ -38,8 +38,7 @@ class Api::EventsController < Api::ApiController
       @event = EventDecorator.decorate(e)
       render :show
     else
-      render :json => { error: t('api.events.create.error'), :status => 406 }
-      #render :json => e.errors.messages, :status => 406
+      render :json => msg_hash(e, 'events', 'create'), :status => 406
     end
   end
 
@@ -49,8 +48,7 @@ class Api::EventsController < Api::ApiController
       @event = EventDecorator.decorate(e)
       render :show
     else
-      render :json => { error: t('api.events.update.error'), :status => 406 }
-      #render :json => e.errors.messages, :status => 406
+      render :json => msg_hash(e, 'events', 'update'), :status => 406
     end
   end
 

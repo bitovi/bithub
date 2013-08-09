@@ -18,8 +18,7 @@ class Api::TagsController < Api::ApiController
     if @tag.save
       render :show
     else
-      render :json => { error: t('api.tags.create.error') }, :status => 406
-      #render json: { error: @tag.errors.messages }
+      render :json => msg_hash(@tag, 'create'), :status => 406
     end
   end
 
@@ -28,8 +27,16 @@ class Api::TagsController < Api::ApiController
     if @tag.update_attributes(params[:tag])
       render :show
     else
-      render :json => { error: t('api.tags.create.error') }, :status => 406
-      #reder json: { error: @tag.errors.messages }
+      render :json => msg_hash(@tag, 'update'), :status => 406
+    end
+  end
+  
+  def destroy
+    @tag = Tag.find(params[:id])
+    if @tag.destroy
+      render :json => msg_hash(@tag, 'destroy', 'success'), :status => 200
+    else
+      render :json => msg_hash(@tag, 'destroy'), :status => 406
     end
   end
 
