@@ -9,6 +9,7 @@ class Ability
       can :read_sensitive_data, :user
     else
       can :read, :all
+      can :create_upvote, Upvote
     end
   end
 end

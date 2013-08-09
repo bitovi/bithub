@@ -38,8 +38,10 @@ Bithub::Application.routes.draw do
         get :projects, :to => 'tags#index'
       end
     end
-
+    
+    resources :rewards
     resources :countries, :only => :index
+
     root :to => "api#home"
   end
 
