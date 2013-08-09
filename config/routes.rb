@@ -22,8 +22,8 @@ Bithub::Application.routes.draw do
       resources 'activities', :only => :index, :to => 'user_activities#index'
       resources 'events', :only => :index, :to => 'user_events#index'
       member do
-        get 'add_role', :to => 'users#add_role'
-        get 'remove_role', :to => 'users#remove_role'
+        put 'addrole', :to => 'users#add_role'
+        put 'removerole', :to => 'users#remove_role'
       end
       collection do
         get 'twitter', :to => 'users#from_twitter'
