@@ -1,5 +1,5 @@
 class Tag < ActsAsTaggableOn::Tag 
-  @tags = YAML::load_file(Rails.root.join('config', 'tags.yml'))
+  @tag_names = YAML::load_file(Rails.root.join('config', 'tag_names.yml'))
 
   attr_accessible :name, :display_name, :aliases, :priority
   validates :name, :presence => true, :uniqueness => true
@@ -9,27 +9,27 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories
-    Tag.where(:name => @tags[:category])
+    Tag.where(:name => @tag_names[:category])
   end
   
   def self.projects
-    Tag.where(:name => @tags[:project])
+    Tag.where(:name => @tag_names[:project])
   end
   
   def self.feeds
-    Tag.where(:name => @tags[:feed])
+    Tag.where(:name => @tag_names[:feed])
   end
 
   def self.category_ids
-    Tag.where(:name => @tags[:category]).pluck(:id)
+    Tag.where(:name => @tag_names[:category]).pluck(:id)
   end
 
   def self.feed_ids
-    Tag.where(:name => @tags[:feed]).pluck(:id)
+    Tag.where(:name => @tag_names[:feed]).pluck(:id)
   end
 
   def self.types
-    @tags.keys().map{|tag| tag.to_s}
+    @tag_names.keys().map{|tag| tag.to_s}
   end
 
 end
