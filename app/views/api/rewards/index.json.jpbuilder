@@ -1,0 +1,5 @@
+json.set! :data do 
+  json.array! @rewards do |r|
+    json.partial! "api/rewards/reward", reward: r
+  end
+end
