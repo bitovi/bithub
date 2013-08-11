@@ -263,6 +263,10 @@ class Event < ActiveRecord::Base
   def awarded?
     self.awards.length > 0
   end
+
+  def thread_awarded?
+    !self.thread.select{|e| e.awarded?}.blank?
+  end
   
   def self.select_with_upvotes(include_events = true)
     query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
