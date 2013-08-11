@@ -7,7 +7,7 @@ class Api::RewardsController < Api::ApiController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @rewards = Reward.all
+    @rewards = build_scope(request.env['muster.query']).all
     render :index
   end
 
@@ -41,6 +41,22 @@ class Api::RewardsController < Api::ApiController
     else
       render :json => msg_hash(@reward, 'destroy'), :status => 406
     end
+  end
+  
+  # SCOPE BUILDING
+  # --------------
+
+  def logic_analyzer
+    @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
+  end
+
+  def scope_applier
+    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  end
+
+  def build_scope(muster_query)
+    scope = Reward.scoped
+    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
   end
 
 end

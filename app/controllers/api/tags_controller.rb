@@ -11,7 +11,7 @@ class Api::TagsController < Api::ApiController
     if (params[:type]) && Tag.types.include?(params[:type])
       @tags = Tag.send(params[:type].pluralize).all      
     else
-      @tags = Tag.all
+      @tags = build_scope(request.env['muster.query']).all
     end
     render :index
   end
@@ -47,5 +47,21 @@ class Api::TagsController < Api::ApiController
       render :json => msg_hash(@tag, 'destroy'), :status => 406
     end
   end
+  
 
+  # SCOPE BUILDING
+  # --------------
+
+  def logic_analyzer
+    @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
+  end
+
+  def scope_applier
+    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  end
+
+  def build_scope(muster_query)
+    scope = Tag.scoped
+    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
+  end
 end
