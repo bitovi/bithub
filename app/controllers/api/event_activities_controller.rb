@@ -17,7 +17,7 @@ class Api::EventActivitiesController < Api::ApiController
       upvote = Upvote.create_upvote(current_user, event)
       render :json => upvote
     else
-      render :json => { error: t('api.event_activities.errors.already_upvoted') },:status => 406
+      render :json => { message: t('api.event_activities.errors.already_upvoted') },:status => 406
     end
   end
 
@@ -27,7 +27,7 @@ class Api::EventActivitiesController < Api::ApiController
       anteup = Anteup.create_anteup(current_user, event, params[:value])
       render :json => anteup
     else
-      render :json => { error: t('api.event_activities.errors.already_anteuped') }, :status => 406
+      render :json => { message: t('api.event_activities.errors.already_anteuped') }, :status => 406
     end
   end
 
@@ -37,7 +37,7 @@ class Api::EventActivitiesController < Api::ApiController
       award = Award.create_award(current_user, event)
       render :json => award
     else
-      render :json => { error: t('api.event_activities.errors.already_awarded') }, :status => 406
+      render :json => { message: t('api.event_activities.errors.already_awarded') }, :status => 406
     end
   end
 
