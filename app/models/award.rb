@@ -1,31 +1,23 @@
 class Award < ActiveRecord::Base
-  class EventHasNoParentError < Error; end
-  class ThreadAlreadyAwardedError < Error; end
-
   attr_accessible :actor, :applies_to, :value
+  after_save :bust_event_cache
+
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
 
   validates :applies_to_id, :actor_id, :presence => true  
-  validates :applies_to_id, :uniqueness => { :scope => :actor_id }
-  
-  def self.create_award(actor, event)
-    raise ThreadAlreadyAwardedError if thread_already_awarded?(event)
+  validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only award once" }
+  validate :thread_not_already_awarded
 
-    val = total_value_for_award(event)
+  def self.create_and_fullfill(actor, event)
     award = Award.new({
       :actor => actor,
       :applies_to => event,
-      :value => val
+      :value => total_value_for_award(event)
     })
 
-    if award.save
-      Anteup.fullfill_all_for_event(event.parent) if event.parent
-      event.touch
-      return award
-    else
-      return nil
-    end
+    Anteup.fullfill_all_for_event(event.parent) if award.save && event.parent
+    return award
   end
 
   def self.total_value_for_award(event)
@@ -37,7 +29,13 @@ class Award < ActiveRecord::Base
     end
   end
 
-  def self.thread_already_awarded?(event)
-    !event.thread.select{|e| e.awarded?}.blank?
+  def thread_not_already_awarded
+    if !applies_to.thread.select{|e| e.awarded?}.blank?
+      errors.add(:applies_to, "can't already be in an awarded thread")
+    end
+  end
+  
+  def bust_event_cache
+    self.applies_to.touch
   end
 end
