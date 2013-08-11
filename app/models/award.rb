@@ -10,7 +10,6 @@ class Award < ActiveRecord::Base
   validates :applies_to_id, :uniqueness => { :scope => :actor_id }
   
   def self.create_award(actor, event)
-    raise EventHasNoParentError if !event.parent
     raise ThreadAlreadyAwardedError if thread_already_awarded?(event)
 
     val = total_value_for_award(event)
@@ -21,7 +20,7 @@ class Award < ActiveRecord::Base
     })
 
     if award.save
-      Anteup.fullfill_all_for_event(event.parent)
+      Anteup.fullfill_all_for_event(event.parent) if event.parent
       event.touch
       return award
     else
@@ -30,13 +29,15 @@ class Award < ActiveRecord::Base
   end
 
   def self.total_value_for_award(event)
-    raise EventHasNoParentError if !event.parent
-    [event.parent.rule.award_value,
-      event.parent.upvotes.sum('value'),
-      event.parent.anteups.sum('value')].reduce(&:+)
+    if event.parent
+      p = event.parent
+      return [p.rule.award_value, p.upvotes.sum('value'), p.anteups.sum('value')].reduce(&:+)
+    else
+      return [event.rule.award_value, event.upvotes.sum('value')].reduce(&:+)
+    end
   end
 
   def self.thread_already_awarded?(event)
-    !event.siblings.select { |e| e.awarded? }.blank?
+    !event.thread.select{|e| e.awarded?}.blank?
   end
 end
