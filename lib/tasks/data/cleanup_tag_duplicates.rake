@@ -1,23 +1,11 @@
 namespace :data do
-
-  desc "Create tag aliases"
-  task :create_tag_aliases => :environment do
-    tags = YAML::load_file('config/tags.yml')
-
-	tags.each do |tag, aliases|
-      if Tag.where(:name => tag).first.update_attribute(:aliases, aliases)
-        puts "Setting aliases '#{aliases}' on tag '#{tag}'"
-      end
-	end
-  end
-
   desc "Cleanup tag duplicates"
   task :cleanup_tag_duplicates => :environment do
 
     def alias_exists?(tags, name)
-      
+
       tags.each do |tag|
-         return tag if tag[:name] != name and tag[:aliases] and tag[:aliases].include?(name)
+        return tag if tag[:name] != name and tag[:aliases] and tag[:aliases].include?(name)
       end
 
       return nil
@@ -34,7 +22,6 @@ namespace :data do
       original = alias_exists?(tags, tag[:name])
 
       if original
-
         # update category FK on events
         num_categories = Event.update_all({:category_id => tag[:id]}, {:category_id => original[:id]})
 
@@ -58,9 +45,7 @@ namespace :data do
       else
         puts "#{tag[:name]} deletion failed"
       end
-
     end
 
   end
-
 end

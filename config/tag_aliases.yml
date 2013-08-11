@@ -1,6 +1,7 @@
 canjs:
  - canjs
  - can_js
+ - "#canjs"
 
 canui:
  - canui
@@ -28,3 +29,6 @@ jquerypp:
  - j_querypp
  - jquery++
  - j_query++
+
+documentjs:
+ - document_js
