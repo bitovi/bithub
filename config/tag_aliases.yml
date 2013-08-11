@@ -1,34 +1,35 @@
 canjs:
- - canjs
- - can_js
+ - "canjs"
+ - "can_js"
  - "#canjs"
 
 canui:
- - canui
+ - "canui"
 
 javascriptmvc:
- - javascriptmvc
- - jmvc
- - java_script_mvc
- - general java_script_mvc
+ - "javascriptmvc"
+ - "jmvc"
+ - "java_script_mvc"
+ - "general java_script_mvc"
 
 donejs:
- - donejs
- - done_js
+ - "donejs"
+ - "done_js"
 
 stealjs:
- - stealjs
- - steal_js
+ - "stealjs"
+ - "steal_js"
  
 funcunit:
- - funcunit
- - func_unit
+ - "funcunit"
+ - "func_unit"
  
 jquerypp:
- - jquerypp
- - j_querypp
- - jquery++
- - j_query++
+ - "jquerypp"
+ - "j_querypp"
+ - "jquery++"
+ - "j_query++"
 
 documentjs:
- - document_js
+ - "documentjs"
+ - "document_js"
