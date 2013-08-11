@@ -1,12 +1,12 @@
 class Api::EventsController < Api::ApiController
-  load_and_authorize_resource
-  skip_load_and_authorize_resource :only => [:index, :show]
+  before_filter :authenticate_user!, except: [:index, :show]
   
   respond_to :json
   helper_method :custom_cache_key
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  rescue_from CanCan::AccessDenied, with: :show_401
 		
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
@@ -47,6 +47,7 @@ class Api::EventsController < Api::ApiController
   end
 
   def update
+    authorize! :manage, Event, :message => "No rights to manage events."
     e = Event.find(params[:id])
     if e.update_from_bithub(params[:event])
       @event = EventDecorator.decorate(e)
@@ -57,6 +58,7 @@ class Api::EventsController < Api::ApiController
   end
 
   def destroy
+    authorize! :manage, Event, :message => "No rights to manage events."
     Event.find(params[:id]).destroy
     render :json => { error: t('api.events.destroy.success') }
   end

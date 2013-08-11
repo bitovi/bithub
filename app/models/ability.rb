@@ -4,12 +4,14 @@ class Ability
   def initialize(user)
     if user.has_role? :admin
       can :manage, :all
-      can :add_role, :user
-      can :remove_role, :user
+      can :create_award, Award
+      can :manage_roles, User
       can :read_sensitive_data, :user
     else
       can :read, :all
       can :create_upvote, Upvote
+      can :create_anteup, Anteup
+      cannot :create_award, Award
     end
   end
 end

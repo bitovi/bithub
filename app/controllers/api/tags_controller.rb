@@ -1,4 +1,5 @@
 class Api::TagsController < Api::ApiController
+  before_filter :authenticate_user!, except: [:index, :show]
   load_and_authorize_resource
   skip_load_and_authorize_resource only: [:index, :show]
 
@@ -6,6 +7,7 @@ class Api::TagsController < Api::ApiController
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
     if (params[:type]) && Tag.types.include?(params[:type])
@@ -31,6 +33,7 @@ class Api::TagsController < Api::ApiController
   end
 
   def update
+    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.find(params[:id])
     if @tag.update_attributes(params[:tag])
       render :show
@@ -40,6 +43,7 @@ class Api::TagsController < Api::ApiController
   end
   
   def destroy
+    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.find(params[:id])
     if @tag.destroy
       render :json => msg_hash(@tag, 'destroy', 'success'), :status => 200

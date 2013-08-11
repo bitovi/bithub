@@ -1,10 +1,10 @@
 class Api::UsersController < Api::ApiController
-  load_and_authorize_resource
-  skip_load_and_authorize_resource only: [:index, :show, :from_github, :from_twitter]
+  before_filter :authenticate_user!, except: [:index, :show]
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
     if params[:cached] == "true"
@@ -57,6 +57,7 @@ class Api::UsersController < Api::ApiController
   end
 
   def add_role
+    authorize! :manage_roles, User, :message => "No rights to manage user roles!"
     user = User.find(params[:id])
     if user && user.add_role(params[:role])
       @user = UserDecorator.decorate(user)
@@ -67,6 +68,7 @@ class Api::UsersController < Api::ApiController
   end
 
   def remove_role
+    authorize! :manage_roles, User, :message => "No rights to manage user roles!"
     user = User.find(params[:id])
     if user && user.remove_role(params[:role])
       @user = UserDecorator.decorate(user)

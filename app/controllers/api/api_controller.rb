@@ -3,12 +3,16 @@ class Api::ApiController < ActionController::Base
   def home
     render :text => "Bithub API v1"
   end
+  
+  def show_401(exception)
+    render json: { message: exception.message }, status: 401
+  end
 
   def show_404(exception)
     render json: exception, status: 404
   end
 
-  def show_406
+  def show_406(exception)
     render json: exception, status: 406
   end
   
