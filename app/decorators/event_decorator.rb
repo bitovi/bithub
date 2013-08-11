@@ -76,9 +76,9 @@ class EventDecorator < Draper::Decorator
     end
   end
 
-  def children
-    EventDecorator.decorate_collection(source.children, context: context)
-  end
+  # def children
+  #   EventDecorator.decorate_collection(source.children, context: context)
+  # end
 
   def props
     if source.category.name == 'digest'
