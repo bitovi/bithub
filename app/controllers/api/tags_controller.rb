@@ -24,6 +24,7 @@ class Api::TagsController < Api::ApiController
   end
 
   def create
+    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.new(params[:tag])
     if @tag.save
       render :show
