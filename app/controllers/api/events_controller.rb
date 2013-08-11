@@ -11,6 +11,7 @@ class Api::EventsController < Api::ApiController
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
   CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
+  POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
     muster_query = request.env['muster.query']
@@ -71,6 +72,7 @@ class Api::EventsController < Api::ApiController
     scope = Event.scoped
     scope = scope.includes(:children)
     scope = scope.not_children
+    scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
     scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
