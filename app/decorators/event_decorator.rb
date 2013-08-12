@@ -96,7 +96,8 @@ class EventDecorator < Draper::Decorator
       source.props[:origin_author_avatar_url] = source.source_data['actor']['avatar_url']
     end
 
-    source.props[:awarded] = source.thread_awarded?
+    source.props[:thread_awarded] = source.thread_awarded?
+    source.props[:awarded] = source.awarded?
 
     source.props
   end
