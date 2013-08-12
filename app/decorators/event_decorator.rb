@@ -7,18 +7,6 @@ class EventDecorator < Draper::Decorator
     tags.map {|t| t.name}
   end
 
-  def award_value
-    source.rule.award_value
-  end
-
-  def awarded
-    source.awards.first
-  end
-
-  def anteups
-    source.anteups.sum(:value)
-  end
-
   def upvotes
     source.respond_to?(:total_upvotes) ? source.total_upvotes.to_i : source.upvotes.reduce(0) { |acc, u| acc += u.value }
   end
@@ -97,7 +85,7 @@ class EventDecorator < Draper::Decorator
     end
 
     source.props[:thread_awarded] = source.thread_awarded?
-    source.props[:awarded] = source.awarded?
+    source.props[:awarded] = source.awarded? || source.thread_awarded?
 
     source.props
   end
