@@ -7,9 +7,9 @@ namespace :data do
       existing = Tag.where(:name => tag).first
       if existing
         existing.update_attribute(:aliases, aliases)
-        puts "EXISTENT TAG #{tag}: Setting aliases #{aliases}"
+        puts "EXISTING TAG #{tag}: Setting aliases #{aliases}"
       else
-        puts "NON-EXISTENT TAG #{tag}: Creating a new one and setting aliases: #{aliases}"
+        puts "NON-EXISTING TAG #{tag}: Creating a new one and setting aliases: #{aliases}"
         Tag.create({:name => tag, :aliases => aliases})
       end
    end
