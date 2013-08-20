@@ -114,8 +114,15 @@ class User < ActiveRecord::Base
 
   private
   def calculate_gravatar_hash
-    if email
-      self.props[:gravatar_url] = "https://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
+    if !email.blank?
+      gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
+      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
+
+      if response.code == '200'
+        self.props['gravatar_url'] = gravatar
+      end
+    else
+      self.props['gravatar_url'] = ''
     end
   end
 
