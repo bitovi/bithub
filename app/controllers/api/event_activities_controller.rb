@@ -14,7 +14,8 @@ class Api::EventActivitiesController < Api::ApiController
 
   def create_upvote
     authorize! :create_upvote, Upvote, :message => "No right to create an upvote!"
-    upvote = Upvote.create({actor: current_user, applies_to: Event.find(params[:event_id])})
+    event = Event.find(params[:event_id])
+    upvote = Upvote.create({actor: current_user, applies_to: event, value: event.rule.upvote_value})
     if upvote.persisted?
       render :json => upvote
     else
