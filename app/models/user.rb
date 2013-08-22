@@ -118,9 +118,7 @@ class User < ActiveRecord::Base
       gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
       response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
 
-      if response.code == '200'
-        self.props['gravatar_url'] = gravatar
-      end
+      self.props['gravatar_url'] = response.code == '200' ? gravatar : ''
     else
       self.props['gravatar_url'] = ''
     end
