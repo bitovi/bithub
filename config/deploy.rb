@@ -71,4 +71,4 @@ end
 
 before('deploy:restart', 'deploy:recreate_upstart_conf')
 before('deploy:restart', 'deploy:symlink_uploads')
-after('deploy', 'db:dump')
+after('deploy', 'db:backup')
