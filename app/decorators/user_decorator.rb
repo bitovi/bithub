@@ -14,7 +14,7 @@ class UserDecorator < Draper::Decorator
       # github -> 'avatar_url', twitter -> 'profile_image_url'
       image_attrs = ['avatar_url', 'profile_image_url']
       source.identities.each do |ident|
-        image_attrs.each {|attr| url = ident['source_data'][attr] if ident['source_data'][attr] }
+        image_attrs.each {|attr| url = ident['source_data'][attr] if ident['source_data'] && ident['source_data'][attr] }
       end
     end
 
