@@ -23,13 +23,13 @@ namespace :data do
 
       if original
         # update category FK on events
-        num_categories = Event.update_all({:category_id => tag[:id]}, {:category_id => original[:id]})
+        num_categories = Event.update_all({:category_id => original[:id]}, {:category_id => tag[:id]})
 
         # update feed FK on events
-        num_feeds = Event.update_all({:feed_id => tag[:id]}, {:feed_id => original[:id]})
+        num_feeds = Event.update_all({:feed_id => original[:id]}, {:feed_id => tag[:id]})
 
         # update all records on Tagging model in ActsAsTaggbleOn
-        num_tags = ActsAsTaggableOn::Tagging.update_all({:tag_id => tag[:id]}, {:tag_id => original[:id]})
+        num_tags = ActsAsTaggableOn::Tagging.update_all({:tag_id => original[:id]}, {:tag_id => tag[:id]})
 
         puts "#{tag[:name]}(#{tag[:id]}) is duplicate of #{original[:name]}(#{original[:id]}); Number of updated categories: #{num_categories}, feeds: #{num_feeds}, tags: #{num_tags}"
 
