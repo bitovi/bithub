@@ -6,13 +6,19 @@ class UserDecorator < Draper::Decorator
   end
 
   def avatar_url
+    url = '/assets/images/icon-user.png'
+
     if !source.props['gravatar_url'].blank?
-      source.props['gravatar_url']
-    elsif source.identities && source.identities.map{|ident| ident.source_data['image'] if ident.source_data}.first
-      source.identities.map{|ident| ident.source_data['image']}.first
+      url = source.props['gravatar_url']
     else
-      '/assets/images/icon-user.png'
+      # github -> 'avatar_url', twitter -> 'profile_image_url'
+      image_attrs = ['avatar_url', 'profile_image_url']
+      source.identities.each do |ident|
+        image_attrs.each {|attr| url = ident['source_data'][attr] if ident['source_data'][attr] }
+      end
     end
+
+    url
   end
 
 end
