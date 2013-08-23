@@ -18,7 +18,7 @@ namespace :db do
     environment_database = @environment_info['database']
     dbhost = @environment_info['host']
 
-    run "pg_dump -W -Fc -U #{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out |
+    run "pg_dump -W -Fc -c -U #{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out |
       ch.send_data "#{dbpass}\n" if out=~ /^Password:/
     end
   end
