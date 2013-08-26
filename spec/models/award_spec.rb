@@ -9,7 +9,7 @@ describe Award do
       @reply = create(:event_determined, parent: @event)
       @upvote = create(:upvote, applies_to: @event)
       @anteup = create(:anteup, applies_to: @event)
-      @award = Award.create_award(@actor, @reply)
+      @award = Award.create_and_fullfill(@actor, @reply)
     end
 
     it "sets the actor" do

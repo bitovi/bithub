@@ -5,7 +5,7 @@ describe Upvote do
     before :each do
       @actor = create(:user, name: "Some user")
       @event = create(:event_determined)
-      @upvote = Upvote.create_upvote(@actor, @event)
+      @upvote = Upvote.create({actor: @actor, applies_to: @event})
     end
 
     it "upvotes event" do

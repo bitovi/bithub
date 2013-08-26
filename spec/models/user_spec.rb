@@ -14,7 +14,7 @@ describe User do
       author = create(:user)
       rule = create(:rule, authorship_value: 0, award_value: 0, upvote_value: 1)
       event = create(:event_determined, rule: rule, author: author)
-      Upvote.create_upvote(author, event)
+      Upvote.create({actor: author, applies_to: event})
       expect(author.score).to eq(1)
       expect(author.upvotes_total).to eq(1)
     end
@@ -24,7 +24,7 @@ describe User do
       rule = create(:rule, authorship_value: 0, award_value: 22, upvote_value: 0)
       event = create(:event_determined, rule: rule, author: author)
       event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
-      Award.create_award(author, event_reply)
+      Award.create_and_fullfill(author, event_reply)
       expect(solver.score).to eq(22)
       expect(solver.awards_total).to eq(22)
     end
@@ -34,8 +34,8 @@ describe User do
       rule = create(:rule, authorship_value: 0, award_value: 22, upvote_value: 7)
       event = create(:event_determined, rule: rule, author: author)
       event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
-      Upvote.create_upvote(solver, event)
-      Award.create_award(author, event_reply)
+      Upvote.create({actor: solver, applies_to: event})
+      Award.create_and_fullfill(author, event_reply)
       expect(solver.awards_total).to eq(29) # Award value only = 29 (22+7)
       expect(author.score).to eq(7)
     end
@@ -46,7 +46,7 @@ describe User do
       event = create(:event_determined, rule: rule, author: author)
       event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
       Anteup.create_anteup(author, event, 33)
-      Award.create_award(author, event_reply)
+      Award.create_and_fullfill(author, event_reply)
       expect(solver.score).to eq(33)
       expect(author.fulfilled_anteups_total).to eq(33)
     end
@@ -58,10 +58,10 @@ describe User do
       event = create(:event_determined, rule: rule, author: author)
       event_reply = create(:event_determined, rule: rule_reply, author: solver, parent: event)
 
-      Upvote.create_upvote(admin, event)
-      Upvote.create_upvote(admin, event_reply)
+      Upvote.create({actor: admin, applies_to: event})
+      Upvote.create({actor: admin, applies_to: event_reply})
       Anteup.create_anteup(author, event, 25)
-      Award.create_award(admin, event_reply)
+      Award.create_and_fullfill(admin, event_reply)
       expect(author.score).to eq(100+1-25)
       expect(solver.score).to eq(10+1+26+1000)
     end
@@ -75,10 +75,10 @@ describe User do
       event = create(:event_determined, rule: rule, author: author)
       event_reply = create(:event_determined, rule: rule_reply, author: solver, parent: event)
 
-      Upvote.create_upvote(admin, event)
-      Upvote.create_upvote(admin, event_reply)
+      Upvote.create({actor: admin, applies_to: event})
+      Upvote.create({actor: admin, applies_to: event_reply})
       Anteup.create_anteup(author, event, 25)
-      Award.create_award(admin, event_reply)
+      Award.create_and_fullfill(admin, event_reply)
 
       u1 = User.where(id: author.id).select_with_score(true).first
       u2 = User.where(id: solver.id).select_with_score(true).first

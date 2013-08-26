@@ -28,8 +28,8 @@ describe Event do
         usr1 = create(:user, name: "Nikica")
         usr2 = create(:user, name: "Veljko")
         event = create(:event_determined)
-        Upvote.create_upvote(usr1, event)
-        Upvote.create_upvote(usr2, event)
+        Upvote.create({actor: usr1, applies_to: event})
+        Upvote.create({actor: usr2, applies_to: event})
 
         ev = Event.where(id: event.id).select_with_upvotes(true).first
         expect(ev.total_upvotes.to_i).to eq(2)
