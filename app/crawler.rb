@@ -31,8 +31,8 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 # Load feeds config 
 $feeds = YAML::load_file('config/feeds.yml')
 
-$timer = 6
-def next_timer; $timer += 6; end
+$timer = 20
+def next_timer; $timer += 10; end
 
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
@@ -67,23 +67,23 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Pollers
     $feeds[:github][:events].each do |project, repo|
       $log.info "Registering Github handler for \"#{project}\" at \"#{repo[:endpoint]}\""
-      EM.add_periodic_timer(next_timer(), &Handler::Github.handler($log, exchange, repo[:endpoint]))
+      EM.add_periodic_timer($timer, &Handler::Github.handler($log, exchange, repo[:endpoint]))
     end
 
     $log.info "Registering Disqus"
-    EM.add_periodic_timer(next_timer(), &Handler::Disqus.handler($log, exchange))
+    EM.add_periodic_timer($timer, &Handler::Disqus.handler($log, exchange))
 
     $log.info "Registering Forums"
     forum_endpoints = {
       questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
       all: 'https://forum.javascriptmvc.com/feed'
     }
-    EM.add_periodic_timer(next_timer(), &Handler::Forums.handler($log, exchange, forum_endpoints))
+    EM.add_periodic_timer($timer, &Handler::Forums.handler($log, exchange, forum_endpoints))
 
     $log.info "Registering Blog"
-    EM.add_periodic_timer(next_timer(), &Handler::Blog.handler($log, exchange))
+    EM.add_periodic_timer($timer, &Handler::Blog.handler($log, exchange))
 
     $log.info "Registering Community site"
-    EM.add_periodic_timer(next_timer(), &Handler::CommunitySite.handler($log, exchange))
+    EM.add_periodic_timer($timer, &Handler::CommunitySite.handler($log, exchange))
   end
 end
