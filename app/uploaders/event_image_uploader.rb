@@ -22,6 +22,10 @@ class EventImageUploader < CarrierWave::Uploader::Base
   version :thumb do
     process :resize_to_fit => [60, 60]
   end
+  
+  version :canjscom do
+    process :resize_to_fit => [158, 110]
+  end
 
   version :large do
     process :resize_to_fill => [800, 800]
