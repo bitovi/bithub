@@ -131,8 +131,11 @@ class User < ActiveRecord::Base
   def does_gravatar_exists?
     if !self.email.blank?
       gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
-      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
 
+      # skip making HTTP request in tests
+      return gravatar if Rails.env == "testing"
+
+      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
       response.code == '200' ? gravatar : ''
     else
       ''
