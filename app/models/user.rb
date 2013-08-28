@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   has_many :awards, :through => :events
   has_many :identities, :dependent => :destroy
   
-  before_save :calculate_gravatar_hash
+  before_save :calculate_avatar_url
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
@@ -112,15 +112,30 @@ class User < ActiveRecord::Base
     end
   end
 
+  def calculate_avatar_url
+    url = '/assets/images/icon-user.png'
+
+    image_attrs = ['avatar_url', 'profile_image_url']
+    self.identities.each do |ident|
+      image_attrs.each {|attr| url = ident['source_data'][attr] if ident['source_data'] && ident['source_data'][attr] }
+    end
+
+    gravatar_url = does_gravatar_exists?
+    url = gravatar_url if not gravatar_url.blank?
+
+    self.props['avatar_url'] = url
+  end
+
   private
-  def calculate_gravatar_hash
-    if !email.blank?
+
+  def does_gravatar_exists?
+    if !self.email.blank?
       gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
       response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
 
-      self.props['gravatar_url'] = response.code == '200' ? gravatar : ''
+      response.code == '200' ? gravatar : ''
     else
-      self.props['gravatar_url'] = ''
+      ''
     end
   end
 

@@ -1,14 +1,7 @@
 delete from leaderboard;
 insert into leaderboard
 (
-	select users.id, users.name, users.email, 
-	( 
-		case
-			when ((char_length(props -> 'gravatar_url')) > 0) then props -> 'gravatar_url'
-			else 'http://bithub.com/assets/images/icon-user.png'
-		end
-
-	) as avatar_url,
+	select users.id, users.name, users.email, props -> 'avatar_url' as avatar_url,
 	(
 		(select coalesce(sum(rules.authorship_value),0)
 			from events, rules
