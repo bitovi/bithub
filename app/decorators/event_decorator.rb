@@ -54,10 +54,7 @@ class EventDecorator < Draper::Decorator
 
   # thumb, large, original
   def image_url(size = nil)
-    case
-    when has_s3_image?(source)
-      S3_PREFIX + props_image_path(source.props['image'], size)    
-    when has_local_image?(source)
+    if has_local_image?(source)
       local_prefix + source.image.url(size)
     else
       ""
