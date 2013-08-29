@@ -1,7 +1,8 @@
 module Handler
   class Github < Base
+    attr_reader :token, :endpoint
 
-    @event_types = {
+    EVENT_TYPES = {
       "CommitCommentEvent" => lambda {|event|
         {
           :title => "commented on a commit in #{event['repo']['name']}",
@@ -133,21 +134,20 @@ module Handler
       }
     }
 
-    def self.handler(log, exchange, endpoint=nil)
-      new(log, exchange, endpoint).handler
+    def self.handler(log, exchange, token, endpoint=nil)
+      new(log, exchange, token, endpoint).handler
     end
 
-    def initialize(log, exchange, endpoint=nil)
+    def initialize(log, exchange, token, endpoint=nil)
+      @token = token
       @endpoint = endpoint || 'https://api.github.com/orgs/bitovi/events'
-      super(log,exchange)
+      super(log, exchange)
     end
 
     def fetch
-      get_github_events = EM::HttpRequest.new(@endpoint)
-                                         .get(:head => {"Authorization" => "token f5e07c1c541c31821e7c71219687a4c045c880a9"})
+      get_github_events = EM::HttpRequest.new(endpoint).get(:head => {"Authorization" => "token #{token}"})
 
       get_github_events.callback do
-
         if get_github_events.response_header.status.to_s == "200"
           github_events = Yajl::Parser.parse(get_github_events.response)
           new_events = filter_old github_events
@@ -202,7 +202,7 @@ module Handler
         :source_data => event
       }
 
-      event_hash.deep_merge(@event_types[event['type']].call event)
+      event_hash.deep_merge(EVENT_TYPES[event['type']].call event)
     end
 
   end

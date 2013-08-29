@@ -1,11 +1,20 @@
 module Handler
   class Disqus < Base
+    attr_reader :endpoint
+    
+    def self.handler(log, exchange, api_key)
+      new(log, exchange, api_key).handler
+    end
+
+    def initialize(log, exchange, api_key)
+      @endpoint = "http://disqus.com/api/3.0/posts/list.json?api_key=#{api_key}&forum[]=jmvcs3&forum[]=bitovi&related[]=thread&related[]=forum"
+      super(log, exchange)
+    end
 
     def fetch
-      get_disqus_events = EM::HttpRequest.new('http://disqus.com/api/3.0/posts/list.json?api_key=NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB&forum[]=jmvcs3&forum[]=bitovi&related[]=thread&related[]=forum').get
+      get_disqus_events = EM::HttpRequest.new(endpoint).get
 
       get_disqus_events.callback do
-
         begin
           disqus_events = Yajl::Parser.parse(get_disqus_events.response)['response']
         rescue Yajl::ParseError => error

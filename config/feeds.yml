@@ -1,3 +1,6 @@
+:disqus:
+  :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
+
 :twitter:
   :streams:
     :public_feed:
@@ -5,82 +8,83 @@
       :params:
         :track: canjs,donejs,stealjs,javascriptmvc,jquerypp,documentjs,shouldjs,jquery++
       :oauth:
-        :consumer_key: lGtKxbNqkGDfwDr3S8SFEw
-        :consumer_secret: dGZa1lO3Aan0tHLUUEtTSxg4Eg0UUcTudkpeU0elHo
-        :token: 123763453-qZStr9dgnjjHVjCHVFKCK0zd7pFSCjx3xC2UWRrf
-        :token_secret: hBSs3shmiGvouciTLbjP9FnDNr9S5DOH93gYVCzfY
+        :consumer_key: 'lGtKxbNqkGDfwDr3S8SFEw'
+        :consumer_secret: 'dGZa1lO3Aan0tHLUUEtTSxg4Eg0UUcTudkpeU0elHo'
+        :token: '123763453-qZStr9dgnjjHVjCHVFKCK0zd7pFSCjx3xC2UWRrf'
+        :token_secret: 'hBSs3shmiGvouciTLbjP9FnDNr9S5DOH93gYVCzfY'
 
     :canjs:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: imczycfZ0kHrziNCWqcldg
-        :consumer_secret: VjKT5zRSurZtIYrS9db9kxl8WH0HlUUeEkSVoN8rok
-        :token: 523041627-VVNsxgQwb3IsslTpRuWia3E3KMmq46VlJsYJb5Y0
-        :token_secret: W0gdkMuSVvJMcR2Q6jJ6FEjlcXmmtybsyBK4pI
+        :consumer_key: 'imczycfZ0kHrziNCWqcldg'
+        :consumer_secret: 'VjKT5zRSurZtIYrS9db9kxl8WH0HlUUeEkSVoN8rok'
+        :token: '523041627-VVNsxgQwb3IsslTpRuWia3E3KMmq46VlJsYJb5Y0'
+        :token_secret: 'W0gdkMuSVvJMcR2Q6jJ6FEjlcXmmtybsyBK4pI'
 
     :jquerypp:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: ntMRzcTggjBJkq48cuyyjA
-        :consumer_secret: xksGh6vK0FOzciz72tZmF7IdC3Owe2u8KyUQxbv9BY
-        :token: 589215872-r9IG7UA3jSmlX3AS73mKr7laTkpqtjyZUoswahHO
-        :token_secret: XE2h3Kvnvp8G7DAU9DDME4Vatakf5Kmpd0R6q4tL4Z0
+        :consumer_key: 'ntMRzcTggjBJkq48cuyyjA'
+        :consumer_secret: 'xksGh6vK0FOzciz72tZmF7IdC3Owe2u8KyUQxbv9BY'
+        :token: '589215872-r9IG7UA3jSmlX3AS73mKr7laTkpqtjyZUoswahHO'
+        :token_secret: 'XE2h3Kvnvp8G7DAU9DDME4Vatakf5Kmpd0R6q4tL4Z0'
 
     :donejs:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: QVPK4uzmEo9dbvfjI7GA
-        :consumer_secret: rDwqW5AZfds5brvnkjUm84CP5fGZhF4eAupP97gc1ms
-        :token: 184072309-6Y3olrlin0DWt4neudkMMnSzTSzykOfWOPi9wqlI
-        :token_secret: G9TMjVrlruIsT0SZWstqfVLSRSSZFGdqPNzIq44NNw
+        :consumer_key: 'QVPK4uzmEo9dbvfjI7GA'
+        :consumer_secret: 'rDwqW5AZfds5brvnkjUm84CP5fGZhF4eAupP97gc1ms'
+        :token: '184072309-6Y3olrlin0DWt4neudkMMnSzTSzykOfWOPi9wqlI'
+        :token_secret: 'G9TMjVrlruIsT0SZWstqfVLSRSSZFGdqPNzIq44NNw'
 
     :javascriptmvc:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: XrZkC4arltXkv80MGg
-        :consumer_secret: nd96gRSm5lBccKnz6e2NcfID4BozsPPDHWuJsNIp3AY
-        :token: 56956664-Vd6tMMECvDEFAGVm6yj5cJY12UGKebxGFJzyaVwbI
-        :token_secret: 5FiSwZ3MdCYrzDjOZAMVH2hylZtHVnNxDRyaqD8iE
+        :consumer_key: 'XrZkC4arltXkv80MGg'
+        :consumer_secret: 'nd96gRSm5lBccKnz6e2NcfID4BozsPPDHWuJsNIp3AY'
+        :token: '56956664-Vd6tMMECvDEFAGVm6yj5cJY12UGKebxGFJzyaVwbI'
+        :token_secret: '5FiSwZ3MdCYrzDjOZAMVH2hylZtHVnNxDRyaqD8iE'
 
     :funcunit:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: QYo6Pe406pNJlBWqN3Nkg
-        :consumer_secret: MLCuiIl4bDNfEMdGvR7DcW7exJtGsIGeAKULXzAez4
-        :token: 171351462-XYaDcD3aZdLStLuBgWHSg22qHPudAVrVLS27SIDb
-        :token_secret: PDnZEP6I1OG26x5WKZ5iTSIBu8ESQIfj2ZvWMwrFTaU
+        :consumer_key: 'QYo6Pe406pNJlBWqN3Nkg'
+        :consumer_secret: 'MLCuiIl4bDNfEMdGvR7DcW7exJtGsIGeAKULXzAez4'
+        :token: '171351462-XYaDcD3aZdLStLuBgWHSg22qHPudAVrVLS27SIDb'
+        :token_secret: 'PDnZEP6I1OG26x5WKZ5iTSIBu8ESQIfj2ZvWMwrFTaU'
 
     :shouldjs:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: aD9aYoxtsyoxRWis19A
-        :consumer_secret: 3TzgETml6h7M5IQURJXvPLZ6exKGcEOUffEaFARg
-        :token: 1114713660-2JzAeM3PZRyPvmzsgkExnD7GASoyBenmw4A10nb
-        :token_secret: PoONtKAmLEM18pY0uY0SaXZsx7OdLe6KKoB0H6sTMg
+        :consumer_key: 'aD9aYoxtsyoxRWis19A'
+        :consumer_secret: '3TzgETml6h7M5IQURJXvPLZ6exKGcEOUffEaFARg'
+        :token: '1114713660-2JzAeM3PZRyPvmzsgkExnD7GASoyBenmw4A10nb'
+        :token_secret: 'PoONtKAmLEM18pY0uY0SaXZsx7OdLe6KKoB0H6sTMg'
 
     :stealjs:
       :host: userstream.twitter.com
       :method: GET
       :path: /1.1/user.json
       :oauth:
-        :consumer_key: 0sSF9HBX98z7WedK6liA
-        :consumer_secret: G8lXrrYWS3B7E9aRSjyl5VFMaSNLVpAKfKkGb6wcTU
-        :token: 1114748720-Oy5Y61k7rsABQtIqZu42uFEfDaprvq4u41H8tZ8
-        :token_secret: IGJLpsd5uvRqxuHEVjnIEkY4CzWoot2OhjYdwWsUyk
+        :consumer_key: '0sSF9HBX98z7WedK6liA'
+        :consumer_secret: 'G8lXrrYWS3B7E9aRSjyl5VFMaSNLVpAKfKkGb6wcTU'
+        :token: '1114748720-Oy5Y61k7rsABQtIqZu42uFEfDaprvq4u41H8tZ8'
+        :token_secret: 'IGJLpsd5uvRqxuHEVjnIEkY4CzWoot2OhjYdwWsUyk'
 
 :github:
+  :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
   :events:
     :canjs:
       :endpoint: 'https://api.github.com/repos/bitovi/canjs/events'

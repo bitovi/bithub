@@ -51,7 +51,7 @@ module Handler
     end
 
     def handler
-      proc { fetch }
+      lambda { fetch }
     end
 
     def encode(text)
