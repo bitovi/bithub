@@ -54,7 +54,11 @@ class EventDecorator < Draper::Decorator
 
   # thumb, large, original
   def image_url(size = :thumb)
-    local_prefix + (size.blank? ? source.image.url(:thumb) : source.image.url(size))
+    if has_local_image?(source)
+      local_prefix + (size.blank? ? source.image.url(:thumb) : source.image.url(size))
+    else
+      ""
+    end
   end
 
   # def children

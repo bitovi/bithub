@@ -24,7 +24,7 @@ class EventImageUploader < CarrierWave::Uploader::Base
   end
   
   version :canjscom do
-    process :resize_to_fit => [158, 110]
+    process :resize_and_pad => [158, 110, "#ffffff"]
   end
 
   version :large do
