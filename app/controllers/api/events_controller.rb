@@ -1,5 +1,5 @@
 class Api::EventsController < Api::ApiController
-  before_filter :authenticate_user!, except: [:index, :show]
+  before_filter :authenticate_user!, except: [:index, :show, :summary]
   
   respond_to :json
   helper_method :custom_cache_key
