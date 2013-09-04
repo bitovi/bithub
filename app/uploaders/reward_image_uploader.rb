@@ -24,6 +24,6 @@ class RewardImageUploader < CarrierWave::Uploader::Base
   end
 
   version :large do
-    process :resize_to_fill => [800, 800]
+    process :resize_and_pad => [240, 240, "#ffffff"]
   end
 end
