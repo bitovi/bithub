@@ -1,5 +1,5 @@
 class QueryLogicAnalyzer
-  TAG_FIELD_NAMES = ['tag', 'feed', 'category']
+  TAG_FIELD_NAMES = ['tag', 'feed', 'category', 'project']
   DELIMITERS = { :and => ',', :or => '|', :between => ':' }
   OPTIONAL_LOGIC = { :exclude => 'exclude' }
   NEGATION = '!'

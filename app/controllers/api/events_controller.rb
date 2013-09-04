@@ -65,7 +65,7 @@ class Api::EventsController < Api::ApiController
 
   def summary
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
-    @summary = Hash[cats_to_sum.map{|cat| [ cat, date_filtered_sumamry(cat) ]}]
+    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_sumamry(cat, params)]}]
     render :summary
   end
 
@@ -94,8 +94,9 @@ class Api::EventsController < Api::ApiController
     @scope_applier ||= ScopeApplier.new(logic_analyzer) 
   end
 
-  def date_filtered_sumamry(tag)
+  def date_filtered_sumamry(tag, params)
     scope = Event.scoped.tagged_with(tag)
+    scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope.count
   end
