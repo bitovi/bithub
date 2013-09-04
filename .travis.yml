@@ -1,5 +1,5 @@
 language: ruby
-script: "bundle exec rpsec"
+script: "bundle exec rspec"
 notifications:
   recipients:
     - veljko@kset.org
