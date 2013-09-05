@@ -57,6 +57,39 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: achievements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE achievements (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    reward_id integer NOT NULL,
+    note character varying(255),
+    achieved_at timestamp without time zone,
+    shipped_at timestamp without time zone
+);
+
+
+--
+-- Name: achievements_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE achievements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: achievements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE achievements_id_seq OWNED BY achievements.id;
+
+
+--
 -- Name: anteups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -536,39 +569,6 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: users_rewards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users_rewards (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    reward_id integer NOT NULL,
-    note character varying(255),
-    achieved timestamp without time zone,
-    shipped timestamp without time zone
-);
-
-
---
--- Name: users_rewards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE users_rewards_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_rewards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE users_rewards_id_seq OWNED BY users_rewards.id;
-
-
---
 -- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -576,6 +576,13 @@ CREATE TABLE users_roles (
     user_id integer,
     role_id integer
 );
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY achievements ALTER COLUMN id SET DEFAULT nextval('achievements_id_seq'::regclass);
 
 
 --
@@ -670,10 +677,11 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: achievements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY users_rewards ALTER COLUMN id SET DEFAULT nextval('users_rewards_id_seq'::regclass);
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT achievements_pkey PRIMARY KEY (id);
 
 
 --
@@ -786,14 +794,6 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: users_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY users_rewards
-    ADD CONSTRAINT users_rewards_pkey PRIMARY KEY (id);
 
 
 --
@@ -974,7 +974,7 @@ ALTER TABLE ONLY users
 -- Name: fk_users_rewards_rewards; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users_rewards
+ALTER TABLE ONLY achievements
     ADD CONSTRAINT fk_users_rewards_rewards FOREIGN KEY (reward_id) REFERENCES rewards(id);
 
 
@@ -982,7 +982,7 @@ ALTER TABLE ONLY users_rewards
 -- Name: fk_users_rewards_users; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users_rewards
+ALTER TABLE ONLY achievements
     ADD CONSTRAINT fk_users_rewards_users FOREIGN KEY (user_id) REFERENCES users(id);
 
 
@@ -1047,3 +1047,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130805160253');
 INSERT INTO schema_migrations (version) VALUES ('20130905102324');
 
 INSERT INTO schema_migrations (version) VALUES ('20130905102701');
+
+INSERT INTO schema_migrations (version) VALUES ('20130905142638');
