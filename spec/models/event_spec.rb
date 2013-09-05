@@ -290,23 +290,34 @@ describe Event do
       end
     end
 
-    describe "#bump_thread" do
-      before(:each) do
-        @ie = create(:github_issue, title: "Why is this happening?")
-        @ice1 = create(:github_issue_comment, title: "I don't care.", parent: @ie)
-        @ice2 = create(:github_issue_comment, title: "Wat? Qua?", parent: @ie)
-        @ice3 = create(:github_issue_comment, title: "Foo, bar.", parent: @ie)
-      end
+    describe "#split_push_event_to_commits" do
+    end
 
-      it "updates thread_updated_at attribute for the parent event" do
-        @ice1.bump_thread
-        @ie.thread_updated_at.should > @ie.created_at
+    describe "#thread" do
+      it "fetches the event itself wrapped in an array if there is no thread" do
+        e = create(:github_issue, title: "Why is this happening?")
+        e.thread.should =~ [e]
       end
       
-      it "updates thread_updated_at attribute for all sibling events" do
-        @ice1.bump_thread
-        @ice2.reload.thread_updated_at.should > @ie.created_at
-        @ice3.reload.thread_updated_at.should > @ie.created_at
+      it "fetches the whole thread" do
+        pe = create(:github_issue, title: "Why is this happening?")
+        ce1 = create(:github_issue_comment, title: "I don't care.", parent: pe)
+        ce2 = create(:github_issue_comment, title: "Wat? Qua?", parent: pe)
+        pe.thread.should =~ ce1.thread
+        expect(pe.thread.length).to eql(3)
+      end
+    end
+
+    describe "#bump_thread" do
+      it "updates the thread_updated_ts attribute for all events in a thread" do
+        pe = create(:github_issue, title: "Why is this happening?", origin_ts: Time.now+5)
+        ce1 = create(:github_issue_comment, title: "I don't care.", parent: pe, origin_ts: Time.now+10)
+        ce2 = create(:github_issue_comment, title: "Wat? Qua?", parent: pe, origin_ts: Time.now+15)
+
+        ce2.bump_thread
+        pe.reload.thread_updated_ts.should > pe.origin_ts
+        ce1.reload.thread_updated_ts.should > ce1.origin_ts
+        ce2.reload.thread_updated_ts.should == ce2.origin_ts
       end
     end
 
