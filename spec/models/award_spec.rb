@@ -1,31 +1,25 @@
 require 'spec_helper'
 
 describe Award do
-  describe ".create_with_strategy"
-  describe ".total_value"
-  describe ".double_upvote_value"
-  describe ".thread_not_already_awarded"
+  describe ".double_upvote_value" do
+    it "returns double the upvote value of the event as the value for a new award" do
+      rule = create(:rule, upvote_value: 3)
+      a1 = create(:user, name: "Nikica")
+      a2 = create(:user, name: "Veljko")
+      event = create(:event_determined, rule: rule)
+      Upvote.create_based_on_rule(a1, event)
+      Upvote.create_based_on_rule(a2, event)
+
+      expect(Award.double_upvote_value(event)).to eq(event.upvotes.sum(:value)*2)
+    end
+  end
+
+  describe ".total_value" do
+    it "returns an award value specified in the rule" do
+      award_value = 100
+      rule = create(:rule, award_value: award_value)
+      event = create(:event_determined, rule: rule)
+      expect(Award.total_value(event)).to eq(award_value)
+    end
+  end
 end
-
-    # before(:each) do
-    #   @actor = create(:user, name: "Some user")
-    #   @rule = create(:rule, award_value: 100)
-    #   @event = create(:event_determined, rule: @rule)
-    #   @reply = create(:event_determined, parent: @event)
-    #   @upvote = create(:upvote, applies_to: @event)
-    #   @anteup = create(:anteup, applies_to: @event)
-    #   @award = Award.create({actor: @actor, applies_to_id: @reply, value: Award.double_upvote_value(@event)})
-    # end
-
-    # it "sets the actor" do
-    #   expect(@award.actor).to eq(@actor)
-    # end
-
-    # it "sets the target event" do
-    #   expect(@award.applies_to).to eq(@reply)
-    # end
-
-    # it "calculates and sets the total point value for the award" do
-    #   sum = @upvote.value + @anteup.value + @event.rule.award_value
-    #   expect(@award.value).to eq(sum)
-    # end
