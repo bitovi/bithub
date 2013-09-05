@@ -24,15 +24,25 @@ describe Event do
     end
 
     describe ".select_with_upvotes" do
-      it "calculates total nmb of upvotes for each event" do
-        usr1 = create(:user, name: "Nikica")
-        usr2 = create(:user, name: "Veljko")
-        event = create(:event_determined)
-        Upvote.create({actor: usr1, applies_to: event})
-        Upvote.create({actor: usr2, applies_to: event})
+      before :all do
+        @event = create(:event_determined, title: "Something happen")
+        @user = create(:user, name: "Nikica")
+      end
 
-        ev = Event.where(id: event.id).select_with_upvotes(true).first
-        expect(ev.total_upvotes.to_i).to eq(2)
+      after :all do
+        @event.destroy
+        @user.destroy
+      end
+
+      it "gets upvotes as an Integer" do
+        ev = Event.where(id: @event.id).select_with_upvotes.first
+        expect(ev.total_upvotes).to be_an(Integer)
+      end
+
+      it "calculets upvotes" do
+        Upvote.create_based_on_rule(@user, @event)
+        ev = Event.where(id: @event.id).select_with_upvotes.first
+        expect(ev.total_upvotes).to eq(1)
       end
     end
 

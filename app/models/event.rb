@@ -274,6 +274,10 @@ class Event < ActiveRecord::Base
     query_string = "events.*, " + query_string if include_events
     select(query_string)
   end
+  
+  def total_upvotes
+    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_upvotes])
+  end 
 
   def cache_key
     case
