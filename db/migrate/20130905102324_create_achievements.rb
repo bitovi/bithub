@@ -1,6 +1,6 @@
-class CreateUsersRewards < ActiveRecord::Migration
+class CreateAchievements < ActiveRecord::Migration
   def change
-    create_table :users_rewards do |t|
+    create_table :achievements do |t|
       t.belongs_to :user, :null => false
       t.belongs_to :reward, :null => false
       t.string :note
