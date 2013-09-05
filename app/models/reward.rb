@@ -3,4 +3,8 @@ class Reward < ActiveRecord::Base
   mount_uploader :image, RewardImageUploader
 
   validates :title, :point_minimum, :presence => true
+
+  has_many :achievements
+  has_many :users, :through => :achievements
+
 end

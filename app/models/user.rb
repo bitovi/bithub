@@ -19,6 +19,9 @@ class User < ActiveRecord::Base
   has_many :awards, :through => :events
   has_many :identities, :dependent => :destroy
   
+  has_many :achievements
+  has_many :rewards, :through => :achievements
+
   before_save :calculate_avatar_url
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
