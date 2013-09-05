@@ -15,8 +15,9 @@ class Api::EventActivitiesController < Api::ApiController
   def create_upvote
     authorize! :create_upvote, Upvote, :message => "No right to create an upvote!"
     event = Event.find(params[:event_id])
-    upvote = Upvote.create({actor: current_user, applies_to: event, value: event.rule.upvote_value})
-    if upvote.persisted?
+    upvote = Upvote.create_from_rule(current_user, event)
+
+    if upvote
       render :json => upvote
     else
       render :json => {
@@ -28,8 +29,10 @@ class Api::EventActivitiesController < Api::ApiController
 
   def create_award
     authorize! :create_award, Award, :message => "No right to create an award!"
-    award = Award.create_and_fullfill(current_user, Event.find(params[:event_id]))
-    if award.persisted?
+    event = Event.find(params[:event_id])
+    award = Award.create_with_strategy(current_user, event, {strategy: :double_the_upvotes})
+
+    if award
       render :json => award
     else
       render :json => {

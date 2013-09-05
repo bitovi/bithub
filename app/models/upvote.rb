@@ -8,6 +8,10 @@ class Upvote < ActiveRecord::Base
   validates :applies_to_id, :actor_id, :presence => true
   validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only upvote once" }
 
+  def self.create_based_on_rule(actor, event)
+    Upvote.create!({actor: actor, applies_to: event, value: event.rule.upvote_value})
+  end
+
   def bust_event_cache
     self.applies_to.touch
   end
