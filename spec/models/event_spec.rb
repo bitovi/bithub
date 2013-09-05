@@ -301,15 +301,15 @@ describe Event do
     end
 
     describe "#cache_key" do
-      before(:each) { @event = create(:event_determined, title: "This one is for testing the cache_key", updated_at: nil, thread_updated_at: nil) }
+      before(:each) { @event = create(:event_determined, title: "This one is for testing the cache_key", updated_at: nil, thread_updated_ts: nil) }
 
       it "uses the id and the updated_at timestamp when it is present" do
         expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}"
       end
 
-      it "uses the id, updated_at and thread_updated_at timestamps when they are present" do
-        @event.update_attribute(:thread_updated_at, Time.now)
-        expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}-#{@event.thread_updated_at.utc.to_s(:number)}"
+      it "uses the id, updated_at and thread_updated_ts timestamps when they are present" do
+        @event.update_attribute(:thread_updated_ts, Time.now)
+        expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}-#{@event.thread_updated_ts.utc.to_s(:number)}"
       end
     end
   end
