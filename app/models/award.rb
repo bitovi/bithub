@@ -9,23 +9,25 @@ class Award < ActiveRecord::Base
   validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only award once" }
   validate :thread_not_already_awarded
 
-  def self.create_and_fullfill(actor, event)
-    award = Award.new({
-      :actor => actor,
-      :applies_to => event,
-      :value => total_value_for_award(event)
-    })
+  def self.create_with_strategy(author, event, opts = {})
+    opts = { :strategy => :double_the_upvotes } if opts.empty?
 
-    Anteup.fullfill_all_for_event(event.parent) if award.save && event.parent
-    return award
+    if opts[:strategy] == :double_the_upvotes
+      Award.create!({actor: author, applies_to: event, value: Award.double_upvote_value(event)})
+    elsif opts[:strategy] == :based_on_rule
+      Award.create!({actor: author, applies_to: event, value: Award.total_value(event)})
+    end
   end
 
-  def self.total_value_for_award(event)
-    if event.parent
-      p = event.parent
-      return [p.rule.award_value, p.upvotes.sum('value'), p.anteups.sum('value')].reduce(&:+)
+  def self.double_upvote_value(event)
+    (event.upvotes.sum(:value) * 2)
+  end
+
+  def self.total_value(event)
+    if p = event.parent
+      [p.rule.award_value, p.upvotes.sum('value'), p.anteups.sum('value')].reduce(&:+)
     else
-      return [event.rule.award_value, event.upvotes.sum('value')].reduce(&:+)
+      [event.rule.award_value, event.upvotes.sum('value')].reduce(&:+)
     end
   end
 

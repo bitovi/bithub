@@ -2,88 +2,49 @@ require 'spec_helper'
 
 describe User do
   describe "#score" do
-    it "calculates points for authorships" do
-      author = create(:user)
-      rule = create(:rule, authorship_value: 11, award_value: 0, upvote_value: 0)
-      event = create(:event_determined, rule: rule, author: author)
-      expect(author.score).to eq(11)
-      expect(author.authored_events_total).to eq(11)
+    before :all do
+      @rule = create(:rule, authorship_value: 33, award_value: 0, upvote_value: 11)
+      @author = create(:user, name: "Nikica")
+      @actor = create(:user, name: "Veljko")
     end
 
-    it "calculates points for upvotes" do
-      author = create(:user)
-      rule = create(:rule, authorship_value: 0, award_value: 0, upvote_value: 1)
-      event = create(:event_determined, rule: rule, author: author)
-      Upvote.create({actor: author, applies_to: event})
-      expect(author.score).to eq(1)
-      expect(author.upvotes_total).to eq(1)
+    after :all do
+      @rule.destroy
+      @author.destroy
+      @actor.destroy
     end
 
-    it "calculates points for awards" do
-      author = create(:user); solver = create(:user)
-      rule = create(:rule, authorship_value: 0, award_value: 22, upvote_value: 0)
-      event = create(:event_determined, rule: rule, author: author)
-      event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
-      Award.create_and_fullfill(author, event_reply)
-      expect(solver.score).to eq(22)
-      expect(solver.awards_total).to eq(22)
-    end
-    
-    it "calculates points for awards+upvotes" do
-      author = create(:user); solver = create(:user)
-      rule = create(:rule, authorship_value: 0, award_value: 22, upvote_value: 7)
-      event = create(:event_determined, rule: rule, author: author)
-      event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
-      Upvote.create({actor: solver, applies_to: event})
-      Award.create_and_fullfill(author, event_reply)
-      expect(solver.awards_total).to eq(29) # Award value only = 29 (22+7)
-      expect(author.score).to eq(7)
+    it "calculates total authorship points" do
+      event = create(:event_determined, rule: @rule, author: @author)
+      expect(@author.authored_events_total).to eq(33)
     end
 
-    it "calculates points for anteups" do
-      author = create(:user); solver = create(:user)
-      rule = create(:rule, authorship_value: 0, award_value: 0, upvote_value: 0)
-      event = create(:event_determined, rule: rule, author: author)
-      event_reply = create(:event_determined, rule: rule, parent: event, author: solver)
-      Anteup.create_anteup(author, event, 33)
-      Award.create_and_fullfill(author, event_reply)
-      expect(solver.score).to eq(33)
-      expect(author.fulfilled_anteups_total).to eq(33)
+    it "calculates total upvote points" do
+      event = create(:event_determined, rule: @rule, author: @author)
+      Upvote.create_based_on_rule(@actor, event)
+      expect(@author.upvotes_total).to eq(11)
+    end
+
+    it "calculates total award points" do
+      event = create(:event_determined, rule: @rule, author: @author)
+      Upvote.create_based_on_rule(@actor, event)
+      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
+      expect(@author.awards_total).to eq(11*2)
     end
 
     it "calculates total points" do
-      admin = create(:user); author = create(:user); solver = create(:user)
-      rule = create(:rule, authorship_value: 100, award_value: 1000, upvote_value: 1)
-      rule_reply = create(:rule, authorship_value: 10, upvote_value: 1)
-      event = create(:event_determined, rule: rule, author: author)
-      event_reply = create(:event_determined, rule: rule_reply, author: solver, parent: event)
-
-      Upvote.create({actor: admin, applies_to: event})
-      Upvote.create({actor: admin, applies_to: event_reply})
-      Anteup.create_anteup(author, event, 25)
-      Award.create_and_fullfill(admin, event_reply)
-      expect(author.score).to eq(100+1-25)
-      expect(solver.score).to eq(10+1+26+1000)
+      event = create(:event_determined, rule: @rule, author: @author)
+      Upvote.create_based_on_rule(@actor, event)
+      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
+      expect(@author.score).to eq(11+11*2+33)
     end
   end
 
   describe ".select_with_score" do
-    it "calculates total points" do
-      admin = create(:user); author = create(:user); solver = create(:user)
-      rule = create(:rule, authorship_value: 100, award_value: 1000, upvote_value: 1)
-      rule_reply = create(:rule, authorship_value: 10, upvote_value: 1)
-      event = create(:event_determined, rule: rule, author: author)
-      event_reply = create(:event_determined, rule: rule_reply, author: solver, parent: event)
-
-      Upvote.create({actor: admin, applies_to: event})
-      Upvote.create({actor: admin, applies_to: event_reply})
-      Anteup.create_anteup(author, event, 25)
-      Award.create_and_fullfill(admin, event_reply)
-
-      u1 = User.where(id: author.id).select_with_score(true).first
-      u2 = User.where(id: solver.id).select_with_score(true).first
-      expect(u1.total_score.to_i).to eq(100+1-25)
-      expect(u2.total_score.to_i).to eq(10+1+26+1000)
+    it "calculates score for each user by using built in PG fns" do
+      user = create(:user)
+      u = User.where(id: user.id).select_with_score.first
+      expect(u.total_score).to be_a(Integer)
     end
   end
 

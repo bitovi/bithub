@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
       (select coalesce(sum(anteups.value),0) from anteups
       where anteups.actor_id = users.id
       and anteups.fullfilled = true)
-    ) as total_score
+    )::int as total_score
     SQL
     query_string = "users.*, " + query_string if include_users
     select(query_string)
@@ -128,6 +128,11 @@ class User < ActiveRecord::Base
 
     self.props['avatar_url'] = url
   end
+
+  # For casting the virtual column
+  def total_score
+    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
+  end 
 
   private
 
