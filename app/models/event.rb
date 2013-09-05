@@ -146,8 +146,9 @@ class Event < ActiveRecord::Base
   end
 
   def determine_tags_from_meta
-    tags = (meta[:tags] << meta[:feed] << meta[:type] << meta[:category]).reject {|el| el.nil?}
-    self.tag_list = ActsAsTaggableOn::TagList.new(tags)
+    tags = ([] + (props[:tags] || []) + [props[:feed]] + [props[:type]] + [props[:category]])
+    tags += ([] + (meta[:tags] || []) + [meta[:feed]] + [meta[:type]] + [meta[:category]])
+    self.tag_list = ActsAsTaggableOn::TagList.new(tags.uniq)
     self
   end
 

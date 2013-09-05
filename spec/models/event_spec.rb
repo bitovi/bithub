@@ -189,7 +189,7 @@ describe Event do
         event = build(:event_wo_tags)
         event.determine_tags_from_meta.save!
         tags = Tag.find_or_create_all_with_like_by_name(['some_feed','some_category','some_content_tag'])
-        event.tags.should =~(tags)        
+        event.tags.should =~ tags
       end
     end
 
