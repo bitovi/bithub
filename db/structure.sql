@@ -281,6 +281,40 @@ CREATE TABLE leaderboard (
 
 
 --
+-- Name: rewards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE rewards (
+    id integer NOT NULL,
+    title character varying(255),
+    description text,
+    point_minimum integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    image character varying(255)
+);
+
+
+--
+-- Name: rewards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE rewards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: rewards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -502,6 +536,39 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
+-- Name: users_rewards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users_rewards (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    reward_id integer NOT NULL,
+    note character varying(255),
+    achieved timestamp without time zone,
+    shipped timestamp without time zone
+);
+
+
+--
+-- Name: users_rewards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE users_rewards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_rewards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE users_rewards_id_seq OWNED BY users_rewards.id;
+
+
+--
 -- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -557,6 +624,13 @@ ALTER TABLE ONLY internals ALTER COLUMN id SET DEFAULT nextval('internals_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY rewards ALTER COLUMN id SET DEFAULT nextval('rewards_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
 
 
@@ -593,6 +667,13 @@ ALTER TABLE ONLY upvotes ALTER COLUMN id SET DEFAULT nextval('upvotes_id_seq'::r
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users_rewards ALTER COLUMN id SET DEFAULT nextval('users_rewards_id_seq'::regclass);
 
 
 --
@@ -641,6 +722,14 @@ ALTER TABLE ONLY identities
 
 ALTER TABLE ONLY internals
     ADD CONSTRAINT internals_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rewards
+    ADD CONSTRAINT rewards_pkey PRIMARY KEY (id);
 
 
 --
@@ -700,10 +789,18 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_events_on_origin_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: users_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_events_on_origin_date ON events USING btree (origin_date);
+ALTER TABLE ONLY users_rewards
+    ADD CONSTRAINT users_rewards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_events_on_thread_updated_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_events_on_thread_updated_date ON events USING btree (thread_updated_date);
 
 
 --
@@ -874,6 +971,22 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: fk_users_rewards_rewards; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users_rewards
+    ADD CONSTRAINT fk_users_rewards_rewards FOREIGN KEY (reward_id) REFERENCES rewards(id);
+
+
+--
+-- Name: fk_users_rewards_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users_rewards
+    ADD CONSTRAINT fk_users_rewards_users FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -924,3 +1037,13 @@ INSERT INTO schema_migrations (version) VALUES ('20130618110729');
 INSERT INTO schema_migrations (version) VALUES ('20130716113111');
 
 INSERT INTO schema_migrations (version) VALUES ('20130723090829');
+
+INSERT INTO schema_migrations (version) VALUES ('20130726125946');
+
+INSERT INTO schema_migrations (version) VALUES ('20130805155441');
+
+INSERT INTO schema_migrations (version) VALUES ('20130805160253');
+
+INSERT INTO schema_migrations (version) VALUES ('20130905102324');
+
+INSERT INTO schema_migrations (version) VALUES ('20130905102701');
