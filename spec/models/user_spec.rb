@@ -91,6 +91,17 @@ describe User do
     end
   end
 
+  describe "#reward_if_eligible" do
+    it "creates an achievement for the user if he has enough points" do
+      author = create(:user, name: "Nikica")
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      reward = Reward.create({title: "A snake!", point_minimum: 154})
+
+      author.reward_if_eligible
+      author.rewards.should =~ [reward]
+    end
+  end
+
   describe "#collect_authored_events" do
     it "collects all events with matching props -> origin_author_id" do
       user = build(:user, name: 'Floppy', email: 'floppy@qua.wat')

@@ -129,6 +129,13 @@ class User < ActiveRecord::Base
     self.props['avatar_url'] = url
   end
 
+  def reward_if_eligible
+    if r = Reward.find_qualified_for(self)
+      rewards << r
+      save
+    end
+  end
+
   # For casting the virtual column
   def total_score
     ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])

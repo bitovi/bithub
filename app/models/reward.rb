@@ -6,5 +6,9 @@ class Reward < ActiveRecord::Base
 
   has_many :achievements
   has_many :users, :through => :achievements
+  
+  def self.find_qualified_for(user)
+    where("point_minimum < ?", user.score).order('point_minimum desc').first
+  end
 
 end

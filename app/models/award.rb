@@ -9,14 +9,17 @@ class Award < ActiveRecord::Base
   validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only award once" }
   validate :thread_not_already_awarded
 
-  def self.create_with_strategy(author, event, opts = {})
+  def self.create_with_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
 
     if opts[:strategy] == :double_the_upvotes
-      Award.create!({actor: author, applies_to: event, value: Award.double_upvote_value(event)})
+      award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
     elsif opts[:strategy] == :based_on_rule
-      Award.create!({actor: author, applies_to: event, value: Award.total_value(event)})
+      award = Award.create!({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
     end
+
+    applies_to.author.reward_if_eligible if applies_to.author
+    award
   end
 
   def self.double_upvote_value(event)
