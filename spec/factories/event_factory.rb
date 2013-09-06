@@ -1,3 +1,31 @@
+push_event_payload = {
+    push_id: 223206323,
+    size: 2,
+    distinct_size: 2,
+    ref: "refs/heads/canComponent",
+    head: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
+    before: "5068c01920cf40e7af1536a6adf8457a3f10ef67",
+    commits: [{
+      sha: "b824b74af1eb7fe33304b80c4f7ab9b5a050090f",
+      author: {
+        email: "justinbmeyer@gmail.com",
+        name: "Justin Meyer"
+      },
+      message: "all tests pass in FF and Chrome in for all libraries",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/b824b74af1eb7fe33304b80c4f7ab9b5a050090f"
+    }, {
+      sha: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
+      author: {
+        email: "neektza@gmail.com",
+        name: "Nikica Jokic"
+      },
+      message: "started documenting components",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/ae8c72c7e1d0639117dee0bc46cab0a741dc442d"
+    }]
+}
+
 FactoryGirl.define do
 
   factory :meta, class:Hash do

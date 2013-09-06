@@ -93,9 +93,11 @@ class Event < ActiveRecord::Base
   def whole_chain
     pluck_props
     determine_all_from_meta
-    process_forums
-    process_github
-    process_twitter
+    ActiveRecord::Base.transaction do
+      process_forums
+      process_github
+      process_twitter
+    end
     self
   end
 
@@ -199,6 +201,7 @@ class Event < ActiveRecord::Base
       # push
       if tag_list.include?('push_event')
         props[:commits] = meta[:commits]
+        #split_push_event_to_commits
         group_push_event
       end
 
@@ -353,6 +356,12 @@ class Event < ActiveRecord::Base
     self
   end
 
+  def split_push_event_to_commits
+    source_data[:payload][:commits].map do |c|
+      Event.new_from_crawler(*Event.prepare_commit(c, self))
+    end
+  end
+
   def group_issue_comment
     if issues_event = Event.parent_issues_event(props[:issue_id])
       self.parent = issues_event
@@ -438,6 +447,16 @@ class Event < ActiveRecord::Base
 
   def self.other_retweet(retweeted_id)
     Event.find_tweet_by_tweet_id(retweeted_id)
+  end
+
+  def self.prepare_commit(commit_hash, push_event)
+    [{
+      title: commit_hash[:message],
+      origin_ts: push_event.origin_ts,
+      props: { author_email: commit_hash[:author][:email] }
+    },
+      push_event[:props]
+    ]
   end
 
   def self.clean_args_after_determination!(args)

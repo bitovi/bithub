@@ -234,7 +234,12 @@ describe Event do
       end
     end
 
+    describe "#split_push_event_to_commits" do
+      it "should create a number of commits equal to length of the commits hash"
+    end
+
     describe "#process_github" do
+
       context "when grouping issue comments" do
         before :each do
           @issue = build(:github_issue)
