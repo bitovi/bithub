@@ -7,7 +7,7 @@ Bithub::Application.routes.draw do
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
-  namespace :api, :defaults => { :formats => [:json] } do
+  namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'auth/session_info#current_session'
 
     resources :events, :except => [:new, :edit] do
@@ -40,7 +40,6 @@ Bithub::Application.routes.draw do
     end
     
     resources :rewards
-    resources :achievements, :only => [:index, :create, :update, :destroy]
     resources :countries, :only => :index
 
     root :to => "api#home"
