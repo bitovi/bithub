@@ -50,7 +50,7 @@ class Api::RewardsController < Api::ApiController
   # --------------
 
   def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
+    @logic_analyzer ||= QueryLogicAnalyzer.new(Reward)
   end
 
   def scope_applier
