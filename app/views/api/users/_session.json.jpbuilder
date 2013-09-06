@@ -1,4 +1,4 @@
-json.(user, :id, :name, :email, :address, :city, :postal, :country, :activities, :achievements, :identities, :roles)
+json.(user, :id, :name, :email, :address, :city, :postal, :state, :country, :activities, :achievements, :identities, :roles)
 
 json.score user.score
 json.avatar_url user.props['avatar_url']
