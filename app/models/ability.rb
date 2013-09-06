@@ -12,6 +12,7 @@ class Ability
       can :create_upvote, Upvote
       can :create_anteup, Anteup
       cannot :create_award, Award
+      cannot :read, Achievement
     end
   end
 end
