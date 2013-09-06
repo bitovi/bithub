@@ -24,8 +24,11 @@ class Api::AchievementsController < Api::ApiController
 
   def update
     authorize! :manage, Achievement, :message => "No rights to manage achievements."
+
     @achievement = Achievement.find(params[:id])
-    if @achievement.update_attributes(params[:chievement])
+    filtered_params = params.select {|param| Achievement.accessible_attributes.include?(param)}
+
+    if @achievement.update_attributes(filtered_params)
       render :show
     else
       render :json => msg_hash(@achievement, 'update'), :status => 406
