@@ -3,11 +3,11 @@ class Achievement < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :reward
+  validate :user_id, :uniqueness => { :scope => :reward_id }
 
-  after_initialize :init
+  after_create :set_timestamp
 
-  def init
-    self.achieved_at = Time.now()
+  def set_timestamp
+    self.update_attribute(:achieved_at, Time.now)
   end
-
 end
