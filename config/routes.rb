@@ -40,21 +40,10 @@ Bithub::Application.routes.draw do
     end
     
     resources :rewards
+    resources :achievements
     resources :countries, :only => :index
 
     root :to => "api#home"
-  end
-
-  # NEEDS TO BE BELOW ALL API ROUTES !!!
-  namespace :admin do
-    resources :users do
-      resources :activities, only: [:destroy]
-    end
-    resources :events
-    resources :tags
-    resources :rules
-    resources :countries
-    root :to => "rules#index"
   end
 
   root :to => "api#home"
