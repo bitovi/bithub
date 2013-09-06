@@ -1,0 +1,5 @@
+json.set! :data do 
+  json.array! @achievements do |act|
+    json.partial! "api/achievements/achievement", achievement: a
+  end
+end

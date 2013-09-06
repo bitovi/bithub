@@ -1,0 +1,1 @@
+json.(achievement, :id, :user, :reward, :shipped_at, :achieved_at)
