@@ -148,7 +148,9 @@ FactoryGirl.define do
         association :category, factory: :tag, name: "code"
         tag_list ['github', 'push_event', 'code', 'canjs']
 
-        sd_map = { payload: push_event_payload }
+        sd_map = {
+          # payload: push_event_payload
+        }
         source_data sd_map
 
         meta({
