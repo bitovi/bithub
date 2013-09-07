@@ -6,20 +6,20 @@ FactoryGirl.define do
 
     trait :with_both_idents do
       after :build do |user|
-        FactoryGirl.create(:identity, user: user, provider: 'github', uid: 123456789)
-        FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
+        user.identities << FactoryGirl.build(:identity, user: user, provider: 'github', uid: 123456789)
+        user.identities << FactoryGirl.build(:identity, user: user, provider: 'twitter', uid: 987654321)
       end
     end
     
     trait :with_twitter_ident do
       after :build do |user|
-        FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
+        user.identities << FactoryGirl.build(:identity, user: user, provider: 'twitter', uid: 987654321)
       end
     end
     
     trait :with_github_ident do
       after :build do |user|
-        FactoryGirl.create(:identity, user: user, provider: 'github', uid: 123456789)
+        user.identities << FactoryGirl.build(:identity, user: user, provider: 'github', uid: 123456789)
       end
     end
 

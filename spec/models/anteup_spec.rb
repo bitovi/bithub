@@ -4,7 +4,8 @@ describe Anteup do
 
   before :each do
     @actor = create(:user, name: "Some user")
-    @event = create(:event_determined)
+    @event = create(:event_determined, title: "Event in anteup_spec, before each")
+
     @anteup = Anteup.create_anteup(@actor, @event, 76)
   end
 

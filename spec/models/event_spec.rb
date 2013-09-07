@@ -3,9 +3,8 @@ require 'digest/md5'
 
 describe Event do
   context "upon creation" do
-    before :each do
-      create(:rule)
-    end
+    before(:all) { @default_rule = create(:rule) }
+    after(:all) { @default_rule.destroy }
 
     describe "#initialize" do
       it "sets event id from DB sequence before saving" do
@@ -24,14 +23,9 @@ describe Event do
     end
 
     describe ".select_with_upvotes" do
-      before :all do
-        @event = create(:event_determined, title: "Something happen")
+      before :each do
+        @event = create(:event_determined, rule: @default_rule, title: "Event in event_spec, testing .select_with_upvotes.")
         @user = create(:user, name: "Nikica")
-      end
-
-      after :all do
-        @event.destroy
-        @user.destroy
       end
 
       it "gets upvotes as an Integer" do
@@ -44,6 +38,7 @@ describe Event do
         ev = Event.where(id: @event.id).select_with_upvotes.first
         expect(ev.total_upvotes).to eq(1)
       end
+
     end
 
     describe "#new_from_bithub" do
@@ -322,7 +317,7 @@ describe Event do
     end
 
     describe "#cache_key" do
-      before(:each) { @event = create(:event_determined, title: "This one is for testing the cache_key", updated_at: nil, thread_updated_ts: nil) }
+      before(:each) { @event = create(:event_determined, title: "Event in event_spec, testing #cache_key", updated_at: nil, thread_updated_ts: nil) }
 
       it "uses the id and the updated_at timestamp when it is present" do
         expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}"

@@ -5,7 +5,7 @@ describe Reward do
     @author = create(:user, name: "Nikica")
     @actor = create(:user, name: "Veljko")
     @rule = create(:rule, upvote_value: 155)
-    @event = create(:event_determined, rule: @rule, author: @author)
+    @event = create(:event_determined, rule: @rule, author: @author, title: "Event in reward_spec, before each")
     Upvote.create_based_on_rule(@actor, @event)
   end
 
