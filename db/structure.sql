@@ -209,7 +209,7 @@ CREATE TABLE events (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     image character varying(255),
-    thread_updated_at timestamp without time zone,
+    thread_updated_ts timestamp without time zone,
     thread_updated_date date
 );
 
@@ -990,6 +990,8 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
+SET search_path TO "$user",public;
+
 INSERT INTO schema_migrations (version) VALUES ('20130126192030');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226163527');
@@ -1047,5 +1049,7 @@ INSERT INTO schema_migrations (version) VALUES ('20130805160253');
 INSERT INTO schema_migrations (version) VALUES ('20130905102324');
 
 INSERT INTO schema_migrations (version) VALUES ('20130905102701');
+
+INSERT INTO schema_migrations (version) VALUES ('20130905120435');
 
 INSERT INTO schema_migrations (version) VALUES ('20130905142638');
