@@ -18,7 +18,7 @@ namespace :db do
     environment_database = @environment_info['database']
     dbhost = @environment_info['host']
 
-    run "pg_dump -W -Fc -c -U #{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out |
+    run "pg_dump --format=c --password --username=#{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out|
       ch.send_data "#{dbpass}\n" if out=~ /^Password:/
     end
   end
@@ -45,7 +45,7 @@ namespace :db do
     else
       dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
       backup_path = File.join(db_backups_path, version + '.backup')
-      run("pg_restore -c -d #{dbname} #{backup_path}")
+      run("pg_restore --clean --dbname=#{dbname} #{backup_path}")
     end
   end
 
@@ -74,15 +74,15 @@ namespace :db do
   desc "Sync staging with production"
   task :sync_with_prod, :roles => :db, :only => {:primary => true} do
     dbname = 'bithub_staging' unless dbname
-    run "pg_dump -Fc -c -w -h 69.164.216.88 bithub | pg_restore -c -n public -d bithub_staging"
+    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --clean --schema=public --dbname=bithub_staging"
   end
 
   task :pass_var, :roles => :db, :only => {:primary => true} do
     puts "#{foobar}"
   end
 
-  desc "Sync local db"
-  task :sync_local_db, :roles => :db, :only => {:primary => true} do
+  desc "Pull production db"
+  task :pull, :roles => :db, :only => {:primary => true} do
 
     # create backup to /tmp/
     set :db_backups_path, '/tmp/'
@@ -102,8 +102,9 @@ namespace :db do
       restore_db = local_db
     end
 
-    # restore to local db
-    run_locally "pg_restore -Fc -c -n public -d #{restore_db} #{dest}"
+    run_locally "dropdb --if-exists #{restore_db}"
+    run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
+    run_locally "pg_restore --clean --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
   end
 
 end
