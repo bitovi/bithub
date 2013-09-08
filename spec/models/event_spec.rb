@@ -38,7 +38,6 @@ describe Event do
         ev = Event.where(id: @event.id).select_with_upvotes.first
         expect(ev.total_upvotes).to eq(1)
       end
-
     end
 
     describe "#new_from_bithub" do
