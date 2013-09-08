@@ -8,8 +8,7 @@ class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :tag_list,
-    :origin_ts, :thread_updated_ts,
-    :origin_date, :thread_updated_date,
+    :origin_date, :origin_ts, :thread_updated_at,
     :created_at, :updated_at,
     :props, :source_data, :image
 
@@ -61,7 +60,7 @@ class Event < ActiveRecord::Base
     event.hash_key              = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
     event.origin_ts             = now.utc
     event.origin_date           = now.utc.to_date
-    event.thread_updated_ts     = now.utc
+    event.thread_updated_at     = now.utc
     event.thread_updated_date   = now.utc.to_date
     event.image                 = args[:image]
     event.props[:location]      = args[:location] if args[:location]
@@ -253,7 +252,7 @@ class Event < ActiveRecord::Base
   end
 
   def update_thread_attrs(ts)
-    self.update_attribute(:thread_updated_ts, ts)
+    self.update_attribute(:thread_updated_at, ts)
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
@@ -282,7 +281,7 @@ class Event < ActiveRecord::Base
     case
     when new_record?
       "#{self.class.model_name.cache_key}/new"
-    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_ts])
+    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_at])
       event_updated_utc = event_updated.utc.to_s(:number)
       thread_updated_utc = thread_updated.utc.to_s(:number)
       "#{self.class.model_name.cache_key}/#{id}-#{event_updated_utc}-#{thread_updated_utc}"
