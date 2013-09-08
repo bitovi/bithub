@@ -990,6 +990,8 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
+SET search_path TO "$user",public;
+
 INSERT INTO schema_migrations (version) VALUES ('20130126192030');
 
 INSERT INTO schema_migrations (version) VALUES ('20130226163527');

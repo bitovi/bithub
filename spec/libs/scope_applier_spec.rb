@@ -32,7 +32,7 @@ describe ScopeApplier do
     it 'should apply regular filtering params to the scope' do
       scope_to_test = Event.scoped; params = { id: '1', title: 'Whats up?'}
       scope_to_test = @scope_applier.apply_regular_params_to_scope(scope_to_test, params)
-      expect(scope_to_test.where_values_hash).to eq({id: '1', title: 'Whats up?'})
+      expect(scope_to_test.where_values_hash).to eq({'id' => '1', 'title' => 'Whats up?'})
     end
   end
   

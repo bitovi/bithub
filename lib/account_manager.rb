@@ -4,12 +4,11 @@ module AccountManager
 
     identity = find_or_create_identity(oauth_data)
 
-    case
-    when current_user
+    if current_user
       user = current_user
       user.update_blank_oauth_attrs!({name: name, email: email})
       user.merge_identities!(identity)
-    when identity.has_assigned_user?
+    elsif identity.has_assigned_user?
       user = identity.user
     else
       user = identity.create_user({name: name, email: email})

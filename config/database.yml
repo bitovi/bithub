@@ -2,18 +2,15 @@ development:
   adapter: postgresql
   encoding: utf8
   database: bithub_development
-  pool: 5
   username: bithub
   password: negativ1Q
-  host: localhost
-  port: 5432
 
 test:
   adapter: postgresql
   encoding: unicode
   database: bithub_test
-  username: postgres
-  host: localhost
+  username: bithub
+  password: negativ1Q
 
 staging:
   adapter: postgresql

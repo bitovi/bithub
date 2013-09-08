@@ -8,8 +8,7 @@ class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :tag_list,
-    :origin_ts, :thread_updated_ts,
-    :origin_date, :thread_updated_date,
+    :origin_date, :origin_ts, :thread_updated_at,
     :created_at, :updated_at,
     :props, :source_data, :image
 
@@ -19,12 +18,11 @@ class Event < ActiveRecord::Base
   mount_uploader :image, EventImageUploader
 
   belongs_to :parent, :class_name => "Event"
-  has_many :children, :foreign_key => "parent_id", :class_name => "Event"
-
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
+  has_many :children, :foreign_key => "parent_id", :class_name => "Event"
   has_many :upvotes, :foreign_key => "applies_to_id"
   has_many :anteups, :foreign_key => "applies_to_id"
   has_many :awards, :foreign_key => "applies_to_id"
@@ -38,18 +36,17 @@ class Event < ActiveRecord::Base
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
-
   scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from events)") }
   scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from events)") }
-
   scope :only_parents, lambda { where("id IN (SELECT parent_id from events WHERE parent_id IS NOT NULL)") }
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
-
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
-
   scope :with_state, lambda {|state| where("props -> 'state' = :val", val: state) }
 
+  after_create do
+    author.reward_if_eligible if author
+  end
   
   def self.new_from_crawler(args = {}, meta)
     ev = self.new(args)
@@ -63,7 +60,7 @@ class Event < ActiveRecord::Base
     event.hash_key              = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
     event.origin_ts             = now.utc
     event.origin_date           = now.utc.to_date
-    event.thread_updated_ts     = now.utc
+    event.thread_updated_at     = now.utc
     event.thread_updated_date   = now.utc.to_date
     event.image                 = args[:image]
     event.props[:location]      = args[:location] if args[:location]
@@ -258,7 +255,7 @@ class Event < ActiveRecord::Base
   end
 
   def update_thread_attrs(ts)
-    self.update_attribute(:thread_updated_ts, ts)
+    self.update_attribute(:thread_updated_at, ts)
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
@@ -287,7 +284,7 @@ class Event < ActiveRecord::Base
     case
     when new_record?
       "#{self.class.model_name.cache_key}/new"
-    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_ts])
+    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_at])
       event_updated_utc = event_updated.utc.to_s(:number)
       thread_updated_utc = thread_updated.utc.to_s(:number)
       "#{self.class.model_name.cache_key}/#{id}-#{event_updated_utc}-#{thread_updated_utc}"

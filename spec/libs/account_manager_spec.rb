@@ -18,11 +18,11 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
 
     context "when user is already logged_in (current_user exists)" do
-      it "assigns the found identity to the current_user if it isn't already" do
-        user_with_only_gihub = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
-        user_with_only_gihub.save!
+      it "assigns the found identity to the current_user if it isn't already assigned" do
+        user_with_only_github = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
+        user_with_only_github.save!
 
-        user_with_both_idents = AccountManager.find_or_create_user('twitter', twitter_oauth_data, user_with_only_gihub)
+        user_with_both_idents = AccountManager.find_or_create_user('twitter', twitter_oauth_data, user_with_only_github)
         tw_ident = Identity.find_by_uid(twitter_oauth_data['uid'])
         gh_ident = Identity.find_by_uid(github_oauth_data['uid'])
 
@@ -32,7 +32,8 @@ describe AccountManager, "creates/finds/syncs accounts" do
       it "destroys the user possibly assigned to the found identity" do
         user_with_only_github = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
         user_with_only_twitter = build(:user_with_twitter_ident, name: "Nikica Jokic")
-        user_with_only_github.save! ; user_with_only_twitter.save!
+        user_with_only_github.save!
+        user_with_only_twitter.save!
 
         user_with_both_idents = AccountManager.find_or_create_user('twitter', twitter_oauth_data, user_with_only_github)
         non_existent_user = User.where(:id => user_with_only_twitter.id).first

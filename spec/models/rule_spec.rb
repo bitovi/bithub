@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Rule do
+
   describe "#best_match" do
 
     context "when given no tags" do
@@ -38,5 +39,7 @@ describe Rule do
         end
       end
     end
+
   end
+
 end

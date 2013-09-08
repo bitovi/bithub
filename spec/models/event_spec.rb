@@ -3,9 +3,8 @@ require 'digest/md5'
 
 describe Event do
   context "upon creation" do
-    before :each do
-      create(:rule)
-    end
+    before(:all) { @default_rule = create(:rule) }
+    after(:all) { @default_rule.destroy }
 
     describe "#initialize" do
       it "sets event id from DB sequence before saving" do
@@ -24,14 +23,9 @@ describe Event do
     end
 
     describe ".select_with_upvotes" do
-      before :all do
-        @event = create(:event_determined, title: "Something happen")
+      before :each do
+        @event = create(:event_determined, rule: @default_rule, title: "Event in event_spec, testing .select_with_upvotes.")
         @user = create(:user, name: "Nikica")
-      end
-
-      after :all do
-        @event.destroy
-        @user.destroy
       end
 
       it "gets upvotes as an Integer" do
@@ -314,28 +308,28 @@ describe Event do
     end
 
     describe "#bump_thread" do
-      it "updates the thread_updated_ts attribute for all events in a thread" do
+      it "updates the thread_updated_at attribute for all events in a thread" do
         pe = create(:github_issue, title: "Why is this happening?", origin_ts: Time.now+5)
         ce1 = create(:github_issue_comment, title: "I don't care.", parent: pe, origin_ts: Time.now+10)
         ce2 = create(:github_issue_comment, title: "Wat? Qua?", parent: pe, origin_ts: Time.now+15)
 
         ce2.bump_thread
-        pe.reload.thread_updated_ts.should > pe.origin_ts
-        ce1.reload.thread_updated_ts.should > ce1.origin_ts
-        ce2.reload.thread_updated_ts.should == ce2.origin_ts
+        pe.reload.thread_updated_at.should > pe.origin_ts
+        ce1.reload.thread_updated_at.should > ce1.origin_ts
+        ce2.reload.thread_updated_at.should == ce2.origin_ts
       end
     end
 
     describe "#cache_key" do
-      before(:each) { @event = create(:event_determined, title: "This one is for testing the cache_key", updated_at: nil, thread_updated_ts: nil) }
+      before(:each) { @event = create(:event_determined, title: "Event in event_spec, testing #cache_key", updated_at: nil, thread_updated_at: nil) }
 
       it "uses the id and the updated_at timestamp when it is present" do
         expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}"
       end
 
-      it "uses the id, updated_at and thread_updated_ts timestamps when they are present" do
-        @event.update_attribute(:thread_updated_ts, Time.now)
-        expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}-#{@event.thread_updated_ts.utc.to_s(:number)}"
+      it "uses the id, updated_at and thread_updated_at timestamps when they are present" do
+        @event.update_attribute(:thread_updated_at, Time.now)
+        expect(@event.reload.cache_key).to eq "events/#{@event.id}-#{@event.updated_at.utc.to_s(:number)}-#{@event.thread_updated_at.utc.to_s(:number)}"
       end
     end
   end
