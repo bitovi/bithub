@@ -5,5 +5,5 @@ class Internal < ActiveRecord::Base
   belongs_to :actor, :class_name => "User"
   belongs_to :receiver, :class_name => "User"
 
-  validates :receiver, :actor, :value, :presence => true
+  validates :receiver, :value, :presence => true
 end

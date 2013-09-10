@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   has_many :rewards, :through => :achievements
 
   before_save :calculate_avatar_url
+  after_update :award_points_for_completing_profile
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
@@ -109,9 +110,13 @@ class User < ActiveRecord::Base
 
   def merge_identities!(identity)
     other_user = identity.user if identity.user
-    if !self.identities.include?(identity)
+    unless self.identities.include?(identity)
       self.identities << identity 
-      other_user.destroy if self.save && other_user
+      ActiveRecord::Base.transaction do
+        self.save!
+        other_user.destroy if other_user
+        identity.award_points_for_joining
+      end
     end
   end
 
@@ -127,6 +132,22 @@ class User < ActiveRecord::Base
     url = gravatar_url if not gravatar_url.blank?
 
     self.props['avatar_url'] = url
+  end
+
+  def award_points_for_completing_profile
+    if all_relevant_fields_filled? && not_already_awarded_for_profile_completion?
+      Internal.create!({receiver: self, value: 1, comment: "Completed profile."})
+    else
+      false
+    end
+  end
+
+  def not_already_awarded_for_profile_completion?
+    Internal.where("receiver_id = ? AND comment = ?", self.id, "Completed profile.").blank?
+  end
+
+  def all_relevant_fields_filled?
+    name.present? && email.present? && address.present? && city.present? && postal.present? && country_id.present?
   end
 
   def reward_if_eligible

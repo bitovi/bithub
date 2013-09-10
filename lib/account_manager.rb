@@ -11,8 +11,11 @@ module AccountManager
     elsif identity.has_assigned_user?
       user = identity.user
     else
-      user = identity.create_user({name: name, email: email})
-      identity.save!
+      user = identity.build_user({name: name, email: email})
+      ActiveRecord::Base.transaction do
+        identity.save!
+        identity.award_points_for_joining
+      end
       user.collect_authored_events
     end
 
