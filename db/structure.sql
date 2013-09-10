@@ -271,7 +271,7 @@ ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 CREATE TABLE internals (
     id integer NOT NULL,
-    actor_id integer NOT NULL,
+    actor_id integer,
     receiver_id integer NOT NULL,
     applies_to_id integer,
     value integer,
@@ -1051,3 +1051,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130905102324');
 INSERT INTO schema_migrations (version) VALUES ('20130905102701');
 
 INSERT INTO schema_migrations (version) VALUES ('20130905142638');
+
+INSERT INTO schema_migrations (version) VALUES ('20130910111148');
