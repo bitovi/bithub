@@ -5,8 +5,8 @@ class Award < ActiveRecord::Base
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
 
-  validates :applies_to_id, :actor_id, :presence => true  
-  validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only award once" }
+  validates_presence_of :applies_to_id, :actor_id
+  validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only award once"
   validate :thread_not_already_awarded
 
   def self.create_with_strategy(actor, applies_to, opts = {})

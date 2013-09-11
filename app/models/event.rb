@@ -27,8 +27,8 @@ class Event < ActiveRecord::Base
   has_many :anteups, :foreign_key => "applies_to_id"
   has_many :awards, :foreign_key => "applies_to_id"
 
-  validates :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title, :presence => true
-  validates :hash_key, :uniqueness => true
+  validates_presence_of :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title
+  validates_uniqueness_of :hash_key
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON

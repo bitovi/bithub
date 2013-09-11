@@ -3,7 +3,8 @@ class Achievement < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :reward
-  validate :user_id, :uniqueness => { :scope => :reward_id }
+  validates_uniqueness_of :user_id, :scope => :reward_id
+  
 
   after_create :set_timestamp
 

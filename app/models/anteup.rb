@@ -4,7 +4,7 @@ class Anteup < ActiveRecord::Base
   attr_accessible :actor, :applies_to, :value, :fullfilled
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
-  validates :applies_to_id, :actor_id, :presence => true
+  validates_presence_of :applies_to_id, :actor_id
   scope :fullfilled, where(:fullfilled => true)
 
   def self.create_anteup(actor, event, value=25)
