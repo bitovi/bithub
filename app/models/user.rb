@@ -151,8 +151,9 @@ class User < ActiveRecord::Base
   end
 
   def reward_if_eligible
-    if r = Reward.find_qualified_for(self)
-      rewards << r
+    if rs = Reward.find_all_qualified_for(self)
+      not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
+      rewards << not_already_achieved_rewards
       save
     end
   end
