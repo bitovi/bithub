@@ -1,6 +1,6 @@
 FactoryGirl.define do
 
-  factory :meta, class:Hash do
+  factory :props, class:Hash do
     feed "some_feed"
     category "some_category"
     tags ['some_feed','some_category','some_content_tag']
@@ -16,7 +16,7 @@ FactoryGirl.define do
     origin_date Date.today
     origin_ts Time.now
     sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }
-    meta FactoryGirl.build(:meta)
+    props FactoryGirl.build(:props)
 
     trait :with_determined_feed do
       association :feed, factory: :tag, name: "some_feed"
@@ -79,7 +79,7 @@ FactoryGirl.define do
 
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
-        meta({
+        props({
           :feed => 'twitter',
           :tweet_id => "100",
           :type => "status_event",
@@ -90,7 +90,7 @@ FactoryGirl.define do
 
       trait :retweet1 do
         title "RT: A hashtag #canjs and a @canjs mention."
-        meta({
+        props({
           :tweet_id => "101",
           :retweeted_id => "100",
           :type => "status_event"
@@ -99,7 +99,7 @@ FactoryGirl.define do
 
       trait :retweet2 do
         title "RT: A hashtag #canjs and a @canjs mention."
-        meta({
+        props({
           :tweet_id => "102",
           :retweeted_id => "100",
           :type => "status_event"
@@ -122,7 +122,7 @@ FactoryGirl.define do
         body "I'm awesome because I raised an issue."
         association :category, factory: :tag, name: 'bug'
         tag_list ['github','issues_event','issue','canjs','bug']
-        meta({
+        props({
           :feed => 'github',
           :type => "issues_event",
           :issue_id => "111",
@@ -136,7 +136,7 @@ FactoryGirl.define do
         association :category, factory: :tag, name: "comment"
         tag_list ['github','issue_comment_event','comment','canjs']
         sequence(:body) {|n| "Here's a comment no. ##{n} to your issue" }
-        meta({
+        props({
           :type => "issue_comment_event",
           :issue_id => "111"
         })
@@ -153,7 +153,7 @@ FactoryGirl.define do
         }
         source_data sd_map
 
-        meta({
+        props({
           :type => "push_event",
           :feed => "github",
           :commits => "3sdaf4s,43a2aa8,295aa54",
@@ -166,7 +166,7 @@ FactoryGirl.define do
         body "This is an awesome comment"
         association :category, factory: :tag, name: "comment"
         tag_list ['github','commit_comment_event','comment','canjs']
-        meta({
+        props({
           :type => "commit_comment_event",
           :commit_id => "43a2aa8",
         })
@@ -177,7 +177,7 @@ FactoryGirl.define do
         body "This is an awesome comment"
         association :category, factory: :tag, name: "comment"
         tag_list ['github','commit_comment_event','comment','canjs']
-        meta({
+        props({
           :type => "commit_comment_event",
           :commit_id => "295aa54",
         })

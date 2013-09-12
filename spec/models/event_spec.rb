@@ -65,16 +65,16 @@ describe Event do
       end
 
       it "calculates the hash key" do
-        expect(ev.hash).to be
+        expect(ev.hash.class).to be
       end
 
-      it "sets the origin_date" do
-        expect(ev.origin_date).to be
-      end
-
-      it "sets the origin_ts" do
+      it "sets the origin and thread timestamps" do
         expect(ev.origin_ts).to be
+        expect(ev.origin_date).to be
+        expect(ev.thread_updated_at).to be
+        expect(ev.thread_updated_date).to be
       end
+
     end
 
     describe "#update_from_bithub" do
@@ -84,15 +84,15 @@ describe Event do
       end
 
       it "re-determines the feed" do
-        expect(@ev.feed).to eq(Event.determine_feed(updated_args[:feed]))
+        expect(@ev.feed).to eq(Tag.find_by_name(updated_args[:feed]))
       end
 
       it "re-determines the category" do
-        expect(@ev.category).to eq(Event.determine_category(updated_args[:category]))
+        expect(@ev.category).to eq(Tag.find_by_name(updated_args[:category]))
       end
 
       it "re-determines tags" do
-        expect(@ev.tag_list).to eq(Event.determine_tags(only_tags(updated_args)))
+        @ev.tag_list.should =~ only_tags(updated_args)
       end
     end
 
@@ -118,70 +118,37 @@ describe Event do
       end
     end
 
-    describe ".determine_feed" do
-      it "determines a feed using the name of the feed" do
-        feed = Event.determine_feed("some_feed")
-        tag_feed = Tag.find_by_name("some_feed")
-        expect(feed).to eq(tag_feed)
-      end
-    end
-    
-    describe ".determine_category" do
-      it "determines a category using the name of the category" do
-        category = Event.determine_category("some_category")
-        tag_category = Tag.find_by_name("some_category")
-        expect(category).to eq(tag_category)
-      end
-    end
-    
-    describe ".determine_rule" do
-      it "determines a rule using an array of tags" do
-        rule = Event.determine_rule(['some_feed','some_category','some_project'])
-        tag_rule = Rule.best_match(['some_feed','some_category','some_project'])
-        expect(rule).to eq(tag_rule)
-      end
-    end
-
-    describe ".determine_author" do
-      it "determines the author based on origin_author_id and origin_author_feed attributes" do
-        user = create(:user, name: 'Nikica Jokic')
-        ident = create(:identity, uid: 123456789, provider: 'bithub', user: user)
-        author = Event.determine_author('bithub', 123456789)
-        expect(author).to eq(user)
-      end
-    end
-
-    describe "#determine_feed_from_meta" do
+    describe "#determine_feed" do
       it "determines a feed" do
         event = build(:event_wo_feed)        
-        event.determine_feed_from_meta.save!
-        feed = Tag.find_by_name(event.meta[:feed])
+        event.determine_feed.save!
+        feed = Tag.find_by_name(event.props['feed'])
         expect(event.feed).to eq(feed)
       end
     end
 
-    describe "#determine_category_from_meta" do
+    describe "#determine_category" do
       it "determines a category" do
         event = build(:event_wo_category)        
-        event.determine_category_from_meta.save!
-        category = Tag.find_by_name(event.meta[:category])
+        event.determine_category.save!
+        category = Tag.find_by_name(event.props['category'])
         expect(event.category).to eq(category)
       end
     end
 
-    describe "#determine_rule_from_meta" do
+    describe "#determine_rule" do
       it "determines a rule" do
         event = build(:event_wo_rule)        
-        event.determine_rule_from_meta.save!
-        rule = Rule.best_match(event.meta[:tags])
+        event.determine_rule.save!
+        rule = Rule.best_match(event.props[:tags])
         expect(event.rule).to eq(rule)
       end
     end
 
-    describe "#determine_tags_from_meta" do
+    describe "#determine_tags" do
       it "determines tags" do
         event = build(:event_wo_tags)
-        event.determine_tags_from_meta.save!
+        event.determine_tags.save!
         tags = Tag.find_or_create_all_with_like_by_name(['some_feed','some_category','some_content_tag'])
         event.tags.should =~ tags
       end
@@ -196,39 +163,39 @@ describe Event do
         end
         it "associates it with a github event" do
           ghe = build(:github_issue)
-          ghe.determine_author_from_meta.save!
+          ghe.determine_author.save!
           expect(ghe.author).to eq(@usr)
         end
         it "associates it with a twitter event" do
           twe = build(:twitter_tweet)
-          twe.determine_author_from_meta.save!
+          twe.determine_author.save!
           expect(twe.author).to eq(@usr)
         end
       end
     end
 
-    describe "#process_forums" do
+    describe "#group_forums" do
       before :each do
         @starter = build(:forum_thread_starter)
         @reply1 = build(:forum_child)
         @reply2 = build(:forum_child)
       end
       it "groups a thread starter with 2 replies" do
-        @reply1.process_forums.save!
-        @starter.process_forums.save!
-        @reply2.process_forums.save!
+        @reply1.group_forums.save!
+        @starter.group_forums.save!
+        @reply2.group_forums.save!
         expect(@starter.reload.children.count).to eql(2)
         expect(@reply1.reload.parent_id).to eql(@starter.id)
         expect(@reply2.reload.parent_id).to eql(@starter.id)
       end
       it "groups replies without a thread starter" do
-        @reply1.process_forums.save!
-        @reply2.process_forums.save!
+        @reply1.group_forums.save!
+        @reply2.group_forums.save!
         expect(@reply1.children.count).to eql(1)
       end
     end
 
-    describe "#process_github" do
+    describe "#group_github" do
       context "when grouping issue comments" do
         before :each do
           @issue = build(:github_issue)
@@ -236,16 +203,16 @@ describe Event do
           @issue_comment2 = build(:github_issue_comment)
         end
         it "groups issue comments with an issue" do
-          @issue_comment1.process_github.save!
-          @issue.process_github.save!
-          @issue_comment2.process_github.save!
+          @issue_comment1.group_github.save!
+          @issue.group_github.save!
+          @issue_comment2.group_github.save!
           expect(@issue.reload.children.count).to eql(2)
           expect(@issue_comment1.reload.parent_id).to eql(@issue.id)
           expect(@issue_comment2.reload.parent_id).to eql(@issue.id)
         end
         it "groups comments when there is no issue" do
-          @issue_comment1.process_github.save!
-          @issue_comment2.process_github.save!
+          @issue_comment1.group_github.save!
+          @issue_comment2.group_github.save!
           expect(@issue_comment2.reload.parent_id).to eql(@issue_comment1.id)        
         end
       end
@@ -256,9 +223,9 @@ describe Event do
           @commit_comment2 = build(:github_commit_comment2, title: "He's right, it does.")
         end
         it "groups a push event with 2 commit comments" do
-          @commit_comment1.process_github.save!
-          @push.process_github.save!
-          @commit_comment2.process_github.save!
+          @commit_comment1.group_github.save!
+          @push.group_github.save!
+          @commit_comment2.group_github.save!
           expect(@push.reload.children.count).to eql(2)
           expect(@commit_comment1.reload.parent_id).to eql(@push.id)
           expect(@commit_comment2.reload.parent_id).to eql(@push.id)
@@ -266,7 +233,7 @@ describe Event do
       end
     end
 
-    describe "#process_twitter" do
+    describe "#group_twitter" do
       context "when grouping (re)tweets" do
         before :each do
           @tweet = build(:twitter_tweet, title: "Hey, check this out, http:///canjs.com")
@@ -274,17 +241,14 @@ describe Event do
           @retweet2 = build(:twitter_retweet2, title: "RT Hey, check this out, http:///canjs.com")
         end
         it "groups a tweet with 2 retweets" do
-          @retweet1.process_twitter.save!
-          @tweet.process_twitter.save!
-          @retweet2.process_twitter.save!
+          @retweet1.group_twitter.save!
+          @tweet.group_twitter.save!
+          @retweet2.group_twitter.save!
           expect(@tweet.reload.children.count).to eql(2)
           expect(@retweet1.reload.parent_id).to eql(@tweet.id)
           expect(@retweet2.reload.parent_id).to eql(@tweet.id)
         end
       end
-    end
-
-    describe "#split_push_event_to_commits" do
     end
 
     describe "#thread" do
@@ -315,6 +279,18 @@ describe Event do
       end
     end
 
+    describe "#clean_props_after_categorization" do
+      it "cleans props from attributes that should't get saved in hstore"
+    end
+
+    describe ".pluck_and_clean_for_bithub" do
+      it "transforms arguments received from bithub-client into stuff for hstore and stuff for filling collumns"
+    end
+
+    describe ".origin_and_thread_to_now" do
+      it "sets thread and origin timestamps to current time"
+    end
+
     describe "#cache_key" do
       before(:each) { @event = create(:event_determined, title: "Event in event_spec, testing #cache_key", updated_at: nil, thread_updated_at: nil) }
 
@@ -331,25 +307,25 @@ describe Event do
 end
 
 def original_args
-  {
+  ActiveSupport::HashWithIndifferentAccess.new({
     title: 'A new event arrives!',
     body: 'Whasaaap?',
     category: 'comment',
     feed: 'github',
     tags: ['issue_comment_event', 'canjs']
-  }
+  })
 end
 
 def updated_args
-  {
+  ActiveSupport::HashWithIndifferentAccess.new({
     title: 'Changed title',
     body: 'Changed body',
     category: 'code',
     feed: 'twitter',
     tags: ['push_event', 'jquerypp']
-  }
+  })
 end
 
 def only_tags(args)
-  Array[args[:category], args[:feed]].concat(args[:tags])
+  ([args[:category], args[:feed]] + args[:tags])
 end
