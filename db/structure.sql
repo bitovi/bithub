@@ -324,7 +324,9 @@ CREATE TABLE rewards (
     point_minimum integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    image character varying(255)
+    image character varying(255),
+    display_point_minimum character varying(255) DEFAULT ''::character varying,
+    disabled_ts timestamp without time zone
 );
 
 
@@ -1053,3 +1055,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130905102701');
 INSERT INTO schema_migrations (version) VALUES ('20130905142638');
 
 INSERT INTO schema_migrations (version) VALUES ('20130910111148');
+
+INSERT INTO schema_migrations (version) VALUES ('20130916130332');
