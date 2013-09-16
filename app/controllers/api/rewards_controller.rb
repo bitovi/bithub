@@ -7,7 +7,7 @@ class Api::RewardsController < Api::ApiController
   rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
-    scope = build_scope(request.env['muster.query']).all
+    scope = build_scope(request.env['muster.query'])
     scope = scope_applier.apply_order_to_scope(scope, params)
     @rewards = scope.all
     render :index
