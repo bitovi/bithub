@@ -16,7 +16,6 @@ require 'sanitize'
 # Ours
 require 'app/handlers'
 require 'lib/string'
-require 'lib/proc'
 require 'lib/hash'
 
 # Connection string
@@ -42,24 +41,24 @@ AMQP.start($mq_cs) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
   channel.fanout("e.events.preproc") do |exchange|
 
-    # --- Streams
-    $log.info "Registering to Twitter's public stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
+    # # --- Streams
+    # $log.info "Registering to Twitter's public stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:public_feed], false)
     
-    $log.info "Registering @canjs user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
+    # $log.info "Registering @canjs user stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:canjs], true)
     
-    $log.info "Registering @jquerypp user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
+    # $log.info "Registering @jquerypp user stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:jquerypp], true)
     
-    $log.info "Registering @funcunit user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
+    # $log.info "Registering @funcunit user stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:funcunit], true)
   
-    $log.info "Registering @javascriptmvc user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
+    # $log.info "Registering @javascriptmvc user stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
     
-    $log.info "Registering @donejs user stream"
-    Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
+    # $log.info "Registering @donejs user stream"
+    # Handler::Twitter.connect($log, exchange, $feeds[:twitter][:streams][:donejs], true)
 
     # --- Pollers
     phase = 1; shift_phase = lambda {phase+=1}
@@ -68,46 +67,46 @@ AMQP.start($mq_cs) do |connection, open_ok|
     $feeds[:github][:events].each do |project, repo|
       EM.add_timer(phase) do
         $log.info "Registering Github handler for \"#{project}\" at \"#{repo[:endpoint]}\""
-        EM.add_periodic_timer(60, &Handler::Github.handler($log, exchange, $feeds[:github][:token], repo[:endpoint]))
+        EM.add_periodic_timer(3, &Handler::Github.handler($log, exchange, $feeds[:github][:token], repo[:endpoint]))
       end
       shift_phase.call
     end
 
-
-    # --- Disqus
-    EM.add_timer(phase) do
-      $log.info "Registering Disqus"
-      EM.add_periodic_timer(15, &Handler::Disqus.handler($log, exchange, $feeds[:disqus][:api_key]))
-    end
-    shift_phase.call
-
-
-    # --- Forums
-    forum_endpoints = {
-      questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
-      all: 'https://forum.javascriptmvc.com/feed'
-    }
-
-    EM.add_timer(phase) do
-      $log.info "Registering Forums"
-      EM.add_periodic_timer(30, &Handler::Forums.handler($log, exchange, forum_endpoints))
-    end
-    shift_phase.call
+    # # --- Disqus
+    # EM.add_timer(phase) do
+    #   $log.info "Registering Disqus"
+    #   EM.add_periodic_timer(15, &Handler::Disqus.handler($log, exchange, $feeds[:disqus][:api_key]))
+    # end
+    # shift_phase.call
 
 
-    # --- Blog
-    EM.add_timer(phase) do
-      $log.info "Registering Blog"
-      EM.add_periodic_timer(300, &Handler::Blog.handler($log, exchange))
-    end
-    shift_phase.call
+    # # --- Forums
+    # forum_endpoints = {
+    #   questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
+    #   all: 'https://forum.javascriptmvc.com/feed'
+    # }
+
+    # EM.add_timer(phase) do
+    #   $log.info "Registering Forums"
+    #   EM.add_periodic_timer(30, &Handler::Forums.handler($log, exchange, forum_endpoints))
+    # end
+    # shift_phase.call
 
 
-    # --- Old community site
-    EM.add_timer(phase) do
-      $log.info "Registering Community site"
-      EM.add_periodic_timer(300, &Handler::CommunitySite.handler($log, exchange))
-    end
-    shift_phase.call
+    # # --- Blog
+    # EM.add_timer(phase) do
+    #   $log.info "Registering Blog"
+    #   EM.add_periodic_timer(300, &Handler::Blog.handler($log, exchange))
+    # end
+    # shift_phase.call
+
+
+    # # --- Old community site
+    # EM.add_timer(phase) do
+    #   $log.info "Registering Community site"
+    #   EM.add_periodic_timer(300, &Handler::CommunitySite.handler($log, exchange))
+    # end
+    # shift_phase.call
+
   end
 end
