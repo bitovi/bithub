@@ -1,8 +1,16 @@
 require 'digest/md5'
 require "#{Rails.root}/app/processors/github.rb"
+VALID_FEEDS_FOR_IDENT = %w(github twitter)
 
 class Event < ActiveRecord::Base
-  VALID_FEEDS_FOR_IDENT = %w(github twitter)
+  extend Finders
+  include Preprocessing
+  include Determination
+  include Grouping
+  include Grouping::TwitterSpecific
+  include Grouping::GithubSpecific
+  include Grouping::ForumsSpecific
+
   class EventHasNoParentError < Error; end
   class DistinctFieldNotKnown < Error; end
 
@@ -12,8 +20,6 @@ class Event < ActiveRecord::Base
     :origin_date, :origin_ts, :thread_updated_at,
     :created_at, :updated_at,
     :props, :source_data, :image
-
-  attr_accessor :meta
 
   acts_as_taggable_on :tags
   mount_uploader :image, EventImageUploader
@@ -28,8 +34,8 @@ class Event < ActiveRecord::Base
   has_many :anteups, :foreign_key => "applies_to_id"
   has_many :awards, :foreign_key => "applies_to_id"
 
-  validates :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title, :presence => true
-  validates :hash_key, :uniqueness => true
+  validates_presence_of :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title
+  validates_uniqueness_of :hash_key
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
@@ -51,188 +57,46 @@ class Event < ActiveRecord::Base
     
   @processor ||= Processors::Github.new({feed: 'github'})
   
-  def self.new_from_crawler(args = {}, meta)
-    ev = self.new(args)
-    ev.meta = meta.symbolize_keys
-    ev.whole_chain
-  end
-
-  def self.new_from_bithub(args)
-    now                         = DateTime.now
-    event                       = self.new
-    event.hash_key              = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-    event.origin_ts             = now.utc
-    event.origin_date           = now.utc.to_date
-    event.thread_updated_at     = now.utc
-    event.thread_updated_date   = now.utc.to_date
-    event.image                 = args[:image]
-    event.props[:location]      = args[:location] if args[:location]
-    event.props[:scheduled_for] = DateTime.parse(args[:datetime]) if args[:datetime] && !args[:datetime].blank?
-    event.determine_all(args)
-    Event.clean_args_after_determination!(args)
-    event.assign_attributes(args)
-    event
-  end
-
-  def self.github_processor
-    @processor
-  end
-
-  def update_from_bithub(args)
-    self.determine_all(args)
-    Event.clean_args_after_determination!(args)
-    self.assign_attributes(args)
-    self.save
-  end
-
-  def self.next_id
-    ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
-  end
 
   def initialize(args = {})
     args[:id] = Event.next_id
     super
   end
 
-  def whole_chain
-    pluck_props
-    determine_all_from_meta
-    ActiveRecord::Base.transaction do
-      process_forums
-      process_github
-      process_twitter
-    end
-    self
+  def self.new_from_crawler(args = {}, meta)
+    ev = self.new(args)
+    ev.to_props(meta).determine.group
   end
 
-  def pluck_props
-    props[:origin_author_name] = meta[:origin_author_name] if meta[:origin_author_name]
-    props[:origin_author_id] = meta[:origin_author_id] if meta[:origin_author_id]
-    props[:image] = meta[:image] if meta[:image]
-    props[:mongo_id] = meta[:mongo_id] if meta[:mongo_id]
+  def self.new_from_bithub(args)
+    event = self.new
+
+    event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+    attrs = event.to_props_and_clean(args)
+    event.determine
+    event.origin_and_thread_timestamps_to_now
+    event.assign_attributes(attrs)
+    event.image = args[:image]
+    event
   end
 
-  def determine_all(args)
-    self.tag_list    = Event.determine_tags(tags_from_args(args))
-    self.feed        = Event.determine_feed(args[:feed])
-    self.category    = Event.determine_category(args[:category])
-    self.rule        = Event.determine_rule(self.tag_list)
-    self.author      = Event.determine_author(args[:origin_author_feed], args[:origin_author_id])
-    self
+  def update_from_bithub(args)
+    attrs = to_props_and_clean(args)
+    determine
+    assign_attributes(attrs)
+    save
   end
 
-  def determine_all_from_meta
-    determine_tags_from_meta
-    determine_feed_from_meta
-    determine_category_from_meta
-    determine_rule_from_meta
-    determine_author_from_meta
-    self
+  def origin_and_thread_timestamps_to_now
+    now                      = DateTime.now
+    self.origin_ts           = now.utc
+    self.origin_date         = now.utc.to_date
+    self.thread_updated_at   = now.utc
+    self.thread_updated_date = now.utc.to_date
   end
 
-  def self.determine_tags(tags)
-    ActsAsTaggableOn::TagList.new(tags)
-  end
-
-  def self.determine_feed(feed_name)
-    Tag.find_by_name(feed_name) || Tag.find_or_create_with_like_by_name(feed_name)
-  end
-
-  def self.determine_category(category_name)
-    Tag.find_by_name(category_name) || Tag.find_or_create_with_like_by_name(category_name)
-  end
-  
-  def self.determine_rule(tags)
-    Rule.best_match(tags)
-  end
-
-  def self.determine_author(provider, uid)
-    ident = Identity.find_or_create_with_provider_and_uid(provider, uid)
-    ident.user
-  end
-
-  def determine_tags_from_meta
-    tags = ([] + (props[:tags] || []) + [props[:feed]] + [props[:type]] + [props[:category]])
-    tags += ([] + (meta[:tags] || []) + [meta[:feed]] + [meta[:type]] + [meta[:category]])
-    self.tag_list = ActsAsTaggableOn::TagList.new(tags.uniq)
-    self
-  end
-
-  def determine_feed_from_meta
-    self.feed = Event.determine_feed(meta[:feed])
-    self
-  end
-
-  def determine_category_from_meta
-    self.category = Event.determine_category(meta[:category])
-    self
-  end
-
-  def determine_rule_from_meta
-    self.rule = Event.determine_rule(meta[:tags])
-    self
-  end
-
-  def determine_author_from_meta
-    props[:origin_author_id] = meta[:origin_author_id]
-    props[:origin_author_username] = meta[:origin_author_username]
-    ident = Identity.find_by_provider_and_uid(meta[:feed], meta[:origin_author_id])
-    self.author = ident.user if ident && ident.user
-    self
-  end
-
-  def process_forums
-    group_forum_reply if tag_list.include?('forums')
-    self
-  end
-
-  def process_github
-    if tag_list.include?('github')
-
-      # issues
-      if tag_list.include?('issues_event')
-        props[:issue_id] = meta[:issue_id]
-        props[:state] = meta[:state]
-        group_issue
-      end
-
-      # issue comments
-      if tag_list.include?('issue_comment_event')
-        props[:issue_id] = meta[:issue_id]
-        group_issue_comment    
-      end
-
-      # push
-      if tag_list.include?('push_event')
-        props[:commits] = meta[:commits]
-        commits = split_push_event_to_commits
-        commits.each {|c| c.save!}
-        group_push_event
-      end
-
-      # commit comments
-      if tag_list.include?('commit_comment_event')
-        props[:commit_id] = meta[:commit_id]
-        group_commit_comment
-      end
-
-    end
-    self
-  end
-
-  def process_twitter    
-    if tag_list.include?('twitter') && tag_list.include?('status_event')
-
-      props[:tweet_id] = meta[:tweet_id]
-      if meta[:retweeted_id]
-        props[:retweeted_id] = meta[:retweeted_id]
-        group_retweet
-      else
-        group_tweet
-      end
-    end
-
-    self
+  def self.next_id
+    ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
   end
 
   def thread
@@ -254,9 +118,6 @@ class Event < ActiveRecord::Base
     activities.concat(self.anteups)
   end
 
-
-  # Thread activity timestamps
-  # --------------------------
   def bump_thread
     latest_origin_ts = self.thread.pluck(:origin_ts).max
     self.thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
@@ -266,7 +127,6 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_at, ts)
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
-
 
   def split_push_event_to_commits
     sd = HashWithIndifferentAccess.new(self.source_data)
@@ -280,8 +140,6 @@ class Event < ActiveRecord::Base
     end
   end
 
-  # Awards & Upvotes
-  # ----------------
   def awarded?
     self.awards.length > 0
   end
@@ -317,147 +175,13 @@ class Event < ActiveRecord::Base
   end
 
   private
-  ### TWITTER methods
-  def group_retweet
-    if orig_tweet = Event.orig_tweet(props[:retweeted_id])
-      self.parent = orig_tweet
-    else
-      self.parent = Event.other_retweet(props[:retweeted_id])
-    end
-    self
-  end
-
-  def group_tweet
-    self.children += Event.collect_retweets_of(props[:tweet_id])
-    self
-  end
-
-  ### FORUMS methods
-  def adopt_children_for_forum_thread_starter
-    thread_url, _ = url.split("#")
-    self.children += Event.find_forum_thread_events_by_url(thread_url)
-    self
-  end
-
-  def group_forum_reply
-    thread_url, _ = url.split('#')
-    replies = Event.find_forum_thread_events_by_url(thread_url).order('origin_ts ASC')
-
-    if replies.length > 0
-      if self.origin_ts > replies.first.origin_ts
-        self.parent_id = replies.first.id
-      else
-        adopt_children_for_forum_thread_starter
-      end
-    end
-    self
-  end
-
-  # GITHUB methods
-  def adopt_children_for_github_issue
-    self.children += Event.collect_issue_comments(props[:issue_id])
-    self
-  end
-
-  def group_issue
-    if issues_event = Event.find_issues_event_by_issue_id(props[:issue_id])
-      self.parent = issues_event
-    else
-      adopt_children_for_github_issue
-    end
-    self
-  end
-
-  def group_push_event
-    self.children += Event.collect_commit_comments(props[:commits])
-    self
-  end
-
-  def group_issue_comment
-    if issues_event = Event.parent_issues_event(props[:issue_id])
-      self.parent = issues_event
-    else
-      self.parent = Event.sibling_issue_comment_event(props[:issue_id])
-    end  
-    self
-  end
-
-  def group_commit_comment
-    if push_event = Event.parent_push_event(props[:commit_id])
-      self.parent = push_event
-    else
-      self.parent = Event.sibling_commit_comment_event(props[:commit_id])
-    end
-    self
-  end
-
+  
   # Helper methods
   def self.has_an_attribute?(attr)
     Event.reflections.include?(attr.to_sym) ||
     Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
     Event.attribute_names.include?(attr.to_s) ||
     Event.attribute_names.include?(attr.to_s.pluralize)
-  end
-
-  # Aliases, and explicitly named finders
-  def self.find_tweet_by_tweet_id(tweet_id)
-    Event.tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{tweet_id}'").first
-  end
-
-  def self.collect_retweets_of(tweet_id)
-    Event.tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'")
-  end
-
-  def self.find_forum_thread_events_by_url(thread_url)
-    Event.tagged_with('forums').where("url LIKE '#{thread_url}%'")
-  end
-
-  def self.find_push_event_by_commit_id(commit_id)
-    Event.tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
-  end
-
-  def self.find_issues_event_by_issue_id(issue_id)
-    Event.tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-  end
-
-  def self.find_issue_comment_event_by_issue_id(issue_id)
-    Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
-  end
-
-  def self.find_commit_comment_event_by_commit_id(commit_id)
-    Event.tagged_with(['github','commit_comment_event']).where("props -> 'commit_id' = '#{commit_id}'").first
-  end
-
-  def self.collect_issue_comments(issue_id)
-    Event.tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").all
-  end
-
-  def self.collect_commit_comments(commits)
-    Event.tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").all
-  end
-
-  def self.parent_issues_event(issue_id)
-    Event.find_issues_event_by_issue_id(issue_id)
-  end
-
-  def self.sibling_issue_comment_event(issue_id)
-    Event.find_issue_comment_event_by_issue_id(issue_id)
-  end
-
-  def self.parent_push_event(commit_id)
-    Event.find_push_event_by_commit_id(commit_id)
-  end
-
-  def self.sibling_commit_comment_event(commit_id)
-    Event.find_commit_comment_event_by_commit_id(commit_id)
-  end
-
-  def self.orig_tweet(retweeted_id)
-    Event.find_tweet_by_tweet_id(retweeted_id)
-  end
-
-  def self.other_retweet(retweeted_id)
-    Event.find_tweet_by_tweet_id(retweeted_id)
   end
 
   def self.prepare_commit(commit_info, push_event)
@@ -470,26 +194,5 @@ class Event < ActiveRecord::Base
     meta = wat.delete(:meta)
 
     [wat, meta]
-  end
-
-  def self.clean_args_after_determination!(args)
-    args.delete(:category)
-    args.delete(:feed)
-    args.delete(:project)
-    args.delete(:tags)
-    args.delete(:origin_author_feed)
-    args.delete(:origin_author_id)
-    args.delete(:location)
-    args.delete(:datetime)
-    args
-  end
-
-  def tags_from_args(args)
-    tags = []
-    tags.push args[:category] if args[:category]
-    tags.push args[:feed] if args[:feed]
-    tags.push args[:project] if args[:project]
-    tags.concat args[:tags] if args[:tags]
-    tags
   end
 end

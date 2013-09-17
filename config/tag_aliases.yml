@@ -1,35 +1,51 @@
 canjs:
- - "canjs"
- - "can_js"
- - "#canjs"
+ display_name: "CanJS"
+ aliases:
+   - "canjs"
+   - "can_js"
+   - "#canjs"
 
 canui:
- - "canui"
+  display_name: "CanUI"
+  aliases:
+    - "canui"
 
 javascriptmvc:
- - "javascriptmvc"
- - "jmvc"
- - "java_script_mvc"
- - "general java_script_mvc"
+  display_name: "JavascriptMVC"
+  aliases:
+    - "javascriptmvc"
+    - "jmvc"
+    - "java_script_mvc"
+    - "general java_script_mvc"
 
 donejs:
- - "donejs"
- - "done_js"
+  display_name: "DoneJS"
+  aliases:
+    - "donejs"
+    - "done_js"
 
 stealjs:
- - "stealjs"
- - "steal_js"
+  display_name: "StealJS"
+  aliases:
+    - "stealjs"
+    - "steal_js"
  
 funcunit:
- - "funcunit"
- - "func_unit"
+  display_name: "FuncUnit"
+  aliases:
+    - "funcunit"
+    - "func_unit"
  
 jquerypp:
- - "jquerypp"
- - "j_querypp"
- - "jquery++"
- - "j_query++"
+  display_name: "jQuery++"
+  aliases:
+    - "jquerypp"
+    - "j_querypp"
+    - "jquery++"
+    - "j_query++"
 
 documentjs:
- - "documentjs"
- - "document_js"
+  display_name: "DocumentJS"
+  aliases:
+    - "documentjs"
+    - "document_js"

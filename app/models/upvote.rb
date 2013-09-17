@@ -5,8 +5,8 @@ class Upvote < ActiveRecord::Base
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
 
-  validates :applies_to_id, :actor_id, :presence => true
-  validates :actor_id, uniqueness: { scope: :applies_to_id, message: "may only upvote once" }
+  validates_presence_of :applies_to_id, :actor_id
+  validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only upvote once"
 
   def self.create_based_on_rule(actor, applies_to)
     upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})

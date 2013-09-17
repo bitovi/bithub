@@ -9,22 +9,22 @@ describe Reward do
     Upvote.create_based_on_rule(@actor, @event)
   end
 
-  describe ".find_qualified_for" do
-    it "finds an award that's under user's point total" do
-      wrong_reward = Reward.create({title: "A mug", point_minimum: 250})
-      right_reward = Reward.create({title: "A snake!", point_minimum: 150})
+  describe ".find_all_qualified_for" do
+    it "finds all award that are under user's point total" do
+      r1 = Reward.create({title: "A mug", point_minimum: 50})
+      r2 = Reward.create({title: "A snake!", point_minimum: 120})
+      r3 = Reward.create({title: "The edge", point_minimum: 155})
 
-      r = Reward.find_qualified_for(@author)
-      expect(r).to eql(right_reward)
+      rs = Reward.find_all_qualified_for(@author)
+      rs.should =~ [r1, r2, r3]
     end
 
-    it "finds an award that closest to user's point total" do
-      wrong_reward1 = Reward.create({title: "A mug", point_minimum: 150})
-      wrong_reward2 = Reward.create({title: "A cup", point_minimum: 152})
-      right_reward = Reward.create({title: "A snake!", point_minimum: 154})
+    it "doesn't find awards that are more valuable than user's total points" do
+      r1 = Reward.create({title: "A cup", point_minimum: 180})
+      r2 = Reward.create({title: "A snake!", point_minimum: 200})
 
-      r = Reward.find_qualified_for(@author)
-      expect(r).to eql(right_reward)
+      rs = Reward.find_all_qualified_for(@author)
+      expect(rs).to eql []
     end
   end
 end

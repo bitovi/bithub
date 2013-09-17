@@ -92,13 +92,38 @@ describe User do
   end
 
   describe "#reward_if_eligible" do
-    it "creates an achievement for the user if he has enough points" do
+    it "creates one achievement for each award that the user is eligible for" do
       author = create(:user, name: "Nikica")
       Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
-      reward = Reward.create({title: "A snake!", point_minimum: 154})
+      r1 = Reward.create({title: "A mug.", point_minimum: 50})
+      r2 = Reward.create({title: "A snake!", point_minimum: 100})
+      r3 = Reward.create({title: "An aligatro!!", point_minimum: 155})
 
       author.reward_if_eligible
-      author.rewards.should =~ [reward]
+      author.rewards.should =~ [r1, r2, r3]
+    end
+
+    it "create an achievement only for rewards that are not already achievement/present" do
+      author = create(:user, name: "Nikica")
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      r1 = Reward.create({title: "A mug.", point_minimum: 50})
+      author.reward_if_eligible
+      
+      r2 = Reward.create({title: "A snake!", point_minimum: 100})
+      r3 = Reward.create({title: "An aligatro!!", point_minimum: 155})
+
+      author.reward_if_eligible
+      author.rewards.should =~ [r1, r2, r3]
+    end
+
+    it "doesn't create duplicate achievements" do
+      author = create(:user, name: "Nikica")
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      r = Reward.create({title: "A mug.", point_minimum: 50})
+      
+      author.reward_if_eligible
+      author.reward_if_eligible
+      expect(author.rewards).to eql [r]
     end
   end
 

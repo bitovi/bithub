@@ -104,9 +104,9 @@ namespace :db do
       restore_db = local_db
     end
 
-    run_locally "dropdb --if-exists #{restore_db}"
+    run_locally "dropdb #{restore_db}"
     run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
-    run_locally "pg_restore --clean --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
+    run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
   end
 
 end

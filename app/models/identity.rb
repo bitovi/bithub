@@ -2,10 +2,15 @@ class Identity < ActiveRecord::Base
   attr_accessible :provider, :uid, :source_data
   belongs_to :user
   serialize :source_data, JSON
-  validates :uid, :uniqueness => {:scope => :provider}
+  validates_uniqueness_of :uid, scope: :provider
 
   def update_source_data_if_blank(data)
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
+  end
+
+  def award_points_for_joining(user = nil)
+    user_to_award = self.user || user
+    Internal.create!({receiver: user_to_award, value: 1, comment: "Logged in with #{self.provider}."}) if self.user
   end
 
   def has_assigned_user?
