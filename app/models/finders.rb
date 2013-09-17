@@ -1,61 +1,67 @@
 module Finders
-  def find_tweet_by_tweet_id(tweet_id)
-    tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{tweet_id}'").first
-  end
-
-  def collect_retweets_of(tweet_id)
-    tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'")
-  end
-
-  def find_forum_thread_events_by_url(thread_url)
+  
+  # Forums
+  def forum_posts_by_thread_url(thread_url)
     tagged_with('forums').where("url LIKE '#{thread_url}%'")
   end
 
-  def find_push_event_by_commit_id(commit_id)
-    tagged_with(['github','push_event']).where("props -> 'commits' LIKE '%#{commit_id}%'").first
+
+  # Twitter
+  def tweets_by_tweet_id(tweet_id)
+    tagged_with(['twitter','status_event']).where("props -> 'tweet_id' = '#{tweet_id}'")
   end
 
-  def find_issues_event_by_issue_id(issue_id)
-    tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+  def tweets_by_retweeted_id(tweet_id)
+    tagged_with(['twitter','status_event']).where("props -> 'retweeted_id' = '#{tweet_id}'")
   end
 
-  def find_issue_comment_event_by_issue_id(issue_id)
-    tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").first
+
+  # Github
+  def pushes_by_commit_sha(commit_sha)
+    tagged_with(['github','push_event']).where("props -> 'commit_shas' LIKE '%#{commit_sha}%'")
   end
 
-  def find_commit_comment_event_by_commit_id(commit_id)
-    tagged_with(['github','commit_comment_event']).where("props -> 'commit_id' = '#{commit_id}'").first
+  def issues_by_issue_id(issue_id)
+    tagged_with(['github', 'issues_event']).where("props -> 'issue_id' = '#{issue_id}'")
+  end
+  
+  def issues_by_repo_name_and_issue_number(repo_name, issue_number)
+    tagged_with(['github', 'issues_event'])
+    .where("props -> 'repo_name' = '#{repo_name}'")
+    .where("props -> 'issue_number' = '#{issue_number}'")
+  end
+  
+  def name_and_number(repo_name, issue_nmb)
+    where("props -> 'repo_name' = '#{repo_name}'")
+    .where("props -> 'referenced_issue_number' = '#{issue_nmb}'")
   end
 
-  def parent_issues_event(issue_id)
-    find_issues_event_by_issue_id(issue_id)
+  def pushes_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
+    tagged_with(['github', 'push_event'])
+    .name_and_number(repo_name, referenced_issue_number)
   end
 
-  def sibling_issue_comment_event(issue_id)
-    find_issue_comment_event_by_issue_id(issue_id)
+  def pull_requests_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
+    tagged_with(['github', 'pull_request_event'])
+    .name_and_number(repo_name, referenced_issue_number)
   end
 
-  def parent_push_event(commit_id)
-    find_push_event_by_commit_id(commit_id)
+  def issue_comments_by_issue_id(issue_id)
+    tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'")
+  end
+  
+  def issue_comments_by_repo_name_and_issue_number(repo_name, issue_number)
+    tagged_with(['github', 'issue_comment_event'])
+    .where("props -> 'repo_name' = '#{repo_name}'")
+    .where("props -> 'issue_number' = '#{issue_number}'")
   end
 
-  def sibling_commit_comment_event(commit_id)
-    find_commit_comment_event_by_commit_id(commit_id)
+  def commit_comments_by_commit_sha(commit_sha)
+    tagged_with(['github', 'commit_comment_event']).where("props -> 'commit_sha' = '#{commit_sha}'")
+  end
+  
+  def commit_comments_by_commit_shas(commit_shas)
+    tagged_with(['github', 'commit_comment_event']).where("position(props -> 'commit_sha' in '#{commit_shas}') > 0")
   end
 
-  def orig_tweet(retweeted_id)
-    find_tweet_by_tweet_id(retweeted_id)
-  end
-
-  def other_retweet(retweeted_id)
-    find_tweet_by_tweet_id(retweeted_id)
-  end
-
-  def collect_issue_comments(issue_id)
-    tagged_with(['github', 'issue_comment_event']).where("props -> 'issue_id' = '#{issue_id}'").all
-  end
-
-  def collect_commit_comments(commits)
-    tagged_with(['github','commit_comment_event']).where("position(props -> 'commit_id' in '#{commits}') > 0").all
-  end
 end
