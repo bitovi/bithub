@@ -7,6 +7,7 @@ require 'time'
 module Handler
   class Base
     attr_reader :initialized, :feed
+
     CUSTOM_RULESET = Sanitize::Config::RELAXED
     CUSTOM_RULESET[:elements] << "div"
 
@@ -40,8 +41,12 @@ module Handler
       new_events
     end
 
+    def publish(events)
+      store(events)
+    end
+
     def store(events)
-      @log.info "#{@feed}: sending #{events.size} events"
+      @log.info "FEED: #{@feed} | sending #{events.size} events"
 
       enqueue_events = proc do
         events.each { |e| @exchange.publish(Yajl::Encoder.encode(e), routing_key: "tasks.taggify") }
