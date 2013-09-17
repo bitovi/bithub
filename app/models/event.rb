@@ -3,8 +3,12 @@ VALID_FEEDS_FOR_IDENT = %w(github twitter)
 
 class Event < ActiveRecord::Base
   extend Finders
+  include Preprocessing
+  include Determination
   include Grouping
-  include Categorization
+  include Grouping::TwitterSpecific
+  include Grouping::GithubSpecific
+  include Grouping::ForumsSpecific
 
   class EventHasNoParentError < Error; end
   class DistinctFieldNotKnown < Error; end
@@ -57,47 +61,34 @@ class Event < ActiveRecord::Base
 
   def self.new_from_crawler(args = {}, meta)
     ev = self.new(args)
-    ev.props = meta.symbolize_keys
-    ev.categorise.group
+    ev.to_props(meta).determine.group
   end
 
   def self.new_from_bithub(args)
     event = self.new
 
     event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-    filtered_args, event.props = Event.pluck_and_clean_for_bithub(args)
-    event.categorize
-    event.origin_and_thread_to_now
-    event.assign_attributes(filtered_args)
+    attrs = event.to_props_and_clean(args)
+    event.determine
+    event.origin_and_thread_timestamps_to_now
+    event.assign_attributes(attrs)
     event.image = args[:image]
     event
   end
 
   def update_from_bithub(args)
-    filtered_args, self.props = Event.pluck_and_clean_for_bithub(args)
-    categorize
-    assign_attributes(filtered_args)
+    attrs = to_props_and_clean(args)
+    determine
+    assign_attributes(attrs)
     save
   end
 
-  def origin_and_thread_to_now
+  def origin_and_thread_timestamps_to_now
     now                      = DateTime.now
     self.origin_ts           = now.utc
     self.origin_date         = now.utc.to_date
     self.thread_updated_at   = now.utc
     self.thread_updated_date = now.utc.to_date
-  end
-
-  def self.pluck_and_clean_for_bithub(args)
-    props = {
-      category: args.delete(:category),
-      project: args.delete(:project),
-      feed: args.delete(:feed),
-      tags: args.delete(:tags)
-    }
-    props[:location] = args.delete(:location)
-    props[:scheduled_for] = DateTime.parse(args.delete(:datetime)) if args[:datetime] && args[:datetime].present?
-    [args, props]
   end
 
   def self.next_id
