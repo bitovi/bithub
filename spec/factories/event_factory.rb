@@ -1,29 +1,54 @@
-push_event_payload = {
-    push_id: 223206323,
+push_event_source_data = {
+  id: "1822604055",
+  type: "PushEvent",
+  actor: {
+    id: 252054,
+    login: "imjoshdean",
+    gravatar_id: "3282bba910cbf2936251e351f1405c26",
+    url: "https://api.github.com/users/imjoshdean",
+    avatar_url: "https://1.gravatar.com/avatar/3282bba910cbf2936251e351f1405c26?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+  },
+  repo: {
+    id: 3228363,
+    name: "bitovi/canjs",
+    url: "https://api.github.com/repos/bitovi/canjs"
+  },
+  payload: {
+    push_id: 224663608,
     size: 2,
     distinct_size: 2,
-    ref: "refs/heads/canComponent",
-    head: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
-    before: "5068c01920cf40e7af1536a6adf8457a3f10ef67",
+    ref: "refs/heads/master",
+    head: "1107f77cc5074b7ad9b7f628afb43bc703325111",
+    before: "d567f296b998eddedde0f709e58790e646d194c9",
     commits: [{
-      sha: "b824b74af1eb7fe33304b80c4f7ab9b5a050090f",
+      sha: "7d7a87304943e1de9d019bf07d33dc9413a13181",
       author: {
-        email: "justinbmeyer@gmail.com",
-        name: "Justin Meyer"
+        email: "imjoshdean@me.com",
+        name: "Josh Dean"
       },
-      message: "all tests pass in FF and Chrome in for all libraries",
+      message: "Update EJS documentation. Clean up some issues and wording.",
       distinct: true,
-      url: "https://api.github.com/repos/bitovi/canjs/commits/b824b74af1eb7fe33304b80c4f7ab9b5a050090f"
+      url: "https://api.github.com/repos/bitovi/canjs/commits/7d7a87304943e1de9d019bf07d33dc9413a13181"
     }, {
-      sha: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
+      sha: "1107f77cc5074b7ad9b7f628afb43bc703325111",
       author: {
-        email: "neektza@gmail.com",
-        name: "Nikica Jokic"
+        email: "imjoshdean@me.com",
+        name: "Josh Dean"
       },
-      message: "started documenting components",
+      message: "Update can.Model documentation. Clean up some issues and wording.",
       distinct: true,
-      url: "https://api.github.com/repos/bitovi/canjs/commits/ae8c72c7e1d0639117dee0bc46cab0a741dc442d"
+      url: "https://api.github.com/repos/bitovi/canjs/commits/1107f77cc5074b7ad9b7f628afb43bc703325111"
     }]
+  },
+  public: true,
+  created_at: "2013-09-05T14:43:05Z",
+  org: {
+    id: 2782656,
+    login: "bitovi",
+    gravatar_id: "89162cee14c11672d134cfafed24d1be",
+    url: "https://api.github.com/orgs/bitovi",
+    avatar_url: "https://2.gravatar.com/avatar/89162cee14c11672d134cfafed24d1be?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png"
+  }
 }
 
 FactoryGirl.define do
@@ -176,10 +201,7 @@ FactoryGirl.define do
         association :category, factory: :tag, name: "code"
         tag_list ['github', 'push_event', 'code', 'canjs']
 
-        sd_map = {
-          # payload: push_event_payload
-        }
-        source_data sd_map
+        source_data push_event_source_data
 
         meta({
           :type => "push_event",

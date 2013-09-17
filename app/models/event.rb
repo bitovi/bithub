@@ -1,4 +1,5 @@
 require 'digest/md5'
+require "#{Rails.root}/app/processors/github.rb"
 
 class Event < ActiveRecord::Base
   VALID_FEEDS_FOR_IDENT = %w(github twitter)
@@ -47,6 +48,8 @@ class Event < ActiveRecord::Base
   after_create do
     author.reward_if_eligible if author
   end
+    
+  @processor ||= Processors::Github.new({feed: 'github'})
   
   def self.new_from_crawler(args = {}, meta)
     ev = self.new(args)
@@ -69,6 +72,10 @@ class Event < ActiveRecord::Base
     Event.clean_args_after_determination!(args)
     event.assign_attributes(args)
     event
+  end
+
+  def self.github_processor
+    @processor
   end
 
   def update_from_bithub(args)
@@ -198,7 +205,8 @@ class Event < ActiveRecord::Base
       # push
       if tag_list.include?('push_event')
         props[:commits] = meta[:commits]
-        #split_push_event_to_commits
+        commits = split_push_event_to_commits
+        commits.each {|c| c.save!}
         group_push_event
       end
 
@@ -259,6 +267,18 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
+
+  def split_push_event_to_commits
+    sd = HashWithIndifferentAccess.new(self.source_data)
+    sd['payload']['commits'].map do |c|
+      e = Event.new_from_crawler(*Event.prepare_commit(c, self))
+      e.tag_list += self.tag_list
+      e.thread_updated_at = self.thread_updated_at
+      e.thread_updated_date = self.thread_updated_date
+      e.parent = self
+      e
+    end
+  end
 
   # Awards & Upvotes
   # ----------------
@@ -353,12 +373,6 @@ class Event < ActiveRecord::Base
     self
   end
 
-  def split_push_event_to_commits
-    source_data[:payload][:commits].map do |c|
-      Event.new_from_crawler(*Event.prepare_commit(c, self))
-    end
-  end
-
   def group_issue_comment
     if issues_event = Event.parent_issues_event(props[:issue_id])
       self.parent = issues_event
@@ -446,14 +460,16 @@ class Event < ActiveRecord::Base
     Event.find_tweet_by_tweet_id(retweeted_id)
   end
 
-  def self.prepare_commit(commit_hash, push_event)
-    [{
-      title: commit_hash[:message],
-      origin_ts: push_event.origin_ts,
-      props: { author_email: commit_hash[:author][:email] }
-    },
-      push_event[:props]
-    ]
+  def self.prepare_commit(commit_info, push_event)
+    custom_sd = push_event.source_data.merge(commit_info).merge({
+      hash_key: commit_info[:sha],
+      type: "CustomCommitEvent"
+    })
+
+    wat = github_processor.process(ActiveSupport::HashWithIndifferentAccess.new(custom_sd))
+    meta = wat.delete(:meta)
+
+    [wat, meta]
   end
 
   def self.clean_args_after_determination!(args)

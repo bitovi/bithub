@@ -229,7 +229,32 @@ describe Event do
     end
 
     describe "#split_push_event_to_commits" do
-      it "should create a number of commits equal to length of the commits hash"
+      it "should create a number of commits equal to length of the commits hash" do
+        push = build(:github_push, title: "Event in event_spec, testing #split_push_event_to_commits")
+        expect(push.split_push_event_to_commits.length).to eql 2
+      end
+
+      it "should copy the PushEvent's tags to CustomCommitEvent" do
+        push = build(:github_push, title: "Event in event_spec, testing #split_push_event_to_commits")
+        push.split_push_event_to_commits.first.tag_list.should include(*push.tag_list)
+      end
+    end
+
+    describe ".prepare_commit" do
+      it "should assign the 'custom_commit_event' as :type to new commits" do
+        push = build(:github_push, title: "Event in event_spec, testing #split_push_event_to_commits")
+        expect(Event.prepare_commit(push.source_data[:payload][:commits].first, push)[1][:type]).to eq('custom_commit_event')
+      end
+      
+      it "should assign the commit SHA as the hash_key attribute to new commits" do
+        push = build(:github_push, title: "Event in event_spec, testing #split_push_event_to_commits")
+        expect(Event.prepare_commit(push.source_data[:payload][:commits].first, push)[0][:hash_key]).to eq(push.source_data[:payload][:commits][0][:sha])
+      end
+
+      it "should assign timestamps to new commits" do
+        push = build(:github_push, title: "Event in event_spec, testing #split_push_event_to_commits")
+        expect(Event.prepare_commit(push.source_data[:payload][:commits].first, push)[0][:hash_key]).to eq(push.source_data[:payload][:commits][0][:sha])
+      end
     end
 
     describe "#process_github" do
@@ -287,9 +312,6 @@ describe Event do
           expect(@retweet2.reload.parent_id).to eql(@tweet.id)
         end
       end
-    end
-
-    describe "#split_push_event_to_commits" do
     end
 
     describe "#thread" do
@@ -357,4 +379,34 @@ end
 
 def only_tags(args)
   Array[args[:category], args[:feed]].concat(args[:tags])
+end
+
+def push_event
+{ 
+    push_id: 223206323,
+    size: 2,
+    distinct_size: 2,
+    ref: "refs/heads/canComponent",
+    head: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
+    before: "5068c01920cf40e7af1536a6adf8457a3f10ef67",
+    commits: [{
+      sha: "b824b74af1eb7fe33304b80c4f7ab9b5a050090f",
+      author: {
+        email: "justinbmeyer@gmail.com",
+        name: "Justin Meyer"
+      },
+      message: "all tests pass in FF and Chrome in for all libraries",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/b824b74af1eb7fe33304b80c4f7ab9b5a050090f"
+    }, {
+      sha: "ae8c72c7e1d0639117dee0bc46cab0a741dc442d",
+      author: {
+        email: "neektza@gmail.com",
+        name: "Nikica Jokic"
+      },
+      message: "started documenting components",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/ae8c72c7e1d0639117dee0bc46cab0a741dc442d"
+    }]
+}
 end
