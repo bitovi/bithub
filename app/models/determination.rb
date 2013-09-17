@@ -1,6 +1,6 @@
-module Categorization
+module Determination
 
-  def categorize(custom_props = nil)
+  def determine(custom_props = nil)
     self.props ||= custom_props
     self.determine_tags
     self.determine_feed
