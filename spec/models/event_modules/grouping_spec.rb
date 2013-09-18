@@ -79,11 +79,13 @@ describe Grouping do
   
 
   describe "#group_push_event" do
+
     context "when there exist one/more related commit comments" do
       it "should adopts those as its children" do
         c1 = create(:github_commit_comment, props: {commit_sha: "a3h9dj2"}, title: "This is a bad commit.")
         c2 = create(:github_commit_comment, props: {commit_sha: "23jy602"}, title: "This is a good commit.")
         npe = build(:github_push, props: {commit_shas: "a3h9dj2,23jy602"}, title: "Pushed 2 commits")
+        npe.stub(:split_push_event_to_commits)
         npe.group_push_event.save!
         npe.children.should =~ [c1, c2]
       end
@@ -98,6 +100,7 @@ describe Grouping do
       it "should set that issue as its parent" do
         i = create(:github_issue, props: {issue_id: "12345", issue_number: "76", repo_name: "bitovi/canjs"}, title: "This is broken!")
         npe = build(:github_push, props: {referenced_issue_number: "76", repo_name: "bitovi/canjs"})
+        npe.stub(:split_push_event_to_commits)
         npe.group_push_event.save!
         npe.parent.should == i
       end
@@ -190,6 +193,30 @@ describe Grouping do
   end
 
 
+  describe "#split_push_event_to_commits" do
+    it "should create a number of commits equal to length of the commits hash" do
+      push = build(:github_push, :with_push_event_source_data)
+      expect(push.split_push_event_to_commits.length).to eql 2
+    end
+
+    it "should copy the PushEvent's tags to CustomCommitEvent" do
+      push = build(:github_push, :with_push_event_source_data)
+      push.split_push_event_to_commits.first.tag_list.should include(*push.tag_list)
+    end
+  end
+
+  describe "#update_parent_issue" do
+    it "updates the attributes with the data from the new issue" do
+      i = create(:github_issue, title: "Wat.", body: "Wat?", props: {state: "open", issue_id: "123", labels: ['wat']})
+      ni = build(:github_issue, :with_source_data, props: {issue_id: "123"})
+      i.update_self_from_child(ni)
+
+      i.reload.title.should == ni.source_data[:payload][:issue][:title]
+      i.reload.body.should == ni.source_data[:payload][:issue][:body]
+      i.reload.props['labels'].should == ni.source_data[:payload][:issue][:labels].map{|l| l[:name]}
+      i.reload.props['state'].should == ni.source_data[:payload][:issue][:state]
+    end
+  end
 
 
 
@@ -269,19 +296,6 @@ describe Grouping do
       @reply1.group_forums.save!
       @reply2.group_forums.save!
       expect(@reply1.children.count).to eql(1)
-    end
-  end
-
-  describe "#update_parent_issue" do
-    it "updates the attributes with the data from the new issue" do
-      i = create(:github_issue, title: "Wat.", body: "Wat?", props: {state: "open", issue_id: "123", labels: ['wat']})
-      ni = build(:github_issue, :with_source_data, props: {issue_id: "123"})
-      i.update_self_from_child(ni)
-
-      i.reload.title.should == ni.source_data[:payload][:issue][:title]
-      i.reload.body.should == ni.source_data[:payload][:issue][:body]
-      i.reload.props['labels'].should == ni.source_data[:payload][:issue][:labels].map{|l| l[:name]}
-      i.reload.props['state'].should == ni.source_data[:payload][:issue][:state]
     end
   end
 
