@@ -36,6 +36,7 @@ custom_commit_event = lambda do |event|
     :url => event['url'],
     :hash_key => event['sha'],
     :meta => {
+      :category => 'code',
       :repo_name => event['repo']['name'],
       :referenced_issue_number => issue_nmb
     }

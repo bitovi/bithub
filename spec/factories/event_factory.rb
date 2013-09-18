@@ -173,8 +173,8 @@ FactoryGirl.define do
         association :category, factory: :tag, name: "code"
         tag_list %w(github push_event code canjs)
 
-        trait :with_full_source_data do
-          source_data push_event_source_data
+        trait :with_push_event_source_data do
+          source_data(push_event_source_data)
         end
       end
 
