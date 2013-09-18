@@ -131,18 +131,6 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
-  def split_push_event_to_commits
-    sd = HashWithIndifferentAccess.new(self.source_data)
-    sd['payload']['commits'].map do |c|
-      e = Event.new_from_crawler(*Event.prepare_commit(c, self))
-      e.tag_list += self.tag_list
-      e.thread_updated_at = self.thread_updated_at
-      e.thread_updated_date = self.thread_updated_date
-      e.parent = self
-      e
-    end
-  end
-
   def awarded?
     self.awards.length > 0
   end

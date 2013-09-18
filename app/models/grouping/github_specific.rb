@@ -59,6 +59,7 @@ module Grouping::GithubSpecific
     if pi = referenced_issue
       self.parent = pi
     end
+    split_push_event_to_commits
     self
   end
 
@@ -81,6 +82,17 @@ module Grouping::GithubSpecific
     self
   end
 
+  def split_push_event_to_commits
+    sd = HashWithIndifferentAccess.new(self.source_data)
+    sd['payload']['commits'].map do |c|
+      e = Event.new_from_crawler(*Event.prepare_commit(c, self))
+      e.tag_list += self.tag_list
+      e.thread_updated_at = self.thread_updated_at
+      e.thread_updated_date = self.thread_updated_date
+      e.parent = self
+      e.save!
+    end
+  end
 
   # Helpers and finders
   
@@ -169,5 +181,3 @@ module Grouping::GithubSpecific
   end
 
 end
-
-
