@@ -48,7 +48,8 @@ push_event_source_data = {
     gravatar_id: "89162cee14c11672d134cfafed24d1be",
     url: "https://api.github.com/orgs/bitovi",
     avatar_url: "https://2.gravatar.com/avatar/89162cee14c11672d134cfafed24d1be?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png"
-
+  }
+}
 issue_source_data = {
   payload: {
     issue: {
@@ -171,20 +172,16 @@ FactoryGirl.define do
         title "pushed commits"
         association :category, factory: :tag, name: "code"
         tag_list %w(github push_event code canjs)
+
+        trait :with_full_source_data do
+          source_data push_event_source_data
+        end
       end
 
       factory :github_pull_request do
         title "requested a pull"
         association :category, factory: :tag, name: "code"
         tag_list %w(github pull_request_event code canjs)
-
-        source_data push_event_source_data
-
-        meta({
-          :type => "push_event",
-          :feed => "github",
-          :commits => "3sdaf4s,43a2aa8,295aa54",
-        })
       end
 
       factory :github_issue_comment do

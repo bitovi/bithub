@@ -56,7 +56,10 @@ class Event < ActiveRecord::Base
   end
     
   @processor ||= Processors::Github.new({feed: 'github'})
-  
+
+  def self.github_processor
+    @processor
+  end
 
   def initialize(args = {})
     args[:id] = Event.next_id
@@ -185,14 +188,14 @@ class Event < ActiveRecord::Base
   end
 
   def self.prepare_commit(commit_info, push_event)
-    custom_sd = push_event.source_data.merge(commit_info).merge({
-      hash_key: commit_info[:sha],
-      type: "CustomCommitEvent"
-    })
+    custom_sd = push_event.source_data
+    .merge(commit_info)
+    .merge({type: "CustomCommitEvent"})
 
-    wat = github_processor.process(ActiveSupport::HashWithIndifferentAccess.new(custom_sd))
-    meta = wat.delete(:meta)
+    mf_hash = ActiveSupport::HashWithIndifferentAccess.new(custom_sd)
+    processed_event_hash = github_processor.process(mf_hash)
+    meta = processed_event_hash.delete(:meta)
 
-    [wat, meta]
+    [processed_event_hash, meta]
   end
 end
