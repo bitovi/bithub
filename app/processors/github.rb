@@ -26,13 +26,8 @@ custom_commit_event = lambda do |event|
     issue_nmb = m[1]
   end
 
-  lines = event['message'].lines.map(&:chomp)
-  title = lines[0]
-  body = lines[2..-1]
-  
   event_hash = {
-    :title => title,
-    :body => body,
+    :title => event['message'],
     :url => event['url'],
     :hash_key => event['sha'],
     :meta => {
