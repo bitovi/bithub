@@ -41,5 +41,16 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         end
       end
     end
+
+    channel.fanout("e.issues") do |issues_exchange|
+      queue = channel.queue("q.issues.web").bind(issues_exchange)
+      
+      queue.subscribe do |metadata, payload|
+        issue_hash = ActiveSupport::JSON.decode(payload)
+
+        # do something with that issue_hash
+        $log.info "-- #{issue_hash['title']}"
+      end      
+    end
   end
 end
