@@ -18,9 +18,13 @@ describe Handler::Github do
 
   context "upon fetching Github event" do
 
+    before :all do
+      @githubProcessor = EventProcessor::Github.new
+    end
+    
     def load_and_prepare(type)
       @event = Response.load('github',type)
-      Handler::Github.prepare_event(@event, {:feed => 'github'})
+      @githubProcessor.process(@event)
     end
 
     describe "#prepare_event (CommitCommentEvent)" do

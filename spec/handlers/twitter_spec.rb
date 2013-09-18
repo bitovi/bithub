@@ -21,10 +21,15 @@ describe Handler::Twitter do
 
   context "upon fetching Twitter event" do
 
+    before :all do
+      @publicProcessor = EventProcessor::Twitter.new({feed: 'twitter', is_user_stream: false})
+      @userProcessor = EventProcessor::Twitter.new({feed: 'twitter', is_user_stream: true})
+    end
+
     describe "#prepare_event (User event)" do
       before do
         @event = Response.load('twitter', 'follow_event')
-        @prepared = Handler::Twitter.prepare_user_event(@event, {:feed => 'twitter'})
+        @prepared = @userProcessor.process(@event)
       end
 
       it_should_behave_like "every Twitter event"
@@ -33,7 +38,7 @@ describe Handler::Twitter do
     describe "#prepare_event (Public event)" do
       before do
         @event = Response.load('twitter', 'status_event')
-        @prepared = Handler::Twitter.prepare_public_event(@event, {:feed => 'twitter'})
+        @prepared = @publicProcessor.process(@event)
       end
 
       it_should_behave_like "every Twitter event"
@@ -48,7 +53,7 @@ describe Handler::Twitter do
     describe "#prepare_event (Public event RT)" do
       before do
         @event = Response.load('twitter', 'status_event_rt')
-        @prepared = Handler::Twitter.prepare_public_event(@event, {:feed => 'twitter'})
+        @prepared = @publicProcessor.process(@event)
       end
 
       it_should_behave_like "every Twitter event"
