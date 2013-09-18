@@ -21,6 +21,7 @@ module Grouping::GithubSpecific
 
     if issue_opener && picrs = previous_closers_and_reopeners
       self.children += picrs + (picrs.map{|picr| picr.children}.flatten).uniq
+
     elsif issue_closer_or_reopener && pi = previous_issue_instance
       self.parent = pi
       pi.update_self_from_child(self)

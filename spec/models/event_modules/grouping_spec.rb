@@ -8,13 +8,23 @@ describe Grouping do
 
   describe "#group_issues_event" do
     before :each do
-      Event.any_instance.stub(:update_parent_issue) { false }
+      Event.any_instance.stub(:update_self_from_child) { false }
     end
 
-    context "when there already exists an instance of the issue" do
+    context "when there already exist instances of the issue, and are a closers/reopeners" do
+      it "adopts those instances as it's children" do
+        i1 = create(:github_issue, props: {issue_id: "123", action: "closed"})
+        i2 = create(:github_issue, props: {issue_id: "123", action: "reopened"})
+        ni = build(:github_issue, props: {issue_id: "123", action: "opened"})
+        ni.group_issues_event.save!
+        ni.children.should =~ [i1, i2]
+      end
+    end
+
+    context "when there already exists an instance of the issue, and it is a opener" do
       it "sets that issue as its parent" do
-        i = create(:github_issue, props: {issue_id: "123"})
-        ni = build(:github_issue, props: {issue_id: "123"})
+        i = create(:github_issue, props: {issue_id: "123", action: "opened"})
+        ni = build(:github_issue, props: {issue_id: "123", action: "closed"})
         ni.group_issues_event.save!
         ni.parent.should == i
       end
@@ -22,9 +32,9 @@ describe Grouping do
 
     context "when there exist one/more related issue comments" do
       it "should adopt those as its children" do
-        c1 = create(:github_issue_comment, props: {issue_id: "12345"}, title: "Vel said...")
-        c2 = create(:github_issue_comment, props: {issue_id: "12345"}, title: "Nik said...")
-        nie = build(:github_issue, props: {issue_id: "12345"}, title: "Justin raised...")
+        c1 = create(:github_issue_comment, props: {repo_name: 'bithub-test/testy', issue_number: "7"}, title: "Vel said...")
+        c2 = create(:github_issue_comment, props: {repo_name: 'bithub-test/testy', issue_number: "7"}, title: "Nik said...")
+        nie = build(:github_issue, props: {repo_name: 'bithub-test/testy', issue_number: "7"}, title: "Justin raised...")
         nie.group_issues_event.save!
         nie.children.should =~ [c1, c2]
       end
@@ -98,11 +108,11 @@ describe Grouping do
   
 
   describe "#group_pull_request_event" do
-    context "there there exist one/more related pull-request comments" do
+    context "when there exist one/more related pull-request comments" do
       it "should adopt those as its children" do
-        c1 = create(:github_issue_comment, props: {issue_id: "54321"}, title: "This is OK to merge.")
-        c2 = create(:github_issue_comment, props: {issue_id: "54321"}, title: "Can't merge this yo.")
-        npre = build(:github_pull_request, props: {issue_id: "54321"}, title: "Guys, look at this cool new feature.")
+        c1 = create(:github_issue_comment, props: {repo_name: "bithub-test/testy", issue_number: "7"}, title: "This is OK to merge.")
+        c2 = create(:github_issue_comment, props: {repo_name: "bithub-test/testy", issue_number: "7"}, title: "Can't merge this yo.")
+        npre = build(:github_pull_request, props: {repo_name: "bithub-test/testy", issue_number: "7"}, title: "Guys, look at this cool new feature.")
         npre.group_pull_request_event.save!
         npre.children.should =~ [c1, c2]
       end
@@ -126,7 +136,7 @@ describe Grouping do
 
   describe "#group_issue_comment_event" do
     before :each do
-      Event.any_instance.stub(:update_parent_issue) { false }
+      Event.any_instance.stub(:update_self_from_child) { false }
     end
 
     context "when there exists a related issue comment" do
