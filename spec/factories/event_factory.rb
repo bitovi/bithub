@@ -1,6 +1,69 @@
+push_event_source_data = {
+  id: "1822604055",
+  type: "PushEvent",
+  actor: {
+    id: 252054,
+    login: "imjoshdean",
+    gravatar_id: "3282bba910cbf2936251e351f1405c26",
+    url: "https://api.github.com/users/imjoshdean",
+    avatar_url: "https://1.gravatar.com/avatar/3282bba910cbf2936251e351f1405c26?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
+  },
+  repo: {
+    id: 3228363,
+    name: "bitovi/canjs",
+    url: "https://api.github.com/repos/bitovi/canjs"
+  },
+  payload: {
+    push_id: 224663608,
+    size: 2,
+    distinct_size: 2,
+    ref: "refs/heads/master",
+    head: "1107f77cc5074b7ad9b7f628afb43bc703325111",
+    before: "d567f296b998eddedde0f709e58790e646d194c9",
+    commits: [{
+      sha: "7d7a87304943e1de9d019bf07d33dc9413a13181",
+      author: {
+        email: "imjoshdean@me.com",
+        name: "Josh Dean"
+      },
+      message: "Update EJS documentation. Clean up some issues and wording.",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/7d7a87304943e1de9d019bf07d33dc9413a13181"
+    }, {
+      sha: "1107f77cc5074b7ad9b7f628afb43bc703325111",
+      author: {
+        email: "imjoshdean@me.com",
+        name: "Josh Dean"
+      },
+      message: "Update can.Model documentation. Clean up some issues and wording.",
+      distinct: true,
+      url: "https://api.github.com/repos/bitovi/canjs/commits/1107f77cc5074b7ad9b7f628afb43bc703325111"
+    }]
+  },
+  public: true,
+  created_at: "2013-09-05T14:43:05Z",
+  org: {
+    id: 2782656,
+    login: "bitovi",
+    gravatar_id: "89162cee14c11672d134cfafed24d1be",
+    url: "https://api.github.com/orgs/bitovi",
+    avatar_url: "https://2.gravatar.com/avatar/89162cee14c11672d134cfafed24d1be?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png"
+  }
+}
+issue_source_data = {
+  payload: {
+    issue: {
+      title: "Someone found a bug!",
+      body: "The description",
+      state: "closed",
+      labels: [{name: 'bug'}, {name: 'question'}]
+    }
+  }
+}
+
 FactoryGirl.define do
 
-  factory :meta, class:Hash do
+  factory :props, class:Hash do
     feed "some_feed"
     category "some_category"
     tags ['some_feed','some_category','some_content_tag']
@@ -16,7 +79,7 @@ FactoryGirl.define do
     origin_date Date.today
     origin_ts Time.now
     sequence(:hash_key) {|n| Digest::MD5.hexdigest(title + body + n.to_s) }
-    meta FactoryGirl.build(:meta)
+    props FactoryGirl.build(:props)
 
     trait :with_determined_feed do
       association :feed, factory: :tag, name: "some_feed"
@@ -79,115 +142,63 @@ FactoryGirl.define do
 
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
-        meta({
-          :feed => 'twitter',
-          :tweet_id => "100",
-          :type => "status_event",
-          :origin_author_id => "123456",
-          :origin_author_username => "some_user"
-        })
       end
 
-      trait :retweet1 do
+      trait :retweet do
         title "RT: A hashtag #canjs and a @canjs mention."
-        meta({
-          :tweet_id => "101",
-          :retweeted_id => "100",
-          :type => "status_event"
-        })
       end
 
-      trait :retweet2 do
-        title "RT: A hashtag #canjs and a @canjs mention."
-        meta({
-          :tweet_id => "102",
-          :retweeted_id => "100",
-          :type => "status_event"
-        })
-      end
-
-      factory :twitter_tweet, traits: [:tweet, :with_determined_rule]
-      factory :twitter_retweet1, traits: [:retweet1, :with_determined_rule]
-      factory :twitter_retweet2, traits: [:retweet2, :with_determined_rule]
+      factory :twitter_tweet, traits: [:with_determined_rule, :tweet]
+      factory :twitter_retweet, traits: [:with_determined_rule, :retweet]
     end
 
     ### Github event
 
     factory :github_event do
-      title "Some generic title"
       association :feed, factory: :tag, name: 'github'
-
-      trait :issue do
+      with_determined_rule
+        
+      factory :github_issue do
         title "raised issue #1"
-        body "I'm awesome because I raised an issue."
         association :category, factory: :tag, name: 'bug'
-        tag_list ['github','issues_event','issue','canjs','bug']
-        meta({
-          :feed => 'github',
-          :type => "issues_event",
-          :issue_id => "111",
-          :origin_author_id => "456789",
-          :origin_author_username => "some_user"
-        })
+        tag_list %w(github issues_event issue canjs bug)
+      
+        trait :with_source_data do
+          source_data(issue_source_data)
+        end
       end
 
-      trait :issue_comment do
+      factory :github_push do
+        title "pushed commits"
+        association :category, factory: :tag, name: "code"
+        tag_list %w(github push_event code canjs)
+
+        trait :with_push_event_source_data do
+          source_data(push_event_source_data)
+        end
+      end
+
+      factory :github_pull_request do
+        title "requested a pull"
+        association :category, factory: :tag, name: "code"
+        tag_list %w(github pull_request_event code canjs)
+      end
+
+      factory :github_issue_comment do
         title "commented on issue #1"
         association :category, factory: :tag, name: "comment"
-        tag_list ['github','issue_comment_event','comment','canjs']
-        sequence(:body) {|n| "Here's a comment no. ##{n} to your issue" }
-        meta({
-          :type => "issue_comment_event",
-          :issue_id => "111"
-        })
+        tag_list %w(github issue_comment_event comment canjs)
+        
+        trait :with_source_data do
+          source_data(issue_source_data)
+        end
       end
 
-      trait :push do
-        title "pushed"
-        body ""
-        association :category, factory: :tag, name: "code"
-        tag_list ['github', 'push_event', 'code', 'canjs']
-
-        sd_map = {
-          # payload: push_event_payload
-        }
-        source_data sd_map
-
-        meta({
-          :type => "push_event",
-          :feed => "github",
-          :commits => "3sdaf4s,43a2aa8,295aa54",
-        })
-      end
-
-      # how to generate commit hashes? (to avoid c/p)
-      trait :commit_comment1 do
-        title "commented on a commit 43a2aa8"
-        body "This is an awesome comment"
+      factory :github_commit_comment do
+        title "commented on a commit 4b2342hh"
         association :category, factory: :tag, name: "comment"
-        tag_list ['github','commit_comment_event','comment','canjs']
-        meta({
-          :type => "commit_comment_event",
-          :commit_id => "43a2aa8",
-        })
+        tag_list %w(github commit_comment_event comment canjs)
       end
-
-      trait :commit_comment2 do
-        title "commented on a commit 295aa54"
-        body "This is an awesome comment"
-        association :category, factory: :tag, name: "comment"
-        tag_list ['github','commit_comment_event','comment','canjs']
-        meta({
-          :type => "commit_comment_event",
-          :commit_id => "295aa54",
-        })
-      end
-
-      factory :github_issue, traits: [:issue, :with_determined_rule]
-      factory :github_issue_comment, traits: [:issue_comment, :with_determined_rule]
-      factory :github_push, traits: [:push, :with_determined_rule]
-      factory :github_commit_comment1, traits: [:commit_comment1, :with_determined_rule]
-      factory :github_commit_comment2, traits: [:commit_comment2, :with_determined_rule]
     end
   end
 end
