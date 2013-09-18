@@ -88,8 +88,7 @@
   :repos:
     :testy:
       :events: 'https://api.github.com/repos/bithub-test/testy/events'
-      :issues: 'https://api.github.com/repos/bitovi/canjs/issues'
-    #  :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
+      :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
     # :canjs:
     #   :events: 'https://api.github.com/repos/bitovi/canjs/events'
     # :steal:

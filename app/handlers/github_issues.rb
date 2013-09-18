@@ -32,8 +32,10 @@ module Handler
           end
 
           ### fetch next page
-          next_link = self.get_link_by_type(get_github_issues.response_header["LINK"], 'next')
-          self.fetch(next_link[:url]) if next_link
+          if get_github_issues.response_header["LINK"]
+            next_link = self.get_link_by_type(get_github_issues.response_header["LINK"], 'next')
+            self.fetch(next_link[:url]) if next_link
+          end
 
         else
           @log.warning "FEED: #{feed} | HTTP #{get_github_issues.response_header.status}"
