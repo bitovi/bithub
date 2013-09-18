@@ -1,6 +1,7 @@
 require 'app/handlers/base'
 require 'app/handlers/twitter'
 require 'app/handlers/github'
+require 'app/handlers/github_issues'
 require 'app/handlers/forums'
 require 'app/handlers/blog'
 require 'app/handlers/disqus'

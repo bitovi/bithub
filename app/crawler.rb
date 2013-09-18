@@ -63,11 +63,14 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Pollers
     phase = 1; shift_phase = lambda {phase+=1}
 
-    # --- Github
-    $feeds[:github][:events].each do |project, repo|
-      EM.add_timer(phase) do
-        $log.info "Registering Github handler for \"#{project}\" at \"#{repo[:endpoint]}\""
-        EM.add_periodic_timer(3, &Handler::Github.handler($log, exchange, $feeds[:github][:token], repo[:endpoint]))
+    # --- Github events endpoint
+    $feeds[:github][:repos].each do |project, repo|
+      if repo[:events] 
+        EM.add_timer(phase) do
+          $log.info "Registering Github events handler for \"#{project}\" at \"#{repo[:events]}\""
+          # or to make something bold in console log with "\033[1mFOOBAR\033[0m ?!
+          EM.add_periodic_timer(3, &Handler::Github.handler($log, exchange, $feeds[:github][:token], repo[:events]))
+        end
       end
       shift_phase.call
     end
@@ -109,4 +112,21 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # shift_phase.call
 
   end
+
+  channel.fanout("e.issues") do |exchange|
+
+    # --- Pollers
+    phase = 1; shift_phase = lambda {phase+=1}
+
+    # --- Github issues endpoint
+    $feeds[:github][:repos].each do |project, repo|
+      if repo[:issues]
+        $log.info "Registering Github issues handler for \"#{project}\" at \"#{repo[:issues]}\""
+        EM.add_periodic_timer(20, &Handler::GithubIssues.handler($log, exchange, $feeds[:github][:token], repo[:issues]))
+        
+      end
+      shift_phase.call
+    end    
+  end
+
 end
