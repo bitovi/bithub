@@ -15,13 +15,11 @@ module EventProcessor
       raise NotValidEventException if !valid_event?(event_hash)
 
       partly_processed_hash = {
-        origin_ts: parse_date(event_hash['created_at']).iso8601,
-        origin_date: parse_date(event_hash['created_at']).strftime("%Y-%m-%d"),
-        source_data: event_hash,
-        meta: {
-          origin_author_name: event_hash['user']['screen_name'],
-          origin_author_id: event_hash['user']['id'],
-          feed: feed
+        :origin_ts => parse_date(event_hash['created_at']).iso8601,
+        :origin_date => parse_date(event_hash['created_at']).strftime("%Y-%m-%d"),
+        :source_data => event_hash,
+        :meta => {
+          :feed => feed
         }
       }
 
@@ -34,24 +32,28 @@ module EventProcessor
 
     private
     def prepare_user_event(event_hash, partly_processed_hash)
-      partly_processed_hash.merge({
-        title: "followed @#{event_hash['target']['screen_name']}",
-        hash_key: Digest::MD5.hexdigest(event_hash['source']['id_str'] + event_hash['target']['id_str'] + feed),
-        meta: {
-          type: 'follow_event'
+      partly_processed_hash.deep_merge({
+        :title => "followed @#{event_hash['target']['screen_name']}",
+        :hash_key => Digest::MD5.hexdigest(event_hash['source']['id_str'] + event_hash['target']['id_str'] + feed),
+        :meta => {
+          :origin_author_name => event_hash['source']['screen_name'],
+          :origin_author_id => event_hash['source']['id'],
+          :type => 'follow_event'
         }
       })
     end
 
     def prepare_public_event(event_hash, partly_processed_hash)
-      fully_processed_hash = partly_processed_hash.merge({
-        title: event_hash['text'],
-        hash_key: Digest::MD5.hexdigest(event_hash['id_str'] + feed),
-        url: "https://twitter.com/#{event_hash['user']['screen_name']}/status/#{event_hash['id_str']}",
-        meta: {
-          type: 'status_event',
-          origin_id: event_hash['id'],
-          tweet_id: event_hash['id_str']
+      fully_processed_hash = partly_processed_hash.deep_merge({
+        :title => event_hash['text'],
+        :hash_key => Digest::MD5.hexdigest(event_hash['id_str'] + feed),
+        :url => "https://twitter.com/#{event_hash['user']['screen_name']}/status/#{event_hash['id_str']}",
+        :meta => {
+          :origin_author_name => event_hash['user']['screen_name'],
+          :origin_author_id => event_hash['user']['id'],
+          :type => 'status_event',
+          :origin_id => event_hash['id'],
+          :tweet_id => event_hash['id_str']
         }
       })
 
@@ -62,7 +64,11 @@ module EventProcessor
     end
 
     def is_follow_event?(event_hash)
-      event_hash['event'] == 'follow' && event_hash['target']['screen_name']
+      event_hash['event'] == 'follow' && event_hash['target']['screen_name'] && event_hash['created_at']
+    end
+
+    def is_status_event?(event_hash)
+      event_hash['text'] && event_hash['user']['screen_name'] && event_hash['created_at'] 
     end
 
     def is_user_stream?
@@ -70,7 +76,7 @@ module EventProcessor
     end
 
     def valid_event?(event_hash)
-      event_hash['event'] && event_hash['created_at'] && event_hash['screen_name']
+      is_follow_event?(event_hash) || is_status_event?(event_hash)
     end
   end
 end
