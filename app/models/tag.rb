@@ -41,6 +41,9 @@ class Tag < ActsAsTaggableOn::Tag
     %w(bug).each do |keyword|
       return "bug" if tag =~ /#{keyword}/i
     end
+  
+    return tag
   end
+
 
 end
