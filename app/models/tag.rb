@@ -33,4 +33,14 @@ class Tag < ActsAsTaggableOn::Tag
     @tag_groups.keys().map{|tag| tag.to_s}
   end
 
+  def self.basic_tagging(tag)
+    %w(enhancement feature feature-request).each do |keyword|
+      return "feature" if tag =~ /#{keyword}/i
+    end
+
+    %w(bug).each do |keyword|
+      return "bug" if tag =~ /#{keyword}/i
+    end
+  end
+
 end

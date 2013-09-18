@@ -18,13 +18,13 @@ module Determination
   end
 
   def determine_feed
-    f = self.props[:feed]
+    f = self.props[:feed] || self.props['feed']
     self.feed = Tag.find_by_name(f) || Tag.find_or_create_with_like_by_name(f)
     self
   end
 
   def determine_category
-    c = self.props[:category]
+    c = Tag.basic_tagging(self.props[:category] || self.props['category'])
     self.category = Tag.find_by_name(c) || Tag.find_or_create_with_like_by_name(c)
     self
   end

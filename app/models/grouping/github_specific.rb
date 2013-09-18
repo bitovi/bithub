@@ -170,12 +170,15 @@ module Grouping::GithubSpecific
   end
 
   def update_self_from_child(child)
-    has_necessary_data = child.source_data && child.source_data[:payload] && (issue_data = child.source_data[:payload][:issue])
+    sd = ActiveSupport::HashWithIndifferentAccess.new(child.source_data)
+    has_necessary_data = sd && sd[:payload] && sd[:payload][:issue]
     if has_necessary_data
-      self.body = issue_data[:body]
-      self.title = issue_data[:title]
-      self.props['labels'] = issue_data[:labels].map{|l| l[:name]}
-      self.props['state'] = issue_data[:state]
+      self.body = sd[:payload][:issue][:body]
+      self.title = sd[:payload][:issue][:title]
+      self.props['labels'] = sd[:payload][:issue][:labels].map{|l| l[:name]}
+      self.props['state'] = sd[:payload][:issue][:state]
+      self.props['category'] = self.props['labels'].first
+      self.determine_category
       self.save
     else
       fail NoDataToUpdateIssueException, "Needs to have source_data with the original issue in the payload"
