@@ -178,7 +178,7 @@ module Grouping::GithubSpecific
       self.props['state'] = issue_data[:state]
       self.save
     else
-      raise NoDataToUpdateIssueException, "Needs to have source_data with the original issue in the payload"
+      fail NoDataToUpdateIssueException, "Needs to have source_data with the original issue in the payload"
     end
   end
 
