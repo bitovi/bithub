@@ -22,7 +22,7 @@ describe Determination do
 
   describe "#determine_rule" do
     it "determines a rule" do
-      event = build(:event_wo_rule)        
+      event = create(:event_wo_rule)        
       event.determine_rule.save!
       rule = Rule.best_match(event.props[:tags])
       expect(event.rule).to eq(rule)
@@ -40,18 +40,21 @@ describe Determination do
 
   describe "#determine_author" do
     context "when there is an author in the system" do
+
       before(:each) do
         @usr = create(:user, name: "Nikica")
-        ident = create(:identity, uid: 123456, provider: "twitter", user: @usr)
         ident = create(:identity, uid: 456789, provider: "github", user: @usr)
+        ident = create(:identity, uid: 123456, provider: "twitter", user: @usr)
       end
+
       it "associates it with a github event" do
-        ghe = build(:github_issue)
+        ghe = build(:github_issue, props: {feed: 'github', origin_author_id: 456789})
         ghe.determine_author.save!
         expect(ghe.author).to eq(@usr)
       end
+
       it "associates it with a twitter event" do
-        twe = build(:twitter_tweet)
+        twe = build(:twitter_tweet, props: {feed: 'twitter', origin_author_id: 123456})
         twe.determine_author.save!
         expect(twe.author).to eq(@usr)
       end

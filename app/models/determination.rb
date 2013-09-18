@@ -35,10 +35,11 @@ module Determination
   end
 
   def determine_author
-    uid = self.props[:origin_author_id]
-    if f = self.props[:origin_author_feed] # Coming from Bithub
+    p = ActiveSupport::HashWithIndifferentAccess.new(self.props)
+    uid = p[:origin_author_id] 
+    if f = p[:origin_author_feed] # Coming from Bithub
       ident = Identity.find_or_create_with_provider_and_uid(f, uid)
-    else f = self.props[:feed] # Coming from crawler
+    else f = p[:feed] # Coming from crawler
       ident = Identity.find_by_provider_and_uid(f, uid)
     end
     self.author = ident.user if ident && ident.user

@@ -55,3 +55,4 @@ en:
         already_upvoted: "Already upvoted"
         already_anteuped: "Anteup already placed"
         already_awarded: "Already awarded"
+        has_no_parent: "Event has no parent!"

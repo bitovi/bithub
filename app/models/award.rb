@@ -9,13 +9,22 @@ class Award < ActiveRecord::Base
   validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only award once"
   validate :thread_not_already_awarded
 
+  class EventHasNoParentException < Exception; end
+
   def self.create_with_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
 
-    if opts[:strategy] == :double_the_upvotes
-      award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
-    elsif opts[:strategy] == :based_on_rule
-      award = Award.create!({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
+    begin
+      if opts[:strategy] == :double_the_upvotes
+        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
+      elsif opts[:strategy] == :double_parents_upvotes
+        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_parents_upvote_value(applies_to)})
+      elsif opts[:strategy] == :based_on_rule
+        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
+      end
+    rescue EventHasNoParentException => e
+      Rails.logger.info "Event can't be awarded because it has no parent" 
+      raise e
     end
 
     applies_to.author.reward_if_eligible if applies_to.author
@@ -24,6 +33,14 @@ class Award < ActiveRecord::Base
 
   def self.double_upvote_value(event)
     (event.upvotes.sum(:value) * 2)
+  end
+  
+  def self.double_parents_upvote_value(event)
+    if self.parent
+      (event.parent.upvotes.sum(:value) * 2)
+    else
+      fail EventHasNoParentException
+    end
   end
 
   def self.total_value(event)

@@ -11,7 +11,7 @@ class Event < ActiveRecord::Base
   include Grouping::GithubSpecific
   include Grouping::ForumsSpecific
 
-  class EventHasNoParentError < Error; end
+  class EventHasNoParentException < Error; end
   class DistinctFieldNotKnown < Error; end
 
   attr_accessible :hash_key, :id,

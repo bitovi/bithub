@@ -29,15 +29,14 @@ class Api::EventActivitiesController < Api::ApiController
   def create_award
     authorize! :create_award, Award, :message => "No right to create an award!"
     event = Event.find(params[:event_id])
-    award = Award.create_with_strategy(current_user, event, {strategy: :double_the_upvotes})
 
-    if award
+    begin
+      award = Award.create_with_strategy(current_user, event, {strategy: :double_parents_upvotes})
       render :json => award
-    else
-      render :json => {
-        message: t('api.event_activities.errors.already_awarded'),
-        errors: award.errors.full_messages
-      }, :status => 406
+    rescue EventHasNoParentException => e
+      render :json => { message: t('api.event_activities.errors.has_no_parent'), errors: award.errors.full_messages }, :status => 406
+    rescue ActiveRecord::RecordInvalid => e
+      render :json => { message: t('api.event_activities.errors.already_awarded'), errors: award.errors.full_messages }, :status => 406
     end
   end
   
