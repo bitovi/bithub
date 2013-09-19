@@ -83,13 +83,15 @@ module Handler
     end
 
     def calculate_difference_hash(event_hash)
-      composite_seed = event_hash['issue_id'].to_s +
+      composite_seed = event_hash['id'].to_s +
                        event_hash['labels'].to_s +
                        event_hash['state'] +
                        event_hash['title'] +
                        event_hash['body']
 
-      event_hash[:hash_key] = Digest::MD5.hexdigest(composite_seed)
+      event_hash['content_digest'] = Digest::MD5.hexdigest(composite_seed)
+      ltmp = event_hash['labels']
+      event_hash['labels'] = ltmp.map{|l| l['name']}
       event_hash
     end
 

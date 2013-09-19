@@ -84,18 +84,18 @@ issues_event = lambda do |event|
     title = "Issue #{action}: #{t}"
   end
 
-  composite_seed = event_hash['payload']['issue']['issue_id'].to_s +
-                   event_hash['payload']['issue']['labels'].to_s +
-                   event_hash['payload']['issue']['state'] +
-                   event_hash['payload']['issue']['title'] +
-                   event_hash['payload']['issue']['body']
+  composite_seed = event['payload']['issue']['id'].to_s +
+                   event['payload']['issue']['labels'].to_s +
+                   event['payload']['issue']['state'] +
+                   event['payload']['issue']['title'] +
+                   event['payload']['issue']['body']
 
   {
     :title => title,
     :body => event['payload']['issue']['body'],
     :url => event['payload']['issue']['html_url'],
-    :hash_key => Digest::MD5.hexdigest(composite_seed),
     :meta => {
+      :content_digest => Digest::MD5.hexdigest(composite_seed),
       :labels => event['payload']['issue']['labels'].map { |l| l['name'] },
       :issue_id => event['payload']['issue']['id'],
       :action => event['payload']['action'],

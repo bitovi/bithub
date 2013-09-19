@@ -6,7 +6,7 @@ require 'time'
 
 module Handler
   class Base
-    attr_reader :initialized, :feed
+    attr_reader :initialized, :feed, :log
 
     CUSTOM_RULESET = Sanitize::Config::RELAXED
     CUSTOM_RULESET[:elements] << "div"

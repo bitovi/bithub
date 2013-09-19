@@ -29,7 +29,7 @@ module Handler
             @log.error "FEED: #{feed} | #{e}"
           end
         else
-          @log.warning "FEED: #{feed} | HTTP #{get_github_events.response_header.status}"
+          @log.error "FEED: #{feed} | HTTP #{get_github_events.response_header.status}"
         end
       end
 
