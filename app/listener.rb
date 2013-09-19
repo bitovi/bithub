@@ -20,6 +20,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
 
   channel.direct("e.events") do |web_exchange|  
+
     channel.direct("e.events.liveservice") do |liveservice_exchange|
       queue = channel.queue("q.events.web").bind(web_exchange)
 
@@ -41,16 +42,27 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         end
       end
     end
+  end
 
-    channel.fanout("e.issues") do |issues_exchange|
-      queue = channel.queue("q.issues.web").bind(issues_exchange)
-      
-      queue.subscribe do |metadata, payload|
-        issue_hash = ActiveSupport::JSON.decode(payload)
+  channel.fanout("e.issues") do |issues_exchange|
+    queue = channel.queue("q.issues.web").bind(issues_exchange)
+    queue.subscribe do |metadata, payload|
+      issue_hash = ActiveSupport::JSON.decode(payload)
 
-        # do something with that issue_hash
-        $log.info "-- #{issue_hash['title']}"
-      end      
+      if (i = Event.issues_by_issue_id(issue_hash['id']).first)
+        issue = i.top_level_parent
+        if issue.props['content_digest'] != issue_hash['content_digest']
+          issue.title = issue_hash['title']
+          issue.body = issue_hash['body']
+          issue.props['labels'] = issue_hash['labels']
+          issue.props['state'] = issue_hash['state']
+          issue.props['content_digest'] = issue_hash['content_digest']
+          issue.props['category'] = issue.props['labels'].first
+          issue.determine_category
+          issue.save!
+        end
+      end
     end
   end
+
 end
