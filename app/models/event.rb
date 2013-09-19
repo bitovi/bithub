@@ -165,6 +165,14 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def top_level_parent
+    if self.parent
+      self.parent.top_level_parent
+    else
+      self
+    end
+  end
+
   private
   
   # Helper methods
