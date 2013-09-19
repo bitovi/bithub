@@ -14,7 +14,7 @@
   - jquerypp
   - stealjs
   - funcunit
-  - documentjs
+  - document_js
 
 :category:
   - bug
