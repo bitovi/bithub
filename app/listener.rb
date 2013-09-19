@@ -52,6 +52,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       if (i = Event.issues_by_issue_id(issue_hash['id']).first)
         issue = i.top_level_parent
         if issue.props['content_digest'] != issue_hash['content_digest']
+          $log.info "Issue with ID=#{issue_hash['id']} changed. Updating"
           issue.title = issue_hash['title']
           issue.body = issue_hash['body']
           issue.props['labels'] = issue_hash['labels']
