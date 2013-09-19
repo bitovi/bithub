@@ -26,7 +26,7 @@ module Handler
           github_issues = Yajl::Parser.parse(get_github_issues.response)
 
           begin
-            publish(github_issues) if github_issues.size > 0
+            publish(process(github_issues)) if github_issues.size > 0
           rescue EventProcessor::Github::NotValidEventException => e
             @log.error "FEED: #{feed} | #{e}"
           end
@@ -79,7 +79,18 @@ module Handler
     end
 
     def process(new_events)
-      new_events.map { |e| processor.process(e) }
+      new_events.map { |e| calculate_difference_hash(e) }
+    end
+
+    def calculate_difference_hash(event_hash)
+      composite_seed = event_hash['issue_id'].to_s +
+                       event_hash['labels'].to_s +
+                       event_hash['state'] +
+                       event_hash['title'] +
+                       event_hash['body']
+
+      event_hash[:hash_key] = Digest::MD5.hexdigest(composite_seed)
+      event_hash
     end
 
   end
