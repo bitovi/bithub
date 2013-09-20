@@ -25,7 +25,7 @@ module EventProcessor
 
       if is_user_stream? && is_follow_event?(event_hash)
         prepare_user_event(event_hash, partly_processed_hash)
-      else
+      elsif is_not_user_stream? && is_status_event?(event_hash)
         prepare_public_event(event_hash, partly_processed_hash)
       end
     end
@@ -64,11 +64,15 @@ module EventProcessor
     end
 
     def is_follow_event?(event_hash)
-      event_hash['event'] == 'follow' && event_hash['target']['screen_name'] && event_hash['created_at']
+      event_hash['event'] && (event_hash['event'] == 'follow') && event_hash['target']['screen_name'] && event_hash['created_at']
     end
 
     def is_status_event?(event_hash)
       event_hash['text'] && event_hash['user']['screen_name'] && event_hash['created_at'] 
+    end
+
+    def is_not_user_stream?
+      !is_user_stream
     end
 
     def is_user_stream?
