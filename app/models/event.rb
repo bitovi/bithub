@@ -30,9 +30,9 @@ class Event < ActiveRecord::Base
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   has_many :children, :foreign_key => "parent_id", :class_name => "Event"
-  has_many :upvotes, :foreign_key => "applies_to_id"
-  has_many :anteups, :foreign_key => "applies_to_id"
-  has_many :awards, :foreign_key => "applies_to_id"
+  has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
+  has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
+  has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title
   validates_uniqueness_of :hash_key
