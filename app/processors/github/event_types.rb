@@ -64,6 +64,7 @@ issue_comment_event = lambda do |event|
     :body => event['payload']['comment']['body'],
     :url => event['payload']['issue']['html_url'],
     :meta => {
+      :labels => event['payload']['issue']['labels'].map { |l| l['name'] },
       :issue_id => event['payload']['issue']['id'],
       :issue_number => event['payload']['issue']['number'],
       :repo_name => event['repo']['name']
