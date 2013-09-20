@@ -37,7 +37,7 @@ class Award < ActiveRecord::Base
   
   def self.double_parents_upvote_value(event)
     if self.parent
-      (event.parent.upvotes.sum(:value) * 2)
+      (event.top_level_parent.upvotes.sum(:value) * 2)
     else
       fail EventHasNoParentException
     end

@@ -41,6 +41,17 @@ describe Award do
 
       expect(Award.double_parents_upvote_value(ce)).to eq(ce.parent.upvotes.sum(:value)*2)
     end
+
+    it "should look at the top level parent to know the amount it needs to award" do
+      user = create(:user)
+      rule = create(:rule, upvote_value: 7)
+      ie = create(:github_issue, rule: rule)
+      pe = create(:github_push, parent: ie)
+      cce = create(:github_commit_comment, parent: pe)
+
+      Upvote.create_based_on_rule(user, cce)
+      expect(Award.double_parents_upvote_value(cce)).to eq(cce.top_level_parent.upvotes.sum(:value)*2)
+    end
   end
 
   describe ".total_value" do
