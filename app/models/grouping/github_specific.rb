@@ -173,13 +173,19 @@ module Grouping::GithubSpecific
     sd = ActiveSupport::HashWithIndifferentAccess.new(child.source_data)
     has_necessary_data = sd && sd[:payload] && sd[:payload][:issue]
     if has_necessary_data
-      self.body = sd[:payload][:issue][:body]
+
       self.title = sd[:payload][:issue][:title]
+      self.body = sd[:payload][:issue][:body]
       self.props['labels'] = sd[:payload][:issue][:labels].map{|l| l[:name]}
       self.props['state'] = sd[:payload][:issue][:state]
-      self.props['category'] = self.props['labels'].first
-      self.determine_category
+
+      if self.props['labels'] && self.props['labels'].length > 0
+        self.props['category'] = self.props['labels'].first
+        self.redetermine_category
+      end
+
       self.save
+
     else
       fail NoDataToUpdateIssueException, "Needs to have source_data with the original issue in the payload"
     end

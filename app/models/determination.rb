@@ -46,6 +46,13 @@ module Determination
     self
   end
 
+  def redetermine_category
+    c = self.props['category']
+    self.tag_list.remove(c)
+    self.determine_category
+    self.tag_list.add(c)
+  end
+
   def clean_props_after_categorization
     self.props.delete(:category)
     self.props.delete(:feed)

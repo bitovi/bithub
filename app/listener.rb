@@ -58,10 +58,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.props['labels'] = issue_hash['labels']
           issue.props['state'] = issue_hash['state']
           issue.props['content_digest'] = issue_hash['content_digest']
-          issue.props['category'] = issue.props['labels'].first
-          issue.tag_list.remove(issue.category.name)
-          issue.determine_category
-          issue.tag_list.add(issue.category.name)
+
+          if issue.props['labels'] && issue.props['labels'].length > 0
+            issue.props['category'] = issue.props['labels'].first
+            issue.redetermine_category
+          end
+
           issue.save!
         end
       end
