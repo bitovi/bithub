@@ -1,4 +1,5 @@
 module Determination
+  FT_LIST = %w(bug feature feature-request enhancement)
 
   def determine(custom_props = nil)
     self.props ||= custom_props
@@ -48,9 +49,11 @@ module Determination
 
   def redetermine_category
     c = self.props['category']
-    self.tag_list.remove(c)
+    self.tag_list.remove(FT_LIST)
     self.determine_category
-    self.tag_list.add(c)
+    if self.category
+      self.tag_list.add(self.category.name)
+    end
   end
 
   def clean_props_after_categorization
