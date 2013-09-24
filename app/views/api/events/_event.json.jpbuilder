@@ -15,8 +15,8 @@ json.cache! custom_cache_key(event) do
 	json.actor event.actor
 	json.image_url event.image_url(params[:size])
 
-	json.children EventDecorator.decorate_collection(event.children) do |c|
-		json.partial! "api/events/event", event: c
+	json.children event.children do |c|
+		json.partial! "api/events/event", event: EventDecorator.decorate(c)
 	end
 
 	json.source_data event.source_data

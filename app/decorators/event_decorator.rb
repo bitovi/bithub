@@ -8,7 +8,11 @@ class EventDecorator < Draper::Decorator
   end
 
   def upvotes
-    source.respond_to?(:total_upvotes) ? source.total_upvotes.to_i : source.upvotes.reduce(0) { |acc, u| acc += u.value }
+    if !source.parent
+      source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
+    else
+      source.upvotes.reduce(0) { |acc, u| acc += u.value }
+    end
   end
 
   def title
