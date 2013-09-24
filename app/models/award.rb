@@ -60,5 +60,6 @@ class Award < ActiveRecord::Base
   
   def bust_event_cache
     self.applies_to.touch
+    self.applies_to.parent.touch if self.applies_to.parent
   end
 end
