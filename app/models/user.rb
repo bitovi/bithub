@@ -158,6 +158,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  def completed_profile?
+    self.name.present? &&
+    self.email.present? &&
+    self.address.present? &&
+    self.city.present? &&
+    self.postal.present? &&
+    self.country.present?
+  end
+
   # For casting the virtual column
   def total_score
     ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
