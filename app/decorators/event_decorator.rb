@@ -65,10 +65,6 @@ class EventDecorator < Draper::Decorator
     end
   end
 
-  # def children
-  #   EventDecorator.decorate_collection(source.children, context: context)
-  # end
-
   def props
     if source.category.name == 'digest'
       source.props[:repo] = source.source_data['repo']['name'] if tag_list.include?('watch_event') || tag_list.include?('fork_event')
@@ -86,7 +82,7 @@ class EventDecorator < Draper::Decorator
     end
 
     source.props[:thread_awarded] = source.thread_awarded?
-    source.props[:awarded] = source.awarded? || source.thread_awarded?
+    source.props[:awarded] = source.awarded?
 
     source.props
   end
