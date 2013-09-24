@@ -10,6 +10,7 @@ class Upvote < ActiveRecord::Base
 
   def self.create_based_on_rule(actor, applies_to)
     upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
+    upvote_value.bust_event_cache
     applies_to.author.reward_if_eligible if applies_to.author
     upvote
   end

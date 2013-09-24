@@ -27,6 +27,7 @@ class Award < ActiveRecord::Base
       raise e
     end
 
+    award.bust_event_cache
     applies_to.author.reward_if_eligible if applies_to.author
     award
   end
