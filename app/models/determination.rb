@@ -13,7 +13,7 @@ module Determination
   end
 
   def determine_tags
-    ts = ([] + (self.props[:tags] || []) + [self.props[:feed]] + [self.props[:type]] + [self.props[:category]])
+    ts = ([] + (self.props[:tags] || []) + [self.props[:feed]] + [self.props[:type]] + [self.props[:category]] + [self.props[:project]])
     self.tag_list = ActsAsTaggableOn::TagList.new(ts.uniq)
     self
   end
