@@ -56,7 +56,7 @@ issue_source_data = {
       title: "Someone found a bug!",
       body: "The description",
       state: "closed",
-      labels: [{name: 'bug'}, {name: 'question'}]
+      labels: [{name: "bug"}, {name: "question"}]
     }
   }
 }

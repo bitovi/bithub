@@ -104,8 +104,6 @@ describe Grouping do
         npe.group_push_event.save!
         npe.parent.should == i
       end
-
-      it "should mark the issue as resolved if the commit messages contain closing keywords"
     end
   end
   
@@ -162,8 +160,6 @@ describe Grouping do
         nic.group_issue_comment_event.save!
         nic.parent.should == i
       end
-
-      it "should update the attributes (labels, title, body, etc.) of the parent issue"
     end
   end
 
@@ -206,23 +202,28 @@ describe Grouping do
   end
 
   describe "#update_parent_issue" do
-    it "updates the attributes with the data from the new issue" do
-      i = create(:github_issue, title: "Wat.", body: "Wat?", props: {state: "open", issue_id: "123", labels: ['wat']})
-      ni = build(:github_issue, :with_source_data, props: {issue_id: "123"})
-      i.update_self_from_child(ni)
+    before :each do
+      @i = create(:github_issue, title: "Wat.", body: "Wat?", props: {state: "open", issue_id: "123", labels: ['wat']})
+      @ni = build(:github_issue, :with_source_data, props: {issue_id: "123"})
+      @i.update_self_from_child(@ni)
+    end
+    
+    it "should update the title of the parent issue" do
+      @i.reload.title.should == @ni.source_data[:payload][:issue][:title]
+    end
 
-      i.reload.title.should == ni.source_data[:payload][:issue][:title]
-      i.reload.body.should == ni.source_data[:payload][:issue][:body]
-      i.reload.props['labels'].should == ni.source_data[:payload][:issue][:labels].map{|l| l[:name]}
-      i.reload.props['state'].should == ni.source_data[:payload][:issue][:state]
+    it "should update the body of the parent issue" do
+      @i.reload.body.should == @ni.source_data[:payload][:issue][:body]
+    end
+
+    it "should update the labels of the parent issue" do
+      @i.reload.props['labels'].should == @ni.source_data[:payload][:issue][:labels].map{|l| l[:name]}.join(',')
+    end
+
+    it "should update the state of the parent issue" do
+      @i.reload.props['state'].should == @ni.source_data[:payload][:issue][:state]
     end
   end
-
-
-
-
-
-
 
   describe "#group_tweet" do
     context "when there are existing retweets of itself" do
