@@ -182,7 +182,7 @@ module Grouping::GithubSpecific
       self.props['state'] = sd[:payload][:issue][:state]
 
       if self.props['labels'] && self.props['labels'].length > 0
-        self.props['category'] = self.props['labels'].first
+        self.props['category'] = self.props['labels'].split(',').first
         self.redetermine_category
       end
 
