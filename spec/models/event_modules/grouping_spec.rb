@@ -104,8 +104,6 @@ describe Grouping do
         npe.group_push_event.save!
         npe.parent.should == i
       end
-
-      it "should mark the issue as resolved if the commit messages contain closing keywords"
     end
   end
   
@@ -162,8 +160,6 @@ describe Grouping do
         nic.group_issue_comment_event.save!
         nic.parent.should == i
       end
-
-      it "should update the attributes (labels, title, body, etc.) of the parent issue"
     end
   end
 
