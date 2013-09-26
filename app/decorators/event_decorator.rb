@@ -82,7 +82,7 @@ class EventDecorator < Draper::Decorator
     end
 
     source.props[:thread_awarded] = source.thread_awarded?
-    source.props[:awarded] = source.awarded?
+    source.props[:awarded_value] = source.awards.first.value if source.awards.first
 
     source.props
   end
