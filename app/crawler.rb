@@ -27,8 +27,9 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
+$log.info "Loading feeds for #{ENV['ENV']}"
 # Load feeds config 
-if ENV['ENV'] == 'production'
+if ENV['ENV'] == 'prod'
   $feeds = YAML::load_file('config/feeds.yml')
 elsif ENV['ENV'] == 'staging'
   $feeds = YAML::load_file('config/feeds_staging.yml')

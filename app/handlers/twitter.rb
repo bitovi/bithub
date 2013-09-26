@@ -5,7 +5,7 @@ require 'app/processors/twitter/processor'
 
 module Handler
   class Twitter
-    attr_reader :feed, :processor
+    attr_reader :feed, :processor, :connected_as
 
     ERRBACKS = [
       "on_unauthorized", "on_forbidden",
@@ -55,9 +55,13 @@ module Handler
       begin
         publish processor.process(event)
       rescue EventProcessor::Twitter::NotValidEventException => e
-        @log.error "FEED: #{feed} | #{e}"
+        if event["friends"]
+          @log.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
+        else
+          @log.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event}"
+        end
       rescue => error
-        @log.error "FEED: #{feed} | ERROR: #{error}"
+        @log.error "FEED: #{feed} | AS: #{connected_as} | ERROR: #{error}"
       end
     end
 
