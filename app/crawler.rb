@@ -28,7 +28,13 @@ $log.add(Log4r::StdoutOutputter.new('console', {
 }))
 
 # Load feeds config 
-$feeds = YAML::load_file('config/feeds.yml')
+if ENV['ENV'] == 'production'
+  $feeds = YAML::load_file('config/feeds.yml')
+elsif ENV['ENV'] == 'staging'
+  $feeds = YAML::load_file('config/feeds_staging.yml')
+elsif ENV['ENV'] == 'development'
+  $feeds = YAML::load_file('config/feeds_dev.yml')
+end
 
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
@@ -44,6 +50,9 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Streams
     $log.info "Registering to Twitter's public stream"
     Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:public_feed], false)
+    
+    $log.info "Registering @bitovi user stream"
+    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:bitovi], true)
     
     $log.info "Registering @canjs user stream"
     Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:canjs], true)
@@ -69,7 +78,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         EM.add_timer(phase) do
           $log.info "Registering Github events handler for \"#{project}\" at \"#{repo[:events]}\""
           # or to make something bold in console log with "\033[1mFOOBAR\033[0m ?!
-          EM.add_periodic_timer(10, &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
+          EM.add_periodic_timer(15, &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
         end
       end
       shift_phase.call

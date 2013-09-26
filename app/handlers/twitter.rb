@@ -7,7 +7,8 @@ module Handler
   class Twitter
     attr_reader :feed, :processor
 
-    ERRBACKS = [ "on_unauthorized", "on_forbidden",
+    ERRBACKS = [
+      "on_unauthorized", "on_forbidden",
       "on_not_found", "on_not_acceptable",
       "on_too_long", "on_no_data_received",
       "on_close", "on_max_reconnects",
@@ -39,6 +40,7 @@ module Handler
       @stream.on_error do |message|
         @log.error "#{@stream} connected as #{@connected_as} ERROR: #{message}"
       end
+
 
       # dynamically assign the rest of the errbacks
       ERRBACKS.each do |errback|
