@@ -172,11 +172,13 @@ module Grouping::GithubSpecific
   def update_self_from_child(child)
     sd = ActiveSupport::HashWithIndifferentAccess.new(child.source_data)
     has_necessary_data = sd && sd[:payload] && sd[:payload][:issue]
-    if has_necessary_data
 
+    if has_necessary_data
       self.title = sd[:payload][:issue][:title]
       self.body = sd[:payload][:issue][:body]
-      self.props['labels'] = sd[:payload][:issue][:labels].map{|l| l[:name]}
+
+      label_names = sd[:payload][:issue][:labels].map{|l| l[:name]}
+      self.props['labels'] = label_names.join(',')
       self.props['state'] = sd[:payload][:issue][:state]
 
       if self.props['labels'] && self.props['labels'].length > 0

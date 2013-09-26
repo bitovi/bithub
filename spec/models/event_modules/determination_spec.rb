@@ -4,37 +4,37 @@ describe Determination do
 
   describe "#determine_feed" do
     it "determines a feed" do
-      event = build(:event_wo_feed)        
-      event.determine_feed.save!
-      feed = Tag.find_by_name(event.props['feed'])
+      event = build(:event, props: {feed: 'github'})        
+      event.determine_feed
+      feed = Tag.find_by_name(event.props[:feed])
       expect(event.feed).to eq(feed)
     end
   end
 
   describe "#determine_category" do
     it "determines a category" do
-      event = build(:event_wo_category)        
-      event.determine_category.save!
-      category = Tag.find_by_name(event.props['category'])
+      event = build(:event, props: {category: 'code'})        
+      event.determine_category
+      category = Tag.find_by_name(event.props[:category])
       expect(event.category).to eq(category)
     end
   end
 
   describe "#determine_rule" do
     it "determines a rule" do
-      event = create(:event_wo_rule)        
-      event.determine_rule.save!
-      rule = Rule.best_match(event.props[:tags])
+      create(:rule, required_tags: %w(canjs code github))
+      event = build(:event, tag_list: %w(canjs code github))        
+      event.determine_rule
+      rule = Rule.best_match(event.tag_list)
       expect(event.rule).to eq(rule)
     end
   end
 
   describe "#determine_tags" do
     it "determines tags" do
-      event = build(:event_wo_tags)
-      event.determine_tags.save!
-      tags = Tag.find_or_create_all_with_like_by_name(['some_feed','some_category','some_content_tag'])
-      event.tags.should =~ tags
+      event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(foo bar)})
+      event.determine_tags
+      event.tag_list.should =~ %w(code canjs github foo bar)
     end
   end
 
