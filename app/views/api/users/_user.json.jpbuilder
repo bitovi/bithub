@@ -2,6 +2,6 @@ json.(user, :id, :name, :score)
 
 json.avatar_url user.props['avatar_url']
 
-if user_signed_in? && can?(:read_sensitive_data, @user)
-  json.(user, :email, :roles)
+if user_signed_in? #&& can?(:read_sensitive_data, @user)
+  json.(user, :email, :address, :city, :postal, :state, :country, :activities, :achievements, :identities, :roles)
 end
