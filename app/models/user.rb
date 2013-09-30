@@ -28,12 +28,25 @@ class User < ActiveRecord::Base
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
   def activities
-    self.events.joins(:rule).select(['events.id','events.title', 'events.created_at', 'rules.authorship_value'])
-    .concat(self.upvotes.includes(:applies_to).select(['upvotes.*', 'events.title']))
-    .concat(self.awards.includes(:applies_to).select(['awards.*', 'events.title']))
-    .concat(self.anteups.includes(:applies_to).select(['anteups.*', 'events.title']))
-    .concat(self.internals.includes(:applies_to).select(['internals.*']))
-    .sort {|x, y| x[:created_at] <=> y[:created_at]}
+    activities = []
+
+    self.events.joins(:rule).each do |e|
+      activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :created_at => e.created_at})
+    end
+
+    self.awards.select(['awards.*', 'events.title']).each do |a|
+      activities.push({:type => 'award', :id => a.id, :title => a.title, :value => a.value, :created_at => a.created_at})  
+    end
+
+    self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
+      activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+    end
+
+    self.internals.each do |i|
+      activities.push({:type => 'internal', :id => i.id, :title => i.comment, :value => i.value, :created_at => i.created_at})
+    end
+
+    activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
 
   def cached_score
