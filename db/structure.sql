@@ -164,7 +164,8 @@ CREATE TABLE countries (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     display_name character varying(255),
-    iso character varying(255) NOT NULL
+    iso character varying(255) NOT NULL,
+    priority integer DEFAULT 0
 );
 
 
@@ -799,6 +800,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_events_on_props; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_events_on_props ON events USING gist (props);
+
+
+--
 -- Name: index_events_on_thread_updated_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1057,3 +1065,7 @@ INSERT INTO schema_migrations (version) VALUES ('20130905142638');
 INSERT INTO schema_migrations (version) VALUES ('20130910111148');
 
 INSERT INTO schema_migrations (version) VALUES ('20130916130332');
+
+INSERT INTO schema_migrations (version) VALUES ('20130924211203');
+
+INSERT INTO schema_migrations (version) VALUES ('20130926121052');
