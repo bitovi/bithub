@@ -1,5 +1,7 @@
 class ThirdPartyUserInformer
+  attr_reader :github
 
+  class NotUIDException < Exception; end
   def initialize
     Twitter.configure do |config|
       config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
@@ -8,7 +10,7 @@ class ThirdPartyUserInformer
       config.oauth_token_secret = ENV['TWITTER_OAUTH_TOKEN_SECRET']
     end
 
-    @github = Github.new(basic_auth: 'neektza:ahn8Choo')
+    @github = Github.new({auto_pagination: true, basic_auth: 'neektza:ahn8Choo'})
   end
 
   def from_twitter(q)
@@ -16,7 +18,19 @@ class ThirdPartyUserInformer
   end
 
   def from_github(q)
-    res = @github.search.users(q)
+    res = github.search.users(q)
     res.users
+  end
+
+  def followed_accts(uid)
+    fail NotUIDException unless uid.is_a? Integer
+    res = Twitter.friend_ids(uid)
+    res.attrs[:ids] if res.attrs && res.attrs[:ids]
+  end
+
+  def watched_repos(uid)
+    fail NotUIDException unless uid.is_a? Integer
+    res = github.activity.watching.watched :uid => uid
+    res.response.body.map{|r| r['full_name']}
   end
 end
