@@ -14,25 +14,25 @@ describe User do
       @actor.destroy
     end
 
-    it "calculates total authorship points" do
+    it "should calculate total authorship points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from authorship")
       expect(@author.authored_events_total).to eq(33)
     end
 
-    it "calculates total upvote points" do
+    it "should calculate total upvote points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from upvotes")
       Upvote.create_based_on_rule(@actor, event)
       expect(@author.upvotes_total).to eq(11)
     end
 
-    it "calculates total award points" do
+    it "should calculate total award points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from awards")
       Upvote.create_based_on_rule(@actor, event)
       Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
       expect(@author.awards_total).to eq(11*2)
     end
 
-    it "calculates total points" do
+    it "should calculate total points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing total #score")
       Upvote.create_based_on_rule(@actor, event)
       Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
@@ -41,7 +41,7 @@ describe User do
   end
 
   describe ".select_with_score" do
-    it "calculates score for each user by using built in PG fns" do
+    it "should calculate score for each user by using built in PG fns" do
       user = create(:user)
       u = User.where(id: user.id).select_with_score.first
       expect(u.total_score).to be_a(Integer)
@@ -49,7 +49,7 @@ describe User do
   end
 
   describe "#update_blank_oauth_attrs" do
-    it "updates the user's attrs if they're blank" do
+    it "should update the user's attrs if they're blank" do
       user = create(:user, name: "Nikica Jokic", email: nil)
       user.update_blank_oauth_attrs!({name: "Nikica Prdovic", email: "neektza@gmail.com"})
       expect(user.reload.email).to eq ("neektza@gmail.com")
@@ -61,7 +61,7 @@ describe User do
     let(:another_user) { create(:user, name: 'Veljko', email: 'veljko@kset.org') }
 
     context "when there is already a github identity associated with the user" do
-      it "adds a new twitter identity to the existing user" do
+      it "should add a new twitter identity to the existing user" do
         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
         identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
 
@@ -71,7 +71,7 @@ describe User do
     end
 
     context "when there is already a twitter identity associated with the user" do
-      it "adds a new twitter identity to the existing user" do
+      it "shoul add a new twitter identity to the existing user" do
         identity_github = create(:identity, uid: 987654321, provider: 'github')
         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: user)
 
@@ -81,7 +81,7 @@ describe User do
     end
 
     context "when there is already another user that owns the identity being merged" do
-      it "destroys the other user and snatches it's identity" do
+      it "should destroy the other user and snatches it's identity" do
         old_user_id = another_user.id
         identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: another_user)
@@ -92,7 +92,7 @@ describe User do
   end
 
   describe "#reward_if_eligible" do
-    it "creates one achievement for each award that the user is eligible for" do
+    it "should create one achievement for each award that the user is eligible for" do
       author = create(:user, name: "Nikica")
       Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
       r1 = Reward.create({title: "A mug.", point_minimum: 50})
@@ -103,7 +103,7 @@ describe User do
       author.rewards.should =~ [r1, r2, r3]
     end
 
-    it "create an achievement only for rewards that are not already achievement/present" do
+    it "should create an achievement only for rewards that are not already achievement/present" do
       author = create(:user, name: "Nikica")
       Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
       r1 = Reward.create({title: "A mug.", point_minimum: 50})
@@ -124,6 +124,56 @@ describe User do
       author.reward_if_eligible
       author.reward_if_eligible
       expect(author.rewards).to eql [r]
+    end
+  end
+
+  describe "#completed_profile?" do
+    it "should return false if user's profile has not been completed" do
+      user = build(:user, name: "Mali")
+      expect(user.completed_profile?).to eq false
+    end
+    
+    it "should return true if user's profile has been completed" do
+      user = build(:user,
+        name: "Mali",
+        email: "mali@mail.com",
+        address: "Ajme",
+        city: "Moram",
+        postal: "Pisat",
+        country: Country.new(name: "Ove gluposti")
+      )
+
+      expect(user.completed_profile?).to eq true
+    end
+  end
+
+  describe "#already_awarded_for_profile_completion" do
+    it "should return true if the user has already been awarded" do
+      @user = create(:user)
+      expect(@user.already_awarded_for_profile_completion?).to eql false
+    end
+    
+    it "should return false if the user hasn't already been awarded" do
+      @user = create(:user)
+      Internal.create!({receiver: @user, value: 1, comment: "Completed profile."})
+      expect(@user.already_awarded_for_profile_completion?).to eql true
+    end
+  end
+
+  describe "#award_points_for_completing_profile" do
+    it "should award +1 point for competing profile" do
+      @user = create(:user)
+      @user.stub(:completed_profile?).and_return(true)
+      @user.award_points_for_completing_profile
+      expect(@user.score).to eq 1
+    end
+  end
+  
+  describe "#award_points_for_joining" do
+    it "should award +1 point for singning in with twitter/github for the first time" do
+      @user = create(:user)
+      @user.award_points_for_joining('twitter')
+      expect(@user.score).to eq 1
     end
   end
 

@@ -5,7 +5,11 @@ class User < ActiveRecord::Base
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me, :state, :country
+  attr_accessible :address, :city,
+    :email, :name, :postal, :email,
+    :remember_me, :state, :country,
+    :events
+
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
@@ -128,10 +132,49 @@ class User < ActiveRecord::Base
       ActiveRecord::Base.transaction do
         self.save!
         other_user.destroy if other_user
-        identity.award_points_for_joining
+        self.award_points_for_joining(identity.provider)
       end
     end
   end
+
+  def award_points_for_completing_profile
+    if self.completed_profile? && !self.already_awarded_for_profile_completion?
+      self.internals.create({value: 1, comment: "Completed profile."})
+    end
+    self
+  end
+
+  def award_points_for_joining(provider)
+    self.internals.create({value: 1, comment: "Logged in with #{provider}."})
+    self
+  end
+
+  def already_awarded_for_profile_completion?
+    Internal.where("receiver_id = ? AND comment = ?", self.id, "Completed profile.").present?
+  end
+
+  def completed_profile?
+    self.name.present? &&
+    self.email.present? &&
+    self.address.present? &&
+    self.city.present? &&
+    self.postal.present? &&
+    self.country.present?
+  end
+
+  def reward_if_eligible
+    if rs = Reward.find_all_qualified_for(self)
+      not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
+      rewards << not_already_achieved_rewards
+      save
+    end
+  end
+
+  # For casting the virtual column
+  def total_score
+    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
+  end 
+
 
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
@@ -146,45 +189,6 @@ class User < ActiveRecord::Base
 
     self.props['avatar_url'] = url
   end
-
-  def award_points_for_completing_profile
-    if all_relevant_fields_filled? && not_already_awarded_for_profile_completion?
-      Internal.create!({receiver: self, value: 1, comment: "Completed profile."})
-    else
-      false
-    end
-  end
-
-  def not_already_awarded_for_profile_completion?
-    Internal.where("receiver_id = ? AND comment = ?", self.id, "Completed profile.").blank?
-  end
-
-  def all_relevant_fields_filled?
-    name.present? && email.present? && address.present? && city.present? && postal.present? && country_id.present?
-  end
-
-  def reward_if_eligible
-    if rs = Reward.find_all_qualified_for(self)
-      not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
-      rewards << not_already_achieved_rewards
-      save
-    end
-  end
-
-  def completed_profile?
-    self.name.present? &&
-    self.email.present? &&
-    self.address.present? &&
-    self.city.present? &&
-    self.postal.present? &&
-    self.country.present?
-  end
-
-  # For casting the virtual column
-  def total_score
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
-  end 
-
   private
 
   def does_gravatar_exists?
