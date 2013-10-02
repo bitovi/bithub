@@ -149,6 +149,10 @@ class Event < ActiveRecord::Base
     ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_upvotes])
   end 
 
+  def sum_upvotes
+    (self.upvotes.pluck :value).reduce :+
+  end
+
   def cache_key
     case
     when new_record?
