@@ -48,27 +48,16 @@ AMQP.start($mq_cs) do |connection, open_ok|
   channel = AMQP::Channel.new(connection)
 
   channel.fanout("e.events.preproc") do |preproc_exchange|
-    # --- Streams
+
+    # --- Public stream
     $log.info "Registering to Twitter's public stream"
     Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:public_feed], false)
-    
-    $log.info "Registering @bitovi user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:bitovi], true)
-    
-    $log.info "Registering @canjs user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:canjs], true)
-    
-    $log.info "Registering @jquerypp user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:jquerypp], true)
-    
-    $log.info "Registering @funcunit user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:funcunit], true)
-  
-    $log.info "Registering @javascriptmvc user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:javascriptmvc], true)
-    
-    $log.info "Registering @donejs user stream"
-    Handler::Twitter.connect($log, preproc_exchange, $feeds[:twitter][:streams][:donejs], true)
+
+    # --- User streams
+    $feeds[:twitter][:streams][:user_feeds].each do |screen_name, data|
+      $log.info "Registering @#{screen_name} user stream"
+      Handler::Twitter.connect($log, preproc_exchange, data, true)
+    end
 
     # --- Pollers
     phase = 1; shift_phase = lambda {phase+=1}
