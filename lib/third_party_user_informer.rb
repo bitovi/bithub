@@ -21,16 +21,29 @@ class ThirdPartyUserInformer
     res = github.search.users(q)
     res.users
   end
-
-  def followed_accts(uid)
+  
+  def followed_acct_ids(uid)
     fail NotUIDException unless uid.is_a? Integer
     res = Twitter.friend_ids(uid)
     res.attrs[:ids] if res.attrs && res.attrs[:ids]
+  end
+  
+  def watched_repo_names(uid)
+    fail NotUIDException unless uid.is_a? Integer
+    res = github.activity.watching.watched :uid => uid
+    res.response.body.map{|r| r['full_name']}
+  end
+
+  def followed_accts(uid)
+    fail NotUIDException unless uid.is_a? Integer
+    res = Twitter.friends(uid)
+    res.attrs[:users] if res.attrs[:users]
   end
 
   def watched_repos(uid)
     fail NotUIDException unless uid.is_a? Integer
     res = github.activity.watching.watched :uid => uid
-    res.response.body.map{|r| r['full_name']}
+    res.response.body
   end
+  
 end

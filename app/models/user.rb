@@ -139,13 +139,13 @@ class User < ActiveRecord::Base
 
   def award_points_for_completing_profile
     if self.completed_profile? && !self.already_awarded_for_profile_completion?
-      self.internals.create({value: 1, comment: "Completed profile."})
+      self.internals.build({value: 1, comment: "Completed profile."})
     end
     self
   end
 
   def award_points_for_joining(provider)
-    self.internals.create({value: 1, comment: "Logged in with #{provider}."})
+    self.internals.build({value: 1, comment: "Logged in with #{provider}."})
     self
   end
 

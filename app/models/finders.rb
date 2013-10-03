@@ -65,7 +65,7 @@ module Finders
   end
 
   def event_by_origin_uid(uid)
-    where("props -> origin_author_id = ?", uid)
+    where("props -> 'origin_author_id' = ?", uid)
   end
 
 end

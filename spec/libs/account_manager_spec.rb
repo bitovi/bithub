@@ -1,8 +1,17 @@
 require 'spec_helper'
+require Rails.root + 'spec/libs/api_responses'
 
 describe AccountManager, "creates/finds/syncs accounts" do
   let(:github_oauth_data) { oauth_data_hash['omniauth.auth'] }
   let(:twitter_oauth_data) { oauth_data_hash('twitter', 987654321, '', 'Nikica Jokic')['omniauth.auth']}
+
+  before :all do
+    @default_rule = create(:rule)
+  end
+
+  after :all do
+    @default_rule.destroy
+  end
 
   describe ".find_or_create_user" do
 
@@ -47,6 +56,86 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
   end
 
+  # describe "#generate_follows_and_watches_for_uid" do
+
+  #   context "when logging in with github" do
+  #     it "should check if user has already starred" do
+
+  #       user = AccountManager.new
+  #       user.stub_chain(:api, :watched_repos).and_return(watched_repos)
+  #       user.generate_follows_and_watches_for_uid(816489)
+
+  #     end
+  #   end
+    
+  #   context "when logging in with twitter" do
+  #     it "should check if user has already followed" do
+  #       user = AccountManager.new
+  #       user.api.stub(:followed_accounts).and_return(followed_accounts)
+  #       user.generate_follows_and_watches_for_uid(55592490)
+
+  #     end
+  #   end
+  # end
+  
+  describe "#missing_repos" do
+    it "should return repos that the user does not follow" do
+      am = AccountManager.new
+      am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+
+      ident = build(:identity, :from_github)
+      create(:github_watch_event,
+             props: { origin_author_id: 816489 },
+             source_data: { repo: { full_name: 'bitovi/canjs' }})
+
+      mrs = am.missing_repos(ident)
+     
+      mrs.should =~ %w(bitovi/jquerypp bitovi/javascriptmvc)
+    end
+  end
+  
+  describe "#missing_friends" do
+    it "should return repos that the user does not follow" do
+      am = AccountManager.new
+      am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+
+      ident = build(:identity, :from_twitter)
+      create(:twitter_event, :follow_event,
+             props: { origin_author_id: 55592490 },
+             source_data: { target: { screen_name: 'canjs' }})
+
+      mfs = am.missing_friends(ident)
+     
+      mfs.should =~ %w(jquerypp javascriptmvc bitovi)
+    end
+  end
+
+  
+  describe "#create_internal_watches" do
+    it "should create a follow_event" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 816489 }
+      am.stub_chain(:identity, :name) { "Nikica Jokic" }
+
+      es = am.create_internal_watches(ApiResponses.watched_repos[0..1])
+      ex_es = Event.tagged_with('watch_event').all
+
+      es.should =~ ex_es
+    end
+  end
+  
+  describe "#create_internal_follows" do
+    it "should create a follow_events" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 55592490 }
+      am.stub_chain(:identity, :name) { "Nikica Jokic" }
+      
+      es = am.create_internal_follows(ApiResponses.followed_accts[0..1])
+      ex_es = Event.tagged_with('follow_event').all
+
+      es.should =~ ex_es
+    end
+  end
 
   describe ".pluck_data_for" do
     it "plucks [name, email] from oauth_data" do
@@ -69,3 +158,4 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
   end
 end
+

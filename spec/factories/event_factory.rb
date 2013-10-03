@@ -138,14 +138,21 @@ FactoryGirl.define do
     factory :twitter_event do
       association :feed, factory: :tag, name: 'twitter'
       association :category, factory: :tag, name: 'twitter'
-      tag_list ['twitter','status_event','canjs']
 
       trait :tweet do
         title "A hashtag #canjs and a @canjs mention."
+        tag_list %w(twitter status_event canjs)
       end
 
       trait :retweet do
         title "RT: A hashtag #canjs and a @canjs mention."
+        tag_list %w(twitter status_event canjs)
+      end
+
+      trait :follow_event do
+        title "followed @canjs"
+        tag_list %w(twitter follow_event canjs)
+        with_determined_rule
       end
 
       factory :twitter_tweet, traits: [:with_determined_rule, :tweet]
@@ -192,6 +199,12 @@ FactoryGirl.define do
         trait :with_source_data do
           source_data(issue_source_data)
         end
+      end
+
+      factory :github_watch_event do
+        title "started watching bitovi/canjs"
+        association :category, factory: :tag, name: "digest"
+        tag_list %w(github digest watch_event canjs)
       end
 
       factory :github_commit_comment do

@@ -1,5 +1,8 @@
 class AccountManager
-  attr_reader :user_api, :current_user
+  attr_reader :user_api, :current_user, :identity
+    
+  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r}
+  RELEVANT_FRIENDS = YAML.load_file('config/tag_aliases.yml').keys << 'bitovi'
 
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
@@ -8,7 +11,7 @@ class AccountManager
 
   def find_or_create_user(provider, oauth_data)
     name, email = self.class.pluck_data_for(provider, oauth_data)
-    identity = Identity.find_or_create_with_oauth_data(oauth_data)
+    @identity = Identity.find_or_create_with_oauth_data(oauth_data)
 
     if has_current_user?
       update_and_merge(identity, name, email)
@@ -17,7 +20,6 @@ class AccountManager
     else
       create_and_collect(identity, name, email)
     end
-
   end
 
   def update_and_merge(identity, name, email)
@@ -30,16 +32,107 @@ class AccountManager
     user = identity.build_user({name: name, email: email})
     begin
       ActiveRecord::Base.transaction do
-        identity.user.award_points_for_joining(identity.provider).save!
-        #generate_follow_events_if_necessary(identity)
+        identity.user.award_points_for_joining(identity.provider)
+        identity.save!
+        # TODO napravit sve follow evente koji fale
       end
       identity.user.collect_authored_events
-    rescue ActiveRecord::InvalidRecord => e
+    rescue ActiveRecord::RecordInvalid => e
       puts e.message
       puts e.backtrace.inspect
     end
+    user
+  end
 
-    return user
+  def missing_repos(ident)
+    rs = user_api.watched_repos
+
+    remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
+                            .map{|r| (r[:full_name] || r['full_name'])}
+
+    present_repo_watches = Event.tagged_with(%w(github watch_event))
+                                .event_by_origin_uid(ident.uid.to_s)
+                                .pluck(:source_data)
+                                .map{|e| e['repo']['full_name']}
+                                .uniq
+
+    if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
+      missing_repos
+    else
+      []
+    end
+  end
+
+  def missing_friends(ident)
+    fs = user_api.followed_accts
+
+    remote_friend_names = fs.select{|r| RELEVANT_FRIENDS.include?(r[:screen_name] || r['screen_name'])}
+                            .map{|r| (r[:screen_name] || r['screen_name'])}
+
+    present_friend_names = Event.tagged_with(%w(twitter follow_event))
+                                .event_by_origin_uid(ident.uid.to_s)
+                                .pluck(:source_data)
+                                .map{|e| e['target']['screen_name']}
+                                .uniq
+
+    if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
+      missing_friends
+    else
+      []
+    end
+  end
+
+
+  def create_internal_follows(accts)
+    accts.map do |a|
+      for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str])
+      hash_key = Digest::MD5.hexdigest(for_hk)
+
+      e = Event.new({
+        title: "followed #{a[:screen_name]}",
+        hash_key: hash_key,
+        origin_ts: Time.now,
+        origin_date: Date.today,
+        props: {
+          origin_author_id: identity.uid,
+          origin_author_name: identity.name,
+          target: a[:screen_name],
+
+          feed: "twitter",
+          category: "digest",
+          tags: ["follow_event"]
+        }
+      })
+
+      e.determine.save!
+      e
+    end
+  end
+
+  def create_internal_watches(repos)
+    repos.map do |r|
+      for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s
+      hash_key = Digest::MD5.hexdigest(for_hk)
+      e = Event.new({
+        title: "started watching #{r[:full_name]}",
+        hash_key: hash_key,
+        origin_ts: Time.now,
+        origin_date: Date.today,
+        props: {
+          origin_author_id: identity.uid,
+          origin_author_name: identity.name,
+          repo: r[:full_name] || r['full_name'],
+
+          feed: "github",
+          type: "watch_event",
+          category: "digest",
+          tags: [r[:name]]
+        }
+      })
+
+      e.determine.save!
+      e
+    end
   end
 
   def has_current_user?
