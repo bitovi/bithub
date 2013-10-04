@@ -157,6 +157,7 @@ FactoryGirl.define do
 
       factory :twitter_tweet, traits: [:with_determined_rule, :tweet]
       factory :twitter_retweet, traits: [:with_determined_rule, :retweet]
+      factory :twitter_follow_event, traits: [:follow_event]
     end
 
     ### Github event

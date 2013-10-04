@@ -14,7 +14,7 @@ class AccountManager
     @identity = Identity.find_or_create_with_oauth_data(oauth_data)
 
     if has_current_user?
-      update_and_merge(identity, name, email)
+      update_and_merge(name, email)
     elsif identity.has_assigned_user?
       identity.user
     else
@@ -22,19 +22,19 @@ class AccountManager
     end
   end
 
-  def update_and_merge(identity, name, email)
+  def update_and_merge(name, email)
     current_user.update_blank_oauth_attrs!({name: name, email: email})
     current_user.merge_identities!(identity)
     current_user
   end
 
-  def create_and_collect(identity, name, email)
+  def create_and_collect(name, email)
     user = identity.build_user({name: name, email: email})
     begin
       ActiveRecord::Base.transaction do
         identity.user.award_points_for_joining(identity.provider)
         identity.save!
-        # TODO napravit sve follow evente koji fale
+        create_missing_repos_and_watches
       end
       identity.user.collect_authored_events
     rescue ActiveRecord::RecordInvalid => e
@@ -44,39 +44,47 @@ class AccountManager
     user
   end
 
-  def missing_repos(ident)
+  def create_missing_repos_and_watches
+    if identity.provider == 'twitter'
+      create_internal_follows(missing_friends)
+    elsif identity.provider == 'github'
+      create_internal_watches(missing_repos)
+    end
+  end
+
+  def missing_repos
     rs = user_api.watched_repos
 
     remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
                             .map{|r| (r[:full_name] || r['full_name'])}
 
     present_repo_watches = Event.tagged_with(%w(github watch_event))
-                                .event_by_origin_uid(ident.uid.to_s)
-                                .pluck(:source_data)
-                                .map{|e| e['repo']['full_name']}
+                                .event_by_origin_uid(identity.uid.to_s)
+                                .map{|e| e.props['repo']}
                                 .uniq
 
     if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
-      missing_repos
+      p missing_repos
+      rs.select{|r| missing_repos.include?(r[:full_name] || r['full_name'])}
     else
       []
     end
   end
 
-  def missing_friends(ident)
+  def missing_friends
     fs = user_api.followed_accts
 
     remote_friend_names = fs.select{|r| RELEVANT_FRIENDS.include?(r[:screen_name] || r['screen_name'])}
                             .map{|r| (r[:screen_name] || r['screen_name'])}
 
     present_friend_names = Event.tagged_with(%w(twitter follow_event))
-                                .event_by_origin_uid(ident.uid.to_s)
-                                .pluck(:source_data)
-                                .map{|e| e['target']['screen_name']}
+                                .event_by_origin_uid(identity.uid.to_s)
+                                .map{|e| e.props['target']}
                                 .uniq
 
     if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
-      missing_friends
+      p missing_friends
+      fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
     else
       []
     end
@@ -87,17 +95,16 @@ class AccountManager
     accts.map do |a|
       for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str])
       hash_key = Digest::MD5.hexdigest(for_hk)
+      screen_name = a[:screen_name] || a['screen_name']
 
       e = Event.new({
-        title: "followed #{a[:screen_name]}",
+        title: "followed #{screen_name}",
         hash_key: hash_key,
         origin_ts: Time.now,
         origin_date: Date.today,
         props: {
           origin_author_id: identity.uid,
-          origin_author_name: identity.name,
-          target: a[:screen_name],
-
+          target: screen_name,
           feed: "twitter",
           category: "digest",
           tags: ["follow_event"]
@@ -113,16 +120,16 @@ class AccountManager
     repos.map do |r|
       for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s
       hash_key = Digest::MD5.hexdigest(for_hk)
+      repo_name = r[:full_name] || r['full_name']
+
       e = Event.new({
-        title: "started watching #{r[:full_name]}",
+        title: "started watching #{repo_name}",
         hash_key: hash_key,
         origin_ts: Time.now,
         origin_date: Date.today,
         props: {
           origin_author_id: identity.uid,
-          origin_author_name: identity.name,
-          repo: r[:full_name] || r['full_name'],
-
+          repo: repo_name,
           feed: "github",
           type: "watch_event",
           category: "digest",

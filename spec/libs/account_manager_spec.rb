@@ -16,15 +16,13 @@ describe AccountManager, "creates/finds/syncs accounts" do
   describe ".find_or_create_user" do
 
     context "when user is already logged_in (current_user exists)" do
-      before :each do
-      end
 
       it "should assign the found identity to the current_user if it isn't already" do
         user_with_only_github = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
         user_with_only_github.save!
 
-        user_with_both_idents = AccountManager.new(user_with_only_github)
-                                              .find_or_create_user('twitter', twitter_oauth_data)
+        user_with_both_idents = AccountManager.new(user_with_only_github).find_or_create_user('twitter', twitter_oauth_data)
+
         tw_ident = Identity.find_by_uid(twitter_oauth_data['uid'])
         gh_ident = Identity.find_by_uid(github_oauth_data['uid'])
 
@@ -37,8 +35,8 @@ describe AccountManager, "creates/finds/syncs accounts" do
         user_with_only_github.save!
         user_with_only_twitter.save!
 
-        user_with_both_idents = AccountManager.new(user_with_only_github)
-                                              .find_or_create_user('twitter', twitter_oauth_data)
+        user_with_both_idents = AccountManager.new(user_with_only_github).find_or_create_user('twitter', twitter_oauth_data)
+
         non_existent_user = User.where(:id => user_with_only_twitter.id).first
 
         non_existent_user.should be_nil
@@ -56,81 +54,103 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
   end
 
-  # describe "#generate_follows_and_watches_for_uid" do
+  describe "#create_missing_repos_and_watches" do
 
-  #   context "when logging in with github" do
-  #     it "should check if user has already starred" do
+    context "when logging in with github" do
+      before :each do
+        @am = AccountManager.new
+        @am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+        @am.stub_chain(:identity, :uid) { 816489 }
+        @am.stub_chain(:identity, :provider) { "github" }
+        @watching_repos = %w(bitovi/canjs bitovi/jquerypp bitovi/javascriptmvc)
+      end
 
-  #       user = AccountManager.new
-  #       user.stub_chain(:api, :watched_repos).and_return(watched_repos)
-  #       user.generate_follows_and_watches_for_uid(816489)
+      it "should check" do
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('watch_event').count.should == @watching_repos.length
+      end
 
-  #     end
-  #   end
-    
-  #   context "when logging in with twitter" do
-  #     it "should check if user has already followed" do
-  #       user = AccountManager.new
-  #       user.api.stub(:followed_accounts).and_return(followed_accounts)
-  #       user.generate_follows_and_watches_for_uid(55592490)
+      it "should also" do
+        create(:github_watch_event, props: {origin_author_id: '816489', repo: 'bitovi/canjs'})
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('watch_event').count.should == @watching_repos.length - 1
+      end
+    end
 
-  #     end
-  #   end
-  # end
-  
+    context "when logging in with twitter" do
+      before :each do
+        @am = AccountManager.new
+        @am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+        @am.stub_chain(:identity, :uid) { 55592490 }
+        @am.stub_chain(:identity, :provider) { "twitter" }
+        @following_users = %w(canjs jquerypp javascriptmvc bitovi)
+      end
+
+      it "should check" do
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('follow_event').count.should == @following_users.length
+      end
+      
+      it "should also" do
+        create(:twitter_follow_event, props: {origin_author_id: '55592490', target: 'canjs'})
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('follow_event').count.should == @following_users.length - 1
+      end
+    end
+  end
+
+
   describe "#missing_repos" do
     it "should return repos that the user does not follow" do
       am = AccountManager.new
       am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+      am.stub_chain(:identity, :uid) { 816489 }
 
-      ident = build(:identity, :from_github)
       create(:github_watch_event,
              props: { origin_author_id: 816489 },
              source_data: { repo: { full_name: 'bitovi/canjs' }})
 
-      mrs = am.missing_repos(ident)
-     
-      mrs.should =~ %w(bitovi/jquerypp bitovi/javascriptmvc)
+      mrs = am.missing_repos
+
+      mrs.should =~ ApiResponses.watched_repos.select{|r| %w(bitovi/jquerypp bitovi/javascriptmvc).include? r['full_name']}
     end
   end
-  
+
   describe "#missing_friends" do
     it "should return repos that the user does not follow" do
       am = AccountManager.new
       am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+      am.stub_chain(:identity, :uid) { 55592490 }
 
-      ident = build(:identity, :from_twitter)
       create(:twitter_event, :follow_event,
              props: { origin_author_id: 55592490 },
              source_data: { target: { screen_name: 'canjs' }})
 
-      mfs = am.missing_friends(ident)
-     
-      mfs.should =~ %w(jquerypp javascriptmvc bitovi)
+      mfs = am.missing_friends
+
+      mfs.should =~ ApiResponses.followed_accts.select{|a| %w(jquerypp javascriptmvc bitovi).include?(a['screen_name'] || a[:screen_name])}
     end
   end
 
-  
+
   describe "#create_internal_watches" do
     it "should create a follow_event" do
       am = AccountManager.new
       am.stub_chain(:identity, :uid) { 816489 }
-      am.stub_chain(:identity, :name) { "Nikica Jokic" }
 
-      es = am.create_internal_watches(ApiResponses.watched_repos[0..1])
+      es = am.create_internal_watches(ApiResponses.watched_repos)
       ex_es = Event.tagged_with('watch_event').all
 
       es.should =~ ex_es
     end
   end
-  
+
   describe "#create_internal_follows" do
     it "should create a follow_events" do
       am = AccountManager.new
       am.stub_chain(:identity, :uid) { 55592490 }
-      am.stub_chain(:identity, :name) { "Nikica Jokic" }
-      
-      es = am.create_internal_follows(ApiResponses.followed_accts[0..1])
+
+      es = am.create_internal_follows(ApiResponses.followed_accts)
       ex_es = Event.tagged_with('follow_event').all
 
       es.should =~ ex_es
