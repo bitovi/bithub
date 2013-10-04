@@ -11,6 +11,7 @@ class Ability
       can :read, :all
       can :create_upvote, Upvote
       can :create_anteup, Anteup
+      can :destroy_upvote, Upvote
       cannot :create_award, Award
       cannot :read, Achievement
     end

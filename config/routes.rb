@@ -16,6 +16,7 @@ Bithub::Application.routes.draw do
       resource 'award', :only => :create, :to => 'event_activities#create_award'
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
       get :summary, :on => :collection
+      delete :upvote, :to => 'event_activities#destroy_upvote'
     end
 
     resources :users, :except => [:new] do

@@ -39,6 +39,17 @@ class Api::EventActivitiesController < Api::ApiController
       render :json => { message: t('api.event_activities.errors.already_awarded'), errors: award.errors.full_messages }, :status => 406
     end
   end
+
+  def destroy_upvote
+    authorize! :destroy_upvote, Upvote, :message => "No right to destroy an upvote!"
+    u = Upvote.where({ applies_to_id: params[:event_id], actor_id: current_user.id }).first
+
+    if u && u.destroy
+      render :json => { message: "Deleted" }, :status => 200
+    else
+      render :json => { message: "Not found!" }, :status => 404
+    end
+  end
   
   def create_anteup
     authorize! :create_award, Anteup, :message => "No right to create an anteup!"
