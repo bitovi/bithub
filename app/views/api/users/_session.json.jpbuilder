@@ -1,4 +1,6 @@
 json.(user, :id, :name, :email, :address, :city, :postal, :state, :country, :activities, :achievements, :identities, :roles)
 
+json.upvoted_events user.upvotes_as_actor.map {|u| u.applies_to_id}
+  
 json.score user.score
 json.avatar_url user.props['avatar_url']

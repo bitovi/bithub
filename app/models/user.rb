@@ -31,15 +31,11 @@ class User < ActiveRecord::Base
     activities = []
 
     self.events.joins(:rule).each do |e|
-      activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :created_at => e.created_at})
+      activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
     self.awards.select(['awards.*', 'events.title']).each do |a|
       activities.push({:type => 'award', :id => a.id, :title => a.title, :value => a.value, :created_at => a.created_at})  
-    end
-
-    self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
-      activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
     self.internals.each do |i|
