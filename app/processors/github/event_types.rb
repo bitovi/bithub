@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 commit_comment_event = lambda do |event|
   {
     :title => "commented on a commit in #{event['repo']['name']}",
@@ -176,7 +178,11 @@ team_add_event = lambda do |event|
 end
 
 watch_event = lambda do |event|
-  { :title => "started watching #{event['repo']['name']}" }
+  {
+    :title => "started watching #{event['repo']['name']}",
+    :hash_key => Digest::MD5.hexdigest(event['actor']['id'].to_s + event['repo']['id'].to_s + 'github')
+  }
+
 end
 
 EVENT_TYPES = {

@@ -16,7 +16,10 @@ module Handler
     end
 
     def fetch
-      get_github_events = EM::HttpRequest.new(endpoint).get(:head => {"Authorization" => "token #{token}"})
+      get_github_events = EM::HttpRequest.new(endpoint).get(:head => {
+        "Authorization" => "token #{token}",
+        "Accept" => "application/vnd.github.v3+json"
+      })
 
       get_github_events.callback do
 
