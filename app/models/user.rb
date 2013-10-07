@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
-    self.internals.each do |i|
+    self.internals.all.each do |i|
       activities.push({:type => 'internal', :id => i.id, :title => i.comment, :value => i.value, :created_at => i.created_at})
     end
 

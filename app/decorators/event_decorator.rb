@@ -66,7 +66,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def props
-    if source.category.name == 'digest'
+    if source.source_data && source.category.name == 'digest'
       source.props[:repo] = source.source_data['repo']['name'] if tag_list.include?('watch_event') || tag_list.include?('fork_event')
       source.props[:target] = source.source_data['target']['screen_name'] if tag_list.include?('follow_event')
     end
