@@ -18,7 +18,7 @@ class AccountManager
     elsif identity.has_assigned_user?
       identity.user
     else
-      create_and_collect(identity, name, email)
+      create_and_collect(name, email)
     end
   end
 
@@ -53,7 +53,7 @@ class AccountManager
   end
 
   def missing_repos
-    rs = user_api.watched_repos
+    rs = user_api.watched_repos(identity.uid)
 
     remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
                             .map{|r| (r[:full_name] || r['full_name'])}
@@ -72,7 +72,7 @@ class AccountManager
   end
 
   def missing_friends
-    fs = user_api.followed_accts
+    fs = user_api.followed_accts(identity.uid)
 
     remote_friend_names = fs.select{|r| RELEVANT_FRIENDS.include?(r[:screen_name] || r['screen_name'])}
                             .map{|r| (r[:screen_name] || r['screen_name'])}
