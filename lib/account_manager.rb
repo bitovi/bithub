@@ -13,42 +13,45 @@ class AccountManager
     name, email = self.class.pluck_data_for(provider, oauth_data)
     @identity = Identity.find_or_create_with_oauth_data(oauth_data)
 
-    if has_current_user?
-      update_and_merge(name, email)
-    elsif identity.has_assigned_user?
-      identity.user
-    else
-      create_and_collect(name, email)
+    begin
+      if has_current_user?
+        update_and_merge(name, email)
+      elsif identity.has_assigned_user?
+        identity.user
+      else
+        create_and_collect(name, email)
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "========> #{e.message}"
     end
   end
 
   def update_and_merge(name, email)
-    current_user.update_blank_oauth_attrs!({name: name, email: email})
-    current_user.merge_identities!(identity)
+    ActiveRecord::Base.transaction do
+      current_user.update_blank_oauth_attrs!({name: name, email: email})
+      current_user.award_points_for_joining(identity.provider)
+      current_user.merge_identities!(identity)
+      create_missing_repos_and_watches!
+    end
     current_user
   end
 
   def create_and_collect(name, email)
     user = identity.build_user({name: name, email: email})
-    begin
-      ActiveRecord::Base.transaction do
-        identity.user.award_points_for_joining(identity.provider)
-        identity.save!
-        create_missing_repos_and_watches
-      end
-      identity.user.collect_authored_events
-    rescue ActiveRecord::RecordInvalid => e
-      puts e.message
-      puts e.backtrace.inspect
+    ActiveRecord::Base.transaction do
+      identity.user.award_points_for_joining(identity.provider)
+      identity.save!
+      create_missing_repos_and_watches!
     end
+    identity.user.collect_authored_events
     user
   end
 
-  def create_missing_repos_and_watches
+  def create_missing_repos_and_watches!
     if identity.provider == 'twitter'
-      create_internal_follows(missing_friends)
+      create_internal_follows!(missing_friends)
     elsif identity.provider == 'github'
-      create_internal_watches(missing_repos)
+      create_internal_watches!(missing_repos)
     end
   end
 
@@ -91,14 +94,14 @@ class AccountManager
   end
 
 
-  def create_internal_follows(accts)
+  def create_internal_follows!(accts)
     accts.map do |a|
       for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str])
       hash_key = Digest::MD5.hexdigest(for_hk)
       screen_name = a[:screen_name] || a['screen_name']
 
       e = Event.new({
-        title: "followed #{screen_name}",
+        title: "followed @#{screen_name}",
         hash_key: hash_key,
         origin_ts: Time.now,
         origin_date: Date.today,
@@ -116,7 +119,7 @@ class AccountManager
     end
   end
 
-  def create_internal_watches(repos)
+  def create_internal_watches!(repos)
     repos.map do |r|
       for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s
       hash_key = Digest::MD5.hexdigest(for_hk)
