@@ -1,8 +1,8 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r}
-  RELEVANT_FRIENDS = YAML.load_file('config/tag_aliases.yml').keys << 'bitovi'
+  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy'
+  RELEVANT_FRIENDS = YAML.load_file('config/tag_aliases.yml').keys << 'bitovi' << 'bitovi_bithub'
 
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
@@ -96,7 +96,7 @@ class AccountManager
 
   def create_internal_follows!(accts)
     accts.map do |a|
-      for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str])
+      for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str]) + 'twitter'
       hash_key = Digest::MD5.hexdigest(for_hk)
       screen_name = a[:screen_name] || a['screen_name']
 
@@ -110,6 +110,7 @@ class AccountManager
           target: screen_name,
           feed: "twitter",
           category: "digest",
+          type: "follow_event",
           tags: ["follow_event"]
         }
       })
@@ -121,7 +122,7 @@ class AccountManager
 
   def create_internal_watches!(repos)
     repos.map do |r|
-      for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s
+      for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s + 'github'
       hash_key = Digest::MD5.hexdigest(for_hk)
       repo_name = r[:full_name] || r['full_name']
 
