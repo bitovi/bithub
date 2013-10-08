@@ -58,7 +58,6 @@ module Determination
 
   def clean_props_after_categorization
     self.props.delete(:category)
-    self.props.delete(:feed)
     self.props.delete(:project)
     self.props.delete(:tags)
     self.props.delete(:origin_author_feed)

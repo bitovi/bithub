@@ -5,14 +5,20 @@ class User < ActiveRecord::Base
   devise :rememberable, :trackable, :omniauthable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :address, :city, :email, :name, :postal, :email, :remember_me, :state, :country
+  attr_accessible :address, :city,
+    :email, :name, :postal, :email,
+    :remember_me, :state, :country,
+    :events
+
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
-  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
-  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
-  has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
+  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :nullify
+  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :nullify
+  has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :nullify
+  has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
   has_many :events, :foreign_key => "author_id", :class_name => "Event"
+
   has_many :internals, :foreign_key => "receiver_id"
   has_many :anteups, :through => :events
   has_many :upvotes, :through => :events
@@ -23,9 +29,10 @@ class User < ActiveRecord::Base
   has_many :rewards, :through => :achievements
 
   before_save :calculate_avatar_url
-  after_update :award_points_for_completing_profile
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
+  
+  after_update :award_points_for_completing_profile
 
   def activities
     activities = []
@@ -38,7 +45,11 @@ class User < ActiveRecord::Base
       activities.push({:type => 'award', :id => a.id, :title => a.title, :value => a.value, :created_at => a.created_at})  
     end
 
-    self.internals.each do |i|
+    self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
+      activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+    end
+
+    self.internals.all.each do |i|
       activities.push({:type => 'internal', :id => i.id, :title => i.comment, :value => i.value, :created_at => i.created_at})
     end
 
@@ -121,13 +132,49 @@ class User < ActiveRecord::Base
     other_user = identity.user if identity.user
     unless self.identities.include?(identity)
       self.identities << identity 
-      ActiveRecord::Base.transaction do
-        self.save!
-        other_user.destroy if other_user
-        identity.award_points_for_joining
-      end
+      self.save!
+      other_user.destroy if other_user
     end
   end
+
+  def award_points_for_completing_profile
+    if self.completed_profile? && !self.already_awarded_for_profile_completion?
+      self.internals.create({receiver: self, value: 1, comment: "Completed profile."})
+    end
+    self
+  end
+
+  def award_points_for_joining(provider)
+    self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider}."})
+    self
+  end
+
+  def already_awarded_for_profile_completion?
+    Internal.where("receiver_id = ? AND comment = ?", self.id, "Completed profile.").present?
+  end
+
+  def completed_profile?
+    self.name.present? &&
+    self.email.present? &&
+    self.address.present? &&
+    self.city.present? &&
+    self.postal.present? &&
+    self.country.present?
+  end
+
+  def reward_if_eligible
+    if rs = Reward.find_all_qualified_for(self)
+      not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
+      rewards << not_already_achieved_rewards
+      save
+    end
+  end
+
+  # For casting the virtual column
+  def total_score
+    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
+  end 
+
 
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
@@ -142,45 +189,6 @@ class User < ActiveRecord::Base
 
     self.props['avatar_url'] = url
   end
-
-  def award_points_for_completing_profile
-    if all_relevant_fields_filled? && not_already_awarded_for_profile_completion?
-      Internal.create!({receiver: self, value: 1, comment: "Completed profile."})
-    else
-      false
-    end
-  end
-
-  def not_already_awarded_for_profile_completion?
-    Internal.where("receiver_id = ? AND comment = ?", self.id, "Completed profile.").blank?
-  end
-
-  def all_relevant_fields_filled?
-    name.present? && email.present? && address.present? && city.present? && postal.present? && country_id.present?
-  end
-
-  def reward_if_eligible
-    if rs = Reward.find_all_qualified_for(self)
-      not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
-      rewards << not_already_achieved_rewards
-      save
-    end
-  end
-
-  def completed_profile?
-    self.name.present? &&
-    self.email.present? &&
-    self.address.present? &&
-    self.city.present? &&
-    self.postal.present? &&
-    self.country.present?
-  end
-
-  # For casting the virtual column
-  def total_score
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
-  end 
-
   private
 
   def does_gravatar_exists?

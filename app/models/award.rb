@@ -1,6 +1,5 @@
 class Award < ActiveRecord::Base
   attr_accessible :actor, :applies_to, :value
-  after_save :bust_event_cache
 
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
@@ -8,6 +7,8 @@ class Award < ActiveRecord::Base
   validates_presence_of :applies_to_id, :actor_id
   validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only award once"
   validate :thread_not_already_awarded
+  
+  after_create :bust_event_cache
 
   class EventHasNoParentException < Exception; end
 
@@ -27,7 +28,6 @@ class Award < ActiveRecord::Base
       raise e
     end
 
-    award.bust_event_cache
     applies_to.author.reward_if_eligible if applies_to.author
     award
   end

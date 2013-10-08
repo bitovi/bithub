@@ -64,4 +64,8 @@ module Finders
     tagged_with(['github', 'commit_comment_event']).where("position(props -> 'commit_sha' in '#{commit_shas}') > 0")
   end
 
+  def event_by_origin_uid(uid)
+    where("props -> 'origin_author_id' = ?", uid)
+  end
+
 end

@@ -8,11 +8,6 @@ class Identity < ActiveRecord::Base
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
   end
 
-  def award_points_for_joining(user = nil)
-    user_to_award = self.user || user
-    Internal.create!({receiver: user_to_award, value: 1, comment: "Logged in with #{self.provider}."}) if self.user
-  end
-
   def has_assigned_user?
     !!self.user
   end

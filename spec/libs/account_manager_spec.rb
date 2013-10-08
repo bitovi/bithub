@@ -1,28 +1,28 @@
 require 'spec_helper'
+require Rails.root + 'spec/libs/api_responses'
 
 describe AccountManager, "creates/finds/syncs accounts" do
   let(:github_oauth_data) { oauth_data_hash['omniauth.auth'] }
   let(:twitter_oauth_data) { oauth_data_hash('twitter', 987654321, '', 'Nikica Jokic')['omniauth.auth']}
 
-  describe ".find_or_create_identity" do
-    it "delegates finding / creation of identity to the Identity model" do
-      Identity.should_receive(:find_or_create_with_oauth_data)
-      identity = AccountManager.find_or_create_identity(github_oauth_data)
-    end
+  before :all do
+    @default_rule = create(:rule)
+  end
+
+  after :all do
+    @default_rule.destroy
   end
 
   describe ".find_or_create_user" do
-    it "gets the identity associated with oauth_data by delegating to .find_or_create identity" do
-      AccountManager.should_receive(:find_or_create_identity)
-      AccountManager.find_or_create_identity(github_oauth_data)
-    end
 
     context "when user is already logged_in (current_user exists)" do
-      it "assigns the found identity to the current_user if it isn't already assigned" do
+
+      it "should assign the found identity to the current_user if it isn't already" do
         user_with_only_github = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
         user_with_only_github.save!
 
-        user_with_both_idents = AccountManager.find_or_create_user('twitter', twitter_oauth_data, user_with_only_github)
+        user_with_both_idents = AccountManager.new(user_with_only_github).find_or_create_user('twitter', twitter_oauth_data)
+
         tw_ident = Identity.find_by_uid(twitter_oauth_data['uid'])
         gh_ident = Identity.find_by_uid(github_oauth_data['uid'])
 
@@ -35,7 +35,8 @@ describe AccountManager, "creates/finds/syncs accounts" do
         user_with_only_github.save!
         user_with_only_twitter.save!
 
-        user_with_both_idents = AccountManager.find_or_create_user('twitter', twitter_oauth_data, user_with_only_github)
+        user_with_both_idents = AccountManager.new(user_with_only_github).find_or_create_user('twitter', twitter_oauth_data)
+
         non_existent_user = User.where(:id => user_with_only_twitter.id).first
 
         non_existent_user.should be_nil
@@ -43,21 +44,116 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
 
     context "when user isn't logged in, but exists in the system" do
-      it "finds the identity and returns the assigned user" do
+      it "should find the identity and return the assigned user" do
         github_user = build(:user_with_github_ident, name: "Nikica Jokic", email: "neektza@gmail.com")
         github_user.save!
 
-        user = AccountManager.find_or_create_user('github', github_oauth_data)
+        user = AccountManager.new.find_or_create_user('github', github_oauth_data)
         expect(user).to eq(github_user)
       end
     end
+  end
 
-    context "when there is no user/identity present" do
-      it "creates an identity and creates a user for that identity" do
-        created_user = AccountManager.find_or_create_user('github', github_oauth_data)
-        expected_identity = Identity.find_by_uid(github_oauth_data['uid'])
-        expect(created_user).to eq(expected_identity.user)
+  describe "#create_missing_repos_and_watches" do
+
+    context "when logging in with github" do
+      before :each do
+        @am = AccountManager.new
+        @am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+        @am.stub_chain(:identity, :uid) { 816489 }
+        @am.stub_chain(:identity, :provider) { "github" }
+        @watching_repos = %w(bitovi/canjs bitovi/jquerypp bitovi/javascriptmvc)
       end
+
+      it "should check" do
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('watch_event').count.should == @watching_repos.length
+      end
+
+      it "should also" do
+        create(:github_watch_event, props: {origin_author_id: '816489', repo: 'bitovi/canjs'})
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('watch_event').count.should == @watching_repos.length - 1
+      end
+    end
+
+    context "when logging in with twitter" do
+      before :each do
+        @am = AccountManager.new
+        @am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+        @am.stub_chain(:identity, :uid) { 55592490 }
+        @am.stub_chain(:identity, :provider) { "twitter" }
+        @following_users = %w(canjs jquerypp javascriptmvc bitovi)
+      end
+
+      it "should check" do
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('follow_event').count.should == @following_users.length
+      end
+      
+      it "should also" do
+        create(:twitter_follow_event, props: {origin_author_id: '55592490', target: 'canjs'})
+        @am.create_missing_repos_and_watches
+        Event.tagged_with('follow_event').count.should == @following_users.length - 1
+      end
+    end
+  end
+
+
+  describe "#missing_repos" do
+    it "should return repos that the user does not follow" do
+      am = AccountManager.new
+      am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+      am.stub_chain(:identity, :uid) { 816489 }
+
+      create(:github_watch_event,
+             props: { origin_author_id: 816489 },
+             source_data: { repo: { full_name: 'bitovi/canjs' }})
+
+      mrs = am.missing_repos
+
+      mrs.should =~ ApiResponses.watched_repos.select{|r| %w(bitovi/jquerypp bitovi/javascriptmvc).include? r['full_name']}
+    end
+  end
+
+  describe "#missing_friends" do
+    it "should return repos that the user does not follow" do
+      am = AccountManager.new
+      am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+      am.stub_chain(:identity, :uid) { 55592490 }
+
+      create(:twitter_event, :follow_event,
+             props: { origin_author_id: 55592490 },
+             source_data: { target: { screen_name: 'canjs' }})
+
+      mfs = am.missing_friends
+
+      mfs.should =~ ApiResponses.followed_accts.select{|a| %w(jquerypp javascriptmvc bitovi).include?(a['screen_name'] || a[:screen_name])}
+    end
+  end
+
+
+  describe "#create_internal_watches" do
+    it "should create a follow_event" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 816489 }
+
+      es = am.create_internal_watches(ApiResponses.watched_repos)
+      ex_es = Event.tagged_with('watch_event').all
+
+      es.should =~ ex_es
+    end
+  end
+
+  describe "#create_internal_follows" do
+    it "should create a follow_events" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 55592490 }
+
+      es = am.create_internal_follows(ApiResponses.followed_accts)
+      ex_es = Event.tagged_with('follow_event').all
+
+      es.should =~ ex_es
     end
   end
 
@@ -82,3 +178,4 @@ describe AccountManager, "creates/finds/syncs accounts" do
     end
   end
 end
+
