@@ -8,6 +8,8 @@ $log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
+            
+ACCEPTABLE_LABLES = %w(bug feature feature-request enhancement)
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
@@ -60,6 +62,11 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.props['content_digest'] = issue_hash['content_digest']
 
           if issue.props['labels'] && issue.props['labels'].length > 0
+
+            issue.props['labels'] = issue.props['labels']
+                                         .reject{|l| l =~ /\./i}
+                                         .reject{|l| !ACCEPTABLE_LABLES.include?(l.downcase)}
+
             issue.props['category'] = issue.props['labels'].first
             issue.redetermine_category
           end
