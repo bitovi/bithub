@@ -17,7 +17,8 @@ class Event < ActiveRecord::Base
   attr_accessible :hash_key, :id,
     :body, :title, :url,
     :feed, :category, :tag_list, :author,
-    :origin_date, :origin_ts, :thread_updated_at,
+    :origin_date, :origin_ts,
+    :thread_updated_date, :thread_updated_at,
     :created_at, :updated_at,
     :props, :source_data, :image
 
