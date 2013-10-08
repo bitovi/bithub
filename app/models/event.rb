@@ -50,7 +50,7 @@ class Event < ActiveRecord::Base
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  scope :no_irc, lambda { tagged_with("irc", exclude: true) }
+  scope :no_irc, lambda { where("props -> 'feed' <> 'irc'") }
 
   after_create do
     author.reward_if_eligible if author
