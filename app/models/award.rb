@@ -4,7 +4,7 @@ class Award < ActiveRecord::Base
   belongs_to :applies_to, :class_name => "Event"
   belongs_to :actor, :class_name => "User"
 
-  validates_presence_of :applies_to_id, :actor_id
+  validates_presence_of :applies_to_id
   validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only award once"
   validate :thread_not_already_awarded
   

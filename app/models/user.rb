@@ -13,16 +13,17 @@ class User < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
-  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :nullify
-  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :nullify
+  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
+  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :nullify
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
-  has_many :events, :foreign_key => "author_id", :class_name => "Event"
 
-  has_many :internals, :foreign_key => "receiver_id"
+  has_many :events, :foreign_key => "author_id", :class_name => "Event"
   has_many :anteups, :through => :events
   has_many :upvotes, :through => :events
   has_many :awards, :through => :events
+
+  has_many :internals, :foreign_key => "receiver_id"
   has_many :identities, :dependent => :destroy
   
   has_many :achievements
