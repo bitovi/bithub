@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
     end
 
     self.awards.select(['awards.*', 'events.title']).each do |a|
-      activities.push({:type => 'award', :id => a.id, :title => a.title, :value => a.value, :created_at => a.created_at})  
+      activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})  
     end
 
     self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
