@@ -172,7 +172,7 @@ describe User do
   describe "#award_points_for_joining" do
     it "should award +1 point for singning in with twitter/github for the first time" do
       @user = create(:user)
-      @user.award_points_for_joining('twitter')
+      @user.award_points_for_joining('twitter').save!
       expect(@user.score).to eq 1
     end
   end

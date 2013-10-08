@@ -63,7 +63,7 @@ class AccountManager
 
     present_repo_watches = Event.tagged_with(%w(github watch_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| e.props['repo']}
+                                .map{|e| e.source_data['repo']['full_name']}
                                 .uniq
 
     if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
@@ -81,11 +81,12 @@ class AccountManager
 
     present_friend_names = Event.tagged_with(%w(twitter follow_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| e.props['target']}
+                                .map{|e| e.source_data['target']['screen_name']}
                                 .uniq
 
     if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
       fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
+      
     else
       []
     end

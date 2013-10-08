@@ -1,7 +1,7 @@
 require 'spec_helper'
 require Rails.root + 'spec/libs/api_responses'
 
-describe AccountManager, "creates/finds/syncs accounts" do
+describe AccountManager do
   let(:github_oauth_data) { oauth_data_hash['omniauth.auth'] }
   let(:twitter_oauth_data) { oauth_data_hash('twitter', 987654321, '', 'Nikica Jokic')['omniauth.auth']}
 
@@ -23,6 +23,7 @@ describe AccountManager, "creates/finds/syncs accounts" do
 
         @am = AccountManager.new(user_with_only_github)
         @am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
+        @am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
         user_with_both_idents = @am.find_or_create_user('twitter', twitter_oauth_data)
 
         tw_ident = Identity.find_by_uid(twitter_oauth_data['uid'])
@@ -69,15 +70,17 @@ describe AccountManager, "creates/finds/syncs accounts" do
         @watching_repos = %w(bitovi/canjs bitovi/jquerypp bitovi/javascriptmvc)
       end
 
-      it "should check" do
+      it "should create missing watch_events" do
         @am.create_missing_repos_and_watches!
         Event.tagged_with('watch_event').count.should == @watching_repos.length
       end
 
-      it "should also" do
-        create(:github_watch_event, props: {origin_author_id: '816489', repo: 'bitovi/canjs'})
-        @am.create_missing_repos_and_watches!
-        Event.tagged_with('watch_event').count.should == @watching_repos.length - 1
+      it "should not create watch_events that are already in the system" do
+        create(:github_watch_event,
+               'props' => { 'origin_author_id' => '816489' },
+               'source_data' => { 'repo' => { 'full_name' => 'bitovi/canjs' }})
+        
+        @am.create_missing_repos_and_watches!.length.should == @watching_repos.length - 1
       end
     end
 
@@ -90,22 +93,24 @@ describe AccountManager, "creates/finds/syncs accounts" do
         @following_users = %w(canjs jquerypp javascriptmvc bitovi)
       end
 
-      it "should check" do
+      it "should create missing follow_events" do
         @am.create_missing_repos_and_watches!
         Event.tagged_with('follow_event').count.should == @following_users.length
       end
       
-      it "should also" do
-        create(:twitter_follow_event, props: {origin_author_id: '55592490', target: 'canjs'})
-        @am.create_missing_repos_and_watches!
-        Event.tagged_with('follow_event').count.should == @following_users.length - 1
+      it "should not create follow_events that are already in the system" do
+        create(:twitter_follow_event,
+               'props' => { 'origin_author_id' => '55592490' },
+               'source_data' => { 'target' => { 'screen_name' => 'canjs' }})
+        
+        @am.create_missing_repos_and_watches!.length.should == @following_users.length - 1
       end
     end
   end
 
 
   describe "#missing_repos" do
-    it "should return repos that the user does not follow" do
+    it "should return repos that the user does not watch" do
       am = AccountManager.new
       am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
       am.stub_chain(:identity, :uid) { 816489 }
