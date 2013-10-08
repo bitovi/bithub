@@ -67,7 +67,6 @@ class AccountManager
                                 .uniq
 
     if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
-      p missing_repos
       rs.select{|r| missing_repos.include?(r[:full_name] || r['full_name'])}
     else
       []
@@ -86,7 +85,6 @@ class AccountManager
                                 .uniq
 
     if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
-      p missing_friends
       fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
     else
       []
