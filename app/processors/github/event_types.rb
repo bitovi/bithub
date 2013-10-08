@@ -10,11 +10,11 @@ commit_comment_event = lambda do |event|
 end
 
 create_event = lambda do |event|
-  { :title => "created a new #{event['payload']['ref_type']} in #{event['repo']['name']}" }
+  { :title => "created a new #{event['payload']['ref_type']} on #{event['repo']['name']}: #{event['payload']['ref']}" }
 end
 
 delete_event = lambda do |event|
-  { :title => "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}" }
+  { :title => "deleted a #{event['payload']['ref_type']} from #{event['repo']['name']}: #{event['payload']['ref']}" }
 end
 
 download_event = lambda do |event|
