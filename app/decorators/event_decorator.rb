@@ -71,7 +71,7 @@ class EventDecorator < Draper::Decorator
       source.props[:target] = source.source_data['target']['screen_name'] if tag_list.include?('follow_event')
     end
 
-    if source.feed && source.feed.name == 'github'
+    if source.feed && source.source_data && source.feed.name == 'github'
       source.props[:repo_name] = source.source_data['repo']['name']
     else
       source.props[:repo_name] = ''
