@@ -108,6 +108,7 @@ class AccountManager
         thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
+          origin_author_name: identity.source_data['nickname'],
           target: screen_name,
           feed: "twitter",
           category: "digest",
@@ -136,6 +137,7 @@ class AccountManager
         thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
+          origin_author_name: identity.source_data['nickname'],
           repo: repo_name,
           repo_name: repo_name,
           feed: "github",
