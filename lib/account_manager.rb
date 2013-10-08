@@ -104,6 +104,8 @@ class AccountManager
         hash_key: hash_key,
         origin_ts: Time.now,
         origin_date: Date.today,
+        thread_updated_at: Time.now,
+        thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
           target: screen_name,
@@ -130,9 +132,12 @@ class AccountManager
         hash_key: hash_key,
         origin_ts: Time.now,
         origin_date: Date.today,
+        thread_updated_at: Time.now,
+        thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
           repo: repo_name,
+          repo_name: repo_name,
           feed: "github",
           type: "watch_event",
           category: "digest",
