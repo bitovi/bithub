@@ -29,7 +29,7 @@ stealjs:
   aliases:
     - "stealjs"
     - "steal_js"
-	- "steal"
+    - "steal"
  
 funcunit:
   display_name: "FuncUnit"
