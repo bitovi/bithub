@@ -72,9 +72,11 @@ class EventDecorator < Draper::Decorator
     end
 
     if source.feed && source.feed.name == 'github'
-      source.props[:repo_name] = source.source_data['repo']['name']
-    else
-      source.props[:repo_name] = ''
+      if source.source_data
+        source.props[:repo_name] = source.source_data['repo']['name']
+      elsif source.props
+        source.props[:repo_name] = source.props['repo'] || source.props['repo_name']
+      end
     end
     
     if tag_list and tag_list.include?('push_event')
