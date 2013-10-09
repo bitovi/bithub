@@ -98,6 +98,7 @@ class AccountManager
       for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str]) + 'twitter'
       hash_key = Digest::MD5.hexdigest(for_hk)
       screen_name = a[:screen_name] || a['screen_name']
+      nickname = identity.source_data['nickname'] || identity.source_data[:nickname]
 
       e = Event.new({
         title: "followed @#{screen_name}",
@@ -108,7 +109,7 @@ class AccountManager
         thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
-          origin_author_name: identity.source_data['nickname'],
+          origin_author_name: nickname,
           target: screen_name,
           feed: "twitter",
           category: "digest",
@@ -127,6 +128,7 @@ class AccountManager
       for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s + 'github'
       hash_key = Digest::MD5.hexdigest(for_hk)
       repo_name = r[:full_name] || r['full_name']
+      nickname = identity.source_data['nickname'] || identity.source_data[:nickname]
 
       e = Event.new({
         title: "started watching #{repo_name}",
@@ -137,7 +139,7 @@ class AccountManager
         thread_updated_date: Date.today,
         props: {
           origin_author_id: identity.uid,
-          origin_author_name: identity.source_data['nickname'],
+          origin_author_name: nickname,
           repo: repo_name,
           repo_name: repo_name,
           feed: "github",

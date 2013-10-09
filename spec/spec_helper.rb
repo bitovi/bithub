@@ -24,14 +24,18 @@ OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({
   'uid' => '987654321',
   'info' => {
     'email' => 'neektza@gmail.com',
-    'name' => 'Nikica Jokic'
+    'name' => 'Nikica Jokic',
+    'nickname' => 'neektza'
   }
 })
 
 OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new({
   'provider' => 'github',
   'uid' => '123456789',
-  'info' => { 'email' => "neektza@gmail.com" }
+  'info' => {
+    'email' => 'neektza@gmail.com',
+    'nickname' => 'neektza'
+  }
 })
 
 OmniAuth.config.test_mode = true

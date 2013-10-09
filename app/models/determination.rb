@@ -61,7 +61,6 @@ module Determination
     self.props.delete(:project)
     self.props.delete(:tags)
     self.props.delete(:origin_author_feed)
-    self.props.delete(:origin_author_id)
   end
 
 end

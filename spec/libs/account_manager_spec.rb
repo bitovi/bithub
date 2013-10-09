@@ -24,6 +24,7 @@ describe AccountManager do
         @am = AccountManager.new(user_with_only_github)
         @am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
         @am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
+
         user_with_both_idents = @am.find_or_create_user('twitter', twitter_oauth_data)
 
         tw_ident = Identity.find_by_uid(twitter_oauth_data['uid'])
@@ -67,6 +68,7 @@ describe AccountManager do
         @am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
         @am.stub_chain(:identity, :uid) { 816489 }
         @am.stub_chain(:identity, :provider) { "github" }
+        @am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
         @watching_repos = %w(bitovi/canjs bitovi/jquerypp bitovi/javascriptmvc)
       end
 
@@ -90,6 +92,7 @@ describe AccountManager do
         @am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
         @am.stub_chain(:identity, :uid) { 55592490 }
         @am.stub_chain(:identity, :provider) { "twitter" }
+        @am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
         @following_users = %w(canjs jquerypp javascriptmvc bitovi)
       end
 
@@ -114,6 +117,7 @@ describe AccountManager do
       am = AccountManager.new
       am.stub_chain(:user_api, :watched_repos) { ApiResponses.watched_repos }
       am.stub_chain(:identity, :uid) { 816489 }
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
 
       create(:github_watch_event,
              props: { origin_author_id: 816489 },
@@ -130,6 +134,7 @@ describe AccountManager do
       am = AccountManager.new
       am.stub_chain(:user_api, :followed_accts) { ApiResponses.followed_accts }
       am.stub_chain(:identity, :uid) { 55592490 }
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
 
       create(:twitter_event, :follow_event,
              props: { origin_author_id: 55592490 },
@@ -143,26 +148,43 @@ describe AccountManager do
 
 
   describe "#create_internal_watches" do
-    it "should create a follow_event" do
+    it "should create a number of watch events" do
       am = AccountManager.new
       am.stub_chain(:identity, :uid) { 816489 }
-
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
       es = am.create_internal_watches!(ApiResponses.watched_repos)
       ex_es = Event.tagged_with('watch_event').all
-
       es.should =~ ex_es
+    end
+    
+    it "should assign needed props to new events" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 816489 }
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
+      es = am.create_internal_watches!(ApiResponses.watched_repos)
+      es.first.props['origin_author_id'].should be
+      es.first.props['origin_author_name'].should be
     end
   end
 
   describe "#create_internal_follows" do
-    it "should create a follow_events" do
+    it "should create a number of follow events" do
       am = AccountManager.new
       am.stub_chain(:identity, :uid) { 55592490 }
-
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
       es = am.create_internal_follows!(ApiResponses.followed_accts)
       ex_es = Event.tagged_with('follow_event').all
-
       es.should =~ ex_es
+    end
+    
+    it "should assign needed props to new events" do
+      am = AccountManager.new
+      am.stub_chain(:identity, :uid) { 55592490 }
+      am.stub_chain(:identity, :source_data) { Hash.new({'nickname' => 'neektza'}) }
+      es = am.create_internal_follows!(ApiResponses.followed_accts)
+
+      es.first.props['origin_author_id'].should be
+      es.first.props['origin_author_name'].should be
     end
   end
 
