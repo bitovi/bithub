@@ -2,6 +2,8 @@ class ThirdPartyUserInformer
   attr_reader :github
 
   class NotUIDException < Exception; end
+  class NotUsernameException < Exception; end
+
   def initialize
     Twitter.configure do |config|
       config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
@@ -28,9 +30,9 @@ class ThirdPartyUserInformer
     res.attrs[:ids] if res.attrs && res.attrs[:ids]
   end
   
-  def watched_repo_names(uid)
-    fail NotUIDException unless uid.is_a? Integer
-    res = github.activity.watching.watched :uid => uid
+  def watched_repo_names(username)
+    fail NotUsernameException unless username.is_a? String
+    res = github.activity.watching.watched :user => username
     res.response.body.map{|r| r['full_name']}
   end
 
@@ -40,9 +42,9 @@ class ThirdPartyUserInformer
     res.attrs[:users] if res.attrs[:users]
   end
 
-  def watched_repos(uid)
-    fail NotUIDException unless uid.is_a? Integer
-    res = github.activity.watching.watched :uid => uid
+  def watched_repos(username)
+    fail NotUsernameException unless username.is_a? String
+    res = github.activity.watching.watched({user: username})
     res.response.body
   end
   

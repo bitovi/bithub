@@ -197,7 +197,7 @@ class User < ActiveRecord::Base
       gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(self.email)}"
 
       # skip making HTTP request in tests
-      return gravatar if Rails.env == "testing"
+      return gravatar if Rails.env == "test"
 
       response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
       response.code == '200' ? gravatar : ''

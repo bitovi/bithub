@@ -1,7 +1,7 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy'
+  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
   RELEVANT_FRIENDS = YAML.load_file('config/tag_aliases.yml').keys << 'bitovi' << 'bitovi_bithub'
 
   def initialize(current_user = nil)
@@ -56,7 +56,8 @@ class AccountManager
   end
 
   def missing_repos
-    rs = user_api.watched_repos(identity.uid)
+    username = identity.source_data['nickname'] || identity.source_data[:nickname]
+    rs = user_api.watched_repos(username)
 
     remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
                             .map{|r| (r[:full_name] || r['full_name'])}
