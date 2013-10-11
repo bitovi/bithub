@@ -68,7 +68,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         EM.add_timer(phase) do
           $log.info "Registering Github events handler for \"#{project}\" at \"#{repo[:events]}\""
           # or to make something bold in console log with "\033[1mFOOBAR\033[0m ?!
-          EM.add_periodic_timer(15, &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
+          EM.add_periodic_timer(30, &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
         end
       end
       shift_phase.call
