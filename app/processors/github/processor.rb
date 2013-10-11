@@ -24,7 +24,11 @@ module EventProcessor
       }
 
       t = event_hash['type'].snake_case.to_sym
-      processed_event_hash.deep_merge(EVENT_TYPES[t].call(event_hash))
+      begin
+        processed_event_hash.deep_merge(EVENT_TYPES[t].call(event_hash))
+      rescue NoMethodError => e
+        raise NotValidEventException, "unknown event type"
+      end
     end
   end
 end
