@@ -73,7 +73,7 @@ class Api::EventsController < Api::ApiController
   def build_scope(muster_query, params)
     scope = Event.scoped
     scope = scope.includes(:children)
-    scope = scope.not_children
+    scope = scope.not_children if !counting?
     scope = scope.no_irc if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
     scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
@@ -111,11 +111,15 @@ class Api::EventsController < Api::ApiController
     end
   end
 
+  def counting?
+    params['count'] || request.env['muster.query']['count']
+  end
+
   def on_greatest?
-    params["order"] =~ /upvotes/
+    params['order'] =~ /upvotes/
   end
 
   def posting_for_antoher_user?(params)
-    params["postas"] && !params["postas"].blank?
+    params['postas'] && !params['postas'].blank?
   end
 end
