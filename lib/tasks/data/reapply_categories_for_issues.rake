@@ -35,12 +35,10 @@ namespace :data do
         end
       end
 
-      # set category
-      #e.category = bestMatch['category']
-
       # update count
       categories[bestMatch['category']]['count'] += 1
       e.category = Tag.find_by_name(bestMatch['category'])
+      e.tag_list.remove(['bug','feature','issue'])
       e.tag_list.add(bestMatch['category']) unless e.tag_list.include? bestMatch['category']
       e.save!
     end
