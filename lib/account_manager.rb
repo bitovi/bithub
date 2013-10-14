@@ -12,18 +12,20 @@ class AccountManager
   def find_or_create_user(provider, oauth_data)
     name, email = self.class.pluck_data_for(provider, oauth_data)
     @identity = Identity.find_or_create_with_oauth_data(oauth_data)
+    user = nil
 
     begin
       if has_current_user?
-        update_and_merge(name, email)
+        user = update_and_merge(name, email)
       elsif identity.has_assigned_user?
-        identity.user
+        user = identity.user
       else
-        create_and_collect(name, email)
+        user = create_and_collect(name, email)
       end
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error "========> #{e.message}"
     end
+    user
   end
 
   def update_and_merge(name, email)
@@ -82,7 +84,7 @@ class AccountManager
 
     present_friend_names = Event.tagged_with(%w(twitter follow_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| (sd = e.source_data) ? sd['target']['screen_name'] : props['target']}
+                                .map{|e| (sd = e.source_data) ? sd['target']['screen_name'] : e.props['target']}
                                 .uniq
 
     if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
