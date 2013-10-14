@@ -64,6 +64,7 @@ class AccountManager
 
     present_repo_watches = Event.tagged_with(%w(github watch_event))
                                 .event_by_origin_uid(identity.uid.to_s)
+                                .select{|e| e.source_data && e.source_data['repo'] && e.source_data['repo']['full_name']}
                                 .map{|e| e.source_data['repo']['full_name']}
                                 .uniq
 
@@ -82,6 +83,7 @@ class AccountManager
 
     present_friend_names = Event.tagged_with(%w(twitter follow_event))
                                 .event_by_origin_uid(identity.uid.to_s)
+                                .select{|e| e.source_data && e.source_data['target'] && e.source_data['target']['screen_name']}
                                 .map{|e| e.source_data['target']['screen_name']}
                                 .uniq
 
