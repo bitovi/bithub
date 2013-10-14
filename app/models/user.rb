@@ -136,8 +136,21 @@ class User < ActiveRecord::Base
     unless self.identities.include?(identity)
       self.identities << identity 
       self.save!
-      other_user.destroy if other_user
+      if other_user
+        other_user.reassign_events_to(self)
+        other_user.destroy
+      end
     end
+  end
+
+  def reassign_events_to(whom)
+    self.events.each do |e|
+    end
+
+    self.internals.each do |e|
+    end
+
+    # ...
   end
 
   def award_points_for_completing_profile
