@@ -121,7 +121,7 @@ class AccountManager
         }
       })
 
-      e.determine.save!
+      e.determine.save
       e
     end
   end
@@ -152,7 +152,7 @@ class AccountManager
         }
       })
 
-      e.determine.save!
+      e.determine.save
       e
     end
   end
