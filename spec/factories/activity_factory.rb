@@ -11,4 +11,11 @@ FactoryGirl.define do
     association :actor, factory: :user
     value 25
   end
+
+  factory :award do
+    association :applies_to, factory: :event, title: "Some award"
+    association :actor, factory: :user
+    value 50    
+  end
+
 end

@@ -145,12 +145,20 @@ class User < ActiveRecord::Base
 
   def reassign_events_to(whom)
     self.events.each do |e|
+      e.author = whom
+      e.save!
     end
+  end
 
-    self.internals.each do |e|
+  def reassign_activities_to(whom)
+    self.upvotes_as_actor.each do |u|
+      u.actor = whom
+      u.save!
     end
-
-    # ...
+    self.awards_as_actor.each do |a|
+      a.actor = whom
+      a.save!
+    end
   end
 
   def award_points_for_completing_profile
