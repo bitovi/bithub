@@ -44,16 +44,6 @@
           :token: '589215872-r9IG7UA3jSmlX3AS73mKr7laTkpqtjyZUoswahHO'
           :token_secret: 'XE2h3Kvnvp8G7DAU9DDME4Vatakf5Kmpd0R6q4tL4Z0'
 
-      :donejs:
-        :host: userstream.twitter.com
-        :method: GET
-        :path: /1.1/user.json
-        :oauth:
-          :consumer_key: 'QVPK4uzmEo9dbvfjI7GA'
-          :consumer_secret: 'rDwqW5AZfds5brvnkjUm84CP5fGZhF4eAupP97gc1ms'
-          :token: '184072309-6Y3olrlin0DWt4neudkMMnSzTSzykOfWOPi9wqlI'
-          :token_secret: 'G9TMjVrlruIsT0SZWstqfVLSRSSZFGdqPNzIq44NNw'
-
       :javascriptmvc:
         :host: userstream.twitter.com
         :method: GET
@@ -73,16 +63,6 @@
           :consumer_secret: 'MLCuiIl4bDNfEMdGvR7DcW7exJtGsIGeAKULXzAez4'
           :token: '171351462-XYaDcD3aZdLStLuBgWHSg22qHPudAVrVLS27SIDb'
           :token_secret: 'PDnZEP6I1OG26x5WKZ5iTSIBu8ESQIfj2ZvWMwrFTaU'
-
-      :shouldjs:
-        :host: userstream.twitter.com
-        :method: GET
-        :path: /1.1/user.json
-        :oauth:
-          :consumer_key: 'aD9aYoxtsyoxRWis19A'
-          :consumer_secret: '3TzgETml6h7M5IQURJXvPLZ6exKGcEOUffEaFARg'
-          :token: '1114713660-2JzAeM3PZRyPvmzsgkExnD7GASoyBenmw4A10nb'
-          :token_secret: 'PoONtKAmLEM18pY0uY0SaXZsx7OdLe6KKoB0H6sTMg'
 
       :stealjs:
         :host: userstream.twitter.com
@@ -115,9 +95,6 @@
     :funcunit:
       :events: 'https://api.github.com/repos/bitovi/funcunit/events'
       :issues: 'https://api.github.com/repos/bitovi/funcunit/issues'
-    :donejs:
-      :events: 'https://api.github.com/repos/bitovi/donejs/events'
-      :issues: 'https://api.github.com/repos/bitovi/donejs/issues'
     :javascriptmvc:
       :events: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
       :issues: 'https://api.github.com/repos/bitovi/javascriptmvc/issues'
