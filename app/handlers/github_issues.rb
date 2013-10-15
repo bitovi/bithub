@@ -45,7 +45,7 @@ module Handler
           end
 
         else
-          @log.warning "FEED: #{feed} | HTTP #{get_github_issues.response_header.status}"
+          @log.warn "FEED: #{feed} | HTTP #{get_github_issues.response_header.status}"
         end
       end
 
@@ -97,7 +97,7 @@ module Handler
                        event_hash['body']
 
       event_hash['content_digest'] = Digest::MD5.hexdigest(composite_seed)
-      ltmp = event_hash['labels'].reject{|l| l['name'] =~ /\./i}.map{|l| l['name']}
+      ltmp = event_hash['labels'].reject{|l| l['name'] =~ /\./i}.map{|l| l['name'].downcase}
       event_hash['labels'] = ltmp
       event_hash
     end
