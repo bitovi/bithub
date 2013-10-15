@@ -34,6 +34,7 @@ class AccountManager
       current_user.award_points_for_joining(identity.provider)
       current_user.merge_identities!(identity)
       create_missing_repos_and_watches!
+      current_user.reward_if_eligible
     end
     current_user
   end
@@ -46,6 +47,7 @@ class AccountManager
       create_missing_repos_and_watches!
     end
     identity.user.collect_authored_events
+    identity.user.reward_if_eligible
     user
   end
 
