@@ -15,7 +15,7 @@ namespace :db do
     run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
     dbuser = @environment_info['username']
     dbpass = @environment_info['password']
-    environment_database = @environment_info['database']
+    environment_database = (app_env == 'staging') ? 'bithub_staging' : 'bithub'
     dbhost = @environment_info['host']
 
     run "pg_dump --format=c --password --username=#{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out|
