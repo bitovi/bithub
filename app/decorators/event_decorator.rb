@@ -72,10 +72,10 @@ class EventDecorator < Draper::Decorator
     end
 
     if source.feed && source.feed.name == 'github'
-      if source.source_data
-        source.props[:repo_name] = source.source_data['repo']['name']
-      elsif source.props
+      if source.props && (source.props['repo'] || source.props['repo_name'])
         source.props[:repo_name] = source.props['repo'] || source.props['repo_name']
+      elsif source.source_data && source.source_data['repo']
+        source.props[:repo_name] = source.source_data['repo']['name']
       end
     end
     
