@@ -102,13 +102,6 @@ AMQP.start($mq_cs) do |connection, open_ok|
     end
     shift_phase.call
 
-
-    # --- Old community site
-    EM.add_timer(phase) do
-      $log.info "Registering Community site"
-      EM.add_periodic_timer(600, &Handler::CommunitySite.handler($log, preproc_exchange))
-    end
-    shift_phase.call
   end
 
   channel.fanout("e.issues") do |issues_exchange|
