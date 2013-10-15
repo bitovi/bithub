@@ -21,21 +21,24 @@ require 'lib/hash'
 # Connection string
 $mq_cs = ENV['RABBITMQ_URI']
 
+# paths to config files based on env
+$config_paths = {
+  'prod' => 'config/config.yml',
+  'staging' => 'config/config_staging.yml',
+  'development' => 'config/config_dev.yml'
+}
+
 # Logging
 $log = Log4r::Logger.new('crawler')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
+# Load config 
 $log.info "Loading feeds for #{ENV['ENV']}"
-# Load feeds config 
-if ENV['ENV'] == 'prod'
-  $feeds = YAML::load_file('config/feeds.yml')
-elsif ENV['ENV'] == 'staging'
-  $feeds = YAML::load_file('config/feeds_staging.yml')
-elsif ENV['ENV'] == 'development'
-  $feeds = YAML::load_file('config/feeds_dev.yml')
-end
+$config = YAML::load_file($config_paths[ENV['ENV']])
+$feeds = $config[:feeds]
+$intervals = $config[:intervals]
 
 # Event loop
 AMQP.start($mq_cs) do |connection, open_ok|
@@ -68,7 +71,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
         EM.add_timer(phase) do
           $log.info "Registering Github events handler for \"#{project}\" at \"#{repo[:events]}\""
           # or to make something bold in console log with "\033[1mFOOBAR\033[0m ?!
-          EM.add_periodic_timer(30, &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
+          EM.add_periodic_timer($intervals[:github][:events], &Handler::Github.handler($log, preproc_exchange, $feeds[:github][:token], repo[:events]))
         end
       end
       shift_phase.call
@@ -77,7 +80,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Disqus
     EM.add_timer(phase) do
       $log.info "Registering Disqus"
-      EM.add_periodic_timer(30, &Handler::Disqus.handler($log, preproc_exchange, $feeds[:disqus][:api_key]))
+      EM.add_periodic_timer($intervals[:disqus], &Handler::Disqus.handler($log, preproc_exchange, $feeds[:disqus][:api_key]))
     end
     shift_phase.call
 
@@ -90,7 +93,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
 
     EM.add_timer(phase) do
       $log.info "Registering Forums"
-      EM.add_periodic_timer(120, &Handler::Forums.handler($log, preproc_exchange, forum_endpoints))
+      EM.add_periodic_timer($intervals[:forums], &Handler::Forums.handler($log, preproc_exchange, forum_endpoints))
     end
     shift_phase.call
 
@@ -98,7 +101,7 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Blog
     EM.add_timer(phase) do
       $log.info "Registering Blog"
-      EM.add_periodic_timer(600, &Handler::Blog.handler($log, preproc_exchange))
+      EM.add_periodic_timer($intervals[:blog], &Handler::Blog.handler($log, preproc_exchange))
     end
     shift_phase.call
 
@@ -113,19 +116,15 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Github issues endpoint
     $feeds[:github][:repos].each do |project, repo|
       if repo[:issues]
-        $log.info "Registering Github open issues handler for \"#{project}\" at \"#{repo[:issues]}\""
-        EM.add_timer(5, &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], 'open', repo[:issues]))
+        ['open', 'closed'].each do |state|
+          EM.add_timer(phase) do
+            $log.info "Registering Github #{state} issues handler for \"#{project}\" at \"#{repo[:issues]}\""
+            EM.add_periodic_timer($intervals[:github][:issues][state], &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], state, repo[:issues]))
+          end
+          shift_phase.call
+        end
       end
-      shift_phase.call
-    end    
+    end
     
-    $feeds[:github][:repos].each do |project, repo|
-      if repo[:issues]
-        $log.info "Registering Github closed issues handler for \"#{project}\" at \"#{repo[:issues]}\""
-        EM.add_timer(10, &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], 'closed', repo[:issues]))
-      end
-      shift_phase.call
-    end    
   end
-
 end
