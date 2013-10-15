@@ -81,13 +81,13 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     queue.subscribe do |metadata, payload|
       issue_hash = ActiveSupport::JSON.decode(payload)
 
-      if (i = Event.issues_by_issue_id(issue_hash['id']).first)
+      if (i = Event.issues_by_issue_id(issue_hash['source_data']['id']).first)
         issue = i.top_level_parent
         if (issue.props['content_digest'] != issue_hash['content_digest'])
-          $log.info "Issue with ID=#{issue_hash['id']} changed. Updating"
-          issue.title = issue_hash['title']
-          issue.body = issue_hash['body']
-          issue.props['state'] = issue_hash['state']
+          $log.info "Issue with ID=#{issue_hash['source_data']['id']} changed. Updating"
+          issue.title = issue_hash['source_data']['title']
+          issue.body = issue_hash['source_data']['body']
+          issue.props['state'] = issue_hash['source_data']['state']
           issue.props['content_digest'] = issue_hash['content_digest']
           issue.props['category'] = category_from_labels(issue_hash['labels'])
 
@@ -95,17 +95,18 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.save!
         end
       else
-        $log.info "Issue with ID=#{issue_hash['id']} doesn't exist. Creating"
+        $log.info "Issue with ID=#{issue_hash['source_data']['id']} doesn't exist. Creating"
         issue = Event.new
-        action = (issue_hash['state'] == 'open') ? 'opened' : 'closed'
+        action = (issue_hash['source_data']['state'] == 'open') ? 'opened' : 'closed'
   
-        issue.hash_key = Digest::MD5.hexdigest("github:issue:#{issue_hash['id']}")
-        issue.title = issue_hash['title']
-        issue.body = issue_hash['body']
-        issue.url = issue_hash['url']
+        issue.hash_key = Digest::MD5.hexdigest("github:issue:#{issue_hash['source_data']['id']}")
+        issue.title = issue_hash['source_data']['title']
+        issue.body = issue_hash['source_data']['body']
+        issue.url = issue_hash['source_data']['url']
+        issue.source_data = issue_hash['source_data']
         issue.feed = Tag.find_or_create_by_name('github')
 
-        created_at = (issue_hash['created_at']) ? issue_hash['created_at'] : (fail NoTimestampsException);
+        created_at = (issue_hash['source_data']['created_at']) ? issue_hash['source_data']['created_at'] : (fail NoTimestampsException);
         t = Time.parse(created_at).utc
 
         issue.origin_ts = t
@@ -114,18 +115,18 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         issue.thread_updated_date = t
         
         issue.props = {
-          repo_name: repo_name(issue_hash['url']),
-          issue_id: issue_hash['id'],
-          issue_number: issue_hash['number'],
-          labels: only_names(issue_hash['labels']),
-          state: issue_hash['state'],
+          repo_name: repo_name(issue_hash['source_data']['url']),
+          issue_id: issue_hash['source_data']['id'],
+          issue_number: issue_hash['source_data']['number'],
+          labels: only_names(issue_hash['source_data']['labels']),
+          state: issue_hash['source_data']['state'],
           action: action,
           feed: 'github',
           type: 'issues_event',
-          origin_author_id: issue_hash['user']['id'],
-          tags: [ remove_prefix(repo_name(issue_hash['url'])) ]
+          origin_author_id: issue_hash['source_data']['user']['id'],
+          tags: [ remove_prefix(repo_name(issue_hash['source_data']['url'])) ]
         }
-          
+
         issue.props['category'] = category_from_labels(issue_hash['labels'])
         issue.determine
         issue.save!
