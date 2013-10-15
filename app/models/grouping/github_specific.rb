@@ -25,6 +25,9 @@ module Grouping::GithubSpecific
     elsif issue_closer_or_reopener && pi = previous_issue_instance
       self.parent = pi
       pi.update_self_from_child(self)
+
+      # child events must refer to thread starter, not closer/reopener event
+      return self
     end
 
     if ics = related_issue_comments
@@ -100,9 +103,9 @@ module Grouping::GithubSpecific
   
   def related_issue
     if props[:issue_id]
-      Event.issues_by_issue_id(props[:issue_id]).first
+      Event.issues_by_issue_id(props[:issue_id]).order('id').first
     elsif props[:owner_repo] and props[:issue_number]
-      Event.issues_by_repo_name_and_issue_number(props[:repo_name], props[:issue_number]).first
+      Event.issues_by_repo_name_and_issue_number(props[:repo_name], props[:issue_number]).order('id').first
     end
   end
 
