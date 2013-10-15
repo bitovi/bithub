@@ -92,7 +92,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.props['category'] = category_from_labels(issue_hash['labels'])
 
           issue.redetermine_category
-          issue.save!
+
+          begin
+            issue.save!
+          rescue Exception => e
+            puts e.message
+            puts e.backtrace.inspect
+          end
+
         end
       else
         $log.info "Issue with ID=#{issue_hash['source_data']['id']} doesn't exist. Creating"
@@ -129,7 +136,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
         issue.props['category'] = category_from_labels(issue_hash['labels'])
         issue.determine
-        issue.save!
+
+        begin
+          issue.save!
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace.inspect
+        end
+
       end
     end
   end
