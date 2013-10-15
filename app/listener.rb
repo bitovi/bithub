@@ -53,7 +53,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
       if (i = Event.issues_by_issue_id(issue_hash['id']).first)
         issue = i.top_level_parent
-        if issue.props['content_digest'] != issue_hash['content_digest']
+        if (issue.props['content_digest'] != issue_hash['content_digest'])
           $log.info "Issue with ID=#{issue_hash['id']} changed. Updating"
           issue.title = issue_hash['title']
           issue.body = issue_hash['body']
@@ -68,10 +68,11 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
                                          .reject{|l| !ACCEPTABLE_LABLES.include?(l.downcase)}
 
             issue.props['category'] = issue.props['labels'].first
-            issue.redetermine_category
+            issue.redetermine_category if issue.props['category']
           end
 
           issue.save!
+
         end
       end
     end

@@ -48,7 +48,6 @@ module Determination
   end
 
   def redetermine_category
-    c = self.props[:category] || self.props['category']
     self.tag_list.remove(FT_LIST)
     self.determine_category
     if self.category
