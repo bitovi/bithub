@@ -120,8 +120,16 @@ AMQP.start($mq_cs) do |connection, open_ok|
     # --- Github issues endpoint
     $feeds[:github][:repos].each do |project, repo|
       if repo[:issues]
-        $log.info "Registering Github issues handler for \"#{project}\" at \"#{repo[:issues]}\""
-        EM.add_periodic_timer(180, &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], repo[:issues]))
+        $log.info "Registering Github open issues handler for \"#{project}\" at \"#{repo[:issues]}\""
+        EM.add_timer(5, &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], 'open', repo[:issues]))
+      end
+      shift_phase.call
+    end    
+    
+    $feeds[:github][:repos].each do |project, repo|
+      if repo[:issues]
+        $log.info "Registering Github closed issues handler for \"#{project}\" at \"#{repo[:issues]}\""
+        EM.add_timer(10, &Handler::GithubIssues.handler($log, issues_exchange, $feeds[:github][:token], 'closed', repo[:issues]))
       end
       shift_phase.call
     end    

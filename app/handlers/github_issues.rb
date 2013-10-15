@@ -2,23 +2,30 @@ require 'app/processors/github/processor'
 
 module Handler
   class GithubIssues < Base
-    attr_reader :token, :endpoint, :processor
+    attr_reader :token, :endpoint, :processor, :state
 
-    def self.handler(log, exchange, token, endpoint=nil)
-      new(log, exchange, token, endpoint).handler
+    def self.handler(log, exchange, token, state, endpoint = nil)
+      new(log, exchange, token, state, endpoint).handler
     end
 
-    def initialize(log, exchange, token, endpoint=nil)
+    def initialize(log, exchange, token, state, endpoint=nil)
       @token = token
       @endpoint = endpoint || 'https://api.github.com/orgs/bitovi/issues'
       @processor = EventProcessor::Github.new
+      @state = state
       super(log, exchange)
     end
 
     def fetch(endpoint = nil)
       endpoint = endpoint || @endpoint
 
-      get_github_issues = EM::HttpRequest.new(endpoint).get(:head => {"Authorization" => "token #{token}"})
+      get_github_issues = EM::HttpRequest.new(endpoint).get({
+        query: { state: state },
+        head: {
+          'Authorization' => "token #{token}",
+          'Accept' => 'application/vnd.github.v3+json'
+        }
+      })
 
       get_github_issues.callback do
 
