@@ -30,12 +30,15 @@ gem 'sanitize'
 gem 'htmlentities'
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
+gem 'newrelic_rpm'
+
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
 # Gems for ThirdPartyInformer
 gem 'twitter'
 gem 'github_api'
+
 
 group :test, :development do
   gem 'factory_girl_rails'
