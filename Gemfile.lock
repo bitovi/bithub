@@ -152,6 +152,7 @@ GEM
     net-ssh (2.6.7)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    newrelic_rpm (3.6.0.83)
     nokogiri (1.5.9)
     oauth (0.4.7)
     oauth2 (0.8.1)
@@ -287,6 +288,7 @@ DEPENDENCIES
   levenshtein-ffi
   log4r
   muster!
+  newrelic_rpm
   omniauth
   omniauth-github
   omniauth-meetup
