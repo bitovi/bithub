@@ -99,6 +99,18 @@ module Grouping::GithubSpecific
     end
   end
 
+  def valid_labels
+    sd = ActiveSupport::HashWithIndifferentAccess.new(self.source_data)
+
+    return [] unless sd[:payload][:issue] && sd[:payload][:issue][:labels]
+
+    labels = sd[:payload][:issue][:labels].map{|l| l[:name].downcase}
+    labels.select do |label|
+      tag = Tag.find_by_name(label)
+      tag.name if tag      
+    end
+  end
+
   # Helpers and finders
   
   def related_issue
@@ -184,13 +196,12 @@ module Grouping::GithubSpecific
       self.props['labels'] = label_names.join(',')
       self.props['state'] = sd[:payload][:issue][:state]
 
-      if self.props['labels'] && self.props['labels'].length > 0
-        self.props['category'] = self.props['labels'].split(',').first
-        self.redetermine_category
+      if child.valid_labels.length > 0
+        self.props['category'] = child.valid_labels.first
+        self.redetermine_category        
       end
 
       self.save
-
     else
       fail NoDataToUpdateIssueException, "Needs to have source_data with the original issue in the payload"
     end
