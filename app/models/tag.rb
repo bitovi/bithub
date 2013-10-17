@@ -33,6 +33,10 @@ class Tag < ActsAsTaggableOn::Tag
     @tag_groups.keys().map{|tag| tag.to_s}
   end
 
+  def self.find_by_name(name)
+    Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
+  end
+
   def self.basic_tagging(tag)
     %w(enhancement feature feature-request).each do |keyword|
       return "feature" if tag =~ /#{keyword}/i
