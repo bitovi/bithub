@@ -157,6 +157,36 @@ ALTER SEQUENCE awards_id_seq OWNED BY awards.id;
 
 
 --
+-- Name: category_determination_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE category_determination_rules (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    scorings hstore
+);
+
+
+--
+-- Name: category_determination_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE category_determination_rules_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: category_determination_rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE category_determination_rules_id_seq OWNED BY category_determination_rules.id;
+
+
+--
 -- Name: countries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -606,6 +636,13 @@ ALTER TABLE ONLY awards ALTER COLUMN id SET DEFAULT nextval('awards_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextval('category_determination_rules_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
 
 
@@ -701,6 +738,14 @@ ALTER TABLE ONLY anteups
 
 ALTER TABLE ONLY awards
     ADD CONSTRAINT awards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY category_determination_rules
+    ADD CONSTRAINT category_determination_rules_pkey PRIMARY KEY (id);
 
 
 --
@@ -1069,3 +1114,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130916130332');
 INSERT INTO schema_migrations (version) VALUES ('20130924211203');
 
 INSERT INTO schema_migrations (version) VALUES ('20130926121052');
+
+INSERT INTO schema_migrations (version) VALUES ('20131018093050');
