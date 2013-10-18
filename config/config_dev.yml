@@ -17,7 +17,7 @@
       :public_feed:
         :path: '/1.1/statuses/filter.json'
         :params:
-          :track: canjs,donejs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++
+          :track: canjs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++
         :oauth:
           :consumer_key: "huCmG0TZ7vs6leLqLNlGQ"
           :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
