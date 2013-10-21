@@ -39,4 +39,10 @@ class Tag < ActsAsTaggableOn::Tag
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end
 
+  def check_for_junk_tags
+    if name =~ /\./
+      errors.add(:name, "can't contain dots as they break the client app")
+    end
+  end
+  
 end
