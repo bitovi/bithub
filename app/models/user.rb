@@ -122,6 +122,7 @@ class User < ActiveRecord::Base
         end
       end
     end
+    self
   end
 
   def update_blank_oauth_attrs!(args)

@@ -15,7 +15,7 @@ class AccountManager
     user = nil
 
     begin
-      if has_current_user?
+      if current_user_exists?
         user = update_and_merge(name, email)
       elsif identity.has_assigned_user?
         user = identity.user
@@ -28,17 +28,6 @@ class AccountManager
     user
   end
 
-  def update_and_merge(name, email)
-    ActiveRecord::Base.transaction do
-      current_user.update_blank_oauth_attrs!({name: name, email: email})
-      current_user.award_points_for_joining(identity.provider)
-      current_user.merge_identities!(identity)
-      create_missing_repos_and_watches!
-      current_user.reward_if_eligible
-    end
-    current_user
-  end
-
   def create_and_collect(name, email)
     user = identity.build_user({name: name, email: email})
     ActiveRecord::Base.transaction do
@@ -46,9 +35,19 @@ class AccountManager
       identity.save!
       create_missing_repos_and_watches!
     end
-    identity.user.collect_authored_events
-    identity.user.reward_if_eligible
+    identity.reload.user.collect_authored_events.reward_if_eligible
     user
+  end
+
+  def update_and_merge(name, email)
+    ActiveRecord::Base.transaction do
+      current_user.update_blank_oauth_attrs!({name: name, email: email})
+      current_user.award_points_for_joining(identity.provider)
+      current_user.merge_identities!(identity)
+      create_missing_repos_and_watches!
+      current_user.reload.collect_authored_events.reward_if_eligible
+    end
+    current_user
   end
 
   def create_missing_repos_and_watches!
@@ -159,7 +158,7 @@ class AccountManager
     end
   end
 
-  def has_current_user?
+  def current_user_exists?
     current_user != nil
   end
 
