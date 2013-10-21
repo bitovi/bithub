@@ -5,6 +5,8 @@ class Tag < ActsAsTaggableOn::Tag
   validates_presence_of :name
   validates_uniqueness_of :name
 
+  validate :check_for_junk_tags
+
   def to_s
     name
   end
