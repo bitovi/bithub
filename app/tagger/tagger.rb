@@ -6,9 +6,8 @@ module Tagger
     DEFAULT_DELIMITERS = /[ ,.!?;\/]/
 
     def initialize(tags, opts={})
-      raise NoTagsProvided if tags.empty?
       @count = 0
-      @tags = tags
+      @tags = tags || {}
       @levenshtein_treshold = opts[:levenshtein_treshold] || 0
       @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
     end

@@ -20,10 +20,6 @@ describe Tagger do
     Tagger::Engine.new(tags, tagger_config)
   end
     
-  it "raises an error if created without tags" do
-    expect { Tagger::Engine.new({}, {}) }.to raise_error Tagger::NoTagsProvided
-  end
-
   describe "#textualize" do 
     it "untouches input string" do
       expect(tagger.textualize("Gray fox jumps ...")).to eq "Gray fox jumps ..."
