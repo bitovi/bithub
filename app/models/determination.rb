@@ -14,8 +14,18 @@ module Determination
   end
 
   def determine_tags
-    ts = ([] + (self.props[:tags] || []) + [self.props[:feed]] + [self.props[:type]] + [self.props[:category]] + [self.props[:project]])
-    self.tag_list = ActsAsTaggableOn::TagList.new(ts.uniq)
+
+    # some props should be in tag list by default
+    tags = []
+    [:feed, :type, :project, :tags, :category].each {|name| tags.push self.props[name] if self.props[name]}
+
+    # on some we want to run tagger
+    input = [self[:url], self[:title], self[:body]]
+    search_tags = {}
+    Tag.all.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
+    tags.concat Tagger::Engine.new(search_tags).find_tags(input)
+
+    self.tag_list = ActsAsTaggableOn::TagList.new(tags)
     self
   end
 
