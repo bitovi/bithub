@@ -51,10 +51,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   channel = AMQP::Channel.new(connection)
 
-  channel.direct("e.events") do |web_exchange|  
+  #channel.direct("e.events") do |web_exchange|  
+  channel.fanout("e.events.preproc") do |input_exchange|
 
     channel.direct("e.events.liveservice") do |liveservice_exchange|
-      queue = channel.queue("q.events.web").bind(web_exchange)
+      #queue = channel.queue("q.events.web").bind(web_exchange)
+      queue = channel.queue("q.events.tagger").bind(input_exchange, {:routing_key => "tasks.taggify"})
 
       queue.subscribe do |metadata, payload|
         event_hash = ActiveSupport::JSON.decode(payload)
@@ -152,4 +154,5 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       end
     end
   end
+
 end
