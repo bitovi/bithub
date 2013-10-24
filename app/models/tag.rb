@@ -39,22 +39,10 @@ class Tag < ActsAsTaggableOn::Tag
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end
 
-  def self.basic_tagging(tag)
-    %w(enhancement feature feature-request).each do |keyword|
-      return "feature" if tag =~ /#{keyword}/i
-    end
-
-    %w(bug).each do |keyword|
-      return "bug" if tag =~ /#{keyword}/i
-    end
-  
-    return tag
-  end
-
   def check_for_junk_tags
     if name =~ /\./
       errors.add(:name, "can't contain dots as they break the client app")
     end
   end
-
+  
 end
