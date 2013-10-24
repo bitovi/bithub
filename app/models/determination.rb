@@ -14,6 +14,8 @@ module Determination
   end
 
   def determine_tags
+    # cast some magic
+    self.props.symbolize_keys!
 
     # some props should be in tag list by default
     tags = []
@@ -22,10 +24,17 @@ module Determination
     # on some we want to run tagger
     input = [self[:url], self[:title], self[:body]]
     search_tags = {}
-    Tag.all.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
+    Tag.projects.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
     tags.concat Tagger::Engine.new(search_tags).find_tags(input)
 
-    self.tag_list = ActsAsTaggableOn::TagList.new(tags)
+    # additionaly check issue events
+    if self.props[:type] == 'issues_event'
+      search_tags = {}
+      Tag.labels.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
+      tags.concat Tagger::Engine.new(search_tags).find_tags(self.props[:labels])
+    end
+
+    self.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     self
   end
 
