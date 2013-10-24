@@ -1,0 +1,158 @@
+require 'spec_helper'
+require 'spec/processors/shared_specs'
+require 'responses/responses'
+
+require 'digest/md5'
+require 'app/processor'
+
+describe Processor do
+  context "when processing stuff from Github" do
+    let(:processor) { Processor.new('github') }
+
+    shared_examples_for "every Github event" do
+      it_should_behave_like "every event"
+      it "should have an event type in meta" do
+        expect(processed_event[:meta][:type]).to be
+      end
+      it "should have :origin_id in meta" do
+        expect(processed_event[:meta][:origin_id]).to be
+      end
+    end
+
+    describe "#process" do
+
+      def load_and_process(event_type)
+        resp = Response.load('github', event_type)
+        Processor.new('github').process(resp)
+      end
+
+      context "when processing CommitCommentEvent" do
+        let(:processed_event) { load_and_process('CommitCommentEvent') }
+
+        it_should_behave_like "every Github event"
+        it_should_behave_like "an event with a body and a url"
+        it "should have a commit_id in meta" do
+          expect(processed_event[:meta][:commit_id]).to be
+        end
+      end
+
+      context "when processing CreateEvent" do
+        let(:processed_event) { load_and_process('CreateEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing DeleteEvent" do
+        let(:processed_event) { load_and_process('DeleteEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing DownloadEvent" do
+        let(:processed_event) { load_and_process('DownloadEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing FollowEvent" do
+        let(:processed_event) { load_and_process('FollowEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing ForkEvent" do
+        let(:processed_event) { load_and_process('ForkEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing ForkApplyEvent" do
+        let(:processed_event) { load_and_process('ForkApplyEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing GistEvent" do
+        let(:processed_event) { load_and_process('GistEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing GollumEvent" do
+        let(:processed_event) { load_and_process('GollumEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing IssueCommentEvent" do
+        let(:processed_event) { load_and_process('IssueCommentEvent') }
+
+        it_should_behave_like "every Github event"
+        it_should_behave_like "an event with a body and a url"
+        it "should have an issue_id in meta" do
+          expect(processed_event[:meta][:issue_id]).to be
+        end
+      end
+
+      context "when processing IssuesEvent" do
+        let(:processed_event) { load_and_process('IssuesEvent') }
+
+        it_should_behave_like "every Github event"
+        it_should_behave_like "an event with a body and a url"
+        it "should have :labels in meta" do
+          expect(processed_event[:meta][:labels]).to be
+        end
+        it "should have a :state in meta" do
+          expect(processed_event[:meta][:state]).to be
+        end
+        it "should have an :issue_id in meta" do
+          expect(processed_event[:meta][:issue_id]).to be
+        end
+        it "should have an :action in meta" do
+          expect(processed_event[:meta][:action]).to be
+        end
+      end
+
+      context "when processing MemberEvent" do
+        let(:processed_event) { load_and_process('MemberEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing PublicEvent" do
+        let(:processed_event) { load_and_process('PublicEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing PullRequestEvent" do
+        let(:processed_event) { load_and_process('PullRequestEvent') }
+
+        it_should_behave_like "every Github event"
+        it_should_behave_like "an event with a body and a url"
+      end
+
+      context "when processing PullRequestReviewCommentEvent" do
+        let(:processed_event) { load_and_process('PullRequestReviewCommentEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing WatchEvent" do
+        let(:processed_event) { load_and_process('WatchEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing PushEvent" do
+        let(:processed_event) { load_and_process('PushEvent') }
+
+        it_should_behave_like "every Github event"
+        it "should have an url" do
+          expect(processed_event[:url]).to be
+        end
+        it "should have :commits in meta" do
+          expect(processed_event[:meta][:commits]).to be
+        end
+      end
+
+      context "when processing TeamAddEvent" do
+        let(:processed_event) { load_and_process('TeamAddEvent') }
+        it_should_behave_like "every Github event"
+      end
+
+      context "when processing WatchEvent" do
+        let(:processed_event) { load_and_process('WatchEvent') }
+        it_should_behave_like "every Github event"
+      end
+    end
+  end
+end

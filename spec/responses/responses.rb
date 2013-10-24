@@ -1,20 +1,18 @@
 require 'json'
-require './lib/string.rb'
-require './lib/hash.rb'
+require 'lib/string'
+require 'lib/hash'
 
 module Response
-
-  @root = './spec/responses/'
+  ROOT = 'spec/responses'
 
   def self.load(feed, type)    
-    @path = File.join(@root, feed, type.snake_case + '.json')
-    JSON.parse( IO.read(@path) )    
+    @path = File.join(ROOT, feed, type.snake_case + '.json')
+    JSON.parse(File.read(@path))
   end
 
   def self.load_raw(feed, type)    
-    @path = File.join(@root, feed, type.snake_case + '.json')
+    @path = File.join(ROOT, feed, type.snake_case + '.json')
     file = File.open(@path, "rb")
     file.read
   end
-  
 end

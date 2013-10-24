@@ -13,7 +13,11 @@ gem 'htmlentities'
 gem 'foreman'
 
 group :development do
-  gem 'rspec'
   gem 'capistrano'
   gem 'capistrano-ext'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'webmock'
 end
