@@ -192,14 +192,14 @@ module Grouping::GithubSpecific
       self.title = sd[:payload][:issue][:title]
       self.body = sd[:payload][:issue][:body]
 
-      label_names = sd[:payload][:issue][:labels].map{|l| l[:name]}
+      # snake case label names and replace '.' with '_'
+      label_names = sd[:payload][:issue][:labels].map{|l| l[:name].snake_case.gsub(/\./, '_')}
+
       self.props['labels'] = label_names.join(',')
       self.props['state'] = sd[:payload][:issue][:state]
 
-      if child.valid_labels.length > 0
-        self.props['category'] = child.valid_labels.first
-        self.redetermine_category        
-      end
+      self.tag_list.add(label_names)
+      self.determine_category
 
       self.save
     else

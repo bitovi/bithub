@@ -89,7 +89,10 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.body = issue_hash['source_data']['body']
           issue.props['state'] = issue_hash['source_data']['state']
           issue.props['content_digest'] = issue_hash['content_digest']
-          issue.props['category'] = category_from_labels(issue_hash['labels'])
+          
+          #issue.props['category'] = category_from_labels(issue_hash['labels'])
+          labels = issue.props['labels'].map {|l| l.snake_case.gsub(/\./, "_")}
+          issue.tag_list.add(labels)
 
           issue.redetermine_category
 
@@ -105,7 +108,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         $log.info "Issue with ID=#{issue_hash['source_data']['id']} doesn't exist. Creating"
         issue = Event.new
         action = (issue_hash['source_data']['state'] == 'open') ? 'opened' : 'closed'
-  
+
+        labels = issue.props['labels'].map {|l| l.snake_case.gsub(/\./, "_")}
+
         issue.hash_key = Digest::MD5.hexdigest("github:issue:#{issue_hash['source_data']['id']}")
         issue.title = issue_hash['source_data']['title']
         issue.body = issue_hash['source_data']['body']
@@ -131,10 +136,10 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           feed: 'github',
           type: 'issues_event',
           origin_author_id: issue_hash['source_data']['user']['id'],
-          tags: [ remove_prefix(repo_name(issue_hash['source_data']['url'])) ]
+          tags: [ remove_prefix(repo_name(issue_hash['source_data']['url'])) ] + labels
         }
 
-        issue.props['category'] = category_from_labels(issue_hash['labels'])
+        #issue.props['category'] = category_from_labels(issue_hash['labels'])
         issue.determine
 
         begin

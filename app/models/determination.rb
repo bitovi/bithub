@@ -5,8 +5,8 @@ module Determination
   def determine(custom_props = nil)
     self.props ||= custom_props
     self.determine_feed
-    self.determine_category
     self.determine_tags
+    self.determine_category
     self.determine_rule
     self.determine_author
     self.clean_props_after_categorization
@@ -27,10 +27,10 @@ module Determination
   end
 
   def determine_category
-    c_raw = (self.props[:category] || self.props['category'])
-    fail DeterminationException, ":category missing from props" if c_raw.nil?
-    c = Tag.basic_tagging(c_raw)
-    self.category = Tag.find_by_name(c) || Tag.find_or_create_with_like_by_name(c)
+    if (category = self.props[:category] || CategoryDeterminationRule.determine_category(self.tag_list))
+      self.tag_list.add(category)
+      self.category = Tag.find_or_create_with_like_by_name(category)
+    end
     self
   end
 
