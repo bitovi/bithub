@@ -23,6 +23,10 @@ class Tag < ActsAsTaggableOn::Tag
     Tag.where(:name => @tag_groups[:feed])
   end
 
+  def self.labels
+    Tag.where(:name => @tag_groups[:label])
+  end
+
   def self.category_ids
     Tag.where(:name => @tag_groups[:category]).pluck(:id)
   end
