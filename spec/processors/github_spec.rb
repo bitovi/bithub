@@ -2,31 +2,30 @@ require 'spec_helper'
 require 'spec/processors/shared_specs'
 require 'responses/responses'
 
-require 'digest/md5'
 require 'app/processor'
 
 describe Processor do
-  context "when processing stuff from Github" do
-    let(:processor) { Processor.new('github') }
 
-    shared_examples_for "every Github event" do
-      it_should_behave_like "every event"
-      it "should have an event type in meta" do
-        expect(processed_event[:meta][:type]).to be
-      end
-      it "should have :origin_id in meta" do
-        expect(processed_event[:meta][:origin_id]).to be
-      end
+  shared_examples_for "every Github event" do
+    it_should_behave_like "every event"
+    it "should have an event type in meta" do
+      expect(processed_event[:meta][:type]).to be
     end
+    it "should have :origin_id in meta" do
+      expect(processed_event[:meta][:origin_id]).to be
+    end
+  end
 
-    describe "#process" do
+  describe "#process" do
+
+    context "when processing Github's" do
 
       def load_and_process(event_type)
         resp = Response.load('github', event_type)
         Processor.new('github').process(resp)
       end
 
-      context "when processing CommitCommentEvent" do
+      context "CommitCommentEvent" do
         let(:processed_event) { load_and_process('CommitCommentEvent') }
 
         it_should_behave_like "every Github event"
@@ -36,47 +35,47 @@ describe Processor do
         end
       end
 
-      context "when processing CreateEvent" do
+      context "CreateEvent" do
         let(:processed_event) { load_and_process('CreateEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing DeleteEvent" do
+      context "DeleteEvent" do
         let(:processed_event) { load_and_process('DeleteEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing DownloadEvent" do
+      context "DownloadEvent" do
         let(:processed_event) { load_and_process('DownloadEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing FollowEvent" do
+      context "FollowEvent" do
         let(:processed_event) { load_and_process('FollowEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing ForkEvent" do
+      context "ForkEvent" do
         let(:processed_event) { load_and_process('ForkEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing ForkApplyEvent" do
+      context "ForkApplyEvent" do
         let(:processed_event) { load_and_process('ForkApplyEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing GistEvent" do
+      context "GistEvent" do
         let(:processed_event) { load_and_process('GistEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing GollumEvent" do
+      context "GollumEvent" do
         let(:processed_event) { load_and_process('GollumEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing IssueCommentEvent" do
+      context "IssueCommentEvent" do
         let(:processed_event) { load_and_process('IssueCommentEvent') }
 
         it_should_behave_like "every Github event"
@@ -86,7 +85,7 @@ describe Processor do
         end
       end
 
-      context "when processing IssuesEvent" do
+      context "IssuesEvent" do
         let(:processed_event) { load_and_process('IssuesEvent') }
 
         it_should_behave_like "every Github event"
@@ -105,34 +104,34 @@ describe Processor do
         end
       end
 
-      context "when processing MemberEvent" do
+      context "MemberEvent" do
         let(:processed_event) { load_and_process('MemberEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing PublicEvent" do
+      context "PublicEvent" do
         let(:processed_event) { load_and_process('PublicEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing PullRequestEvent" do
+      context "PullRequestEvent" do
         let(:processed_event) { load_and_process('PullRequestEvent') }
 
         it_should_behave_like "every Github event"
         it_should_behave_like "an event with a body and a url"
       end
 
-      context "when processing PullRequestReviewCommentEvent" do
+      context "PullRequestReviewCommentEvent" do
         let(:processed_event) { load_and_process('PullRequestReviewCommentEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing WatchEvent" do
+      context "WatchEvent" do
         let(:processed_event) { load_and_process('WatchEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing PushEvent" do
+      context "PushEvent" do
         let(:processed_event) { load_and_process('PushEvent') }
 
         it_should_behave_like "every Github event"
@@ -144,12 +143,12 @@ describe Processor do
         end
       end
 
-      context "when processing TeamAddEvent" do
+      context "TeamAddEvent" do
         let(:processed_event) { load_and_process('TeamAddEvent') }
         it_should_behave_like "every Github event"
       end
 
-      context "when processing WatchEvent" do
+      context "WatchEvent" do
         let(:processed_event) { load_and_process('WatchEvent') }
         it_should_behave_like "every Github event"
       end
