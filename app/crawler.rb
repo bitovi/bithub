@@ -59,17 +59,27 @@ AMQP.start(mq_cs) do |connection, open_ok|
       Handler::Twitter.connect(log, preproc_exchange, data, true)
     end
 
+
     # --- Pollers
     phase = 1; shift_phase = lambda {phase+=1}
 
     # --- Github events endpoint
+    gh_http_req_head = { "Authorization" => "token #{feeds[:github][:token]}", "Accept" => "application/vnd.github.v3+json" }
     feeds[:github][:repos].each do |project, repo|
-      if repo[:events] 
+      if repo[:events]
         EM.add_timer(phase) do
           log.info "Registering Github events handler for \"#{project}\" at \"#{repo[:events]}\""
-          # or to make something bold in console log with "\033[1mFOOBAR\033[0m ?!
-          EM.add_periodic_timer(30, &Handler::Github.handler(log, preproc_exchange, feeds[:github][:token], repo[:events]))
+          EM.add_periodic_timer(30, &Handler::Github.handler(log, preproc_exchange, repo[:events]){|c| c[:head] = gh_http_req_head})
         end
+      end
+      shift_phase.call
+    end
+
+    # --- Forums
+    feeds[:forums][:endpoints].each do |name, uri|
+      EM.add_timer(phase) do
+        log.info "Registering Forums events handler for \"#{name}\" at \"#{uri}\""
+        EM.add_periodic_timer(120, &Handler::Forums.handler(log, preproc_exchange, uri))
       end
       shift_phase.call
     end
@@ -77,36 +87,15 @@ AMQP.start(mq_cs) do |connection, open_ok|
     # --- Disqus
     EM.add_timer(phase) do
       log.info "Registering Disqus"
-      EM.add_periodic_timer(30, &Handler::Disqus.handler(log, preproc_exchange, feeds[:disqus][:api_key]))
+      disqus_uri = feeds[:disqus][:uri].gsub(':api_key', feeds[:disqus][:api_key])
+      EM.add_periodic_timer(30, &Handler.new(log, preproc_exchange, disqus_uri).handler)
     end
     shift_phase.call
-
-
-    # --- Forums
-    forum_endpoints = {
-      questions: 'https://forum.javascriptmvc.com/feed/filter/questions',
-      all: 'https://forum.javascriptmvc.com/feed'
-    }
-
-    EM.add_timer(phase) do
-      log.info "Registering Forums"
-      EM.add_periodic_timer(120, &Handler::Forums.handler(log, preproc_exchange, forum_endpoints))
-    end
-    shift_phase.call
-
 
     # --- Blog
     EM.add_timer(phase) do
       log.info "Registering Blog"
       EM.add_periodic_timer(600, &Handler::Blog.handler(log, preproc_exchange))
-    end
-    shift_phase.call
-
-
-    # --- Old community site
-    EM.add_timer(phase) do
-      log.info "Registering Community site"
-      EM.add_periodic_timer(600, &Handler::CommunitySite.handler(log, preproc_exchange))
     end
     shift_phase.call
   end
@@ -124,7 +113,7 @@ AMQP.start(mq_cs) do |connection, open_ok|
         EM.add_periodic_timer(180, &Handler::GithubIssues.handler(log, issues_exchange, feeds[:github][:token], repo[:issues]))
       end
       shift_phase.call
-    end    
+    end
   end
 
 end
