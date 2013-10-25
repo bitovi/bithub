@@ -99,20 +99,6 @@ module Grouping::GithubSpecific
     end
   end
 
-  ### to be deleted
-  def valid_labels
-    sd = ActiveSupport::HashWithIndifferentAccess.new(self.source_data)
-
-    return [] unless sd[:payload][:issue] && sd[:payload][:issue][:labels]
-
-    labels = sd[:payload][:issue][:labels].map{|l| l[:name].downcase}
-    labels.select do |label|
-      tag = Tag.find_by_name(label)
-      tag.name if tag      
-    end
-  end
-  ###
-
   # Helpers and finders
   
   def related_issue

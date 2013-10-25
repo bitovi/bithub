@@ -5,8 +5,6 @@ class Tag < ActsAsTaggableOn::Tag
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  validate :check_for_junk_tags
-
   def to_s
     name
   end
@@ -41,12 +39,6 @@ class Tag < ActsAsTaggableOn::Tag
 
   def self.find_by_name(name)
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
-  end
-
-  def check_for_junk_tags
-    if name =~ /\./
-      errors.add(:name, "can't contain dots as they break the client app")
-    end
   end
   
 end

@@ -1,6 +1,5 @@
 module Determination
   class DeterminationException < Exception; end
-  FT_LIST = %w(bug feature feature-request enhancement)
 
   def determine(custom_props = nil)
     self.props ||= custom_props
@@ -68,14 +67,6 @@ module Determination
     end
     self.author = ident.user if ident && ident.user
     self
-  end
-
-  def redetermine_category
-    self.tag_list.remove(FT_LIST)
-    self.determine_category
-    if self.category
-      self.tag_list.add(self.category.name)
-    end
   end
 
   def clean_props_after_categorization
