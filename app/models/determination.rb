@@ -1,6 +1,9 @@
 module Determination
   class DeterminationException < Exception; end
 
+  PROPS_TO_TAGS = [:feed, :type, :project, :tags, :category]
+  ATTRS_FOR_TAGGING = [:url, :title, :body]
+
   def determine(custom_props = nil)
     self.props ||= custom_props
     self.determine_feed
@@ -13,23 +16,22 @@ module Determination
   end
 
   def determine_tags
+    tags = []
+
     # cast some magic
     self.props.symbolize_keys!
 
     # some props should be in tag list by default
-    tags = []
-    [:feed, :type, :project, :tags, :category].each {|name| tags.push self.props[name] if self.props[name]}
+    PROPS_TO_TAGS.each {|prop| tags.push self.props[prop] if self.props[prop]}
 
     # on some we want to run tagger
-    input = [self[:url], self[:title], self[:body]]
-    search_tags = {}
-    Tag.projects.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
+    input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}
+    search_tags = Tag.to_name_aliases_hash(:project)
     tags.concat Tagger::Engine.new(search_tags).find_tags(input)
 
     # additionaly check issue events
     if self.props[:type] == 'issues_event'
-      search_tags = {}
-      Tag.labels.each {|tag| search_tags[tag[:name]] = tag[:aliases] if tag[:aliases] }
+      search_tags = Tag.to_name_aliases_hash(:label)
       tags.concat Tagger::Engine.new(search_tags).find_tags(self.props[:labels])
     end
 
