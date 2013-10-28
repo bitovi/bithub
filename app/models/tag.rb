@@ -38,7 +38,7 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.to_name_aliases_hash(group)
-    Hash[ Tag.where(:name => @tag_groups[group]).select {|tag| [tag.name, tag.aliases] if tag.aliases} ]
+    Hash[ Tag.where(:name => @tag_groups[group]).map {|tag| [tag.name, tag.aliases || [tag.name]]} ]
   end
 
   def self.find_by_name(name)
