@@ -5,8 +5,6 @@ class Tag < ActsAsTaggableOn::Tag
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  validate :check_for_junk_tags
-
   def to_s
     name
   end
@@ -23,6 +21,10 @@ class Tag < ActsAsTaggableOn::Tag
     Tag.where(:name => @tag_groups[:feed])
   end
 
+  def self.labels
+    Tag.where(:name => @tag_groups[:label])
+  end
+
   def self.category_ids
     Tag.where(:name => @tag_groups[:category]).pluck(:id)
   end
@@ -35,14 +37,12 @@ class Tag < ActsAsTaggableOn::Tag
     @tag_groups.keys().map{|tag| tag.to_s}
   end
 
-  def self.find_by_name(name)
-    Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
+  def self.to_name_aliases_hash(group)
+    Hash[ Tag.where(:name => @tag_groups[group]).select {|tag| [tag.name, tag.aliases] if tag.aliases} ]
   end
 
-  def check_for_junk_tags
-    if name =~ /\./
-      errors.add(:name, "can't contain dots as they break the client app")
-    end
+  def self.find_by_name(name)
+    Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end
   
 end
