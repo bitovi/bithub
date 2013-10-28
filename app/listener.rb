@@ -41,20 +41,21 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       queue = channel.queue("q.events.tagger").bind(input_exchange, {:routing_key => "tasks.taggify"})
 
       queue.subscribe do |metadata, payload|
-        event_hash = ActiveSupport::JSON.decode(payload)
-        meta = event_hash.delete('meta')
+        if event_hash = ActiveSupport::JSON.decode(payload)
+          meta = event_hash.delete('meta')
 
-        begin
-          ev = Event.new_from_crawler(event_hash, meta)
-          ev.save!
-          ev.bump_thread
-          liveservice_exchange.publish(ActiveSupport::JSON.encode(ev))
-        rescue ActiveRecord::RecordInvalid => invalid
-          $log.info "Invalid record: #{invalid}"
-        rescue ActiveRecord::RecordNotUnique => duplicate 
-          $log.info "Duplicate record: #{duplicate}"
-        ensure
-          ev.connection.close if ev && ev.connection
+          begin
+            ev = Event.new_from_crawler(event_hash, meta)
+            ev.save!
+            ev.bump_thread
+            liveservice_exchange.publish(ActiveSupport::JSON.encode(ev))
+          rescue ActiveRecord::RecordInvalid => invalid
+            $log.info "Invalid record: #{invalid}"
+          rescue ActiveRecord::RecordNotUnique => duplicate 
+            $log.info "Duplicate record: #{duplicate}"
+          ensure
+            ev.connection.close if ev && ev.connection
+          end
         end
       end
     end
