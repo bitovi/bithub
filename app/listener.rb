@@ -23,24 +23,6 @@ def repo_name(url)
     (match_groups && rn = match_groups[1]) ? rn : (fail NoRepoNameException, "no repo name pattern in the url")
 end
 
-def only_names(ls)
-  ls.map {|l| l['name']}
-end
-
-def filter_out_junk_labels(ls)
-  acceptable_lables = %w(bug feature feature-request enhancement)
-  ls.reject{|l| l =~ /\./i}.reject{|l| !acceptable_lables.include?(l.downcase)}
-end
-
-def category_from_labels(ls)
-  if ls && ls.length > 0
-    filtered_ls = filter_out_junk_labels(ls)
-    (!filtered_ls.nil? && !filtered_ls.empty?) ? filtered_ls.first : 'issues_event'
-  else
-    'issues_event'
-  end
-end
-
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   $log.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
@@ -51,10 +33,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   channel = AMQP::Channel.new(connection)
 
-  channel.direct("e.events") do |web_exchange|  
+  #channel.direct("e.events") do |web_exchange|  
+  channel.fanout("e.events.preproc") do |input_exchange|
 
     channel.direct("e.events.liveservice") do |liveservice_exchange|
-      queue = channel.queue("q.events.web").bind(web_exchange)
+      #queue = channel.queue("q.events.web").bind(web_exchange)
+      queue = channel.queue("q.events.tagger").bind(input_exchange, {:routing_key => "tasks.taggify"})
 
       queue.subscribe do |metadata, payload|
         event_hash = ActiveSupport::JSON.decode(payload)
@@ -87,14 +71,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           $log.info "Issue with ID=#{issue_hash['source_data']['id']} changed. Updating"
           issue.title = issue_hash['source_data']['title']
           issue.body = issue_hash['source_data']['body']
+          issue.props['labels'] = issue_hash['source_data']['labels'].map {|l| l['name']}.join(',')
           issue.props['state'] = issue_hash['source_data']['state']
           issue.props['content_digest'] = issue_hash['content_digest']
           
-          #issue.props['category'] = category_from_labels(issue_hash['labels'])
-          labels = issue.props['labels'].map {|l| l.snake_case.gsub(/\./, "_")}
-          issue.tag_list.add(labels)
-
-          issue.redetermine_category
+          issue.determine_tags
+          issue.determine_category
 
           begin
             issue.save!
@@ -108,8 +90,6 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         $log.info "Issue with ID=#{issue_hash['source_data']['id']} doesn't exist. Creating"
         issue = Event.new
         action = (issue_hash['source_data']['state'] == 'open') ? 'opened' : 'closed'
-
-        labels = issue.props['labels'].map {|l| l.snake_case.gsub(/\./, "_")}
 
         issue.hash_key = Digest::MD5.hexdigest("github:issue:#{issue_hash['source_data']['id']}")
         issue.title = issue_hash['source_data']['title']
@@ -130,16 +110,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           repo_name: repo_name(issue_hash['source_data']['url']),
           issue_id: issue_hash['source_data']['id'],
           issue_number: issue_hash['source_data']['number'],
-          labels: only_names(issue_hash['source_data']['labels']),
+          labels: issue_hash['source_data']['labels'].map {|l| l['name']}.join(','),
           state: issue_hash['source_data']['state'],
           action: action,
           feed: 'github',
           type: 'issues_event',
-          origin_author_id: issue_hash['source_data']['user']['id'],
-          tags: [ remove_prefix(repo_name(issue_hash['source_data']['url'])) ] + labels
+          origin_author_id: issue_hash['source_data']['user']['id']
         }
 
-        #issue.props['category'] = category_from_labels(issue_hash['labels'])
         issue.determine
 
         begin
@@ -152,4 +130,5 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       end
     end
   end
+
 end
