@@ -15,27 +15,13 @@ module Determination
     self
   end
 
-  def determine_tags
-    tags = []
-
+  def determine_tags    
     # cast some magic
     self.props.symbolize_keys!
 
-    # some props should be in tag list by default
-    PROPS_TO_TAGS.each {|prop| tags.push self.props[prop] if self.props[prop]}
-
-    # on some we want to run tagger
-    input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}
-    search_tags = Tag.to_name_aliases_hash(:project)
-    tags.concat Tagger::Engine.new(search_tags).find_tags(input)
-
-    # additionaly check issue events
-    if self.props[:type] == 'issues_event'
-      search_tags = Tag.to_name_aliases_hash(:label)
-      tags.concat Tagger::Engine.new(search_tags).find_tags(self.props[:labels])
-    end
-
+    tags = taggify_props + taggify_content + taggify_labels
     self.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
+
     self
   end
 
@@ -75,6 +61,26 @@ module Determination
     self.props.delete(:project)
     self.props.delete(:tags)
     self.props.delete(:origin_author_feed)
+  end
+
+  def taggify_props
+    PROPS_TO_TAGS.map {|prop| self.props[prop] if self.props[prop]}.compact
+  end
+
+  def taggify_content
+    input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}.compact
+    search_tags = Tag.to_name_aliases_hash(:project)
+    Tagger::Engine.new(search_tags).find_tags(input)
+  end
+
+  def taggify_labels
+    if self.props[:type] == 'issues_event'
+      search_tags = Tag.to_name_aliases_hash(:label)
+      input = self.props[:labels]
+      Tagger::Engine.new(search_tags).find_tags(input)
+    else
+      []
+    end
   end
 
 end
