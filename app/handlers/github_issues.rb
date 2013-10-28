@@ -90,8 +90,7 @@ module Handler
                        event_hash['body']
 
       event_hash['content_digest'] = Digest::MD5.hexdigest(composite_seed)
-      ltmp = event_hash['labels'].reject{|l| l['name'] =~ /\./i}.map{|l| l['name']}
-      event_hash['labels'] = ltmp
+      event_hash['labels'] = event_hash['labels'].map{|l| l['name']}
       event_hash
     end
 

@@ -6,23 +6,25 @@ require 'time'
 
 class Handler
   attr_reader :latest
+  attr_accessor :backlog_size, :http_head, :feed, :api_key
+
   CUSTOM_RULESET = Sanitize::Config::RELAXED
   CUSTOM_RULESET[:elements] << "div"
 
-  def self.handler(logger, exchange, endpoint)
-    new(logger, exchange, endpoint).handler
+  def self.handler(logger, exchange, endpoint, &blk)
+    new(logger, exchange, endpoint, &blk).handler
   end
 
-  def initialize(logger, exchange, endpoint, backlog_size = 100)
-    @config = {} # relevant keys: :head, :feed
-
-    @latest = []
+  def initialize(logger, exchange, endpoint, &blk)
     @logger = logger
     @exchange = exchange
     @endpoint = endpoint
-    @backlog_size = backlog_size
 
-    yield @config if block_given?
+    blk.call(self) if blk # relevant keys: :head, :feed, :api_key ?
+
+    @backlog_size ||= 100
+    @http_head ||= {}
+    @feed ||= determine_feed(endpoint)
   end
 
   def handler
@@ -30,8 +32,8 @@ class Handler
   end
 
   def fetch
-    http_req = EM::HttpRequest.new(@endpoint).get
-    # TODO HEAD: ...
+    http_req = EM::HttpRequest.new(@endpoint).get({head: @http_head})
+    # TODO za forums :  questions.each { |q| q['filter_term'] = 'question' } -> meta[:category] = filter_term u processoru
 
     http_req.callback do
       if success?(http_req)
@@ -48,14 +50,20 @@ class Handler
     end
   end
 
-  def handle_success(http_req)
-    events = Yajl::Parser.parse(http_req.response)
+  def handle_success(http_req, &parse)
+    events = parser.call(http_req.response)
 
-    key_maker = lambda {|e| e[:hash_key] = Digest::MD5.hexdigest(pluck_id(e) + @config[:feed])}
+    key_maker = lambda do |e|
+      seed = pluck_unique_attribute(e) + @config[:feed]
+      e[:hash_key] = Digest::MD5.hexdigest(seed)
+    end
+    
     publish(process(reject_old(events, &key_maker)))
   end
 
   def reject_old(events, key_maker = nil)
+    @latest ||= []
+
     new_events = events
       .each {|i| key_maker[i] if i[:hash_key].nil?}
       .reject {|e| @latest.include? e[:hash_key]}
@@ -114,8 +122,20 @@ class Handler
     (http_resp.response_header.status.to_s =~ /4../) || (http_resp.response_header.status.to_s =~ /5../)
   end
 
-  def pluck_id(event_hash = nil)
-    (event_hash[:id] || event_hash['id']).to_s
+  def parser
+    if in_github? || in_disqus?
+      lambda {|raw| Yajl::Parser.parse(raw)}
+    elsif in_forums? || in_blog?
+      lambda {|raw| Nori.new(:parser => :nokogiri).parse(raw)}
+    end
+  end
+
+  def pluck_unique_attribute(event_hash)
+    if in_github? || in_disqus?
+      (event_hash[:id] || event_hash['id']).to_s
+    elsif in_forums? || in_blog?
+      (event_hash[:link] || event_hash['link'])
+    end
   end
   
   def log_exception(e)
@@ -124,5 +144,25 @@ class Handler
 
   def log_http_status(resp)
     @logger.error "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}"
+  end
+
+  def in_github?
+    @config[:feed] == 'github'
+  end
+
+  def in_forums?
+    @config[:feed] == 'forums'
+  end
+
+  def in_disqus?
+    @config[:feed] == 'disqus'
+  end
+
+  def in_blog?
+    @config[:feed] == 'blog'
+  end
+
+  def determine_feed(uri)
+    (f = %w(github disqus blog forums).select{|f| uri =~ /#{f}/}) ? f.first : nil;
   end
 end

@@ -20,8 +20,7 @@ class Processor
 
   def initialize(feed)
     @feed = feed
-    @config = {}
-    yield @config if block_given?
+    yield self if block_given?
   end
 
   def process(event_hash)

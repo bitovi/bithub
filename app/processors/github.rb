@@ -10,6 +10,7 @@ module GithubSpecific
     .deep_merge(cons_origin_tss_hash(original_hash['created_at']))
     .deep_merge({
       meta: {
+        feed: 'github',
         type: event_type,
         origin_id: original_hash['id'],
         origin_author_name: original_hash['actor']['login'],
@@ -106,7 +107,6 @@ module GithubSpecific
   end
 
   def issues_event (event)
-
     t = event['payload']['issue']['title']
     nmb = event['payload']['issue']['number']
     state = event['payload']['issue']['state']
@@ -141,15 +141,18 @@ module GithubSpecific
   end
 
   def member_event (event)
-    { :title => "Member #{event['payload']['member']['login']} added to #{event['repo']['name']}" }
+    return {
+      :title => "Member #{event['payload']['member']['login']} added to #{event['repo']['name']}"
+    }
   end
 
   def public_event (event)
-    { :title => "Repository #{event['repo']['name']} goes public!" }
+    return {
+      :title => "Repository #{event['repo']['name']} goes public!"
+    }
   end
 
   def pull_request_event (event)
-
     if m = ("" + event['payload']['pull_request']['title'] + event['payload']['pull_request']['body']).match(/#(\d*)/)
       issue_nmb = m[1]
     end
@@ -177,7 +180,7 @@ module GithubSpecific
   end
 
   def pull_request_review_comment_event (event)
-    {
+    return {
       :title => "commented on pull request review #{event['payload']['issue']['number']}",
       :url => event['payload']['comment']['_links']['html'],
       :body => event['payload']['comment']['body']
@@ -205,11 +208,13 @@ module GithubSpecific
   end
 
   def team_add_event (event)
-    { :title => "team add event" }
+    return {
+      :title => "team add event"
+    }
   end
 
   def watch_event (event)
-    {
+    return {
       :title => "started watching #{event['repo']['name']}",
       :hash_key => Digest::MD5.hexdigest(event['actor']['id'].to_s + event['repo']['id'].to_s + 'github')
     }

@@ -7,10 +7,10 @@ module TwitterSpecific
     .deep_merge(cons_origin_tss_hash(original_hash['created_at']))
     .deep_merge({ meta: { feed: 'twitter' }})
 
-    if is_user_stream? && is_follow_event?(event_hash)
-      prepare_event_from_user_stream(event_hash, partly_processed_hash)
-    elsif not(is_user_stream?) && is_status_event?(event_hash)
-      prepare_event_from_public_stream(event_hash, partly_processed_hash)
+    if is_user_stream? && is_follow_event?(original_hash)
+      prepare_event_from_user_stream(original_hash, partly_processed_hash)
+    elsif not(is_user_stream?) && is_status_event?(original_hash)
+      prepare_event_from_public_stream(original_hash, partly_processed_hash)
     end
   end
 
@@ -46,7 +46,7 @@ module TwitterSpecific
   end
   
   def is_user_stream?
-    @config[:is_user_stream] || false
+    @user_stream_flag || false
   end
   
   def is_follow_event?(event_hash)

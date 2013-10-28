@@ -1,4 +1,5 @@
 :disqus:
+  :uri: "http://disqus.com/api/3.0/posts/list.json?api_key=:api_key&forum[]=jmvcs3&forum[]=bitovi&related[]=thread&related[]=forum"
   :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
 
 :twitter:
@@ -121,3 +122,8 @@
     :javascriptmvc:
       :events: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
       :issues: 'https://api.github.com/repos/bitovi/javascriptmvc/issues'
+
+:forums:
+  :endpoints:
+    :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
+    :all: 'https://forum.javascriptmvc.com/feed'

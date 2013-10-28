@@ -7,7 +7,7 @@ describe Handler do
     before :each do
       @logger = double(); @exchange = double()
       @endpoint = 'https://api.example.com/entities'
-      @h = Handler.new(@logger, @exchange, @endpoint, 10)
+      @h = Handler.new(@logger, @exchange, @endpoint) {|c| c.backlog_size = 10}
     end
 
     it "should have a backlog of 10 items at most" do
