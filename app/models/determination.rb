@@ -28,14 +28,14 @@ module Determination
   def determine_feed
     f_raw = (self.props[:feed] || self.props['feed'])
     fail DeterminationException, ":feed missing from props" if f_raw.nil?
-    self.feed = Tag.find_by_name(f_raw) || Tag.find_or_create_with_like_by_name(f_raw)
+    self.feed = Tag.find_or_create_by_name(f_raw)
     self
   end
 
   def determine_category
     if (category = self.props[:category] || CategoryDeterminationRule.determine_category(self.tag_list))
       self.tag_list.add(category)
-      self.category = Tag.find_or_create_with_like_by_name(category)
+      self.category = Tag.find_or_create_by_name(category)
     end
     self
   end
