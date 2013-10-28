@@ -2,9 +2,10 @@ require 'digest/md5'
 require 'sanitize'
 require 'htmlentities'
 require 'rexml/document'
+require 'em-http-request'
 require 'time'
 
-class Handler
+class Poller
   attr_reader :latest
   attr_accessor :backlog_size, :http_head, :feed, :api_key
 
@@ -31,12 +32,19 @@ class Handler
     lambda { fetch }
   end
 
-  def fetch
-    http_req = EM::HttpRequest.new(@endpoint).get({head: @http_head})
+  def fetch(link = nil, query = {})
+    link = link || @endpoint
+
+    http_req = EM::HttpRequest.new(link).get({
+      query: query,
+      head: @http_head
+    })
+
     # TODO za forums :  questions.each { |q| q['filter_term'] = 'question' } -> meta[:category] = filter_term u processoru
 
     http_req.callback do
       if success?(http_req)
+        delay(1, lambda {fetch_next_page http_req}) if in_github_issues?
         handle_success(http_req)
       elsif error?(http_req)
         handle_error(http_req)
@@ -49,9 +57,31 @@ class Handler
       @logger.error "ENDPOINT: #{endpoint} | Mysterious error #{http_req.error}"
     end
   end
+  
+  def fetch_next_page(http_req)
+    if (link_header = http_req.response_header['LINK'])
+      if (next_page_query_params = only_query_params(link_by_type(link_header, 'next')))
+        logger.info "Fetching next page: #{next_page_query_params}"
+        fetch(next_page_query_params)
+      end
+    end
+  end
+
+  def link_by_type(link_header, type)
+    parse_link_header(link_header).select{|l| link[:type] == type}.first
+  end
+    
+  def parse_link_header(lh)
+    # TODO add filtering for 'rel' type links only
+    lh.split(',').map {|rel| [:link, :url, :type].zip(pluck_pagination(rel))}
+  end
+  
+  def pluck_pagination(rel)
+    /<(.*)>; rel="(.*)"/.match(rel).to_a
+  end
 
   def handle_success(http_req, &parse)
-    events = parser.call(http_req.response)
+    events = parser.parse(http_req.response)
 
     key_maker = lambda do |e|
       seed = pluck_unique_attribute(e) + @config[:feed]
@@ -122,11 +152,15 @@ class Handler
     (http_resp.response_header.status.to_s =~ /4../) || (http_resp.response_header.status.to_s =~ /5../)
   end
 
+  def delay(t, fn)
+    EM.add_timer(t, &fn)
+  end
+
   def parser
     if in_github? || in_disqus?
-      lambda {|raw| Yajl::Parser.parse(raw)}
+      @parser ||= Yajl::Parser.new
     elsif in_forums? || in_blog?
-      lambda {|raw| Nori.new(:parser => :nokogiri).parse(raw)}
+      @parser ||= Nori.new(:parser => :nokogiri)
     end
   end
 
@@ -137,7 +171,7 @@ class Handler
       (event_hash[:link] || event_hash['link'])
     end
   end
-  
+    
   def log_exception(e)
     @logger.error "ENDPOINT: #{@endpoint} | MESSAGE: #{e.message}"
   end
@@ -147,19 +181,23 @@ class Handler
   end
 
   def in_github?
-    @config[:feed] == 'github'
+    @feed == 'github'
   end
 
   def in_forums?
-    @config[:feed] == 'forums'
+    @feed == 'forums'
   end
 
   def in_disqus?
-    @config[:feed] == 'disqus'
+    @feed == 'disqus'
   end
 
   def in_blog?
-    @config[:feed] == 'blog'
+    @feed == 'blog'
+  end
+
+  def in_github_issues?
+    @feed == 'github' && @enpoint =~ /issues/
   end
 
   def determine_feed(uri)

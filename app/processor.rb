@@ -6,7 +6,6 @@ require 'app/processors/blog'
 require 'app/processors/disqus'
 require 'app/processors/forums'
 require 'app/processors/github'
-require 'app/processors/twitter'
 
 class Processor
 

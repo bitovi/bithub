@@ -3,8 +3,20 @@ require 'digest/md5'
 module GithubSpecific
 
   def github(original_hash, partly_processed_hash)
-    event_type = original_hash['type'].snake_case
-    fail NotValidEventException if not(self.respond_to?(event_type.to_sym))
+    if github_event?
+      event_type = original_hash['type'].snake_case
+      github_event(event_type, original_hash, partly_processed_hash)
+    elsif github_issue?
+      github_issue(original_hash)
+    else
+      fail NotValidGithubResponse, "hash is not an event nor an issue"
+    end
+  end
+
+  def github_issue(issue_hash)
+  end
+
+  def github_event(event_type, original_hash, partly_processed_hash)
 
     partly_processed_hash = partly_processed_hash
     .deep_merge(cons_origin_tss_hash(original_hash['created_at']))
