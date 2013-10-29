@@ -2,21 +2,14 @@ $: << File.expand_path(File.join(File.dirname(__FILE__), '../'))
 
 # Theirs
 require 'bundler/setup'
-require 'log4r'
-require 'yajl'
-require 'nokogiri'
-require 'nori'
-require 'amqp'
-require 'zlib'
-require 'base64'
 require 'rubygems'
-require 'json'
-require 'sanitize'
+require 'log4r'
+require 'amqp'
 
 # Ours
-require 'app/handlers/poller'
-require 'app/handlers/listener'
 require 'lib/core_ext'
+require 'app/poller'
+require 'app/listener'
 
 # Connection string
 mq_cs = ENV['RABBITMQ_URI']
