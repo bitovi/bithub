@@ -7,10 +7,10 @@ describe Processor do
   describe "#process" do
 
     context "when processing forum posts" do
-      let(:processed_event) { load_and_process('post') }
+      let(:processed_event) { load_and_process('posts') }
       
       def load_and_process(event_type)
-        resp = Response.load('forums', event_type)
+        resp = Response.load('forums', event_type)['rss']['channel']['item'][0]
         Processor.new('forums').process(resp)
       end
 

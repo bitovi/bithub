@@ -24,7 +24,7 @@ class TwitterProcessor
   private
     
   def datetime_str(original_hash)
-    (str = original_hash['created_at']) ? str : (raise MissingTimestamp, "missing origin timestamps");
+    (str = original_hash['created_at']) ? str : (raise Processor::MissingTimestamp, "missing origin timestamps");
   end
 
   def prepare_event_from_user_stream(event_hash, partly_processed_hash)

@@ -8,8 +8,8 @@ describe Processor do
       let(:processed_event) { load_and_process('comment_list') }
 
       def load_and_process(event_type)
-        resp = Response.load('disqus', event_type)
-        Processor.new('disqus').process(resp["response"].first)
+        resp = Response.load('disqus', event_type)["response"].first
+        Processor.new('disqus').process(resp)
       end
 
       it_should_behave_like "every event"

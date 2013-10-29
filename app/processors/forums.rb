@@ -31,7 +31,7 @@ class ForumsProcessor
   end
 
   def datetime_str(original_hash)
-    (str = original_hash['pubDate']) ? str : (raise MissingTimestamp, "missing origin timestamps");
+    (str = original_hash['pubDate']) ? str : (raise Processor::MissingTimestamp, "missing origin timestamps");
   end
 
 end

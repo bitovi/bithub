@@ -31,7 +31,7 @@ class GithubProcessor
   end
   
   def datetime_str(original_hash)
-    (str = original_hash['created_at']) ? str : (raise MissingTimestamp, "missing origin timestamps");
+    (str = original_hash['created_at']) ? str : (raise Processor::MissingTimestamp, "missing origin timestamps");
   end
 
   def process_github_issue(issue_hash)
