@@ -5,6 +5,7 @@ require 'bundler/setup'
 require 'rubygems'
 require 'log4r'
 require 'amqp'
+require 'yaml'
 
 # Ours
 require 'lib/core_ext'

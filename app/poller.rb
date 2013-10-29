@@ -1,7 +1,9 @@
 require 'digest/md5'
-require 'rexml/document'
 require 'em-http-request'
 require 'time'
+require 'yajl'
+require 'nokogiri'
+require 'nori'
 
 class Poller
   attr_reader :latest
@@ -75,23 +77,23 @@ class Poller
     /<(.*)>; rel="(.*)"/.match(rel).to_a
   end
 
-  def handle_success(http_req, &parse)
+  def handle_success(http_req)
     events = parser.parse(http_req.response)
 
     key_maker = lambda do |e|
-      seed = pluck_unique_attribute(e) + @config[:feed]
+      seed = pluck_unique_attribute(e) + @feed
       e[:hash_key] = Digest::MD5.hexdigest(seed)
     end
     
-    publish(process(reject_old(events, &key_maker)))
+    publish(process(reject_old(events, key_maker)))
   end
 
-  def reject_old(events, key_maker = nil)
+  def reject_old(events, key_maker)
     @latest ||= []
 
     new_events = events
-      .each {|i| key_maker[i] if i[:hash_key].nil?}
-      .reject {|e| @latest.include? e[:hash_key]}
+      .each{|i| key_maker.call(i)}
+      .reject{|e| @latest.include? e[:hash_key]}
 
     @latest += new_events.map {|e| e[:hash_key]}
     if @latest.length > @backlog_size

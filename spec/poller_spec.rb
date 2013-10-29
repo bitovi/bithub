@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'digest/md5'
-
 require 'app/poller'
 
 describe Poller do
