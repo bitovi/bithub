@@ -1,10 +1,9 @@
-module DisqusSpecific
+class DisqusProcessor
 
-  def disqus(original_hash, partly_processed_hash)
+  def process(original_hash, partly_processed_hash)
     # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
 
     partly_processed_hash
-    .deep_merge(cons_origin_tss_hash { Time.parse(original_hash['createdAt']+"Z").utc })
     .deep_merge({
       title: original_hash['thread']['title'],
       body: original_hash['message'],
@@ -14,6 +13,16 @@ module DisqusSpecific
         origin_author_name: original_hash['author']['name'],
       }
     })
+  end
+
+  def origin_timestamps(orig_hash)
+    Time.parse(datetime_str(orig_hash)+"Z").utc
+  end
+
+  private
+  
+  def datetime_str(original_hash)
+    (str = original_hash['createdAt']) ? str : (raise MissingTimestamp, "missing origin timestamps");
   end
 
 end

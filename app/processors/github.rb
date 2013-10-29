@@ -1,25 +1,42 @@
 require 'digest/md5'
 
-module GithubSpecific
+class GithubProcessor
 
-  def github(original_hash, partly_processed_hash)
+  def process(original_hash, partly_processed_hash)
     if github_event?
       event_type = original_hash['type'].snake_case
-      github_event(event_type, original_hash, partly_processed_hash)
+      process_github_event(event_type, original_hash, partly_processed_hash)
     elsif github_issue?
-      github_issue(original_hash)
+      process_github_issue(original_hash)
     else
       fail NotValidGithubResponse, "hash is not an event nor an issue"
     end
   end
 
-  def github_issue(issue_hash)
+  def origin_timestamps(orig_hash)
+    Time.parse(datetime_str(orig_hash)).utc
   end
 
-  def github_event(event_type, original_hash, partly_processed_hash)
+  private
 
-    partly_processed_hash = partly_processed_hash
-    .deep_merge(cons_origin_tss_hash(original_hash['created_at']))
+  def github_event?
+    true
+  end
+  
+  def github_issue?
+    false
+  end
+  
+  def datetime_str(original_hash)
+    (str = original_hash['created_at']) ? str : (raise MissingTimestamp, "missing origin timestamps");
+  end
+
+  def process_github_issue(issue_hash)
+  end
+
+  def process_github_event(event_type, original_hash, partly_processed_hash)
+
+    partly_processed_hash
     .deep_merge({
       meta: {
         feed: 'github',
@@ -30,8 +47,7 @@ module GithubSpecific
         origin_author_gravatar: original_hash['actor']['gravatar_id'],
       }
     })
-
-    partly_processed_hash.deep_merge(self.send(event_type.to_sym, original_hash))
+    .deep_merge(self.send(event_type.to_sym, original_hash))
   end
 
   def commit_comment_event(event)

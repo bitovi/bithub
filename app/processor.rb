@@ -1,55 +1,50 @@
-require 'lib/hash'
-require 'lib/string'
-require 'lib/proc'
+require 'lib/core_ext'
 
 require 'app/processors/blog'
 require 'app/processors/disqus'
 require 'app/processors/forums'
 require 'app/processors/github'
+require 'app/processors/twitter'
 
 class Processor
+  attr_accessor :is_user_stream
 
   class InvalidEventException < Exception; end
   class MissingTimestamp < Exception; end
 
-  include TwitterSpecific
-  include GithubSpecific
-  include ForumsSpecific
-  include BlogSpecific
-
   def initialize(feed)
     @feed = feed
-    yield self if block_given?
+    config = yield Hash.new if block_given?
+    @feed_processor = Object::const_get(feed.capitalize + 'Processor').new(config || {})
   end
 
   def process(event_hash)
-    partly_processed_hash = {
+    pph = {}
+    .deep_merge(hash_key_source_data_and_feed(event_hash))
+    .deep_merge(origin_timestamps_hash(event_hash))
+
+    @feed_processor.process(event_hash, pph)
+  end
+
+  def hash_key_source_data_and_feed(event_hash)
+    p event_hash
+    return {
       hash_key: event_hash['hash_key'],
       source_data: event_hash,
       meta: { feed: @feed.to_s }
     }
-
-    send(@feed.to_sym, event_hash, partly_processed_hash)
   end
 
-  def cons_origin_tss_hash(date)
-    if block_given?
-      pd = yield
-    else
-      pd = parse_date(date)
-    end
-    { origin_ts: pd.iso8601, origin_date: to_date_str(pd) }
-  end
-
-  def sanitize_body(text)
-    text ? Sanitize.clean(text, Sanitize::Config::RELAXED) : "";
-  end
-
-  def parse_date(date_str)
-    date_str ? Time.parse(date_str).utc : (raise MissingTimestamp, "missing origin timestamps");
+  def origin_timestamps_hash(event_hash)
+    otss = @feed_processor.origin_timestamps(event_hash)
+    return {
+      origin_ts: otss.iso8601,
+      origin_date: to_date_str(otss)
+    }
   end
 
   def to_date_str(date)
     date.strftime("%Y-%m-%d")
   end
+
 end

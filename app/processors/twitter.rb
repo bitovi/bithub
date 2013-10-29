@@ -1,10 +1,13 @@
-module TwitterSpecific
+class TwitterProcessor
 
-  def twitter(original_hash, partly_processed_hash)
+  def initialize(is_user_stream)
+    @user_stream_flag = is_user_stream
+  end
+
+  def process(original_hash, partly_processed_hash)
     fail Processor::InvalidEventException, "event isn't a follow_event nor a status_event" if not(follow_or_status?(original_hash))
 
     partly_processed_hash = partly_processed_hash
-    .deep_merge(cons_origin_tss_hash(original_hash['created_at']))
     .deep_merge({ meta: { feed: 'twitter' }})
 
     if is_user_stream? && is_follow_event?(original_hash)
@@ -12,6 +15,16 @@ module TwitterSpecific
     elsif not(is_user_stream?) && is_status_event?(original_hash)
       prepare_event_from_public_stream(original_hash, partly_processed_hash)
     end
+  end
+
+  def origin_timestamps(orig_hash)
+    Time.parse(datetime_str(orig_hash)).utc
+  end
+
+  private
+    
+  def datetime_str(original_hash)
+    (str = original_hash['created_at']) ? str : (raise MissingTimestamp, "missing origin timestamps");
   end
 
   def prepare_event_from_user_stream(event_hash, partly_processed_hash)
@@ -46,7 +59,7 @@ module TwitterSpecific
   end
   
   def is_user_stream?
-    @user_stream_flag || false
+    @user_stream_flag
   end
   
   def is_follow_event?(event_hash)
