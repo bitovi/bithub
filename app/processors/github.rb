@@ -35,6 +35,15 @@ class GithubProcessor
   end
 
   def process_github_issue(issue_hash)
+    composite_seed = issue_hash['id'].to_s +
+                     issue_hash['labels'].to_s +
+                     issue_hash['state'] +
+                     issue_hash['title'] +
+                     issue_hash['body']
+
+    issue_hash['content_digest'] = Digest::MD5.hexdigest(composite_seed)
+    issue_hash['label_names'] = issue_hash['labels'].map{|l| l['name']}
+    issue_hash
   end
 
   def process_github_event(event_type, original_hash, partly_processed_hash)
@@ -111,16 +120,16 @@ class GithubProcessor
   end
 
   def gollum_event (event)
-    event_hash = {
+    issue_hash = {
       :title => "gollum event",
       :meta => { :pages => [] }
     }
 
     event['payload']['pages'].each do |page|
-      event_hash[:meta][:pages].push({:title => page['title'], :url => page['html_url']})
+      issue_hash[:meta][:pages].push({:title => page['title'], :url => page['html_url']})
     end
 
-    event_hash
+    issue_hash
   end
 
   def issue_comment_event (event)
@@ -223,7 +232,7 @@ class GithubProcessor
       issue_nmb = m[1]
     end
 
-    event_hash = {
+    issue_hash = {
       :title => "pushed to #{event['repo']['name']}",
       :body => event['payload']['body'],
       :url => "http://github.com/#{event['repo']['name']}/commit/#{event['payload']['head']}",
@@ -235,7 +244,7 @@ class GithubProcessor
       }
     }
 
-    event_hash
+    issue_hash
   end
 
   def team_add_event (event)
