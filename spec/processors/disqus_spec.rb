@@ -9,7 +9,7 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('disqus', event_type)
-        Processor.new('disqus').process(resp["response"])
+        Processor.new('disqus').process(resp["response"].first)
       end
 
       it_should_behave_like "every event"

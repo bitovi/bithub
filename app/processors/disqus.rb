@@ -4,7 +4,6 @@ class DisqusProcessor
   end
 
   def process(original_hash, partly_processed_hash)
-    # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
 
     partly_processed_hash
     .deep_merge({
@@ -19,6 +18,7 @@ class DisqusProcessor
   end
 
   def origin_timestamps(orig_hash)
+    # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
     Time.parse(datetime_str(orig_hash)+"Z").utc
   end
 
