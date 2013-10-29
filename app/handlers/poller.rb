@@ -1,6 +1,4 @@
 require 'digest/md5'
-require 'sanitize'
-require 'htmlentities'
 require 'rexml/document'
 require 'em-http-request'
 require 'time'
@@ -8,9 +6,6 @@ require 'time'
 class Poller
   attr_reader :latest
   attr_accessor :backlog_size, :http_head, :feed, :api_key
-
-  CUSTOM_RULESET = Sanitize::Config::RELAXED
-  CUSTOM_RULESET[:elements] << "div"
 
   def self.handler(logger, exchange, endpoint, &blk)
     new(logger, exchange, endpoint, &blk).handler
@@ -124,24 +119,6 @@ class Poller
 
   def handle_error(resp)
     log_http_status(resp)
-  end
-
-  def sanitize(html)
-    decode(cleanup(encode(html)))
-  end
-
-  def encode(text)
-    @htmlEscaper ||= HTMLEntities.new
-    @htmlEscaper.encode(text)
-  end
-
-  def decode(text)
-    @htmlEscaper ||= HTMLEntities.new
-    @htmlEscaper.decode(text)
-  end
-
-  def cleanup(text)
-    Sanitize.clean(@htmlEscaper.encode(text), CUSTOM_RULESET)
   end
 
   def success?(http_resp)
