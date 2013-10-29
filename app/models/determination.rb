@@ -74,7 +74,7 @@ module Determination
   end
 
   def taggify_labels
-    if self.props[:type] == 'issues_event'
+    if self.props[:labels]
       search_tags = Tag.to_name_aliases_hash(:label)
       input = self.props[:labels]
       Tagger::Engine.new(search_tags).find_tags(input)
