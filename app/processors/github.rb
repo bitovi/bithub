@@ -2,6 +2,9 @@ require 'digest/md5'
 
 class GithubProcessor
 
+  def initialize(config = {})
+  end
+
   def process(original_hash, partly_processed_hash)
     if github_event?
       event_type = original_hash['type'].snake_case

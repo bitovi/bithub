@@ -1,7 +1,7 @@
 class TwitterProcessor
 
-  def initialize(is_user_stream)
-    @user_stream_flag = is_user_stream
+  def initialize(config)
+    @user_stream_flag = config[:user_stream_flag]
   end
 
   def process(original_hash, partly_processed_hash)

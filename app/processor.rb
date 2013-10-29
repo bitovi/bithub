@@ -9,13 +9,16 @@ require 'app/processors/twitter'
 class Processor
   attr_accessor :is_user_stream
 
+  class NonExistentFeedException < Exception; end
   class InvalidEventException < Exception; end
   class MissingTimestamp < Exception; end
 
   def initialize(feed)
     @feed = feed
-    config = yield Hash.new if block_given?
-    @feed_processor = Object::const_get(feed.capitalize + 'Processor').new(config || {})
+    config = {}
+    yield config if block_given?
+    
+    @feed_processor = Object::const_get(feed.capitalize + 'Processor').new(config)
   end
 
   def process(event_hash)
@@ -27,7 +30,6 @@ class Processor
   end
 
   def hash_key_source_data_and_feed(event_hash)
-    p event_hash
     return {
       hash_key: event_hash['hash_key'],
       source_data: event_hash,

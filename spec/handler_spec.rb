@@ -1,7 +1,9 @@
 require 'spec_helper'
 require 'digest/md5'
 
-describe Handler do
+require 'app/handlers/poller'
+
+describe Poller do
 
   describe "#reject_old" do
     before :each do

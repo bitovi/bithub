@@ -1,5 +1,8 @@
 class BlogProcessor
 
+  def initialize(config = {})
+  end
+
   def process(original_hash, partly_processed_hash)
     partly_processed_hash
     .deep_merge({

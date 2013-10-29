@@ -1,4 +1,7 @@
 class DisqusProcessor
+  
+  def initialize(config = {})
+  end
 
   def process(original_hash, partly_processed_hash)
     # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'

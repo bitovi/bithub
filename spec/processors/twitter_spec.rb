@@ -43,8 +43,8 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('twitter', event_type)
-        Processor.new('twitter') do |p|
-          p.is_user_stream = true
+        Processor.new('twitter') do |config|
+          config[:user_stream_flag] = true
         end.process(resp)
       end
 
@@ -65,8 +65,8 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('twitter', event_type)
-        Processor.new('twitter') do |p|
-          p.is_user_stream = false
+        Processor.new('twitter') do |config|
+          config[:user_stream_flag] = false
         end.process(resp)
       end
 

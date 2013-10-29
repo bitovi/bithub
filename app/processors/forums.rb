@@ -2,7 +2,7 @@ require 'app/sanitizer'
 
 class ForumsProcessor
 
-  def initialize(sanitizer)
+  def initialize(config = {})
     @sanitizer = Sanitizer.new
   end
 
