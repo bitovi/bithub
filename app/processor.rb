@@ -7,8 +7,6 @@ require 'app/processors/github'
 require 'app/processors/twitter'
 
 class Processor
-  attr_accessor :is_user_stream
-
   class NonExistentFeedException < Exception; end
   class InvalidEventException < Exception; end
   class MissingTimestamp < Exception; end
