@@ -16,10 +16,24 @@ describe Processor do
 
   describe "#process" do
 
-    context "when processing Github's" do
+    
+    context "when processing Github's issues endpoint" do
+      let(:processed_event) { load_and_process('issues_list') }
 
       def load_and_process(event_type)
-        resp = Response.load('github', event_type)
+        resp = Response.load('github', "issues/#{event_type}")
+        Processor.new('github').process(resp)
+      end
+
+      it "should have :content_digest"
+      it "should have :label_names"
+
+    end
+
+    context "when processing Github's events endpoint" do
+    
+      def load_and_process(event_type)
+        resp = Response.load('github', "events/#{event_type}")
         Processor.new('github').process(resp)
       end
 

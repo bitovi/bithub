@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'digest/md5'
 
-require 'app/handlers/poller'
+require 'app/poller'
 
 describe Poller do
 
@@ -9,7 +9,7 @@ describe Poller do
     before :each do
       @logger = double(); @exchange = double()
       @endpoint = 'https://api.example.com/entities'
-      @h = Handler.new(@logger, @exchange, @endpoint) {|c| c.backlog_size = 10}
+      @h = Poller.new(@logger, @exchange, @endpoint) {|c| c.backlog_size = 10}
     end
 
     it "should have a backlog of 10 items at most" do
