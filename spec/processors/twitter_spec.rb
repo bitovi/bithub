@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'spec/processors/shared_specs'
-require 'responses/responses'
-
 require 'app/processor'
 
 describe Processor do
@@ -46,8 +43,8 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('twitter', event_type)
-        Processor.new('twitter') do |config|
-          config[:is_user_stream] = true
+        Processor.new('twitter') do |p|
+          p.is_user_stream = true
         end.process(resp)
       end
 
@@ -68,8 +65,8 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('twitter', event_type)
-        Processor.new('twitter') do |config|
-          config[:is_user_stream] = false
+        Processor.new('twitter') do |p|
+          p.is_user_stream = false
         end.process(resp)
       end
 

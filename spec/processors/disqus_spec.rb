@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'spec/processors/shared_specs'
-require 'responses/responses'
-
 require 'app/processor'
 
 describe Processor do
@@ -12,7 +9,7 @@ describe Processor do
 
       def load_and_process(event_type)
         resp = Response.load('disqus', event_type)
-        Processor.new('disqus').process(resp)
+        Processor.new('disqus').process(resp["response"])
       end
 
       it_should_behave_like "every event"

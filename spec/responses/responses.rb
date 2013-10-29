@@ -1,6 +1,5 @@
 require 'json'
-require 'lib/string'
-require 'lib/hash'
+require 'lib/core_ext'
 
 module Response
   ROOT = 'spec/responses'

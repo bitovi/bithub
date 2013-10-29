@@ -1,8 +1,6 @@
 require 'spec_helper'
-require 'spec/processors/shared_specs'
-require 'responses/responses'
-
 require 'app/processor'
+
 
 describe Processor do
 
