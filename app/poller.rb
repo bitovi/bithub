@@ -7,7 +7,6 @@ require 'nori'
 
 class Poller
   attr_reader :latest
-  attr_accessor :backlog_size, :http_head, :feed, :api_key
 
   def self.handler(logger, exchange, endpoint, &blk)
     new(logger, exchange, endpoint, &blk).handler
@@ -18,10 +17,10 @@ class Poller
     @exchange = exchange
     @endpoint = endpoint
 
-    blk.call(self) if blk # relevant keys: :head, :feed, :api_key ?
+    @config = {}
 
-    @backlog_size ||= 100
-    @http_head ||= {}
+    blk.call(@config) if blk # relevant keys: :http_head, :term (forums)
+
     @feed ||= determine_feed(endpoint)
   end
 
@@ -34,10 +33,11 @@ class Poller
 
     http_req = EM::HttpRequest.new(link).get({
       query: query,
-      head: @http_head
+      head: http_head
     })
 
     # TODO za forums :  questions.each { |q| q['filter_term'] = 'question' } -> meta[:category] = filter_term u processoru
+    # TODO za GH, open closed issues
 
     http_req.callback do
       if success?(http_req)
@@ -81,6 +81,7 @@ class Poller
     events = parse(http_req.response)
 
     key_maker = lambda do |e|
+      @logger.debug e.inspect
       seed = pluck_unique_attribute(e) + @feed
       e[:hash_key] = Digest::MD5.hexdigest(seed)
     end
@@ -92,12 +93,12 @@ class Poller
     @latest ||= []
 
     new_events = events
-      .each{|i| key_maker.call(i)}
+      .each{|e| key_maker.call(e)}
       .reject{|e| @latest.include? e[:hash_key]}
 
     @latest += new_events.map {|e| e[:hash_key]}
-    if @latest.length > @backlog_size
-      @latest.shift(@latest.length - @backlog_size)
+    if @latest.length > backlog_size
+      @latest.shift(@latest.length - backlog_size)
     end
 
     log_filtering(events, new_events)
@@ -175,6 +176,21 @@ class Poller
     @logger.info "FILTERING: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
   end
 
+
+  def determine_feed(uri)
+    (f = %w(github disqus blog forums).select{|f| uri =~ /#{f}/}) ? f.first : nil;
+  end
+
+  private
+
+  def backlog_size
+    @config[:backlog_size] || 100
+  end
+
+  def http_head
+    @config[:http_head] || {}
+  end
+  
   def in_github?
     @feed == 'github'
   end
@@ -193,9 +209,5 @@ class Poller
 
   def in_github_issues?
     @feed == 'github' && @enpoint =~ /issues/
-  end
-
-  def determine_feed(uri)
-    (f = %w(github disqus blog forums).select{|f| uri =~ /#{f}/}) ? f.first : nil;
   end
 end
