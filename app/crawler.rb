@@ -43,7 +43,8 @@ AMQP.start(mq_cs) do |connection, open_ok|
 
   channel = AMQP::Channel.new(connection)
 
-  channel.fanout("e.events.preproc") do |preproc_exchange|
+  channel.direct("e.events") do |events_exchange|
+    queue = channel.queue("q.events").bind(events_exchange)
 
     # # --- Public stream
     # log.info "Registering to Twitter's public stream"
@@ -94,8 +95,8 @@ AMQP.start(mq_cs) do |connection, open_ok|
     # shift_phase.call
   end
 
-  channel.fanout("e.issues") do |issues_exchange|
-    queue = channel.queue("q.issues.web").bind(issues_exchange)
+  channel.direct("e.issues") do |issues_exchange|
+    queue = channel.queue("q.issues").bind(issues_exchange)
 
     # --- Pollers
     phase = 1; shift_phase = lambda {phase+=1}
