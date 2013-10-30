@@ -78,7 +78,7 @@ class Poller
   end
 
   def handle_success(http_req)
-    events = parser.parse(http_req.response)
+    events = parse(http_req.response)
 
     key_maker = lambda do |e|
       seed = pluck_unique_attribute(e) + @feed
@@ -135,11 +135,12 @@ class Poller
     EM.add_timer(t, &fn)
   end
 
-  def parser
+  def parse(data)
     if in_github? || in_disqus?
-      @parser ||= Yajl::Parser.new
+      Yajl::Parser.parse(data)
     elsif in_forums? || in_blog?
       @parser ||= Nori.new(:parser => :nokogiri)
+      @parser.parse(data)
     end
   end
 
