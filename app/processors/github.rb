@@ -2,8 +2,6 @@ require 'digest/md5'
 
 class GithubProcessor
 
-  class NotValidGithubEntity < Exception; end
-
   def initialize(config = {})
   end
 
@@ -14,7 +12,7 @@ class GithubProcessor
     elsif github_issue?(original_hash)
       process_github_issue(original_hash)
     else
-      fail NotValidGithubEntity, "hash is not an event nor an issue"
+      fail Processor::InvalidEventException, "not an event nor an issue"
     end
   end
 
@@ -33,7 +31,7 @@ class GithubProcessor
   end
   
   def datetime_str(original_hash)
-    (str = original_hash['created_at']) ? str : (raise Processor::MissingTimestamp, "missing origin timestamps");
+    (str = original_hash['created_at']) ? str : (fail Processor::MissingTimestamp, "missing origin timestamps");
   end
 
   def process_github_issue(issue_hash)
