@@ -106,8 +106,8 @@ class Poller
 
   def process(events)
     begin
-      events.map{|e| @processor.process(e)}
-    rescue Processor::NotValidEventException => e
+      events.map{|e| processor.process(e)}
+    rescue Processor::InvalidEventException => e
       log_exception e
     end
   end
@@ -120,6 +120,10 @@ class Poller
     rescue Exception => e
       log_exception e
     end
+  end
+
+  def processor
+    @processor ||= Processor.new(@feed)
   end
 
   def handle_error(resp)

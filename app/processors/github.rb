@@ -2,17 +2,19 @@ require 'digest/md5'
 
 class GithubProcessor
 
+  class NotValidGithubEntity < Exception; end
+
   def initialize(config = {})
   end
 
   def process(original_hash, partly_processed_hash)
-    if github_event?
+    if github_event?(original_hash)
       event_type = original_hash['type'].snake_case
       process_github_event(event_type, original_hash, partly_processed_hash)
-    elsif github_issue?
+    elsif github_issue?(original_hash)
       process_github_issue(original_hash)
     else
-      fail NotValidGithubResponse, "hash is not an event nor an issue"
+      fail NotValidGithubEntity, "hash is not an event nor an issue"
     end
   end
 
@@ -22,12 +24,12 @@ class GithubProcessor
 
   private
 
-  def github_event?
-    true
+  def github_event?(event_hash)
+    not(event_hash['type'].nil?)
   end
   
-  def github_issue?
-    false
+  def github_issue?(issue_hash)
+    not(issue_hash['labels'].nil?)
   end
   
   def datetime_str(original_hash)
