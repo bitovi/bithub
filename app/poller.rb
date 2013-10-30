@@ -99,6 +99,8 @@ class Poller
     if @latest.length > @backlog_size
       @latest.shift(@latest.length - @backlog_size)
     end
+
+    log_filtering(events, new_events)
     new_events
   end
 
@@ -112,6 +114,7 @@ class Poller
 
   def publish(events)
     begin
+      log_publishing(events)
       pack_and_publish = lambda { @exchange.publish(Yajl::Encoder.encode(events)) }
       EM.defer(pack_and_publish) if events.length > 0
     rescue Exception => e
@@ -158,6 +161,14 @@ class Poller
 
   def log_http_status(resp)
     @logger.error "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}"
+  end
+
+  def log_publishing(es)
+    @logger.info "PUBLISHING: Message with #{es.length} items published" if es.length > 0
+  end
+  
+  def log_filtering(es, new_es)
+    @logger.info "FILTERING: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
   end
 
   def in_github?
