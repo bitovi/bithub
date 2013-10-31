@@ -18,12 +18,16 @@ class Processor
     @feed_processor = Object::const_get(feed.capitalize + 'Processor').new(config)
   end
 
-  def process(event_hash)
+  def process(event_hash, fsc = nil)
     pph = {}
     .deep_merge(hash_key_source_data_and_feed(event_hash))
     .deep_merge(origin_timestamps_hash(event_hash))
 
-    @feed_processor.process(event_hash, pph)
+    if @feed == 'forums' && fsc[:term]
+      @feed_processor.process(event_hash, pph, fsc[:term])
+    else
+      @feed_processor.process(event_hash, pph)
+    end
   end
 
   def unique_attribute(event_hash)

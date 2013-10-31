@@ -6,7 +6,7 @@ class ForumsProcessor
     @sanitizer = Sanitizer.new
   end
 
-  def process(original_hash, partly_processed_hash)
+  def process(original_hash, partly_processed_hash, term = nil)
     partly_processed_hash
     .deep_merge({
       title: original_hash['title'],
@@ -18,6 +18,11 @@ class ForumsProcessor
         category: original_hash['filter_term'],
       }
     })
+
+    if term
+      partly_processed_hash[:meta][:category] = term
+    end
+    partly_processed_hash
   end
   
   def origin_timestamps(original_hash)

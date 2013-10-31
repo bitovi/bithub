@@ -34,12 +34,9 @@ class Poller
     link = link || @endpoint
 
     http_req = EM::HttpRequest.new(link).get({
-      query: query,
+      query: http_query,
       head: http_head
     })
-
-    # TODO za forums :  questions.each { |q| q['filter_term'] = 'question' } -> meta[:category] = filter_term u processoru
-    # TODO za GH, open closed issues
 
     http_req.callback do
       if success?(http_req)
@@ -81,7 +78,7 @@ class Poller
 
   def handle_success(http_req)
     events = events_from_response(parse(http_req.response))
-    publish(process(reject_old(events)))
+    publish(process(reject_old(events), feed_specific_config))
   end
 
   def reject_old(events)
@@ -99,9 +96,9 @@ class Poller
     new_events
   end
 
-  def process(events)
+  def process(events, fsc)
     begin
-      events.map{|e| processor.process(e)}
+      events.map{|e| processor.process(e, fsc)}
     rescue Processor::InvalidEventException => e
       log_exception e
     end
@@ -186,6 +183,14 @@ class Poller
 
   def http_head
     @config[:http_head] || {}
+  end
+  
+  def http_query
+    @config[:http_query] || {}
+  end
+
+  def feed_specific_config
+    @config[:feed_specific_config] || {}
   end
   
   def json_feed?
