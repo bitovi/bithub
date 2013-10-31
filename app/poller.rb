@@ -8,6 +8,8 @@ require 'nori'
 class Poller
   attr_reader :latest
 
+  class UnknownFeedTypeException < Exception; end
+
   def self.handler(logger, exchange, endpoint, &blk)
     new(logger, exchange, endpoint, &blk).handler
   end
@@ -78,22 +80,15 @@ class Poller
   end
 
   def handle_success(http_req)
-    events = parse(http_req.response)
-
-    key_maker = lambda do |e|
-      @logger.debug e.inspect
-      seed = pluck_unique_attribute(e) + @feed
-      e[:hash_key] = Digest::MD5.hexdigest(seed)
-    end
-    
-    publish(process(reject_old(events, key_maker)))
+    events = events_from_response(parse(http_req.response))
+    publish(process(reject_old(events)))
   end
 
-  def reject_old(events, key_maker)
+  def reject_old(events)
     @latest ||= []
 
     new_events = events
-      .each{|e| key_maker.call(e)}
+      .each{|e| make_key(e)}
       .reject{|e| @latest.include? e[:hash_key]}
 
     @latest += new_events.map {|e| e[:hash_key]}
@@ -101,7 +96,6 @@ class Poller
       @latest.shift(@latest.length - backlog_size)
     end
 
-    log_filtering(events, new_events)
     new_events
   end
 
@@ -121,6 +115,15 @@ class Poller
     rescue Exception => e
       log_exception e
     end
+  end
+
+  def make_key(event_hash)
+    seed = processor.unique_attribute(event_hash) + @feed
+    event_hash[:hash_key] = Digest::MD5.hexdigest(seed)
+  end
+
+  def events_from_response(response_hash)
+    processor.events_from_response(response_hash)
   end
 
   def processor
@@ -144,22 +147,23 @@ class Poller
   end
 
   def parse(data)
-    if in_github? || in_disqus?
+    if json_feed?
       Yajl::Parser.parse(data)
-    elsif in_forums? || in_blog?
+    elsif rss_feed?
       @parser ||= Nori.new(:parser => :nokogiri)
       @parser.parse(data)
+    else
+      fail UnknownFeedTypeException, "can't determine if feed is JSON or XML"
     end
+  end
+  
+  private
+
+  def determine_feed(uri)
+    f = %w(github disqus blog forum).select{|f| uri =~ /#{f}/}
+    return (f[0] == "forum") ? "forums" : f.first
   end
 
-  def pluck_unique_attribute(event_hash)
-    if in_github? || in_disqus?
-      (event_hash[:id] || event_hash['id']).to_s
-    elsif in_forums? || in_blog?
-      (event_hash[:link] || event_hash['link'])
-    end
-  end
-    
   def log_exception(e)
     @logger.error "ENDPOINT: #{@endpoint} | MESSAGE: #{e.message}"
   end
@@ -176,13 +180,6 @@ class Poller
     @logger.info "FILTERING: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
   end
 
-
-  def determine_feed(uri)
-    (f = %w(github disqus blog forums).select{|f| uri =~ /#{f}/}) ? f.first : nil;
-  end
-
-  private
-
   def backlog_size
     @config[:backlog_size] || 100
   end
@@ -191,20 +188,12 @@ class Poller
     @config[:http_head] || {}
   end
   
-  def in_github?
-    @feed == 'github'
+  def json_feed?
+    (@feed == 'github' || @feed == 'disqus')
   end
 
-  def in_forums?
-    @feed == 'forums'
-  end
-
-  def in_disqus?
-    @feed == 'disqus'
-  end
-
-  def in_blog?
-    @feed == 'blog'
+  def rss_feed?
+    (@feed == 'forums' || @feed == 'blog')
   end
 
   def in_github_issues?

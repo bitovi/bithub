@@ -30,7 +30,6 @@ logger.add(Log4r::StdoutOutputter.new('console', {
 
 $logger = logger
 
-
 # Load config 
 logger.info "Loading feeds for #{ENV['ENV']}"
 config = YAML::load_file(config_paths[ENV['ENV']])

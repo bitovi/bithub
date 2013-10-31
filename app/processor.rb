@@ -15,7 +15,6 @@ class Processor
     @feed = feed
     config = {}
     yield config if block_given?
-    
     @feed_processor = Object::const_get(feed.capitalize + 'Processor').new(config)
   end
 
@@ -26,6 +25,16 @@ class Processor
 
     @feed_processor.process(event_hash, pph)
   end
+
+  def unique_attribute(event_hash)
+    @feed_processor.unique_attribute(event_hash)
+  end
+
+  def events_from_response(response_hash)
+    @feed_processor.events_from_response(response_hash)
+  end
+
+  private
 
   def hash_key_source_data_and_feed(event_hash)
     return {
@@ -45,5 +54,4 @@ class Processor
   def to_date_str(date)
     date.strftime("%Y-%m-%d")
   end
-
 end
