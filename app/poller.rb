@@ -53,7 +53,7 @@ class Poller
     end
 
     http_req.errback do
-      @logger.error "ENDPOINT: #{endpoint} | Mysterious error #{http_req.error}"
+      @logger.error "ENDPOINT: #{link} | #{http_req.error}"
     end
   end
   
@@ -173,7 +173,7 @@ class Poller
   end
 
   def log_publishing(es)
-    @logger.info "PUBLISHING: Message with #{es.length} items published" if es.length > 0
+    @logger.info "Publishing #{@feed.upcase}: Message with #{es.length} items published" if es.length > 0
   end
   
   def log_filtering(es, new_es)

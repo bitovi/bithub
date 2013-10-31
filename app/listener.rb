@@ -51,14 +51,14 @@ class Listener
     event = Yajl::Parser.parse(raw_json)
     begin
       publish processor.process(event)
-    rescue EventProcessor::Twitter::NotValidEventException => e
+    rescue Processor::InvalidEventException => e
       if event["friends"]
         @log.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
       else
         @log.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event}"
       end
     rescue => error
-      @log.error "FEED: #{feed} | AS: #{connected_as} | ERROR: #{error}"
+      @log.error "FEED: #{feed} | AS: #{connected_as} | #{error}"
     end
   end
 
