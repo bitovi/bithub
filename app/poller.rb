@@ -88,7 +88,7 @@ class Poller
     @latest ||= []
 
     new_events = events
-      .each{|e| make_key(e)}
+      .each{|e| make_key(e) if e[:hash_key].nil?}
       .reject{|e| @latest.include? e[:hash_key]}
 
     @latest += new_events.map {|e| e[:hash_key]}

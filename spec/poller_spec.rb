@@ -5,41 +5,33 @@ require 'app/poller'
 describe Poller do
 
   describe "#reject_old" do
-    before :each do
-      @logger = double(); @exchange = double()
-      @endpoint = 'https://api.example.com/entities'
-      @h = Poller.new(@logger, @exchange, @endpoint) {|c| c.backlog_size = 10}
-    end
+    let(:poller) { Poller.new(double(), double(),  'https://api.example.com/entities') {|c| c[:backlog_size] = 10}}
 
     it "should have a backlog of 10 items at most" do
       items = (1..13).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
-      @h.reject_old(items)
-
-      expect(@h.latest.length).to eql 10
+      poller.reject_old(items)
+      expect(poller.latest.length).to eql 10
     end
 
     it "should reject items with the same hash key" do
       items = (1..5).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
       new_items = (1..5).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
-
-      @h.reject_old(new_items)
-      @h.latest =~ items
+      poller.reject_old(new_items)
+      poller.latest =~ items
     end
 
     it "should append items when there are no overlaps" do
       items = (1..4).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
       new_items = (5..8).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
-
-      @h.reject_old(new_items)
-      @h.latest =~ (items + new_items)
+      poller.reject_old(new_items)
+      poller.latest =~ (items + new_items)
     end
 
     it "should push out old items when new ones come in and the array is full" do
       items = (1..7).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
       new_items = (8..11).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
-
-      @h.reject_old(new_items)
-      @h.latest =~ (4..11).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
+      poller.reject_old(new_items)
+      poller.latest =~ (4..11).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
     end
   end
 
