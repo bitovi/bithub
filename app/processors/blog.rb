@@ -16,6 +16,14 @@ class BlogProcessor
     Time.strptime(datetime_str(original_hash), "%e %b %Y").utc
   end
 
+  def unique_attribute(event_hash)
+    (event_hash[:link] || event_hash['link'])
+  end
+
+  def events_from_response(response)
+    response['rss']['channel']['item']
+  end
+
   private
 
   def datetime_str(original_hash)

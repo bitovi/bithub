@@ -17,9 +17,17 @@ class DisqusProcessor
     })
   end
 
-  def origin_timestamps(orig_hash)
+  def origin_timestamps(original_hash)
     # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
-    Time.parse(datetime_str(orig_hash)+"Z").utc
+    Time.parse(datetime_str(original_hash)+"Z").utc
+  end
+  
+  def unique_attribute(original_hash)
+    (original_hash[:id] || original_hash['id']).to_s
+  end
+
+  def events_from_response(response)
+    response['response']
   end
 
   private

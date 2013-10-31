@@ -16,8 +16,16 @@ class GithubProcessor
     end
   end
 
-  def origin_timestamps(orig_hash)
-    Time.parse(datetime_str(orig_hash)).utc
+  def origin_timestamps(original_hash)
+    Time.parse(datetime_str(original_hash)).utc
+  end
+  
+  def unique_attribute(original_hash)
+    (original_hash[:id] || original_hash['id']).to_s
+  end
+  
+  def events_from_response(response)
+    response
   end
 
   private
