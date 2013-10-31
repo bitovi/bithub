@@ -44,33 +44,3 @@ describe Poller do
   end
 
 end
-
-  # describe "#fetch" do
-  #   before :each do
-  #     @logger = double(); @exchange = double()
-  #     @logger.stub(:error) { nil }
-  #     @endpoint = 'https://api.example.com/resource'
-  #     @h = Handler.new(@logger, @exchange, @endpoint)
-  #   end
-
-  #   it "suceeds when it gets 200 back" do
-  #     stub_request(:get, 'https://api.example.com/resource')
-  #       .to_return(:body => "Something", :status => 200)
-
-  #     EM.run_block { @h.fetch }
-  #   end
-
-  #   it "fails when it gets 4xx back" do
-  #     stub_request(:get, 'https://api.example.com/resource')
-  #       .to_return(:body => "Client error", :status => 400)
-
-  #     expect(@h.fetch).to raise_error FetchFailedException
-  #   end
-    
-  #   it "fails when it gets 5xx back" do
-  #     stub_request(:get, 'https://api.example.com/resource')
-  #       .to_return(:body => "Server error", :status => 500)
-
-  #     expect(@h.fetch).to raise_error FetchFailedException
-  #   end
-  # end
