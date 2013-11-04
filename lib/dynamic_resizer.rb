@@ -1,6 +1,7 @@
 require 'RMagick'
 
 class DynamicResizer
+  attr_reader :props, :fullpath, :filename, :dirname, :width_limit, :height_limit
 
   WIDTH_LIMIT = 0
   HEIGHT_LIMIT = 0
@@ -12,26 +13,23 @@ class DynamicResizer
     @filename = File.basename(fullpath)
 
     @width_limit = opts[:width_limit] || WIDTH_LIMIT
-    @height_limit = opts[:heigth_limit] || HEIGHT_LIMIT
+    @height_limit = opts[:height_limit] || HEIGHT_LIMIT
 
-    if @props = parse_filename(@filename)
-      self
-    else
-      false
-    end
+    @props = parse_filename(@filename)
   end
 
   def resize
-    props = parse_filename( @filename )
-    return false unless props && validate(props)
+    return false unless is_valid?(@props)
     
     image = Magick::Image.read(make_filepath(props[:origin_filename])).first
-    image.change_geometry!(props[:width].to_s + "x" + props[:height].to_s) { |cols, rows, img|
+    image.change_geometry!(@props[:width].to_s + "x" + props[:height].to_s) { |cols, rows, img|
       img.resize!(cols, rows).to_blob
     }
   end
 
   def resize_and_save
+    return false unless is_valid?(@props)
+
     image = resize()
     filepath = make_filepath(@props[:filename])
     File.open(filepath, "wb") {|f| f.write(image)} ? image : false
@@ -40,8 +38,6 @@ class DynamicResizer
   def mimetype
     "image/" + @props[:extension] if @props
   end
-
-  private
 
   def parse_filename(filename)
     regex_str = "([0-9]+)x([0-9]+)_(.*\.(" + AVAILABLE_EXTENSIONS.join('|') + "))$"
@@ -52,9 +48,11 @@ class DynamicResizer
 
     {
       :filename => matched[0],
+      :path => make_filepath(matched[0]),
       :width => matched[1].to_i,
       :height => matched[2].to_i,
       :origin_filename => matched[3],
+      :origin_path => make_filepath(matched[3]),
       :extension => matched[4]
     }
   end
@@ -63,15 +61,15 @@ class DynamicResizer
     File.join( Rails.root, "public", @dirname, filename)
   end
 
-  def validate(props)
-    validate_filepath(props[:origin_filename]) && validate_geometry(props[:width], props[:height])
+  def is_valid?(props)
+    is_filepath_valid?(props[:origin_filename]) && is_geometry_valid?(props[:width], props[:height])
   end
 
-  def validate_filepath(filename)
+  def is_filepath_valid?(filename)
     File.exists? make_filepath(filename)
   end
 
-  def validate_geometry(width, height)
+  def is_geometry_valid?(width, height)
     [width, 
      height, 
      width > 0, 
