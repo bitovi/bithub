@@ -17,7 +17,8 @@ describe DynamicResizer do
   describe "#parse_filename" do
     it "extract correct values from filename to props" do
       image.stub(:is_filepath_valid? => true)
-      props = image.parse_filename(image.filename)
+      #props = image.parse_filename(image.filename)
+      props = image.send(:parse_filename, image.filename)
 
       expect(props[:filename]).to eq filename
       expect(props[:width]).to eq width
@@ -28,13 +29,13 @@ describe DynamicResizer do
 
   describe "#is_geometry_valid?" do
     it "validate width and height to be greater than 0" do
-      expect(image.is_geometry_valid?(400,300)).to be
-      expect(image.is_geometry_valid?(-400,300)).to be_false      
-      expect(image.is_geometry_valid?(0,0)).to be_false      
+      expect(image.send(:is_geometry_valid?, 400,300)).to be
+      expect(image.send(:is_geometry_valid?, -400,300)).to be_false      
+      expect(image.send(:is_geometry_valid?, 0,0)).to be_false      
     end
     it "validate width and height to be less smaller than limit" do
-      expect(image.is_geometry_valid?(400,300)).to be
-      expect(image.is_geometry_valid?(width_limit+1, height_limit)).to be_false      
+      expect(image.send(:is_geometry_valid?, 400,300)).to be
+      expect(image.send(:is_geometry_valid?, width_limit+1, height_limit)).to be_false      
     end
   end
 

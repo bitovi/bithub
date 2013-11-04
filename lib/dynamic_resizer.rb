@@ -39,6 +39,8 @@ class DynamicResizer
     "image/" + @props[:extension] if @props
   end
 
+  private
+
   def parse_filename(filename)
     regex_str = "([0-9]+)x([0-9]+)_(.*\.(" + AVAILABLE_EXTENSIONS.join('|') + "))$"
     regex = Regexp.new(regex_str, true)
