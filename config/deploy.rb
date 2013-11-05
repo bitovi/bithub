@@ -18,7 +18,7 @@ set(:default_environment, {
   'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'prod'])
+set(:stages, ['testing', 'staging', 'prod'])
 set(:default_stage, 'prod')
 
 set(:shared_children, shared_children + %w{public/uploads})
