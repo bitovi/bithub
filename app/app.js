@@ -52,7 +52,7 @@ connection.on('ready', function () {
 	console.log("Connected to " + connection.serverProperties.product);
 
 	/* create an exchange */
-	var e = connection.exchange("e.events.liveservice", { type: 'direct' });
+	var e = connection.exchange("e.events.liveservice", { type: 'fanout' });
 	e.on('open', function() {
 		console.log("Exchange " + e.name + " opened");
 
