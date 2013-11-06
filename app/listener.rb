@@ -35,7 +35,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   channel.direct("e.events") do |input_exchange|
 
-    channel.direct("e.events.liveservice") do |liveservice_exchange|
+    channel.fanout("e.events.liveservice") do |liveservice_exchange|
       queue = channel.queue("q.events").bind(input_exchange)
 
       queue.subscribe do |metadata, payload|
