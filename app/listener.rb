@@ -50,7 +50,7 @@ class Listener
   def handle_event(raw_json)
     event = Yajl::Parser.parse(raw_json)
     begin
-      publish processor.process(event)
+      publish Array.wrap(processor.process(event))
     rescue Processor::InvalidEventException => e
       if event["friends"]
         @log.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
@@ -63,10 +63,9 @@ class Listener
   end
 
   def publish(event)
-    enqueue_events = proc do
-      @exchange.publish(Yajl::Encoder.encode(event), routing_key: "tasks.taggify")
+    EM.defer do 
+      @exchange.publish(Yajl::Encoder.encode(event))
     end
-    EM.defer(enqueue_events)
   end
 
 end

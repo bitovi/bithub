@@ -68,7 +68,7 @@ class Poller
   end
     
   def parse_link_header(lh)
-    # TODO add filtering for 'rel' type links only
+    # TODO select only links that have 'rel' attr
     lh.split(',').map {|rel| [:link, :url, :type].zip(pluck_pagination(rel))}
   end
   
