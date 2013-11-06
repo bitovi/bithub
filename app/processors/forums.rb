@@ -9,15 +9,13 @@ class ForumsProcessor
   def process(original_hash, partly_processed_hash, fsc = nil)
     fail_if_invalid(original_hash)
 
-    partly_processed_hash
-    .deep_merge({
+    partly_processed_hash.deep_merge!({
       title: original_hash['title'],
       body: sanitize(original_hash['description']),
       url: original_hash['link'],
       meta: {
         type: original_hash['category'].snake_case,
         origin_author_name: original_hash['dc:creator'],
-        category: original_hash['filter_term'],
       }
     })
 
