@@ -1,6 +1,8 @@
 module Determination
   class DeterminationException < Exception; end
-  FT_LIST = %w(bug feature feature-request enhancement)
+
+  PROPS_TO_TAGS = [:feed, :type, :project, :tags, :category]
+  ATTRS_FOR_TAGGING = [:url, :title, :body]
 
   def determine(custom_props = nil)
     self.props ||= custom_props
@@ -13,23 +15,27 @@ module Determination
     self
   end
 
-  def determine_tags
-    ts = ([] + (self.props[:tags] || []) + [self.props[:feed]] + [self.props[:type]] + [self.props[:category]] + [self.props[:project]])
-    self.tag_list = ActsAsTaggableOn::TagList.new(ts.uniq)
+  def determine_tags    
+    # cast some magic
+    self.props.symbolize_keys!
+
+    tags = taggify_props + taggify_content + taggify_labels
+    self.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
+
     self
   end
 
   def determine_feed
     f_raw = (self.props[:feed] || self.props['feed'])
     fail DeterminationException, ":feed missing from props" if f_raw.nil?
-    self.feed = Tag.find_by_name(f_raw) || Tag.find_or_create_with_like_by_name(f_raw)
+    self.feed = Tag.find_or_create_by_name(f_raw)
     self
   end
 
   def determine_category
     if (category = self.props[:category] || CategoryDeterminationRule.determine_category(self.tag_list))
       self.tag_list.add(category)
-      self.category = Tag.find_or_create_with_like_by_name(category)
+      self.category = Tag.find_or_create_by_name(category)
     end
     self
   end
@@ -51,18 +57,30 @@ module Determination
     self
   end
 
-  def redetermine_category
-    self.tag_list.remove(FT_LIST)
-    self.determine_category
-    if self.category
-      self.tag_list.add(self.category.name)
-    end
-  end
-
   def clean_props_after_categorization
     self.props.delete(:project)
     self.props.delete(:tags)
     self.props.delete(:origin_author_feed)
+  end
+
+  def taggify_props
+    PROPS_TO_TAGS.map {|prop| self.props[prop] if self.props[prop]}.compact
+  end
+
+  def taggify_content
+    input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}.compact
+    search_tags = Tag.to_name_aliases_hash(:project)
+    Tagger::Engine.new(search_tags).find_tags(input)
+  end
+
+  def taggify_labels
+    if self.props[:labels]
+      search_tags = Tag.to_name_aliases_hash(:label)
+      input = self.props[:labels]
+      Tagger::Engine.new(search_tags).find_tags(input)
+    else
+      []
+    end
   end
 
 end

@@ -99,18 +99,6 @@ module Grouping::GithubSpecific
     end
   end
 
-  def valid_labels
-    sd = ActiveSupport::HashWithIndifferentAccess.new(self.source_data)
-
-    return [] unless sd[:payload][:issue] && sd[:payload][:issue][:labels]
-
-    labels = sd[:payload][:issue][:labels].map{|l| l[:name].downcase}
-    labels.select do |label|
-      tag = Tag.find_by_name(label)
-      tag.name if tag      
-    end
-  end
-
   # Helpers and finders
   
   def related_issue
@@ -188,17 +176,17 @@ module Grouping::GithubSpecific
     sd = ActiveSupport::HashWithIndifferentAccess.new(child.source_data)
     has_necessary_data = sd && sd[:payload] && sd[:payload][:issue]
 
+    Rails.logger.info "LOGGER: #update_self_from_child: #{has_necessary_data}"
+    
     if has_necessary_data
       self.title = sd[:payload][:issue][:title]
       self.body = sd[:payload][:issue][:body]
+      #self.source_data = sd[:payload][:issue]
 
-      # snake case label names and replace '.' with '_'
-      label_names = sd[:payload][:issue][:labels].map{|l| l[:name].snake_case.gsub(/\./, '_')}
-
-      self.props['labels'] = label_names.join(',')
+      self.props['labels'] = sd[:payload][:issue][:labels].map{|l| l[:name]}.join(',')
       self.props['state'] = sd[:payload][:issue][:state]
 
-      self.tag_list.add(label_names)
+      self.determine_tags
       self.determine_category
 
       self.save
