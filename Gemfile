@@ -7,10 +7,11 @@ gem 'yajl-ruby'
 gem 'nokogiri'
 gem 'nori', '2.3.0'
 gem 'log4r'
-gem 'awesome_print'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'foreman'
+
+# Utils
 gem 'andand'
 
 group :development do
