@@ -5,8 +5,8 @@ class TwitterProcessor
   end
 
   def process(original_hash, partly_processed_hash)
-    fail Processor::InvalidEventException, "event isn't a follow_event nor a status_event" if not(follow_or_status?(original_hash))
-
+    fail_if_invalid(original_hash)
+    
     partly_processed_hash = partly_processed_hash
     .deep_merge({ meta: { feed: 'twitter' }})
 
@@ -17,10 +17,15 @@ class TwitterProcessor
     end
   end
 
-  def origin_timestamps(orig_hash)
-    Time.parse(datetime_str(orig_hash)).utc
+  def origin_timestamps(original_hash)
+    fail_if_invalid(original_hash)
+    Time.parse(datetime_str(original_hash)).utc
   end
-
+  
+  def unique_attribute(original_hash)
+    (original_hash[:id] || original_hash['id']).to_s
+  end
+  
   private
     
   def datetime_str(original_hash)
@@ -57,20 +62,29 @@ class TwitterProcessor
     fully_processed_hash[:meta][:retweeted_id] = event_hash['retweeted_status']['id_str'] if event_hash['retweeted_status']
     fully_processed_hash
   end
+
+  def fail_if_invalid(original_hash)
+    fail Processor::InvalidEventException, "not a follow_event nor a status_event" if not(follow_or_status?(original_hash))
+  end
+
+  def follow_or_status?(event_hash)
+    is_follow_event?(event_hash) || is_status_event?(event_hash)
+  end
   
   def is_user_stream?
     @user_stream_flag
   end
   
   def is_follow_event?(event_hash)
-    event_hash['event'] && (event_hash['event'] == 'follow') && event_hash['target']['screen_name'] && event_hash['created_at']
+    (event_hash['event'].andand == 'follow') && has_timestamp?(event_hash) && event_hash['target']['screen_name']
   end
 
   def is_status_event?(event_hash)
-    event_hash['text'] && event_hash['user']['screen_name'] && event_hash['created_at'] 
+    event_hash['text'] && has_timestamp?(event_hash) && event_hash['user']['screen_name']
   end
 
-  def follow_or_status?(event_hash)
-    is_follow_event?(event_hash) || is_status_event?(event_hash)
+  def has_timestamp?(event_hash)
+    !!event_hash['created_at']
   end
+
 end

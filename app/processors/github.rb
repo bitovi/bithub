@@ -17,6 +17,7 @@ class GithubProcessor
   end
 
   def origin_timestamps(original_hash)
+    fail_if_invalid(original_hash)
     Time.parse(datetime_str(original_hash)).utc
   end
   
@@ -29,6 +30,14 @@ class GithubProcessor
   end
 
   private
+
+  def fail_if_invalid(original_hash)
+    fail Processor::InvalidEventException, "not an event nor an issue" if not(event_or_issue?(original_hash))
+  end
+
+  def event_or_issue?(origin_hash)
+    github_event?(origin_hash) || github_issue?(origin_hash)
+  end
 
   def github_event?(event_hash)
     not(event_hash['type'].nil?)

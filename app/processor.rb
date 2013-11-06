@@ -1,4 +1,5 @@
 require 'lib/core_ext'
+require 'andand'
 
 require 'app/processors/blog'
 require 'app/processors/disqus'
@@ -23,8 +24,8 @@ class Processor
     .deep_merge(hash_key_source_data_and_feed(event_hash))
     .deep_merge(origin_timestamps_hash(event_hash))
 
-    if @feed == 'forums' && fsc[:term]
-      @feed_processor.process(event_hash, pph, fsc[:term])
+    if @feed == 'forums'
+      @feed_processor.process(event_hash, pph, fsc)
     else
       @feed_processor.process(event_hash, pph)
     end

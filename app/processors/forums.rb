@@ -6,7 +6,9 @@ class ForumsProcessor
     @sanitizer = Sanitizer.new
   end
 
-  def process(original_hash, partly_processed_hash, term = nil)
+  def process(original_hash, partly_processed_hash, fsc = nil)
+    fail_if_invalid(original_hash)
+
     partly_processed_hash
     .deep_merge({
       title: original_hash['title'],
@@ -19,9 +21,7 @@ class ForumsProcessor
       }
     })
 
-    if term
-      partly_processed_hash[:meta][:category] = term
-    end
+    partly_processed_hash[:meta][:category] = fsc.andand[:term]
     partly_processed_hash
   end
   
@@ -38,7 +38,27 @@ class ForumsProcessor
   end
 
   private
+
+  def fail_if_invalid(original_hash)
+    fail Processor::InvalidEventException, "not a valid forum post" if not(valid_post?(original_hash))
+  end
   
+  def valid_post?(original_hash)
+    has_title?(original_hash) && has_body?(original_hash) && has_url?(original_hash)
+  end
+
+  def has_title?(original_hash)
+    !!original_hash['title']
+  end
+
+  def has_body?(original_hash)
+    !!original_hash['description']
+  end
+
+  def has_url?(original_hash)
+    !!original_hash['link']
+  end
+
   def sanitize(txt)
     @sanitizer.sanitize(txt)
   end
