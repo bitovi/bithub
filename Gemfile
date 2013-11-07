@@ -16,7 +16,7 @@ gem 'andand'
 
 group :development do
   gem 'capistrano'
-  gem 'capistrano-ext'
+  gem 'capistrano-rbenv', github: "capistrano/rbenv"
 end
 
 group :test do

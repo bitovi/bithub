@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/capistrano/rbenv.git
+  revision: 362dbc02ef963c91425767e09b4848ff7be5132b
+  specs:
+    capistrano-rbenv (0.0.1)
+      capistrano
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -15,8 +22,6 @@ GEM
       i18n
       rake (>= 10.0.0)
       sshkit (>= 0.0.23)
-    capistrano-ext (1.2.1)
-      capistrano (>= 1.0.0)
     cookiejar (0.3.0)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
@@ -79,7 +84,7 @@ DEPENDENCIES
   amqp
   andand
   capistrano
-  capistrano-ext
+  capistrano-rbenv!
   em-http-request
   em-twitter
   foreman
