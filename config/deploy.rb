@@ -14,7 +14,7 @@ set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
 set(:default_environment, {
-  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+  'PATH' => "/opt/rbenv/bin:/opt/rbenv/shims:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
 set(:stages, ['staging', 'prod'])
