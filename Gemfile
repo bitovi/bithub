@@ -55,3 +55,6 @@ group :development do
   gem 'capistrano'
   gem 'capistrano-ext'
 end
+  
+# Code climate
+gem "codeclimate-test-reporter", group: :test, require: nil
