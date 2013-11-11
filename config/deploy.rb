@@ -15,7 +15,7 @@ set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
 set(:default_environment, {
-  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+  'PATH' => "/opt/rbenv/shims/:/opt/rbenv/bin:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
 set(:stages, ['testing', 'staging', 'prod'])
@@ -59,7 +59,7 @@ namespace :deploy do
 
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub-listener --log /var/log/bithub/listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 
   desc "Symling uploads from shared to public folder"
