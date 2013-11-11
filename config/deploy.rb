@@ -1,22 +1,24 @@
-set(:user, 'bithub')
-set(:application, 'crawler')
-set(:repository, 'git@github.com:bitovi/bithub-crawler.git')
+require 'capistrano/ext/multistage'
+require 'bundler/capistrano'
 
 set(:use_sudo, false)
 set(:ssh_options, { :forward_agent => true })
 set(:bundle_flags, "--deployment --quiet --binstubs")
 
+set(:user, "bithub")
+set(:application, "crawler")
+set(:repository, "git@github.com:bitovi/bithub-crawler.git")
 
 set(:deploy_via, :remote_cache)
 set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
-
 set(:default_environment, {
   'PATH' => "/opt/rbenv/bin:/opt/rbenv/shims:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, %w(testing staging prod))
+set(:stages, ['staging', 'prod'])
+set(:default_stage, 'prod')
 
 namespace :deploy do
   task(:start) { run "sudo /usr/bin/service bithub-#{application} start" }
