@@ -19,7 +19,7 @@ set(:default_environment, {
 })
 
 set(:stages, ['testing', 'staging', 'prod'])
-set(:default_stage, 'prod')
+set(:default_stage, 'testing')
 
 set(:shared_children, shared_children + %w{public/uploads})
 
