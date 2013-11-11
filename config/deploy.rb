@@ -15,11 +15,11 @@ set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
 set(:default_environment, {
-  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+  'PATH' => "/opt/rbenv/shims/:/opt/rbenv/bin:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'prod'])
-set(:default_stage, 'prod')
+set(:stages, ['testing', 'staging', 'prod'])
+set(:default_stage, 'testing')
 
 set(:shared_children, shared_children + %w{public/uploads})
 
