@@ -42,22 +42,24 @@ class Poller
       if success?(http_req)
         delay(1, lambda {fetch_next_page http_req}) if in_github_issues?
         handle_success(http_req)
-      elsif error?(http_req)
-        handle_error(http_req)
+      elsif client_error?(http_req)
+        log_http_status(http_req, :error)
+      elsif server_error?(http_req)
+        log_http_status(http_req, :warning)
       else
-        log_http_status(http_req)
+        log_http_status(http_req, :error)
       end
     end
 
     http_req.errback do
-      @logger.error "ENDPOINT: #{link} | #{http_req.error}"
+      log_http_status(http_req, :error)
     end
   end
   
   def fetch_next_page(http_req)
     if (link_header = http_req.response_header['LINK'])
       if (next_page_query_params = only_query_params(link_by_type(link_header, 'next')))
-        logger.info "Fetching next page: #{next_page_query_params}"
+        @logger.info "Fetching next page: #{next_page_query_params}"
         fetch(next_page_query_params)
       end
     end
@@ -127,16 +129,16 @@ class Poller
     @processor ||= Processor.new(@feed)
   end
 
-  def handle_error(resp)
-    log_http_status(resp)
-  end
-
   def success?(http_resp)
     http_resp.response_header.status.to_s =~ /2../
   end
 
-  def error?(http_resp)
-    (http_resp.response_header.status.to_s =~ /4../) || (http_resp.response_header.status.to_s =~ /5../)
+  def client_error?(http_resp)
+    http_resp.response_header.status.to_s =~ /4../
+  end
+
+  def server_error?(http_resp)
+    http_resp.response_header.status.to_s =~ /5../
   end
 
   def delay(t, fn)
@@ -165,8 +167,9 @@ class Poller
     @logger.error "ENDPOINT: #{@endpoint} | MESSAGE: #{e.message}"
   end
 
-  def log_http_status(resp)
-    @logger.error "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}"
+  def log_http_status(resp, level)
+    @logger.send(level, "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}")
+    @logger.error "... MESSAGE: #{resp.error}" if resp.error
   end
 
   def log_publishing(es)
@@ -174,7 +177,7 @@ class Poller
   end
   
   def log_filtering(es, new_es)
-    @logger.info "FILTERING: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
+    @logger.info "Filtering: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
   end
 
   def backlog_size
