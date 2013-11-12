@@ -36,7 +36,10 @@ config = YAML::load_file(config_paths[ENV['ENV']])
 feeds = config[:feeds]
 intervals = config[:intervals]
 
-gh_http_req_head = { "Authorization" => "token #{feeds[:github][:token]}", "Accept" => "application/vnd.github.v3+json" }
+gh_http_req_head = {
+  "Authorization" => "token #{feeds[:github][:token]}",
+  "Accept" => "application/vnd.github.v3+json"
+}
 
 def log_registering(endpoint)
   $logger.info "Registering poller at #{endpoint}"
@@ -73,7 +76,9 @@ AMQP.start(mq_cs) do |connection, open_ok|
       if repo_config[:events]
         EM.add_timer(phase) do
           log_registering(repo_config[:events])
-          EM.add_periodic_timer(intervals[:github][:events], &Poller.handler(logger, events_exchange, repo_config[:events]){|c| c[:http_head] = gh_http_req_head})
+          EM.add_periodic_timer(intervals[:github][:events], &Poller.handler(logger, events_exchange, repo_config[:events]) do |c|
+            c[:http_head] = gh_http_req_head
+          end)
         end
       end
       shift_phase.call
@@ -83,7 +88,9 @@ AMQP.start(mq_cs) do |connection, open_ok|
     feeds[:forums].each do |term, term_uri|
       EM.add_timer(phase) do
         log_registering(term_uri)
-        EM.add_periodic_timer(intervals[:forums], &Poller.handler(logger, events_exchange, term_uri){|c| c[:feed_specific_config] = {term: term}})
+        EM.add_periodic_timer(intervals[:forums], &Poller.handler(logger, events_exchange, term_uri) do |c|
+          c[:feed_specific_config] = {term: term}
+        end)
       end
       shift_phase.call
     end

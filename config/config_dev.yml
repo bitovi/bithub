@@ -2,8 +2,8 @@
   :github:
     :events: 4
     :issues:
-      open: 30
-      closed: 60
+      :open: 30
+      :closed: 60
   :disqus: 3 
   :forums: 8
   :blog: 15 
@@ -16,8 +16,15 @@
     :all: 'https://forum.javascriptmvc.com/feed'
 
   :disqus:
-    :uri: "http://disqus.com/api/3.0/posts/list.json?forum[]=jmvcs3&forum[]=bitovi&related[]=thread&related[]=forum&api_key=:api_key"
-    :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
+    :uri: 'http://disqus.com/api/3.0/posts/list.json'
+    :query:
+      :forum:
+        - 'jmvcs3'
+        - 'bitovi'
+      :related:
+        - 'thread'
+        - 'forum'
+      :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
   
   :github:
     :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
