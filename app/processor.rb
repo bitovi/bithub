@@ -43,6 +43,7 @@ class Processor
 
   def hash_key_source_data_and_feed(event_hash)
     return {
+      hash_key: event_hash.delete(:hash_key),
       source_data: event_hash,
       meta: { feed: @feed.to_s }
     }

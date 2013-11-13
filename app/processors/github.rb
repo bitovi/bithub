@@ -10,7 +10,7 @@ class GithubProcessor
       event_type = original_hash['type'].snake_case
       process_github_event(event_type, original_hash, partly_processed_hash)
     elsif github_issue?(original_hash)
-      process_github_issue(original_hash)
+      process_github_issue(original_hash, partly_processed_hash)
     else
       fail Processor::InvalidEventException, "not an event nor an issue"
     end
@@ -51,16 +51,17 @@ class GithubProcessor
     (str = original_hash['created_at']) ? str : (fail Processor::MissingTimestamp, "missing origin timestamps");
   end
 
-  def process_github_issue(issue_hash)
+  def process_github_issue(issue_hash, partly_processed_hash)
     composite_seed = issue_hash['id'].to_s +
                      issue_hash['labels'].to_s +
                      issue_hash['state'] +
                      issue_hash['title'] +
                      issue_hash['body']
 
-    issue_hash['content_digest'] = Digest::MD5.hexdigest(composite_seed)
-    issue_hash['label_names'] = issue_hash['labels'].map{|l| l['name']}
-    issue_hash
+    partly_processed_hash.deep_merge({
+      content_digest: Digest::MD5.hexdigest(composite_seed),
+      label_names: issue_hash['labels'].map{|l| l['name']}
+    })
   end
 
   def process_github_event(event_type, original_hash, partly_processed_hash)
