@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
+$: << File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-app_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-require "#{app_root}/config/environment"
-require "log4r"
+require 'config/environment'
+require 'app/listener/helpers'
+require 'log4r'
 
 $log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
