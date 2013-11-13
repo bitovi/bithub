@@ -50,7 +50,7 @@ class Listener
   def handle_event(raw_json)
     event = Yajl::Parser.parse(raw_json)
     begin
-      publish Array.wrap(processor.process(event))
+      publish(processor.process(event))
     rescue Processor::InvalidEventException => e
       if event["friends"]
         @log.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"

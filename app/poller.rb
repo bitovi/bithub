@@ -109,7 +109,9 @@ class Poller
   def publish(events)
     begin
       log_publishing(events)
-      pack_and_publish = lambda { @exchange.publish(Yajl::Encoder.encode(events)) }
+      pack_and_publish = lambda do
+        events.each {|e| @exchange.publish(Yajl::Encoder.encode(e)) }
+      end
       EM.defer(pack_and_publish) if events.length > 0
     rescue Exception => e
       log_exception e
