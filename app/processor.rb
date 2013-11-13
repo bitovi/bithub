@@ -24,7 +24,7 @@ class Processor
     .deep_merge(hash_key_source_data_and_feed(event_hash))
     .deep_merge(origin_timestamps_hash(event_hash))
 
-    if @feed == 'forums'
+    if fsc
       @feed_processor.process(event_hash, pph, fsc)
     else
       @feed_processor.process(event_hash, pph)

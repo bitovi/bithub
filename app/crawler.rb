@@ -84,8 +84,15 @@ AMQP.start(mq_cs) do |connection, open_ok|
       shift_phase.call
     end
 
-    # --- Forums
-    feeds[:forums].each do |term, term_uri|
+    # --- Forums general feed
+    EM.add_timer(phase) do
+      log_registering(feeds[:forums][:general])
+      EM.add_periodic_timer(intervals[:forums], &Poller.handler(logger, events_exchange, feeds[:forums][:general]))
+    end
+    shift_phase.call
+
+    # --- Forums by specific terms
+    feeds[:forums][:terms].each do |term, term_uri|
       EM.add_timer(phase) do
         log_registering(term_uri)
         EM.add_periodic_timer(intervals[:forums], &Poller.handler(logger, events_exchange, term_uri) do |c|

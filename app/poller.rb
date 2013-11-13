@@ -195,7 +195,7 @@ class Poller
   end
 
   def feed_specific_config
-    @config[:feed_specific_config] || {}
+    @config[:feed_specific_config]
   end
   
   def json_feed?

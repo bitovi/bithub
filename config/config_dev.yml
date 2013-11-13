@@ -12,8 +12,9 @@
   :blog: 'http://www.bitovi.com/blog.rss'
 
   :forums:
-    :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
-    :all: 'https://forum.javascriptmvc.com/feed'
+    :general: 'https://forum.javascriptmvc.com/feed'
+    :terms:
+      :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
 
   :disqus:
     :uri: 'http://disqus.com/api/3.0/posts/list.json'
