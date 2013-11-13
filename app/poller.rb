@@ -90,6 +90,8 @@ class Poller
       .each{|e| make_key(e) if e[:hash_key].nil?}
       .reject{|e| @latest.include? e[:hash_key]}
 
+    log_filtering(events, new_events)
+
     @latest += new_events.map {|e| e[:hash_key]}
     if @latest.length > backlog_size
       @latest.shift(@latest.length - backlog_size)
@@ -175,11 +177,11 @@ class Poller
   end
 
   def log_publishing(es)
-    @logger.info "Publishing from #{@endpoint}: Message with #{es.length} items published" if es.length > 0
+    @logger.info "Publishing #{es.length} items from #{@endpoint}" if es.length > 0
   end
   
   def log_filtering(es, new_es)
-    @logger.info "Filtering: #{new_es.length} new items, out of #{es.length} fetched" if es.length > 0
+    @logger.info "Keeping #{new_es.length} new items, out of #{es.length} fetched"
   end
 
   def backlog_size
