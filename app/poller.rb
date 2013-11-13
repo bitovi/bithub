@@ -175,7 +175,7 @@ class Poller
   end
 
   def log_publishing(es)
-    @logger.info "Publishing #{@feed.upcase}: Message with #{es.length} items published" if es.length > 0
+    @logger.info "Publishing from #{@endpoint}: Message with #{es.length} items published" if es.length > 0
   end
   
   def log_filtering(es, new_es)

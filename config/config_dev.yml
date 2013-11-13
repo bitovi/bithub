@@ -2,11 +2,11 @@
   :github:
     :events: 4
     :issues:
-      :open: 30
+      :open: 50
       :closed: 60
-  :disqus: 3 
-  :forums: 8
-  :blog: 15 
+  :disqus: 4
+  :forums: 5
+  :blog: 5
 
 :feeds:
   :blog: 'http://www.bitovi.com/blog.rss'
