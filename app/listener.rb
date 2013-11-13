@@ -9,20 +9,7 @@ $log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
-            
 
-class NoRepoNameException < Exception; end
-class NoTimestampsException < Exception; end
-
-
-def remove_prefix(repo_name)
-  repo_name.gsub(/.*\//, '')
-end
-
-def repo_name(url)
-    match_groups = url.match("\/repos\/(.*)\/issues\/\d*")
-    (match_groups && rn = match_groups[1]) ? rn : (fail NoRepoNameException, "no repo name pattern in the url")
-end
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
