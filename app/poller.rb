@@ -45,7 +45,7 @@ class Poller
       elsif client_error?(http_req)
         log_http_status(http_req, :error)
       elsif server_error?(http_req)
-        log_http_status(http_req, :warning)
+        log_http_status(http_req, :warn)
       else
         log_http_status(http_req, :error)
       end
