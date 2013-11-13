@@ -52,7 +52,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     queue = channel.queue("q.issues").bind(issues_exchange)
     queue.subscribe do |metadata, payload|
 
-      issues_hash = ActiveSupport::JSON.decode(payload)
+      issue_hash = ActiveSupport::JSON.decode(payload)
       issue_id = get_issue_id(issue_hash)
 
       if (i = Event.issues_by_issue_id(issue_id).first)
