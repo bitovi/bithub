@@ -14,6 +14,10 @@ $rabbitmq = $config[:rabbitmq]
 $user1 = $config[:github][:users][0]
 $repo1 = $config[:github][:repos][0]
 
+### NOTE: THESE TESTS ARE MEANT TO BE RUN IN DEFAULT ORDER
+###       (hint: use 'rspec --order default'
+
+
 describe "Handling Github issues" do
   include EventedSpec::AMQPSpec
 
