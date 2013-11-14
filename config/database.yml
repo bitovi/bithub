@@ -5,10 +5,17 @@ development:
   username: bithub
   password: negativ1Q
 
-testing:
+test:
   adapter: postgresql
   encoding: unicode
   database: bithub_test
+  username: bithub
+  password: negativ1Q
+
+testing:
+  adapter: postgresql
+  encoding: unicode
+  database: bithub_testing
   username: bithub
   password: negativ1Q
 
