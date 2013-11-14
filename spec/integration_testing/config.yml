@@ -1,0 +1,17 @@
+:rabbitmq:
+  :host: "127.0.0.1"
+  :port: "5672"
+  :user: "bithub"
+  :pass: "Ei7PhaaH"
+  :vhost: "bithub"
+
+:github:
+  :repos:
+    -
+      :name: "bithub-test/testy"
+      :local_path: "../testy"
+  :users:
+    -
+      :access_token: ""
+      :username: "veljkodragsic"
+      :password: "negativ1Q"
