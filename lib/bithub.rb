@@ -2,8 +2,9 @@ require 'yajl'
 require 'net/http'
 
 module Bithub
-
+  
   class Entity
+    attr_accessor :id  
 
     def initialize(*args)
       @endpoint = args.shift
@@ -19,10 +20,9 @@ module Bithub
       end
     end
 
-    def request(path)
+    def getOne(path)
       response = Net::HTTP.get_response(URI("http://bithub.dev" + path))
-      parsed = Yajl::Parser.parse(response.body, :symbolize_keys => true)
-      parsed[:data]
+      Yajl::Parser.parse(response.body, :symbolize_keys => true)
     end
     
   end
@@ -44,8 +44,8 @@ module Bithub
     end
 
     def read
-      response = request("/api/events/?id=" + @id.to_s)
-      attach_attributes(response[0])
+      response = getOne("/api/events/" + @id.to_s)
+      attach_attributes(response)
       
       self
     end
