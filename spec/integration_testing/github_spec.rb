@@ -32,19 +32,23 @@ describe "Handling Github issues" do
     @channel = AMQP::Channel.new
     @exchange = @channel.fanout("e.events.liveservice")
   end
-  
-  it "raises an issue with label 'bug'" do
 
-    # raise an issue
-    data = {
+  before(:all) do
+    @issue = Github::Issue.new $user1[:username], $user1[:password], $repo1[:name], {
       :title => Helpers.unique_string,
       :body => "Raising an issue with label 'bug'.",
       :labels => ['bug']
     }
-    issue = Github::Issue.new $user1[:username], $user1[:password], $repo1[:name], data
+    @issue_bithub = Bithub::Event.new 'http://bithub.dev', {}
+  end
+  
+  it "raises an issue with label 'bug'" do
+
+    # raise an issue
+    @issue.create
 
     # check if request was successful
-    expect(issue.last_response.status).to eq 201
+    expect(@issue.last_response.status).to eq 201
 
     # listen on MQ for new event and check response
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
@@ -52,16 +56,18 @@ describe "Handling Github issues" do
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
 
       # match event on the MQ
-      if event[:title].include?(issue.title)
+      if event[:title].include?(@issue.title)
 
         # fetch event via Bithub API
-        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
-
+        #api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        @issue_bithub.id = event[:id]
+        @issue_bithub.read
+        
         # examine
-        expect(api_event.body).to include("Raising an issue") # response body is wrapped within <p>
-        expect(api_event.tags).to include("bug","github","issues_event")
-        expect(api_event.feed).to eq "github"
-        expect(api_event.category).to eq "bug"
+        expect(@issue_bithub.body).to include("Raising an issue") # response body is wrapped within <p>
+        expect(@issue_bithub.tags).to include("bug","github","issues_event")
+        expect(@issue_bithub.feed).to eq "github"
+        expect(@issue_bithub.category).to eq "bug"
 
         #expect(api_event.author).to eq "foobar"
         # check author points
@@ -74,11 +80,97 @@ describe "Handling Github issues" do
 
   end
 
-  it "updates issue with label 'enhancement' (old labels are removed)"
+  it "updates issue with label 'enhancement' (old labels are removed)" do
+
+    @issue.labels = ['enhancement']
+    @issue.update
+    
+    @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
+    @queue.bind(@exchange).subscribe do |payload|
+      event = Yajl::Parser.parse(payload, :symbolize_keys => true)
+
+      if event[:title].include?(@issue.title)
+        @issue_bithub.read
+        expect(@issue_bithub.tags).to include("feature","github","issues_event")
+        expect(@issue_bithub.tags).not_to include("bug")
+        expect(@issue_bithub.category).to eq "feature"
+        
+        done
+      end      
+    end
+  end
   
-  it "closes an issue"
-  
-  it "posts a comment on issue"
+  it "closes an issue" do
+    @issue.close
+
+    @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
+    @queue.bind(@exchange).subscribe do |payload|
+      event = Yajl::Parser.parse(payload, :symbolize_keys => true)
+
+      if event[:title].include?(@issue.title)
+
+        # check closing event
+        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        expect(api_event.parent_id).to eq @issue_bithub.id        
+        expect(api_event.source_data[:payload][:issue][:state]).to eq "closed"
+        
+        # check parent event
+        @issue_bithub.read
+        expect(@issue_bithub.props[:state]).to eq "closed"
+        
+        done
+      end
+    end
+  end
+
+  it "reopens an issue" do
+    @issue.reopen
+
+    @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
+    @queue.bind(@exchange).subscribe do |payload|
+      event = Yajl::Parser.parse(payload, :symbolize_keys => true)
+
+      if event[:title].include?(@issue.title)
+
+        # check reopening event
+        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        expect(api_event.parent_id).to eq @issue_bithub.id        
+        expect(api_event.source_data[:payload][:issue][:state]).to eq "open"
+
+        # check parent event
+        @issue_bithub.read
+        expect(@issue_bithub.props[:state]).to eq "open"
+
+        done
+      end
+    end
+  end
+
+  it "posts a comment on issue" do
+    identifier = Helpers.unique_string()
+    
+    @issue.post_comment(identifier)
+
+    @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
+    @queue.bind(@exchange).subscribe do |payload|
+      event = Yajl::Parser.parse(payload, :symbolize_keys => true)
+
+      if event[:body].include?(identifier)
+
+        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        expect(api_event.parent_id).to eq @issue_bithub.id
+        #expect(api_event.tags).to include("comment","github","issue_comment_event")
+        expect(api_event.feed).to eq "github"
+        expect(api_event.category).to eq "comment"
+
+        #expect(api_event.author).to eq "foobar"
+        # check author points
+        
+        done
+      end
+    end
+    
+  end
   
   it "references issue within commit message" do
 

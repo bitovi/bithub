@@ -2,10 +2,10 @@ require 'github/entity'
 
 module Github
   class Issue < Entity
-    attr_accessor :title, :body
-
-    #FIELDS = [:title, :body, :assignee, :state, :milestone, :labels]
+    FIELDS = [:title, :body, :number, :assignee, :state, :milestone, :labels]
     
+    attr_accessor *FIELDS
+
     def initialize(*args)
       data = super
 
@@ -13,15 +13,13 @@ module Github
         @number = data[:number]
         read
       else
-        @title = data[:title] || ""
-        @body = data[:body] || ""
-        @labels = data[:labels] || []
-        
-        # copy all data to instance variables
-        
-        create
+        attach_attributes( Hash[ FIELDS.map {|f| [f, data[f]] if data[f]} ])
       end
 
+    end
+
+    def attributes
+      FIELDS
     end
 
     def create
@@ -39,7 +37,7 @@ module Github
     end
 
     def update      
-      response = @connector.update_issue @repo, @number, data[:title], data[:body], instance_variables_to_hash()
+      response = @connector.update_issue @repo, @number, @title, @body, {:labels => @labels} #instance_variables_to_hash()
       attach_attributes_from_response(response)
 
       self
