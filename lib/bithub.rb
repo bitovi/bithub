@@ -55,7 +55,21 @@ module Bithub
   class User < Entity
 
     def initialize(endpoint, id=nil)
+      data = super
+
+      if data[:id]
+        @id = data[:id]
+        read
+      else
+        # ...
+      end
+    end
+
+    def read
+      response = getOne("/api/users/" + @id.to_s)
+      attach_attributes(response)
       
+      self      
     end
 
   end
