@@ -5,11 +5,14 @@
   :pass: "Ei7PhaaH"
   :vhost: "bithub"
 
+:bithub:
+  :endpoint: "http://bithub.dev"
+
 :github:
   :repos:
     -
       :name: "bithub-test/testy"
-      :local_path: "../testy"
+      :local_path: "~/projects/bitovi/testy" #"/home/bithub/web/shared/testy"
   :users:
     -
       :access_token: ""

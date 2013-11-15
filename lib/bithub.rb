@@ -21,7 +21,7 @@ module Bithub
     end
 
     def getOne(path)
-      response = Net::HTTP.get_response(URI("http://bithub.dev" + path))
+      response = Net::HTTP.get_response(URI(@endpoint + path))
       Yajl::Parser.parse(response.body, :symbolize_keys => true)
     end
     
