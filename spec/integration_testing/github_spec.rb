@@ -40,6 +40,7 @@ describe "Handling Github issues" do
       :labels => ['bug']
     }
     @issue_bithub = Bithub::Event.new 'http://bithub.dev', {}
+    @actor = Bithub::User.new 'http://bithub.dev', {:id => 45}
   end
   
   it "raises an issue with label 'bug'" do
@@ -59,7 +60,6 @@ describe "Handling Github issues" do
       if event[:title].include?(@issue.title)
 
         # fetch event via Bithub API
-        #api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
         @issue_bithub.id = event[:id]
         @issue_bithub.read
         
@@ -69,9 +69,12 @@ describe "Handling Github issues" do
         expect(@issue_bithub.feed).to eq "github"
         expect(@issue_bithub.category).to eq "bug"
 
-        #expect(api_event.author).to eq "foobar"
-        # check author points
-
+        # check user
+        previous_score = @actor.score
+        @actor.read
+        expect(@issue_bithub.author[:id]).to eq @actor.id
+        expect(@actor.score).to be > previous_score
+        
         # stop listening
         done
       end
@@ -159,13 +162,10 @@ describe "Handling Github issues" do
 
         api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
         expect(api_event.parent_id).to eq @issue_bithub.id
-        #expect(api_event.tags).to include("comment","github","issue_comment_event")
+        expect(api_event.tags).to include("comment","github","issue_comment_event")
         expect(api_event.feed).to eq "github"
         expect(api_event.category).to eq "comment"
 
-        #expect(api_event.author).to eq "foobar"
-        # check author points
-        
         done
       end
     end
@@ -175,8 +175,8 @@ describe "Handling Github issues" do
   it "references issue within commit message" do
 
     # push to github repo
-    identifier = Helpers.unique_string
-    Helpers.git_create_push($repo1[:local_path], identifier + " #issue_num", ['reference_issue_test.txt'])
+    message = Helpers.unique_string + "#" + @issue.number
+    Helpers.git_create_push($repo1[:local_path], message, ['reference_issue_test.txt'])
 
     # listen on MQ for new event and check response
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
@@ -184,16 +184,12 @@ describe "Handling Github issues" do
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
       
       if event[:props][:type] == 'push_event' && event[:title].include?($repo1[:name])
-        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
-        
+
+        # examine push event
+        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}        
         expect(api_event.children.length).to eq 1
-        
-        #expect(event[:body]).to eq issue.body
-        #expect(event[:tags]).to include *(issue.labels.map {|l| l[:name]})
-        #expect(event[:category]).to eq "bug"
-        #expect(event[:author]).to eq "bug"
-        #expect(event[:feed]).to eq "github"
-        # check author points
+
+        # check commit event itself
         
         done
       end
