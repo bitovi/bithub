@@ -11,6 +11,7 @@ require 'bithub'
 
 $config = Helpers.load_config
 $rabbitmq = $config[:rabbitmq]
+$bithub = $config[:bithub]
 $user1 = $config[:github][:users][0]
 $repo1 = $config[:github][:repos][0]
 
@@ -39,8 +40,8 @@ describe "Handling Github issues" do
       :body => "Raising an issue with label 'bug'.",
       :labels => ['bug']
     }
-    @issue_bithub = Bithub::Event.new 'http://bithub.dev', {}
-    @actor = Bithub::User.new 'http://bithub.dev', {:id => 45}
+    @issue_bithub = Bithub::Event.new $bithub[:endpoint], {}
+    @actor = Bithub::User.new $bithub[:endpoint], {:id => 45}
   end
   
   it "raises an issue with label 'bug'" do
@@ -113,7 +114,7 @@ describe "Handling Github issues" do
       if event[:title].include?(@issue.title)
 
         # check closing event
-        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        api_event = Bithub::Event.new $bithub[:endpoint], {:id => event[:id]}
         expect(api_event.parent_id).to eq @issue_bithub.id        
         expect(api_event.source_data[:payload][:issue][:state]).to eq "closed"
         
@@ -136,7 +137,7 @@ describe "Handling Github issues" do
       if event[:title].include?(@issue.title)
 
         # check reopening event
-        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}
+        api_event = Bithub::Event.new $bithub[:endpoint], {:id => event[:id]}
         expect(api_event.parent_id).to eq @issue_bithub.id        
         expect(api_event.source_data[:payload][:issue][:state]).to eq "open"
 
@@ -175,7 +176,7 @@ describe "Handling Github issues" do
   it "references issue within commit message" do
 
     # push to github repo
-    message = Helpers.unique_string + "#" + @issue.number
+    message = Helpers.unique_string + "#" + @issue.number.to_s
     Helpers.git_create_push($repo1[:local_path], message, ['reference_issue_test.txt'])
 
     # listen on MQ for new event and check response
@@ -186,7 +187,7 @@ describe "Handling Github issues" do
       if event[:props][:type] == 'push_event' && event[:title].include?($repo1[:name])
 
         # examine push event
-        api_event = Bithub::Event.new 'http://bithub.dev', {:id => event[:id]}        
+        api_event = Bithub::Event.new $bithub[:endpoint], {:id => event[:id]}        
         expect(api_event.children.length).to eq 1
 
         # check commit event itself
