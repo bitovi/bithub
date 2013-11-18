@@ -28,6 +28,8 @@ gem 'log4r'
 gem 'foreman'
 gem 'sanitize'
 gem 'htmlentities'
+gem 'andand'
+
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
 gem 'newrelic_rpm'

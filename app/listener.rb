@@ -1,27 +1,15 @@
 #!/usr/bin/env ruby
+$: << File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-app_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-require "#{app_root}/config/environment"
-require "log4r"
+require 'config/environment'
+require 'app/listener/helpers'
+require 'log4r'
 
 $log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
-            
 
-class NoRepoNameException < Exception; end
-class NoTimestampsException < Exception; end
-
-
-def remove_prefix(repo_name)
-  repo_name.gsub(/.*\//, '')
-end
-
-def repo_name(url)
-    match_groups = url.match("\/repos\/(.*)\/issues\/\d*")
-    (match_groups && rn = match_groups[1]) ? rn : (fail NoRepoNameException, "no repo name pattern in the url")
-end
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
@@ -33,15 +21,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   channel = AMQP::Channel.new(connection)
 
-  #channel.direct("e.events") do |web_exchange|  
-  channel.fanout("e.events.preproc") do |input_exchange|
-
-    channel.direct("e.events.liveservice") do |liveservice_exchange|
-      #queue = channel.queue("q.events.web").bind(web_exchange)
-      queue = channel.queue("q.events.tagger").bind(input_exchange, {:routing_key => "tasks.taggify"})
+  channel.direct("e.events") do |input_exchange|
+    channel.fanout("e.events.liveservice") do |liveservice_exchange|
+      queue = channel.queue("q.events").bind(input_exchange)
 
       queue.subscribe do |metadata, payload|
+
         if event_hash = ActiveSupport::JSON.decode(payload)
+          log_key_attrs(event_hash)
           meta = event_hash.delete('meta')
 
           begin
@@ -61,12 +48,16 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     end
   end
 
-  channel.fanout("e.issues") do |issues_exchange|
-    queue = channel.queue("q.issues.web").bind(issues_exchange)
+  channel.direct("e.issues") do |issues_exchange|
+    queue = channel.queue("q.issues").bind(issues_exchange)
     queue.subscribe do |metadata, payload|
-      issue_hash = ActiveSupport::JSON.decode(payload)
 
-      if (i = Event.issues_by_issue_id(issue_hash['source_data']['id']).first)
+      issue_hash = ActiveSupport::JSON.decode(payload)
+      issue_id = get_issue_id(issue_hash)
+
+      if (i = Event.issues_by_issue_id(issue_id).first)
+        $log.info "Updating issue with ID=#{issue_id}."
+
         issue = i.top_level_parent
         if (issue.props['content_digest'] != issue_hash['content_digest'])
           $log.info "Issue with ID=#{issue_hash['source_data']['id']} changed. Updating"
@@ -75,7 +66,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           issue.props['labels'] = issue_hash['source_data']['labels'].map {|l| l['name']}.join(',')
           issue.props['state'] = issue_hash['source_data']['state']
           issue.props['content_digest'] = issue_hash['content_digest']
-          
+
           issue.determine_tags
           issue.determine_category
 
@@ -88,7 +79,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
         end
       else
-        $log.info "Issue with ID=#{issue_hash['source_data']['id']} doesn't exist. Creating"
+        $log.info "Creating issue with ID=#{issue_id}."
+
         issue = Event.new
         action = (issue_hash['source_data']['state'] == 'open') ? 'opened' : 'closed'
 
@@ -99,14 +91,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         issue.source_data = issue_hash['source_data']
         issue.feed = Tag.find_or_create_by_name('github')
 
-        created_at = (issue_hash['source_data']['created_at']) ? issue_hash['source_data']['created_at'] : (fail NoTimestampsException);
+        created_at = issue_hash.andand['source_data'].andand['created_at']
         t = Time.parse(created_at).utc
 
         issue.origin_ts = t
         issue.origin_date = t
         issue.thread_updated_at = t
         issue.thread_updated_date = t
-        
+
         issue.props = {
           repo_name: repo_name(issue_hash['source_data']['url']),
           issue_id: issue_hash['source_data']['id'],
@@ -127,9 +119,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           puts e.message
           puts e.backtrace.inspect
         end
-
       end
     end
   end
-
 end

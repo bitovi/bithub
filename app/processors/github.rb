@@ -1,5 +1,4 @@
-require "#{Rails.root}/lib/hash"
-require "#{Rails.root}/lib/string"
+require "#{Rails.root}/lib/core_ext"
 
 push_event = lambda do |event|
   if m = (event['payload']['commits'].map{|c| c['message']}.join(' ')).match(/#(\d*)/)
