@@ -45,6 +45,7 @@ gem 'github_api'
 group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
+  gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'pry-rails'
   gem 'better_errors'
