@@ -59,7 +59,7 @@ namespace :deploy do
 
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub-listener --log /var/log/bithub/listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 
   desc "Symling uploads from shared to public folder"
