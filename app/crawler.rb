@@ -19,6 +19,7 @@ mq_cs = ENV['RABBITMQ_URI']
 config_paths = {
   'prod' => 'config/config.yml',
   'staging' => 'config/config_staging.yml',
+  'testing' => 'config/config_testing.yml',
   'development' => 'config/config_dev.yml'
 }
 
