@@ -1,12 +1,12 @@
 :intervals:
   :github:
-    :events: 4
+    :events: 5
     :issues:
-      :open: 50
-      :closed: 60
-  :disqus: 4
-  :forums: 5
-  :blog: 5
+      open: 15
+      closed: 25
+  :disqus: 10
+  :forums: 15
+  :blog: 20
 
 :feeds:
   :blog: 'http://www.bitovi.com/blog.rss'
