@@ -75,6 +75,7 @@ GEM
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.0.9)
     dalli (2.6.2)
+    database_cleaner (1.2.0)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -283,6 +284,7 @@ DEPENDENCIES
   carrierwave
   codeclimate-test-reporter
   dalli
+  database_cleaner
   devise
   dotenv-rails
   draper
