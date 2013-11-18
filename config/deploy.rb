@@ -17,8 +17,8 @@ set(:default_environment, {
   'PATH' => "/opt/rbenv/bin:/opt/rbenv/shims:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'prod'])
-set(:default_stage, 'prod')
+set(:stages, ['testing', 'staging', 'prod'])
+set(:default_stage, 'testing')
 
 namespace :deploy do
   task(:start) { run "sudo /usr/bin/service bithub-#{application} start" }
