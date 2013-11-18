@@ -106,7 +106,7 @@ describe User do
     end
   end
 
-  describe "#reassign_activities_to" do
+  describe "#reassign_activities_as_actor_to" do
     it "transfers upvotes" do
       user = create(:user, name: 'Veljko')
       user2 = create(:user, name: 'Okjlev')
@@ -114,7 +114,7 @@ describe User do
       event = create(:twitter_tweet)
       upvote = create(:upvote, applies_to: event, actor: user2)
 
-      user2.reload.reassign_activities_to(user)
+      user2.reload.reassign_activities_as_actor_to(user)
       user.reload.upvotes_as_actor =~ [upvote]
       user2.reload.upvotes_as_actor.count.should eq 0
     end
@@ -127,7 +127,7 @@ describe User do
       child_event = create(:github_issue_comment, parent: event)
       award = create(:award, applies_to: child_event, actor: user2)
 
-      user2.reload.reassign_activities_to(user)
+      user2.reload.reassign_activities_as_actor_to(user)
       user.reload.awards_as_actor =~ [award]
       user2.reload.awards_as_actor.count.should eq 0
     end

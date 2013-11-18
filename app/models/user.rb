@@ -146,18 +146,18 @@ class User < ActiveRecord::Base
   def reassign_events_to(whom)
     self.events.each do |e|
       e.author = whom
-      e.save!
+      e.save
     end
   end
 
-  def reassign_activities_to(whom)
+  def reassign_activities_as_actor_to(whom)
     self.upvotes_as_actor.each do |u|
       u.actor = whom
-      u.save!
+      u.save
     end
     self.awards_as_actor.each do |a|
       a.actor = whom
-      a.save!
+      a.save
     end
   end
 
