@@ -18,6 +18,7 @@ namespace :test do
   desc "Runs rspec integration tests"
   RSpec::Core::RakeTask.new(:integration) do |t|
     t.pattern = FileList["spec/integration_testing"]
+    t.rspec_opts = "--order default"
   end
 
   desc "Runs all rspec unit tests"
