@@ -12,15 +12,12 @@ require 'lib/core_ext'
 require 'app/poller'
 require 'app/listener'
 
-# Connection string
-mq_cs = ENV['RABBITMQ_URI']
-
 # paths to config files based on env
 config_paths = {
-  'prod' => 'config/config.yml',
-  'staging' => 'config/config_staging.yml',
-  'testing' => 'config/config_testing.yml',
-  'development' => 'config/config_dev.yml'
+  'development' => 'config/config_development.yml',
+  'testing'     => 'config/config_testing.yml',
+  'staging'     => 'config/config_staging.yml',
+  'prod'        => 'config/config_production.yml',
 }
 
 # Logging
@@ -47,7 +44,7 @@ def log_registering(endpoint)
 end
 
 # Event loop
-AMQP.start(mq_cs) do |connection, open_ok|
+AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
 
   stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
@@ -117,6 +114,7 @@ AMQP.start(mq_cs) do |connection, open_ok|
       log_registering(feeds[:blog])
       EM.add_periodic_timer(intervals[:blog], &Poller.handler(logger, events_exchange, feeds[:blog]))
     end
+
   end
 
   channel.direct("e.issues") do |issues_exchange|
@@ -130,7 +128,7 @@ AMQP.start(mq_cs) do |connection, open_ok|
       if repo_config[:issues]
         [:open, :closed].each do |state|
           EM.add_timer(phase) do
-            log_registering(repo_config[:issues])
+            log_registering(repo_config[:issues], {state: state})
             EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(logger, issues_exchange, repo_config[:issues]) do |c|
               c[:http_head] = gh_http_req_head
               c[:http_query] = { state: state }
