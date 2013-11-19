@@ -39,8 +39,10 @@ gh_http_req_head = {
   "Accept" => "application/vnd.github.v3+json"
 }
 
-def log_registering(endpoint)
-  $logger.info "Registering poller at #{endpoint}"
+def log_registering(endpoint, query = nil)
+  str = "Registering poller at #{endpoint}"
+  str += " with query #{query}" if query
+  $logger.info str
 end
 
 # Event loop
