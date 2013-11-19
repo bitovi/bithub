@@ -52,7 +52,8 @@ group :test, :development do
   gem 'yajl-ruby'
   gem 'evented-spec'
   gem 'octokit', '~> 2.0'
-  gem 'git'  
+  gem 'git'
+  gem 'database_cleaner'
 end
 
 group :development do
