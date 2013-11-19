@@ -16,8 +16,10 @@ testing:
   adapter: postgresql
   encoding: unicode
   database: bithub_testing
+  pool: 5
   username: bithub
-  password: negativ1Q
+  password: Oof4laed
+  socket: /var/run/postgresql/.s.PGSQL.5432
 
 staging:
   adapter: postgresql

@@ -19,7 +19,12 @@ module Determination
     # cast some magic
     self.props.symbolize_keys!
 
-    tags = taggify_props + taggify_content + taggify_labels
+    tags =
+      (taggify_props + taggify_content + taggify_labels)
+      .flatten
+      .compact
+      .map {|t| t.snake_case}
+    
     self.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
 
     self
@@ -34,6 +39,7 @@ module Determination
 
   def determine_category
     if (category = self.props[:category] || CategoryDeterminationRule.determine_category(self.tag_list))
+      category = category.snake_case
       self.tag_list.add(category)
       self.category = Tag.find_or_create_by_name(category)
     end
