@@ -30,7 +30,7 @@ class Poller
     lambda { fetch }
   end
 
-  def fetch(link = nil, query = {})
+  def fetch(link = nil)
     link = link || @endpoint
 
     http_req = EM::HttpRequest.new(link).get({
@@ -58,24 +58,27 @@ class Poller
   
   def fetch_next_page(http_req)
     if (link_header = http_req.response_header['LINK'])
-      if (next_page_query_params = only_query_params(link_by_type(link_header, 'next')))
-        @logger.info "Fetching next page: #{next_page_query_params}"
-        fetch(next_page_query_params)
+      if (next_page_url = link_by_type(link_header, 'next').andand[:url])
+        #log_fetching(next_page_url)
+        fetch(next_page_url)
       end
     end
   end
 
   def link_by_type(link_header, type)
-    parse_link_header(link_header).select{|l| link[:type] == type}.first
+    parse_link_header(link_header).select{|l| l[:type] == type}.first
   end
     
   def parse_link_header(lh)
     # TODO select only links that have 'rel' attr
-    lh.split(',').map {|rel| [:link, :url, :type].zip(pluck_pagination(rel))}
+    lh.split(',').map do |rel|
+      with_rel_attrs = pluck_pagination(rel)
+      Hash[[:whole, :url, :type].zip with_rel_attrs]
+    end
   end
   
   def pluck_pagination(rel)
-    /<(.*)>; rel="(.*)"/.match(rel).to_a
+    (rel.match /<(.*)>; rel="(.*)"/).to_a
   end
 
   def handle_success(http_req)
@@ -90,7 +93,7 @@ class Poller
       .each{|e| make_key(e) if e[:hash_key].nil?}
       .reject{|e| @latest.include? e[:hash_key]}
 
-    log_filtering(events, new_events)
+    #log_filtering(events, new_events)
 
     @latest += new_events.map {|e| e[:hash_key]}
     if @latest.length > backlog_size
@@ -177,11 +180,17 @@ class Poller
   end
 
   def log_publishing(es)
-    @logger.info "Publishing #{es.length} items from #{@endpoint}" if es.length > 0
+    str = "Publishing #{es.length} items from #{@endpoint}"
+    str += " for #{http_query[:state]} issues" if in_github_issues?
+    @logger.info str if es.length > 0
   end
   
   def log_filtering(es, new_es)
     @logger.info "Keeping #{new_es.length} new items, out of #{es.length} fetched"
+  end
+
+  def log_fetching(url)
+    @logger.info "Fetching from: #{url}"
   end
 
   def backlog_size
@@ -209,6 +218,6 @@ class Poller
   end
 
   def in_github_issues?
-    @feed == 'github' && @enpoint =~ /issues/
+    (@feed.eql? 'github') && !!(@endpoint.match /issues/)
   end
 end

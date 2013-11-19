@@ -2,8 +2,8 @@
   :github:
     :events: 5
     :issues:
-      open: 15
-      closed: 25
+      :open: 4
+      :closed: 7 
   :disqus: 10
   :forums: 15
   :blog: 20
