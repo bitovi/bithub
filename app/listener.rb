@@ -10,6 +10,7 @@ $log.add(Log4r::StdoutOutputter.new('console', {
   :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
 }))
 
+class IssueDuplicate < StandardError; end
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
@@ -30,8 +31,19 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
         if event_hash = ActiveSupport::JSON.decode(payload)
           log_key_attrs(event_hash)
           meta = event_hash.delete('meta')
-
+          
+          issue_id =
+            meta['type'] == 'issues_event' &&
+            event_hash['source_data']['payload']['action'] == 'opened' &&
+            event_hash['source_data']['payload']['issue']['id']
+          
           begin
+
+            # hotfix: check if 'opened' issues aren't already created by issues stream
+            if issue_id && Event.issues_by_issue_id(issue_id).length > 0
+              raise IssueDuplicate, issue_id
+            end
+            
             ev = Event.new_from_crawler(event_hash, meta)
             ev.save!
             ev.bump_thread
@@ -40,6 +52,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             $log.info "Invalid record: #{invalid}"
           rescue ActiveRecord::RecordNotUnique => duplicate 
             $log.info "Duplicate record: #{duplicate}"
+          rescue IssueDuplicate => duplicate 
+            $log.info "Issue duplicate: #{duplicate} -> skipping!"
           ensure
             ev.connection.close if ev && ev.connection
           end
@@ -55,9 +69,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       queue.subscribe do |metadata, payload|
 
         issue_hash = ActiveSupport::JSON.decode(payload)
-        issue_id = get_issue_id(issue_hash)
-
-        if (i = Event.issues_by_issue_id(issue_id).first)
+        issue_id = issue_hash['source_data']['id']
+        
+        if (i = Event.issues_by_issue_id(issue_id).first )
           $log.info "Updating issue with ID=#{issue_id}."
 
           issue = i.top_level_parent
