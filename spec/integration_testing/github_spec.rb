@@ -55,7 +55,7 @@ describe "Handling Github issues" do
 
       # match event on the MQ
       if event[:title].include?(@issue.title)
-
+        
         # fetch event via Bithub API
         @issue_bithub.id = event[:id]
         @issue_bithub.read
@@ -110,7 +110,7 @@ describe "Handling Github issues" do
     @queue.bind(@exchange).subscribe do |payload|
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
 
-      if event[:title].include?(@issue.title)
+      if event[:title].match (Regexp.new ".*closed.*#{@issue.title}.*")
 
         # check closing event
         api_event = Bithub::Event.new $bithub[:endpoint], {:id => event[:id]}
@@ -133,7 +133,7 @@ describe "Handling Github issues" do
     @queue.bind(@exchange).subscribe do |payload|
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
 
-      if event[:title].include?(@issue.title)
+      if event[:title].match (Regexp.new ".*reopened.*#{@issue.title}.*")
 
         # check reopening event
         api_event = Bithub::Event.new $bithub[:endpoint], {:id => event[:id]}
