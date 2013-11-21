@@ -133,7 +133,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             log_registering(repo_config[:issues], {state: state})
             EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(logger, issues_exchange, repo_config[:issues]) do |c|
               c[:http_head] = gh_http_req_head
-              c[:http_query] = { state: state }
+              c[:http_query] = { state: state, per_page: 100 }
+              c[:backlog_size] = 1000
             end)
           end
           shift_phase.call
