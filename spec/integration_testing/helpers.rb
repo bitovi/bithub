@@ -27,4 +27,12 @@ module Helpers
     g.push
   end
 
+  def Helpers.git_clone(uri, path, opts={})
+    return if File.exists?(path)
+    
+    g = Git.clone(uri, path)
+    opts[:username] && g.config('user.name', opts[:username])
+    opts[:email] && g.config('user.email', opts[:email])
+  end
+
 end
