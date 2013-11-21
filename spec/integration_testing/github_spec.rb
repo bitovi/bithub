@@ -27,7 +27,7 @@ describe "Handling Github issues" do
   default_options :user  => $rabbitmq[:user] || "guest"
   default_options :pass  => $rabbitmq[:pass] || "guest"
   default_options :vhost => $rabbitmq[:vhost] || "/"
-  default_timeout 60
+  default_timeout 120
   
   amqp_before do
     @channel = AMQP::Channel.new
@@ -35,22 +35,18 @@ describe "Handling Github issues" do
   end
 
   before(:all) do
-    @issue = Github::Issue.new $user1[:username], $user1[:password], $repo1[:name], {
+    @issue = Github::Issue.new $user1[:access_token], $repo1[:name], {
       :title => Helpers.unique_string,
       :body => "Raising an issue with label 'bug'.",
       :labels => ['bug']
     }
     @issue_bithub = Bithub::Event.new $bithub[:endpoint], {}
-    @actor = Bithub::User.new $bithub[:endpoint], {:id => 45}
+    @actor = Bithub::User.new $bithub[:endpoint], {:email => 'bithub@testing.bithub.com'}
+
+    Helpers.git_clone($repo1[:uri], $repo1[:local_path], {:username => $user1[:username], :email => $user1[:email]})
   end
   
   it "raises an issue with label 'bug'" do
-
-    # raise an issue
-    @issue.create
-
-    # check if request was successful
-    expect(@issue.last_response.status).to eq 201
 
     # listen on MQ for new event and check response
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
@@ -82,13 +78,15 @@ describe "Handling Github issues" do
       
     end
 
+    # raise an issue
+    @issue.create
+
+    # check if request was successful
+    expect(@issue.last_response.status).to eq 201
   end
 
   it "updates issue with label 'enhancement' (old labels are removed)" do
 
-    @issue.labels = ['enhancement']
-    @issue.update
-    
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
     @queue.bind(@exchange).subscribe do |payload|
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
@@ -102,11 +100,12 @@ describe "Handling Github issues" do
         done
       end      
     end
+    
+    @issue.labels = ['enhancement']
+    @issue.update
   end
   
   it "closes an issue" do
-    @issue.close
-
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
     @queue.bind(@exchange).subscribe do |payload|
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
@@ -125,11 +124,11 @@ describe "Handling Github issues" do
         done
       end
     end
+
+    @issue.close
   end
 
   it "reopens an issue" do
-    @issue.reopen
-
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
     @queue.bind(@exchange).subscribe do |payload|
       event = Yajl::Parser.parse(payload, :symbolize_keys => true)
@@ -148,12 +147,12 @@ describe "Handling Github issues" do
         done
       end
     end
+
+    @issue.reopen
   end
 
   it "posts a comment on issue" do
-    identifier = Helpers.unique_string()
-    
-    @issue.post_comment(identifier)
+    identifier = Helpers.unique_string()    
 
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
     @queue.bind(@exchange).subscribe do |payload|
@@ -171,13 +170,10 @@ describe "Handling Github issues" do
       end
     end
     
+    @issue.post_comment(identifier)
   end
   
   it "references issue within commit message" do
-
-    # push to github repo
-    message = Helpers.unique_string + "#" + @issue.number.to_s
-    Helpers.git_create_push($repo1[:local_path], message, ['reference_issue_test.txt'])
 
     # listen on MQ for new event and check response
     @queue = @channel.queue("q.events.testing.github", :auto_delete => true)
@@ -195,6 +191,10 @@ describe "Handling Github issues" do
         done
       end
     end
+
+    # push to github repo
+    message = Helpers.unique_string + "#" + @issue.number.to_s
+    Helpers.git_create_push($repo1[:local_path], message, ['reference_issue_test.txt'])    
   end
   
 end
