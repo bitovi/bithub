@@ -20,9 +20,10 @@ module Bithub
       end
     end
 
-    def getOne(path)
+    def get(path)
       response = Net::HTTP.get_response(URI(@endpoint + path))
-      Yajl::Parser.parse(response.body, :symbolize_keys => true)
+      parsed = Yajl::Parser.parse(response.body, :symbolize_keys => true)
+      parsed[:data] || parsed
     end
     
   end
@@ -37,14 +38,13 @@ module Bithub
         @id = data[:id]
         read
       else
-        # copy attrs
-        # create
+        attach_attributes(data)
       end
       
     end
 
     def read
-      response = getOne("/api/events/" + @id.to_s)
+      response = get("/api/events/" + @id.to_s)
       attach_attributes(response)
       
       self
@@ -60,14 +60,22 @@ module Bithub
       if data[:id]
         @id = data[:id]
         read
+      elsif data[:email]
+        @email = data[:email]
+        read
       else
-        # ...
+        attach_attributes(data)
       end
     end
 
     def read
-      response = getOne("/api/users/" + @id.to_s)
-      attach_attributes(response)
+      if @id
+        response = get("/api/users/" + @id.to_s)
+        attach_attributes(response)
+      elsif @email
+        response = get("/api/users/?email=" + @email.to_s)
+        attach_attributes(response.first) if response.kind_of?(Array)
+      end
       
       self      
     end
