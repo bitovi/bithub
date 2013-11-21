@@ -68,11 +68,15 @@ class TwitterProcessor
   end
 
   def follow_or_status?(event_hash)
-    is_follow_event?(event_hash) || is_status_event?(event_hash)
+    (is_follow_event?(event_hash) && not(we_are_source?(event_hash))) || is_status_event?(event_hash)
   end
   
   def is_user_stream?
     @user_stream_flag
+  end
+
+  def we_are_source?(event_hash)
+    %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? event_hash['source']['screen_name']
   end
   
   def is_follow_event?(event_hash)
