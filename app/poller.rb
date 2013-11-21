@@ -89,16 +89,21 @@ class Poller
   def reject_old(events)
     @latest ||= []
 
-    new_events = events
-      .each{|e| make_key(e) if e[:hash_key].nil?}
-      .reject{|e| @latest.include? e[:hash_key]}
+    new_events = events.reject do |e|
+      e[:hash_key] = calc_hash_key(e)
+      content_digest = processor.content_digest(e) || e[:hash_key]
 
+      if @latest.include? content_digest
+        true
+      else
+        @latest.push content_digest
+        false         
+      end
+    end
+        
     #log_filtering(events, new_events)
 
-    @latest += new_events.map {|e| e[:hash_key]}
-    if @latest.length > backlog_size
-      @latest.shift(@latest.length - backlog_size)
-    end
+    @latest.shift(@latest.length - backlog_size) if @latest.length > backlog_size
 
     new_events
   end
@@ -123,9 +128,9 @@ class Poller
     end
   end
 
-  def make_key(event_hash)
+  def calc_hash_key(event_hash)
     seed = processor.unique_attribute(event_hash) + @feed
-    event_hash[:hash_key] = Digest::MD5.hexdigest(seed)
+    Digest::MD5.hexdigest(seed)
   end
 
   def events_from_response(response_hash)
