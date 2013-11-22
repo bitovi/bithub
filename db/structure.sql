@@ -241,7 +241,8 @@ CREATE TABLE events (
     updated_at timestamp without time zone NOT NULL,
     image character varying(255),
     thread_updated_at timestamp without time zone,
-    thread_updated_date date
+    thread_updated_date date,
+    cached_tag_list character varying(255)
 );
 
 
@@ -1116,3 +1117,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130924211203');
 INSERT INTO schema_migrations (version) VALUES ('20130926121052');
 
 INSERT INTO schema_migrations (version) VALUES ('20131018093050');
+
+INSERT INTO schema_migrations (version) VALUES ('20131121163548');
