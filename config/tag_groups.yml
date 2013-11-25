@@ -7,10 +7,8 @@
   - community_site
 
 :project:
-  - donejs
   - javascriptmvc
   - canjs
-  - canui
   - jquerypp
   - stealjs
   - funcunit

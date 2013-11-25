@@ -50,3 +50,11 @@ documentjs:
   aliases:
     - "documentjs"
     - "document_js"
+
+testee:
+  display_name: "Testee.js"
+  aliases:
+    - "testee"
+    - "testeejs"
+    - "testee_js"
+    - "testee.js"
