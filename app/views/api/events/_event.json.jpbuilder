@@ -1,4 +1,4 @@
-json.cache! custom_cache_key(event) do
+json.cache! ("v1" + custom_cache_key(event)) do
 	json.(event, :id, :title, :body, :origin_ts, :origin_date, :created_at, :updated_at, :thread_updated_at, :thread_updated_date, :url)
 
 	json.category event.category.name
