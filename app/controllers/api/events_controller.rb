@@ -7,7 +7,7 @@ class Api::EventsController < Api::ApiController
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_401
-		
+    
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
   CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
@@ -25,12 +25,14 @@ class Api::EventsController < Api::ApiController
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
       })
+      @ev_relations = EventRelations.new(@events.map{|e| e.id })
       render :index
     end
   end
 
   def show
     @event = EventDecorator.decorate(Event.find(params[:id]))
+    @ev_relations = EventRelations.new(@event.id)
     render :show
   end
 
@@ -40,6 +42,7 @@ class Api::EventsController < Api::ApiController
     if e.save
       e.bump_thread
       @event = EventDecorator.decorate(e)
+      @ev_relations = EventRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
@@ -51,6 +54,7 @@ class Api::EventsController < Api::ApiController
     e = Event.find(params[:id])
     if e.update_from_bithub(params[:event])
       @event = EventDecorator.decorate(e)
+      @ev_relations = EventRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'update'), :status => 406
@@ -70,9 +74,9 @@ class Api::EventsController < Api::ApiController
   end
 
   private # SCOPE BUILDING
+
   def build_scope(muster_query, params)
-    scope = Event.scoped
-    scope = scope.includes(:children)
+    scope = Event.scoped_with_includes
     scope = scope.not_children if !counting?
     scope = scope.no_irc if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
