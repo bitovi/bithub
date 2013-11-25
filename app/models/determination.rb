@@ -38,9 +38,10 @@ module Determination
   end
 
   def determine_category
-    if (category = self.props[:category] || CategoryDeterminationRule.determine_category(self.tag_list))
+    if (category = (self.props[:category] || self.props['category']) || CategoryDeterminationRule.determine_category(self.tag_list))
       category = category.snake_case
       self.tag_list.add(category)
+      self.props['category'] = category
       self.category = Tag.find_or_create_by_name(category)
     end
     self
@@ -64,7 +65,6 @@ module Determination
   end
 
   def clean_props_after_categorization
-    self.props.delete(:project)
     self.props.delete(:tags)
     self.props.delete(:origin_author_feed)
   end
