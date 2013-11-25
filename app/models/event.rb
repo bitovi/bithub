@@ -53,6 +53,8 @@ class Event < ActiveRecord::Base
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
   scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
 
+
+
   after_create do
     author.reward_if_eligible if author
   end
@@ -61,6 +63,19 @@ class Event < ActiveRecord::Base
 
   def self.github_processor
     @processor
+  end
+
+  def self.scoped_with_includes
+    scope = Event.scoped
+    scope = scope.includes(:author)
+    scope = scope.includes(:category)
+    scope = scope.includes(:parent)
+    scope = scope.includes(:feed)
+    scope
+  end
+
+  def children_with_includes
+    self.children.merge(Event.scoped_with_includes)
   end
 
   def initialize(args = {})
@@ -178,6 +193,12 @@ class Event < ActiveRecord::Base
       self
     end
   end
+
+  def cached_tags
+    cached_tag_list.split(', ')
+  end
+
+  
 
   private
   
