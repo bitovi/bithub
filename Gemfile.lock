@@ -59,6 +59,9 @@ GEM
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
     builder (3.0.4)
+    bullet (4.7.1)
+      activesupport
+      uniform_notifier (>= 1.4.0)
     cancan (1.6.9)
     capistrano (2.14.2)
       highline
@@ -259,6 +262,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    uniform_notifier (1.4.0)
     warden (1.2.1)
       rack (>= 1.0)
 
@@ -272,6 +276,7 @@ DEPENDENCIES
   amqp
   andand
   better_errors
+  bullet
   cancan
   capistrano
   capistrano-ext
