@@ -74,7 +74,7 @@ class Api::EventsController < Api::ApiController
     scope = Event.scoped
     scope = scope.includes(:children)
     scope = scope.not_children if !counting?
-    scope = scope.no_irc if on_greatest?
+    scope = scope.no_irc_nor_digest if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
     scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
