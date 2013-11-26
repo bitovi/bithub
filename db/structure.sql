@@ -242,7 +242,8 @@ CREATE TABLE events (
     image character varying(255),
     thread_updated_at timestamp without time zone,
     thread_updated_date date,
-    cached_tag_list character varying(255)
+    cached_tag_list character varying(255),
+    total_upvotes integer
 );
 
 
@@ -846,6 +847,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_events_on_category_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_events_on_category_id ON events USING btree (category_id);
+
+
+--
 -- Name: index_events_on_props; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -892,6 +900,27 @@ CREATE INDEX index_taggings_on_tag_id ON taggings USING btree (tag_id);
 --
 
 CREATE INDEX index_taggings_on_taggable_id_and_taggable_type_and_context ON taggings USING btree (taggable_id, taggable_type, context);
+
+
+--
+-- Name: index_upvotes_on_applies_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_upvotes_on_applies_to_id ON upvotes USING btree (applies_to_id);
+
+
+--
+-- Name: index_upvotes_on_applies_to_id_and_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_upvotes_on_applies_to_id_and_value ON upvotes USING btree (applies_to_id, value);
+
+
+--
+-- Name: index_upvotes_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_upvotes_on_value ON upvotes USING btree (value);
 
 
 --
@@ -1119,3 +1148,13 @@ INSERT INTO schema_migrations (version) VALUES ('20130926121052');
 INSERT INTO schema_migrations (version) VALUES ('20131018093050');
 
 INSERT INTO schema_migrations (version) VALUES ('20131121163548');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126091928');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126093352');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126101253');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126102241');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126103121');
