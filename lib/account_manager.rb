@@ -1,8 +1,8 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tags_definition.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
-  RELEVANT_FRIENDS = YAML.load_file('config/tags_definition.yml').keys << 'bitovi' << 'bitovi_bithub'
+  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
+  RELEVANT_FRIENDS = YAML.load_file('config/tag_definitions.yml').keys << 'bitovi' << 'bitovi_bithub'
 
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
