@@ -63,9 +63,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           $log.info "Issue with ID=#{issue_hash['source_data']['id']} changed. Updating"
           issue.title = issue_hash['source_data']['title']
           issue.body = issue_hash['source_data']['body']
-          issue.props['labels'] = issue_hash['source_data']['labels'].map {|l| l['name']}.join(',')
-          issue.props['state'] = issue_hash['source_data']['state']
-          issue.props['content_digest'] = issue_hash['content_digest']
+          issue.props[:labels] = issue_hash['source_data']['labels'].map {|l| l['name']}.join(',')
+          issue.props[:state] = issue_hash['source_data']['state']
+          issue.props[:content_digest] = issue_hash['content_digest']
 
           issue.determine_tags
           issue.determine_category
