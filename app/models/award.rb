@@ -10,26 +10,23 @@ class Award < ActiveRecord::Base
   
   after_create :bust_event_cache
 
-  class EventHasNoParentException < Exception; end
-
   def self.create_with_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
 
-    begin
-      if opts[:strategy] == :double_the_upvotes
-        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
-      elsif opts[:strategy] == :double_parents_upvotes
-        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_parents_upvote_value(applies_to)})
-      elsif opts[:strategy] == :based_on_rule
-        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
-      end
-    rescue EventHasNoParentException => e
-      Rails.logger.info "Event can't be awarded because it has no parent" 
-      raise e
+    if opts[:strategy] == :double_the_upvotes
+      award = Award.create({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
+    elsif opts[:strategy] == :double_parents_upvotes
+      award = Award.create({actor: actor, applies_to: applies_to, value: Award.double_parents_upvote_value(applies_to)})
+    elsif opts[:strategy] == :based_on_rule
+      award = Award.create({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
     end
 
-    applies_to.author.reward_if_eligible if applies_to.author
-    award
+    if not(award)
+      "Event can't be awarded because it has no parent" 
+    else
+      applies_to.author.reward_if_eligible if applies_to.author
+      award
+    end
   end
 
   def self.double_upvote_value(event)
@@ -39,8 +36,6 @@ class Award < ActiveRecord::Base
   def self.double_parents_upvote_value(event)
     if self.parent
       (event.top_level_parent.upvotes.sum(:value) * 2)
-    else
-      fail EventHasNoParentException
     end
   end
 

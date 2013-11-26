@@ -71,12 +71,12 @@ namespace :db do
     end
   end
 
-  desc "Sync staging with production"
-  task :sync_with_prod, :roles => :db, :only => {:primary => true} do
-    dbname = 'bithub_staging' unless dbname
-    run "dropdb bithub_staging"
-    run "createdb --template=template1 --owner=bithub bithub_staging"
-    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --format=c --schema=public --dbname=bithub_staging"
+  desc "Sync db with production"
+  task :sync, :roles => :db, :only => {:primary => true} do
+    dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
+    run "dropdb #{dbname}"
+    run "createdb --template=template1 --owner=bithub #{dbname}"
+    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --format=c --schema=public --dbname=#{dbname}"
   end
 
   task :pass_var, :roles => :db, :only => {:primary => true} do

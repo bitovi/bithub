@@ -29,6 +29,7 @@ gem 'foreman'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
+gem 'oj'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
@@ -40,7 +41,6 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 # Gems for ThirdPartyInformer
 gem 'twitter'
 gem 'github_api'
-
 
 group :test, :development do
   gem 'factory_girl_rails'
@@ -59,4 +59,5 @@ end
 group :development do
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'bullet'
 end

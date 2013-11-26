@@ -50,3 +50,51 @@ documentjs:
   aliases:
     - "documentjs"
     - "document_js"
+
+testee:
+  display_name: "Testee.js"
+  aliases:
+    - "testee"
+    - "testeejs"
+    - "testee_js"
+    - "testee.js"
+
+digest:
+  display_name: "Digest"
+
+twitter:
+  display_name: "Twitter"
+
+bug:
+  display_name: "Bug"
+
+comment:
+  display_name: "Comment"
+
+feature:
+  display_name: "Feature"
+  aliases:
+    - "feature"
+    - "enhancement"
+    - "feature-request"
+
+question:
+  display_name: "Question"
+
+article:
+  display_name: "Article"
+
+plugin:
+  display_name: "Plugin"
+
+app:
+  display_name: "App"
+
+code:
+  display_name: "Code"
+
+event:
+  display_name: "Event"
+
+chat:
+  display_name: "Chat"
