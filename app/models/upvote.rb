@@ -10,6 +10,10 @@ class Upvote < ActiveRecord::Base
 
   after_create :bust_event_cache
 
+  after_save :update_upvotes
+  after_destroy :update_upvotes
+  after_touch :update_upvotes
+
   def self.create_based_on_rule(actor, applies_to)
     upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
     applies_to.author.reward_if_eligible if applies_to.author
@@ -22,5 +26,9 @@ class Upvote < ActiveRecord::Base
     self.applies_to.touch
     self.applies_to.parent.touch if self.applies_to.parent
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
+  end
+
+  def update_upvotes
+    self.applies_to.update_attribute(:total_upvotes, self.applies_to.upvotes.sum('value'))
   end
 end
