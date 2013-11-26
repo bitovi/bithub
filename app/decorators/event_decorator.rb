@@ -65,30 +65,30 @@ class EventDecorator < Draper::Decorator
 
   def props(thread_awarded = false, awarded_value = nil)
     if source.source_data && source.category.name == 'digest'
-      source.props[:repo] = source.source_data['repo']['name'] if cached_tags.include?('watch_event') || cached_tags.include?('fork_event')
-      source.props[:target] = source.source_data['target']['screen_name'] if cached_tags.include?('follow_event')
+      source.props['repo'] = source.source_data['repo']['name'] if cached_tags.include?('watch_event') || cached_tags.include?('fork_event')
+      source.props['target'] = source.source_data['target']['screen_name'] if cached_tags.include?('follow_event')
     end
 
     if source.feed && source.feed.name == 'github'
       if source.props && (source.props['repo'] || source.props['repo_name'])
-        source.props[:repo_name] = source.props['repo'] || source.props['repo_name']
+        source.props['repo_name'] = source.props['repo'] || source.props['repo_name']
       elsif source.source_data && source.source_data['repo']
-        source.props[:repo_name] = source.source_data['repo']['name']
+        source.props['repo_name'] = source.source_data['repo']['name']
       end
     end
     
     if cached_tags and cached_tags.include?('push_event')
-      source.props[:commits] = source.source_data['payload']['commits']
+      source.props['commits'] = source.source_data['payload']['commits']
     end
 
     if source.source_data && source.source_data['user'] && source.source_data['user']['profile_image_url']
-      source.props[:origin_author_avatar_url] = source.source_data['user']['profile_image_url']
+      source.props['origin_author_avatar_url'] = source.source_data['user']['profile_image_url']
     elsif source.source_data && source.source_data['actor'] && source.source_data['actor']['avatar_url']
-      source.props[:origin_author_avatar_url] = source.source_data['actor']['avatar_url']
+      source.props['origin_author_avatar_url'] = source.source_data['actor']['avatar_url']
     end
 
-    source.props[:thread_awarded] = thread_awarded
-    source.props[:awarded_value] = awarded_value
+    source.props['thread_awarded'] = thread_awarded
+    source.props['awarded_value'] = awarded_value
     #source.props[:thread_awarded] = source.thread_awarded?
     #source.props[:awarded_value] = source.awards.first.value if source.awards.first
 
