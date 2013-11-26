@@ -1,8 +1,11 @@
+require 'digest/md5'
+
 class Api::EventsController < Api::ApiController
   before_filter :authenticate_user!, except: [:index, :show, :summary]
   
   respond_to :json
   helper_method :custom_cache_key
+  helper_method :list_cache_key
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
@@ -107,12 +110,22 @@ class Api::EventsController < Api::ApiController
   end
 
   def custom_cache_key(event)
-    qs = CGI.parse(request.query_string)
+    qs  = CGI.parse(request.query_string)
+    key = [event.cache_key]
     if !qs.blank?
-      event.cache_key + '/' + fragment_cache_key(qs.sort)
-    else
-      event.cache_key
+      event_params = qs.reject{|k, v| !['exclude', 'include'].include?(k)}
+      key << fragment_cache_key(event_params.sort) unless event_params.blank?
     end
+    key.join('/')
+  end
+
+  def list_cache_key(events)
+    qs  = CGI.parse(request.query_string)
+    key = [events.map{|ev| ev.cache_key}.join("|")]
+    if !qs.blank?
+      key.unshift(fragment_cache_key(qs.sort))
+    end
+    Digest::MD5.hexdigest(key.join(':'))
   end
 
   def counting?
