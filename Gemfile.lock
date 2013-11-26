@@ -32,7 +32,7 @@ GEM
       tzinfo (~> 0.3.29)
     activerecord-postgres-array (0.0.9)
       activerecord
-    activerecord-postgres-hstore (0.7.6)
+    activerecord-postgres-hstore (0.7.7)
       activerecord (>= 3.1)
       pg-hstore (>= 1.1.5)
       rake
@@ -60,6 +60,9 @@ GEM
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
     builder (3.0.4)
+    bullet (4.7.1)
+      activesupport
+      uniform_notifier (>= 1.4.0)
     cancan (1.6.9)
     capistrano (2.14.2)
       highline
@@ -168,6 +171,7 @@ GEM
       rack (~> 1.2)
     octokit (2.5.1)
       sawyer (~> 0.5.1)
+    oj (2.2.3)
     omniauth (1.1.4)
       hashie (>= 1.2, < 3)
       rack
@@ -188,7 +192,7 @@ GEM
       omniauth-oauth (~> 1.0)
     orm_adapter (0.4.0)
     pg (0.15.1)
-    pg-hstore (1.1.7)
+    pg-hstore (1.2.0)
     polyglot (0.3.3)
     pry (0.9.12)
       coderay (~> 1.0.5)
@@ -267,6 +271,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    uniform_notifier (1.4.0)
     warden (1.2.1)
       rack (>= 1.0)
     yajl-ruby (1.1.0)
@@ -281,6 +286,7 @@ DEPENDENCIES
   amqp
   andand
   better_errors
+  bullet
   cancan
   capistrano
   capistrano-ext
@@ -305,6 +311,7 @@ DEPENDENCIES
   muster!
   newrelic_rpm
   octokit (~> 2.0)
+  oj
   omniauth
   omniauth-github
   omniauth-meetup

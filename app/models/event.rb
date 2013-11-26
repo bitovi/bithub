@@ -51,7 +51,9 @@ class Event < ActiveRecord::Base
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  scope :no_irc, lambda { where("props -> 'feed' <> 'irc'") }
+  scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
+
+
 
   after_create do
     author.reward_if_eligible if author
@@ -61,6 +63,19 @@ class Event < ActiveRecord::Base
 
   def self.github_processor
     @processor
+  end
+
+  def self.scoped_with_includes
+    scope = Event.scoped
+    scope = scope.includes(:author)
+    scope = scope.includes(:category)
+    scope = scope.includes(:parent)
+    scope = scope.includes(:feed)
+    scope
+  end
+
+  def children_with_includes
+    self.children.merge(Event.scoped_with_includes)
   end
 
   def initialize(args = {})
@@ -142,9 +157,12 @@ class Event < ActiveRecord::Base
   end
   
   def self.select_with_upvotes(include_events = true)
-    query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
-    query_string = "events.*, " + query_string if include_events
-    select(query_string)
+    #query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
+    #query_string = "events.*" if include_events
+    #select(query_string)
+    #
+    #
+    Event.scoped
   end
   
   def total_upvotes
@@ -178,6 +196,12 @@ class Event < ActiveRecord::Base
       self
     end
   end
+
+  def cached_tags
+    cached_tag_list.split(', ')
+  end
+
+  
 
   private
   

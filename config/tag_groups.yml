@@ -7,14 +7,13 @@
   - community_site
 
 :project:
-  - donejs
   - javascriptmvc
   - canjs
-  - canui
   - jquerypp
   - stealjs
   - funcunit
   - documentjs
+  - testee
 
 :category:
   - bug

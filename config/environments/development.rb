@@ -10,7 +10,7 @@ Bithub::Application.configure do
   config.whiny_nils = true
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
   # config.cache_store = :dalli_store
 
@@ -36,4 +36,10 @@ Bithub::Application.configure do
   config.assets.compress = true
   config.assets.compile = false
   config.assets.debug = false
+
+  config.after_initialize do
+    Bullet.enable = false
+    Bullet.rails_logger = true
+  end
+
 end
