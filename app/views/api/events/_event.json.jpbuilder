@@ -12,7 +12,6 @@ json.cache! custom_cache_key(event) do
 
 	json.has_parent event.has_parent
 
-	json.actor event.actor
 	json.image_url event.image_url(params[:size])
 	
 	json.children @ev_relations.children_for_event(event) do |c|
