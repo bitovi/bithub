@@ -20,7 +20,7 @@ class Listener
   end
 
   def initialize(log, exchange, stream_auth_and_opts, is_user_stream)
-    @log = log
+    @logger = log
     @exchange = exchange
     @stream_auth_and_opts = stream_auth_and_opts
     @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
@@ -36,13 +36,13 @@ class Listener
     end
 
     @stream.on_error do |message|
-      @log.error "#{@stream} connected as #{@connected_as} ERROR: #{message}"
+      @logger.error "#{@stream} connected as #{@connected_as} ERROR: #{message}"
     end
 
     # dynamically assign the rest of the errbacks
     ERRBACKS.each do |errback|
       @stream.send(errback.to_sym) do
-        @log.error "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
+        @logger.error "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
       end
     end
   end
@@ -53,19 +53,25 @@ class Listener
       publish(processor.process(event))
     rescue Processor::InvalidEventException => e
       if event["friends"]
-        @log.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
+        @logger.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
       else
-        @log.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event}"
+        @logger.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event}"
       end
     rescue => error
-      @log.error "FEED: #{feed} | AS: #{connected_as} | #{error}"
+      @logger.error "FEED: #{feed} | AS: #{connected_as} | #{error}"
     end
   end
 
   def publish(event)
+    #log_publishing
     EM.defer do 
       @exchange.publish(Yajl::Encoder.encode(event))
     end
+  end
+
+  def log_publishing
+    str = "Publishing from Twitter"
+    @logger.info str
   end
 
 end

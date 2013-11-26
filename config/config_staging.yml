@@ -135,3 +135,6 @@
       :javascriptmvc:
         :events: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
         :issues: 'https://api.github.com/repos/bitovi/javascriptmvc/issues'
+      :testee:
+        :events: 'https://api.github.com/repos/bitovi/testee.js/events'
+        :issues: 'https://api.github.com/repos/bitovi/testee.js/issues'
