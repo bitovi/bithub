@@ -157,9 +157,12 @@ class Event < ActiveRecord::Base
   end
   
   def self.select_with_upvotes(include_events = true)
-    query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
-    query_string = "events.*, " + query_string if include_events
-    select(query_string)
+    #query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
+    #query_string = "events.*" if include_events
+    #select(query_string)
+    #
+    #
+    Event.scoped
   end
   
   def total_upvotes
