@@ -61,13 +61,11 @@ class AccountManager
   def missing_repos
     username = identity.source_data['nickname'] || identity.source_data[:nickname]
     rs = user_api.watched_repos(username)
-
-    remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
-                            .map{|r| (r[:full_name] || r['full_name'])}
-
+    
+    remote_repo_watches = rs.map{|r| (r[:full_name] || r['full_name'])} & RELEVANT_REPO_NAMES
     present_repo_watches = Event.tagged_with(%w(github watch_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map {|e| (sd = e.source_data) ? sd['repo']['full_name'] : e.props['repo_name']}
+                                .map {|e| e.source_data.andand['repo'].andand['full_name'] || e.props.andand['repo_name']}
                                 .uniq
 
     if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
@@ -80,17 +78,14 @@ class AccountManager
   def missing_friends
     fs = user_api.followed_accts(identity.uid)
 
-    remote_friend_names = fs.select{|r| RELEVANT_FRIENDS.include?(r[:screen_name] || r['screen_name'])}
-                            .map{|r| (r[:screen_name] || r['screen_name'])}
-
+    remote_friend_names = fs.map{|r| (r[:screen_name] || r['screen_name'])} & RELEVANT_FRIENDS
     present_friend_names = Event.tagged_with(%w(twitter follow_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| (sd = e.source_data) ? sd['target']['screen_name'] : e.props['target']}
+                                .map{|e| e.source_data.andand['target'].andand['screen_name'] || e.props.andand['target']}
                                 .uniq
 
     if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
       fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
-      
     else
       []
     end
