@@ -82,29 +82,27 @@ class Poller
   end
 
   def handle_success(http_req)
-    events = events_from_response(parse(http_req.response))
+    events = decorate(events_from_response(parse(http_req.response)))
     publish(process(reject_old(events), feed_specific_config))
   end
 
+  def decorate(events)
+    events.each do |e|
+      e[:hash_key] = calc_hash_key(e)
+    end    
+  end
+  
   def reject_old(events)
     @latest ||= []
 
+    events.each {|e| e[:content_digest] = processor.content_digest(e) || e[:hash_key] }
+      
     new_events = events.reject do |e|
-      e[:hash_key] = calc_hash_key(e)
-      content_digest = processor.content_digest(e) || e[:hash_key]
-
-      if @latest.include? content_digest
-        true
-      else
-        @latest.push content_digest
-        false         
-      end
+      # if already in latest reject, otherwise push to latest and keep event
+      (@latest.include? e[:content_digest]) || (@latest.push(e[:content_digest]) && false)
     end
-        
-    #log_filtering(events, new_events)
 
     @latest.shift(@latest.length - backlog_size) if @latest.length > backlog_size
-
     new_events
   end
 
