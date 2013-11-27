@@ -38,7 +38,7 @@ module Determination
   end
 
   def determine_category
-    if (category = (self.props[:category] || self.props['category']) || CategoryDeterminationRule.determine_category(self.tag_list))
+    if (category = CategoryDeterminationRule.determine_category(self.tag_list))
       category = category.snake_case
       self.tag_list.add(category)
       self.category = Tag.find_or_create_by_name(category)
