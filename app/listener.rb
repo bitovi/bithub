@@ -86,14 +86,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             issue.determine_tags
             issue.determine_category
 
-            begin
-              issue.save!
+            if issue.save
               liveservice_exchange.publish(ActiveSupport::JSON.encode(issue))
-            rescue Exception => e
-              puts e.message
-              puts e.backtrace.inspect
+            else
+              $log.error issue.errors.messages.join(', ') unless issue.save              
             end
-
+            
           end
         else
           $log.info "Creating issue with ID=#{issue_id}."
@@ -130,14 +128,13 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
           issue.determine
 
-          begin
-            issue.save!
+          if issue.save
             liveservice_exchange.publish(ActiveSupport::JSON.encode(issue))
-          rescue Exception => e
-            puts e.message
-            puts e.backtrace.inspect
-          end
+          else
+            $log.error issue.errors.messages.join(', ') unless issue.save            
+          end          
         end
+        
       end
     end
   end
