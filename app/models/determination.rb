@@ -26,18 +26,19 @@ module Determination
       .map {|t| t.snake_case}
     
     self.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
-
     self
   end
 
   def determine_feed
-    f_raw = (self.props[:feed] || self.props['feed'])
-    fail DeterminationException, ":feed missing from props" if f_raw.nil?
-    self.feed = Tag.find_or_create_by_name(f_raw)
+    self.props.symbolize_keys!
+    fail DeterminationException, ":feed missing from props" if self.props[:feed].nil?
+    self.feed = Tag.find_or_create_by_name(self.props[:feed])
     self
   end
 
   def determine_category
+    self.props.symbolize_keys!
+
     if (category = CategoryDeterminationRule.determine_category(self.tag_list))
       category = category.snake_case
       self.tag_list.add(category)
@@ -70,6 +71,7 @@ module Determination
   end
 
   def taggify_props
+    self.props.symbolize_keys!
     PROPS_TO_TAGS.map {|prop| self.props[prop] if self.props[prop]}.compact
   end
 
@@ -80,6 +82,8 @@ module Determination
   end
 
   def taggify_labels
+    self.props.symbolize_keys!
+    
     if self.props[:labels]
       search_tags = Tag.to_name_aliases_hash(:label)
       input = self.props[:labels]
