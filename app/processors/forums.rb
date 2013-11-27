@@ -19,7 +19,7 @@ class ForumsProcessor
       }
     })
 
-    partly_processed_hash[:meta][:category] = fsc.andand[:term]
+    partly_processed_hash[:meta][:tags] = [] + fsc.andand[:term]
     partly_processed_hash
   end
   
