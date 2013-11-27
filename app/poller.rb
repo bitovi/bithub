@@ -82,24 +82,27 @@ class Poller
   end
 
   def handle_success(http_req)
-    events = events_from_response(parse(http_req.response))
+    events = decorate(events_from_response(parse(http_req.response)))
     publish(process(reject_old(events), feed_specific_config))
   end
 
+  def decorate(events)
+    events.each do |e|
+      e[:hash_key] = calc_hash_key(e)
+    end    
+  end
+  
   def reject_old(events)
     @latest ||= []
 
-    new_events = events
-      .each{|e| make_key(e) if e[:hash_key].nil?}
-      .reject{|e| @latest.include? e[:hash_key]}
-
-    #log_filtering(events, new_events)
-
-    @latest += new_events.map {|e| e[:hash_key]}
-    if @latest.length > backlog_size
-      @latest.shift(@latest.length - backlog_size)
+    events.each {|e| e[:content_digest] = processor.content_digest(e) || e[:hash_key] }
+      
+    new_events = events.reject do |e|
+      # if already in latest reject, otherwise push to latest and keep event
+      (@latest.include? e[:content_digest]) || (@latest.push(e[:content_digest]) && false)
     end
 
+    @latest.shift(@latest.length - backlog_size) if @latest.length > backlog_size
     new_events
   end
 
@@ -123,9 +126,9 @@ class Poller
     end
   end
 
-  def make_key(event_hash)
+  def calc_hash_key(event_hash)
     seed = processor.unique_attribute(event_hash) + @feed
-    event_hash[:hash_key] = Digest::MD5.hexdigest(seed)
+    Digest::MD5.hexdigest(seed)
   end
 
   def events_from_response(response_hash)

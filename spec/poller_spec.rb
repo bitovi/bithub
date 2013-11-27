@@ -6,10 +6,10 @@ describe Poller do
   describe "#reject_old" do
     let(:logger) { double(:logger, :info => nil) }
     let(:exchange) { double(:exchange, :publish => nil) }
-    let(:poller) { Poller.new(logger, exchange,  'https://api.example.com/entities') {|c| c[:backlog_size] = 10}}
+    let(:poller) { Poller.new(logger, exchange,  'https://api.github.com/entities') {|c| c[:backlog_size] = 10}}
 
     it "should have a backlog of 10 items at most" do
-      items = (1..13).map {|i| {title: i.to_s, hash_key: Digest::MD5.hexdigest(i.to_s)} }
+      items = (1..13).map {|i| {title: i.to_s, id: i, hash_key: Digest::MD5.hexdigest(i.to_s)} }
       poller.reject_old(items)
       expect(poller.latest.length).to eql 10
     end
