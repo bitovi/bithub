@@ -71,6 +71,9 @@ describe "Handling Github issues" do
         @actor.read
         expect(@issue_bithub.author[:id]).to eq @actor.id
         #expect(@actor.score).to be > previous_score
+
+        # wait a bit before jumping to another test
+        sleep 5
         
         # stop listening
         done
