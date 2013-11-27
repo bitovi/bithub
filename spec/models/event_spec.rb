@@ -203,7 +203,7 @@ def updated_args
 end
 
 def only_tags(args)
-  ([args[:category], args[:feed]] + args[:tags])
+  ([args[:feed]] + args[:tags])
 end
 
 def push_event
