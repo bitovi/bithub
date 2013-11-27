@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Award do
 
-  describe ".create_with_strategy" do
+  describe ".create_based_on_strategy" do
     it "should award the user with the appropriate number of points" do
       rule = create(:rule, upvote_value: 7)
       author = create(:user, name: "Nikica")
@@ -13,7 +13,7 @@ describe Award do
 
       old_score = author.score
       Upvote.create_based_on_rule(admin, event)
-      Award.create_with_strategy(admin, event_to_award, {strategy: :double_parents_upvotes})
+      Award.create_based_strategy(admin, event_to_award, {strategy: :double_parents_upvotes})
       new_score = author.reload.score
 
       expect(new_score).to eq(old_score+(event.reload.upvotes.sum(:value)*2))
@@ -54,12 +54,12 @@ describe Award do
     end
   end
 
-  describe ".total_value" do
+  describe ".rule_based_value" do
     it "returns an award value specified in the rule" do
       award_value = 100
       rule = create(:rule, award_value: award_value)
-      event = create(:event_determined, rule: rule, title: "Event in award_spec, testing_total_value.")
-      expect(Award.total_value(event)).to eq(award_value)
+      event = create(:event_determined, rule: rule, title: "Event in award_spec, testing_potential_value.")
+      expect(Award.rule_based_value(event)).to eq(award_value)
     end
   end
 
