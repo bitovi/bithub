@@ -163,10 +163,6 @@ class Event < ActiveRecord::Base
     !self.thread.select{|e| e.awarded?}.blank?
   end
   
-  def self.select_with_upvotes
-    Event.scoped
-  end
-  
   def sum_upvotes
     (self.upvotes.pluck :value).reduce :+
   end
