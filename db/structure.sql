@@ -581,7 +581,7 @@ CREATE TABLE users (
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
     last_sign_in_ip character varying(255),
-    total_score integer
+    total_score integer DEFAULT 0
 );
 
 

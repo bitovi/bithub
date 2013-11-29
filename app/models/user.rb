@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city,
     :email, :name, :postal, :email,
     :remember_me, :state, :country,
-    :events
+    :events, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
