@@ -1,3 +1,6 @@
+
+### Projects
+
 canjs:
  display_name: "CanJS"
  aliases:
@@ -30,13 +33,13 @@ stealjs:
     - "stealjs"
     - "steal_js"
     - "steal"
- 
+
 funcunit:
   display_name: "FuncUnit"
   aliases:
     - "funcunit"
     - "func_unit"
- 
+
 jquerypp:
   display_name: "jQuery++"
   aliases:
@@ -59,17 +62,74 @@ testee:
     - "testee_js"
     - "testee.js"
 
-digest:
-  display_name: "Digest"
+### Feeds
 
 twitter:
   display_name: "Twitter"
 
+github:
+  display_name: "Github"
+
+forums:
+  display_name: "Forums"
+
+irc:
+  display_name: "IRC"
+
+blog:
+  display_name: "Blog"
+
+disqus:
+  display_name: "Disqus"
+
+bithub:
+  display_name: "Bithub"
+
+community_site:
+  display_name: "Community site"
+
+
+### Categories
+
+app:
+  display_name: "App"
+  aliases:
+    - "app"
+
+article:
+  display_name: "Article"
+  aliases:
+    - "article"
+
 bug:
   display_name: "Bug"
+  aliases:
+    - "bug"
+
+chat:
+  display_name: "Chat"
+  aliases:
+    - "chat"
+
+code:
+  display_name: "Code"
+  aliases:
+    - "code"
 
 comment:
   display_name: "Comment"
+  aliases:
+    - "comment"
+
+digest:
+  display_name: "Digest"
+  aliases:
+    - "digest"
+
+event:
+  display_name: "Event"
+  aliases:
+    - "event"
 
 feature:
   display_name: "Feature"
@@ -78,23 +138,66 @@ feature:
     - "enhancement"
     - "feature-request"
 
-question:
-  display_name: "Question"
-
-article:
-  display_name: "Article"
+issue:
+  display_name: "Issue"
+  aliases:
+    - "issue"
 
 plugin:
   display_name: "Plugin"
+  aliases:
+    - "plugin"
 
-app:
-  display_name: "App"
+question:
+  display_name: "Question"
+  aliases:
+    - "question"
 
-code:
-  display_name: "Code"
+#twitter: --> already defined under feeds
+#  display_name: "Twitter"
 
-event:
-  display_name: "Event"
 
-chat:
-  display_name: "Chat"
+### Twitter specific
+
+follow_event: {}
+
+status_event: {}
+
+
+### Github specific
+
+delete_event: {}
+
+push_event: {}
+
+fork_event: {}
+
+pull_request_event: {}
+
+create_event: {}
+
+issues_event: {}
+
+issue_comment_event: {}
+
+commit_comment_event: {}
+
+watch_event: {}
+
+gollum_event: {}
+
+pull_request_review_comment_event: {}
+
+public_event: {}
+
+custom_commit_event: {}
+
+
+### Others
+
+jquerymx:
+  display_name: "jQueryMX"
+  aliases:
+    - "j_query_mx"
+
+uncategorized: {}
