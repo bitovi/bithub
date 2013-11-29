@@ -33,7 +33,7 @@ class AddTotalScoreToUsers < ActiveRecord::Migration
     remove_column :users, :total_score
 
     execute <<-SQL
-      DROP VIEW IF EXISTS user_cached_score;
+      DROP VIEW IF EXISTS user_total_score;
     SQL
   end
 end

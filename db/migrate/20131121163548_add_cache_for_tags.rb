@@ -15,7 +15,7 @@ class AddCacheForTags < ActiveRecord::Migration
     remove_column :events, :cached_tag_list
 
     execute <<-SQL
-      DROP VIEW IF EXISTS event_cached_tag_list;
+      DROP VIEW IF EXISTS event_aggregated_tag_list;
     SQL
   end
 end
