@@ -28,14 +28,14 @@ describe User do
     it "should calculate total award points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from awards")
       Upvote.create_based_on_rule(@actor, event)
-      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
+      Award.create_based_on_strategy(@actor, event, strategy: :double_the_upvotes)
       expect(@author.awards_total).to eq(11*2)
     end
 
     it "should calculate total points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing total #score")
       Upvote.create_based_on_rule(@actor, event)
-      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
+      Award.create_based_on_strategy(@actor, event, strategy: :double_the_upvotes)
       expect(@author.score).to eq(11+11*2+33)
     end
   end
