@@ -53,11 +53,9 @@ class Event < ActiveRecord::Base
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
   scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
 
-
-
-  after_create do
-    author.reward_if_eligible if author
-  end
+  after_create :reward_user_if_eligible
+  after_create :increase_score_in_author
+  after_destroy :decrease_score_in_author
     
   @processor ||= Processors::Github.new({feed: 'github'})
 
@@ -167,6 +165,21 @@ class Event < ActiveRecord::Base
     (self.upvotes.pluck :value).reduce :+
   end
 
+  def increase_score_in_author
+    self.author.total_score += self.rule.authorship_value
+    self.author.save!
+  end
+  
+  def decrease_score_in_author
+    self.author.total_score -= self.rule.authorship_value
+    self.author.save!
+  end
+
+  def reward_user_if_eligible
+    self.author.reward_if_eligible if self.author
+  end
+
+
   def cache_key
     case
     when new_record?
@@ -192,10 +205,8 @@ class Event < ActiveRecord::Base
   end
 
   def cached_tags
-    cached_tag_list.split(', ')
+    self.cached_tag_list.split(', ')
   end
-
-  
 
   private
   
