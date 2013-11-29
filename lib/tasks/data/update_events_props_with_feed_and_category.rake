@@ -1,5 +1,5 @@
 namespace :data do
-  task :feed_and_category_into_props => :environment do
+  task :update_events_props_with_feed_and_category => :environment do
 
     total_events_cnt = Event.count
 
