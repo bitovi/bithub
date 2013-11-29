@@ -243,7 +243,7 @@ CREATE TABLE events (
     thread_updated_at timestamp without time zone,
     thread_updated_date date,
     cached_tag_list character varying(255),
-    total_upvotes integer
+    total_upvotes integer DEFAULT 0
 );
 
 

@@ -20,7 +20,8 @@ class Event < ActiveRecord::Base
     :origin_date, :origin_ts,
     :thread_updated_date, :thread_updated_at,
     :created_at, :updated_at,
-    :props, :source_data, :image
+    :props, :source_data, :image,
+    :total_upvotes
 
   acts_as_taggable_on :tags
   mount_uploader :image, EventImageUploader
