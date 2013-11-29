@@ -13,7 +13,8 @@ class Award < ActiveRecord::Base
 
   def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
-
+    award = nil
+    
     ActiveRecord::Base.transaction do
       case opts[:strategy]
       when :double_the_upvotes
@@ -26,11 +27,12 @@ class Award < ActiveRecord::Base
       award.increase_score_in_associated_user!
       award.reward_associated_user_if_eligible
     end
+    
     award
   end
 
 
-  private
+  #private
   
   # Strategies
   def self.double_upvote_value(event)

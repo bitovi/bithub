@@ -15,6 +15,7 @@ class Upvote < ActiveRecord::Base
   after_destroy :decrease_score_in_associated_user
 
   def self.create_based_on_rule(actor, applies_to)
+    upvote = nil
     ActiveRecord::Base.transaction do
       upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
       upvote.update_upvotes_in_associated_event!
