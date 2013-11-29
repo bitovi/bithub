@@ -580,7 +580,8 @@ CREATE TABLE users (
     current_sign_in_at timestamp without time zone,
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255)
+    last_sign_in_ip character varying(255),
+    total_score integer
 );
 
 
@@ -1158,3 +1159,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131126101253');
 INSERT INTO schema_migrations (version) VALUES ('20131126102241');
 
 INSERT INTO schema_migrations (version) VALUES ('20131126103121');
+
+INSERT INTO schema_migrations (version) VALUES ('20131127171009');
