@@ -23,7 +23,6 @@ class Api::EventsController < Api::ApiController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = apply_upvote_calculation_to_scope(scope, params)
       scope = scope_applier.apply_order_to_scope(scope, params, CATEGORIES_ID_ORDER)
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
@@ -87,11 +86,6 @@ class Api::EventsController < Api::ApiController
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
-  end
-
-  def apply_upvote_calculation_to_scope(scope, params)
-    taggables = logic_analyzer.pluck_and_process_tag_based_params(params)
-    scope = scope.select_with_upvotes(taggables && !taggables[:any])
   end
 
   def logic_analyzer
