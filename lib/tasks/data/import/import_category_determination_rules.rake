@@ -5,6 +5,7 @@ namespace :data do
     puts "---"
     puts "Importing category determination rules"
     rules = YAML::load_file('config/category_determination_rules.yml')
+
     rules.each do |category, scorings|
       if CategoryDeterminationRule.create({:name => category, :scorings => scorings})
         puts "[CREATED] Rule | name: #{category}, scorings: #{scorings}"

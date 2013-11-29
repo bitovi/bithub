@@ -1,5 +1,5 @@
 namespace :data do
-  desc "Imports countries from YAML file"
+  desc "Imports countries"
   task :import_countries => :environment do
     countries = YAML::load_file('config/countries.yml')
     successes = 0
