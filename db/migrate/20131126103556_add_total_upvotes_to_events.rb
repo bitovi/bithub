@@ -15,7 +15,7 @@ class AddTotalUpvotesToEvents < ActiveRecord::Migration
     remove_column :events, :total_upvotes
 
     execute <<-SQL
-      DROP VIEW IF EXISTS event_cached_upvotes;
+      DROP VIEW IF EXISTS event_total_upvotes;
     SQL
   end
 end
