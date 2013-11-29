@@ -248,6 +248,43 @@ CREATE TABLE events (
 
 
 --
+-- Name: taggings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE taggings (
+    id integer NOT NULL,
+    tag_id integer,
+    taggable_id integer,
+    taggable_type character varying(255),
+    tagger_id integer,
+    tagger_type character varying(255),
+    context character varying(128),
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    display_name character varying(255),
+    aliases character varying[],
+    priority integer
+);
+
+
+--
+-- Name: event_aggregated_tag_list; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW event_aggregated_tag_list AS
+    SELECT e.id AS event_id, string_agg((t.name)::text, ','::text) AS tag_list FROM events e, tags t, taggings e_t WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id)) GROUP BY e.id;
+
+
+--
 -- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -482,22 +519,6 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: taggings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE taggings (
-    id integer NOT NULL,
-    tag_id integer,
-    taggable_id integer,
-    taggable_type character varying(255),
-    tagger_id integer,
-    tagger_type character varying(255),
-    context character varying(128),
-    created_at timestamp without time zone
-);
-
-
---
 -- Name: taggings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -514,19 +535,6 @@ CREATE SEQUENCE taggings_id_seq
 --
 
 ALTER SEQUENCE taggings_id_seq OWNED BY taggings.id;
-
-
---
--- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tags (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    display_name character varying(255),
-    aliases character varying[],
-    priority integer
-);
 
 
 --
@@ -927,20 +935,6 @@ CREATE INDEX index_upvotes_on_applies_to_id ON upvotes USING btree (applies_to_i
 
 
 --
--- Name: index_upvotes_on_applies_to_id_and_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_upvotes_on_applies_to_id_and_value ON upvotes USING btree (applies_to_id, value);
-
-
---
--- Name: index_upvotes_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_upvotes_on_value ON upvotes USING btree (value);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1167,12 +1161,6 @@ INSERT INTO schema_migrations (version) VALUES ('20131018093050');
 INSERT INTO schema_migrations (version) VALUES ('20131121163548');
 
 INSERT INTO schema_migrations (version) VALUES ('20131126091928');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126093352');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126101253');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126102241');
 
 INSERT INTO schema_migrations (version) VALUES ('20131126103121');
 

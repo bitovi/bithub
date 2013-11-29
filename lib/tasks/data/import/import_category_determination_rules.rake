@@ -11,7 +11,7 @@ namespace :data do
         puts "[CREATED] Rule | name: #{category}, scorings: #{scorings}"
       end
     end
-    puts "Categroy determination rules imported"
+    puts "Category determination rules imported"
 
   end
 end

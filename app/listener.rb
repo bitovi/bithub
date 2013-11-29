@@ -89,7 +89,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             if issue.save
               liveservice_exchange.publish(ActiveSupport::JSON.encode(issue))
             else
-              $log.error issue.errors.messages.join(', ') unless issue.save              
+              $log.error "Error while trying to update issue with ID=#{issue_id}"
+              $log.error issue.errors.messages
             end
             
           end
@@ -131,7 +132,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           if issue.save
             liveservice_exchange.publish(ActiveSupport::JSON.encode(issue))
           else
-            $log.error issue.errors.messages.join(', ') unless issue.save            
+            $log.error "Error while trying to create an issue"
+            $log.error issue.errors.messages
           end          
         end
         
