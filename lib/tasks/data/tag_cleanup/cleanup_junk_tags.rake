@@ -36,14 +36,15 @@ namespace :data do
         if !db_tag.destroy
           msg += " DELETING failed!"
         else
-          msg " DELETED!"
+          msg += " DELETED!"
           deleted.push(db_tag.name)
         end
-        
+
       else
-        matched.push(db_tag.name)
-        
+        matched.push(db_tag.name)        
       end      
+
+      puts msg if msg
     end
 
     puts "Summary:"
