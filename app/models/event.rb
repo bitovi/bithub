@@ -163,19 +163,10 @@ class Event < ActiveRecord::Base
     !self.thread.select{|e| e.awarded?}.blank?
   end
   
-  def self.select_with_upvotes(include_events = true)
-    #query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
-    #query_string = "events.*" if include_events
-    #select(query_string)
-    #
-    #
+  def self.select_with_upvotes
     Event.scoped
   end
   
-  def total_upvotes
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_upvotes])
-  end 
-
   def sum_upvotes
     (self.upvotes.pluck :value).reduce :+
   end
