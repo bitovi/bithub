@@ -15,7 +15,7 @@ class Upvote < ActiveRecord::Base
   after_destroy :decrease_score_in_associated_user
 
   def self.create_based_on_rule(actor, applies_to)
-    ActiveRecord::Base.trasaction do
+    ActiveRecord::Base.transaction do
       upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
       upvote.update_upvotes_in_associated_event!
       upvote.increase_score_in_associated_user!
@@ -24,7 +24,7 @@ class Upvote < ActiveRecord::Base
     upvote
   end
 
-  private
+  #private
 
   def bust_event_cache
     self.applies_to.touch
@@ -32,7 +32,7 @@ class Upvote < ActiveRecord::Base
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
 
-  def update_upvotes_in_associated_event
+  def update_upvotes_in_associated_event!
     self.applies_to.update_attribute(:total_upvotes, self.applies_to.upvotes.sum('value'))
   end
     
