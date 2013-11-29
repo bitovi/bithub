@@ -248,6 +248,28 @@ CREATE TABLE events (
 
 
 --
+-- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE upvotes (
+    id integer NOT NULL,
+    applies_to_id integer NOT NULL,
+    actor_id integer NOT NULL,
+    value integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: event_total_upvotes; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW event_total_upvotes AS
+    SELECT e.id AS event_id, sum(u.value) AS upvotes_sum FROM events e, upvotes u WHERE (e.id = u.applies_to_id) GROUP BY e.id;
+
+
+--
 -- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -527,20 +549,6 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 
 --
--- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE upvotes (
-    id integer NOT NULL,
-    applies_to_id integer NOT NULL,
-    actor_id integer NOT NULL,
-    value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
 -- Name: upvotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -583,6 +591,14 @@ CREATE TABLE users (
     last_sign_in_ip character varying(255),
     total_score integer DEFAULT 0
 );
+
+
+--
+-- Name: user_total_score; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW user_total_score AS
+    SELECT users.id AS user_id, ((((SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce" FROM events e, rules r WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + (SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce" FROM events e, upvotes u WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce" FROM events e, awards a WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce" FROM internals i WHERE (i.receiver_id = users.id))) AS score_sum FROM users;
 
 
 --
@@ -1159,5 +1175,7 @@ INSERT INTO schema_migrations (version) VALUES ('20131126101253');
 INSERT INTO schema_migrations (version) VALUES ('20131126102241');
 
 INSERT INTO schema_migrations (version) VALUES ('20131126103121');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126103556');
 
 INSERT INTO schema_migrations (version) VALUES ('20131127171009');
