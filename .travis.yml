@@ -2,7 +2,7 @@ language: ruby
 script:
   - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
-  - bundle exec rspec
+  - bundle exec rake test:unit
 notifications:
   recipients:
     - veljko@kset.org

@@ -1,5 +1,5 @@
 namespace :data do
-  desc "Cleanup tag duplicates"
+  desc "Cleans possible tag duplicates"
   task :cleanup_tag_duplicates => :environment do
 
     def alias_exists?(tags, name)

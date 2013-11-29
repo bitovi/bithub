@@ -4,4 +4,17 @@ class Internal < ActiveRecord::Base
   belongs_to :actor, :class_name => "User"
   belongs_to :receiver, :class_name => "User"
   validates_presence_of :receiver, :value
+
+  after_create :update_score_in_associated_user!
+  after_destroy :update_score_in_associated_user!
+
+  def increase_score_in_associated_user!
+    self.receiver.total_score += self.value
+    self.receiver.save!
+  end
+  
+  def decrease_score_in_associated_user!
+    self.receiver.total_score -= self.value
+    self.receiver.save!
+  end
 end
