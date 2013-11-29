@@ -5,4 +5,8 @@ class UserDecorator < Draper::Decorator
     source.roles.pluck(:name)
   end
 
+  def score
+    self.total_score
+  end
+  
 end

@@ -49,6 +49,11 @@ group :test, :development do
   gem 'pry-rails'
   gem 'better_errors'
   gem 'dotenv-rails'
+  gem 'yajl-ruby'
+  gem 'evented-spec'
+  gem 'octokit', '~> 2.0'
+  gem 'git'
+  gem 'database_cleaner'
 end
 
 group :development do

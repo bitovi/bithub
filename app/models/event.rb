@@ -20,7 +20,8 @@ class Event < ActiveRecord::Base
     :origin_date, :origin_ts,
     :thread_updated_date, :thread_updated_at,
     :created_at, :updated_at,
-    :props, :source_data, :image
+    :props, :source_data, :image,
+    :total_upvotes
 
   acts_as_taggable_on :tags
   mount_uploader :image, EventImageUploader
@@ -53,11 +54,9 @@ class Event < ActiveRecord::Base
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
   scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
 
-
-
-  after_create do
-    author.reward_if_eligible if author
-  end
+  after_create :reward_user_if_eligible
+  after_create :increase_score_in_author
+  after_destroy :decrease_score_in_author
     
   @processor ||= Processors::Github.new({feed: 'github'})
 
@@ -92,6 +91,13 @@ class Event < ActiveRecord::Base
     event = self.new
 
     event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+
+    if args[:tags]
+      args[:tags].push args[:category]
+    else
+      args[:tags] = [args[:category]]
+    end
+    
     attrs = event.to_props_and_clean(args)
     event.determine
     event.origin_and_thread_timestamps_to_now
@@ -156,22 +162,24 @@ class Event < ActiveRecord::Base
     !self.thread.select{|e| e.awarded?}.blank?
   end
   
-  def self.select_with_upvotes(include_events = true)
-    #query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
-    #query_string = "events.*" if include_events
-    #select(query_string)
-    #
-    #
-    Event.scoped
-  end
-  
-  def total_upvotes
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_upvotes])
-  end 
-
   def sum_upvotes
     (self.upvotes.pluck :value).reduce :+
   end
+
+  def increase_score_in_author
+    self.author.total_score += self.rule.authorship_value
+    self.author.save!
+  end
+  
+  def decrease_score_in_author
+    self.author.total_score -= self.rule.authorship_value
+    self.author.save!
+  end
+
+  def reward_user_if_eligible
+    self.author.reward_if_eligible if self.author
+  end
+
 
   def cache_key
     case
@@ -198,10 +206,8 @@ class Event < ActiveRecord::Base
   end
 
   def cached_tags
-    cached_tag_list.split(', ')
+    self.cached_tag_list.split(', ')
   end
-
-  
 
   private
   
