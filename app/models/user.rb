@@ -62,10 +62,6 @@ class User < ActiveRecord::Base
     Leaderboard.where(user_id: self.id).first.user_score || 0
   end
 
-  def self.select_with_score
-    User.scoped
-  end
-  
   def score
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
