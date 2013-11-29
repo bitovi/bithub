@@ -2,6 +2,10 @@ require 'digest/md5'
 
 class GithubProcessor
 
+  CONTENT_ATTRS = {
+    :issue => ['id', 'title', 'body', 'labels', 'state']
+  }
+  
   def initialize(config = {})
   end
 
@@ -24,6 +28,15 @@ class GithubProcessor
   def unique_attribute(original_hash)
     (original_hash[:id] || original_hash['id']).to_s
   end
+
+  def content_digest(original_hash)
+    if github_event? original_hash
+      nil
+    elsif github_issue? original_hash
+      seed = CONTENT_ATTRS[:issue].reduce("") {|memo, attr| memo += original_hash[attr].to_s}
+      Digest::MD5.hexdigest seed
+    end
+  end  
   
   def events_from_response(response)
     response
@@ -51,16 +64,20 @@ class GithubProcessor
     (str = original_hash['created_at']) ? str : (fail Processor::MissingTimestamp, "missing origin timestamps");
   end
 
-  def process_github_issue(issue_hash, partly_processed_hash)
-    composite_seed = issue_hash['id'].to_s +
-                     issue_hash['labels'].to_s +
-                     issue_hash['state'] +
-                     issue_hash['title'] +
-                     issue_hash['body']
+  def pluck_labels(original_hash)
+    if github_event? original_hash
+      labels = original_hash['payload']['issue']['labels']
+    elsif github_issue? original_hash
+      labels = original_hash['labels']
+    end
 
+    labels.map {|l| l['name'] }.join(',') if labels
+  end
+
+  def process_github_issue(issue_hash, partly_processed_hash)
     partly_processed_hash.deep_merge({
-      content_digest: Digest::MD5.hexdigest(composite_seed),
-      label_names: issue_hash['labels'].map{|l| l['name']}
+      content_digest: content_digest(issue_hash),
+      label_names: pluck_labels(issue_hash)
     })
   end
 
@@ -156,7 +173,7 @@ class GithubProcessor
       :body => event['payload']['comment']['body'],
       :url => event['payload']['issue']['html_url'],
       :meta => {
-        :labels => event['payload']['issue']['labels'].map { |l| l['name'] },
+        :labels => pluck_labels(event),
         :issue_id => event['payload']['issue']['id'],
         :issue_number => event['payload']['issue']['number'],
         :repo_name => event['repo']['name']
@@ -176,19 +193,13 @@ class GithubProcessor
       title = "Issue #{action}: #{t}"
     end
 
-    composite_seed = event['payload']['issue']['id'].to_s +
-      event['payload']['issue']['labels'].to_s +
-      event['payload']['issue']['state'] +
-      event['payload']['issue']['title'] +
-      event['payload']['issue']['body']
-
     return {
       :title => title,
       :body => event['payload']['issue']['body'],
       :url => event['payload']['issue']['html_url'],
       :meta => {
-        :content_digest => Digest::MD5.hexdigest(composite_seed),
-        :labels => event['payload']['issue']['labels'].map { |l| l['name'] },
+        :content_digest => content_digest(event),
+        :labels => pluck_labels(event),
         :issue_id => event['payload']['issue']['id'],
         :action => event['payload']['action'],
         :repo_name => event['repo']['name'],

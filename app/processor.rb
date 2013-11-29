@@ -35,6 +35,10 @@ class Processor
     @feed_processor.unique_attribute(event_hash)
   end
 
+  def content_digest(event_hash)
+    @feed_processor.content_digest(event_hash) if @feed_processor.respond_to? :content_digest
+  end
+
   def events_from_response(response_hash)
     @feed_processor.events_from_response(response_hash)
   end
