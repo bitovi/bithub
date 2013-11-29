@@ -11,6 +11,7 @@ class Upvote < ActiveRecord::Base
   after_create :bust_event_cache
 
   after_destroy :update_upvotes_in_associated_event
+  after_touch :update_upvotes_in_associated_event
   after_destroy :decrease_score_in_associated_user
 
   def self.create_based_on_rule(actor, applies_to)
