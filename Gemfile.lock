@@ -329,6 +329,7 @@ DEPENDENCIES
   redcarpet
   rmagick
   rolify
+  rspec-core
   rspec-rails
   sanitize
   twitter

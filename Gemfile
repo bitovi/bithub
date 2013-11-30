@@ -30,6 +30,7 @@ gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
 gem 'oj'
+gem 'rspec-core'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
@@ -41,6 +42,7 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 # Gems for ThirdPartyInformer
 gem 'twitter'
 gem 'github_api'
+gem 'octokit', '~> 2.0'
 
 group :test, :development do
   gem 'factory_girl_rails'
@@ -51,7 +53,6 @@ group :test, :development do
   gem 'dotenv-rails'
   gem 'yajl-ruby'
   gem 'evented-spec'
-  gem 'octokit', '~> 2.0'
   gem 'git'
   gem 'database_cleaner'
 end
