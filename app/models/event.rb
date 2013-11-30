@@ -167,13 +167,17 @@ class Event < ActiveRecord::Base
   end
 
   def increase_score_in_author
-    self.author.total_score += self.rule.authorship_value
-    self.author.save!
+    if self.author
+      self.author.total_score += self.rule.authorship_value
+      self.author.save!      
+    end
   end
   
   def decrease_score_in_author
-    self.author.total_score -= self.rule.authorship_value
-    self.author.save!
+    if self.author
+      self.author.total_score -= self.rule.authorship_value
+      self.author.save!      
+    end
   end
 
   def reward_user_if_eligible
