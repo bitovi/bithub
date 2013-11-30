@@ -30,6 +30,7 @@ gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
 gem 'oj'
+gem 'rspec-core'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
