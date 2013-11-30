@@ -38,16 +38,20 @@ class Upvote < ActiveRecord::Base
   end
     
   def increase_score_in_associated_user!
-    self.applies_to.author.total_score += self.value
-    self.applies_to.author.save!
+    if self.applies_to.author
+      self.applies_to.author.total_score += self.value
+      self.applies_to.author.save!
+    end
   end
 
   def decrease_score_in_associated_user!
-    self.applies_to.author.total_score -= self.value
-    self.applies_to.author.save!
+    if self.applies_to.author
+      self.applies_to.author.total_score -= self.value
+      self.applies_to.author.save!
+    end
   end
 
   def reward_associated_user_if_eligible
-    self.applies_to.author.reward_if_eligible if applies_to.author
+    self.applies_to.author.reward_if_eligible if self.applies_to.author
   end
 end
