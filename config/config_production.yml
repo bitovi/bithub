@@ -9,9 +9,24 @@
   :blog: 600
 
 :feeds:
+  :blog: 'http://www.bitovi.com/blog.rss'
+
+  :forums:
+    :general: 'https://forum.javascriptmvc.com/feed'
+    :terms:
+      :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
+
   :disqus:
+    :uri: 'http://disqus.com/api/3.0/posts/list.json'
+    :query:
+      :forum:
+        - 'jmvcs3'
+        - 'bitovi'
+      :related:
+        - 'thread'
+        - 'forum'
     :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
-  
+
   :twitter:
     :streams:
       :public_feed:
@@ -23,7 +38,7 @@
           :consumer_secret: 'dGZa1lO3Aan0tHLUUEtTSxg4Eg0UUcTudkpeU0elHo'
           :token: '123763453-qZStr9dgnjjHVjCHVFKCK0zd7pFSCjx3xC2UWRrf'
           :token_secret: 'hBSs3shmiGvouciTLbjP9FnDNr9S5DOH93gYVCzfY'
-  
+
       :user_feeds:
         :bitovi:
           :host: userstream.twitter.com
@@ -34,7 +49,7 @@
             :consumer_secret: 'aG8WTlXJxJZFkz8vOnVLxcEqHPSYARqr5AhbKfcJ4A'
             :token: '123763453-Iwec9rg9Je3iAuNHixSbajQrsyHV4DGxqfK3Z362'
             :token_secret: 'WjxCyMXYbe9Dxgiy7YLPqkSRsonJhKU1edvLJsPWAA'
-  
+
         :canjs:
           :host: userstream.twitter.com
           :method: GET
@@ -44,7 +59,7 @@
             :consumer_secret: 'VjKT5zRSurZtIYrS9db9kxl8WH0HlUUeEkSVoN8rok'
             :token: '523041627-VVNsxgQwb3IsslTpRuWia3E3KMmq46VlJsYJb5Y0'
             :token_secret: 'W0gdkMuSVvJMcR2Q6jJ6FEjlcXmmtybsyBK4pI'
-  
+
         :jquerypp:
           :host: userstream.twitter.com
           :method: GET
@@ -54,7 +69,7 @@
             :consumer_secret: 'xksGh6vK0FOzciz72tZmF7IdC3Owe2u8KyUQxbv9BY'
             :token: '589215872-r9IG7UA3jSmlX3AS73mKr7laTkpqtjyZUoswahHO'
             :token_secret: 'XE2h3Kvnvp8G7DAU9DDME4Vatakf5Kmpd0R6q4tL4Z0'
-  
+
         :javascriptmvc:
           :host: userstream.twitter.com
           :method: GET
@@ -64,7 +79,7 @@
             :consumer_secret: 'nd96gRSm5lBccKnz6e2NcfID4BozsPPDHWuJsNIp3AY'
             :token: '56956664-Vd6tMMECvDEFAGVm6yj5cJY12UGKebxGFJzyaVwbI'
             :token_secret: '5FiSwZ3MdCYrzDjOZAMVH2hylZtHVnNxDRyaqD8iE'
-  
+
         :funcunit:
           :host: userstream.twitter.com
           :method: GET
@@ -74,7 +89,7 @@
             :consumer_secret: 'MLCuiIl4bDNfEMdGvR7DcW7exJtGsIGeAKULXzAez4'
             :token: '171351462-XYaDcD3aZdLStLuBgWHSg22qHPudAVrVLS27SIDb'
             :token_secret: 'PDnZEP6I1OG26x5WKZ5iTSIBu8ESQIfj2ZvWMwrFTaU'
-  
+
         :stealjs:
           :host: userstream.twitter.com
           :method: GET
@@ -84,7 +99,7 @@
             :consumer_secret: 'G8lXrrYWS3B7E9aRSjyl5VFMaSNLVpAKfKkGb6wcTU'
             :token: '1114748720-Oy5Y61k7rsABQtIqZu42uFEfDaprvq4u41H8tZ8'
             :token_secret: 'IGJLpsd5uvRqxuHEVjnIEkY4CzWoot2OhjYdwWsUyk'
-  
+
   :github:
     :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
     :repos:
