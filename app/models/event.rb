@@ -210,7 +210,7 @@ class Event < ActiveRecord::Base
   end
 
   def cached_tags
-    self.cached_tag_list.split(', ')
+    self.cached_tag_list.split(',').map {|t| t.strip}
   end
 
   private
