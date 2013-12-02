@@ -8,7 +8,7 @@ class Sanitizer
 
   def sanitize(html)
     #decode(cleanup(encode(html)))
-    Sanitize.clean(text, CUSTOM_RULESET)    
+    Sanitize.clean(html, CUSTOM_RULESET)    
   end
   
   def encode(text)
