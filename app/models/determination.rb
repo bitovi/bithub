@@ -39,7 +39,7 @@ module Determination
   def determine_category
     self.props.symbolize_keys!
 
-    if (category = CategoryDeterminationRule.determine_category(self.tag_list))
+    if (category = CategoryDeterminationRule.determine_category(self.tag_list) || self.props[:category])
       category = category.snake_case
       self.tag_list.add(category)
       self.props[:category] = category
