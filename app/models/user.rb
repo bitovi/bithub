@@ -156,39 +156,31 @@ class User < ActiveRecord::Base
 
   def reassign_activities_to(whom)
     self.anteups.each do |a|
-      a.actor = whom
-      a.save!
+      a.update_attributes!(:actor => whom)
     end
     self.upvotes.each do |u|
-      u.actor = whom
-      u.save!
+      u.update_attributes!(:actor => whom)
     end
     self.awards.each do |a|
-      a.actor = whom
-      a.save!
+      a.update_attributes!(:actor => whom)
     end
-    self.internals.each do |a|
-      a.actor = whom
-      a.save!
+    self.internals.each do |i|
+      i.update_attributes!(:actor => whom)
     end
   end
 
   def reassign_actions_to(whom)
     self.anteups_as_actor.each do |a|
-      a.actor = whom
-      a.save!
+      a.update_attributes!(:actor => whom)
     end
     self.upvotes_as_actor.each do |u|
-      u.actor = whom
-      u.save!
+      u.update_attributes!(:actor => whom)
     end
-    self.anteups_as_actor.each do |a|
-      a.actor = whom
-      a.save!
+    self.awards_as_actor.each do |a|
+      a.update_attributes!(:actor => whom)
     end
     self.internals_as_actor.each do |i|
-      i.actor = whom
-      i.save!
+      i.update_attributes!(:actor => whom)
     end
   end
 
