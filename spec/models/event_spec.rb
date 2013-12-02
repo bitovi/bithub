@@ -22,24 +22,6 @@ describe Event do
       end
     end
 
-    describe ".select_with_upvotes" do
-      before :each do
-        @event = create(:event_determined, rule: @default_rule, title: "Event in event_spec, testing .select_with_upvotes.")
-        @user = create(:user, name: "Nikica")
-      end
-
-      it "gets upvotes as an Integer" do
-        ev = Event.where(id: @event.id).select_with_upvotes.first
-        expect(ev.total_upvotes).to be_an(Integer)
-      end
-
-      it "calculets upvotes" do
-        Upvote.create_based_on_rule(@user, @event)
-        ev = Event.where(id: @event.id).select_with_upvotes.first
-        expect(ev.total_upvotes).to eq(1)
-      end
-    end
-
     describe "#new_from_bithub" do
       before :all do
         @comment_category_determination_rule = create(:category_determination_rule, name: "comment", scorings: {comment: 1})
@@ -210,7 +192,7 @@ def updated_args
 end
 
 def only_tags(args)
-  ([args[:feed]] + args[:tags])
+  ([args[:category], args[:feed]] + args[:tags])
 end
 
 def push_event
