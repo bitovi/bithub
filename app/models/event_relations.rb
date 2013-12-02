@@ -18,16 +18,17 @@ class EventRelations
   end
 
   def awards_for
-
+    children_ids = children.map {|c| c.id}
+    
     if @awards_for.nil?
-      @awards_for = Award.where(applies_to_id: @ids)
+      @awards_for = Award.where(applies_to_id: [@ids, children_ids].compact)
     end
 
-    @awards_for || []
+    @awards_for.all || []
   end
 
   def awards_for_event(event)
-    awards_for.select{|award| award.applies_to_id == event.id}.first
+    awards_for.select{|award| award.applies_to_id == event.id}.first.andand(:value)
   end
 
   def upvotes_for
@@ -50,7 +51,13 @@ class EventRelations
   end
 
   def thread_awarded(event)
-    awards_for.select{|a| a.applies_to_id == event.id or a.applies_to_id == e.parent_id}.size > 0
+    if event.parent_id
+      children_ids = children.select {|c| c.parent_id == event.parent_id}.map {|c| c.id}            
+    else
+      children_ids = children_for_event(event).map {|c| c.id}      
+    end
+    
+    awards_for.select {|a| children_ids.include? a.applies_to_id}.size > 0
   end
 
 end
