@@ -7,9 +7,10 @@ class Sanitizer
   CUSTOM_RULESET[:elements] << "div"
 
   def sanitize(html)
-    decode(cleanup(encode(html)))
+    #decode(cleanup(encode(html)))
+    Sanitize.clean(text, CUSTOM_RULESET)    
   end
-
+  
   def encode(text)
     @htmlEscaper ||= HTMLEntities.new
     @htmlEscaper.encode(text)
