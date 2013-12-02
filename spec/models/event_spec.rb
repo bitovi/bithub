@@ -41,6 +41,13 @@ describe Event do
     end
 
     describe "#new_from_bithub" do
+      before :all do
+        @comment_category_determination_rule = create(:category_determination_rule, name: "comment", scorings: {comment: 1})
+      end
+      after :all do
+        @comment_category_determination_rule.destroy
+      end
+      
       let(:args) { original_args }
       let(:ev) { Event.new_from_bithub(args) }
 
@@ -203,7 +210,7 @@ def updated_args
 end
 
 def only_tags(args)
-  ([args[:category], args[:feed]] + args[:tags])
+  ([args[:feed]] + args[:tags])
 end
 
 def push_event

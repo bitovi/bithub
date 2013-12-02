@@ -1,13 +1,16 @@
+require 'digest/md5'
+
 class Api::EventsController < Api::ApiController
   before_filter :authenticate_user!, except: [:index, :show, :summary]
   
   respond_to :json
   helper_method :custom_cache_key
+  helper_method :list_cache_key
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_401
-		
+    
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
   CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
@@ -20,17 +23,18 @@ class Api::EventsController < Api::ApiController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = apply_upvote_calculation_to_scope(scope, params)
       scope = scope_applier.apply_order_to_scope(scope, params, CATEGORIES_ID_ORDER)
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
       })
+      @ev_relations = EventRelations.new(@events.map{|e| e.id })
       render :index
     end
   end
 
   def show
     @event = EventDecorator.decorate(Event.find(params[:id]))
+    @ev_relations = EventRelations.new(@event.id)
     render :show
   end
 
@@ -40,6 +44,7 @@ class Api::EventsController < Api::ApiController
     if e.save
       e.bump_thread
       @event = EventDecorator.decorate(e)
+      @ev_relations = EventRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
@@ -51,6 +56,7 @@ class Api::EventsController < Api::ApiController
     e = Event.find(params[:id])
     if e.update_from_bithub(params[:event])
       @event = EventDecorator.decorate(e)
+      @ev_relations = EventRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'update'), :status => 406
@@ -70,21 +76,16 @@ class Api::EventsController < Api::ApiController
   end
 
   private # SCOPE BUILDING
+
   def build_scope(muster_query, params)
-    scope = Event.scoped
-    scope = scope.includes(:children)
+    scope = Event.scoped_with_includes
     scope = scope.not_children if !counting?
-    scope = scope.no_irc if on_greatest?
+    scope = scope.no_irc_nor_digest if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
     scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
     scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
     scope = scope_applier.apply_regular_params_to_scope(scope, params)
     scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
-  end
-
-  def apply_upvote_calculation_to_scope(scope, params)
-    taggables = logic_analyzer.pluck_and_process_tag_based_params(params)
-    scope = scope.select_with_upvotes(taggables && !taggables[:any])
   end
 
   def logic_analyzer
@@ -103,12 +104,22 @@ class Api::EventsController < Api::ApiController
   end
 
   def custom_cache_key(event)
-    qs = CGI.parse(request.query_string)
+    qs  = CGI.parse(request.query_string)
+    key = [event.cache_key]
     if !qs.blank?
-      event.cache_key + '/' + fragment_cache_key(qs.sort)
-    else
-      event.cache_key
+      event_params = qs.reject{|k, v| !['exclude', 'include'].include?(k)}
+      key << fragment_cache_key(event_params.sort) unless event_params.blank?
     end
+    key.join('/')
+  end
+
+  def list_cache_key(events)
+    qs  = CGI.parse(request.query_string)
+    key = [events.map{|ev| ev.cache_key}.join("|")]
+    if !qs.blank?
+      key.unshift(fragment_cache_key(qs.sort))
+    end
+    Digest::MD5.hexdigest(key.join(':'))
   end
 
   def counting?

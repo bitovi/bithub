@@ -34,7 +34,7 @@ describe Determination do
     it "determines tags from props" do
       event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(foo bar)})
       event.determine_tags
-      event.tag_list.should =~ %w(code canjs github foo bar)
+      event.tag_list.should =~ %w(canjs github foo bar)
     end
     it "determines tags from event content" do
       event = build(:event, title: 'Foo canjs', body: 'Lorem ipsum javascriptmvc ...', props: {})

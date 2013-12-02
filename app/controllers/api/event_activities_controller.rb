@@ -31,7 +31,7 @@ class Api::EventActivitiesController < Api::ApiController
     event = Event.find(params[:event_id])
 
     begin
-      award = Award.create_with_strategy(current_user, event, {strategy: :double_parents_upvotes})
+      award = Award.create_based_on_strategy(current_user, event, strategy: :double_parents_upvotes)
       render :json => award
     rescue EventHasNoParentException => e
       render :json => { message: t('api.event_activities.errors.has_no_parent'), errors: award.errors.full_messages }, :status => 406

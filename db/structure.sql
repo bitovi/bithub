@@ -241,8 +241,69 @@ CREATE TABLE events (
     updated_at timestamp without time zone NOT NULL,
     image character varying(255),
     thread_updated_at timestamp without time zone,
-    thread_updated_date date
+    thread_updated_date date,
+    cached_tag_list character varying(255),
+    total_upvotes integer DEFAULT 0
 );
+
+
+--
+-- Name: taggings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE taggings (
+    id integer NOT NULL,
+    tag_id integer,
+    taggable_id integer,
+    taggable_type character varying(255),
+    tagger_id integer,
+    tagger_type character varying(255),
+    context character varying(128),
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    display_name character varying(255),
+    aliases character varying[],
+    priority integer
+);
+
+
+--
+-- Name: event_aggregated_tag_list; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW event_aggregated_tag_list AS
+    SELECT e.id AS event_id, string_agg((t.name)::text, ','::text) AS tag_list FROM events e, tags t, taggings e_t WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id)) GROUP BY e.id;
+
+
+--
+-- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE upvotes (
+    id integer NOT NULL,
+    applies_to_id integer NOT NULL,
+    actor_id integer NOT NULL,
+    value integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: event_total_upvotes; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW event_total_upvotes AS
+    SELECT e.id AS event_id, sum(u.value) AS upvotes_sum FROM events e, upvotes u WHERE (e.id = u.applies_to_id) GROUP BY e.id;
 
 
 --
@@ -458,22 +519,6 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: taggings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE taggings (
-    id integer NOT NULL,
-    tag_id integer,
-    taggable_id integer,
-    taggable_type character varying(255),
-    tagger_id integer,
-    tagger_type character varying(255),
-    context character varying(128),
-    created_at timestamp without time zone
-);
-
-
---
 -- Name: taggings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -493,19 +538,6 @@ ALTER SEQUENCE taggings_id_seq OWNED BY taggings.id;
 
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tags (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    display_name character varying(255),
-    aliases character varying[],
-    priority integer
-);
-
-
---
 -- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -522,20 +554,6 @@ CREATE SEQUENCE tags_id_seq
 --
 
 ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
-
-
---
--- Name: upvotes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE upvotes (
-    id integer NOT NULL,
-    applies_to_id integer NOT NULL,
-    actor_id integer NOT NULL,
-    value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
 
 
 --
@@ -578,8 +596,17 @@ CREATE TABLE users (
     current_sign_in_at timestamp without time zone,
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255)
+    last_sign_in_ip character varying(255),
+    total_score integer DEFAULT 0
 );
+
+
+--
+-- Name: user_total_score; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW user_total_score AS
+    SELECT users.id AS user_id, ((((SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce" FROM events e, rules r WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + (SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce" FROM events e, upvotes u WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce" FROM events e, awards a WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce" FROM internals i WHERE (i.receiver_id = users.id))) AS score_sum FROM users;
 
 
 --
@@ -845,6 +872,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_events_on_category_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_events_on_category_id ON events USING btree (category_id);
+
+
+--
 -- Name: index_events_on_props; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -891,6 +925,13 @@ CREATE INDEX index_taggings_on_tag_id ON taggings USING btree (tag_id);
 --
 
 CREATE INDEX index_taggings_on_taggable_id_and_taggable_type_and_context ON taggings USING btree (taggable_id, taggable_type, context);
+
+
+--
+-- Name: index_upvotes_on_applies_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_upvotes_on_applies_to_id ON upvotes USING btree (applies_to_id);
 
 
 --
@@ -1116,3 +1157,13 @@ INSERT INTO schema_migrations (version) VALUES ('20130924211203');
 INSERT INTO schema_migrations (version) VALUES ('20130926121052');
 
 INSERT INTO schema_migrations (version) VALUES ('20131018093050');
+
+INSERT INTO schema_migrations (version) VALUES ('20131121163548');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126091928');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126103121');
+
+INSERT INTO schema_migrations (version) VALUES ('20131126103556');
+
+INSERT INTO schema_migrations (version) VALUES ('20131127171009');

@@ -1,21 +1,20 @@
-json.cache! custom_cache_key(event) do
-	json.(event, :id, :title, :body, :origin_ts, :origin_date, :created_at, :updated_at, :thread_updated_at, :thread_updated_date, :url)
+json.cache! ("v1" + custom_cache_key(event)) do
+	json.(event, :id, :title, :body, :parent_id, :origin_ts, :origin_date, :created_at, :updated_at, :thread_updated_at, :thread_updated_date, :url)
 
 	json.category event.category.name
 	json.feed event.feed.name
-	json.tags event.tag_names
+	json.tags event.cached_tags
 
-	json.upvotes event.upvotes
+	json.upvotes @ev_relations.calculate_upvotes_for(event)
 
 	json.author event.author
-	json.props event.props
+	json.props event.props(@ev_relations.thread_awarded(event), @ev_relations.awards_for_event(event))
 
 	json.has_parent event.has_parent
 
-	json.actor event.actor
 	json.image_url event.image_url(params[:size])
-
-	json.children event.children do |c|
+	
+	json.children @ev_relations.children_for_event(event) do |c|
 		json.partial! "api/events/event", event: EventDecorator.decorate(c)
 	end
 
