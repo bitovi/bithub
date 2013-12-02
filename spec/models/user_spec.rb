@@ -85,50 +85,51 @@ describe User do
 
   describe "#reassign_events_to" do
     it "transfers events" do
-      user = create(:user, name: 'Veljko')
-      user2 = create(:user, name: 'Okjlev')
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
 
-      event = create(:github_issue, author: user2)
-      event2 = create(:twitter_follow_event, author: user2)
-      event3 = create(:twitter_tweet, author: user2)
+      e1 = create(:github_issue, author: v)
+      e2 = create(:twitter_follow_event, author: v)
+      e3 = create(:twitter_tweet, author: v)
 
-      user2.reload.reassign_events_to(user)
-      user.reload.events.should =~ [event, event2, event3]
-      user2.reload.events.count.should eq 0
+      v.reload.reassign_events_to(n)
+      v.reload.events.should =~ []
+      n.reload.events.should =~ [e1, e2, e3]
     end
   end
 
-  describe "#reassign_activities_as_actor_to" do
-    it "transfers upvotes" do
-      user = create(:user, name: 'Veljko')
-      user2 = create(:user, name: 'Okjlev')
+  describe "#reassign_activities_to" do
+    it "transfers upvotes/awards/internals/anteups in which the user is an point receiver" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
 
-      event = create(:twitter_tweet)
-      upvote = create(:upvote, applies_to: event, actor: user2)
+      issue = create(:github_issue, author: v)
+      issue_comment = create(:github_issue_comment, parent: issue, author: v)
 
-      user2.reload.reassign_activities_as_actor_to(user)
-      user.reload.upvotes_as_actor =~ [upvote]
-      user2.reload.upvotes_as_actor.count.should eq 0
+      upvote = create(:upvote, applies_to: issue, actor: n)
+      award = create(:award, applies_to: issue_comment, actor: n)
+
+      v.reload.reassign_activities_to(n)
+      n.reload.activities_raw =~ [upvote, issue]
+      v.reload.activities_raw =~ []
     end
+  end
 
-    it "transfers awards" do
-      user = create(:user, name: 'Veljko')
-      user2 = create(:user, name: 'Okjlev')
+  describe "#reassign_actions_to" do
+    it "transfers upvotes/awards/internals/anteups in which the user is an actor" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
 
-      event = create(:github_issue)
-      child_event = create(:github_issue_comment, parent: event)
-      award = create(:award, applies_to: child_event, actor: user2)
+      issue = create(:github_issue, author: v)
+      issue_comment = create(:github_issue_comment, parent: issue, author: v)
 
-      user2.reload.reassign_activities_as_actor_to(user)
-      user.reload.awards_as_actor =~ [award]
-      user2.reload.awards_as_actor.count.should eq 0
+      upvote = create(:upvote, applies_to: issue, actor: n)
+      award = create(:award, applies_to: issue_comment, actor: n)
+
+      n.reload.reassign_actions_to(v)
+      n.reload.actions.count.should eq 0
+      v.reload.actions.count.should eq 2
     end
-
-    #ident = create(:identity, uid: 123, provider: 'twitter', user: user)
-    #ident2 = create(:identity, uid: 456, provider: 'github', user: user2)
-
-    it "transfers rewards"    
-    it "transfers everything"
   end
 
   describe "#reward_if_eligible" do
