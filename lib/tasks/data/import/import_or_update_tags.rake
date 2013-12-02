@@ -1,21 +1,39 @@
 namespace :data do
-  desc "Create/update tags"
+  desc "Imports/updates tags from YAML file"
   task :import_or_update_tags => :environment do
 
     puts "---"
-    puts "Creating/updating tags"
+    puts "Importing/updating tags"
+    
     tags = YAML::load_file('config/tag_definitions.yml')
+    updated = []
+    imported = []
+    failed = []
+    
     tags.each do |tag_name, opts|
-      existing = Tag.find_by_name(tag_name)
-      if existing
-        puts "[UPDATED] Tag | name: #{tag_name}, display_name: #{opts['display_name']}, aliases: #{opts['aliases']}"
-        existing.update_attributes({:display_name => opts['display_name'], :aliases => opts['aliases']})
+      if existing = Tag.find_by_name(tag_name)
+
+        if existing.update_attributes({:display_name => opts['display_name'], :aliases => opts['aliases']})
+          updated.push(tag_name)
+        else
+          failed.push(tag_name)
+        end
+        
       else
-        puts "[CREATED] Tag | name: #{tag_name}: display_name: #{opts['display_name']}, aliases: #{opts['aliases']}"
-        Tag.create({:name => tag_name, :display_name => opts['display_name'], :aliases => opts['aliases']})
+        
+        if Tag.create({:name => tag_name, :display_name => opts['display_name'], :aliases => opts['aliases']})
+          imported.push(tag_name)
+        else
+          failed.push(tag_name)
+        end
+        
       end
     end
-    puts "Tags created/updated"
+    
+    puts "Summary:"
+    puts "  #{imported.length} tags imported"
+    puts "  #{updated.length} tags updated"
+    puts "  #{failed.length} tags failed: #{failed.to_s}"
 
   end
 end
