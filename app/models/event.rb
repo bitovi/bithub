@@ -92,12 +92,6 @@ class Event < ActiveRecord::Base
 
     event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
 
-    if args[:tags]
-      args[:tags].push args[:category]
-    else
-      args[:tags] = [args[:category]]
-    end
-    
     attrs = event.to_props_and_clean(args)
     event.determine
     event.origin_and_thread_timestamps_to_now
@@ -210,7 +204,7 @@ class Event < ActiveRecord::Base
   end
 
   def cached_tags
-    self.cached_tag_list.split(', ')
+    self.cached_tag_list.split(',').map {|t| t.strip}
   end
 
   private
