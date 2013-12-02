@@ -13,14 +13,15 @@ class User < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
+
   has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
   has_many :events, :foreign_key => "author_id", :class_name => "Event", :dependent => :nullify
-  has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
 
+  has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
   has_many :anteups, :through => :events
   has_many :upvotes, :through => :events
   has_many :awards, :through => :events
@@ -39,16 +40,20 @@ class User < ActiveRecord::Base
   def activities
     activities = []
 
-    self.events.joins(:rule).each do |e|
+    self.events.joins(:rule).all.each do |e|
       activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
-    self.awards.select(['awards.*', 'events.title']).each do |a|
+    self.awards.select(['awards.*', 'events.title']).all.each do |a|
       activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})  
     end
 
-    self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
+    self.upvotes.select(['upvotes.*', 'events.title']).all.each do |u|
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+    end
+    
+    self.anteups.select(['anteups.*', 'events.title']).all.each do |u|
+      activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
     self.internals.all.each do |i|
@@ -56,6 +61,24 @@ class User < ActiveRecord::Base
     end
 
     activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
+  end
+
+  def activities_raw
+    activities = []
+    activities += self.awards.all
+    activities += self.upvotes.all
+    activities += self.anteups.all
+    activities += self.internals.all
+    activities
+  end
+  
+  def actions
+    actions = []
+    actions += self.awards_as_actor.all
+    actions += self.upvotes_as_actor.all
+    actions += self.anteups_as_actor.all
+    actions += self.internals_as_actor.all
+    actions
   end
 
   def cached_score
@@ -109,7 +132,63 @@ class User < ActiveRecord::Base
     unless self.identities.include?(identity)
       self.identities << identity 
       self.save!
-      other_user.destroy if other_user
+      if other_user
+        other_user.reassign_all_to(self)
+        other_user.destroy
+      end
+    end
+  end
+
+  def reassign_all_to(whom)
+    ActiveRecord::Base.transaction do
+      self.reassign_events_to(whom)
+      self.reassign_activities_to(whom)
+      self.reassign_actions_to(whom)
+    end
+  end
+
+  def reassign_events_to(whom)
+    self.events.each do |e|
+      e.author = whom
+      e.save!
+    end
+  end
+
+  def reassign_activities_to(whom)
+    self.anteups.each do |a|
+      a.actor = whom
+      a.save!
+    end
+    self.upvotes.each do |u|
+      u.actor = whom
+      u.save!
+    end
+    self.awards.each do |a|
+      a.actor = whom
+      a.save!
+    end
+    self.internals.each do |a|
+      a.actor = whom
+      a.save!
+    end
+  end
+
+  def reassign_actions_to(whom)
+    self.anteups_as_actor.each do |a|
+      a.actor = whom
+      a.save!
+    end
+    self.upvotes_as_actor.each do |u|
+      u.actor = whom
+      u.save!
+    end
+    self.anteups_as_actor.each do |a|
+      a.actor = whom
+      a.save!
+    end
+    self.internals_as_actor.each do |i|
+      i.actor = whom
+      i.save!
     end
   end
 
