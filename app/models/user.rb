@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city,
     :email, :name, :postal, :email,
     :remember_me, :state, :country,
-    :events
+    :events, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
@@ -62,33 +62,6 @@ class User < ActiveRecord::Base
     Leaderboard.where(user_id: self.id).first.user_score || 0
   end
 
-  def self.select_with_score(include_users=true)
-    query_string = <<-SQL
-    (
-      (select coalesce(sum(rules.authorship_value),0) from events, rules
-      where events.rule_id = rules.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(upvotes.value),0) from events, upvotes
-      where upvotes.applies_to_id = events.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(awards.value),0) from events, awards
-      where awards.applies_to_id = events.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(internals.value),0) from internals
-      where internals.receiver_id = users.id)
-      -
-      (select coalesce(sum(anteups.value),0) from anteups
-      where anteups.actor_id = users.id
-      and anteups.fullfilled = true)
-    )::int as total_score
-    SQL
-    query_string = "users.*, " + query_string if include_users
-    select(query_string)
-  end
-  
   def score
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
@@ -193,12 +166,6 @@ class User < ActiveRecord::Base
       save
     end
   end
-
-  # For casting the virtual column
-  def total_score
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
-  end 
-
 
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
