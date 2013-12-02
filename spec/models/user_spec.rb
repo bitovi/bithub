@@ -116,7 +116,20 @@ describe User do
   end
 
   describe "#reassign_actions_to" do
-    it "transfers upvotes/awards/internals/anteups in which the user is an actor"    
+    it "transfers upvotes/awards/internals/anteups in which the user is an actor" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      issue = create(:github_issue, author: v)
+      issue_comment = create(:github_issue_comment, parent: issue, author: v)
+
+      upvote = create(:upvote, applies_to: issue, actor: n)
+      award = create(:award, applies_to: issue_comment, actor: n)
+
+      n.reload.reassign_actions_to(v)
+      n.reload.actions.count.should eq 0
+      v.reload.actions.count.should eq 2
+    end
   end
 
   describe "#reward_if_eligible" do
