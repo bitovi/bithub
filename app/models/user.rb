@@ -62,13 +62,23 @@ class User < ActiveRecord::Base
 
     activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
+
+  def activities_raw
+    activities = []
+    activities += self.awards.all
+    activities += self.upvotes.all
+    activities += self.anteups.all
+    activities += self.internals.all
+    activities
+  end
   
   def actions
     actions = []
-    self.awards_as_actor.all.each {|a| actions << a}
-    self.upvotes_as_actor.all.each {|u| actions << u}
-    self.anteups_as_actor.all.each {|a| actions << a}
-    self.internals_as_actor.all.each {|i| actions << i}
+    actions += self.awards_as_actor.all
+    actions += self.upvotes_as_actor.all
+    actions += self.anteups_as_actor.all
+    actions += self.internals_as_actor.all
+    actions
   end
 
   def cached_score
