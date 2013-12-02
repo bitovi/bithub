@@ -40,14 +40,6 @@ describe User do
     end
   end
 
-  describe ".select_with_score" do
-    it "should calculate score for each user by using built in PG fns" do
-      user = create(:user)
-      u = User.where(id: user.id).select_with_score.first
-      expect(u.total_score).to be_a(Integer)
-    end
-  end
-
   describe "#update_blank_oauth_attrs" do
     it "should update the user's attrs if they're blank" do
       user = create(:user, name: "Nikica Jokic", email: nil)
