@@ -8,7 +8,7 @@ module Tagger
     def initialize(tags, opts={})
       @count = 0
       @tags = tags || {}
-      @levenshtein_treshold = opts[:levenshtein_treshold] || 0
+      @levenshtein_treshold = opts[:levenshtein_treshold] || 1
       @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
     end
 
