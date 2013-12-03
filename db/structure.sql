@@ -272,7 +272,7 @@ CREATE TABLE tags (
     name character varying(255) NOT NULL,
     display_name character varying(255),
     aliases character varying[],
-    priority integer
+    props hstore
 );
 
 
@@ -1167,3 +1167,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131126103121');
 INSERT INTO schema_migrations (version) VALUES ('20131126103556');
 
 INSERT INTO schema_migrations (version) VALUES ('20131127171009');
+
+INSERT INTO schema_migrations (version) VALUES ('20131203191031');

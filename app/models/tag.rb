@@ -1,7 +1,9 @@
 class Tag < ActsAsTaggableOn::Tag 
   @tag_groups = YAML::load_file(Rails.root.join('config', 'tag_groups.yml'))
 
-  attr_accessible :name, :display_name, :aliases, :priority
+  serialize :props, ActiveRecord::Coders::Hstore
+  
+  attr_accessible :name, :display_name, :aliases, :props
   validates_presence_of :name
   validates_uniqueness_of :name
 
