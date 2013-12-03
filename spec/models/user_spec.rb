@@ -127,8 +127,8 @@ describe User do
       award = create(:award, applies_to: issue_comment, actor: n)
 
       n.reload.reassign_actions_to(v)
-      n.reload.actions.count.should eq 0
-      v.reload.actions.count.should eq 2
+      v.reload.actions.should =~ [upvote, award] 
+      n.reload.actions.should =~ []
     end
   end
 
