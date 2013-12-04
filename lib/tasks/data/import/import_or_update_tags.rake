@@ -13,15 +13,26 @@ namespace :data do
     tags.each do |tag_name, opts|
       if existing = Tag.find_by_name(tag_name)
 
-        if existing.update_attributes({:display_name => opts['display_name'], :aliases => opts['aliases']})
-          updated.push(tag_name)
-        else
-          failed.push(tag_name)
+        if existing
+          existing.display_name = opts['display_name']
+          existing.aliases = opts['aliases']
+          existing.group_list = opts['group_list']
+
+          if existing.save
+            updated.push(tag_name)
+          else
+            failed.push(tag_name)
+          end
         end
         
       else
-        
-        if Tag.create({:name => tag_name, :display_name => opts['display_name'], :aliases => opts['aliases']})
+        t = Tag.new
+        t.name = tag_name
+        t.display_name = opts['display_name']
+        t.aliases = opts['aliases']
+        t.group_list = opts['group_list']
+
+        if t.save
           imported.push(tag_name)
         else
           failed.push(tag_name)

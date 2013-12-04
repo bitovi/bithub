@@ -14,7 +14,6 @@ describe AccountManager do
   end
 
   describe ".find_or_create_user" do
-
     context "when user is already logged_in (current_user exists)" do
 
       it "should assign the found identity to the current_user if it isn't already" do

@@ -10,8 +10,8 @@ class Api::TagsController < Api::ApiController
   rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
-    if (params[:type]) && Tag.types.include?(params[:type])
-      @tags = Tag.send(params[:type].pluralize).all      
+    if params[:type]
+      @tags = Tag.tagged_with(params[:type]).all      
     else
       @tags = build_scope(request.env['muster.query']).all
     end
