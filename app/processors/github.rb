@@ -156,7 +156,7 @@ class GithubProcessor
 
   def gollum_event (event)
     issue_hash = {
-      :title => "gollum event",
+      :title => "wiki updated on #{event['repo']['name']}",
       :meta => { :pages => [] }
     }
 
