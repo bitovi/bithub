@@ -1,8 +1,8 @@
 namespace :data do
-  task :add_github_type_to_props_and_redetermine_tags_and_category => :environment do
+  task :add_github_type_to_props => :environment do
 
     puts "---"
-    puts "Setting props[type] and redetermine tags and category for Github events"
+    puts "Setting props[type] on Github events"
 
     events = Event.tagged_with('github').where("(props -> 'type') is null")
     summary = {
@@ -11,18 +11,16 @@ namespace :data do
     failed = []
  
     events.each do |e|      
-      type = e.source_data['type'].snake_case
 
-      if type
+      if type = e.source_data['type'].snake_case
         e.props['type'] = type
-        e.determine_tags
-        e.determine_category
+
         if e.save
           summary[type] = summary[type] ? summary[type]+1 : 1
         else
-          puts "Updating event with id #{e.id} failed!"
           failed.push e.id
         end
+        
       else
         summary['not_matched'] += 1
       end
