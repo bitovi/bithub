@@ -59,7 +59,6 @@ jquerypp:
 documentjs:
     display_name: "DocumentJS"
     group_list: "projects, req_favourites, req_friends"
-    group_list: "projects, relevant"
     aliases:
         - "documentjs"
         - "document_js"
@@ -79,7 +78,7 @@ testee:
 
 twitter:
     display_name: "Twitter"
-    group_list: "feeds"
+    group_list: "feeds, categories"
 
 github:
     display_name: "Github"
