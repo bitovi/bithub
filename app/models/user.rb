@@ -37,7 +37,6 @@ class User < ActiveRecord::Base
   
   after_update :award_points_for_completing_profile
   after_create :update_total_score
-  after_update :update_total_score
 
   def activities
     activities = []
