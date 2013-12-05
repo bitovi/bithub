@@ -250,8 +250,8 @@ class GithubProcessor
 
   def pull_request_review_comment_event (event)
     return {
-      :title => "commented on pull request review #{event['payload']['issue']['number']}",
-      :url => event['payload']['comment']['_links']['html'],
+      :title => "commented on pull request: #{event['payload']['comment']['path']}",
+      :url => event['payload']['comment']['_links']['html']['href'],
       :body => event['payload']['comment']['body']
     }
   end
