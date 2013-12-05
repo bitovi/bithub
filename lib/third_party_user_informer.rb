@@ -26,8 +26,7 @@ class ThirdPartyUserInformer
   
   def followed_acct_ids(uid)
     fail NotUIDException unless uid.is_a? Integer
-    res = Twitter.friend_ids(uid)
-    res.attrs[:ids] if res.attrs && res.attrs[:ids]
+    Twitter.friend_ids(uid)
   end
   
   def watched_repo_names(username)
