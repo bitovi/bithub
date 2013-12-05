@@ -41,6 +41,9 @@ class EventDecorator < Draper::Decorator
   end
 
   # deprecated: use 'author' or 'props.origin_author_*' attrs
+  def actor
+    (author && author[:name]) ? author[:name] : source.props['origin_author_name']
+  end
 
   def has_parent
     !!parent
