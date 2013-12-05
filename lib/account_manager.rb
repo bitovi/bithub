@@ -108,10 +108,10 @@ class AccountManager
       e = Event.new({
         title: "followed @#{screen_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,
@@ -138,10 +138,10 @@ class AccountManager
       e = Event.new({
         title: "started watching #{repo_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,
