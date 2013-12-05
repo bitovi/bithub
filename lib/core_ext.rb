@@ -12,6 +12,10 @@ class Hash
   def deep_merge(other_hash)
     dup.deep_merge!(other_hash)
   end
+
+  def project(keys)
+    keys.map{|k| self[k]}
+  end
 end
 
 class String
