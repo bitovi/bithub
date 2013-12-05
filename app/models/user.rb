@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
   
   after_update :award_points_for_completing_profile
+  after_create :update_total_score
+  after_update :update_total_score
 
   def activities
     activities = []
@@ -87,6 +89,10 @@ class User < ActiveRecord::Base
 
   def score
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
+  end
+
+  def update_total_score
+    self.update_attribute(:total_score, self.score)
   end
 
   def authored_events_total
