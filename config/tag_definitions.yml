@@ -56,6 +56,8 @@ documentjs:
 
 testee:
   display_name: "Testee.js"
+  props:
+    levenshtein_treshold: 0
   aliases:
     - "testee"
     - "testeejs"
