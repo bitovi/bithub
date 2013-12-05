@@ -9,6 +9,7 @@ module Preprocessing
     self.props = {
       category: args.delete(:category),
       project: args.delete(:project),
+      type: args.delete(:type),
       feed: args.delete(:feed),
       tags: args.delete(:tags),
       origin_author_id: args.delete(:origin_author_id),
