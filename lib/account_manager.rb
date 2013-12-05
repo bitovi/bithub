@@ -2,8 +2,15 @@ class AccountManager
   attr_reader :user_api, :current_user, :identity
     
   RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
-  RELEVANT_FRIENDS = YAML.load_file('config/tag_definitions.yml').keys << 'bitovi' << 'bitovi_bithub'
-
+  
+  RELEVANT_TWITTER_ACCOUNTS = {
+    123763453 => 'bitovi',
+    523041627 => 'canjs',
+    589215872 => 'jquerypp',
+    171351462 => 'funcunit',
+    56956664 => 'javascriptmvc',
+  }
+  
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
     @current_user = current_user
@@ -76,21 +83,20 @@ class AccountManager
   end
 
   def missing_friends
-    fs = user_api.followed_accts(identity.uid)
+    fs = user_api.followed_acct_ids(identity.uid)
 
-    remote_friend_names = fs.map{|r| (r[:screen_name] || r['screen_name'])} & RELEVANT_FRIENDS
-    present_friend_names = Event.tagged_with(%w(twitter follow_event))
-                                .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| e.source_data.andand['target'].andand['screen_name'] || e.props.andand['target']}
-                                .uniq
+    remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}      
+    present_friend_ids = Event.tagged_with(%w(twitter follow_event))
+                              .event_by_origin_uid(identity.uid.to_s)
+                              .map{|e| e.source_data.andand['target'].andand['id']}
+                              .uniq
 
-    if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
-      fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
+    if (missing_friends_ids = (remote_friend_ids - present_friend_ids)).length > 0
+      missing_friends_ids.map {|id| {:id_str => id.to_s, :screen_name => RELEVANT_TWITTER_ACCOUNTS[id]}}
     else
       []
     end
   end
-
 
   def create_internal_follows!(accts)
     accts.map do |a|
@@ -102,10 +108,10 @@ class AccountManager
       e = Event.new({
         title: "followed @#{screen_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,
@@ -132,10 +138,10 @@ class AccountManager
       e = Event.new({
         title: "started watching #{repo_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,

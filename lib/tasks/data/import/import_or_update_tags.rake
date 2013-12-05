@@ -9,19 +9,25 @@ namespace :data do
     updated = []
     imported = []
     failed = []
-    
-    tags.each do |tag_name, opts|
-      if existing = Tag.find_by_name(tag_name)
 
-        if existing.update_attributes({:display_name => opts['display_name'], :aliases => opts['aliases']})
+    tags.each do |tag_name, opts|
+      attrs = {
+        display_name: opts['display_name'],
+        aliases: opts['aliases'],
+        props: opts['props']
+      }
+
+      puts attrs.to_yaml if opts['props']
+      
+      if existing = Tag.find_by_name(tag_name)
+        if existing.update_attributes(attrs)
           updated.push(tag_name)
         else
           failed.push(tag_name)
-        end
-        
+        end        
       else
         
-        if Tag.create({:name => tag_name, :display_name => opts['display_name'], :aliases => opts['aliases']})
+        if Tag.create({:name => tag_name}.merge(attrs))
           imported.push(tag_name)
         else
           failed.push(tag_name)
