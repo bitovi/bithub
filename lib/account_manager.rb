@@ -30,7 +30,7 @@ class AccountManager
         user = create_and_collect(name, email)
       end
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error "========> #{e.message}"
+      Rails.logger.error e.message
     end
     user
   end
@@ -40,8 +40,16 @@ class AccountManager
     ActiveRecord::Base.transaction do
       identity.user.award_points_for_joining(identity.provider)
       identity.save!
-      create_missing_repos_and_watches!
     end
+
+    begin
+      create_missing_repos_and_watches!
+    rescue Twitter::Error => e
+      Rails.logger.error e.message
+    rescue Github::Error => e
+      Rails.logger.error e.message
+    end
+
     identity.reload.user.collect_authored_events.reward_if_eligible
     user
   end
@@ -51,9 +59,17 @@ class AccountManager
       current_user.update_blank_oauth_attrs!({name: name, email: email})
       current_user.award_points_for_joining(identity.provider)
       current_user.merge_identities!(identity)
-      create_missing_repos_and_watches!
       current_user.reload.collect_authored_events.reward_if_eligible
     end
+
+    begin
+      create_missing_repos_and_watches!
+    rescue Twitter::Error => e
+      Rails.logger.error e.message
+    rescue Github::Error => e
+      Rails.logger.error e.message
+    end
+
     current_user
   end
 
