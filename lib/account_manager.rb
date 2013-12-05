@@ -4,11 +4,11 @@ class AccountManager
   RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
   
   RELEVANT_TWITTER_ACCOUNTS = {
-    523041627 => 'canjs',
     123763453 => 'bitovi',
+    523041627 => 'canjs',
     589215872 => 'jquerypp',
+    171351462 => 'funcunit',
     56956664 => 'javascriptmvc',
-    171351462 => 'funcunit'
   }
   
   def initialize(current_user = nil)
@@ -84,16 +84,15 @@ class AccountManager
 
   def missing_friends
     fs = user_api.followed_acct_ids(identity.uid)
-    fs_ids = fs.ids
 
-    remote_friend_ids = fs_ids.select{|id| RELEVANT_TWITTER_ACCOUNTS.keys.include?(id)}      
+    remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}      
     present_friend_ids = Event.tagged_with(%w(twitter follow_event))
                               .event_by_origin_uid(identity.uid.to_s)
                               .map{|e| e.source_data.andand['target'].andand['id']}
                               .uniq
 
     if (missing_friends_ids = (remote_friend_ids - present_friend_ids)).length > 0
-      missing_friends_ids.map {|id| {:id_str => id, :screen_name => RELEVANT_TWITTER_ACCOUNTS[id]}}
+      missing_friends_ids.map {|id| {:id_str => id.to_s, :screen_name => RELEVANT_TWITTER_ACCOUNTS[id]}}
     else
       []
     end
