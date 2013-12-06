@@ -17,8 +17,6 @@ namespace :data do
         props: opts['props']
       }
 
-      puts attrs.to_yaml if opts['props']
-      
       if existing = Tag.find_by_name(tag_name)
         if existing.update_attributes(attrs)
           updated.push(tag_name)
