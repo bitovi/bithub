@@ -16,7 +16,7 @@ describe User do
 
     it "should calculate total authorship points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from authorship")
-      expect(@author.authored_events_total).to eq(33)
+      expect(@author.reload.authored_events_total).to eq(33)
     end
 
     it "should calculate total upvote points" do
@@ -36,7 +36,7 @@ describe User do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing total #score")
       Upvote.create_based_on_rule(@actor, event)
       Award.create_based_on_strategy(@actor, event, strategy: :double_the_upvotes)
-      expect(@author.score).to eq(11+11*2+33)
+      expect(@author.reload.score).to eq(11+11*2+33)
     end
   end
 
@@ -231,7 +231,7 @@ describe User do
 
       events = [e1, e2, e3]
       user.collect_authored_events
-      user.events.should =~ events
+      user.reload.events.should =~ events
     end
   end
 end
