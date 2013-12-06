@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -219,6 +220,45 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
+-- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE delayed_jobs (
+    id integer NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    attempts integer DEFAULT 0 NOT NULL,
+    handler text NOT NULL,
+    last_error text,
+    run_at timestamp without time zone,
+    locked_at timestamp without time zone,
+    failed_at timestamp without time zone,
+    locked_by character varying(255),
+    queue character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE delayed_jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
+
+
+--
 -- Name: events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -281,7 +321,13 @@ CREATE TABLE tags (
 --
 
 CREATE VIEW event_aggregated_tag_list AS
-    SELECT e.id AS event_id, string_agg((t.name)::text, ','::text) AS tag_list FROM events e, tags t, taggings e_t WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id)) GROUP BY e.id;
+ SELECT e.id AS event_id, 
+    string_agg((t.name)::text, ','::text) AS tag_list
+   FROM events e, 
+    tags t, 
+    taggings e_t
+  WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
+  GROUP BY e.id;
 
 
 --
@@ -303,7 +349,12 @@ CREATE TABLE upvotes (
 --
 
 CREATE VIEW event_total_upvotes AS
-    SELECT e.id AS event_id, sum(u.value) AS upvotes_sum FROM events e, upvotes u WHERE (e.id = u.applies_to_id) GROUP BY e.id;
+ SELECT e.id AS event_id, 
+    sum(u.value) AS upvotes_sum
+   FROM events e, 
+    upvotes u
+  WHERE (e.id = u.applies_to_id)
+  GROUP BY e.id;
 
 
 --
@@ -606,7 +657,20 @@ CREATE TABLE users (
 --
 
 CREATE VIEW user_total_score AS
-    SELECT users.id AS user_id, ((((SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce" FROM events e, rules r WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + (SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce" FROM events e, upvotes u WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce" FROM events e, awards a WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + (SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce" FROM internals i WHERE (i.receiver_id = users.id))) AS score_sum FROM users;
+ SELECT users.id AS user_id, 
+    (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
+           FROM events e, 
+            rules r
+          WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+           FROM events e, 
+            upvotes u
+          WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+           FROM events e, 
+            awards a
+          WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
+           FROM internals i
+          WHERE (i.receiver_id = users.id))) AS score_sum
+   FROM users;
 
 
 --
@@ -671,6 +735,13 @@ ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
 
 
 --
@@ -784,6 +855,14 @@ ALTER TABLE ONLY countries
 
 
 --
+-- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY delayed_jobs
+    ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -869,6 +948,13 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
 
 
 --
@@ -1169,3 +1255,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131126103556');
 INSERT INTO schema_migrations (version) VALUES ('20131127171009');
 
 INSERT INTO schema_migrations (version) VALUES ('20131203191031');
+
+INSERT INTO schema_migrations (version) VALUES ('20131206133159');
