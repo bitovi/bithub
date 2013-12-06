@@ -41,7 +41,7 @@ module Tagger
           leven_th = tag[:levenshtein_treshold] || @levenshtein_treshold
 
           aliases.each do |tag_alias|
-            if Levenshtein.distance(word, tag_alias) <= leven_th
+            if Levenshtein.distance(word, tag_alias) <= leven_th.to_i
               (result << tag[:name]) unless result.include?(tag[:name])
               break
             end
