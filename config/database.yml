@@ -1,5 +1,6 @@
 development:
   adapter: postgresql
+  host: localhost
   encoding: utf8
   database: bithub_development
   username: bithub
@@ -7,6 +8,7 @@ development:
 
 test:
   adapter: postgresql
+  host: localhost
   encoding: unicode
   database: bithub_test
   username: bithub

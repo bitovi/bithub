@@ -1,4 +1,4 @@
-class CreatePaginationView < ActiveRecord::Migration
+class CreatePaginationMatview < ActiveRecord::Migration
   def up
     execute <<-SQL
       create materialized view pagination
