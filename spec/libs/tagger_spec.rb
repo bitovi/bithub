@@ -15,7 +15,7 @@ describe Tagger do
 
   before :all do
     tag_defs.each do |tag|
-      t = Tag.new {name: tag[:name], aliases: tag[:aliases], props: {}}
+      t = Tag.new({name: tag[:name], aliases: tag[:aliases], props: {}})
       t.props['levenshtein_treshold'] = tag[:props][:levenshtein_treshold] if tag[:props][:levenshtein_treshold]      
       t.group_list = %w(projects)
       t.save

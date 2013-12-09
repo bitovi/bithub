@@ -8,7 +8,7 @@ require "codeclimate-test-reporter"
 require 'database_cleaner'
 
 CodeClimate::TestReporter.start
-DatabaseCleaner.strategy = :truncation, {:except => %w[tags taggings]}
+DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings event_aggregated_tag_list user_total_score event_total_upvotes)}
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
