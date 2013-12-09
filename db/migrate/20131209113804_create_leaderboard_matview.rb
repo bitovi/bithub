@@ -1,4 +1,4 @@
-class CreateLeaderboardView < ActiveRecord::Migration
+class CreateLeaderboardMatview < ActiveRecord::Migration
   def up
     execute <<-SQL
       create materialized view leaderboard
