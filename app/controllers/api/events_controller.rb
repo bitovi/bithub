@@ -1,7 +1,7 @@
 require 'digest/md5'
 
 class Api::EventsController < Api::ApiController
-  before_filter :authenticate_user!, except: [:index, :show, :summary]
+  before_filter :authenticate_user!, except: [:index, :show, :summary, :pagination]
   
   respond_to :json
   helper_method :custom_cache_key
@@ -73,6 +73,11 @@ class Api::EventsController < Api::ApiController
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
     @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_sumamry(cat, params)]}]
     render :summary
+  end
+
+  def pagination
+    summary = Pagination.grouped
+    render :json => summary
   end
 
   private # SCOPE BUILDING

@@ -1,4 +1,7 @@
 class Leaderboard < ActiveRecord::Base
   self.table_name = :leaderboard
-  attr_accessible :score, :user_id, :user_name
+
+  def self.refresh
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW \"#{self.table_name}\";")
+  end
 end
