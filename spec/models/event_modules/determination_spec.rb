@@ -33,13 +33,18 @@ describe Determination do
   describe "#determine_tags" do
 
     before :all do
-      Tag.create({:name => 'foo'})
-      Tag.create({:name => 'bar'})
-      Tag.create({:name => 'github'})
-      Tag.create({:name => 'canjs', :aliases => ['can_js']})
-      Tag.create({:name => 'javascriptmvc'})
-      Tag.create({:name => 'feature', :aliases => ['enhancement', 'feature']})      
-    end    
+      @tags = [Tag.create({:name => 'foo'}),
+               Tag.create({:name => 'bar'}),
+               Tag.create({:name => 'github'}),
+               Tag.create({:name => 'canjs', :aliases => ['can_js']}),
+               Tag.create({:name => 'javascriptmvc'}),
+               Tag.create({:name => 'feature', :aliases => ['enhancement', 'feature']}),
+              ]
+    end
+
+    after :all do
+      @tags.each {|t| t.destroy}
+    end
     
     it "determines tags from props" do
       event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(foo bar)})
