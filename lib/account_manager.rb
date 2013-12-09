@@ -1,7 +1,9 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
+  RELEVANT_REPO_NAMES = Tag.tagged_with('req_favourites').map{|t| "bitovi/#{t.name}"}
+  RELEVANT_REPO_NAMES += %(steal testee.js)
+  RELEVANT_REPO_NAMES << 'bithub-test/testy' if (Rails.env == 'test' || Rails.env == 'testing')
   
   RELEVANT_TWITTER_ACCOUNTS = {
     123763453 => 'bitovi',
@@ -10,7 +12,9 @@ class AccountManager
     171351462 => 'funcunit',
     56956664 => 'javascriptmvc',
   }
-  
+
+  RELEVANT_FRIENDS[666] = 'bitovi_bithub' if (Rails.env == 'test' || Rails.env == 'testing')
+
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
     @current_user = current_user

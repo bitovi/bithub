@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Tagger do
-  let(:tags) do
+  let(:tag_defs) do
     [
       { name: 'canjs', aliases: ['can_js'] },
       { name: 'jquerypp', aliases: ['jquery_pp', 'jquery++'] },
@@ -9,8 +9,17 @@ describe Tagger do
       { name: 'funcunit' },
       { name: 'documentjs', aliases: ['document_js'] },
       { name: 'javascriptmvc', aliases: ['jmvc'] },
-      { name: 'testee', aliases: ['testee_js'], levenshtein_treshold: 0 },
-    ] 
+      { name: 'testee', aliases: ['testee_js'], props: {levenshtein_treshold: 0} },
+    ]
+  end
+
+  before :all do
+    tag_defs.each do |tag|
+      t = Tag.new {name: tag[:name], aliases: tag[:aliases], props: {}}
+      t.props['levenshtein_treshold'] = tag[:props][:levenshtein_treshold] if tag[:props][:levenshtein_treshold]      
+      t.group_list = %w(projects)
+      t.save
+    end
   end
   
   let(:tagger_config) do
@@ -18,7 +27,7 @@ describe Tagger do
   end
 
   subject(:tagger) do 
-    Tagger::Engine.new(tags, tagger_config)
+    Tagger::Engine.new(Tag.projects, tagger_config)
   end
     
   describe "#textualize" do 
