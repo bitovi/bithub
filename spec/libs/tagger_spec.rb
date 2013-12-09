@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe Tagger do
-  let(:tags) do
-    {
+  before :all do
+
+    test_tags = {
       'canjs' => ['canjs','can_js'],
       'jquerypp' => ['jquerypp', 'jquery_pp'],
       'stealjs' => ['stealjs', 'steal_js', 'steal'],
@@ -10,6 +11,14 @@ describe Tagger do
       'documentjs' => ['documentjs', 'document_js'],
       'javascriptmvc' => ['javascriptmvc', 'jmvc']
     } 
+
+    test_tags.each do |t_name, aliases|
+      t = Tag.new
+      t.name = t_name
+      t.aliases = aliases
+      t.group_list = %w(projects)
+      t.save
+    end
   end
   
   let(:tagger_config) do
@@ -17,7 +26,7 @@ describe Tagger do
   end
 
   subject(:tagger) do 
-    Tagger::Engine.new(tags, tagger_config)
+    Tagger::Engine.new(Tag.projects, tagger_config)
   end
     
   describe "#textualize" do 

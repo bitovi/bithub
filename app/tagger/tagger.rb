@@ -1,4 +1,5 @@
 module Tagger
+  class NoTagsProvided < Exception; end
   class Engine
     attr_reader :count
     attr_accessor :tags, :delimiters, :levenshtein_treshold
@@ -6,8 +7,10 @@ module Tagger
     DEFAULT_DELIMITERS = /[ ,.!?;\/]/
 
     def initialize(tags, opts={})
+      fail Tagger::NoTagsProvided, "tagger must have tags to search for" if tags.nil? || tags.empty?
+
       @count = 0
-      @tags = tags || {}
+      @tags = tags
       @levenshtein_treshold = opts[:levenshtein_treshold] || 0
       @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
     end
@@ -36,10 +39,11 @@ module Tagger
       text = textualize(input)
 
       tokenize(text).reduce([]) do |result, word|
-        @tags.each do |tag, aliases|
-          aliases.each do |tag_alias|
-            if Levenshtein.distance(word, tag_alias) <= @levenshtein_treshold
-              (result << tag) if !result.include?(tag)
+        @tags.each do |t|
+          names = [t.name]; names += t.aliases if t.aliases
+          names.each do |name|
+            if Levenshtein.distance(word, name) <= @levenshtein_treshold
+              (result << t.name) if !result.include?(t.name)
               break
             end
           end

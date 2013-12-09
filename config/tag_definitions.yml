@@ -1,160 +1,191 @@
-
-### Projects
+# --------
+# Projects
+# --------
 
 canjs:
- display_name: "CanJS"
- aliases:
-   - "canjs"
-   - "can_js"
-   - "#canjs"
+    display_name: "CanJS"
+    group_list: "projects, req_favourites, req_friends"
+    aliases:
+        - "canjs"
+        - "can_js"
+        - "#canjs"
 
 canui:
-  display_name: "CanUI"
-  aliases:
-    - "canui"
+    display_name: "CanUI"
+    group_list: "projects"
+    aliases:
+        - "canui"
 
 javascriptmvc:
-  display_name: "JavascriptMVC"
-  aliases:
-    - "javascriptmvc"
-    - "jmvc"
-    - "java_script_mvc"
-    - "general java_script_mvc"
+    display_name: "JavascriptMVC"
+    group_list: "projects, req_favourites, req_friends"
+    aliases:
+        - "javascriptmvc"
+        - "jmvc"
+        - "java_script_mvc"
+        - "general java_script_mvc"
 
 donejs:
-  display_name: "DoneJS"
-  aliases:
-    - "donejs"
-    - "done_js"
+    display_name: "DoneJS"
+    group_list: "projects"
+    aliases:
+        - "donejs"
+        - "done_js"
 
 stealjs:
-  display_name: "StealJS"
-  aliases:
-    - "stealjs"
-    - "steal_js"
-    - "steal"
+    display_name: "StealJS"
+    group_list: "projects, req_friends"
+    aliases:
+        - "stealjs"
+        - "steal_js"
+        - "steal"
 
 funcunit:
-  display_name: "FuncUnit"
-  aliases:
-    - "funcunit"
-    - "func_unit"
+    display_name: "FuncUnit"
+    group_list: "projects, req_favourites, req_friends"
+    aliases:
+        - "funcunit"
+        - "func_unit"
 
 jquerypp:
-  display_name: "jQuery++"
-  aliases:
-    - "jquerypp"
-    - "j_querypp"
-    - "jquery++"
-    - "j_query++"
+    display_name: "jQuery++"
+    group_list: "projects, req_favourites, req_friends"
+    aliases:
+        - "jquerypp"
+        - "j_querypp"
+        - "jquery++"
+        - "j_query++"
 
 documentjs:
-  display_name: "DocumentJS"
-  aliases:
-    - "documentjs"
-    - "document_js"
+    display_name: "DocumentJS"
+    group_list: "projects, req_favourites, req_friends"
+    aliases:
+        - "documentjs"
+        - "document_js"
 
 testee:
-  display_name: "Testee.js"
-  aliases:
-    - "testee"
-    - "testeejs"
-    - "testee_js"
-    - "testee.js"
+    display_name: "Testee.js"
+    group_list: "projects, req_friends"
+    aliases:
+        - "testee"
+        - "testeejs"
+        - "testee_js"
+        - "testee.js"
 
-### Feeds
+# -----
+# Feeds
+# -----
 
 twitter:
-  display_name: "Twitter"
+    display_name: "Twitter"
+    group_list: "feeds, categories"
 
 github:
-  display_name: "Github"
+    display_name: "Github"
+    group_list: "feeds"
 
 forums:
-  display_name: "Forums"
+    display_name: "Forums"
+    group_list: "feeds"
 
 irc:
-  display_name: "IRC"
+    display_name: "IRC"
+    group_list: "feeds"
 
 blog:
-  display_name: "Blog"
+    display_name: "Blog"
+    group_list: "feeds"
 
 disqus:
-  display_name: "Disqus"
+    display_name: "Disqus"
+    group_list: "feeds"
 
 bithub:
-  display_name: "Bithub"
+    display_name: "Bithub"
+    group_list: "feeds, projects"
 
 community_site:
-  display_name: "Community site"
+    display_name: "Community site"
+    group_list: "feeds"
 
-
-### Categories
+# ----------
+# Categories
+# ----------
 
 app:
-  display_name: "App"
-  aliases:
-    - "app"
+    display_name: "App"
+    group_list: "categories"
+    aliases:
+        - "app"
 
 article:
-  display_name: "Article"
-  aliases:
-    - "article"
+    display_name: "Article"
+    group_list: "categories"
+    aliases:
+        - "article"
 
 bug:
-  display_name: "Bug"
-  aliases:
-    - "bug"
+    display_name: "Bug"
+    group_list: "categories, labels"
+    aliases:
+        - "bug"
 
 chat:
-  display_name: "Chat"
-  aliases:
-    - "chat"
+    display_name: "Chat"
+    group_list: "categories"
+    aliases:
+        - "chat"
 
 code:
-  display_name: "Code"
-  aliases:
-    - "code"
+    display_name: "Code"
+    group_list: "categories"
+    aliases:
+        - "code"
 
 comment:
-  display_name: "Comment"
-  aliases:
-    - "comment"
+    display_name: "Comment"
+    group_list: "categories"
+    aliases:
+        - "comment"
 
 digest:
-  display_name: "Digest"
-  aliases:
-    - "digest"
+    display_name: "Digest"
+    group_list: "categories"
+    aliases:
+        - "digest"
 
 event:
-  display_name: "Event"
-  aliases:
-    - "event"
+    display_name: "Event"
+    group_list: "categories"
+    aliases:
+        - "event"
 
 feature:
-  display_name: "Feature"
-  aliases:
-    - "feature"
-    - "enhancement"
-    - "feature-request"
+    display_name: "Feature"
+    group_list: "categories, labels"
+    aliases:
+        - "feature"
+        - "enhancement"
+        - "feature-request"
+        - "feature_request"
 
 issue:
-  display_name: "Issue"
-  aliases:
-    - "issue"
+    display_name: "Issue"
+    group_list: "categories"
+    aliases:
+        - "issue"
 
 plugin:
-  display_name: "Plugin"
-  aliases:
-    - "plugin"
+    display_name: "Plugin"
+    group_list: "categories"
+    aliases:
+        - "plugin"
 
 question:
-  display_name: "Question"
-  aliases:
-    - "question"
-
-#twitter: --> already defined under feeds
-#  display_name: "Twitter"
+    display_name: "Question"
+    group_list: "categories"
+    aliases:
+        - "question"
 
 
 ### Twitter specific
@@ -192,12 +223,15 @@ public_event: {}
 
 custom_commit_event: {}
 
-
 ### Others
 
 jquerymx:
-  display_name: "jQueryMX"
-  aliases:
-    - "j_query_mx"
+    display_name: "jQueryMX"
+    aliases:
+        - "j_query_mx"
+
+bitovi:
+    display_name: "Bitovi"
+    group_list: "req_friends"
 
 uncategorized: {}
