@@ -1,8 +1,12 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
-  RELEVANT_FRIENDS = YAML.load_file('config/tag_definitions.yml').keys << 'bitovi' << 'bitovi_bithub'
+  RELEVANT_REPO_NAMES = Tag.tagged_with('req_favourites').map{|t| "bitovi/#{t.name}"}
+  RELEVANT_REPO_NAMES += %(steal testee.js)
+  RELEVANT_REPO_NAMES << 'bithub-test/testy' if (Rails.env == 'test' || Rails.env == 'testing')
+
+  RELEVANT_FRIENDS = Tag.tagged_with('req_friends').map{|t| t.name}
+  RELEVANT_FRIENDS << 'bitovi_bithub' if (Rails.env == 'test' || Rails.env == 'testing')
 
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
