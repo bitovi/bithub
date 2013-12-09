@@ -2,14 +2,15 @@ require 'spec_helper'
 
 describe Tagger do
   let(:tags) do
-    {
-      'canjs' => ['canjs','can_js'],
-      'jquerypp' => ['jquerypp', 'jquery_pp'],
-      'stealjs' => ['stealjs', 'steal_js', 'steal'],
-      'funcunit' => ['funcunit'],
-      'documentjs' => ['documentjs', 'document_js'],
-      'javascriptmvc' => ['javascriptmvc', 'jmvc']
-    } 
+    [
+      { name: 'canjs', aliases: ['can_js'] },
+      { name: 'jquerypp', aliases: ['jquery_pp', 'jquery++'] },
+      { name: 'stealjs', aliases: ['steal_js', 'steal'] },
+      { name: 'funcunit' },
+      { name: 'documentjs', aliases: ['document_js'] },
+      { name: 'javascriptmvc', aliases: ['jmvc'] },
+      { name: 'testee', aliases: ['testee_js'], levenshtein_treshold: 0 },
+    ] 
   end
   
   let(:tagger_config) do
@@ -51,38 +52,44 @@ describe Tagger do
   describe "#find_tags" do
     it "matches lowercase lexems" do
       text = "Many words ... canjs, other words jquerypp, more words steal"
-      expect(tagger.find_tags(text)).to eq %w(canjs jquerypp stealjs)
+      expect(tagger.find_tags(text)).to match_array %w(canjs jquerypp stealjs)
     end
 
     it "matches all caps lexems" do
       text = "Many words CANJS, other words JQUERYPP"
-      expect(tagger.find_tags(text)).to eq %w(canjs jquerypp)
+      expect(tagger.find_tags(text)).to match_array %w(canjs jquerypp)
     end
 
-    it "should match mixed caps lexems" do
+    it "matches mixed caps lexems" do
       text = "Lots of text, CanJs, a little more text StealJS"
-      expect(tagger.find_tags(text)).to eq %w(canjs stealjs)
+      expect(tagger.find_tags(text)).to match_array %w(canjs stealjs)
     end
 
-    it "should matche lexems with a typo" do
+    it "matches lexems with a typo" do
       text = "Some text, then a FnucUnit, and after that, some nice nothing, and a docment_js"
-      expect(tagger.find_tags(text)).to eq %w(funcunit documentjs)
+      expect(tagger.find_tags(text)).to match_array %w(funcunit documentjs)
     end
 
-    it "should matche all tags found in given text" do
+    it "matches all tags found in given text" do
       text = "Lots of text, CanJs, a little more text, and then FUNCUNIT, and some jquerypp"
-      expect(tagger.find_tags(text)).to eq %w(canjs funcunit jquerypp)
+      expect(tagger.find_tags(text)).to match_array %w(canjs funcunit jquerypp)
     end
     
-    it "should not match tokens with spaces" do
+    it "doesn't match tokens with spaces" do
       text = "Lots of text, javascript mvc, a little more text, and then done js, and some jquery pp"
-      expect(tagger.find_tags(text)).to eq %w(javascriptmvc) #because distance(jmvc, mvc) <= 1
+      expect(tagger.find_tags(text)).to match_array %w(javascriptmvc) #because distance(jmvc, mvc) <= 1
     end
 
-    it "should match tags with [su|pre]fixes" do
+    it "matches tags with [su|pre]fixes" do
       text = "@canjs is great, #javascriptmvc"
-      expect(tagger.find_tags(text)).to eq %w(canjs javascriptmvc)
+      expect(tagger.find_tags(text)).to match_array %w(canjs javascriptmvc)
     end
+
+    it "handles levenstein treshold by tag" do
+      text = "word tested shouldn't be matched, but @canjs should be"
+      expect(tagger.find_tags(text)).to match_array %w(canjs)
+    end
+    
   end
   
 end

@@ -43,6 +43,17 @@ class Tag < ActsAsTaggableOn::Tag
     Hash[ Tag.where(:name => @tag_groups[group]).map {|tag| [tag.name, tag.aliases || [tag.name]]} ]
   end
 
+  def self.to_hash_list(group = nil)
+    tags = @tag_groups[group] ? Tag.where(:name => @tag_groups[group]) : Tag.all
+    
+    tags.map do |t|
+      {
+        name: t.name,
+        aliases: t.aliases
+      }.merge(t.props.symbolize_keys)
+    end
+  end
+
   def self.find_by_name(name)
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end

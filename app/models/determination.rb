@@ -77,7 +77,7 @@ module Determination
 
   def taggify_content
     input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}.compact
-    search_tags = Tag.to_name_aliases_hash(:project)
+    search_tags = Tag.to_hash_list(:project)      
     Tagger::Engine.new(search_tags).find_tags(input)
   end
 
@@ -85,7 +85,7 @@ module Determination
     self.props.symbolize_keys!
     
     if self.props[:labels]
-      search_tags = Tag.to_name_aliases_hash(:label)
+      search_tags = Tag.to_hash_list(:label)      
       input = self.props[:labels]
       Tagger::Engine.new(search_tags).find_tags(input)
     else

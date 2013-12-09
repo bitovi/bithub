@@ -4,46 +4,36 @@
 canjs:
  display_name: "CanJS"
  aliases:
-   - "canjs"
    - "can_js"
-   - "#canjs"
 
 canui:
   display_name: "CanUI"
-  aliases:
-    - "canui"
 
 javascriptmvc:
   display_name: "JavascriptMVC"
   aliases:
-    - "javascriptmvc"
     - "jmvc"
     - "java_script_mvc"
-    - "general java_script_mvc"
 
 donejs:
   display_name: "DoneJS"
   aliases:
-    - "donejs"
     - "done_js"
 
 stealjs:
   display_name: "StealJS"
   aliases:
-    - "stealjs"
-    - "steal_js"
     - "steal"
+    - "steal_js"
 
 funcunit:
   display_name: "FuncUnit"
   aliases:
-    - "funcunit"
     - "func_unit"
 
 jquerypp:
   display_name: "jQuery++"
   aliases:
-    - "jquerypp"
     - "j_querypp"
     - "jquery++"
     - "j_query++"
@@ -51,7 +41,6 @@ jquerypp:
 documentjs:
   display_name: "DocumentJS"
   aliases:
-    - "documentjs"
     - "document_js"
 
 testee:
@@ -59,7 +48,6 @@ testee:
   props:
     levenshtein_treshold: 0
   aliases:
-    - "testee"
     - "testeejs"
     - "testee_js"
     - "testee.js"
@@ -95,48 +83,31 @@ community_site:
 
 app:
   display_name: "App"
-  aliases:
-    - "app"
 
 article:
   display_name: "Article"
-  aliases:
-    - "article"
 
 bug:
   display_name: "Bug"
-  aliases:
-    - "bug"
 
 chat:
   display_name: "Chat"
-  aliases:
-    - "chat"
 
 code:
   display_name: "Code"
-  aliases:
-    - "code"
 
 comment:
   display_name: "Comment"
-  aliases:
-    - "comment"
 
 digest:
   display_name: "Digest"
-  aliases:
-    - "digest"
 
 event:
   display_name: "Event"
-  aliases:
-    - "event"
 
 feature:
   display_name: "Feature"
   aliases:
-    - "feature"
     - "enhancement"
     - "feature-request"
 
@@ -147,13 +118,9 @@ issue:
 
 plugin:
   display_name: "Plugin"
-  aliases:
-    - "plugin"
 
 question:
   display_name: "Question"
-  aliases:
-    - "question"
 
 #twitter: --> already defined under feeds
 #  display_name: "Twitter"
