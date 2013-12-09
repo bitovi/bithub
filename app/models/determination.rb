@@ -72,7 +72,17 @@ module Determination
 
   def taggify_props
     self.props.symbolize_keys!
-    PROPS_TO_TAGS.map {|prop| self.props[prop] if self.props[prop]}.compact
+
+    # some props could be arrays
+    search_tags = PROPS_TO_TAGS
+      .map {|prop| self.props[prop]}
+      .flatten
+      .compact
+
+    # match tag objects
+    search_tags.map {|p| Tag.find_by_name(p) }
+      .compact
+      .map {|t| t.name}
   end
 
   def taggify_content
