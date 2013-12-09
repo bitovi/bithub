@@ -1,15 +1,14 @@
 module Tagger
   class Engine
-    attr_reader :count
     attr_accessor :tags, :delimiters, :levenshtein_treshold
 
     DEFAULT_DELIMITERS = /[ ,.!?;\/]/
+    DEFAULT_LEVENSHTEIN_TRESHOLD = 1
 
     def initialize(tags, opts={})
-      @count = 0
-      @tags = tags || {}
-      @levenshtein_treshold = opts[:levenshtein_treshold] || 1
+      @tags = tags || []
       @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
+      @levenshtein_treshold = opts[:levenshtein_treshold] || DEFAULT_LEVENSHTEIN_TRESHOLD
     end
 
     def textualize(input)
@@ -36,14 +35,19 @@ module Tagger
       text = textualize(input)
 
       tokenize(text).reduce([]) do |result, word|
-        @tags.each do |tag, aliases|
+        @tags.each do |tag|
+          aliases = [tag[:name]]
+          aliases += tag[:aliases] if tag[:aliases].is_a? Array
+          leven_th = tag[:levenshtein_treshold] || @levenshtein_treshold
+
           aliases.each do |tag_alias|
-            if Levenshtein.distance(word, tag_alias) <= @levenshtein_treshold
-              (result << tag) if !result.include?(tag)
+            if Levenshtein.distance(word, tag_alias) <= leven_th.to_i
+              (result << tag[:name]) unless result.include?(tag[:name])
               break
             end
           end
         end
+        
         result
       end
     end
