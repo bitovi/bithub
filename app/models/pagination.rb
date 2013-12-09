@@ -7,9 +7,9 @@ class Pagination < ActiveRecord::Base
   def self.grouped_db
     select_command = <<-SQL
       "date",
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'chat' and ip."date" = pagination."date") as chat,
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'digest' and ip."date" = pagination."date") as digest,
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category <> 'digest' and ip.category <> 'chat' and ip."date" = pagination."date") as else
+      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'chat' and ip."date" = pagination."date")::int as chat,
+      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'digest' and ip."date" = pagination."date")::int as digest,
+      (select coalesce(sum(cnt),0) from pagination ip where ip.category <> 'digest' and ip.category <> 'chat' and ip."date" = pagination."date")::int as other
     SQL
 
     self.select(select_command).group("\"date\"").order("\"date\" desc")
