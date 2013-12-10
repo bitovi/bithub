@@ -11,7 +11,7 @@ class Api::TagsController < Api::ApiController
 
   def index
     if params[:type]
-      @tags = Tag.tagged_with(params[:type]).all      
+      @tags = Tag.tagged_with(params[:type].pluralize).all      
     else
       @tags = build_scope(request.env['muster.query']).all
     end
