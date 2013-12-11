@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 $: << File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$: << File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 
 require 'config/environment'
 require 'app/listener/helpers'
