@@ -20,6 +20,28 @@ namespace :test do
     t.pattern = FileList["spec/integration_testing"]
     t.rspec_opts = "--order default"
   end
+  
+  namespace :services do
+    desc "Runs rspec crawler service tests"
+    RSpec::Core::RakeTask.new(:crawler) do |t|
+      t.pattern = FileList["spec/services/crawler"]
+    end
+    
+    desc "Runs rspec listener service tests"
+    RSpec::Core::RakeTask.new(:listener) do |t|
+      t.pattern = FileList["spec/services/listener"]
+    end
+    
+    desc "Runs rspec irc_bot service tests"
+    RSpec::Core::RakeTask.new(:irc_bot) do |t|
+      t.pattern = FileList["spec/services/irc_bot"]
+    end
+    
+    desc "Runs rspec xmpp_bot service tests"
+    RSpec::Core::RakeTask.new(:xmpp_bot) do |t|
+      t.pattern = FileList["spec/services/xmpp_bot"]
+    end
+  end
 
   desc "Runs all rspec unit tests"
   task :unit => ["test:models", "test:libs"]
