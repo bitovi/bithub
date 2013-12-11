@@ -1,3 +1,6 @@
+$XMPP_BOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$:.unshift($XMPP_BOT_DIR)
+
 require 'rubygems'
 require 'amqp'
 require 'blather/client/dsl'
