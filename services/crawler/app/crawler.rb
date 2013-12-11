@@ -1,4 +1,4 @@
-$: << File.expand_path(File.join(File.dirname(__FILE__), '../'))
+$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
 
 # Theirs
 require 'bundler/setup'
@@ -13,11 +13,12 @@ require 'app/poller'
 require 'app/listener'
 
 # paths to config files based on env
+crawler_config_dir = File.join(File.expand_path(File.join(File.dirname(__FILE__), '..')), 'config')
 config_paths = {
-  'development' => 'config/config_development.yml',
-  'testing'     => 'config/config_testing.yml',
-  'staging'     => 'config/config_staging.yml',
-  'prod'        => 'config/config_production.yml',
+  'development' => File.join(crawler_config_dir, 'config_development.yml'),
+  'testing'     => File.join(crawler_config_dir, 'config_testing.yml'),
+  'staging'     => File.join(crawler_config_dir, 'config_staging.yml'),
+  'prod'        => File.join(crawler_config_dir, 'config_production.yml')
 }
 
 # Logging
