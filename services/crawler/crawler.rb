@@ -1,4 +1,5 @@
-$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
+$CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$:.unshift($CRAWLER_DIR)
 
 # Theirs
 require 'bundler/setup'
@@ -9,16 +10,15 @@ require 'yaml'
 
 # Ours
 require 'lib/core_ext'
-require 'app/poller'
-require 'app/listener'
+require 'poller'
+require 'streamer'
 
 # paths to config files based on env
-crawler_config_dir = File.join(File.expand_path(File.join(File.dirname(__FILE__), '..')), 'config')
 config_paths = {
-  'development' => File.join(crawler_config_dir, 'config_development.yml'),
-  'testing'     => File.join(crawler_config_dir, 'config_testing.yml'),
-  'staging'     => File.join(crawler_config_dir, 'config_staging.yml'),
-  'prod'        => File.join(crawler_config_dir, 'config_production.yml')
+  'development' => File.join($CRAWLER_DIR, 'config', 'config_development.yml'),
+  'testing'     => File.join($CRAWLER_DIR, 'config', 'config_testing.yml'),
+  'staging'     => File.join($CRAWLER_DIR, 'config', 'config_staging.yml'),
+  'prod'        => File.join($CRAWLER_DIR, 'config', 'config_production.yml')
 }
 
 # Logging
