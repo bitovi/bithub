@@ -1,6 +1,7 @@
 require 'spec_helper'
+require 'services/crawler/poller'
+
 require 'digest/md5'
-require 'app/poller'
 
 describe Poller do
   describe "#reject_old" do
