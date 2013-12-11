@@ -25,19 +25,17 @@ gem 'jbuilder'
 gem 'jpbuilder'
 gem 'draper'
 gem 'redcarpet'
-gem 'log4r'
 gem 'foreman'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
 gem 'oj'
 gem 'rspec-core'
+gem 'yajl-ruby'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
-
-gem 'newrelic_rpm'
-
 gem 'muster', :git => "git://github.com/neektza/muster.git"
+
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
 # Gems for ThirdPartyInformer
@@ -47,16 +45,17 @@ gem 'octokit', '~> 2.0'
 
 group :test, :development do
   gem 'factory_girl_rails'
+  gem 'rspec'
   gem 'rspec-rails'
   gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'pry-rails'
   gem 'better_errors'
   gem 'dotenv-rails'
-  gem 'yajl-ruby'
   gem 'evented-spec'
   gem 'git'
   gem 'database_cleaner'
+  gem 'webmock'
 end
 
 group :development do
@@ -65,5 +64,30 @@ group :development do
   gem 'bullet'
 end
   
-# Code climate
-gem "codeclimate-test-reporter", group: :test, require: nil
+
+# ----------------
+# services/crawler
+# ----------------
+gem 'em-http-request'
+gem 'em-twitter'
+gem 'nokogiri'
+gem 'nori', '~>2.3.0'
+gem 'sanitize'
+gem 'htmlentities'
+
+# ----------------
+# services/irc-bot
+# ----------------
+gem 'ponder', :github => 'tbuehlmann/ponder'
+
+# -----------------
+# services/xmpp-bot
+# -----------------
+gem 'blather'
+
+# ------------------
+# 3rd party services
+# ------------------
+
+gem "codeclimate-test-reporter", require: false
+gem 'newrelic_rpm'
