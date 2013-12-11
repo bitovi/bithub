@@ -1,7 +1,7 @@
 require 'digest/md5'
 require 'em-twitter'
 
-require 'app/processor'
+require 'lib/processor/processor'
 
 class Listener
   attr_reader :feed, :processor, :connected_as

@@ -1,10 +1,10 @@
-#!/usr/bin/env ruby
-$: << File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$: << File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+$LISTENER_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$:.unshift($LISTENER_DIR)
 
 require 'config/environment'
-require 'app/listener/helpers'
 require 'log4r'
+
+require 'helpers'
 
 $log = Log4r::Logger.new('listener')
 $log.add(Log4r::StdoutOutputter.new('console', {
