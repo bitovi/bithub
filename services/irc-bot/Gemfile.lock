@@ -1,0 +1,52 @@
+GIT
+  remote: git://github.com/tbuehlmann/ponder.git
+  revision: e6855c21ae0b043e120bc7a6f71cafb2255115d1
+  specs:
+    ponder (0.2.0)
+      eventmachine (>= 0.12.10)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    amq-client (0.9.4)
+      amq-protocol (>= 0.9.4)
+      eventmachine
+    amq-protocol (0.9.5)
+    amqp (0.9.7)
+      amq-client (~> 0.9.4)
+      amq-protocol (>= 0.9.4)
+      eventmachine
+    capistrano (2.14.2)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
+    capistrano-ext (1.2.1)
+      capistrano (>= 1.0.0)
+    eventmachine (1.0.0)
+    foreman (0.59.0)
+      thor (>= 0.13.6)
+    highline (1.6.17)
+    log4r (1.1.10)
+    net-scp (1.1.0)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.6.7)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
+    thor (0.16.0)
+    yajl-ruby (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  amqp
+  capistrano
+  capistrano-ext
+  foreman
+  log4r
+  ponder!
+  yajl-ruby
