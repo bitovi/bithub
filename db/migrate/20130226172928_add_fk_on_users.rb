@@ -1,17 +1,9 @@
 class AddFkOnUsers < ActiveRecord::Migration
   def up
-    execute <<-SQL
-      ALTER TABLE users 
-        ADD CONSTRAINT fk_users_countries
-        FOREIGN KEY (country_id) 
-        REFERENCES countries(id)
-    SQL
+    execute "ALTER TABLE users ADD CONSTRAINT fk_users_countries FOREIGN KEY (country_id) REFERENCES countries(id);"
   end
 
   def down
-    execute <<-SQL
-      ALTER TABLE users 
-        DROP CONSTRAINT fk_users_countries
-    SQL
+    execute "ALTER TABLE users DROP CONSTRAINT fk_users_countries;"
   end
 end
