@@ -521,15 +521,15 @@ CREATE MATERIALIZED VIEW leaderboard AS
 
 CREATE MATERIALIZED VIEW pagination AS
  SELECT e.origin_date AS date, 
-    (t.name)::text AS category, 
-    count(*) AS cnt
-   FROM tags t, 
-    taggings tt, 
-    tags mt, 
-    events e, 
-    taggings et
-  WHERE ((((((((tt.tag_id = mt.id) AND (tt.taggable_id = t.id)) AND ((tt.taggable_type)::text = 'ActsAsTaggableOn::Tag'::text)) AND (et.tag_id = t.id)) AND (et.taggable_id = e.id)) AND ((et.taggable_type)::text = 'Event'::text)) AND ((mt.name)::text = 'categories'::text)) AND (e.parent_id IS NULL))
-  GROUP BY e.origin_date, t.name
+    e.id, 
+    categories.name AS category, 
+    ARRAY( SELECT t.name
+           FROM taggings tt, 
+            tags t
+          WHERE ((((tt.taggable_type)::text = 'Event'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
+   FROM (events e
+   LEFT JOIN tags categories ON ((e.category_id = categories.id)))
+  WHERE (e.parent_id IS NULL)
   ORDER BY e.origin_date DESC
   WITH NO DATA;
 
@@ -844,14 +844,6 @@ ALTER TABLE ONLY awards
 
 
 --
--- Name: category_determination_rules_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY category_determination_rules
-    ADD CONSTRAINT category_determination_rules_name_key UNIQUE (name);
-
-
---
 -- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -865,14 +857,6 @@ ALTER TABLE ONLY category_determination_rules
 
 ALTER TABLE ONLY countries
     ADD CONSTRAINT countries_pkey PRIMARY KEY (id);
-
-
---
--- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY events
-    ADD CONSTRAINT events_hash_key_key UNIQUE (hash_key);
 
 
 --
@@ -1267,3 +1251,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131208111213');
 INSERT INTO schema_migrations (version) VALUES ('20131209113732');
 
 INSERT INTO schema_migrations (version) VALUES ('20131209113804');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212195821');
