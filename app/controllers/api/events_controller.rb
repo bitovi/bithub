@@ -76,8 +76,8 @@ class Api::EventsController < Api::ApiController
   end
 
   def pagination
-    summary = Pagination.grouped
-    render :json => summary
+    @dates = Pagination.grouped
+    render :pagination_index
   end
 
   private # SCOPE BUILDING

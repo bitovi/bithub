@@ -4,11 +4,15 @@ class Pagination < ActiveRecord::Base
   scope :by_category, lambda {|c| where(:category => c)}
 
   def self.grouped
-    grouped = {}
+    grouped = []
     
     self.order('"date" desc').each do |row|
-      grouped[row.date] = Hash.new(0) unless grouped[row.date]
-      grouped[row.date][row.category] += row.cnt
+
+      if grouped.last && (grouped.last[:date] == row.date)
+        grouped.last[row.category] = row.cnt
+      else
+        grouped.push({:date => row.date, row.category.to_sym => row.cnt})
+      end
     end
 
     grouped
