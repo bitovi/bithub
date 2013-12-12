@@ -76,7 +76,7 @@ class Api::EventsController < Api::ApiController
   end
 
   def pagination
-    @dates = Pagination.grouped
+    @dates = Pagination.grouped(params[:tags])
     render :pagination_index
   end
 
