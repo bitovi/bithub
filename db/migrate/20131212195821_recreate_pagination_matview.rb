@@ -3,7 +3,7 @@ class RecreatePaginationMatview < ActiveRecord::Migration
     execute "DROP MATERIALIZED VIEW IF EXISTS pagination;"
     execute <<-SQL
       CREATE MATERIALIZED VIEW pagination AS
-        SELECT e.thread_updated_date::date AS "date",
+        SELECT e.thread_updated_at AS "ts",
                e.id AS id,
                categories.name AS category,
                ARRAY(
@@ -14,7 +14,7 @@ class RecreatePaginationMatview < ActiveRecord::Migration
 	      FROM events AS e
             LEFT JOIN tags AS categories ON e.category_id = categories.id
           WHERE e.parent_id IS NULL
-	      ORDER BY e.thread_updated_date DESC;
+	      ORDER BY e.thread_updated_at DESC;
     SQL
   end
 
