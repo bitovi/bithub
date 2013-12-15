@@ -32,7 +32,12 @@ class ScopeApplier
   
   def apply_regular_params_to_scope(scope, params)
     regpars = @logic_analyzer.pluck_and_process_regular_params(params)
-    scope = scope.where(regpars) if regpars
+
+    regpars.each do |k,v|
+      hook = scope.klass.scope_applier_overrides[k.to_sym]
+      scope = hook ? hook.call(scope, v, params) : scope.where({k: v})
+    end
+    
     scope
   end
   

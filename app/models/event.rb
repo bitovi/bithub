@@ -57,6 +57,17 @@ class Event < ActiveRecord::Base
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
+
+  SCOPE_APPLIER_OVERRIDES = {
+    :thread_updated_at => Proc.new do |scope, v, params = {}|
+      args = [params[:clientTz] || 'UTC', v.first, v.last]
+      scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+    end
+  }
+
+  def self.scope_applier_overrides
+    SCOPE_APPLIER_OVERRIDES
+  end
     
   @processor ||= Processors::Github.new({feed: 'github'})
 

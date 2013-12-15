@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class Api::EventsController < Api::ApiController
   before_filter :authenticate_user!, except: [:index, :show, :summary, :pagination]
-  
+
   respond_to :json
   helper_method :custom_cache_key
   helper_method :list_cache_key
@@ -17,6 +17,8 @@ class Api::EventsController < Api::ApiController
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
+    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
     
@@ -76,7 +78,9 @@ class Api::EventsController < Api::ApiController
   end
 
   def pagination
-    @dates = Pagination.grouped(params[:tags])
+    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+    
+    @dates = Pagination.grouped(params)
     render :pagination_index
   end
 
