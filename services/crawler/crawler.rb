@@ -1,5 +1,6 @@
-$CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$:.unshift($CRAWLER_DIR)
+$CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
+$PROJ_ROOT_DIR = File.expand_path(File.join($CRAWLER_DIR, '..', '..'))
+$:.unshift($PROJ_ROOT_DIR)
 
 # Theirs
 require 'bundler/setup'
@@ -10,15 +11,15 @@ require 'yaml'
 
 # Ours
 require 'lib/core_ext'
-require 'poller'
-require 'streamer'
+require 'services/crawler/poller'
+require 'services/crawler/streamer'
 
 # paths to config files based on env
 config_paths = {
-  'development' => File.join($CRAWLER_DIR, 'config', 'config_development.yml'),
-  'testing'     => File.join($CRAWLER_DIR, 'config', 'config_testing.yml'),
-  'staging'     => File.join($CRAWLER_DIR, 'config', 'config_staging.yml'),
-  'prod'        => File.join($CRAWLER_DIR, 'config', 'config_production.yml')
+  'development' => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_development.yml'),
+  'testing'     => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_testing.yml'),
+  'staging'     => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_staging.yml'),
+  'prod'        => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_production.yml')
 }
 
 # Logging
@@ -61,12 +62,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
     # --- Public stream
     logger.info "Registering to Twitter's public stream"
-    Listener.connect(logger, events_exchange, feeds[:twitter][:streams][:public_feed], false)
+    Streamer.connect(logger, events_exchange, feeds[:twitter][:streams][:public_feed], false)
 
     # --- User streams
     feeds[:twitter][:streams][:user_feeds].each do |screen_name, data|
       logger.info "Registering @#{screen_name} user stream"
-      Listener.connect(logger, events_exchange, data, true)
+      Streamer.connect(logger, events_exchange, data, true)
     end
 
     #--- Pollers

@@ -5,6 +5,8 @@ require 'yajl'
 require 'nokogiri'
 require 'nori'
 
+require 'lib/processing/processor'
+
 class Poller
   attr_reader :latest
 
