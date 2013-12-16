@@ -1,9 +1,9 @@
 require 'digest/md5'
 require 'em-twitter'
 
-require 'lib/processor/processor'
+require 'lib/processing/processor'
 
-class Listener
+class Streamer
   attr_reader :feed, :processor, :connected_as
 
   ERRBACKS = [
@@ -24,7 +24,7 @@ class Listener
     @exchange = exchange
     @stream_auth_and_opts = stream_auth_and_opts
     @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
-    @processor = Processor.new('twitter') {|c| c[:user_stream_flag] = is_user_stream }
+    @processor = Processing::Processor.new('twitter') {|c| c[:user_stream_flag] = is_user_stream }
     @feed = 'twitter'
   end
 

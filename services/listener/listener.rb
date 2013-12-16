@@ -1,5 +1,6 @@
-$LISTENER_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$:.unshift($LISTENER_DIR)
+$LISTENER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
+$PROJ_ROOT_DIR = File.expand_path(File.join($LISTENER_DIR, '..', '..'))
+$:.unshift($PROJ_ROOT_DIR)
 
 require 'config/environment'
 require 'log4r'
@@ -22,8 +23,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   Signal.trap("TERM", &stop)
 
   channel = AMQP::Channel.new(connection)
-
   channel.direct("e.events") do |input_exchange|
+
     channel.fanout("e.events.liveservice") do |liveservice_exchange|
       queue = channel.queue("q.events").bind(input_exchange)
 
