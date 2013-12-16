@@ -35,7 +35,7 @@ class ScopeApplier
 
     regpars.each do |k,v|
       hook = scope.klass.scope_applier_overrides[k.to_sym]
-      scope = hook ? hook.call(scope, v, params) : scope.where({k: v})
+      scope = hook ? hook.call(scope, v, params) : scope.where({k => v})
     end
     
     scope
