@@ -1,7 +1,8 @@
 require 'digest/md5'
 require 'em-twitter'
 
-require 'lib/processing/processor'
+require 'app/domain/events/processor'
+require 'app/domain/events/errors'
 
 class Streamer
   attr_reader :feed, :processor, :connected_as
@@ -21,11 +22,11 @@ class Streamer
 
   def initialize(log, exchange, stream_auth_and_opts, is_user_stream)
     @logger = log
+    @feed = 'twitter'
     @exchange = exchange
     @stream_auth_and_opts = stream_auth_and_opts
     @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
-    @processor = Processing::Processor.new('twitter') {|c| c[:user_stream_flag] = is_user_stream }
-    @feed = 'twitter'
+    @processor = Events::Processor.new(@feed) {|c| c[:user_stream_flag] = is_user_stream }
   end
 
   def connect
@@ -51,7 +52,7 @@ class Streamer
     event = Yajl::Parser.parse(raw_json)
     begin
       publish(processor.process(event))
-    rescue Processor::InvalidEventException => e
+    rescue Events::Errors::InvalidEventException => e
       if event["friends"]
         @logger.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
       else

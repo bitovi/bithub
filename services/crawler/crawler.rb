@@ -15,12 +15,7 @@ require 'services/crawler/poller'
 require 'services/crawler/streamer'
 
 # paths to config files based on env
-config_paths = {
-  'development' => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_development.yml'),
-  'testing'     => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_testing.yml'),
-  'staging'     => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_staging.yml'),
-  'prod'        => File.join($PROJ_ROOT_DIR, 'config', 'crawler', 'config_production.yml')
-}
+config_path = File.join($PROJ_ROOT_DIR, 'config', 'crawler', "#{ENV['ENV']}.yml")
 
 # Logging
 logger = Log4r::Logger.new('Crawler')
@@ -32,7 +27,7 @@ $logger = logger
 
 # Load config 
 logger.info "Loading feeds for #{ENV['ENV']}"
-config = YAML::load_file(config_paths[ENV['ENV']])
+config = YAML::load_file(config_path)
 feeds = config[:feeds]
 intervals = config[:intervals]
 
@@ -98,7 +93,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       EM.add_timer(phase) do
         log_registering(term_uri)
         EM.add_periodic_timer(intervals[:forums], &Poller.handler(logger, events_exchange, term_uri) do |c|
-          c[:feed_specific_config] = {term: term}
+          c[:processor_config] = {term: term}
         end)
       end
       shift_phase.call
