@@ -5,8 +5,11 @@ require 'yajl'
 require 'nokogiri'
 require 'nori'
 
-require 'lib/processing/processor'
+require 'app/domain/events/processor'
+require 'app/domain/events/errors'
 
+
+# FIXME segfault -> circular reference
 class Poller
   attr_reader :latest
 
@@ -22,7 +25,6 @@ class Poller
     @endpoint = endpoint
 
     @config = {}
-
     blk.call(@config) if blk # relevant keys: :http_head, :term (forums)
 
     @feed ||= determine_feed(endpoint)
@@ -57,7 +59,7 @@ class Poller
       log_http_status(http_req, :error)
     end
   end
-  
+
   def fetch_next_page(http_req)
     if (link_header = http_req.response_header['LINK'])
       if (next_page_url = link_by_type(link_header, 'next').andand[:url])
@@ -70,7 +72,7 @@ class Poller
   def link_by_type(link_header, type)
     parse_link_header(link_header).select{|l| l[:type] == type}.first
   end
-    
+
   def parse_link_header(lh)
     # TODO select only links that have 'rel' attr
     lh.split(',').map do |rel|
@@ -78,40 +80,34 @@ class Poller
       Hash[[:whole, :url, :type].zip with_rel_attrs]
     end
   end
-  
+
   def pluck_pagination(rel)
     (rel.match /<(.*)>; rel="(.*)"/).to_a
   end
 
   def handle_success(http_req)
     events = decorate(events_from_response(parse(http_req.response)))
-    publish(process(reject_old(events), feed_specific_config))
+    publish(process(reject_old(events)))
   end
 
   def decorate(events)
-    events.each do |e|
-      e[:hash_key] = calc_hash_key(e)
-    end    
+    events.each {|e| make_digest(e) }
   end
-  
+
   def reject_old(events)
     @latest ||= []
 
-    events.each {|e| e[:content_digest] = processor.content_digest(e) || e[:hash_key] }
-      
-    new_events = events.reject do |e|
-      # if already in latest reject, otherwise push to latest and keep event
-      (@latest.include? e[:content_digest]) || (@latest.push(e[:content_digest]) && false)
-    end
+    new_events = events.reject{|e| @latest.include? e[:content_digest]}
+    @latest += new_events.collect {|e| e[:content_digest]}
+    @latest.shift(@latest.length - backlog_size) if (@latest.length > backlog_size)
 
-    @latest.shift(@latest.length - backlog_size) if @latest.length > backlog_size
     new_events
   end
 
-  def process(events, fsc)
+  def process(events)
     begin
-      events.map{|e| processor.process(e, fsc)}
-    rescue Processor::InvalidEventException => e
+      events.map{|e| processor.process(e)}
+    rescue Events::Errors::InvalidEventException => e
       log_exception e
     end
   end
@@ -120,7 +116,9 @@ class Poller
     begin
       log_publishing(events)
       pack_and_publish = lambda do
-        events.each {|e| @exchange.publish(Yajl::Encoder.encode(e)) }
+        events.each do |e|
+          @exchange.publish(Yajl::Encoder.encode(e))
+        end
       end
       EM.defer(pack_and_publish) if events.length > 0
     rescue Exception => e
@@ -128,9 +126,9 @@ class Poller
     end
   end
 
-  def calc_hash_key(event_hash)
-    seed = processor.unique_attribute(event_hash) + @feed
-    Digest::MD5.hexdigest(seed)
+  def make_digest(event_hash)
+    event_hash[:content_digest] = processor.content_digest(event_hash)
+    #event_hash[:hash_key] = event_hash[:content_digest]
   end
 
   def events_from_response(response_hash)
@@ -138,7 +136,7 @@ class Poller
   end
 
   def processor
-    @processor ||= Processor.new(@feed)
+    @processor ||= Events::Processor.new(@feed) { @config[:processor_config] }
   end
 
   def success?(http_resp)
@@ -167,7 +165,7 @@ class Poller
       fail UnknownFeedTypeException, "can't determine if feed is JSON or XML"
     end
   end
-  
+
   private
 
   def determine_feed(uri)
@@ -189,7 +187,7 @@ class Poller
     str += " for #{http_query[:state]} issues" if in_github_issues?
     @logger.info str if es.length > 0
   end
-  
+
   def log_filtering(es, new_es)
     @logger.info "Keeping #{new_es.length} new items, out of #{es.length} fetched"
   end
@@ -205,15 +203,11 @@ class Poller
   def http_head
     @config[:http_head] || {}
   end
-  
+
   def http_query
     @config[:http_query] || {}
   end
 
-  def feed_specific_config
-    @config[:feed_specific_config]
-  end
-  
   def json_feed?
     (@feed == 'github' || @feed == 'disqus')
   end
