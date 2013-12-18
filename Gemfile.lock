@@ -382,7 +382,6 @@ DEPENDENCIES
   rmagick
   rolify
   rspec
-  rspec-core
   rspec-rails
   sanitize
   twitter

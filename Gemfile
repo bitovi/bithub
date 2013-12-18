@@ -30,7 +30,6 @@ gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
 gem 'oj'
-gem 'rspec-core'
 gem 'yajl-ruby'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
@@ -43,7 +42,7 @@ gem 'twitter'
 gem 'github_api'
 gem 'octokit', '~> 2.0'
 
-group :test, :development do
+group :test, :testing, :development do
   gem 'factory_girl_rails'
   gem 'rspec'
   gem 'rspec-rails'
