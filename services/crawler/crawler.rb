@@ -116,27 +116,27 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   end
 
-  channel.direct("e.issues") do |issues_exchange|
-    queue = channel.queue("q.issues").bind(issues_exchange)
+  # channel.direct("e.issues") do |issues_exchange|
+  #   queue = channel.queue("q.issues").bind(issues_exchange)
 
-    # --- Pollers
-    phase = 1; shift_phase = lambda {phase+=1}
+  #   # --- Pollers
+  #   phase = 1; shift_phase = lambda {phase+=1}
 
-    # --- Github issues endpoint
-    feeds[:github][:repos].each do |repo_name, repo_config|
-      if repo_config[:issues]
-        [:open, :closed].each do |state|
-          EM.add_timer(phase) do
-            log_registering(repo_config[:issues], {state: state})
-            EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(logger, issues_exchange, repo_config[:issues]) do |c|
-              c[:http_head] = gh_http_req_head
-              c[:http_query] = { state: state, per_page: 100 }
-              c[:backlog_size] = 1000
-            end)
-          end
-          shift_phase.call
-        end
-      end
-    end
-  end
+  #   # --- Github issues endpoint
+  #   feeds[:github][:repos].each do |repo_name, repo_config|
+  #     if repo_config[:issues]
+  #       [:open, :closed].each do |state|
+  #         EM.add_timer(phase) do
+  #           log_registering(repo_config[:issues], {state: state})
+  #           EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(logger, issues_exchange, repo_config[:issues]) do |c|
+  #             c[:http_head] = gh_http_req_head
+  #             c[:http_query] = { state: state, per_page: 100 }
+  #             c[:backlog_size] = 1000
+  #           end)
+  #         end
+  #         shift_phase.call
+  #       end
+  #     end
+  #   end
+  # end
 end

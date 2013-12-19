@@ -25,7 +25,6 @@ module Events
             :body => original_hash['payload']['issue']['body'],
             :url => original_hash['payload']['issue']['html_url'],
             :meta => {
-              :content_digest => content_digest(original_hash),
               :labels => label_names(labels(original_hash)),
               :issue_id => original_hash['payload']['issue']['id'],
               :action => original_hash['payload']['action'],

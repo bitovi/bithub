@@ -13,7 +13,7 @@ module Events
           attrs = {
             :title => "pushed to #{original_hash['repo']['name']}",
             :body => original_hash['payload']['body'],
-            :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{event['payload']['head']}",
+            :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{original_hash['payload']['head']}",
             :meta => {
               :commits => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
               :commit_shas => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),

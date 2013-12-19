@@ -8,8 +8,6 @@ require 'nori'
 require 'app/domain/events/processor'
 require 'app/domain/events/errors'
 
-
-# FIXME segfault -> circular reference
 class Poller
   attr_reader :latest
 
@@ -128,7 +126,6 @@ class Poller
 
   def make_digest(event_hash)
     event_hash[:content_digest] = processor.content_digest(event_hash)
-    #event_hash[:hash_key] = event_hash[:content_digest]
   end
 
   def events_from_response(response_hash)
