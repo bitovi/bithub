@@ -40,7 +40,7 @@ module Tagger
       tokenize(text).reduce([]) do |result, word|
         @tags.each do |t|
           names = [t.name]; names += t.aliases if t.aliases
-          leven_th = tag.props['levenshtein_treshold'] || @levenshtein_treshold
+          leven_th = t.props['levenshtein_treshold'] || @levenshtein_treshold
                 
           names.each do |name|
             if Levenshtein.distance(word, name) <= leven_th.to_i
