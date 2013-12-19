@@ -18,6 +18,7 @@ module Events
             url: original_hash['link'],
           },
           meta: {
+            feed: 'forum',
             type: 'post',
             tags: original_hash['category'].snake_case,
             origin_author_name: original_hash['dc:creator'],

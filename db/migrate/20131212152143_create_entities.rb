@@ -17,6 +17,7 @@ class CreateEntities < ActiveRecord::Migration
 
       t.string :image
       t.string :cached_tag_list
+      t.integer :total_upvotes
 
       t.hstore :props
       t.timestamps

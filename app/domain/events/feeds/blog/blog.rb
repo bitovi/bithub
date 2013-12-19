@@ -12,7 +12,8 @@ module Events
             body: Sanitize.clean(original_hash['description'], Sanitize::Config::RELAXED),
           },
           meta: {
-            type: 'post'
+            feed: 'blog',
+            type: 'post',
           }
         })
       end

@@ -1,28 +1,20 @@
 require 'digest/md5'
+require 'app/domain/events/dispatcher'
 
 class Event < ActiveRecord::Base
 
-  attr_accessible :hash_key
-    :origin_date, :origin_ts,
-    :created_at, :updated_at,
-    :props, :source_data
+  attr_accessible :content_digest, :feed, :type,
+    :created_at, :updated_at, :extracted,
+    :source_data, :source_json
 
-  acts_as_taggable_on :feed
-  acts_as_taggable_on :type
+  validates_presence_of :content_digest
+  validates_uniqueness_of :content_digest
 
-  belongs_to :entity
-
-  validates_presence_of :origin_date, :origin_ts, :hash_key
-  validates_uniqueness_of :hash_key
-
-  serialize :props, ActiveRecord::Coders::Hstore
+  serialize :extracted, JSON
   serialize :source_data, JSON
+  serialize :source_json, JSON
 
-
-
-
-  # ---
-
+  #belongs_to :entity
 
   # def initialize(args = {})
   #   args[:id] = Event.next_id
@@ -59,8 +51,6 @@ class Event < ActiveRecord::Base
   # def self.next_id
   #   ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
   # end
-
-
 
   # def cache_key
   #   case
