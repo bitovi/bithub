@@ -32,15 +32,18 @@ module Events
     end
 
     def process(original_hash)
-      processed = {}
-      .deep_merge(hash_key_source_data_and_feed(original_hash))
-      .deep_merge(origin_timestamps_hash(original_hash))
+      processed = hash_key_and_source_data(original_hash)
 
+      processed.deep_merge({
+        meta: { feed: @feed.to_s },
+        extracted: origin_timestamps(original_hash)
+      })
+      
       @subprocessor.process(remap_meta_type(original_hash), processed)
     end
 
-    def content_digest(event_hash)
-      @subprocessor.content_digest(event_hash)
+    def content_digest(original_hash)
+      @subprocessor.content_digest(original_hash)
     end
 
     def events_from_response(response_hash)
@@ -49,16 +52,15 @@ module Events
 
     private
 
-    def hash_key_source_data_and_feed(event_hash)
+    def hash_key_and_source_data(original_hash)
       return {
-        content_digest: event_hash.delete(:content_digest),
-        source_data: event_hash,
-        meta: { feed: @feed.to_s }
+        content_digest: original_hash.delete(:content_digest),
+        source_data: original_hash,
       }
     end
 
-    def origin_timestamps_hash(event_hash)
-      otss = @subprocessor.origin_timestamps(event_hash)
+    def origin_timestamps(original_hash)
+      otss = @subprocessor.origin_timestamps(original_hash)
       return {
         origin_ts: otss.iso8601,
         origin_date: to_date_str(otss)

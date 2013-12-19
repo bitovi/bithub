@@ -20,10 +20,12 @@ module Events
             title = "Issue #{action}: #{t}"
           end
 
-          attrs = {
-            :title => title,
-            :body => original_hash['payload']['issue']['body'],
-            :url => original_hash['payload']['issue']['html_url'],
+          new_data = {
+            extracted: {
+              :title => title,
+              :body => original_hash['payload']['issue']['body'],
+              :url => original_hash['payload']['issue']['html_url'],
+            },
             :meta => {
               :labels => label_names(labels(original_hash)),
               :issue_id => original_hash['payload']['issue']['id'],
@@ -34,7 +36,7 @@ module Events
             }
           }
 
-          processed.deep_merge(attrs)
+          processed.deep_merge(new_data)
         end
       end
 

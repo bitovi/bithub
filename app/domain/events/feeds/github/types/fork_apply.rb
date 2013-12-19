@@ -6,7 +6,9 @@ module Events
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
-            :title => "patch applied on #{original_hash['repo']['name']}"
+            extracted: {
+              :title => "patch applied on #{original_hash['repo']['name']}"
+            }
           })
         end
       end

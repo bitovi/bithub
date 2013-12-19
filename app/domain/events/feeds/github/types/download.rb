@@ -6,9 +6,11 @@ module Events
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
-            :title => "download #{original_hash['payload']['download']['name']} created",
-            :body => original_hash['payload']['download']['description'],
-            :url => original_hash['payload']['download']['html_url'],
+            extracted: {
+              :title => "download #{original_hash['payload']['download']['name']} created",
+              :body => original_hash['payload']['download']['description'],
+              :url => original_hash['payload']['download']['html_url'],
+            }
           })
         end
       end

@@ -10,17 +10,21 @@ module Events
             issue_nmb = m[1]
           end
 
-          attrs = {
-            :title => "pushed to #{original_hash['repo']['name']}",
-            :body => original_hash['payload']['body'],
-            :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{original_hash['payload']['head']}",
-            :meta => {
+          new_data = {
+            extracted: {
+              :title => "pushed to #{original_hash['repo']['name']}",
+              :body => original_hash['payload']['body'],
+              :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{original_hash['payload']['head']}",
+            },
+            meta: {
               :commits => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
               :commit_shas => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
               :repo_name => original_hash['repo']['name'],
               :referenced_issue_number => issue_nmb
             }
           }
+
+          processed.deep_merge(new_data)
         end
       end
 

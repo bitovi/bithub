@@ -16,11 +16,13 @@ module Events
 
           title = "Pull request ##{nmb} #{action}: #{t}"
 
-          attrs = {
-            :title => title,
-            :body => original_hash['payload']['pull_request']['body'],
-            :url => original_hash['payload']['pull_request']['html_url'],
-            :meta => {
+          new_data = {
+            extracted: {
+              :title => title,
+              :body => original_hash['payload']['pull_request']['body'],
+              :url => original_hash['payload']['pull_request']['html_url'],
+            },
+            meta: {
               :repo_name => original_hash['repo']['name'],
               :referenced_issue_number => issue_nmb,
               :issue_number => nmb,
@@ -29,7 +31,7 @@ module Events
             }
           }
           
-          processed.deep_merge(attrs)
+          processed.deep_merge(new_data)
         end
       end
 

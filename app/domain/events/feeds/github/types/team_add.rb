@@ -5,9 +5,11 @@ module Events
 
       class Processor
         def process(original_hash, processed)
-          attrs = {
-            :title => "team add event"
-          }
+          processed.deep_merge({
+            extracted: {
+              :title => "team add event"
+            }
+          })
         end
       end
 
