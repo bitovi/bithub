@@ -2,7 +2,7 @@ require 'digest/md5'
 require 'andand'
 
 require 'lib/core_ext'
-require 'app/domain/events/shared/type_mappings'
+require 'app/domain/events/shared/mappings'
 
 # Require all feed and type files
 Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
@@ -11,12 +11,22 @@ end
 
 module Events
   class Processor
-    include Events::TypeMappings
+    # TODO: refactor filtering so that it mutate the event with the content digest
+    # it should have 1-1 mapping of digest-event in an array [[d1, e1], [d2, e2]] ...
+
+    include Events::Mappings
 
     def initialize(feed)
+      @logger = Log4r::Logger.new('Processor')
+      @logger.add(Log4r::StdoutOutputter.new('console', {
+        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
+      }))
+
+
       config = yield Hash.new if block_given?
-      @feed = feed
-      @subprocessor = Events.const_get(feed.capitalize)
+
+      @feed = feed_mappings(feed)
+      @subprocessor = Events.const_get(@feed.capitalize)
                             .const_get('Processor')
                             .new{config}
     end
@@ -41,7 +51,7 @@ module Events
 
     def hash_key_source_data_and_feed(event_hash)
       return {
-        hash_key: event_hash.delete(:hash_key),
+        content_digest: event_hash.delete(:content_digest),
         source_data: event_hash,
         meta: { feed: @feed.to_s }
       }

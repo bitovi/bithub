@@ -2,7 +2,7 @@ module Events
   module Github
     module WithLabels
 
-      def pluck_labels(origin_hash)
+      def labels(original_hash)
         original_hash['payload']['issue']['labels']
       end
 
