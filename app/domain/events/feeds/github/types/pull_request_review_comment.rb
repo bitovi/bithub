@@ -5,11 +5,13 @@ module Events
 
       class Processor
         def process(original_hash, processed)
-          attrs = {
-            :title => "commented on pull request: #{original_hash['payload']['comment']['path']}",
-            :url => original_hash['payload']['comment']['_links']['html']['href'],
+          processed.deep_merge({
+            extracted: {
+              :title => "commented on pull request: #{original_hash['payload']['comment']['path']}",
+              :url => original_hash['payload']['comment']['_links']['html']['href'],
               :body => original_hash['payload']['comment']['body'],
-          }
+            }
+          })
         end
       end
 

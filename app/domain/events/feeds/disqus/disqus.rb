@@ -4,9 +4,11 @@ module Events
     class Processor
       def process(original_hash, processed)
         processed.deep_merge({
-          title: original_hash['thread']['title'],
-          body: original_hash['message'],
-          url: original_hash['url'],
+          extracted: {
+            title: original_hash['thread']['title'],
+            body: original_hash['message'],
+            url: original_hash['url'],
+          },
           meta: {
             feed: 'disqus',
             type: 'post',

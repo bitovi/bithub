@@ -11,19 +11,21 @@ module Events
       def process(original_hash, processed)
         fail_if_invalid(original_hash)
 
-        processed = processed.deep_merge({
-          title: original_hash['title'],
-          body: sanitize(original_hash['description']),
-          url: original_hash['link'],
+        new_data = {
+          extracted: {
+            title: original_hash['title'],
+            body: sanitize(original_hash['description']),
+            url: original_hash['link'],
+          },
           meta: {
             type: 'post',
             tags: original_hash['category'].snake_case,
             origin_author_name: original_hash['dc:creator'],
           }
-        })
+        }
+        new_data[:meta][:tags] = [@config.andand[:term]]
 
-        processed[:meta][:tags] = [] + [@config.andand[:term]]
-        processed
+        processed.deep_merge(new_data)
       end
 
       def origin_timestamps(original_hash)

@@ -50,6 +50,10 @@ module Events
       subtype.entities_to_create(payload)
     end
 
+    def dispatch(payload)
+      subtype(payload)
+    end
+
     def subtype(payload)
       meta = (payload['meta'] || payload[:meta])
       fail Events::Errors::UnknownFeedException unless meta['feed']

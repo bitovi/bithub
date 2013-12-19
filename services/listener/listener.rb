@@ -31,7 +31,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
         begin
           item_hash = ActiveSupport::JSON.decode(payload)
-          processed = Events::Dispatcher.new.process(item_hash)
+          processed = Events::Dispatcher.new.dispatch(item_hash)
           $log.info processed
         rescue Events::Errors::UnknownFeedException => e
           $log.error item_hash.inspect

@@ -8,10 +8,10 @@ module Events
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
-            content_digest: content_digest(original_hash),
-            label_names: label_names(labels(original_hash)),
+            #content_digest: content_digest(original_hash),
+            #label_names: label_names(labels(original_hash)),
             meta: {
-              type: 'fake_issue_event',
+              type: 'custom_issue_event',
             }
           })
         end

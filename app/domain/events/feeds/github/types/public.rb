@@ -6,7 +6,9 @@ module Events
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
-            :title => "Repository #{original_hash['repo']['name']} goes public!"
+            extracted: {
+              :title => "Repository #{original_hash['repo']['name']} goes public!"
+            }
           })
         end
       end

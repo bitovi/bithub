@@ -6,10 +6,14 @@ module Events
         fail_if_invalid(original_hash)
 
         processed.deep_merge({
-          title: original_hash['title'],
-          url: original_hash['link'],
-          body: Sanitize.clean(original_hash['description'], Sanitize::Config::RELAXED),
-          meta: { type: 'post' }
+          extracted: {
+            title: original_hash['title'],
+            url: original_hash['link'],
+            body: Sanitize.clean(original_hash['description'], Sanitize::Config::RELAXED),
+          },
+          meta: {
+            type: 'post'
+          }
         })
       end
 
