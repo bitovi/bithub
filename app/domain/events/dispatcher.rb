@@ -11,17 +11,19 @@ module Events
   class Dispatcher
     include Events::Mappings
 
-    def initialize(event_persistor) #, entity_persistor)
+    def initialize(event_persistor, entity_persistor)
       initialize_logger
-      @ep = event_persistor
+      @evp = event_persistor
+      @enp = entity_persistor
     end
 
-    def persist(payload)
+    def process(payload)
       event_class = subtype(payload).to_s
       @logger.debug event_class.inspect
 
       full_name, feed, type = event_class.match(/Event::(.*)::(.*)/).to_a
-      @ep.new({
+
+      new_event = @evp.new({
         feed: feed,
         type: type,
         content_digest: payload['content_digest'],
@@ -30,13 +32,11 @@ module Events
         extracted: payload['extracted'],
       })
 
-      # @entities = []
-      # @entities += entities_to_update
-      # @entities += entities_to_create
+      new_or_updated_entities = Entities::Dispatcher.new(@enp).process(new_event)
 
-      # @entities.each do |e|
-      #   @entity_persistor.create(e) if e.create?
-      #   @entity_persistor.update(e) if e.update?
+      # ActiveRecord::Base.transaction do
+      #   new_event.save!
+      #   new_or_updated_entities.each { |e| entity.save! }
       # end
     end
     
