@@ -1,10 +1,11 @@
-class Determinator
-  class DeterminationException < Exception; end
+module Entities
+  class Determinator
 
   PROPS_TO_TAGS = [:feed, :type, :project, :tags]
   ATTRS_FOR_TAGGING = [:url, :title, :body]
 
-  def initialize
+  def initialize(ar_instance, determination_rules)
+    @entity = entity
   end
 
   def determine(custom_props = nil)

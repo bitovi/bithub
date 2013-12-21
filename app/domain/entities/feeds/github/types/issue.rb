@@ -1,49 +1,51 @@
 module Entities
   module Github
     module Issue
+      Relationships = {
+        :upstream = []
+        :downstream = [Entities::Github::Issue, Entities::Github::PullRequest, Entities::Github::Push]
+      }
 
-      class Builder
-        def extract_attrs(payload)
+      class Procurer < Entities::Procurer
+        include Github::FindableByRepoNameAndIssueNumber
+        include Github::FindableByIssueNumber
 
-
-        end
-      end
-      
-      class Determinator
-        def determine_tags
-        end
-
-        def determine_category
-        end
-      end
-
-      class Grouper
-        def find_parent
-        end
-
-        def find_children
+        def find(attrs)
+          if (issue_id = attrs['issue_id'])
+            find_issue_comment_by_issue_id(issue_id)
+          elsif (repo_name = attrs['repo_name']) && (issue_number = attrs['issue_number'])
+            find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
+          else
+            fail Entities::Errors::MissingAttrToFindWith, 'must have some attributes to find with'
+          end
         end
 
-        def find_references
+        def build
+          build_from_issue_comment
         end
+
       end
 
-      # def find_issues_by_issue_id(issue_id)
-      #   query = {
-      #     tags: %w(github issues_event),
-      #     props: { issue_id: issue_id }
-      #   }
-      # end
+      module Finders
+        def find_issue_by_issue_id(issue_id)
+          tagged_with(['github', 'issues_event'])
+          .where("props -> 'issue_id' = '#{issue_id}'")
+        end
 
-      # def find_issues_by_repo_name_and_issue_number(repo_name, issue_number)
-      #   query = {
-      #     tags: %w(github issues_event),
-      #     props: {
-      #       repo_name: repo_name
-      #       issue_number: issue_number
-      #     }
-      #   }
-      # end
+        def find_issue_by_repo_name_and_issue_number(repo_name, issue_number)
+          .tagged_with(['github', 'issues_event'])
+          .where("props -> 'repo_name' = '#{repo_name}'")
+          .where("props -> 'issue_number' = '#{issue_number}'")
+        end
+      end
+
+      module Builders
+        def build_from_issue
+        end
+
+        def build_from_issue_comment
+        end
+      end
 
     end
   end

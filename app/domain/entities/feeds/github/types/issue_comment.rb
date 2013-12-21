@@ -1,22 +1,36 @@
 module Entities
   module Github
-    class IssueComment
+    module IssueComment
+      Relationships = {
+        :upstream = [Entities::Github::Issue, Entities::Github::PullRequest, Entities::Github::Push]
+        :downstream = []
+      }
 
-      def find_issue_comments_by_issue_id(issue_id)
-        query = {
-          tags: %w(github issue_comment_event),
-          props: { issue_id: issue_id }
-        }
+      class Procurer < Entities::Procurer
+        include Finders
+
+        def find(attrs)
+          if (issue_id = attrs['issue_id'])
+            find_issue_comment_by_issue_id(issue_id)
+          elsif (repo_name = attrs['repo_name']) && (issue_number = attrs['issue_number'])
+            find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
+          else
+            fail Entities::Errors::MissingAttrToFindWith, 'must have some attributes to find with'
+          end
+        end
       end
 
-      def find_issue_comments_by_repo_name_and_issue_number(repo_name, issue_number)
-        query = {
-          tags: %w(github issue_comment_event),
-          props: {
-            repo_name: repo_name,
-            issue_number: issue_number
-          }
-        }
+      module Finders
+        def find_issue_comment_by_issue_id(issue_id)
+          .tagged_with(['github', 'issue_comment_event'])
+          .where("props -> 'issue_id' = '#{issue_id}'")
+        end
+
+        def find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
+          tagged_with(['github', 'issue_comment_event'])
+          .where("props -> 'repo_name' = '#{repo_name}'")
+          .where("props -> 'issue_number' = '#{issue_number}'")
+        end
       end
 
     end
