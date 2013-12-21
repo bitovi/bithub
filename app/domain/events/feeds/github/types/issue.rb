@@ -3,7 +3,6 @@ require 'app/domain/events/shared/with_labels'
 module Events
   module Github
     module Issue
-      #Relationships = [Entities::Github::Issue]
 
       class Processor
         include Events::Github::WithLabels

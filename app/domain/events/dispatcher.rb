@@ -19,38 +19,35 @@ module Events
 
     def process(payload)
       event_class = subtype(payload).to_s
-      @logger.debug event_class.inspect
-
-      full_name, feed, type = event_class.match(/Event::(.*)::(.*)/).to_a
+      full_name, feed_name, type_name = names(event_class)
 
       new_event = @evp.new({
-        feed: feed,
-        type: type,
+        feed: feed_name,
+        type: type_name,
         content_digest: payload['content_digest'],
         source_data: payload['source_data'],
         source_json: payload['source_json'],
         extracted: payload['extracted'],
       })
 
-      new_or_updated_entities = Entities::Dispatcher.new(@enp).process(new_event)
+      boss = entity_class(event_class)::Procurer.new(@enp)
+
+      base_entity = boss.find_or_build(payload)
+      related_entities = boss.find_or_build_related(payload)
+
+      new_or_updated_entities = [base_entity] + related_entities
 
       # ActiveRecord::Base.transaction do
       #   new_event.save!
       #   new_or_updated_entities.each { |e| entity.save! }
       # end
     end
-    
-    # def entities_to_update
-    #   subtype.entities_to_update(payload)
-    # end
 
-    # def entities_to_create
-    #   subtype.entities_to_create(payload)
-    # end
+    def entity_class(event_class)
+      _, feed_name, type_name = names(event_class)
+      Entities.const_get(feed_name).const_get(type_name)
+    end
 
-    # def subtype_name(payload)
-    #   subtype(payload).to_s.gsub(/Events::.*::/, '')
-    # end
 
     def subtype(payload)
       meta = (payload['meta'] || payload[:meta])
@@ -72,6 +69,10 @@ module Events
       else
         fail Events::Errors::UnknownFeedException
       end
+    end
+
+    def names(event_class)
+      event_class.match(/Event::(.*)::(.*)/).to_a
     end
 
     def initialize_logger

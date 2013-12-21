@@ -1,20 +1,20 @@
 module Entities
   module Github
-    class CommitComment
+    module CommitComment
 
-      def find_commit_comments_by_commit_sha(commit_sha)
-        query = {
-          tags: %w(github commit_comment_event),
-          props: { commit_sha: commit_sha }
-        }
-        tagged_with().where("props -> 'commit_sha' = '#{commit_sha}'")
+      class Procurer
       end
 
-      def find_commit_comments_by_multiple_commit_shas(commit_shas)
-        query = {
-          tags: %w(github commit_comment_event),
-          props: { commit_sha: "IN #{commit_shas}" }
-        }
+      module FindableByCommitSHA
+        def find_commit_comments_by_commit_sha(commit_sha)
+          tagged_with(['github', 'commit_comment_event'])
+          .where("props -> 'commit_sha' = '#{commit_sha}'")
+        end
+
+        def find_commit_comments_by_commit_shas(commit_shas)
+          tagged_with(['github', 'commit_comment_event'])
+          .where("position(props -> 'commit_sha' in '#{commit_shas}') > 0")
+        end
       end
 
     end

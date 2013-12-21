@@ -1,22 +1,20 @@
 module Entities
   module Github
-    class Push
+    module Push
 
-      def find_pushes_by_commit_sha(commit_sha)
-        query = {
-          tags: %w(github push_event)
-          props: { commit_shas: "LIKE #{commit_sha}" }
-        }
+      class Procurer < Github::Procurer
       end
 
-      def find_pushes_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
-        query = {
-          tags: %w(github push_event)
-          props: {
-            repo_name: repo_name
-            referenced_issue_number: issue_nmb
-          }
-        }
+      module Finders
+        def find_pushes_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
+          .tagged_with(['github', 'push_event'])
+          .name_and_number(repo_name, referenced_issue_number)
+        end
+
+        def find_pushes_by_commit_sha(commit_sha)
+          .tagged_with(['github','push_event'])
+          .where("props -> 'commit_shas' LIKE '%#{commit_sha}%'")
+        end
       end
 
     end

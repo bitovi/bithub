@@ -1,6 +1,7 @@
 module Entities
-  module Github
+  module Forum
     class Procurer < Entities::Procurer
-    end
+	end
   end
 end
+

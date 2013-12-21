@@ -1,16 +1,14 @@
 module Entities
   module Forum
-    class Post
+    module Post
+      class Procurer < Forum::Procurer
 
-      def initialize
-        @ar = Entity
-      end
+      module Finders
 
-      def forum_posts_by_thread_url(thread_url)
-        query = {
-          tags: %w(forums),
-          url: "LIKE '#{thread_url}%'"
-        }
+        def find_forum_posts_by_thread_url(thread_url)
+          tagged_with('forums').where("url LIKE '#{thread_url}%'")
+        end
+
       end
 
 
