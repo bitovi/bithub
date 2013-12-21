@@ -159,6 +159,10 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
+  def update_total_upvotes
+    self.update_attribute(:total_upvotes, self.applies_to.upvotes.sum('value'))
+  end
+
   def awarded?
     self.awards.length > 0
   end
