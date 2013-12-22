@@ -444,16 +444,133 @@ ALTER SEQUENCE internals_id_seq OWNED BY internals.id;
 
 
 --
--- Name: leaderboard; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE leaderboard (
-    user_id integer,
-    user_name character varying(255),
-    user_email character varying(255),
-    user_gravatar_url character varying(255),
-    user_score integer
+CREATE TABLE roles (
+    id integer NOT NULL,
+    name character varying(255),
+    resource_id integer,
+    resource_type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
+
+
+--
+-- Name: rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE rules (
+    id integer NOT NULL,
+    required_tags character varying(255)[],
+    authorship_value integer,
+    award_value integer,
+    upvote_value integer,
+    priority integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    name character varying(255),
+    email character varying(255),
+    address character varying(255),
+    city character varying(255),
+    postal character varying(255),
+    state character varying(255),
+    props hstore,
+    country_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip character varying(255),
+    last_sign_in_ip character varying(255),
+    total_score integer DEFAULT 0
+);
+
+
+--
+-- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users_roles (
+    user_id integer,
+    role_id integer
+);
+
+
+--
+-- Name: leaderboard; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW leaderboard AS
+ SELECT users.id AS user_id, 
+    users.name AS user_name, 
+    users.email AS user_email, 
+    (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
+    ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
+           FROM events, 
+            rules
+          WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+           FROM events, 
+            upvotes
+          WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
+           FROM events, 
+            awards
+          WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+           FROM internals
+          WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
+           FROM anteups
+          WHERE ((anteups.actor_id = users.id) AND (anteups.fullfilled = true)))) AS user_score
+   FROM (users
+   LEFT JOIN users_roles ON ((users.id = users_roles.user_id)))
+  WHERE (((users.name IS NOT NULL) AND (users_roles.role_id IS NULL)) OR (NOT (users_roles.role_id IN ( SELECT roles.id
+      FROM roles
+     WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
+  ORDER BY ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
+      FROM events, 
+       rules
+     WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+      FROM events, 
+       upvotes
+     WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
+      FROM events, 
+       awards
+     WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+      FROM internals
+     WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
+      FROM anteups
+     WHERE ((anteups.actor_id = users.id) AND (anteups.fullfilled = true)))) DESC
+  WITH NO DATA;
+
+
+--
+-- Name: pagination; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW pagination AS
+ SELECT e.thread_updated_at AS ts, 
+    e.id, 
+    categories.name AS category, 
+    ARRAY( SELECT t.name
+           FROM taggings tt, 
+            tags t
+          WHERE ((((tt.taggable_type)::text = 'Event'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
+   FROM (events e
+   LEFT JOIN tags categories ON ((e.category_id = categories.id)))
+  WHERE (e.parent_id IS NULL)
+  ORDER BY e.thread_updated_at DESC
+  WITH NO DATA;
 
 
 --
@@ -493,20 +610,6 @@ ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles (
-    id integer NOT NULL,
-    name character varying(255),
-    resource_id integer,
-    resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -523,22 +626,6 @@ CREATE SEQUENCE roles_id_seq
 --
 
 ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
-
-
---
--- Name: rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE rules (
-    id integer NOT NULL,
-    required_tags character varying(255)[],
-    authorship_value integer,
-    award_value integer,
-    upvote_value integer,
-    priority integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
 
 
 --
@@ -627,32 +714,6 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users (
-    id integer NOT NULL,
-    name character varying(255),
-    email character varying(255),
-    address character varying(255),
-    city character varying(255),
-    postal character varying(255),
-    state character varying(255),
-    props hstore,
-    country_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    remember_created_at timestamp without time zone,
-    sign_in_count integer DEFAULT 0,
-    current_sign_in_at timestamp without time zone,
-    last_sign_in_at timestamp without time zone,
-    current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255),
-    total_score integer DEFAULT 0
-);
-
-
---
 -- Name: user_total_score; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -690,16 +751,6 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
-
-
---
--- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users_roles (
-    user_id integer,
-    role_id integer
-);
 
 
 --
@@ -839,6 +890,14 @@ ALTER TABLE ONLY awards
 
 
 --
+-- Name: category_determination_rules_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY category_determination_rules
+    ADD CONSTRAINT category_determination_rules_name_key UNIQUE (name);
+
+
+--
 -- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -860,6 +919,14 @@ ALTER TABLE ONLY countries
 
 ALTER TABLE ONLY delayed_jobs
     ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_hash_key_key UNIQUE (hash_key);
 
 
 --
@@ -1257,3 +1324,11 @@ INSERT INTO schema_migrations (version) VALUES ('20131127171009');
 INSERT INTO schema_migrations (version) VALUES ('20131203191031');
 
 INSERT INTO schema_migrations (version) VALUES ('20131206133159');
+
+INSERT INTO schema_migrations (version) VALUES ('20131208111213');
+
+INSERT INTO schema_migrations (version) VALUES ('20131209113732');
+
+INSERT INTO schema_migrations (version) VALUES ('20131209113804');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212195821');
