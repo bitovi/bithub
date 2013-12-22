@@ -48,13 +48,13 @@ namespace :deploy do
     envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
     env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
     run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
-    run "sudo /usr/bin/service bithub-listener start"
+    run "sudo /usr/bin/service bithub start"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener stop"
+    run "sudo /usr/bin/service bithub stop"
   end
 
   desc "Recreate Upstart configuration"
