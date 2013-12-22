@@ -1,7 +1,7 @@
 module Determination
   class DeterminationException < Exception; end
 
-  PROPS_TO_TAGS = [:feed, :type, :project, :tags]
+  PROPS_TO_TAGS = [:feed, :type, :project, :tags, :state]
   ATTRS_FOR_TAGGING = [:url, :title, :body]
 
   def determine(custom_props = nil)
