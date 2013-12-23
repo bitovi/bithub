@@ -12,8 +12,6 @@ class CreateEntities < ActiveRecord::Migration
 
       t.datetime :origin_ts, :null => false
       t.datetime :thread_updated_ts, :null => false
-      t.date :origin_date, :null => false
-      t.date :thread_updated_date, :null => false
 
       t.string :image
       t.string :cached_tag_list
