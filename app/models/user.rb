@@ -232,8 +232,12 @@ class User < ActiveRecord::Base
       # skip making HTTP request in tests
       return gravatar if Rails.env == "test"
 
-      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
-      response.code == '200' ? gravatar : ''
+      begin
+        response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
+        response.code == '200' ? gravatar : ''
+      rescue
+        return ''
+      end
     else
       ''
     end
