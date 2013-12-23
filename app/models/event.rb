@@ -160,7 +160,7 @@ class Event < ActiveRecord::Base
   end
 
   def update_total_upvotes
-    self.update_attribute(:total_upvotes, self.applies_to.upvotes.sum('value'))
+    self.update_attribute(:total_upvotes, self.upvotes.sum('value'))
   end
 
   def awarded?
