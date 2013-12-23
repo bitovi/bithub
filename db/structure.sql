@@ -220,6 +220,45 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
+-- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE delayed_jobs (
+    id integer NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    attempts integer DEFAULT 0 NOT NULL,
+    handler text NOT NULL,
+    last_error text,
+    run_at timestamp without time zone,
+    locked_at timestamp without time zone,
+    failed_at timestamp without time zone,
+    locked_by character varying(255),
+    queue character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE delayed_jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
+
+
+--
 -- Name: events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -520,7 +559,7 @@ CREATE MATERIALIZED VIEW leaderboard AS
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT e.origin_date AS date, 
+ SELECT e.thread_updated_at AS ts, 
     e.id, 
     categories.name AS category, 
     ARRAY( SELECT t.name
@@ -530,7 +569,7 @@ CREATE MATERIALIZED VIEW pagination AS
    FROM (events e
    LEFT JOIN tags categories ON ((e.category_id = categories.id)))
   WHERE (e.parent_id IS NULL)
-  ORDER BY e.origin_date DESC
+  ORDER BY e.thread_updated_at DESC
   WITH NO DATA;
 
 
@@ -753,6 +792,13 @@ ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
 
 
@@ -844,6 +890,14 @@ ALTER TABLE ONLY awards
 
 
 --
+-- Name: category_determination_rules_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY category_determination_rules
+    ADD CONSTRAINT category_determination_rules_name_key UNIQUE (name);
+
+
+--
 -- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -857,6 +911,22 @@ ALTER TABLE ONLY category_determination_rules
 
 ALTER TABLE ONLY countries
     ADD CONSTRAINT countries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY delayed_jobs
+    ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_hash_key_key UNIQUE (hash_key);
 
 
 --
@@ -945,6 +1015,13 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
 
 
 --
@@ -1245,6 +1322,8 @@ INSERT INTO schema_migrations (version) VALUES ('20131126103556');
 INSERT INTO schema_migrations (version) VALUES ('20131127171009');
 
 INSERT INTO schema_migrations (version) VALUES ('20131203191031');
+
+INSERT INTO schema_migrations (version) VALUES ('20131206133159');
 
 INSERT INTO schema_migrations (version) VALUES ('20131208111213');
 
