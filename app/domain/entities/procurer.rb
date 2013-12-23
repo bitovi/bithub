@@ -6,6 +6,13 @@ module Entities
       @p = persistor
     end
 
+    def dispatch(payload)
+      #RECIMO issues_event koji closa issue
+      meta = payload['meta']
+
+      case 
+    end
+
     def find_or_build(payload)
       attrs = extract(payload)
 
@@ -20,16 +27,16 @@ module Entities
 
     def find_or_build_upstream(attrs)
       attrs = extract(payload)
-      Relationships[:upstream].map {|ec| ec::Procurer.new(@p).find_or_build(attrs) }
+      Relationships[:upstream].map do |ec|
+        entity = ec::Procurer.new(@p).find_or_build(attrs)
+      end
     end
     
     def find_or_build_downstream(attrs)
       attrs = extract(payload)
-      Relationships[:downstream].map {|ec| ec::Procurer.new(@p).find_or_build(attrs) }
-    end
-
-    def build(attrs)
-      @p.new(attrs)
+      Relationships[:downstream].map do |ec|
+        entity = ec::Procurer.new(@p).find_or_build(attrs)
+      end
     end
 
     def extract(payload)
@@ -37,16 +44,4 @@ module Entities
     end
   end
 
-  module FindableByOriginUID
-    def find_by_origin_uid(uid)
-      where("props -> 'origin_author_id' = ?", uid)
-    end
-  end
-
-  module FindableByRepoNameIssueNumber
-    def find_by_name_and_number(repo_name, issue_nmb)
-      where("props -> 'repo_name' = '#{repo_name}'")
-      .where("props -> 'referenced_issue_number' = '#{issue_nmb}'")
-    end
-  end
 end

@@ -1,4 +1,4 @@
 module Entities
-  module Github
+  module Disqus
   end
 end

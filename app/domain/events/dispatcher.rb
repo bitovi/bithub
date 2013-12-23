@@ -30,10 +30,10 @@ module Events
         extracted: payload['extracted'],
       })
 
-      boss = entity_class(event_class)::Procurer.new(@enp)
+      entity_class = Entities::Procurer.new(@enp).dispatch(payload)
 
-      base_entity = boss.find_or_build(payload)
-      related_entities = boss.find_or_build_related(payload)
+      base_entity = entity_class.find_or_build(payload)
+      related_entities = entity_class.find_or_build_related(payload)
 
       new_or_updated_entities = [base_entity] + related_entities
 

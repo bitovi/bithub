@@ -1,10 +1,10 @@
 module Entities
   module Github
-    module Push
+    module Commit
 
       Relationships = {
-        upstream: [],
-        downstream: [Entities::Github::Commit, Entities::Github::CommitComment]
+        upstream: [Entities::Github::Push],
+        downstream: [Entities::Github::CommitComment]
       }
 
       class Procurer < Entities::Procurer
@@ -17,7 +17,7 @@ module Entities
         end
 
         def find_pushes_by_commit_sha(commit_sha)
-          .tagged_with(['github', 'push_event'])
+          .tagged_with(['github','push_event'])
           .where("props -> 'commit_shas' LIKE '%#{commit_sha}%'")
         end
       end
