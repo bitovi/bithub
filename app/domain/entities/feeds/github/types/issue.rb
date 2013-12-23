@@ -2,8 +2,8 @@ module Entities
   module Github
     module Issue
       Relationships = {
-        :upstream = []
-        :downstream = [Entities::Github::Issue, Entities::Github::PullRequest, Entities::Github::Push]
+        upstream: [],
+        downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment]
       }
 
       class Procurer < Entities::Procurer
@@ -21,7 +21,7 @@ module Entities
         end
 
         def build
-          build_from_issue_comment
+          build_from_issue
         end
 
       end

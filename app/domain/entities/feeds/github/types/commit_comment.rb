@@ -2,7 +2,12 @@ module Entities
   module Github
     module CommitComment
 
-      class Procurer
+      Relationships = {
+        upstream: [Entities::Github::Push, Entities::Github::Commit],
+        downstream: []
+      }
+
+      class Procurer < Entities::Procurer
       end
 
       module FindableByCommitSHA

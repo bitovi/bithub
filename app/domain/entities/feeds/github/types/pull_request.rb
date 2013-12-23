@@ -1,7 +1,14 @@
 module Entities
   module Github
     class PullRequest
-      class Procurer
+
+      Relationships = {
+        upstream: [],
+        downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment]
+      }
+
+      class Procurer < Entities::Procurer
+      end
 
       module FindableByRepoNameAndRefIssueNmb
         def find_pull_requests_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
