@@ -10,11 +10,23 @@ class Api::TagsController < Api::ApiController
   rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
-    if params[:type]
-      @tags = Tag.tagged_with(params[:type].pluralize).all      
-    else
-      @tags = build_scope(request.env['muster.query']).all
+
+    mq = request.env['muster.query']
+    
+    # overridedefault limit (50)    
+    mq['limit'] = 1000
+
+    scope = build_scope(mq)
+    scope = scope.tagged_with(params[:type].pluralize) if params[:type]
+
+    # replace ordering by priority if any
+    if order_by_priority = mq['order'].select {|o| o.starts_with? 'priority'}.first
+      order_by_priority.gsub! /priority/, "CASE WHEN (props -> 'priority') IS NULL THEN 0 ELSE (props -> 'priority')::integer END"
+      scope = scope.order(order_by_priority)
     end
+
+    @tags = scope.all
+    
     render :index
   end
   
