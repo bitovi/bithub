@@ -7,7 +7,7 @@ module Entities
         downstream: []
       }
 
-      class Procurer < Twitter::Procurer
+      class Procurer
       end
 
       module Finders

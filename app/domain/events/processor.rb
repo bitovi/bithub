@@ -17,27 +17,22 @@ module Events
     include Events::Mappings
 
     def initialize(feed)
-      @logger = Log4r::Logger.new('Processor')
-      @logger.add(Log4r::StdoutOutputter.new('console', {
-        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-      }))
-
-
+      initialize_logger
       config = yield Hash.new if block_given?
 
       @feed = feed_mappings(feed)
-      @subprocessor = Events.const_get(@feed.capitalize)
-                            .const_get('Processor')
-                            .new{config}
+      @subprocessor = Events.const_get(@feed.capitalize)::Processor.new{config}
     end
 
     def process(original_hash)
-      processed = hash_key_and_source_data(original_hash)
+      content_digest = original_hash.delete(:content_digest)
 
-      processed.deep_merge({
+      processed = {
+        content_digest: content_digest,
+        source_data: original_hash,
         meta: { feed: @feed.to_s },
-        extracted: origin_timestamps(original_hash)
-      })
+        extracted: { origin_ts: origin_timestamp(original_hash) },
+      }
       
       @subprocessor.process(remap_meta_type(original_hash), processed)
     end
@@ -52,19 +47,9 @@ module Events
 
     private
 
-    def hash_key_and_source_data(original_hash)
-      return {
-        content_digest: original_hash.delete(:content_digest),
-        source_data: original_hash,
-      }
-    end
-
-    def origin_timestamps(original_hash)
-      otss = @subprocessor.origin_timestamps(original_hash)
-      return {
-        origin_ts: otss.iso8601,
-        origin_date: to_date_str(otss)
-      }
+    def origin_timestamp(original_hash)
+      ots = @subprocessor.origin_timestamp(original_hash)
+      ots.iso8601
     end
 
     def to_date_str(date)
@@ -75,6 +60,13 @@ module Events
       original_hash.deep_merge({
         meta: { type: type_mappings(original_hash[:type]) }
       })
+    end
+
+    def initialize_logger
+      @logger = Log4r::Logger.new('Processor')
+      @logger.add(Log4r::StdoutOutputter.new('console', {
+        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
+      }))
     end
 
   end

@@ -1,11 +1,15 @@
 require 'andand'
 require 'lib/core_ext'
-require 'app/domain/events/shared/mappings'
 
-# Require all Event types
-Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
-  require f.gsub('app/domain/', '')
-end
+require 'entities/procurer'
+require 'events/shared/mappings'
+
+# Feeds
+require 'events/feeds/blog/blog'
+require 'events/feeds/disqus/disqus'
+require 'events/feeds/forum/forum'
+require 'events/feeds/github/github'
+require 'events/feeds/twitter/twitter'
 
 module Events
   class Dispatcher
@@ -17,9 +21,13 @@ module Events
       @enp = entity_persistor
     end
 
-    def process(payload)
-      event_class = subtype(payload).to_s
-      full_name, feed_name, type_name = names(event_class)
+    def dispatch(payload)
+      @logger.debug "IN DISPATCHER"
+
+      # @logger.debug "RAW PAYLOAD"
+      # @logger.debug payload.inspect
+
+      full_name, feed_name, type_name = names(subtype(payload).to_s)
 
       new_event = @evp.new({
         feed: feed_name,
@@ -27,15 +35,19 @@ module Events
         content_digest: payload['content_digest'],
         source_data: payload['source_data'],
         source_json: payload['source_json'],
-        extracted: payload['extracted'],
       })
+      
+      @logger.debug "NEW event"
+      @logger.debug new_event.inspect
 
-      entity_class = Entities::Procurer.new(@enp).dispatch(payload)
+      procurer = Entities::Procurer.new(@enp)
+      new_entity = procurer.procure(new_event)
 
-      base_entity = entity_class.find_or_build(payload)
-      related_entities = entity_class.find_or_build_related(payload)
+      @logger.debug "NEW entity"
+      @logger.debug new_entity.inspect
 
-      new_or_updated_entities = [base_entity] + related_entities
+      # related_entities = entity_class.procure_related(payload)
+      # new_or_updated_entities = [base_entity] + related_entities
 
       # ActiveRecord::Base.transaction do
       #   new_event.save!
@@ -47,7 +59,6 @@ module Events
       _, feed_name, type_name = names(event_class)
       Entities.const_get(feed_name).const_get(type_name)
     end
-
 
     def subtype(payload)
       meta = (payload['meta'] || payload[:meta])
@@ -72,7 +83,7 @@ module Events
     end
 
     def names(event_class)
-      event_class.match(/Event::(.*)::(.*)/).to_a
+      event_class.to_s.match(/.*::(.*)::(.*)/).to_a
     end
 
     def initialize_logger

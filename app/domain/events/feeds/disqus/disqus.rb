@@ -17,7 +17,7 @@ module Events
         })
       end
 
-      def origin_timestamps(original_hash)
+      def origin_timestamp(original_hash)
         # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
         Time.parse(datetime_str(original_hash)+"Z").utc
       end

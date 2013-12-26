@@ -1,3 +1,5 @@
+require 'events/feeds/blog/types/post'
+
 module Events
   module Blog
 
@@ -18,7 +20,7 @@ module Events
         })
       end
 
-      def origin_timestamps(original_hash)
+      def origin_timestamp(original_hash)
         Time.strptime(datetime_str(original_hash), "%e %b %Y").utc
       end
 

@@ -1,13 +1,13 @@
 module Entities
   module Twitter
-    class Tweet
+    module Tweet
 
       Relationships = {
         upstream: [Entities::Twitter::Tweet],
         downstream: []
       }
 
-      class Procurer < Twitter::Procurer
+      class Procurer
       end
 
       module Finders

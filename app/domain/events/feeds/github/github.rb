@@ -1,5 +1,10 @@
 require 'app/domain/events/shared/mappings'
 
+# Require all github types
+Dir[File.join('app', 'domain', 'events', 'feeds', 'github', 'types', '*.rb')].each do |f|
+  require f.gsub('app/domain/', '')
+end
+
 module Events
   module Github
 
@@ -26,7 +31,7 @@ module Events
         end
       end
 
-      def origin_timestamps(original_hash)
+      def origin_timestamp(original_hash)
         fail_if_invalid(original_hash)
         Time.parse(datetime_str(original_hash)).utc
       end
