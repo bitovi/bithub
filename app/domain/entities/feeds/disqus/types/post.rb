@@ -1,13 +1,15 @@
+require 'entities/feeds/disqus/types/thread'
+
 module Entities
   module Disqus
-    class Post
+    module Post
 
-      Relationships = {
-        upstream: [Entities::Disqus::Thread],
-        downstream: []
-      }
+      # Relationships = {
+      #   upstream: [Entities::Disqus::Thread],
+      #   downstream: []
+      # }
 
-      class Procurer < Twitter::Procurer
+      class Procurer
       end
 
       module Finders

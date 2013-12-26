@@ -1,4 +1,5 @@
 require 'lib/sanitizer'
+require 'events/feeds/forum/types/post'
 
 module Events
   module Forum
@@ -29,7 +30,7 @@ module Events
         processed.deep_merge(new_data)
       end
 
-      def origin_timestamps(original_hash)
+      def origin_timestamp(original_hash)
         Time.parse(datetime_str(original_hash)).utc
       end
 

@@ -1,7 +1,8 @@
+require 'events/feeds/disqus/types/post'
+
 module Events
   module Disqus
     module Post
-      #Relationships = [Entities::Disqus::Post]
     end
   end
 end

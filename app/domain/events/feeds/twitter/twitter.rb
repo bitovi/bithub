@@ -1,3 +1,6 @@
+require 'events/feeds/twitter/types/tweet'
+require 'events/feeds/twitter/types/follow'
+
 module Events
   module Twitter
 
@@ -20,7 +23,7 @@ module Events
         end
       end
 
-      def origin_timestamps(original_hash)
+      def origin_timestamp(original_hash)
         fail_if_invalid(original_hash)
         Time.parse(datetime_str(original_hash)).utc
       end
