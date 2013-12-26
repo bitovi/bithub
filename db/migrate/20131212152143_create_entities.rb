@@ -20,7 +20,5 @@ class CreateEntities < ActiveRecord::Migration
       t.hstore :props
       t.timestamps
     end
-
-    add_index(:entities, :thread_updated_date)
   end
 end

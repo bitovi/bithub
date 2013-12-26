@@ -45,7 +45,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
     execute <<-SQL
       CREATE MATERIALIZED VIEW pagination AS
       SELECT
-        e.origin_date::date AS "date",
+        e.origin_ts::date AS origin_date,
         t.name::text AS category,
         count (*) AS cnt
       FROM tags AS t,taggings AS tt, tags AS mt, entities AS e, taggings AS et
@@ -56,8 +56,8 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       AND et.taggable_id = e.id
       AND et.taggable_type = 'Entity'
       AND mt.name = 'categories'
-      GROUP BY e.origin_date, t.name
-      ORDER BY e.origin_date desc;
+      GROUP BY origin_date, category 
+      ORDER BY origin_date desc;
     SQL
     
     execute <<-SQL
