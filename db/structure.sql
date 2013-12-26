@@ -220,32 +220,46 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
--- Name: events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: entities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE events (
+CREATE TABLE entities (
     id integer NOT NULL,
-    hash_key character varying(255) NOT NULL,
     title text,
     url text,
     body text,
     author_id integer,
     rule_id integer NOT NULL,
-    parent_id integer,
     feed_id integer NOT NULL,
     category_id integer NOT NULL,
     origin_ts timestamp without time zone NOT NULL,
-    origin_date date NOT NULL,
-    props hstore,
-    source_data text NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    thread_updated_ts timestamp without time zone NOT NULL,
     image character varying(255),
-    thread_updated_at timestamp without time zone,
-    thread_updated_date date,
     cached_tag_list character varying(255),
-    total_upvotes integer DEFAULT 0
+    total_upvotes integer,
+    props hstore,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
+
+
+--
+-- Name: entities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE entities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: entities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE entities_id_seq OWNED BY entities.id;
 
 
 --
@@ -278,17 +292,47 @@ CREATE TABLE tags (
 
 
 --
--- Name: event_aggregated_tag_list; Type: VIEW; Schema: public; Owner: -
+-- Name: entity_aggregated_tag_list; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW event_aggregated_tag_list AS
- SELECT e.id AS event_id, 
+CREATE VIEW entity_aggregated_tag_list AS
+ SELECT e.id AS entity_id, 
     string_agg((t.name)::text, ','::text) AS tag_list
-   FROM events e, 
+   FROM entities e, 
     tags t, 
     taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
+
+
+--
+-- Name: entity_refs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE entity_refs (
+    id integer NOT NULL,
+    from_id integer NOT NULL,
+    id_id integer NOT NULL
+);
+
+
+--
+-- Name: entity_refs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE entity_refs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: entity_refs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE entity_refs_id_seq OWNED BY entity_refs.id;
 
 
 --
@@ -306,16 +350,33 @@ CREATE TABLE upvotes (
 
 
 --
--- Name: event_total_upvotes; Type: VIEW; Schema: public; Owner: -
+-- Name: entity_total_upvotes; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW event_total_upvotes AS
- SELECT e.id AS event_id, 
+CREATE VIEW entity_total_upvotes AS
+ SELECT e.id AS entity_id, 
     sum(u.value) AS upvotes_sum
-   FROM events e, 
+   FROM entities e, 
     upvotes u
   WHERE (e.id = u.applies_to_id)
   GROUP BY e.id;
+
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE events (
+    id integer NOT NULL,
+    content_digest character varying(255) NOT NULL,
+    props hstore,
+    source_data text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    type character varying(255),
+    feed character varying(255),
+    source_json json
+);
 
 
 --
@@ -480,15 +541,15 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.email AS user_email, 
     (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
     ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
-           FROM events, 
+           FROM entities, 
             rules
-          WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-           FROM events, 
+          WHERE ((rules.id = entities.rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+           FROM entities, 
             upvotes
-          WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-           FROM events, 
+          WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
+           FROM entities, 
             awards
-          WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+          WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
           WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
            FROM anteups
@@ -499,15 +560,15 @@ CREATE MATERIALIZED VIEW leaderboard AS
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
   ORDER BY ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
-      FROM events, 
+      FROM entities, 
        rules
-     WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-      FROM events, 
+     WHERE ((rules.id = entities.rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+      FROM entities, 
        upvotes
-     WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-      FROM events, 
+     WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
+      FROM entities, 
        awards
-     WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+     WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
       FROM internals
      WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
       FROM anteups
@@ -520,17 +581,17 @@ CREATE MATERIALIZED VIEW leaderboard AS
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT e.origin_date AS date, 
+ SELECT (e.origin_ts)::date AS origin_date, 
     (t.name)::text AS category, 
     count(*) AS cnt
    FROM tags t, 
     taggings tt, 
     tags mt, 
-    events e, 
+    entities e, 
     taggings et
-  WHERE ((((((((tt.tag_id = mt.id) AND (tt.taggable_id = t.id)) AND ((tt.taggable_type)::text = 'ActsAsTaggableOn::Tag'::text)) AND (et.tag_id = t.id)) AND (et.taggable_id = e.id)) AND ((et.taggable_type)::text = 'Event'::text)) AND ((mt.name)::text = 'categories'::text)) AND (e.parent_id IS NULL))
-  GROUP BY e.origin_date, t.name
-  ORDER BY e.origin_date DESC
+  WHERE (((((((tt.tag_id = mt.id) AND (tt.taggable_id = t.id)) AND ((tt.taggable_type)::text = 'ActsAsTaggableOn::Tag'::text)) AND (et.tag_id = t.id)) AND (et.taggable_id = e.id)) AND ((et.taggable_type)::text = 'Entity'::text)) AND ((mt.name)::text = 'categories'::text))
+  GROUP BY (e.origin_ts)::date, (t.name)::text
+  ORDER BY (e.origin_ts)::date DESC
   WITH NO DATA;
 
 
@@ -681,13 +742,13 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 CREATE VIEW user_total_score AS
  SELECT users.id AS user_id, 
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM events e, 
+           FROM entities e, 
             rules r
           WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM events e, 
+           FROM entities e, 
             upvotes u
           WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM events e, 
+           FROM entities e, 
             awards a
           WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
@@ -747,6 +808,20 @@ ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entities ALTER COLUMN id SET DEFAULT nextval('entities_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entity_refs ALTER COLUMN id SET DEFAULT nextval('entity_refs_id_seq'::regclass);
 
 
 --
@@ -868,11 +943,27 @@ ALTER TABLE ONLY countries
 
 
 --
+-- Name: entities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT entities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_refs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY entity_refs
+    ADD CONSTRAINT entity_refs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY events
-    ADD CONSTRAINT events_hash_key_key UNIQUE (hash_key);
+    ADD CONSTRAINT events_hash_key_key UNIQUE (content_digest);
 
 
 --
@@ -964,24 +1055,10 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_events_on_category_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_events_on_category_id ON events USING btree (category_id);
-
-
---
 -- Name: index_events_on_props; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_events_on_props ON events USING gist (props);
-
-
---
--- Name: index_events_on_thread_updated_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_events_on_thread_updated_date ON events USING btree (thread_updated_date);
 
 
 --
@@ -1044,7 +1121,7 @@ CREATE INDEX index_users_roles_on_user_id_and_role_id ON users_roles USING btree
 -- Name: unique_hash_key; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX unique_hash_key ON events USING btree (hash_key);
+CREATE UNIQUE INDEX unique_hash_key ON events USING btree (content_digest);
 
 
 --
@@ -1055,11 +1132,11 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: fk_anteups_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_anteups_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY anteups
-    ADD CONSTRAINT fk_anteups_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+    ADD CONSTRAINT fk_anteups_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
 
 
 --
@@ -1071,11 +1148,11 @@ ALTER TABLE ONLY anteups
 
 
 --
--- Name: fk_awards_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_awards_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY awards
-    ADD CONSTRAINT fk_awards_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+    ADD CONSTRAINT fk_awards_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
 
 
 --
@@ -1087,35 +1164,35 @@ ALTER TABLE ONLY awards
 
 
 --
--- Name: fk_events_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_entities_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY events
-    ADD CONSTRAINT fk_events_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
-
-
---
--- Name: fk_events_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY events
-    ADD CONSTRAINT fk_events_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
 
 
 --
--- Name: fk_events_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_entities_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY events
-    ADD CONSTRAINT fk_events_rules FOREIGN KEY (rule_id) REFERENCES rules(id);
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
 
 
 --
--- Name: fk_events_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_entities_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY events
-    ADD CONSTRAINT fk_events_users FOREIGN KEY (author_id) REFERENCES users(id);
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_rules FOREIGN KEY (rule_id) REFERENCES rules(id);
+
+
+--
+-- Name: fk_entities_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_users FOREIGN KEY (author_id) REFERENCES users(id);
 
 
 --
@@ -1135,11 +1212,11 @@ ALTER TABLE ONLY internals
 
 
 --
--- Name: fk_upvotes_events; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_upvotes_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY upvotes
-    ADD CONSTRAINT fk_upvotes_events FOREIGN KEY (applies_to_id) REFERENCES events(id);
+    ADD CONSTRAINT fk_upvotes_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
 
 
 --
@@ -1267,3 +1344,17 @@ INSERT INTO schema_migrations (version) VALUES ('20131208111213');
 INSERT INTO schema_migrations (version) VALUES ('20131209113732');
 
 INSERT INTO schema_migrations (version) VALUES ('20131209113804');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212151917');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212151919');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212152143');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212152203');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212152452');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212162518');
+
+INSERT INTO schema_migrations (version) VALUES ('20131212162523');
