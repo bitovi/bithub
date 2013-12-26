@@ -1,4 +1,5 @@
 require 'entities/errors'
+require 'entities/determinator'
 require 'entities/shared/finders'
 
 # Feeds
@@ -17,13 +18,21 @@ module Entities
     end
 
     def procure(event)
-      procurer = Entities.const_get(event.feed)::Procurer.new(@p)
-      procurer.procure(event)
+      subprocurer = Entities.const_get(event.feed)::Procurer.new(@p)
+      determinator.determine(subprocurer.procure(event))
+    end
+
+    def determine(entity)
+      @determinator.determine(entity)
     end
 
     # -----------
     # API methods
     # -----------
+    
+    def determinator
+      @determinator ||= Determinator.new(@p)
+    end
 
     def find_or_build_upstream(attrs)
       attrs = extract(payload)
@@ -50,6 +59,8 @@ module Entities
       }))
     end
   end
+  
+  class Determinator
 end
 
 
