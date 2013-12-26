@@ -5,9 +5,9 @@ module Entities
   module Blog
 
     class Procurer < Entities::Procurer
-      def procure(event)
+      def procure(event, payload)
         procurer = Entities::Blog::Post::Procurer.new(@p)
-        procurer.procure(event)
+        procurer.procure(event, payload)
       end
     end
 
