@@ -1,9 +1,7 @@
 require 'digest/md5'
-require "#{Rails.root}/app/processors/github.rb"
 VALID_FEEDS_FOR_IDENT = %w(github twitter)
 
 class Entity < ActiveRecord::Base
-  extend Finders
 
   class EventHasNoParentException < Error; end
   class DistinctFieldNotKnown < Error; end
@@ -51,12 +49,6 @@ class Entity < ActiveRecord::Base
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
     
-  @processor ||= Processors::Github.new({feed: 'github'})
-
-  def self.github_processor
-    @processor
-  end
-
   def self.scoped_with_includes
     scope = Event.scoped
     scope = scope.includes(:author)
@@ -68,44 +60,6 @@ class Entity < ActiveRecord::Base
 
   def children_with_includes
     self.children.merge(Event.scoped_with_includes)
-  end
-
-  def initialize(args = {})
-    args[:id] = Event.next_id
-    super
-  end
-
-  def self.new_from_crawler(args = {}, meta)
-    ev = self.new(args)
-    ev.to_props(meta).determine.group
-  end
-
-  def self.new_from_bithub(args)
-    event = self.new
-
-    event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
-
-    attrs = event.to_props_and_clean(args)
-    event.determine
-    event.origin_and_thread_timestamps_to_now
-    event.assign_attributes(attrs)
-    event.image = args[:image]
-    event
-  end
-
-  def update_from_bithub(args)
-    attrs = to_props_and_clean(args)
-    determine
-    assign_attributes(attrs)
-    save
-  end
-
-  def origin_and_thread_timestamps_to_now
-    now                      = DateTime.now
-    self.origin_ts           = now.utc
-    self.origin_date         = now.utc.to_date
-    self.thread_updated_at   = now.utc
-    self.thread_updated_date = now.utc.to_date
   end
 
   def self.next_id
@@ -208,17 +162,5 @@ class Entity < ActiveRecord::Base
     Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
     Event.attribute_names.include?(attr.to_s) ||
     Event.attribute_names.include?(attr.to_s.pluralize)
-  end
-
-  def self.prepare_commit(commit_info, push_event)
-    custom_sd = push_event.source_data
-    .merge(commit_info)
-    .merge({type: "CustomCommitEvent"})
-
-    mf_hash = ActiveSupport::HashWithIndifferentAccess.new(custom_sd)
-    processed_event_hash = github_processor.process(mf_hash)
-    meta = processed_event_hash.delete(:meta)
-
-    [processed_event_hash, meta]
   end
 end
