@@ -17,39 +17,51 @@ module Entities
       @p = persistor
     end
 
-    def procure(event)
+    def procure(event, payload)
       subprocurer = Entities.const_get(event.feed)::Procurer.new(@p)
-      determinator.determine(subprocurer.procure(event))
-    end
+      entity = subprocurer.procure(event, payload)
 
-    def determine(entity)
-      @determinator.determine(entity)
+      determine(entity)
+      assign_common_attributes(entity)
+      entity
+      
+      # @logger.debug "BUILT, DETERMINED #{entity.inspect}"
+      # @logger.debug "BUILT, DETERMINED TAGS #{entity.tag_list.inspect}"
     end
 
     # -----------
     # API methods
     # -----------
     
-    def determinator
-      @determinator ||= Determinator.new(@p)
+    def determine(entity)
+      @determinator ||= Determinator.new
+      @determinator.determine(entity)
     end
 
     def find_or_build_upstream(attrs)
-      attrs = extract(payload)
+      attrs = attrs_from_payload(payload)
       Relationships[:upstream].map do |ec|
         entity = ec::Procurer.new(@p).find_or_build(attrs)
       end
     end
     
     def find_or_build_downstream(attrs)
-      attrs = extract(payload)
+      attrs = attrs_from_payload(payload)
       Relationships[:downstream].map do |ec|
         entity = ec::Procurer.new(@p).find_or_build(attrs)
       end
     end
 
-    def extract(payload)
+    def attrs_from_payload(payload)
       payload['extracted']
+    end
+
+    def props_from_payload(payload)
+      payload['meta']
+    end
+
+    def assign_common_attributes(entity)
+      entity.thread_updated_ts = entity.origin_ts
     end
 
     def initialize_logger
@@ -60,7 +72,6 @@ module Entities
     end
   end
   
-  class Determinator
 end
 
 

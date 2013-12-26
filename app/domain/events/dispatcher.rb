@@ -41,7 +41,7 @@ module Events
       @logger.debug new_event.inspect
 
       procurer = Entities::Procurer.new(@enp)
-      new_entity = procurer.procure(new_event)
+      new_entity = procurer.procure(new_event, payload)
 
       @logger.debug "NEW entity"
       @logger.debug new_entity.inspect
@@ -49,10 +49,11 @@ module Events
       # related_entities = entity_class.procure_related(payload)
       # new_or_updated_entities = [base_entity] + related_entities
 
-      # ActiveRecord::Base.transaction do
-      #   new_event.save!
-      #   new_or_updated_entities.each { |e| entity.save! }
-      # end
+      ActiveRecord::Base.transaction do
+        new_event.save!
+        new_entity.save!
+        #new_or_updated_entities.each { |e| entity.save! }
+      end
     end
 
     def entity_class(event_class)

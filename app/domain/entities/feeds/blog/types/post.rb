@@ -11,16 +11,16 @@ module Entities
 
       class Procurer < Entities::Procurer
 
-        def procure(event)
-          if (bp = find_blog_post_by_url(event.extracted['url']))
-            fail EventShouldHaveBeenRejected
-          else
-            build_from_blog_post_event(event.extracted)
-          end
+        def procure(event, payload)
+          build(event, payload)
         end
 
-        def build_from_blog_post_event(extracted)
-          @p.new(extracted)
+        def build(event, payload)
+          entity = @p.new
+          entity.assign_attributes(attrs_from_payload(payload))
+          entity.props = props_from_payload(payload)
+          # @logger.debug payload['extracted']
+          entity
         end
 
         def find_blog_post_by_url(url)
