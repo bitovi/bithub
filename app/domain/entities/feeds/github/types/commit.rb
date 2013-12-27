@@ -8,17 +8,26 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
-      end
 
-      module Finders
-        def find_pushes_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
-          .tagged_with(['github', 'push_event'])
-          .name_and_number(repo_name, referenced_issue_number)
+        def find(payload)
+          # how to find from push?
         end
 
-        def find_pushes_by_commit_sha(commit_sha)
-          .tagged_with(['github','push_event'])
-          .where("props -> 'commit_shas' LIKE '%#{commit_sha}%'")
+        def build(payload)
+          if type(payload) == 'Push'
+            build_from_push
+          else
+            fail Entities::Errors::BuildingException, "don't know how  build the entity from supplied payload"
+          end
+        end
+
+        def find_by_commit_sha(commit_sha)
+          @p.tagged_with(['github', 'commit'])
+            .where("props -> 'commit_sha' = '#{commit_sha}'")
+        end
+        
+        def build_from_push
+          ["COMMIT1", "COMMIT2"]
         end
       end
 

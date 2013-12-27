@@ -1,39 +1,39 @@
 module Entities
   module Github
     module IssueComment
+
       Relationships = {
         upstream: [Entities::Github::Issue, Entities::Github::PullRequest],
         downstream: []
       }
 
       class Procurer < Entities::Procurer
-        include Finders
 
-        def find(attrs)
-          if (issue_id = attrs['issue_id'])
-            find_issue_comment_by_issue_id(issue_id)
-          elsif (repo_name = attrs['repo_name']) && (issue_number = attrs['issue_number'])
-            find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
-          else
-            fail Entities::Errors::MissingAttrToFindWith, 'must have some attributes to find with'
+        def find(payload)
+          if (issue_id = issue_id(payload))
+            find_by_issue_id(issue_id(payload))
+          elsif repo_name(payload) && issue_number(payload)
+            find_by_repo_name_and_issue_number(repo_name(payload), issue_number(payload))
           end
         end
-      end
 
-      # Set orphaned attr
-      def build(attrs)
-      end
-
-      module Finders
-        def find_issue_comment_by_issue_id(issue_id)
-          .tagged_with(['github', 'issue_comment_event'])
-          .where("props -> 'issue_id' = '#{issue_id}'")
+        def build(payload)
+          build_from_issue_comment
         end
 
-        def find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
-          tagged_with(['github', 'issue_comment_event'])
-          .where("props -> 'repo_name' = '#{repo_name}'")
-          .where("props -> 'issue_number' = '#{issue_number}'")
+        def find_by_issue_id(issue_id)
+          @p.tagged_with(['github', 'issue_comment'])
+            .where("props -> 'issue_id' = '#{issue_id}'")
+        end
+
+        def find_by_repo_name_and_issue_number(repo_name, issue_number)
+          @p.tagged_with(['github', 'issue_comment'])
+            .where("props -> 'repo_name' = '#{repo_name}'")
+            .where("props -> 'issue_number' = '#{issue_number}'")
+        end
+
+        def build_from_issue_comment
+          "ISSUE COMMENT"
         end
       end
 

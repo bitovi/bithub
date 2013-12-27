@@ -7,25 +7,36 @@ module Entities
         downstream: []
       }
 
-      class Procurer
-      end
+      class Procurer < Entities::Procurer
 
-      module Finders
-        def find_tweets_by_tweet_id(tweet_id)
-          tagged_with(['twitter','status_event'])
-          .where("props -> 'tweet_id' = '#{tweet_id}'")
+        def find(payload)
+          if tweet_id(payload)
+            find_by_tweet_id(issue_id(payload))
+          end
         end
 
-        def find_tweets_by_retweeted_id(tweet_id)
-          tagged_with(['twitter','status_event'])
-          .where("props -> 'retweeted_id' = '#{tweet_id}'")
+        def build(payload)
+          if type(payload) == 'Issue'
+            build_from_issue
+          else
+            fail Entities::Errors::BuildingException, "don't know how to build an entity from supplied payload"
+          end
         end
-      end
 
-      module Builders
+        def find_by_tweet_id(tweet_id)
+          @p.tagged_with(['twitter','status_event'])
+            .where("props -> 'tweet_id' = '#{tweet_id}'")
+        end
 
-        # TODO
-        def build_tweet_from_retweet(attrs)
+        def find_by_retweeted_id(tweet_id)
+          @p.tagged_with(['twitter','status_event'])
+            .where("props -> 'retweet_id' = '#{tweet_id}'")
+        end
+        
+        def build_from_tweet(payload)
+        end
+        
+        def build_from_retweet(payload)
         end
       end
 

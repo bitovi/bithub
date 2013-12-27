@@ -1,6 +1,6 @@
 module Entities
   module Twitter
-    class Follow
+    module Follow
 
       Relationships = {
         upstream: [],
@@ -10,13 +10,6 @@ module Entities
       class Procurer
       end
 
-      module Finders
-      end
-
-      module Builders
-      end
-
     end
   end
 end
-

@@ -1,50 +1,46 @@
 module Entities
   module Github
     module Issue
+
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment]
       }
 
       class Procurer < Entities::Procurer
-        include Github::FindableByRepoNameAndIssueNumber
-        include Github::FindableByIssueNumber
+        include Entities::Github::Accessors
 
-        def find(attrs)
-          if (issue_id = attrs['issue_id'])
-            find_issue_comment_by_issue_id(issue_id)
-          elsif (repo_name = attrs['repo_name']) && (issue_number = attrs['issue_number'])
-            find_issue_comment_by_repo_name_and_issue_number(repo_name, issue_number)
-          else
-            fail Entities::Errors::MissingAttrToFindWith, 'must have some attributes to find with'
+        def find(payload)
+          if issue_id(payload)
+            find_by_issue_id(issue_id(payload))
+          elsif repo_name(payload) && issue_number(payload)
+            find_by_repo_name_and_issue_number(repo_name(payload), issue_number(payload))
           end
         end
 
-        def build
-          build_from_issue
+        def build(payload)
+          if type(payload) == 'Issue'
+            build_from_issue
+          else
+            fail Entities::Errors::BuildingException, "don't know how to build an entity from supplied payload"
+          end
         end
 
-      end
-
-      module Finders
-        def find_issue_by_issue_id(issue_id)
-          tagged_with(['github', 'issues_event'])
-          .where("props -> 'issue_id' = '#{issue_id}'")
+        def find_by_issue_id(issue_id)
+          @p.tagged_with(['github', 'issue'])
+            .where("props -> 'issue_id' = '#{issue_id}'")
         end
 
-        def find_issue_by_repo_name_and_issue_number(repo_name, issue_number)
-          .tagged_with(['github', 'issues_event'])
-          .where("props -> 'repo_name' = '#{repo_name}'")
-          .where("props -> 'issue_number' = '#{issue_number}'")
+        def find_by_repo_name_and_issue_number(repo_name, issue_number)
+          @p.tagged_with(['github', 'issue'])
+            .where("props -> 'repo_name' = '#{repo_name}'")
+            .where("props -> 'issue_number' = '#{issue_number}'")
         end
-      end
 
-      module Builders
         def build_from_issue
+          "URAC"
         end
 
-        def build_from_issue_comment
-        end
       end
 
     end

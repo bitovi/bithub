@@ -1,5 +1,3 @@
-require 'entities/procurer'
-
 module Entities
   module Blog
     module Post
@@ -11,19 +9,28 @@ module Entities
 
       class Procurer < Entities::Procurer
 
-        def procure(event, payload)
-          build(event, payload)
+        def find(payload, event)
+          if url(payload)
+            find_by_url(url(payload))
+          end
         end
 
-        def build(event, payload)
+        def build(payload)
           entity = @p.new
           entity.assign_attributes(attrs_from_payload(payload))
           entity.props = props_from_payload(payload)
-          # @logger.debug payload['extracted']
+          @logger.info "NEW: #{entity}"
           entity
         end
 
-        def find_blog_post_by_url(url)
+        def update(entity, payload)
+          entity.assign_attributes(attrs_from_payload(payload))
+          @logger.info "PRESENT: #{entity}"
+          entity
+        end
+
+        # Finders
+        def find_by_url(url)
           @p.where(url: url).first
         end
 

@@ -1,21 +1,16 @@
-require 'entities/feeds/disqus/types/post'
-
 module Entities
   module Disqus
     module Thread
 
-      # Relationships = {
-      #   upstream: [],
-      #   downstream: [Entities::Disqus::Post]
-      # }
+      Relationships = {
+        upstream: [],
+        downstream: [Entities::Disqus::Post]
+      }
 
-      class Procurer
-      end
-
-      module Finders
-      end
-
-      module Builders
+      class Procurer < Entities::Procurer
+        def initialize
+          fail NotImplementedError
+        end
       end
 
     end

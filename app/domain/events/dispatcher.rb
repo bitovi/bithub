@@ -22,11 +22,6 @@ module Events
     end
 
     def dispatch(payload)
-      @logger.debug "IN DISPATCHER"
-
-      # @logger.debug "RAW PAYLOAD"
-      # @logger.debug payload.inspect
-
       full_name, feed_name, type_name = names(subtype(payload).to_s)
 
       new_event = @evp.new({
@@ -40,19 +35,18 @@ module Events
       @logger.debug "NEW event"
       @logger.debug new_event.inspect
 
-      procurer = Entities::Procurer.new(@enp)
-      new_entity = procurer.procure(new_event, payload)
+      procurer = Entities::Delegator.new(@enp).procurer(payload)
+      new_entity = procurer.procure(payload, new_event)
 
       @logger.debug "NEW entity"
       @logger.debug new_entity.inspect
 
-      # related_entities = entity_class.procure_related(payload)
-      # new_or_updated_entities = [base_entity] + related_entities
+      # related_entities = procurer.procure_related(new_entity, new_event, payload)
 
       ActiveRecord::Base.transaction do
         new_event.save!
         new_entity.save!
-        #new_or_updated_entities.each { |e| entity.save! }
+        #related_entities.each {|e| e.save!}
       end
     end
 
