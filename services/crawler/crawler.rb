@@ -1,6 +1,9 @@
-$CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
-$PROJ_ROOT_DIR = File.expand_path(File.join($CRAWLER_DIR, '..', '..'))
-$:.unshift($PROJ_ROOT_DIR)
+CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
+ROOT_DIR = File.expand_path(File.join(CRAWLER_DIR, '..', '..'))
+DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
+
+$:.unshift(ROOT_DIR)
+$:.unshift(DOMAIN_DIR)
 
 # Theirs
 require 'bundler/setup'
@@ -15,7 +18,7 @@ require 'services/crawler/poller'
 require 'services/crawler/streamer'
 
 # paths to config files based on env
-config_path = File.join($PROJ_ROOT_DIR, 'config', 'crawler', "#{ENV['ENV']}.yml")
+config_path = File.join(ROOT_DIR, 'config', 'crawler', "#{ENV['ENV']}.yml")
 
 # Logging
 logger = Log4r::Logger.new('Crawler')
