@@ -1,69 +1,53 @@
 require 'entities/errors'
 require 'entities/determinator'
 require 'entities/shared/finders'
-
-# Feeds
-require 'entities/feeds/blog/blog'
-require 'entities/feeds/disqus/disqus'
-require 'entities/feeds/forum/forum'
-require 'entities/feeds/github/github'
-require 'entities/feeds/twitter/twitter'
+require 'entities/shared/accessors'
 
 module Entities
-  class Procurer
 
+  class Procurer
     def initialize(persistor)
       initialize_logger
       @p = persistor
     end
 
     def procure(event, payload)
-      subprocurer = Entities.const_get(event.feed)::Procurer.new(@p)
-      entity = subprocurer.procure(event, payload)
-
-      determine(entity)
-      assign_common_attributes(entity)
-      entity
-      
+      find_or_build(payload, event)
+      # determine(entity)
+      # assign_common_attributes(entity)
       # @logger.debug "BUILT, DETERMINED #{entity.inspect}"
       # @logger.debug "BUILT, DETERMINED TAGS #{entity.tag_list.inspect}"
     end
 
-    # -----------
-    # API methods
-    # -----------
+    def find_or_build(event, payload)
+      if (entity = find(payload))
+        entity
+      else
+        build(payload)
+      end
+    end
     
-    def determine(entity)
-      @determinator ||= Determinator.new
-      @determinator.determine(entity)
+    def procure_related(payload, event)
+      find_or_build_related(payload, event)
     end
 
-    def find_or_build_upstream(attrs)
-      attrs = attrs_from_payload(payload)
+    def find_or_build_related(payload, event)
+      find_or_build_upstream(payload, event)
+      find_or_build_downstream(payload, event)
+    end
+
+    def find_or_build_upstream(payload, event)
       Relationships[:upstream].map do |ec|
-        entity = ec::Procurer.new(@p).find_or_build(attrs)
+        entity = ec::Procurer.new(@p).procure(payload, event)
       end
     end
     
-    def find_or_build_downstream(attrs)
-      attrs = attrs_from_payload(payload)
+    def find_or_build_downstream(payload, event)
       Relationships[:downstream].map do |ec|
-        entity = ec::Procurer.new(@p).find_or_build(attrs)
+        entity = ec::Procurer.new(@p).procure(payload, event)
       end
     end
-
-    def attrs_from_payload(payload)
-      payload['extracted']
-    end
-
-    def props_from_payload(payload)
-      payload['meta']
-    end
-
-    def assign_common_attributes(entity)
-      entity.thread_updated_ts = entity.origin_ts
-    end
-
+    
     def initialize_logger
       @logger = Log4r::Logger.new('Procurer')
       @logger.add(Log4r::StdoutOutputter.new('console', {
@@ -71,8 +55,42 @@ module Entities
       }))
     end
   end
-  
+
+  class Delegator
+    include Entities::Accessors
+
+    def initialize(persistor)
+      @p = persistor
+    end
+
+    def procurer(payload)
+      @subprocurer ||= Entities.const_get(feed(payload)).const_get(type(payload))::Procurer.new(@p)
+    end
+  end
+
+    # def determine(entity)
+    #   @determinator ||= Determinator.new
+    #   @determinator.determine(entity)
+    # end
+
+    # def assign_common_attributes(entity)
+    #   entity.thread_updated_ts = entity.origin_ts
+    # end
+
+  module Github; end
+  module Twitter; end
+  module Forum; end
+  module Blog; end
+  module Disqus; end
+  module Meetup; end
 end
+
+# Feeds
+require 'entities/feeds/blog/blog'
+require 'entities/feeds/disqus/disqus'
+require 'entities/feeds/forum/forum'
+require 'entities/feeds/github/github'
+require 'entities/feeds/twitter/twitter'
 
 
   # def self.new_from_crawler(args = {}, meta)

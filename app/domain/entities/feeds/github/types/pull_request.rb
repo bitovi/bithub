@@ -1,6 +1,6 @@
 module Entities
   module Github
-    class PullRequest
+    module PullRequest
 
       Relationships = {
         upstream: [],
@@ -8,12 +8,32 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
-      end
+        
+        def find(payload)
+          if (issue_id = issue_id(payload))
+            find_by_issue_id(issue_id(payload))
+          elsif repo_name(payload) && issue_number(payload)
+            find_by_repo_name_and_issue_number(repo_name(payload), issue_number(payload))
+          end
+        end
 
-      module FindableByRepoNameAndRefIssueNmb
-        def find_pull_requests_by_repo_name_and_referenced_issue_number(repo_name, referenced_issue_number)
-          tagged_with(['github', 'pull_request_event'])
-          .name_and_number(repo_name, referenced_issue_number)
+        def build(payload)
+          build_from_pull_request
+        end
+        
+        def find_by_pull_request_id(pr_id)
+          @p.tagged_with(['github', 'pull_request'])
+            .where("props -> 'pull_request_id' = '#{pr_id}'")
+        end
+
+        def find_by_repo_name_and_issue_number(repo_name, pr_number)
+          @p.tagged_with(['github', 'pull_request'])
+            .where("props -> 'repo_name' = '#{repo_name}'")
+            .where("props -> 'pull_request_number' = '#{pr_number}'")
+        end
+
+        def build_from_pull_request
+          "PULL REQUEST"
         end
       end
 

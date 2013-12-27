@@ -8,16 +8,41 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
-      end
 
-      module Finders
-        def find_forum_posts_by_thread_url(thread_url)
-          tagged_with('forums').where("url LIKE '#{thread_url}%'")
+        def find(payload)
+          if url(payload)
+            find_by_url(payload)
+          end
+        end
+
+        def build(payload)
+          entity = @p.new
+          entity.assign_attributes(attrs_from_payload(payload))
+          entity.props = props_from_payload(payload)
+          entity
+        end
+
+        def update(entity, payload)
+          entity.assign_attributes(attrs_from_payload(payload))
+          entity
+        end
+
+        # Finders
+        def find_by_url(url)
+          @p.tagged_with('forum').where("url = ?", url).first
+        end
+
+        def find_by_thread_url(url)
+          thread_url, _ = url.split('#')
+          @p.tagged_with('forum').where("url LIKE '#{thread_url}%'").first
         end
       end
 
-
-      # grouping
+    end
+  end
+end
+      
+    # grouping
       # --------
       # def group_forum_post
       #   thread_url, _ = url.split('#')
@@ -33,6 +58,3 @@ module Entities
       #   self
       # end
 
-    end
-  end
-end
