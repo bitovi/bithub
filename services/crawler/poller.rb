@@ -5,13 +5,13 @@ require 'yajl'
 require 'nokogiri'
 require 'nori'
 
+require_relative 'fetchers'
 require 'app/domain/events/processor'
 require 'app/domain/events/errors'
 
 class Poller
-  attr_reader :latest
-
-  class UnknownFeedTypeException < Exception; end
+  include Fetchers::Fake if %w(development test).include?(ENV['ENV'])
+  include Fetchers::HTTP if %w(testing staging production).include?(ENV['ENV'])
 
   def self.handler(logger, exchange, endpoint, &blk)
     new(logger, exchange, endpoint, &blk).handler
@@ -30,32 +30,6 @@ class Poller
 
   def handler
     lambda { fetch }
-  end
-
-  def fetch(link = nil)
-    link = link || @endpoint
-
-    http_req = EM::HttpRequest.new(link).get({
-      query: http_query,
-      head: http_head
-    })
-
-    http_req.callback do
-      if success?(http_req)
-        delay(1, lambda {fetch_next_page http_req}) if in_github_issues?
-        handle_success(http_req)
-      elsif client_error?(http_req)
-        log_http_status(http_req, :error)
-      elsif server_error?(http_req)
-        log_http_status(http_req, :warn)
-      else
-        log_http_status(http_req, :error)
-      end
-    end
-
-    http_req.errback do
-      log_http_status(http_req, :error)
-    end
   end
 
   def fetch_next_page(http_req)
@@ -83,8 +57,8 @@ class Poller
     (rel.match /<(.*)>; rel="(.*)"/).to_a
   end
 
-  def handle_success(http_req)
-    events = decorate(events_from_response(parse(http_req.response)))
+  def handle_success(response)
+    events = decorate(events_from_response(parse(response)))
     publish(process(reject_old(events)))
   end
 
