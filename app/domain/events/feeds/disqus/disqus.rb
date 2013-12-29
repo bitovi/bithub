@@ -1,3 +1,5 @@
+require 'events/feeds/disqus/types/post'
+
 module Events
   module Disqus
 
@@ -12,6 +14,7 @@ module Events
           meta: {
             feed: 'disqus',
             type: 'post',
+            post_id: original_hash['id'],
             origin_author_name: original_hash['author']['name'],
           }
         })

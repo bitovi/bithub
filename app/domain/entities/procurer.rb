@@ -2,16 +2,20 @@ require 'entities/errors'
 require 'entities/determinator'
 require 'entities/shared/finders'
 require 'entities/shared/accessors'
+require 'entities/shared/helpers'
 
 module Entities
 
   class Procurer
+    include Loggable
+    include Entities::Accessors
+
     def initialize(persistor)
       initialize_logger
       @p = persistor
     end
 
-    def procure(event, payload)
+    def procure(payload, event)
       find_or_build(payload, event)
       # determine(entity)
       # assign_common_attributes(entity)
@@ -19,7 +23,7 @@ module Entities
       # @logger.debug "BUILT, DETERMINED TAGS #{entity.tag_list.inspect}"
     end
 
-    def find_or_build(event, payload)
+    def find_or_build(payload, event)
       if (entity = find(payload))
         entity
       else
@@ -47,24 +51,14 @@ module Entities
         entity = ec::Procurer.new(@p).procure(payload, event)
       end
     end
-    
-    def initialize_logger
-      @logger = Log4r::Logger.new('Procurer')
-      @logger.add(Log4r::StdoutOutputter.new('console', {
-        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-      }))
-    end
-  end
 
-  class Delegator
-    include Entities::Accessors
-
-    def initialize(persistor)
-      @p = persistor
+    def fill_props(built_entity, payload)
+      built_entity.props = meta(payload)
+      built_entity
     end
 
-    def procurer(payload)
-      @subprocurer ||= Entities.const_get(feed(payload)).const_get(type(payload))::Procurer.new(@p)
+    def build_fail
+      fail Entities::Errors::BuildingException, "don't know how to build the entity from the supplied payload"
     end
   end
 

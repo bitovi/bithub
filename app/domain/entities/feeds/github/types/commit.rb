@@ -15,19 +15,20 @@ module Entities
 
         def build(payload)
           if type(payload) == 'Push'
-            build_from_push
+            fill_props(build_from_push(payload), payload)
           else
-            fail Entities::Errors::BuildingException, "don't know how  build the entity from supplied payload"
+            build_fail
           end
         end
 
         def find_by_commit_sha(commit_sha)
           @p.tagged_with(['github', 'commit'])
             .where("props -> 'commit_sha' = '#{commit_sha}'")
+            .first
         end
         
-        def build_from_push
-          ["COMMIT1", "COMMIT2"]
+        def build_from_push(payload)
+          @p.new(extracted(payload))
         end
       end
 

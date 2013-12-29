@@ -1,7 +1,9 @@
 require 'andand'
 require 'lib/core_ext'
+require 'lib/loggable'
 
 require 'entities/procurer'
+require 'entities/determinator'
 require 'events/shared/mappings'
 
 # Feeds
@@ -13,6 +15,7 @@ require 'events/feeds/twitter/twitter'
 
 module Events
   class Dispatcher
+    include Loggable
     include Events::Mappings
 
     def initialize(event_persistor, entity_persistor)
@@ -22,6 +25,9 @@ module Events
     end
 
     def dispatch(payload)
+      # @logger.debug "NEW payload"
+      # @logger.debug payload.inspect
+
       full_name, feed_name, type_name = names(subtype(payload).to_s)
 
       new_event = @evp.new({
@@ -32,14 +38,17 @@ module Events
         source_json: payload['source_json'],
       })
       
-      @logger.debug "NEW event"
-      @logger.debug new_event.inspect
-
+      # @logger.debug "NEW event"
+      # @logger.debug new_event.inspect
+      
       procurer = Entities::Delegator.new(@enp).procurer(payload)
       new_entity = procurer.procure(payload, new_event)
 
-      @logger.debug "NEW entity"
-      @logger.debug new_entity.inspect
+      Entities::Determinator.new(new_entity).determine
+      Entities::Normalizer.new(new_entity).normalize
+
+      # @logger.debug "NEW entity"
+      # @logger.debug new_entity.inspect
 
       # related_entities = procurer.procure_related(new_entity, new_event, payload)
 
@@ -50,27 +59,20 @@ module Events
       end
     end
 
-    def entity_class(event_class)
-      _, feed_name, type_name = names(event_class)
-      Entities.const_get(feed_name).const_get(type_name)
-    end
-
     def subtype(payload)
       meta = (payload['meta'] || payload[:meta])
       fail Events::Errors::UnknownFeedException unless meta['feed']
       fail Events::Errors::UnknownTypeException unless meta['type']
 
-      meta['type'] = type_mappings(meta['type'])
-      meta['feed'] = feed_mappings(meta['feed'])
+      feed_name, type_name = switch_to_camel_case(meta)
 
-      module_name = meta['feed'].camel_case
-      class_name = meta['type'].gsub('_event', '').camel_case
+      @logger.debug "Dispatcher#subtype, feed:#{feed_name}, type:#{type_name}"
 
-      if (m = Events.const_get(module_name))
-        if (c = m.const_get(class_name))
+      if (m = Events.const_get(feed_name))
+        if (c = m.const_get(type_name))
           return c
         else
-          fail Events::Errors::UnknownFeedException
+          fail Events::Errors::UnknownTypeException
         end
       else
         fail Events::Errors::UnknownFeedException
@@ -81,11 +83,5 @@ module Events
       event_class.to_s.match(/.*::(.*)::(.*)/).to_a
     end
 
-    def initialize_logger
-      @logger = Log4r::Logger.new('Dispatcher')
-      @logger.add(Log4r::StdoutOutputter.new('console', {
-        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-      }))
-    end
   end
 end

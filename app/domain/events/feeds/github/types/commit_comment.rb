@@ -1,7 +1,6 @@
 module Events
   module Github
     module CommitComment
-      #Relationships = [Entities::Github::CommitComment, Entities::Github::Push]
 
       class Processor
         def process(origin_hash, processed)

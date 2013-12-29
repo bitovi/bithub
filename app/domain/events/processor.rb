@@ -2,6 +2,7 @@ require 'digest/md5'
 require 'andand'
 
 require 'lib/core_ext'
+require 'lib/loggable'
 require 'app/domain/events/shared/mappings'
 
 # Require all feed and type files
@@ -11,6 +12,7 @@ end
 
 module Events
   class Processor
+    include Loggable
     # TODO: refactor filtering so that it mutate the event with the content digest
     # it should have 1-1 mapping of digest-event in an array [[d1, e1], [d2, e2]] ...
 
@@ -60,13 +62,6 @@ module Events
       original_hash.deep_merge({
         meta: { type: type_mappings(original_hash[:type]) }
       })
-    end
-
-    def initialize_logger
-      @logger = Log4r::Logger.new('Processor')
-      @logger.add(Log4r::StdoutOutputter.new('console', {
-        :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-      }))
     end
 
   end

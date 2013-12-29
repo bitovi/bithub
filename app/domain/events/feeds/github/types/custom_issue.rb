@@ -1,7 +1,6 @@
 module Events
   module Github
     module CustomIssue
-      #Relationships = [Entities::Github::Issue]
 
       RELEVANT_CONTENT_ATTRS = ['id', 'title', 'body', 'labels', 'state']
 
