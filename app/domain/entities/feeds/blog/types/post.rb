@@ -8,8 +8,9 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
+        include Entities::Blog::Accessors
 
-        def find(payload, event)
+        def find(payload)
           if url(payload)
             find_by_url(url(payload))
           end
@@ -17,15 +18,13 @@ module Entities
 
         def build(payload)
           entity = @p.new
-          entity.assign_attributes(attrs_from_payload(payload))
-          entity.props = props_from_payload(payload)
-          @logger.info "NEW: #{entity}"
+          entity.assign_attributes(extracted(payload))
+          entity.props = meta(payload)
           entity
         end
 
         def update(entity, payload)
-          entity.assign_attributes(attrs_from_payload(payload))
-          @logger.info "PRESENT: #{entity}"
+          entity.assign_attributes(extracted(payload))
           entity
         end
 

@@ -8,28 +8,29 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
+        include Entities::Forum::Accessors
 
         def find(payload)
           if url(payload)
-            find_by_url(payload)
+            find_by_url(url(payload))
           end
         end
 
         def build(payload)
           entity = @p.new
-          entity.assign_attributes(attrs_from_payload(payload))
-          entity.props = props_from_payload(payload)
+          entity.assign_attributes(extracted(payload))
+          entity.props = meta(payload)
           entity
         end
 
         def update(entity, payload)
-          entity.assign_attributes(attrs_from_payload(payload))
+          entity.assign_attributes(extracted(payload))
           entity
         end
 
         # Finders
         def find_by_url(url)
-          @p.tagged_with('forum').where("url = ?", url).first
+          @p.tagged_with('forum').where(:url => url).first
         end
 
         def find_by_thread_url(url)

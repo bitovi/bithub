@@ -1,7 +1,6 @@
 module Events
   module Github
     module Create
-      #Relationships = []
 
       class Processor
         def process(original_hash, processed)

@@ -18,18 +18,24 @@ module Entities
         end
 
         def build(payload)
-          build_from_pull_request
+          if type(payload) == 'PullRequest'
+            fill_props(build_from_pull_request(payload))
+          else
+            build_fail
+          end
         end
         
         def find_by_pull_request_id(pr_id)
           @p.tagged_with(['github', 'pull_request'])
             .where("props -> 'pull_request_id' = '#{pr_id}'")
+            .first
         end
 
         def find_by_repo_name_and_issue_number(repo_name, pr_number)
           @p.tagged_with(['github', 'pull_request'])
             .where("props -> 'repo_name' = '#{repo_name}'")
             .where("props -> 'pull_request_number' = '#{pr_number}'")
+            .first
         end
 
         def build_from_pull_request
