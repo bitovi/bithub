@@ -6,29 +6,27 @@ class Entity < ActiveRecord::Base
   class EventHasNoParentException < Error; end
   class DistinctFieldNotKnown < Error; end
 
-  attr_accessible :hash_key, :id,
+  attr_accessible :id,
     :body, :title, :url,
     :feed, :category, :tag_list, :author,
-    :origin_date, :origin_ts,
-    :thread_updated_date, :thread_updated_at,
+    :origin_ts, :thread_updated_ts,
     :created_at, :updated_at,
     :props, :image, :total_upvotes
 
-  acts_as_taggable_on :tags
+  acts_as_taggable
   mount_uploader :image, EventImageUploader
 
-  belongs_to :parent, :class_name => "Event"
+  belongs_to :parent, :class_name => "Entity"
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
-  has_many :children, :foreign_key => "parent_id", :class_name => "Event"
+  has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
   has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
-  validates_presence_of :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title
-  validates_uniqueness_of :hash_key
+  validates_presence_of :origin_ts, :feed_id, :category_id, :rule_id, :tag_list, :title
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
@@ -36,11 +34,11 @@ class Entity < ActiveRecord::Base
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
-  scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from events)") }
-  scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from events)") }
-  scope :only_parents, lambda { where("id IN (SELECT parent_id from events WHERE parent_id IS NOT NULL)") }
+  scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)") }
+  scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from entities)") }
+  scope :only_parents, lambda { where("id IN (SELECT parent_id from entities WHERE parent_id IS NOT NULL)") }
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
-  scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
+  scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
   scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
@@ -50,7 +48,7 @@ class Entity < ActiveRecord::Base
   after_destroy :decrease_score_in_author
     
   def self.scoped_with_includes
-    scope = Event.scoped
+    scope = Entity.scoped
     scope = scope.includes(:author)
     scope = scope.includes(:category)
     scope = scope.includes(:parent)
@@ -59,18 +57,18 @@ class Entity < ActiveRecord::Base
   end
 
   def children_with_includes
-    self.children.merge(Event.scoped_with_includes)
+    self.children.merge(Entity.scoped_with_includes)
   end
 
   def self.next_id
-    ActiveRecord::Base.connection.execute("SELECT nextval('#{Event.sequence_name}') AS id;").first['id'].to_i
+    ActiveRecord::Base.connection.execute("SELECT nextval('#{Entity.sequence_name}') AS id;").first['id'].to_i
   end
 
   def thread
     if self.parent_id # When an event is a child
-      Event.where("id = ? OR parent_id = ?", self.parent_id, self.parent_id)
+      Entity.where("id = ? OR parent_id = ?", self.parent_id, self.parent_id)
     else # When an event is a parent
-      Event.where("id = ? OR parent_id = ?", self.id, self.id)
+      Entity.where("id = ? OR parent_id = ?", self.id, self.id)
     end
   end
 
@@ -91,8 +89,7 @@ class Entity < ActiveRecord::Base
   end
 
   def update_thread_attrs(ts)
-    self.update_attribute(:thread_updated_at, ts)
-    self.update_attribute(:thread_updated_date, ts.to_date);
+    self.update_attribute(:thread_updated_ts, ts)
   end
 
   def awarded?
