@@ -13,6 +13,10 @@ class ActivityDecorator < Draper::Decorator
     source.respond_to?(:value) ? source.value : source.authorship_value
   end
 
+  def upvotes
+    source[:upvotes] || nil
+  end
+
   def actor
     if source.instance_of? Event
       source.author ? source.author : nil
