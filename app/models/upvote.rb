@@ -10,17 +10,46 @@ class Upvote < ActiveRecord::Base
 
   after_create :bust_event_cache
 
+  after_destroy :update_cached_upvotes_in_associated_event
+  after_destroy :update_cached_score_in_associated_user
+  after_destroy :check_if_still_eligible_for_rewards
+
   def self.create_based_on_rule(actor, applies_to)
-    upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
-    applies_to.author.reward_if_eligible if applies_to.author
+    upvote = nil
+    ActiveRecord::Base.transaction do
+      upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
+      upvote.update_cached_upvotes_in_associated_event
+      upvote.update_cached_score_in_associated_user
+      upvote.reward_associated_user_if_eligible
+    end
     upvote
   end
 
-  private
+  #private
 
   def bust_event_cache
     self.applies_to.touch
     self.applies_to.parent.touch if self.applies_to.parent
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
+
+  def update_cached_upvotes_in_associated_event
+    self.applies_to.update_total_upvotes
+  end
+    
+  def update_cached_score_in_associated_user
+    self.applies_to.author.update_total_score if self.applies_to.author
+  end
+
+  def reward_associated_user_if_eligible
+    self.applies_to.author.reward_if_eligible if self.applies_to.author
+  end
+
+  def check_if_still_eligible_for_rewards
+    self.applies_to.author.validate_eligibility if self.applies_to.author
+  end
+
+  handle_asynchronously :update_cached_score_in_associated_user
+  handle_asynchronously :reward_associated_user_if_eligible
+  handle_asynchronously :check_if_still_eligible_for_rewards
 end

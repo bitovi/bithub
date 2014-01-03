@@ -4,7 +4,7 @@ class EventDecorator < Draper::Decorator
   delegate_all
 
   def tag_names
-    tags.map {|t| t.name}
+    cached_tags
   end
 
   def upvotes
@@ -16,7 +16,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def title
-    if source.tag_list.include?('status_event') && !source.source_data['entities']['urls'].blank?
+    if source.cached_tags.include?('status_event') && !source.source_data['entities']['urls'].blank?
       apply_hyperlinks(source.title, source.source_data['entities']['urls'])
     else
       source.title
@@ -24,7 +24,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def body
-    if (contains? source.tag_list, ['github','bithub']) && source.body
+    if (contains? source.cached_tags, ['github','bithub']) && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
@@ -42,7 +42,7 @@ class EventDecorator < Draper::Decorator
 
   # deprecated: use 'author' or 'props.origin_author_*' attrs
   def actor
-    author ? author['name'] : source.props['origin_author_name']
+    (author && author[:name]) ? author[:name] : source.props['origin_author_name']
   end
 
   def has_parent
@@ -50,10 +50,11 @@ class EventDecorator < Draper::Decorator
   end
 
   def author
-    { :id => source.author[:id],
-      :name => source.author[:name],
-      :created_at => source.author[:created_at],
-    } if source.author
+    if source.author
+      { id: source.author.id, name: source.author.name }
+    else
+      { name: source.props['origin_author_name'] }
+    end
   end
 
   # thumb, large, original
@@ -65,10 +66,10 @@ class EventDecorator < Draper::Decorator
     end
   end
 
-  def props
+  def props(thread_awarded = false, awarded_value = nil)
     if source.source_data && source.category.name == 'digest'
-      source.props[:repo] = source.source_data['repo']['name'] if tag_list.include?('watch_event') || tag_list.include?('fork_event')
-      source.props[:target] = source.source_data['target']['screen_name'] if tag_list.include?('follow_event')
+      source.props[:repo] = source.source_data['repo']['name'] if cached_tags.include?('watch_event') || cached_tags.include?('fork_event')
+      source.props[:target] = source.source_data['target']['screen_name'] if cached_tags.include?('follow_event')
     end
 
     if source.feed && source.feed.name == 'github'
@@ -79,7 +80,7 @@ class EventDecorator < Draper::Decorator
       end
     end
     
-    if tag_list and tag_list.include?('push_event')
+    if cached_tags and cached_tags.include?('push_event')
       source.props[:commits] = source.source_data['payload']['commits']
     end
 
@@ -89,8 +90,10 @@ class EventDecorator < Draper::Decorator
       source.props[:origin_author_avatar_url] = source.source_data['actor']['avatar_url']
     end
 
-    source.props[:thread_awarded] = source.thread_awarded?
-    source.props[:awarded_value] = source.awards.first.value if source.awards.first
+    source.props[:thread_awarded] = thread_awarded
+    source.props[:awarded_value] = awarded_value
+    #source.props[:thread_awarded] = source.thread_awarded?
+    #source.props[:awarded_value] = source.awards.first.value if source.awards.first
 
     source.props
   end
@@ -145,7 +148,7 @@ class EventDecorator < Draper::Decorator
   def apply_hyperlinks(text, urls)
     urls.reduce(text) do |acc, url|
       range = url['indices']; link = text.slice(*range)
-      text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>") 
+      text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>")
     end
   end
   
@@ -160,3 +163,4 @@ class EventDecorator < Draper::Decorator
   end
 
 end
+

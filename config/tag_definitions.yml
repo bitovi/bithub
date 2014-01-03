@@ -1,0 +1,204 @@
+# --------
+# Projects
+# --------
+
+canjs:
+  display_name: "CanJS"
+  group_list: "projects, req_favourites, req_friends"
+  aliases:
+    - "can_js"
+
+canui:
+  display_name: "CanUI"
+  group_list: "projects"
+
+javascriptmvc:
+  display_name: "JavascriptMVC"
+  group_list: "projects, req_favourites, req_friends"
+  aliases:
+    - "jmvc"
+    - "java_script_mvc"
+
+donejs:
+  display_name: "DoneJS"
+  group_list: "projects"
+  aliases:
+    - "done_js"
+
+stealjs:
+  display_name: "StealJS"
+  group_list: "projects, req_friends"
+  aliases:
+    - "steal"
+    - "steal_js"
+
+funcunit:
+  display_name: "FuncUnit"
+  group_list: "projects, req_favourites, req_friends"
+  aliases:
+    - "func_unit"
+
+jquerypp:
+  display_name: "jQuery++"
+  group_list: "projects, req_favourites, req_friends"
+  aliases:
+    - "j_querypp"
+    - "jquery++"
+    - "j_query++"
+
+documentjs:
+  display_name: "DocumentJS"
+  group_list: "projects, req_favourites, req_friends"
+  aliases:
+    - "document_js"
+
+testee:
+  display_name: "Testee.js"
+  group_list: "projects, req_friends"
+  props:
+    levenshtein_treshold: 0
+  aliases:
+    - "testeejs"
+    - "testee_js"
+    - "testee.js"
+
+# --------
+# Feeds
+# --------
+
+twitter:
+  display_name: "Twitter"
+  group_list: "feeds, categories"
+
+github:
+  display_name: "Github"
+  group_list: "feeds"
+
+forums:
+  display_name: "Forums"
+  group_list: "feeds"
+
+irc:
+  display_name: "IRC"
+  group_list: "feeds"
+
+blog:
+  display_name: "Blog"
+  group_list: "feeds"
+
+disqus:
+  display_name: "Disqus"
+  group_list: "feeds"
+
+bithub:
+  display_name: "Bithub"
+  group_list: "feeds, projects"
+
+community_site:
+  display_name: "Community site"
+  group_list: "feeds"
+
+
+# ----------
+# Categories
+# ----------
+
+app:
+  display_name: "App"
+  group_list: "categories"
+
+article:
+  display_name: "Article"
+  group_list: "categories"
+
+bug:
+  display_name: "Bug"
+  group_list: "categories, labels"
+
+chat:
+  display_name: "Chat"
+  group_list: "categories"
+
+code:
+  display_name: "Code"
+  group_list: "categories"
+
+comment:
+  display_name: "Comment"
+  group_list: "categories"
+
+digest:
+  display_name: "Digest"
+  group_list: "categories"
+
+event:
+  display_name: "Event"
+  group_list: "categories"
+
+feature:
+  display_name: "Feature"
+  group_list: "categories, labels"
+  aliases:
+    - "enhancement"
+    - "feature-request"
+
+issue:
+  display_name: "Issue"
+  group_list: "categories"
+
+plugin:
+  group_list: "categories"
+  display_name: "Plugin"
+
+question:
+  group_list: "categories"
+  display_name: "Question"
+
+
+### Twitter specific
+
+follow_event: {}
+
+status_event: {}
+
+
+### Github specific
+
+delete_event: {}
+
+push_event: {}
+
+fork_event: {}
+
+pull_request_event: {}
+
+create_event: {}
+
+issues_event: {}
+
+issue_comment_event: {}
+
+commit_comment_event: {}
+
+watch_event: {}
+
+gollum_event: {}
+
+pull_request_review_comment_event: {}
+
+public_event: {}
+
+custom_commit_event: {}
+
+### Others
+
+jquerymx:
+  display_name: "jQueryMX"
+  aliases:
+    - "j_query_mx"
+
+bitovi:
+  display_name: "Bitovi"
+  group_list: "req_friends"
+
+uncategorized: {}

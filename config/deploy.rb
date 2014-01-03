@@ -15,11 +15,11 @@ set(:deploy_to) { "/home/#{user}/#{application}" }
 
 set(:normalize_asset_timestamps, false)
 set(:default_environment, {
-  'PATH' => "/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
+  'PATH' => "/opt/rbenv/shims/:/opt/rbenv/bin:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
 })
 
-set(:stages, ['staging', 'prod'])
-set(:default_stage, 'prod')
+set(:stages, ['testing', 'staging', 'prod'])
+set(:default_stage, 'testing')
 
 set(:shared_children, shared_children + %w{public/uploads})
 
@@ -48,18 +48,18 @@ namespace :deploy do
     envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
     env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
     run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
-    run "sudo /usr/bin/service bithub-listener start"
+    run "sudo /usr/bin/service bithub start"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener stop"
+    run "sudo /usr/bin/service bithub stop"
   end
 
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub --log /var/log/bithub/web --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 
   desc "Symling uploads from shared to public folder"

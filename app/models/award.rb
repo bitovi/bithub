@@ -10,57 +10,81 @@ class Award < ActiveRecord::Base
   
   after_create :bust_event_cache
 
-  class EventHasNoParentException < Exception; end
+  after_destroy :update_cached_score_in_associated_user
+  after_destroy :check_if_still_eligible_for_rewards
 
-  def self.create_with_strategy(actor, applies_to, opts = {})
+  def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
-
-    begin
-      if opts[:strategy] == :double_the_upvotes
+    award = nil
+    
+    ActiveRecord::Base.transaction do
+      case opts[:strategy]
+      when :double_the_upvotes
         award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_upvote_value(applies_to)})
-      elsif opts[:strategy] == :double_parents_upvotes
+      when :double_parents_upvotes
         award = Award.create!({actor: actor, applies_to: applies_to, value: Award.double_parents_upvote_value(applies_to)})
-      elsif opts[:strategy] == :based_on_rule
-        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.total_value(applies_to)})
+      when :based_on_rule
+        award = Award.create!({actor: actor, applies_to: applies_to, value: Award.rule_based_value(applies_to)})
       end
-    rescue EventHasNoParentException => e
-      Rails.logger.info "Event can't be awarded because it has no parent" 
-      raise e
+      award.update_cached_score_in_associated_user
+      award.reward_associated_user_if_eligible
     end
-
-    applies_to.author.reward_if_eligible if applies_to.author
+    
     award
   end
 
+  #private
+  
+  # Strategies
   def self.double_upvote_value(event)
     (event.upvotes.sum(:value) * 2)
   end
   
   def self.double_parents_upvote_value(event)
-    if self.parent
-      (event.top_level_parent.upvotes.sum(:value) * 2)
-    else
-      fail EventHasNoParentException
-    end
+    (event.top_level_parent.upvotes.sum(:value) * 2) if event.parent
   end
-
-  def self.total_value(event)
+  
+  def self.rule_based_value(event)
     if p = event.parent
-      [p.rule.award_value, p.upvotes.sum('value'), p.anteups.sum('value')].reduce(&:+)
+      [p.rule.award_value, p.upvotes.sum('value')].reduce(&:+)
     else
       [event.rule.award_value, event.upvotes.sum('value')].reduce(&:+)
     end
   end
 
+  # Validator
   def thread_not_already_awarded
-    if !applies_to.thread.select{|e| e.awarded?}.blank?
+    flag = applies_to.thread
+    .select{|e| e.awarded?}
+    .map{|e| !e.awards.include?(self)}
+    .reduce(false) {|acc, v| acc && v}
+      
+    if flag
       errors.add(:applies_to, "can't already be in an awarded thread")
     end
   end
-  
+
+  # Methods for hooks
   def bust_event_cache
     self.applies_to.touch
     self.applies_to.parent.touch if self.applies_to.parent
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
+
+  def update_cached_score_in_associated_user
+    self.applies_to.author.update_total_score if self.applies_to.author
+  end
+
+  def reward_associated_user_if_eligible
+    self.applies_to.author.reward_if_eligible if self.applies_to.author
+  end
+
+  def check_if_still_eligible_for_rewards
+    self.applies_to.author.validate_eligibility if self.applies_to.author
+  end
+
+  handle_asynchronously :update_cached_score_in_associated_user
+  handle_asynchronously :reward_associated_user_if_eligible
+  handle_asynchronously :check_if_still_eligible_for_rewards
+
 end

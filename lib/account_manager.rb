@@ -1,8 +1,18 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_aliases.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
-  RELEVANT_FRIENDS = YAML.load_file('config/tag_aliases.yml').keys << 'bitovi' << 'bitovi_bithub'
+  RELEVANT_REPO_NAMES = Tag.tagged_with('req_favourites').map {|t| "bitovi/#{t.name}"}
+  #RELEVANT_REPO_NAMES += %w(steal testee.js)
+  #RELEVANT_REPO_NAMES << 'bithub-test/testy' if (Rails.env == 'test' || Rails.env == 'testing')
+  
+  RELEVANT_TWITTER_ACCOUNTS = {
+    123763453 => 'bitovi',
+    523041627 => 'canjs',
+    589215872 => 'jquerypp',
+    171351462 => 'funcunit',
+    56956664 => 'javascriptmvc',
+    12345678 => 'bitovi_bithub'
+  }
 
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
@@ -23,7 +33,7 @@ class AccountManager
         user = create_and_collect(name, email)
       end
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error "========> #{e.message}"
+      Rails.logger.error e.message
     end
     user
   end
@@ -33,9 +43,14 @@ class AccountManager
     ActiveRecord::Base.transaction do
       identity.user.award_points_for_joining(identity.provider)
       identity.save!
-      create_missing_repos_and_watches!
     end
-    identity.reload.user.collect_authored_events.reward_if_eligible
+    
+    # Costly actions done outside of the request
+    u = identity.reload.user
+    u.delay.collect_authored_events
+    u.delay.reward_if_eligible
+
+    delay.create_missing_repos_and_watches!
     user
   end
 
@@ -44,9 +59,12 @@ class AccountManager
       current_user.update_blank_oauth_attrs!({name: name, email: email})
       current_user.award_points_for_joining(identity.provider)
       current_user.merge_identities!(identity)
-      create_missing_repos_and_watches!
-      current_user.reload.collect_authored_events.reward_if_eligible
     end
+    
+    current_user.delay.collect_authored_events
+    current_user.delay.reward_if_eligible
+
+    delay.create_missing_repos_and_watches!
     current_user
   end
 
@@ -61,13 +79,11 @@ class AccountManager
   def missing_repos
     username = identity.source_data['nickname'] || identity.source_data[:nickname]
     rs = user_api.watched_repos(username)
-
-    remote_repo_watches = rs.select{|r| RELEVANT_REPO_NAMES.include?(r[:full_name] || r['full_name'])}
-                            .map{|r| (r[:full_name] || r['full_name'])}
-
+    
+    remote_repo_watches = rs.map{|r| (r[:full_name] || r['full_name'])} & RELEVANT_REPO_NAMES
     present_repo_watches = Event.tagged_with(%w(github watch_event))
                                 .event_by_origin_uid(identity.uid.to_s)
-                                .map {|e| (sd = e.source_data) ? sd['repo']['full_name'] : e.props['repo_name']}
+                                .map {|e| e.source_data.andand['repo'].andand['full_name'] || e.props.andand['repo_name']}
                                 .uniq
 
     if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
@@ -78,24 +94,20 @@ class AccountManager
   end
 
   def missing_friends
-    fs = user_api.followed_accts(identity.uid)
+    fs = user_api.followed_acct_ids(identity.uid)
 
-    remote_friend_names = fs.select{|r| RELEVANT_FRIENDS.include?(r[:screen_name] || r['screen_name'])}
-                            .map{|r| (r[:screen_name] || r['screen_name'])}
+    remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}      
+    present_friend_ids = Event.tagged_with(%w(twitter follow_event))
+                              .event_by_origin_uid(identity.uid.to_s)
+                              .map{|e| e.source_data.andand['target'].andand['id']}
+                              .uniq
 
-    present_friend_names = Event.tagged_with(%w(twitter follow_event))
-                                .event_by_origin_uid(identity.uid.to_s)
-                                .map{|e| (sd = e.source_data) ? sd['target']['screen_name'] : e.props['target']}
-                                .uniq
-
-    if (missing_friends = (remote_friend_names - present_friend_names)).length > 0
-      fs.select{|r| missing_friends.include?(r[:screen_name] || r['screen_name'])}
-      
+    if (missing_friends_ids = (remote_friend_ids - present_friend_ids)).length > 0
+      missing_friends_ids.map {|id| {:id_str => id.to_s, :screen_name => RELEVANT_TWITTER_ACCOUNTS[id]}}
     else
       []
     end
   end
-
 
   def create_internal_follows!(accts)
     accts.map do |a|
@@ -107,10 +119,10 @@ class AccountManager
       e = Event.new({
         title: "followed @#{screen_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,
@@ -137,10 +149,10 @@ class AccountManager
       e = Event.new({
         title: "started watching #{repo_name}",
         hash_key: hash_key,
-        origin_ts: Time.now,
-        origin_date: Date.today,
-        thread_updated_at: Time.now,
-        thread_updated_date: Date.today,
+        origin_ts: 1.year.ago,
+        origin_date: 1.year.ago.to_date,
+        thread_updated_at: 1.year.ago,
+        thread_updated_date: 1.year.ago.to_date,
         props: {
           origin_author_id: identity.uid,
           origin_author_name: nickname,
