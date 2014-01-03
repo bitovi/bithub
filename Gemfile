@@ -19,7 +19,11 @@ gem 'omniauth-github'
 gem 'omniauth-meetup'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
+gem 'activerecord-postgresql-extensions'
 gem 'acts-as-taggable-on'
+gem 'daemons'
+gem 'delayed_job'
+gem 'delayed_job_active_record'
 gem 'jbuilder'
 gem 'jpbuilder'
 gem 'draper'
@@ -28,6 +32,10 @@ gem 'log4r'
 gem 'foreman'
 gem 'sanitize'
 gem 'htmlentities'
+gem 'andand'
+gem 'oj'
+gem 'rspec-core'
+
 gem 'levenshtein-ffi', :require => 'levenshtein'
 
 gem 'newrelic_rpm'
@@ -38,18 +46,27 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 # Gems for ThirdPartyInformer
 gem 'twitter'
 gem 'github_api'
-
+gem 'octokit', '~> 2.0'
 
 group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
+  gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'pry-rails'
   gem 'better_errors'
   gem 'dotenv-rails'
+  gem 'yajl-ruby'
+  gem 'evented-spec'
+  gem 'git'
+  gem 'database_cleaner'
 end
 
 group :development do
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'bullet'
 end
+  
+# Code climate
+gem "codeclimate-test-reporter", group: :test, require: nil

@@ -1,46 +1,42 @@
 digest:
-  github: 1
-  twitter: 1
-  follow_event: 1
-  fork_event: 1
-  watch_event: 1
+  follow_event: 10
+  fork_event: 10
+  watch_event: 10
 
 twitter:
-  twitter: 1
-  status_event: 1
+  status_event: 10
 
 comment:
-  disqus: 1
-  github: 1
-  commit_comment_event: 1
-  issue_comment_event: 1
-  pull_request_review_comment_event: 1
+  disqus: 10
+  commit_comment_event: 10
+  issue_comment_event: 10
+  pull_request_review_comment_event: 10
 
 code:
-  github: 1
-  push_event: 1
-  create_event: 1
-  delete_event: 1
-  pull_request_event: 1
+  push_event: 10
+  create_event: 10
+  delete_event: 10
+  pull_request_event: 10
 
 question:
-  forums: 1
-  question: 1
+  forums: 10
+  question: 10
 
 chat:
-  irc: 1
+  irc: 10
 
 article:
-  blog: 1
+  blog: 10
 
 issue:
-  github: 1
-  issues_event: 1
+  issues_event: 10
 
 bug:
+  issues_event: 10
   bug: 5
 
 feature:
+  issues_event: 10
   feature: 5
   feature_request: 5
   enhancement: 5

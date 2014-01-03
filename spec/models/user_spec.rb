@@ -16,7 +16,7 @@ describe User do
 
     it "should calculate total authorship points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from authorship")
-      expect(@author.authored_events_total).to eq(33)
+      expect(@author.reload.authored_events_total).to eq(33)
     end
 
     it "should calculate total upvote points" do
@@ -28,23 +28,15 @@ describe User do
     it "should calculate total award points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing #score from awards")
       Upvote.create_based_on_rule(@actor, event)
-      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
+      Award.create_based_on_strategy(@actor, event, strategy: :double_the_upvotes)
       expect(@author.awards_total).to eq(11*2)
     end
 
     it "should calculate total points" do
       event = create(:event_determined, rule: @rule, author: @author, title: "Event in user_spec, testing total #score")
       Upvote.create_based_on_rule(@actor, event)
-      Award.create_with_strategy(@actor, event, {strategy: :double_the_upvotes})
-      expect(@author.score).to eq(11+11*2+33)
-    end
-  end
-
-  describe ".select_with_score" do
-    it "should calculate score for each user by using built in PG fns" do
-      user = create(:user)
-      u = User.where(id: user.id).select_with_score.first
-      expect(u.total_score).to be_a(Integer)
+      Award.create_based_on_strategy(@actor, event, strategy: :double_the_upvotes)
+      expect(@author.reload.score).to eq(11+11*2+33)
     end
   end
 
@@ -88,6 +80,55 @@ describe User do
         user.merge_identities!(identity_twitter)
         expect(User.where(:id => old_user_id).first).to be_nil
       end
+    end
+  end
+
+  describe "#reassign_events_to" do
+    it "transfers events" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      e1 = create(:github_issue, author: v)
+      e2 = create(:twitter_follow_event, author: v)
+      e3 = create(:twitter_tweet, author: v)
+
+      v.reload.reassign_events_to(n)
+      v.reload.events.should =~ []
+      n.reload.events.should =~ [e1, e2, e3]
+    end
+  end
+
+  describe "#reassign_activities_to" do
+    it "transfers upvotes/awards/internals/anteups in which the user is an point receiver" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      issue = create(:github_issue, author: v)
+      issue_comment = create(:github_issue_comment, parent: issue, author: v)
+
+      upvote = create(:upvote, applies_to: issue, actor: n)
+      award = create(:award, applies_to: issue_comment, actor: n)
+
+      v.reload.reassign_activities_to(n)
+      n.reload.activities_raw =~ [upvote, issue]
+      v.reload.activities_raw =~ []
+    end
+  end
+
+  describe "#reassign_actions_to" do
+    it "transfers upvotes/awards/internals/anteups in which the user is an actor" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      issue = create(:github_issue, author: v)
+      issue_comment = create(:github_issue_comment, parent: issue, author: v)
+
+      upvote = create(:upvote, applies_to: issue, actor: n)
+      award = create(:award, applies_to: issue_comment, actor: n)
+
+      n.reload.reassign_actions_to(v)
+      v.reload.actions.should =~ [upvote, award] 
+      n.reload.actions.should =~ []
     end
   end
 
@@ -190,7 +231,7 @@ describe User do
 
       events = [e1, e2, e3]
       user.collect_authored_events
-      user.events.should =~ events
+      user.reload.events.should =~ events
     end
   end
 end

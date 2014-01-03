@@ -15,10 +15,10 @@ namespace :db do
     run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
     dbuser = @environment_info['username']
     dbpass = @environment_info['password']
-    environment_database = (app_env == 'staging') ? 'bithub_staging' : 'bithub'
+    dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
     dbhost = @environment_info['host']
 
-    run "pg_dump --format=c --password --username=#{dbuser} #{environment_database} > #{backup_file}" do |ch, stream, out|
+    run "pg_dump --format=c --password --username=#{dbuser} #{dbname} > #{backup_file}" do |ch, stream, out|
       ch.send_data "#{dbpass}\n" if out=~ /^Password:/
     end
   end
@@ -71,12 +71,12 @@ namespace :db do
     end
   end
 
-  desc "Sync staging with production"
-  task :sync_with_prod, :roles => :db, :only => {:primary => true} do
-    dbname = 'bithub_staging' unless dbname
-    run "dropdb bithub_staging"
-    run "createdb --template=template1 --owner=bithub bithub_staging"
-    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --format=c --schema=public --dbname=bithub_staging"
+  desc "Sync db with production"
+  task :sync, :roles => :db, :only => {:primary => true} do
+    dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
+    run "dropdb #{dbname}"
+    run "createdb --template=template1 --owner=bithub #{dbname}"
+    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --format=c --schema=public --dbname=#{dbname}"
   end
 
   task :pass_var, :roles => :db, :only => {:primary => true} do
@@ -95,18 +95,24 @@ namespace :db do
     dest = File.join('/tmp/', backup_time + ".backup")      
     top.download(src, dest, :via => :scp, &block)
 
-    # restore to which local db
+    db.recreate
+  end
+
+  desc "Recreate local db with given dump file"
+  task :recreate, :roles => :db, :only => {:primary => true} do
+
     if not exists? :local_db
       puts "You can specify to which local db to restore to. Hint: use \"cap db:sync_local -s local_db=__db_name__\""
-      puts "Using 'bithub_development'!"
+      puts "Using 'bithub_development'"
       restore_db = 'bithub_development'
     else
       restore_db = local_db
     end
 
-    run_locally "dropdb #{restore_db}"
+    run_locally "dropdb --if-exists #{restore_db} "
     run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
     run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
   end
+
 
 end

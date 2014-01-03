@@ -18,6 +18,7 @@ Bithub::Application.routes.draw do
       resource 'award', :only => :create, :to => 'event_activities#create_award'
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
       get :summary, :on => :collection
+      get :pagination, :on => :collection
       delete :upvote, :to => 'event_activities#destroy_upvote'
     end
 
@@ -33,6 +34,8 @@ Bithub::Application.routes.draw do
         get 'github', :to => 'users#from_github'
       end
     end
+
+    resource :pagination, :only => [:index]
 
     resources :tags, :except => [:new, :edit] do
       collection do

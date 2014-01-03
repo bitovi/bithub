@@ -20,7 +20,8 @@ class Event < ActiveRecord::Base
     :origin_date, :origin_ts,
     :thread_updated_date, :thread_updated_at,
     :created_at, :updated_at,
-    :props, :source_data, :image
+    :props, :source_data, :image,
+    :total_upvotes
 
   acts_as_taggable_on :tags
   mount_uploader :image, EventImageUploader
@@ -51,16 +52,40 @@ class Event < ActiveRecord::Base
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM events WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  scope :no_irc, lambda { where("props -> 'feed' <> 'irc'") }
+  scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
 
-  after_create do
-    author.reward_if_eligible if author
+  after_create :reward_user_if_eligible
+  after_create :increase_score_in_author
+  after_destroy :decrease_score_in_author
+
+  SCOPE_APPLIER_OVERRIDES = {
+    :thread_updated_at => Proc.new do |scope, v, params = {}|
+      args = [params[:clientTz] || 'UTC', v.first, v.last]
+      scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+    end
+  }
+
+  def self.scope_applier_overrides
+    SCOPE_APPLIER_OVERRIDES
   end
     
   @processor ||= Processors::Github.new({feed: 'github'})
 
   def self.github_processor
     @processor
+  end
+
+  def self.scoped_with_includes
+    scope = Event.scoped
+    scope = scope.includes(:author)
+    scope = scope.includes(:category)
+    scope = scope.includes(:parent)
+    scope = scope.includes(:feed)
+    scope
+  end
+
+  def children_with_includes
+    self.children.merge(Event.scoped_with_includes)
   end
 
   def initialize(args = {})
@@ -77,6 +102,7 @@ class Event < ActiveRecord::Base
     event = self.new
 
     event.hash_key = Digest::MD5.hexdigest(args[:feed] + args[:title] + args[:category] + args[:body])
+
     attrs = event.to_props_and_clean(args)
     event.determine
     event.origin_and_thread_timestamps_to_now
@@ -133,6 +159,10 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
+  def update_total_upvotes
+    self.update_attribute(:total_upvotes, self.upvotes.sum('value'))
+  end
+
   def awarded?
     self.awards.length > 0
   end
@@ -141,19 +171,28 @@ class Event < ActiveRecord::Base
     !self.thread.select{|e| e.awarded?}.blank?
   end
   
-  def self.select_with_upvotes(include_events = true)
-    query_string = "(SELECT COALESCE (SUM(u.value), 0) FROM upvotes AS u WHERE u.applies_to_id = events.id) as total_upvotes"
-    query_string = "events.*, " + query_string if include_events
-    select(query_string)
-  end
-  
-  def total_upvotes
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_upvotes])
-  end 
-
   def sum_upvotes
     (self.upvotes.pluck :value).reduce :+
   end
+
+  def increase_score_in_author
+    if self.author
+      self.author.total_score += self.rule.authorship_value
+      self.author.save!      
+    end
+  end
+  
+  def decrease_score_in_author
+    if self.author
+      self.author.total_score -= self.rule.authorship_value
+      self.author.save!      
+    end
+  end
+
+  def reward_user_if_eligible
+    self.author.reward_if_eligible if self.author
+  end
+
 
   def cache_key
     case
@@ -177,6 +216,10 @@ class Event < ActiveRecord::Base
     else
       self
     end
+  end
+
+  def cached_tags
+    self.cached_tag_list.split(',').map {|t| t.strip}
   end
 
   private

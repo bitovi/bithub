@@ -8,19 +8,20 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city,
     :email, :name, :postal, :email,
     :remember_me, :state, :country,
-    :events
+    :events, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :country
+
   has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
   has_many :events, :foreign_key => "author_id", :class_name => "Event", :dependent => :nullify
-  has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
 
+  has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
   has_many :anteups, :through => :events
   has_many :upvotes, :through => :events
   has_many :awards, :through => :events
@@ -34,21 +35,25 @@ class User < ActiveRecord::Base
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
   
-  after_update :award_points_for_completing_profile
+  after_update :check_and_award_points_for_completing_profile
 
   def activities
     activities = []
 
-    self.events.joins(:rule).each do |e|
+    self.events.joins(:rule).all.each do |e|
       activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
-    self.awards.select(['awards.*', 'events.title']).each do |a|
+    self.awards.select(['awards.*', 'events.title']).all.each do |a|
       activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})  
     end
 
-    self.upvotes.select(['upvotes.*', 'events.title']).each do |u|
+    self.upvotes.select(['upvotes.*', 'events.title']).all.each do |u|
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+    end
+    
+    self.anteups.select(['anteups.*', 'events.title']).all.each do |u|
+      activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
     self.internals.all.each do |i|
@@ -58,37 +63,28 @@ class User < ActiveRecord::Base
     activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
   end
 
+  def activities_raw
+    activities = []
+    activities += self.awards.all
+    activities += self.upvotes.all
+    activities += self.anteups.all
+    activities += self.internals.all
+    activities
+  end
+  
+  def actions
+    actions = []
+    actions += self.awards_as_actor.all
+    actions += self.upvotes_as_actor.all
+    actions += self.anteups_as_actor.all
+    actions += self.internals_as_actor.all
+    actions
+  end
+
   def cached_score
     Leaderboard.where(user_id: self.id).first.user_score || 0
   end
 
-  def self.select_with_score(include_users=true)
-    query_string = <<-SQL
-    (
-      (select coalesce(sum(rules.authorship_value),0) from events, rules
-      where events.rule_id = rules.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(upvotes.value),0) from events, upvotes
-      where upvotes.applies_to_id = events.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(awards.value),0) from events, awards
-      where awards.applies_to_id = events.id
-      and events.author_id = users.id)
-      +
-      (select coalesce(sum(internals.value),0) from internals
-      where internals.receiver_id = users.id)
-      -
-      (select coalesce(sum(anteups.value),0) from anteups
-      where anteups.actor_id = users.id
-      and anteups.fullfilled = true)
-    )::int as total_score
-    SQL
-    query_string = "users.*, " + query_string if include_users
-    select(query_string)
-  end
-  
   def score
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
@@ -131,16 +127,47 @@ class User < ActiveRecord::Base
     save! if self.changed?
   end
 
+  def update_total_score
+    self.update_attribute(:total_score, self.score)
+  end
+
   def merge_identities!(identity)
     other_user = identity.user if identity.user
     unless self.identities.include?(identity)
       self.identities << identity 
       self.save!
-      other_user.destroy if other_user
+      self.delay.snatch_all_and_destroy(other_user) if other_user
     end
   end
 
-  def award_points_for_completing_profile
+  def snatch_all_and_destroy(whom)
+    ActiveRecord::Base.transaction do
+      self.snatch_events_from(whom)
+      self.snatch_activities_from(whom)
+      self.snatch_actions_from(whom)
+    end
+    whom.destroy
+  end
+
+  def snatch_events_from(whom)
+    whom.events.update_all(:actor => self)
+  end
+
+  def snatch_activities_from(whom)
+    whom.awards.update_all(:actor => self)
+    whom.anteups.update_all(:actor => self)
+    whom.upvotes.update_all(:actor => self)
+    whom.internals.update_all(:actor => self)
+  end
+
+  def snatch_actions_from(whom)
+    whom.awards_as_actor.update_all(:actor => self)
+    whom.anteups_as_actor.update_all(:actor => self)
+    whom.upvotes_as_actor.update_all(:actor => self)
+    whom.internals_as_actor.update_all(:actor => self)
+  end
+
+  def check_and_award_points_for_completing_profile
     if self.completed_profile? && !self.already_awarded_for_profile_completion?
       self.internals.create({receiver: self, value: 1, comment: "Completed profile."})
     end
@@ -173,11 +200,15 @@ class User < ActiveRecord::Base
     end
   end
 
-  # For casting the virtual column
-  def total_score
-    ActiveRecord::ConnectionAdapters::Column.value_to_integer(self[:total_score])
-  end 
+  def validate_eligibility
+    if rs = Reward.find_all_qualified_for(self)
+      delete_uneligible_achievements if self.rewards.length > rs
+    end
+  end
 
+  def delete_uneligible_achievements
+    raise "NOT IMPLEMENTED"
+  end
 
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
@@ -201,8 +232,12 @@ class User < ActiveRecord::Base
       # skip making HTTP request in tests
       return gravatar if Rails.env == "test"
 
-      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
-      response.code == '200' ? gravatar : ''
+      begin
+        response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
+        response.code == '200' ? gravatar : ''
+      rescue
+        return ''
+      end
     else
       ''
     end
