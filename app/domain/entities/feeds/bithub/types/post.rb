@@ -1,18 +1,19 @@
 module Entities
-  module Disqus
+  module Bithub
     module Post
 
       Relationships = {
-        upstream: [Entities::Disqus::Thread],
-        downstream: []
+        upstream: [],
+        downstream: [],
+        referenced: [],
       }
 
       class Procurer < Entities::Procurer
-        include Entities::Disqus::Accessors
+        include Entities::Bithub::Accessors
 
         def find(payload)
           if url(payload)
-            find_by_post_id(post_id(payload))
+            find_by_id(id(payload))
           end
         end
 
@@ -29,22 +30,14 @@ module Entities
         end
 
         # Finders
-        def find_by_post_id(post_id)
-          @p.tagged_with('forum')
-            .where("props -> 'post_id' = '#{post_id}'")
-            .first
+        def find_by_url(url)
+          @p.where(url: url).first
         end
 
-        def find_by_thread_url(url)
-          thread_url, _ = url.split('#')
-          @p.tagged_with('forum')
-            .where("url LIKE '#{thread_url}%'")
-            .first
-        end
-        
         def relationships
-          Entities::Disqus::Post::Relationships
+          Entities::Bithub::Post::Relationships
         end
+
       end
 
     end

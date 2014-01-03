@@ -8,6 +8,10 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
+        
+        def relationships
+          Entities::Github::Watch::Relationships
+        end
       end
 
     end

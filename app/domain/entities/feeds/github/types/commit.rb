@@ -8,17 +8,14 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
+        include Entities::Github::Accessors
 
-        def find(payload)
+        def find_self(payload)
           # how to find from push?
         end
-
-        def build(payload)
-          if type(payload) == 'Push'
-            fill_props(build_from_push(payload), payload)
-          else
-            build_fail
-          end
+        
+        def build_self(payload)
+          # build from push
         end
 
         def find_by_commit_sha(commit_sha)
@@ -26,9 +23,9 @@ module Entities
             .where("props -> 'commit_sha' = '#{commit_sha}'")
             .first
         end
-        
-        def build_from_push(payload)
-          @p.new(extracted(payload))
+
+        def relationships
+          Entities::Github::Commit::Relationships
         end
       end
 

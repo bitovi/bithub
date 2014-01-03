@@ -15,61 +15,114 @@ module Entities
       @p = persistor
     end
 
-    def procure(payload, event)
-      find_or_build(payload, event)
-      # determine(entity)
-      # assign_common_attributes(entity)
-      # @logger.debug "BUILT, DETERMINED #{entity.inspect}"
-      # @logger.debug "BUILT, DETERMINED TAGS #{entity.tag_list.inspect}"
+    def procure(payload)
+      @logger.debug "Procurer#procure for:#{extract_type_name(self.class)}, payload:#{type(payload)}" 
+      find_or_build(payload)
     end
 
-    def find_or_build(payload, event)
+    def find_or_build(payload)
       if (entity = find(payload))
         entity
       else
         build(payload)
       end
     end
-    
-    def procure_related(payload, event)
-      find_or_build_related(payload, event)
-    end
 
-    def find_or_build_related(payload, event)
-      find_or_build_upstream(payload, event)
-      find_or_build_downstream(payload, event)
-    end
-
-    def find_or_build_upstream(payload, event)
-      Relationships[:upstream].map do |ec|
-        entity = ec::Procurer.new(@p).procure(payload, event)
-      end
-    end
-    
-    def find_or_build_downstream(payload, event)
-      Relationships[:downstream].map do |ec|
-        entity = ec::Procurer.new(@p).procure(payload, event)
+    def find(payload)
+      if own_type?(type(payload))
+        find_self(payload)
+      elsif upstream_type?(type(payload))
+        find_upstream(payload)
+      elsif downstream_type?(type(payload))
+        find_downstream(payload)
+      elsif referenced_type?(type(payload))
+        find_referenced(payload)
       end
     end
 
-    def fill_props(built_entity, payload)
-      built_entity.props = meta(payload)
-      built_entity
+    def build(payload)
+      if own_type?(type(payload))
+        build_self(payload)
+      elsif among_relationships?(type(payload))
+        nil
+      else
+        build_fail(payload)
+      end
+    end
+    
+    # def procure_related(payload)
+    #   find_or_build_related(payload)
+    # end
+
+    # def find_or_build_related(payload)
+    #   find_or_build_upstream(payload) + find_or_build_downstream(payload) + 
+    # end
+
+    def find_or_build_upstream(payload)
+      relationships[:upstream].map do |ec|
+        entity = ec::Procurer.new(@p).procure(payload)
+      end
+    end
+    
+    def find_or_build_downstream(payload)
+      relationships[:downstream].map do |ec|
+        entity = ec::Procurer.new(@p).procure(payload)
+      end
+    end
+    
+    def find_referenced(payload)
+      relationships[:references].map do |ec|
+        entity = ec::Procurer.new(@p).procure(payload)
+      end
     end
 
-    def build_fail
-      fail Entities::Errors::BuildingException, "don't know how to build the entity from the supplied payload"
+    def own_type?(type)
+      #@logger.debug "Procurer#own_type #{type} #{module_name}"
+      extract_type_name(self.class) == type
     end
+    
+    def among_relationships?(type)
+      upstream_type?(type) || downstream_type?(type) || referenced_type?
+    end
+
+    def upstream_type?(type)
+      @logger.debug "Procurer#upstream_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
+      relationships[:upstream]
+      .map {|rl| extract_type_name(rl)}
+      .include?(type)
+    end
+
+    def downstream_type?(type)
+      @logger.debug "Procurer#downstream_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
+      relationships[:downstream]
+      .map {|rl| extract_type_name(rl)}
+      .include?(type)
+    end
+    
+    def downstream_type?(type)
+      @logger.debug "Procurer#refereced_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
+      relationships[:referenced]
+      .map {|rl| extract_type_name(rl)}
+      .include?(type)
+    end
+
+    def extract_type_name(_class)
+      name = _class.to_s; levels = name.scan(/::/).count
+      # @logger.debug "Extracting for #{name}"
+      if levels == 2
+        _, type_name = name.match(/.*::(.*)$/)
+      elsif levels == 3
+        _, type_name = name.match(/.*::(.*)::.*$/).to_a
+      end
+      type_name if type_name
+    end
+    
+    def build_fail(payload)
+      @logger.error "Don't know how to build for payload #{payload}"
+      fail Entities::Errors::BuildingError, "don't know how to build the entity from the supplied payload"
+    end
+
   end
-
-    # def determine(entity)
-    #   @determinator ||= Determinator.new
-    #   @determinator.determine(entity)
-    # end
-
-    # def assign_common_attributes(entity)
-    #   entity.thread_updated_ts = entity.origin_ts
-    # end
 
   module Github; end
   module Twitter; end

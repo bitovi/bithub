@@ -37,6 +37,10 @@ module Entities
           thread_url, _ = url.split('#')
           @p.tagged_with('forum').where("url LIKE '#{thread_url}%'").first
         end
+        
+        def relationships
+          Entities::Forum::Post::Relationships
+        end
       end
 
     end
