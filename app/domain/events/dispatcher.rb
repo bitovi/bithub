@@ -42,20 +42,28 @@ module Events
       # @logger.debug new_event.inspect
       
       procurer = Entities::Delegator.new(@enp).procurer(payload)
-      new_entity = procurer.procure(payload, new_event)
+      new_entity = procurer.procure(payload)
+
+      upstream_entities = procurer.find_or_build_upstream(payload)
+      downstream_entities = procurer.find_or_build_upstream(payload)
+      referenced_entities = procurer.find_referenced(payload)
 
       Entities::Determinator.new(new_entity).determine
       Entities::Normalizer.new(new_entity).normalize
+      Entities::Grouper.new(new_entity)
+      .join_family(upstream_entity)
+      .adopt(downstream_entities)
+      .reference(referenced_entities)
 
       # @logger.debug "NEW entity"
       # @logger.debug new_entity.inspect
-
-      # related_entities = procurer.procure_related(new_entity, new_event, payload)
-
+      
       ActiveRecord::Base.transaction do
         new_event.save!
         new_entity.save!
-        #related_entities.each {|e| e.save!}
+        upstream_entity.save!
+        downstream_entities.each {|e| e.save!}
+        referenced_entities.each {|e| e.save!}
       end
     end
 

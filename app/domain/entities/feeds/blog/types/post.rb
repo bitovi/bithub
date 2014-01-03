@@ -33,6 +33,9 @@ module Entities
           @p.where(url: url).first
         end
 
+        def relationships
+          Entities::Blog::Post::Relationships
+        end
       end
 
     end

@@ -11,21 +11,20 @@ module Entities
       }
 
       class Procurer < Entities::Procurer
+        include Entities::Github::Accessors
 
-        def find(payload)
+        def find_self(payload)
           if comment_id(payload)
             find_by_comment_id(comment_id(payload))
           elsif commit_sha(payload)
             find_by_commit_sha(commit_sha(payload))
           end
         end
-
-        def build(payload)
-          if type(payload) == 'CommitComment'
-            fill_props(build_from_commit_comment(payload), payload)
-          else
-            build_fail
-          end
+        
+        def build_self(payload)
+          entity = @p.new(extracted(payload))
+          entity.props = meta(payload)
+          entity
         end
         
         def find_by_comment_id(comment_id)
@@ -45,9 +44,9 @@ module Entities
             .where("position(props -> 'commit_sha' in '#{commit_shas}') > 0")
             .first
         end
-
-        def build_from_commit_comment(payload)
-          @p.new(extracted(payload))
+        
+        def relationships
+          Entities::Github::CommitComment::Relationships
         end
       end
 

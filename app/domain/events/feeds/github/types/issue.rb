@@ -16,7 +16,7 @@ module Events
           if action == 'opened'
             title = t
           else
-            title = "Issue #{action}: #{t}"
+            title = "Issue #{action}"
           end
 
           new_data = {
@@ -34,6 +34,10 @@ module Events
               :issue_number => nmb
             }
           }
+
+          if action != 'opened'
+            new_data[:meta][:type] = 'issue_action'
+          end
 
           processed.deep_merge(new_data)
         end

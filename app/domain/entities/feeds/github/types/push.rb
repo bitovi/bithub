@@ -10,18 +10,16 @@ module Entities
       class Procurer < Entities::Procurer
         include Entities::Github::Accessors
 
-        def find(payload)
+        def find_self(payload)
           if push_id(payload)
             find_by_push_id(push_id(payload))
           end
         end
 
-        def build(payload)
-          if type(payload) == 'Push'
-            fill_props(build_from_push(payload), payload)
-          else
-            build_fail
-          end
+        def build_self(payload)
+          entity = @p.new(extracted(payload))
+          entity.props = meta(payload)
+          entity
         end
         
         def find_by_push_id(push_id)
@@ -30,8 +28,9 @@ module Entities
             .first
         end
 
-        def build_from_push(payload)
-          @p.new(extracted(payload))
+        
+        def relationships
+          Entities::Github::Push::Relationships
         end
       end
 

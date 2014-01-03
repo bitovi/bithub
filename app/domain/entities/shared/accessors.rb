@@ -20,6 +20,11 @@ module Entities
       payload['extracted']['url']
     end
   end
+  
+  module Bithub
+    module Accessors
+    end
+  end
 
   module Blog
     module Accessors
