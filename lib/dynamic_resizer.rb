@@ -6,7 +6,14 @@ class DynamicResizer
   WIDTH_LIMIT = 0
   HEIGHT_LIMIT = 0
   AVAILABLE_EXTENSIONS = ["jpg","jpeg","png","gif"]
+  AVAILABLE_ARGS = ['greyscale']
 
+  module Filters
+    def self.greyscale(img)
+      img.quantize(256, Magick::GRAYColorspace)
+    end
+  end
+      
   def initialize(fullpath, opts = {})
     @fullpath = fullpath
     @dirname = File.dirname(fullpath)
@@ -23,14 +30,16 @@ class DynamicResizer
     
     image = Magick::Image.read(make_filepath(props[:origin_filename])).first
     image.change_geometry!(@props[:width].to_s + "x" + props[:height].to_s) { |cols, rows, img|
-      img.resize!(cols, rows).to_blob
+      apply_filters(img).resize!(cols, rows).to_blob
     }
   end
+
 
   def resize_and_save
     return false unless is_valid?(@props)
 
     image = resize()
+
     filepath = make_filepath(@props[:filename])
     File.open(filepath, "wb") {|f| f.write(image)} ? image : false
   end
@@ -41,8 +50,12 @@ class DynamicResizer
 
   private
 
+  def apply_filters(img)
+    @props[:args].reduce(img) {|img, filter| img = DynamicResizer::Filters.send(filter, img)}
+  end
+
   def parse_filename(filename)
-    regex_str = "([0-9]+)x([0-9]+)_(.*\.(" + AVAILABLE_EXTENSIONS.join('|') + "))$"
+    regex_str = "([0-9]+)x([0-9]+),?([^_]*)_(.*\.(" + AVAILABLE_EXTENSIONS.join('|') + "))$"
     regex = Regexp.new(regex_str, true)
 
     matched = regex.match(filename)
@@ -53,10 +66,15 @@ class DynamicResizer
       :path => make_filepath(matched[0]),
       :width => matched[1].to_i,
       :height => matched[2].to_i,
-      :origin_filename => matched[3],
-      :origin_path => make_filepath(matched[3]),
-      :extension => matched[4]
+      :args => parse_args(matched[3]),
+      :origin_filename => matched[4],
+      :origin_path => make_filepath(matched[4]),
+      :extension => matched[5]
     }
+  end
+
+  def parse_args(s)
+    s.split(',').select {|e| AVAILABLE_ARGS.include? e}
   end
 
   def make_filepath(filename)
@@ -79,6 +97,10 @@ class DynamicResizer
      (@width_limit == 0) || (@width_limit && width <= @width_limit),
      (@height_limit == 0) || (@height_limit && height <= @height_limit)
     ].all?
+  end
+
+  def filter_greyscale
+    @img = @img.quantize(256, Magick::GRAYColorspace)    
   end
   
 end
