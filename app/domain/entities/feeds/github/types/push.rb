@@ -4,31 +4,25 @@ module Entities
 
       Relationships = {
         upstream: [],
-        downstream: [Entities::Github::Commit, Entities::Github::CommitComment]
+        downstream: [Entities::Github::Commit, Entities::Github::CommitComment],
+        references: [],
       }
 
-      class Procurer < Entities::Procurer
-        include Entities::Github::Accessors
+      class Procurer
+        include Entities::ProcurementAPI
 
-        def find_self(payload)
-          if push_id(payload)
-            find_by_push_id(push_id(payload))
+        def find(payload)
+          if payload.push_id
+            find_by_push_id(payload.push_id).all
           end
         end
 
-        def build_self(payload)
-          entity = @p.new(extracted(payload))
-          entity.props = meta(payload)
-          entity
-        end
-        
+        private
         def find_by_push_id(push_id)
           @p.tagged_with(['github', 'push'])
             .where("props -> 'push_id' = '#{push_id}'")
-            .first
         end
 
-        
         def relationships
           Entities::Github::Push::Relationships
         end

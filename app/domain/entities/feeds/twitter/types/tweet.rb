@@ -3,40 +3,40 @@ module Entities
     module Tweet
 
       Relationships = {
-        upstream: [Entities::Twitter::Tweet],
-        downstream: []
+        upstream: [],
+        downstream: [],
+        references: [],
       }
 
-      class Procurer < Entities::Procurer
+      class Procurer
+        include Entities::ProcurementAPI
 
         def find(payload)
-          if tweet_id(payload)
-            find_by_tweet_id(issue_id(payload))
+          if payload.tweet_id
+            find_by_tweet_id(payload.tweet_id)
           end
         end
 
-        def build(payload)
-          if type(payload) == 'Issue'
-            build_from_issue
-          else
-            fail Entities::Errors::BuildingException, "don't know how to build an entity from supplied payload"
+        def find_parent(payload)
+          if payload.retweeted_id
+            find_by_tweet_id(payload.retweeted_id).first
+          end
+        end
+
+        def find_children(payload)
+          if payload.tweet_id
+            find_by_retweeted_id(payload.tweet_id).all
           end
         end
 
         def find_by_tweet_id(tweet_id)
-          @p.tagged_with(['twitter','status_event'])
+          @p.tagged_with(['twitter', 'status_event'])
             .where("props -> 'tweet_id' = '#{tweet_id}'")
         end
 
         def find_by_retweeted_id(tweet_id)
-          @p.tagged_with(['twitter','status_event'])
-            .where("props -> 'retweet_id' = '#{tweet_id}'")
-        end
-        
-        def build_from_tweet(payload)
-        end
-        
-        def build_from_retweet(payload)
+          @p.tagged_with(['twitter', 'status_event'])
+            .where("props -> 'retweeted_id' = '#{tweet_id}'")
         end
       end
 

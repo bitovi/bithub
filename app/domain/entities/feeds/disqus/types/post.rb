@@ -3,45 +3,26 @@ module Entities
     module Post
 
       Relationships = {
-        upstream: [Entities::Disqus::Thread],
-        downstream: []
+        upstream: [],
+        downstream: [],
+        references: [],
       }
 
-      class Procurer < Entities::Procurer
-        include Entities::Disqus::Accessors
+      class Procurer
+        include Entities::ProcurementAPI
 
         def find(payload)
-          if url(payload)
-            find_by_post_id(post_id(payload))
+          if payload.post_id
+            find_by_post_id(payload.post_id).first
           end
-        end
-
-        def build(payload)
-          entity = @p.new
-          entity.assign_attributes(extracted(payload))
-          entity.props = meta(payload)
-          entity
-        end
-
-        def update(entity, payload)
-          entity.assign_attributes(extracted(payload))
-          entity
         end
 
         # Finders
         def find_by_post_id(post_id)
-          @p.tagged_with('forum')
+          @p.tagged_with('disqus')
             .where("props -> 'post_id' = '#{post_id}'")
-            .first
         end
 
-        def find_by_thread_url(url)
-          thread_url, _ = url.split('#')
-          @p.tagged_with('forum')
-            .where("url LIKE '#{thread_url}%'")
-            .first
-        end
-        
         def relationships
           Entities::Disqus::Post::Relationships
         end

@@ -4,10 +4,12 @@ module Entities
 
       Relationships = {
         upstream: [],
-        downstream: []
+        downstream: [],
+        references: [],
       }
 
       class Procurer
+        include Entities::ProcurementAPI
       end
 
     end

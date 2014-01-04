@@ -3,39 +3,42 @@ module Entities
     module Post
 
       Relationships = {
-        upstream: [Entities::Forum::Post],
-        downstream: [Entities::Forum::Post]
+        upstream: [],
+        downstream: [],
+        references: [],
       }
 
       class Procurer < Entities::Procurer
-        include Entities::Forum::Accessors
+        include Entities::ProcurementAPI
 
         def find(payload)
-          if url(payload)
-            find_by_url(url(payload))
+          if payload.url 
+            find_by_url(payload.url).first
           end
         end
 
-        def build(payload)
-          entity = @p.new
-          entity.assign_attributes(extracted(payload))
-          entity.props = meta(payload)
-          entity
+        def find_parent(payload)
+          if payload.url
+            find_by_thread_prefix(payload.url).order("origin_ts ASC").first
+          end
+        end
+        
+        def find_children(payload)
+          if payload.url
+            find_by_thread_prefix(payload.url).where("origin_ts > ?", payload.origin_ts).all
+          end
         end
 
-        def update(entity, payload)
-          entity.assign_attributes(extracted(payload))
-          entity
-        end
-
-        # Finders
+        private
         def find_by_url(url)
-          @p.tagged_with('forum').where(:url => url).first
+          @p.tagged_with('forum')
+            .where(:url => url)
         end
 
-        def find_by_thread_url(url)
+        def find_by_thread_prefix(url)
           thread_url, _ = url.split('#')
-          @p.tagged_with('forum').where("url LIKE '#{thread_url}%'").first
+          @p.tagged_with(%w(forum post))
+            .where("url LIKE '#{thread_url}%'")
         end
         
         def relationships
@@ -46,20 +49,3 @@ module Entities
     end
   end
 end
-      
-    # grouping
-      # --------
-      # def group_forum_post
-      #   thread_url, _ = url.split('#')
-      #   other_replies = @ar.build_query(forum_posts_by_thread_url(thread_url)).execute #.order('origin_ts ASC')
-
-      #   if other_replies.length > 0
-      #     if origin_ts > other_replies.first.origin_ts
-      #       self.parent = other_replies.first
-      #     else
-      #       self.children += other_replies.all
-      #     end
-      #   end
-      #   self
-      # end
-

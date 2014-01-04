@@ -36,7 +36,7 @@ module Events
         extracted: { origin_ts: origin_timestamp(original_hash) },
       }
       
-      @subprocessor.process(remap_meta_type(original_hash), processed)
+      @subprocessor.process(original_hash, processed)
     end
 
     def content_digest(original_hash)

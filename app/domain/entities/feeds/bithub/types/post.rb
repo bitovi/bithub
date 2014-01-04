@@ -5,33 +5,21 @@ module Entities
       Relationships = {
         upstream: [],
         downstream: [],
-        referenced: [],
+        references: [],
       }
 
-      class Procurer < Entities::Procurer
-        include Entities::Bithub::Accessors
+      class Procurer
+        include Entities::ProcurementAPI
 
         def find(payload)
-          if url(payload)
-            find_by_id(id(payload))
+          if payload.local_id
+            find_by_id(payload.local_id).first
           end
-        end
-
-        def build(payload)
-          entity = @p.new
-          entity.assign_attributes(extracted(payload))
-          entity.props = meta(payload)
-          entity
-        end
-
-        def update(entity, payload)
-          entity.assign_attributes(extracted(payload))
-          entity
         end
 
         # Finders
         def find_by_url(url)
-          @p.where(url: url).first
+          @p.where(url: url)
         end
 
         def relationships
