@@ -3,7 +3,7 @@ module Events
     module CommitComment
 
       class Processor
-        def process(origin_hash, processed)
+        def process(original_hash, processed)
           processed.deep_merge({
             extracted: {
               :title => "commented on a commit in #{original_hash['repo']['name']}",

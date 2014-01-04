@@ -4,7 +4,8 @@ module Entities
 
       Relationships = {
         upstream: [],
-        downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment]
+        downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
+        references: [],
       }
 
       class Procurer < Entities::Procurer

@@ -74,7 +74,7 @@ module Events
       def type_processor(original_hash)
         if github_event?(original_hash)
           event_type_class = type_mappings(original_hash['type']).gsub('Event', '')
-          Events::Github.const_get(event_type_class).const_get('Processor')
+          Events::Github.const_get(event_type_class)::Processor
         elsif github_issue?(original_hash)
           Events::Github::CustomIssue::Processor
         end

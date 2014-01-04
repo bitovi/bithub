@@ -4,7 +4,8 @@ module Entities
 
       Relationships = {
         upstream: [],
-        downstream: []
+        downstream: [],
+        references: [],
       }
 
       class Procurer < Entities::Procurer
