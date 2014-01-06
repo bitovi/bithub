@@ -141,30 +141,22 @@ class User < ActiveRecord::Base
   end
 
   def snatch_all_and_destroy(whom)
-    ActiveRecord::Base.transaction do
-      self.snatch_events_from(whom)
-      self.snatch_activities_from(whom)
-      self.snatch_actions_from(whom)
-    end
+    self.snatch_events_from(whom)
+    self.snatch_actions_from(whom)
+    self.update_total_score
+    self.reward_if_eligible
     whom.destroy
   end
 
   def snatch_events_from(whom)
-    whom.events.update_all(:actor => self)
-  end
-
-  def snatch_activities_from(whom)
-    whom.awards.update_all(:actor => self)
-    whom.anteups.update_all(:actor => self)
-    whom.upvotes.update_all(:actor => self)
-    whom.internals.update_all(:actor => self)
+    whom.events.update_all(:author_id => self)
   end
 
   def snatch_actions_from(whom)
-    whom.awards_as_actor.update_all(:actor => self)
-    whom.anteups_as_actor.update_all(:actor => self)
-    whom.upvotes_as_actor.update_all(:actor => self)
-    whom.internals_as_actor.update_all(:actor => self)
+    whom.awards_as_actor.update_all(:actor_id => self)
+    whom.anteups_as_actor.update_all(:actor_id => self)
+    whom.upvotes_as_actor.update_all(:actor_id => self)
+    whom.internals_as_actor.update_all(:actor_id => self)
   end
 
   def check_and_award_points_for_completing_profile
