@@ -58,6 +58,9 @@ class Event < ActiveRecord::Base
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
 
+  after_save :update_pagination_table
+  after_destroy :update_pagination_table
+
   SCOPE_APPLIER_OVERRIDES = {
     :thread_updated_at => Proc.new do |scope, v, params = {}|
       args = [params[:clientTz] || 'UTC', v.first, v.last]
@@ -191,6 +194,10 @@ class Event < ActiveRecord::Base
 
   def reward_user_if_eligible
     self.author.reward_if_eligible if self.author
+  end
+
+  def update_pagination_table
+    Pagination.refresh
   end
 
 
