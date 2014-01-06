@@ -8,8 +8,8 @@ module Entities
         references: [],
       }
 
-      class Procurer < Entities::Procurer
-        include Entities::Github::Accessors
+      class Procurer
+        include Entities::ProcurementAPI
 
         def find(payload)
           # how to find from push?

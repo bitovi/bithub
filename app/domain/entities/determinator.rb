@@ -1,10 +1,8 @@
 require 'tagging/tagger'
-require 'events/shared/mappings'
 require 'lib/loggable'
 
 module Entities
   class Determinator
-    include Events::Mappings
     include Loggable
 
     PROPS_TO_TAGS = [:feed, :type, :project, :tags]
@@ -16,13 +14,13 @@ module Entities
     end
 
     def determine
-      switch_to_snake_case(@e.props)
+      Payload.switch_to_snake_case(@e.props)
       determine_feed
       determine_tags
       determine_category
       determine_rule
       determine_author
-      switch_to_camel_case(@e.props)
+      Payload.switch_to_camel_case(@e.props)
     end
     
     private

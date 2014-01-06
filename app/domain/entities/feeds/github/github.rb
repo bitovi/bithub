@@ -1,17 +1,5 @@
 module Entities
   module Github
-
-
-    module IssueAttributeFinder
-      def find(payload)
-        if payload.issue_id
-          find_by_issue_id(payload.issue_id).all
-        elsif payload.repo_name && payload.issue_number
-          find_by_repo_name_and_issue_number(payload.repo_name, payload.issue_number).all
-        end
-      end
-    end
-
     module Commit; end
     module CommitComment; end
     module Issue; end

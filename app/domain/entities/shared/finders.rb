@@ -7,12 +7,5 @@ module Entities
 			end
 		end
 
-		module FindableByRepoNameIssueNumber
-			def find_by_name_and_number(repo_name, issue_nmb)
-				where("props -> 'repo_name' = '#{repo_name}'")
-				.where("props -> 'referenced_issue_number' = '#{issue_nmb}'")
-			end
-		end
-
 	end
 end

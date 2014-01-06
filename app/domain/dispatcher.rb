@@ -7,7 +7,6 @@ require 'payload/payload'
 require 'entities/procurer'
 require 'entities/determinator'
 require 'entities/grouper'
-require 'events/shared/mappings'
 
 # Feeds
 require 'events/feeds/blog/blog'
@@ -43,18 +42,18 @@ class Dispatcher
 
     procurer = Entities::Procurer.new(@enp, payload)
 
-    new_entity          = procurer.procure(payload)
-    upstream_entity     = procurer.procure_upstream(payload)
-    downstream_entities = procurer.procure_downstream(payload)
-    referenced_entities = procurer.find_referenced(payload)
+    new_entity = procurer.procure
+    parent     = procurer.find_parent
+    children   = procurer.find_children
+    references = procurer.find_references
 
     Entities::Determinator.new(new_entity).determine
     Entities::Normalizer.new(new_entity).normalize
 
     Entities::Grouper.new(new_entity)
-    .join_family(upstream_entity)
-    .adopt(downstream_entities)
-    .reference(referenced_entities)
+    .join_family(parent)
+    .adopt(children)
+    .reference(references)
 
     # @logger.debug "NEW entity"
     # @logger.debug new_entity.inspect

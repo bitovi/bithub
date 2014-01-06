@@ -5,11 +5,6 @@ module Events
 
       class Processor
         def process(original_hash, processed)
-
-          if m = (original_hash['payload']['commits'].map{|c| c['message']}.join(' ')).match(/#(\d*)/)
-            issue_nmb = m[1]
-          end
-
           new_data = {
             extracted: {
               :title => "pushed to #{original_hash['repo']['name']}",
@@ -17,10 +12,9 @@ module Events
               :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{original_hash['payload']['head']}",
             },
             meta: {
-              :commits => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
               :commit_shas => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
               :repo_name => original_hash['repo']['name'],
-              :referenced_issue_number => issue_nmb
+              :push_id => original_hash['payload']['push_id'],
             }
           }
 

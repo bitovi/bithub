@@ -17,6 +17,15 @@ module Entities
           end
         end
 
+        def find_parent(payload)
+        end
+
+        def find_children(payload)
+        end
+
+        def find_references(payload)
+        end
+
         # Finders
         def find_by_url(url)
           @p.where(url: url)
