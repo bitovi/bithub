@@ -58,32 +58,51 @@ module Accessors
   end
 
   module Github
-    def issue_id
-      @data.andand[:meta].andand[:issue_id]
-    end
-
-    def push_id
-      @data.andand[:meta].andand[:push_id]
-    end
-
+    # All events
     def repo_name
-      @data.andand[:meta].andand[:repo_name]
+      @data[:source_data].andand[:repo].andand[:name]
     end
 
-    def issue_number
-      @data.andand[:meta].andand[:issue_number]
+    # Issue, Pull-request
+    def issue_id
+      @data[:source_data].andand[:payload].andand[:issue].andand[:id]
+    end
+    
+    def pull_request_id
+      @data[:source_data].andand[:payload].andand[:pull_request].andand[:id]
+    end
+
+    def issue_or_pull_req_number
+      if i = @data[:source_data].andand[:payload].andand[:issue] 
+        i.andand[:number]
+      elsif pr = @data[:source_data].andand[:payload].andand[:pull_request]
+        pr.andand[:number]
+      end
     end
     
     def referenced_repo_name
-      if (ref = @data.andand[:meta].andand[:referenced_repo_name])
-        ref
-      else
-        repo_name
-      end
+      repo_name
+    end
+    
+    # Push
+    def push_id
+      @data[:source_data].andand[:payload].andand[:push_id]
     end
 
-    def referenced_issue_number
-      @data.andand[:meta].andand[:referenced_issue_number]
+    def commit_shas
+      @data[:source_data].andand[:payload].andand[:commits].map{|c| c[:sha]}.join(',')
+    end
+    
+    def referenced_number
+      if commits = @data[:source_data].andand[:payload].andand[:commits]
+        md = commits.map{|c| c[:message]}.join(' ').match(/#(\d*)/)
+      end
+      md.andand[1]
+    end
+    
+    # Commit Comment
+    def commit_id
+      @data[:source_data].andand[:payload].andand[:comment].andand[:commit_id]
     end
   end
 

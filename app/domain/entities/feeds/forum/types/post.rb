@@ -8,7 +8,7 @@ module Entities
         references: [],
       }
 
-      class Procurer < Entities::Procurer
+      class Procurer
         include Entities::ProcurementAPI
 
         def find(payload)
@@ -27,6 +27,9 @@ module Entities
           if payload.url
             find_by_thread_prefix(payload.url).where("origin_ts > ?", payload.origin_ts).all
           end
+        end
+
+        def find_references(payload)
         end
 
         private

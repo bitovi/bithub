@@ -1,11 +1,11 @@
 module Entities
-	class Normalizer
+  class Normalizer
     include Loggable
 
-		def initialize(entity)
-			initialize_logger
+    def initialize(entity)
+      initialize_logger
       @e = entity
-		end
+    end
 
     def normalize
       set_thread_ts_to_origin_ts
@@ -20,5 +20,5 @@ module Entities
       @e.props.delete('tags')
       @e.props.delete('origin_author_feed') # Events from Bithub have this
     end
-	end
+  end
 end

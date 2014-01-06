@@ -8,7 +8,8 @@ module Entities
         references: [],
       }
 
-      class Procurer < Entities::Procurer
+      class Procurer
+        include Entities::ProcurementAPI
         
         def relationships
           Entities::Github::Watch::Relationships

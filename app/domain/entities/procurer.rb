@@ -2,7 +2,6 @@ require 'entities/errors'
 require 'entities/determinator'
 require 'entities/shared/procurement_api'
 require 'entities/shared/finders'
-require 'entities/shared/accessors'
 require 'entities/shared/helpers'
 
 module Entities
@@ -13,36 +12,33 @@ module Entities
     def initialize(persistor, payload)
       initialize_logger
       @persistor = persistor
-      @subprocurer = procurer(payload)
+      @payload = payload
     end
 
-    def procure(payload)
-      @logger.debug "Procurer#procure for:#{extract_type_name(self.class)}, payload:#{payload.type}" 
-      procurer.procure(payload)
+    def procure
+      procurer.procure(@payload)
     end
     
-    def find_upstream(payload)
-      procurer.find_upstream(payload)
+    def find_parent
+      procurer.find_parent(@payload)
     end
 
-    def find_downstream(payload)
-      procurer.find_downstream(payload)
+    def find_children
+      procurer.find_children(@payload)
     end
     
-    def find_references(payload)
-      procurer.find_references(payload)
+    def find_references
+      procurer.find_references(@payload)
     end
     
     private
-    def procurer(payload)
-      @subprocurer ||= Entities
-        .const_get(payload.type)
-        .const_get(payload.type)
-        ::Procurer.new(@persistor)
+    def procurer
+      @payload.switch_to_camel_case
+      @subprocurer ||= Entities.const_get(@payload.feed).const_get(@payload.type)::Procurer.new(@persistor)
     end
 
-    def build_fail(payload)
-      @logger.error "Don't know how to build for payload #{payload}"
+    def build_fail
+      @logger.error "Don't know how to build for payload #{@payload}"
       fail Entities::Errors::BuildingError, "don't know how to build the entity from the supplied payload"
     end
   end
@@ -62,11 +58,6 @@ require 'entities/feeds/forum/forum'
 require 'entities/feeds/github/github'
 require 'entities/feeds/twitter/twitter'
 
-
-# def self.new_from_crawler(args = {}, meta)
-#   ev = self.new(args)
-#   ev.to_props(meta).determine.group
-# end
 
 # def self.new_from_bithub(args)
 #   event = self.new

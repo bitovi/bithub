@@ -11,7 +11,7 @@ module Events
               :url => original_hash['payload']['comment']['html_url'],
             },
             :meta => {
-              :commit_id => original_hash['payload']['comment']['commit_id']
+              :commit_id => original_hash['payload']['comment']['commit_id'],
             }
           })
         end
