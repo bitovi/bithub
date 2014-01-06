@@ -54,6 +54,7 @@ class Dispatcher
     .join_family(parent)
     .adopt(children)
     .reference(references)
+    .caused_by(new_event)
 
     # @logger.debug "NEW entity"
     # @logger.debug new_entity.inspect
@@ -61,9 +62,9 @@ class Dispatcher
     ActiveRecord::Base.transaction do
       new_event.save!
       new_entity.save!
-      upstream_entity.save!
-      downstream_entities.each {|e| e.save!}
-      referenced_entities.each {|e| e.save!}
+      parent.save!
+      children.each {|e| e.save!}
+      references.each {|e| e.save!}
     end
   end
 end
