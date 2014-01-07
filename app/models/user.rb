@@ -143,6 +143,7 @@ class User < ActiveRecord::Base
   def snatch_all_and_destroy(whom)
     self.snatch_events_from(whom)
     self.snatch_actions_from(whom)
+    self.snatch_internals_from(whom)
     self.update_total_score
     self.reward_if_eligible
     whom.destroy
@@ -157,6 +158,10 @@ class User < ActiveRecord::Base
     whom.anteups_as_actor.update_all(:actor_id => self)
     whom.upvotes_as_actor.update_all(:actor_id => self)
     whom.internals_as_actor.update_all(:actor_id => self)
+  end
+
+  def snatch_internals_from(whom)
+    whom.internals.update_all(:receiver_id => self)
   end
 
   def check_and_award_points_for_completing_profile
