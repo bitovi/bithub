@@ -15,7 +15,6 @@ module Events
         if github_event?(original_hash)
           processed = processed.deep_merge({
             meta: {
-              feed: 'github',
               type: original_hash['type'].snake_case,
               origin_id: original_hash['id'],
               origin_author_name: original_hash['actor']['login'],
