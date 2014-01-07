@@ -8,6 +8,8 @@ twitter:
 
 comment:
   disqus: 10
+
+github_comment:
   commit_comment_event: 10
   issue_comment_event: 10
   pull_request_review_comment_event: 10
