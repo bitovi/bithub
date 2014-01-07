@@ -1,0 +1,93 @@
+:intervals:
+  :github:
+    :events: 3
+    :issues:
+      :open: 3000
+      :closed: 6000
+  :disqus: 3
+  :forums: 3
+  :meetup: 3
+  :blog: 5
+
+:feeds:
+  :blog: 'http://www.bitovi.com/blog.rss'
+
+  :forums:
+    :general: 'https://forum.javascriptmvc.com/feed'
+    :terms:
+      :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
+
+  :disqus:
+    :uri: 'http://disqus.com/api/3.0/posts/list.json'
+    :query:
+      :forum:
+        - 'jmvcs3'
+        - 'bitovi'
+      :related:
+        - 'thread'
+        - 'forum'
+      :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
+
+  :meetup:
+    :uri: "https://api.meetup.com/2/open_events"
+    :query:
+      :sign: "true"
+      :key: "663a24605a37767831495d6332546b4a"
+      :text: "canjs"
+
+  :github:
+    :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
+    :repos:
+      :testy:
+        :events: 'https://api.github.com/repos/bithub-test/testy/events'
+        :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
+      :canjs:
+        :events: 'https://api.github.com/repos/bitovi/canjs/events'
+        :issues: 'https://api.github.com/repos/bitovi/canjs/issues'
+      :steal:
+        :events: 'https://api.github.com/repos/bitovi/steal/events'
+        :issues: 'https://api.github.com/repos/bitovi/steal/issues'
+      :documentjs:
+        :events: 'https://api.github.com/repos/bitovi/documentjs/events'
+        :issues: 'https://api.github.com/repos/bitovi/documentjs/issues'
+      :jquerypp:
+        :events: 'https://api.github.com/repos/bitovi/jquerypp/events'
+        :issues: 'https://api.github.com/repos/bitovi/jquerypp/issues'
+      :canui:
+        :events: 'https://api.github.com/repos/bitovi/canui/events'
+        :issues: 'https://api.github.com/repos/bitovi/canui/issues'
+      :funcunit:
+        :events: 'https://api.github.com/repos/bitovi/funcunit/events'
+        :issues: 'https://api.github.com/repos/bitovi/funcunit/issues'
+      :donejs:
+        :events: 'https://api.github.com/repos/bitovi/donejs/events'
+        :issues: 'https://api.github.com/repos/bitovi/donejs/issues'
+      :javascriptmvc:
+        :events: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
+        :issues: 'https://api.github.com/repos/bitovi/javascriptmvc/issues'
+      :testee:
+        :events: 'https://api.github.com/repos/bitovi/testee.js/events'
+        :issues: 'https://api.github.com/repos/bitovi/testee.js/issues'
+
+  :twitter:
+    :streams:
+      :public_feed:
+        :path: '/1.1/statuses/filter.json'
+        :params:
+          :track: canjs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++
+        :oauth:
+          :consumer_key: "huCmG0TZ7vs6leLqLNlGQ"
+          :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
+          :token: "55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw"
+          :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+
+      :user_feeds:
+        :bitovi_bithub:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "O8LBlzL77IMhcUd58PaCA"
+            :consumer_secret: "GgBnHe2pyNbVQoBiZYMqeRM39juGphZ4tsCcpn79uTM"
+            :token: "1911709506-lxbZcO7DbjeZ4D6HlfpHTmYaMgyNwKyD1x3OcZs"
+            :token_secret: "H4mVLnP21EUD2zkvfonQfIOMS0GVT585bXhRNMT9ZI"
