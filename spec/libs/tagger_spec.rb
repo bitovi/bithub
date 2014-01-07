@@ -1,23 +1,10 @@
 require 'spec_helper'
+require './spec/helpers.rb'
 
 describe Tagger do
-  tag_defs = [
-              { name: 'canjs', aliases: ['can_js'] },
-              { name: 'jquerypp', aliases: ['jquery_pp', 'jquery++'] },
-              { name: 'stealjs', aliases: ['steal_js', 'steal'] },
-              { name: 'funcunit' },
-              { name: 'documentjs', aliases: ['document_js'] },
-              { name: 'javascriptmvc', aliases: ['jmvc'] },
-              { name: 'testee', aliases: ['testee_js'], props: {levenshtein_treshold: 0} },
-             ]
 
   before :all do
-    tag_defs.each do |tag|
-      t = Tag.new({name: tag[:name], aliases: tag[:aliases], props: {}})
-      t.props['levenshtein_treshold'] = tag.andand[:props].andand[:levenshtein_treshold]
-      t.group_list = %w(projects)
-      t.save
-    end
+    Helpers::Tags.import
   end
 
   after :all do
