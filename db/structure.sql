@@ -321,10 +321,10 @@ CREATE TABLE tags (
 --
 
 CREATE VIEW event_aggregated_tag_list AS
- SELECT e.id AS event_id,
+ SELECT e.id AS event_id, 
     string_agg((t.name)::text, ','::text) AS tag_list
-   FROM events e,
-    tags t,
+   FROM events e, 
+    tags t, 
     taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
@@ -349,9 +349,9 @@ CREATE TABLE upvotes (
 --
 
 CREATE VIEW event_total_upvotes AS
- SELECT e.id AS event_id,
+ SELECT e.id AS event_id, 
     sum(u.value) AS upvotes_sum
-   FROM events e,
+   FROM events e, 
     upvotes u
   WHERE (e.id = u.applies_to_id)
   GROUP BY e.id;
@@ -514,18 +514,18 @@ CREATE TABLE users_roles (
 --
 
 CREATE MATERIALIZED VIEW leaderboard AS
- SELECT users.id AS user_id,
-    users.name AS user_name,
-    users.email AS user_email,
-    (users.props -> 'avatar_url'::text) AS user_gravatar_url,
+ SELECT users.id AS user_id, 
+    users.name AS user_name, 
+    users.email AS user_email, 
+    (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
     ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
-           FROM events,
+           FROM events, 
             rules
           WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-           FROM events,
+           FROM events, 
             upvotes
           WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-           FROM events,
+           FROM events, 
             awards
           WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
@@ -538,13 +538,13 @@ CREATE MATERIALIZED VIEW leaderboard AS
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
   ORDER BY ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
-      FROM events,
+      FROM events, 
        rules
      WHERE ((events.rule_id = rules.id) AND (events.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-      FROM events,
+      FROM events, 
        upvotes
      WHERE ((upvotes.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-      FROM events,
+      FROM events, 
        awards
      WHERE ((awards.applies_to_id = events.id) AND (events.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
       FROM internals
@@ -559,11 +559,11 @@ CREATE MATERIALIZED VIEW leaderboard AS
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT e.thread_updated_at AS ts,
-    e.id,
-    categories.name AS category,
+ SELECT e.thread_updated_at AS ts, 
+    e.id, 
+    categories.name AS category, 
     ARRAY( SELECT t.name
-           FROM taggings tt,
+           FROM taggings tt, 
             tags t
           WHERE ((((tt.taggable_type)::text = 'Event'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
    FROM (events e
@@ -718,15 +718,15 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE VIEW user_total_score AS
- SELECT users.id AS user_id,
+ SELECT users.id AS user_id, 
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM events e,
+           FROM events e, 
             rules r
           WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM events e,
+           FROM events e, 
             upvotes u
           WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM events e,
+           FROM events e, 
             awards a
           WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
@@ -890,6 +890,14 @@ ALTER TABLE ONLY awards
 
 
 --
+-- Name: category_determination_rules_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY category_determination_rules
+    ADD CONSTRAINT category_determination_rules_name_key UNIQUE (name);
+
+
+--
 -- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -911,6 +919,14 @@ ALTER TABLE ONLY countries
 
 ALTER TABLE ONLY delayed_jobs
     ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_hash_key_key UNIQUE (hash_key);
 
 
 --
