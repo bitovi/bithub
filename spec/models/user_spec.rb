@@ -117,6 +117,19 @@ describe User do
     end
   end
 
+  describe "#snatch_internals_from" do
+    it "transfers internals" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      i = Internal.create!({receiver: n, value: 1, comment: "Completed profile."})
+
+      v.reload.snatch_internals_from(n)
+      v.reload.internals.should =~ [i]
+      n.reload.internals.should =~ []      
+    end
+  end
+  
   describe "#reward_if_eligible" do
     it "should create one achievement for each award that the user is eligible for" do
       author = create(:user, name: "Nikica")
