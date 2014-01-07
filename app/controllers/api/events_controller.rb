@@ -48,6 +48,11 @@ class Api::EventsController < Api::ApiController
       e.bump_thread
       @event = EventDecorator.decorate(e)
       @ev_relations = EventRelations.new(@event.id)
+
+      if author = @event.author
+        Upvote.create_based_on_rule(User.find(author[:id]), @event) if author[:id].is_a? Integer
+      end
+      
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
