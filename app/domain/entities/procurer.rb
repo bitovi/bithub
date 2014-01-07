@@ -19,16 +19,16 @@ module Entities
       procurer.procure(@payload)
     end
     
-    def find_parent
-      procurer.find_parent(@payload)
+    def procure_parent
+      procurer.procure_parent(@payload)
     end
 
-    def find_children
-      procurer.find_children(@payload)
+    def procure_children
+      procurer.procure_children(@payload)
     end
     
-    def find_references
-      procurer.find_references(@payload)
+    def procure_references
+      procurer.procure_references(@payload)
     end
     
     private

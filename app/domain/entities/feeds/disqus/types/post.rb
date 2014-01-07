@@ -11,25 +11,27 @@ module Entities
       class Procurer
         include Entities::ProcurementAPI
 
-        def find(payload)
-          if payload.post_id
-            find_by_post_id(payload.post_id).first
+        def procure
+          if @payload.post_id && (entity = find_by_post_id.first)
+            entity
+          else
+            build
           end
         end
 
-        def find_parent(payload)
+        def procure_parent
         end
 
-        def find_children(payload)
+        def procure_children
         end
 
-        def find_references(payload)
+        def procure_references
         end
 
         # Finders
-        def find_by_post_id(post_id)
-          @p.tagged_with('disqus')
-            .where("props -> 'post_id' = '#{post_id}'")
+        def find_by_post_id
+          @persistor.tagged_with('disqus')
+            .where("props -> 'post_id' = '#{@payload.post_id}'")
         end
 
         def relationships

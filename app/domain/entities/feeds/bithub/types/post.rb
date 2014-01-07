@@ -11,24 +11,26 @@ module Entities
       class Procurer
         include Entities::ProcurementAPI
 
-        def find(payload)
-          if payload.local_id
-            find_by_id(payload.local_id).first
+        def procure
+          if @payload.wat && (entity = find_by_wat.first)
+            entity
+          else
+            build
           end
         end
 
-        def find_parent(payload)
+        def procure_parent
         end
 
-        def find_children(payload)
+        def procure_children
         end
 
-        def find_references(payload)
+        def procure_references
         end
-
+        
         # Finders
-        def find_by_url(url)
-          @p.where(url: url)
+        def find_by_wat?
+          @persistor.where(wat: @payload.wat)
         end
 
         def relationships

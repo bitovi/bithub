@@ -7,10 +7,20 @@ module Events
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
-            #content_digest: content_digest(original_hash),
-            #label_names: label_names(labels(original_hash)),
+
+            extracted: {
+              title: original_hash['title'],
+              body: original_hash['body'],
+              url: original_hash['html_url'],
+            },
             meta: {
+              feed: 'github',
               type: 'custom_issue_event',
+              # labels: label_names(labels(original_hash)),
+              # :issue_id => original_hash['id'],
+              # :state => original_hash['state'],
+              # :issue_number => original_hash['number'],
+              # :repo_name => original_hash['repo']['name'],
             }
           })
         end

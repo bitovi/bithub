@@ -79,6 +79,14 @@ module Accessors
         pr.andand[:number]
       end
     end
+
+    def labels
+      @data[:source_data].andand[:payload].andand[:issue].andand[:labels]
+    end
+
+    def label_names
+      labels.map {|l| l['name'] }.join(',')
+    end
     
     def referenced_repo_name
       repo_name
@@ -90,11 +98,19 @@ module Accessors
     end
 
     def commit_shas
+      @data[:source_data].andand[:payload].andand[:commits].map{|c| c[:sha]}
+    end
+    
+    def commit_shas_csv
       @data[:source_data].andand[:payload].andand[:commits].map{|c| c[:sha]}.join(',')
+    end
+
+    def commits
+      @data[:source_data].andand[:payload].andand[:commits]
     end
     
     def referenced_number
-      if commits = @data[:source_data].andand[:payload].andand[:commits]
+      if commits
         md = commits.map{|c| c[:message]}.join(' ').match(/#(\d*)/)
       end
       md.andand[1]

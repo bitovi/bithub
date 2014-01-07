@@ -1,7 +1,6 @@
 module Events
   module Twitter
     module Tweet
-      #Relationships = [Entities::Twitter::Tweet]
 
       class Processor
         def process(original_hash, processed)

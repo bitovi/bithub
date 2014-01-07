@@ -11,36 +11,38 @@ module Entities
       class Procurer
         include Entities::ProcurementAPI
 
-        def find(payload)
-          if payload.url 
-            find_by_url(payload.url).first
+        def procure
+          if @payload.url && (entity = find_by_url.first)
+            entity
+          else
+            build
           end
         end
 
-        def find_parent(payload)
-          if payload.url
-            find_by_thread_prefix(payload.url).order("origin_ts ASC").first
+        def procure_parent
+          if @payload.url
+            find_by_thread_prefix.order("origin_ts ASC").first
           end
         end
         
-        def find_children(payload)
-          if payload.url
-            find_by_thread_prefix(payload.url).where("origin_ts > ?", payload.origin_ts).all
+        def procure_children
+          if @payload.url
+            find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
           end
         end
 
-        def find_references(payload)
+        def procure_references
         end
 
         private
-        def find_by_url(url)
-          @p.tagged_with('forum')
-            .where(:url => url)
+        def find_by_url
+          @persistor.tagged_with('forum')
+            .where(:url => @payload.url)
         end
 
-        def find_by_thread_prefix(url)
-          thread_url, _ = url.split('#')
-          @p.tagged_with(%w(forum post))
+        def find_by_thread_prefix
+          thread_url, _ = @payload.url.split('#')
+          @persistor.tagged_with(%w(forum post))
             .where("url LIKE '#{thread_url}%'")
         end
         

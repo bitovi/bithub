@@ -1,21 +1,18 @@
 module Entities
   module ProcurementAPI
-    def initialize(persistor)
-      @p = persistor
+    def initialize(persistor, payload)
+      @persistor = persistor
+      @payload = payload
     end
 
-    def procure(payload)
-      if (entity = find(payload))
-        entity
-      else
-        build(payload)
-      end
-    end
-
-    def build(payload)
-      entity = @p.new payload.extracted
+    def build
+      entity = @persistor.new payload.extracted
       entity.props = payload.meta
       entity
+    end
+
+    def p
+      @persistor
     end
   end
 end
