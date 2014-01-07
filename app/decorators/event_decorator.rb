@@ -11,7 +11,7 @@ class EventDecorator < Draper::Decorator
     if !source.parent
       source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
     else
-      source.upvotes.reduce(0) { |acc, u| acc += u.value }
+      source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
     end
   end
 

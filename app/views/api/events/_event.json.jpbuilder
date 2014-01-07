@@ -5,7 +5,7 @@ json.cache! ("v1" + custom_cache_key(event)) do
 	json.feed event.feed.name
 	json.tags event.cached_tags
 
-	json.upvotes @ev_relations.calculate_upvotes_for(event)
+	json.upvotes event.upvotes
 
 	json.author event.author
 	json.actor event.actor
