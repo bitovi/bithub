@@ -3,10 +3,10 @@ timeout 30
 preload_app true
 
 # Unix socket
-listen "/home/veljko/projects/bitovi/bithub/tmp/sockets/unicorn.sock", :backlog => 64
+listen "/Users/retro/Projects/bithub-local/web/tmp/sockets/unicorn.sock", :backlog => 64
 
 # PID
-pid "/home/veljko/projects/bitovi/bithub/tmp/sockets/unicorn.pid"
+pid "/Users/retro/Projects/bithub-local/web/tmp/sockets/unicorn.pid"
 
 # Logs
 #stderr_path "/home/bithub/web/shared/log/unicorn.stderr.log"
