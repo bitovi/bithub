@@ -58,10 +58,11 @@ module Determination
     uid = p[:origin_author_id] 
     if f = p[:origin_author_feed] # Coming from Bithub
       ident = Identity.find_or_create_with_provider_and_uid(f, uid)
+      self.author = ident.user
     else f = p[:feed] # Coming from crawler
       ident = Identity.find_by_provider_and_uid(f, uid)
+      self.author = ident.user if ident && ident.user
     end
-    self.author = ident.user if ident && ident.user
     self
   end
 
