@@ -1,7 +1,7 @@
 module Fetchers
   module Fake
     FAKE_RESPONSES = File.expand_path(File.join(File.basename(__FILE__), '..', 'tmp', 'fake_responses'))
-    puts "===> Dev mode, responses cached and read from #{FAKE_RESPONSES}"
+    puts "===> Dev mode, responses cached to and read from #{FAKE_RESPONSES}"
 
     def fetch(link = nil)
       remote = link || @endpoint
@@ -12,6 +12,7 @@ module Fetchers
         response = fetch_fake(local)
         handle_success(response)
       else
+        puts "===> No local resource, fetching: #{remote}"
         fetch_real(remote) do |r|
           write_to_cache(r)
           handle_success(r)
@@ -43,8 +44,11 @@ module Fetchers
     end
 
     def resource_location(remote)
-      @feed = determine_feed(remote)
-      File.join(FAKE_RESPONSES, @feed + '.json')
+      feed = determine_feed(remote)
+      _, path_suffix = remote.match(/\.com(\/.*)*$/).to_a
+
+      filename = feed + path_suffix.gsub(/\//, '_')
+      File.join(FAKE_RESPONSES, filename)
     end
 
     def write_to_cache(response)
@@ -66,7 +70,7 @@ module Fetchers
       http_req.callback do
         if success?(http_req)
           delay(1, lambda {fetch_next_page http_req}) if in_github_issues?
-          handle_success(http_req)
+          handle_success(http_req.response)
         elsif client_error?(http_req)
           log_http_status(http_req, :error)
         elsif server_error?(http_req)

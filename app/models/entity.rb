@@ -16,6 +16,10 @@ class Entity < ActiveRecord::Base
   acts_as_taggable
   mount_uploader :image, EventImageUploader
 
+  # has_many :events
+  # has_many :entity_refs
+  # has_many :references, through: :entity_refs, :source => :entities
+
   belongs_to :parent, :class_name => "Entity"
   belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
@@ -121,7 +125,6 @@ class Entity < ActiveRecord::Base
   def reward_user_if_eligible
     self.author.reward_if_eligible if self.author
   end
-
 
   def cache_key
     case

@@ -24,6 +24,17 @@ class Hash
   def project(keys)
     keys.map{|k| self[k]}
   end
+
+  def symbolize_keys!
+    keys.each do |key|
+      self[(key.to_sym rescue key) || key] = delete(key)
+    end
+    self
+  end
+
+  def symbolize_keys
+    dup.symbolize_keys!
+  end
 end
 
 class String

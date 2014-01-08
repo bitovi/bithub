@@ -8,17 +8,20 @@ require 'nori'
 require_relative 'fetchers'
 require 'app/domain/events/processor'
 require 'app/domain/events/errors'
+require 'lib/loggable'
 
 class Poller
-  include Fetchers::Fake if %w(development test).include?(ENV['ENV'])
-  include Fetchers::HTTP if %w(testing staging production).include?(ENV['ENV'])
+  include Loggable
+  #include Fetchers::Fake if %w(development test).include?(ENV['ENV'])
+  #include Fetchers::HTTP if %w(testing staging production).include?(ENV['ENV'])
+  include Fetchers::HTTP
 
-  def self.handler(logger, exchange, endpoint, &blk)
-    new(logger, exchange, endpoint, &blk).handler
+  def self.handler(exchange, endpoint, &blk)
+    new(exchange, endpoint, &blk).handler
   end
 
-  def initialize(logger, exchange, endpoint, &blk)
-    @logger = logger
+  def initialize(exchange, endpoint, &blk)
+    initialize_logger
     @exchange = exchange
     @endpoint = endpoint
 
@@ -63,7 +66,7 @@ class Poller
   end
 
   def decorate(events)
-    events.each {|e| make_digest(e) }
+    events.map {|e| { content_digest: make_digest(e), data: e }}
   end
 
   def reject_old(events)
@@ -78,7 +81,7 @@ class Poller
 
   def process(events)
     begin
-      events.map{|e| processor.process(e)}
+      events.map{|e| processor.process(e[:data])}
     rescue Events::Errors::InvalidEventException => e
       log_exception e
     end
@@ -89,7 +92,7 @@ class Poller
       log_publishing(events)
       pack_and_publish = lambda do
         events.each do |e|
-          @exchange.publish(Yajl::Encoder.encode(e))
+          @exchange.publish(Yajl::Encoder.encode(e[:data]))
         end
       end
       EM.defer(pack_and_publish) if events.length > 0
@@ -99,7 +102,7 @@ class Poller
   end
 
   def make_digest(event_hash)
-    event_hash[:content_digest] = processor.content_digest(event_hash)
+    processor.content_digest(event_hash)
   end
 
   def events_from_response(response_hash)
@@ -141,7 +144,7 @@ class Poller
 
   def determine_feed(uri)
     f = %w(github disqus blog forum).select{|f| uri =~ /#{f}/}
-    return (f[0] == "forum") ? "forums" : f.first
+    f.first
   end
 
   def log_exception(e)
