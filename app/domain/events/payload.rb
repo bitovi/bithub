@@ -4,9 +4,6 @@ module Events
     class MissingTypeError < Exception; end
 
     def initialize(payload)
-    end
-
-    def initialize(payload)
       @data = symbolize_keys(payload)
       verify_existance_of_critical_attributes
       initialize_mappings
@@ -101,17 +98,5 @@ module Events
       }
     end
 
-
-
   end
-end
-
-
-require 'andand'
-require 'core_ext'
-
-module Events
-  class Payload
-  end
-
 end
