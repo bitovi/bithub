@@ -26,9 +26,3 @@ module Events
 
   end
 end
-
-# extracted: {
-#   title: title
-#   url: link
-#   body: body
-# },

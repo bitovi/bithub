@@ -18,7 +18,7 @@ module Events
         source_data.andand[:description]
       end
 
-      def url
+      def link
         source_data.andand[:link]
       end
 
@@ -42,17 +42,3 @@ module Events
 
   end
 end
-
-# new_data = {
-#   extracted: {
-#     title: original_hash['title'],
-#     body: sanitize(original_hash['description']),
-#     url: original_hash['link'],
-#   },
-#   meta: {
-#     feed: 'forum',
-#     type: 'post',
-#     tags: original_hash['category'].snake_case,
-#     origin_author_name: original_hash['dc:creator'],
-#   }
-# }

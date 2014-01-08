@@ -1,6 +1,8 @@
 module Entities
   module Github
-    module Watch
+
+    class Watch
+      include Entities::Constructable
 
       Relationships = {
         upstream: [],
@@ -8,14 +10,10 @@ module Entities
         references: [],
       }
 
-      class Procurer
-        include Entities::ProcurementAPI
-        
-        def relationships
-          Entities::Github::Watch::Relationships
-        end
+      def relationships
+        Entities::Github::Watch::Relationships
       end
-
     end
+
   end
 end

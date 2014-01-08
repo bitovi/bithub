@@ -19,10 +19,10 @@ module Entities
           end
         end
         
-        def find_parent
+        def procure_parent
         end
 
-        def find_children
+        def procure_children
           if @payload.repo_name && @payload.issue_or_pull_req_number
             relationships[:downstream].reduce([]) do |acc, rl|
               acc += rl::Procurer.new(@p)
@@ -34,9 +34,26 @@ module Entities
           end
         end
 
-        def find_references
+        def procure_references
         end
 
+        # Builder
+        def build
+          Hash.new({
+            title: "Pull request ##{@payload.number} #{@payload.action}",
+            body: @payload.body,
+            url: @payload.html_url,
+            props: {
+              repo_name: @payload.repo_name,
+              number: @payload.number,
+              pull_request_id: @payload.pull_request_id,
+              state: @payload.state,
+              action: @payload.action, # IssuePullRequestAction?
+            }
+          })
+        end
+
+        # Finders
         def find_by_pull_request_id(pr_id)
           @persistor.tagged_with(['github', 'pull_request'])
             .where("props -> 'pull_request_id' = '#{pr_id}'")

@@ -29,6 +29,10 @@ module Events
         repo_name
       end
 
+      def head
+        payload.andand[:head]
+      end
+
       def referenced_number
         if md = commit_messages.join(' ').match(/#(\d*)/)
           md.andand[1]
@@ -38,18 +42,3 @@ module Events
 
   end
 end
-
-# new_data = {
-#   extracted: {
-#     :title => "pushed to #{original_hash['repo']['name']}",
-#     :body => original_hash['payload']['body'],
-#     :url => "http://github.com/#{original_hash['repo']['name']}/commit/#{original_hash['payload']['head']}",
-#   },
-#   meta: {
-#     :commit_shas => original_hash['payload']['commits'].map{|c| c['sha']}.join(','),
-#     :repo_name => original_hash['repo']['name'],
-#     :push_id => original_hash['payload']['push_id'],
-#   }
-# }
-
-# processed.deep_merge(new_data)

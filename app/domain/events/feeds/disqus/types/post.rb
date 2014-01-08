@@ -11,6 +11,22 @@ module Events
         source_data.andand[:id]
       end
 
+      def thread
+        source_data.andand[:thread]
+      end
+
+      def title
+        thread.andand[:title]
+      end
+
+      def message
+        source_data.andand[:message]
+      end
+
+      def url
+        source_data.andand[:url]
+      end
+
       def origin_author_name
         source_data.andand[:author].andand[:name]
       end
@@ -23,9 +39,3 @@ module Events
 
   end
 end
-
-# extracted: {
-#   title: original_hash['thread']['title'],
-#   body: original_hash['message'],
-#   url: original_hash['url'],
-# },

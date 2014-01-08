@@ -33,7 +33,6 @@ module Events
       Events.const_get(feed).const_get(type).new(payload)
     end
 
-
     def remap_feed_and_type
       @data[:meta][:feed] = @feed_mappings[@data[:meta][:feed]]
       @data[:meta][:type] = @type_mappings[@data[:meta][:type]]

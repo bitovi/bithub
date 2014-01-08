@@ -1,5 +1,6 @@
 module Entities
-  module ProcurementAPI
+
+  module Constructable
     def initialize(persistor, payload)
       @persistor = persistor
       @payload = payload
@@ -15,4 +16,5 @@ module Entities
       @persistor
     end
   end
+
 end
