@@ -1,7 +1,13 @@
 require 'spec_helper'
 require 'digest/md5'
 
+require './spec/helpers.rb'
+
 describe Event do
+
+  before(:all) { Helpers::Tags.import }
+  after(:all) { Tag.destroy_all }
+
   context "upon creation" do
     before(:all) { @default_rule = create(:rule) }
     after(:all) { @default_rule.destroy }
@@ -67,9 +73,10 @@ describe Event do
     end
 
     describe "#update_from_bithub" do
+      
       before(:each) do
         @ev = Event.new_from_bithub(original_args)
-        @ev.update_from_bithub(updated_args)
+        @ev.update_from_bithub(updated_args)        
       end
 
       it "re-determines the feed" do

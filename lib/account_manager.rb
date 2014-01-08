@@ -1,7 +1,9 @@
 class AccountManager
   attr_reader :user_api, :current_user, :identity
     
-  RELEVANT_REPO_NAMES = YAML.load_file('config/tag_definitions.yml').keys.map{|r| 'bitovi/' + r} << 'bithub-test/testy' << 'bitovi/steal'
+  RELEVANT_REPO_NAMES = Tag.tagged_with('req_favourites').map {|t| "bitovi/#{t.name}"}
+  #RELEVANT_REPO_NAMES += %w(steal testee.js)
+  #RELEVANT_REPO_NAMES << 'bithub-test/testy' if (Rails.env == 'test' || Rails.env == 'testing')
   
   RELEVANT_TWITTER_ACCOUNTS = {
     123763453 => 'bitovi',
@@ -9,8 +11,9 @@ class AccountManager
     589215872 => 'jquerypp',
     171351462 => 'funcunit',
     56956664 => 'javascriptmvc',
+    12345678 => 'bitovi_bithub'
   }
-  
+
   def initialize(current_user = nil)
     @user_api = ThirdPartyUserInformer.new
     @current_user = current_user
@@ -41,16 +44,13 @@ class AccountManager
       identity.user.award_points_for_joining(identity.provider)
       identity.save!
     end
+    
+    # Costly actions done outside of the request
+    u = identity.reload.user
+    u.delay.collect_authored_events
+    u.delay.reward_if_eligible
 
-    begin
-      create_missing_repos_and_watches!
-    rescue Twitter::Error => e
-      Rails.logger.error e.message
-    rescue Github::Error => e
-      Rails.logger.error e.message
-    end
-
-    identity.reload.user.collect_authored_events.reward_if_eligible
+    delay.create_missing_repos_and_watches!
     user
   end
 
@@ -59,17 +59,12 @@ class AccountManager
       current_user.update_blank_oauth_attrs!({name: name, email: email})
       current_user.award_points_for_joining(identity.provider)
       current_user.merge_identities!(identity)
-      current_user.reload.collect_authored_events.reward_if_eligible
     end
+    
+    current_user.delay.collect_authored_events
+    current_user.delay.reward_if_eligible
 
-    begin
-      create_missing_repos_and_watches!
-    rescue Twitter::Error => e
-      Rails.logger.error e.message
-    rescue Github::Error => e
-      Rails.logger.error e.message
-    end
-
+    delay.create_missing_repos_and_watches!
     current_user
   end
 

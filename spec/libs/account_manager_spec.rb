@@ -7,14 +7,19 @@ describe AccountManager do
 
   before :all do
     @default_rule = create(:rule)
+    Tag.create({name: 'watch_event'})
+    Tag.create({name: 'follow_event'})
+    t = Tag.new({name: 'canjs'})
+    t.group_list = %w(projects)
+    t.save
   end
 
   after :all do
     @default_rule.destroy
+    Tag.destroy_all
   end
 
   describe ".find_or_create_user" do
-
     context "when user is already logged_in (current_user exists)" do
 
       it "should assign the found identity to the current_user if it isn't already"

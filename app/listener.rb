@@ -47,6 +47,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             ev = Event.new_from_crawler(event_hash, meta)
             ev.save!
             ev.bump_thread
+
             liveservice_exchange.publish(ActiveSupport::JSON.encode(ev))
           rescue ActiveRecord::RecordInvalid => invalid
             $log.info "Invalid record: #{invalid}"

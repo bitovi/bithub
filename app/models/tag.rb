@@ -1,9 +1,9 @@
 class Tag < ActsAsTaggableOn::Tag 
-  @tag_groups = YAML::load_file(Rails.root.join('config', 'tag_groups.yml'))
-
-  serialize :props, ActiveRecord::Coders::Hstore
-  
+  serialize :props, ActiveRecord::Coders::Hstore  
   attr_accessible :name, :display_name, :aliases, :props
+
+  acts_as_taggable_on :groups
+  
   validates_presence_of :name
   validates_uniqueness_of :name
 
@@ -12,33 +12,46 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories
-    Tag.where(:name => @tag_groups[:category])
+    self.tagged_with('categories')
   end
   
   def self.projects
-    Tag.where(:name => @tag_groups[:project])
+    self.tagged_with('projects')
   end
   
   def self.feeds
-    Tag.where(:name => @tag_groups[:feed])
+    self.tagged_with('feeds')
   end
 
   def self.labels
-    Tag.where(:name => @tag_groups[:label])
+    self.tagged_with('labels')
+  end
+
+  def self.category_names
+    self.categories.pluck(:name)
+  end
+
+  def self.feed_names
+    self.feeds.pluck(:name)
+  end
+
+  def self.project_names
+    self.projects.pluck(:name)
   end
 
   def self.category_ids
-    Tag.where(:name => @tag_groups[:category]).pluck(:id)
+    self.categories.pluck(:id)
   end
 
   def self.feed_ids
-    Tag.where(:name => @tag_groups[:feed]).pluck(:id)
+    self.feeds.pluck(:id)
   end
 
-  def self.types
-    @tag_groups.keys().map{|tag| tag.to_s}
+  def self.group_names
+    Tag.group_counts.pluck(:name)
   end
 
+  ###
   def self.to_name_aliases_hash(group)
     Hash[ Tag.where(:name => @tag_groups[group]).map {|tag| [tag.name, tag.aliases || [tag.name]]} ]
   end
@@ -53,7 +66,8 @@ class Tag < ActsAsTaggableOn::Tag
       }.merge(t.props.symbolize_keys)
     end
   end
-
+  ###
+  
   def self.find_by_name(name)
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end

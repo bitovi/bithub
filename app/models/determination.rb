@@ -1,7 +1,7 @@
 module Determination
   class DeterminationException < Exception; end
 
-  PROPS_TO_TAGS = [:feed, :type, :project, :tags]
+  PROPS_TO_TAGS = [:feed, :type, :project, :tags, :state]
   ATTRS_FOR_TAGGING = [:url, :title, :body]
 
   def determine(custom_props = nil)
@@ -72,22 +72,30 @@ module Determination
 
   def taggify_props
     self.props.symbolize_keys!
-    PROPS_TO_TAGS.map {|prop| self.props[prop] if self.props[prop]}.compact
+
+    # some props could be arrays
+    search_tags = PROPS_TO_TAGS
+      .map {|prop| self.props[prop]}
+      .flatten
+      .compact
+
+    # match tag objects
+    search_tags.map {|p| Tag.find_by_name(p) }
+      .compact
+      .map {|t| t.name}
   end
 
   def taggify_content
     input = ATTRS_FOR_TAGGING.map {|attr| self[attr] if self[attr]}.compact
-    search_tags = Tag.to_hash_list(:project)      
-    Tagger::Engine.new(search_tags).find_tags(input)
+    Tagger::Engine.new(Tag.projects).find_tags(input)
   end
 
   def taggify_labels
     self.props.symbolize_keys!
     
     if self.props[:labels]
-      search_tags = Tag.to_hash_list(:label)      
       input = self.props[:labels]
-      Tagger::Engine.new(search_tags).find_tags(input)
+      Tagger::Engine.new(Tag.labels).find_tags(input)
     else
       []
     end

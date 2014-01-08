@@ -18,19 +18,13 @@ namespace :data do
       }
 
       if existing = Tag.find_by_name(tag_name)
-        if existing.update_attributes(attrs)
-          updated.push(tag_name)
-        else
-          failed.push(tag_name)
-        end        
+        existing.assign_attributes(attrs)
+        existing.group_list = opts['group_list']
+        existing.save ? updated.push(tag_name) : failed.push(tag_name)
       else
-        
-        if Tag.create({:name => tag_name}.merge(attrs))
-          imported.push(tag_name)
-        else
-          failed.push(tag_name)
-        end
-        
+        t = Tag.new({:name => tag_name}.merge(attrs))
+        t.group_list = opts['group_list']
+        t.save ? imported.push(tag_name) : failed.push(tag_name)
       end
     end
     

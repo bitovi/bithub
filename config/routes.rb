@@ -7,6 +7,8 @@ Bithub::Application.routes.draw do
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
+  match 'uploads/*path', to: "uploads#index"
+
   namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'auth/session_info#current_session'
 
@@ -16,6 +18,7 @@ Bithub::Application.routes.draw do
       resource 'award', :only => :create, :to => 'event_activities#create_award'
       resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
       get :summary, :on => :collection
+      get :pagination, :on => :collection
       delete :upvote, :to => 'event_activities#destroy_upvote'
     end
 
@@ -31,6 +34,8 @@ Bithub::Application.routes.draw do
         get 'github', :to => 'users#from_github'
       end
     end
+
+    resource :pagination, :only => [:index]
 
     resources :tags, :except => [:new, :edit] do
       collection do

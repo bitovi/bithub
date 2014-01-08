@@ -36,6 +36,8 @@ GEM
       activerecord (>= 3.1)
       pg-hstore (>= 1.1.5)
       rake
+    activerecord-postgresql-extensions (0.6.0)
+      activerecord (>= 2.3)
     activeresource (3.2.14)
       activemodel (= 3.2.14)
       activesupport (= 3.2.14)
@@ -78,8 +80,14 @@ GEM
     codeclimate-test-reporter (0.1.1)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.0.9)
+    daemons (1.1.9)
     dalli (2.6.2)
     database_cleaner (1.2.0)
+    delayed_job (4.0.0)
+      activesupport (>= 3.0, < 4.1)
+    delayed_job_active_record (4.0.0)
+      activerecord (>= 3.0, < 4.1)
+      delayed_job (>= 3.0, < 4.1)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -288,6 +296,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-postgres-array
   activerecord-postgres-hstore
+  activerecord-postgresql-extensions
   acts-as-taggable-on
   amqp
   andand
@@ -298,8 +307,11 @@ DEPENDENCIES
   capistrano-ext
   carrierwave
   codeclimate-test-reporter
+  daemons
   dalli
   database_cleaner
+  delayed_job
+  delayed_job_active_record
   devise
   dotenv-rails
   draper

@@ -1,6 +1,11 @@
 require 'spec_helper'
 
+require './spec/helpers.rb'
+
 describe Determination do
+
+  before(:all) { Helpers::Tags.import }
+  after(:all) { Tag.destroy_all }
 
   describe "#determine_feed" do
     it "determines a feed" do
@@ -31,21 +36,21 @@ describe Determination do
   end
 
   describe "#determine_tags" do
+
     it "determines tags from props" do
-      event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(foo bar)})
+      event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(funcunit)})
       event.determine_tags
-      event.tag_list.should =~ %w(canjs github foo bar)
+      event.tag_list.should =~ %w(canjs github funcunit)
     end
+    
     it "determines tags from event content" do
       event = build(:event, title: 'Foo canjs', body: 'Lorem ipsum javascriptmvc ...', props: {})
-      Tag.create({:name => 'canjs'})
-      Tag.create({:name => 'javascriptmvc'})
       event.determine_tags
       event.tag_list.should =~ %w(canjs javascriptmvc)
     end
+    
     it "determines tags from labels" do
       event = build(:event, props: {labels: ['enhancement']})
-      Tag.create({:name => 'feature', :aliases => ['enhancement', 'feature']})
       event.determine_tags
       event.tag_list.should =~ %w(feature)
     end

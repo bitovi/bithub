@@ -57,6 +57,20 @@ class Event < ActiveRecord::Base
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
+
+  after_save :update_pagination_table
+  after_destroy :update_pagination_table
+
+  SCOPE_APPLIER_OVERRIDES = {
+    :thread_updated_at => Proc.new do |scope, v, params = {}|
+      args = [params[:clientTz] || 'UTC', v.first, v.last]
+      scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+    end
+  }
+
+  def self.scope_applier_overrides
+    SCOPE_APPLIER_OVERRIDES
+  end
     
   @processor ||= Processors::Github.new({feed: 'github'})
 
@@ -148,6 +162,10 @@ class Event < ActiveRecord::Base
     self.update_attribute(:thread_updated_date, ts.to_date);
   end
 
+  def update_total_upvotes
+    self.update_attribute(:total_upvotes, self.upvotes.sum('value'))
+  end
+
   def awarded?
     self.awards.length > 0
   end
@@ -176,6 +194,10 @@ class Event < ActiveRecord::Base
 
   def reward_user_if_eligible
     self.author.reward_if_eligible if self.author
+  end
+
+  def update_pagination_table
+    Pagination.refresh
   end
 
 

@@ -35,8 +35,7 @@ class User < ActiveRecord::Base
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
   
-  after_update :award_points_for_completing_profile
-  after_create :update_total_score
+  after_update :check_and_award_points_for_completing_profile
 
   def activities
     activities = []
@@ -90,10 +89,6 @@ class User < ActiveRecord::Base
     self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
 
-  def update_total_score
-    self.update_attribute(:total_score, self.score)
-  end
-
   def authored_events_total
     self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
   end
@@ -132,64 +127,44 @@ class User < ActiveRecord::Base
     save! if self.changed?
   end
 
+  def update_total_score
+    self.update_attribute(:total_score, self.score)
+  end
+
   def merge_identities!(identity)
     other_user = identity.user if identity.user
     unless self.identities.include?(identity)
       self.identities << identity 
       self.save!
-      if other_user
-        other_user.reassign_all_to(self)
-        other_user.destroy
-      end
+      self.delay.snatch_all_and_destroy(other_user) if other_user
     end
   end
 
-  def reassign_all_to(whom)
-    ActiveRecord::Base.transaction do
-      self.reassign_events_to(whom)
-      self.reassign_activities_to(whom)
-      self.reassign_actions_to(whom)
-    end
+  def snatch_all_and_destroy(whom)
+    self.snatch_events_from(whom)
+    self.snatch_actions_from(whom)
+    self.snatch_internals_from(whom)
+    self.update_total_score
+    self.reward_if_eligible
+    whom.destroy
   end
 
-  def reassign_events_to(whom)
-    self.events.each do |e|
-      e.author = whom
-      e.save!
-    end
+  def snatch_events_from(whom)
+    whom.events.update_all(:author_id => self)
   end
 
-  def reassign_activities_to(whom)
-    self.anteups.each do |a|
-      a.update_attributes!(:actor => whom)
-    end
-    self.upvotes.each do |u|
-      u.update_attributes!(:actor => whom)
-    end
-    self.awards.each do |a|
-      a.update_attributes!(:actor => whom)
-    end
-    self.internals.each do |i|
-      i.update_attributes!(:actor => whom)
-    end
+  def snatch_actions_from(whom)
+    whom.awards_as_actor.update_all(:actor_id => self)
+    whom.anteups_as_actor.update_all(:actor_id => self)
+    whom.upvotes_as_actor.update_all(:actor_id => self)
+    whom.internals_as_actor.update_all(:actor_id => self)
   end
 
-  def reassign_actions_to(whom)
-    self.anteups_as_actor.each do |a|
-      a.update_attributes!(:actor => whom)
-    end
-    self.upvotes_as_actor.each do |u|
-      u.update_attributes!(:actor => whom)
-    end
-    self.awards_as_actor.each do |a|
-      a.update_attributes!(:actor => whom)
-    end
-    self.internals_as_actor.each do |i|
-      i.update_attributes!(:actor => whom)
-    end
+  def snatch_internals_from(whom)
+    whom.internals.update_all(:receiver_id => self)
   end
 
-  def award_points_for_completing_profile
+  def check_and_award_points_for_completing_profile
     if self.completed_profile? && !self.already_awarded_for_profile_completion?
       self.internals.create({receiver: self, value: 1, comment: "Completed profile."})
     end
@@ -222,6 +197,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  def validate_eligibility
+    if rs = Reward.find_all_qualified_for(self)
+      delete_uneligible_achievements if self.rewards.length > rs
+    end
+  end
+
+  def delete_uneligible_achievements
+    raise "NOT IMPLEMENTED"
+  end
+
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
 
@@ -244,8 +229,12 @@ class User < ActiveRecord::Base
       # skip making HTTP request in tests
       return gravatar if Rails.env == "test"
 
-      response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
-      response.code == '200' ? gravatar : ''
+      begin
+        response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
+        response.code == '200' ? gravatar : ''
+      rescue
+        return ''
+      end
     else
       ''
     end

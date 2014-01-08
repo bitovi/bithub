@@ -95,18 +95,24 @@ namespace :db do
     dest = File.join('/tmp/', backup_time + ".backup")      
     top.download(src, dest, :via => :scp, &block)
 
-    # restore to which local db
+    db.recreate
+  end
+
+  desc "Recreate local db with given dump file"
+  task :recreate, :roles => :db, :only => {:primary => true} do
+
     if not exists? :local_db
       puts "You can specify to which local db to restore to. Hint: use \"cap db:sync_local -s local_db=__db_name__\""
-      puts "Using 'bithub_development'!"
+      puts "Using 'bithub_development'"
       restore_db = 'bithub_development'
     else
       restore_db = local_db
     end
 
-    run_locally "dropdb #{restore_db}"
+    run_locally "dropdb --if-exists #{restore_db} "
     run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
     run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
   end
+
 
 end

@@ -1,16 +1,18 @@
 development:
   adapter: postgresql
+  host: localhost
   encoding: utf8
   database: bithub_development
   username: bithub
-  password: negativ1Q
+  host: localhost
 
 test:
   adapter: postgresql
+  host: localhost
   encoding: unicode
   database: bithub_test
   username: bithub
-  password: negativ1Q
+  host: localhost
 
 testing:
   adapter: postgresql
