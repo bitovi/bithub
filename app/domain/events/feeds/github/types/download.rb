@@ -3,7 +3,7 @@ module Events
 
     class Download
       include Constructable
-      include Events::Github::StandardAccessors
+      include Events::Github::Accessors::Standard
 
       def name
         payload.andand[:download].andand[:name]

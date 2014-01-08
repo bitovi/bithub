@@ -11,27 +11,27 @@ module Events
       end
 
       def title
-        @data[:source_data].andand[:title]
+        source_data.andand[:title]
       end
 
       def body
-        @data[:source_data].andand[:description]
+        source_data.andand[:description]
       end
 
       def url
-        @data[:source_data].andand[:link]
+        source_data.andand[:link]
       end
 
       def origin_author_name
-        @data[:source_data].andand[:'dc:creator']
+        source_data.andand[:'dc:creator']
+      end
+      
+      def subforum
+        source_data.andand[:category]
       end
 
       def origin_timestamp
-        Time.parse(datetime_str(@data[:source_data].andand[:pubDate])).utc
-      end
-
-      def subforum
-        @data[:source_data].andand[:category]
+        Time.parse(source_data.andand[:pubDate]).utc
       end
 
       private
