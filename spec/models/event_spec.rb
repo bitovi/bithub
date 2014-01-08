@@ -1,7 +1,13 @@
 require 'spec_helper'
 require 'digest/md5'
 
+require './spec/helpers.rb'
+
 describe Event do
+
+  before(:all) { Helpers::Tags.import }
+  after(:all) { Tag.destroy_all }
+
   context "upon creation" do
     before(:all) { @default_rule = create(:rule) }
     after(:all) { @default_rule.destroy }
@@ -67,17 +73,6 @@ describe Event do
     end
 
     describe "#update_from_bithub" do
-      before :all do
-        @tags = [Tag.create({:name => 'code'}),
-                 Tag.create({:name => 'twitter'}),
-                 Tag.create({:name => 'push_event'}),
-                 Tag.create({:name => 'jquerypp', :aliases => ['jquery++']}),
-                ]
-      end
-
-      after :all do
-        @tags.each {|t| t.destroy}
-      end
       
       before(:each) do
         @ev = Event.new_from_bithub(original_args)

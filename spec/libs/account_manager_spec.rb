@@ -7,10 +7,16 @@ describe AccountManager do
 
   before :all do
     @default_rule = create(:rule)
+    Tag.create({name: 'watch_event'})
+    Tag.create({name: 'follow_event'})
+    t = Tag.new({name: 'canjs'})
+    t.group_list = %w(projects)
+    t.save
   end
 
   after :all do
     @default_rule.destroy
+    Tag.destroy_all
   end
 
   describe ".find_or_create_user" do

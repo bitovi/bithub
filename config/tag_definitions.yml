@@ -127,6 +127,10 @@ comment:
   display_name: "Comment"
   group_list: "categories"
 
+github_comment:
+  display_name: "Github Comment"
+  group_list: "categories"
+
 digest:
   display_name: "Digest"
   group_list: "categories"
