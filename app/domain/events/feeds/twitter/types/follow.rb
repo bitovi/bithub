@@ -35,15 +35,3 @@ module Events
 
   end
 end
-
-# processed.deep_merge({
-#   extracted: {
-#     title: "followed @#{original_hash['target']['screen_name']}",
-#     # hash_key: Digest::MD5.hexdigest(original_hash['source']['id_str'] + original_hash['target']['id_str'] + @feed.to_s),
-#   },
-#   meta: {
-#     type: 'follow_event',
-#     origin_author_name: original_hash['source']['screen_name'],
-#     origin_author_id: original_hash['source']['id'],
-#   }
-# })
