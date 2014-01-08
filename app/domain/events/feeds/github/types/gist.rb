@@ -3,7 +3,7 @@ module Events
 
     class Gist
       include Constructable
-      include Events::Github::StandardAccessors
+      include Events::Github::Accessors::Standard
 
       def action
         payload.andand[:action]

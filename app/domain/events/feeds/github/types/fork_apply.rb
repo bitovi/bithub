@@ -3,7 +3,7 @@ module Events
 
     class ForkApply
       include Constructable
-      include Events::Github::StandardAccessors
+      include Events::Github::Accessors::Standard
     end
 
   end

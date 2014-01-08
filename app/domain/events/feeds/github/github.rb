@@ -111,9 +111,6 @@ module Events
       end
     end
 
-
-
-
     class Processor
       def initialize(original_hash)
         @data = Events::Payload.new(original_hash)
