@@ -1,20 +1,30 @@
 module Events
   module Github
-    module Download
-      #Relationships = []
 
-      class Processor
-        def process(original_hash, processed)
-          processed.deep_merge({
-            extracted: {
-              :title => "download #{original_hash['payload']['download']['name']} created",
-              :body => original_hash['payload']['download']['description'],
-              :url => original_hash['payload']['download']['html_url'],
-            }
-          })
-        end
+    class Download
+      include Constructable
+      include Events::Github::StandardAccessors
+
+      def name
+        payload.andand[:download].andand[:name]
       end
 
+      def description
+        payload.andand[:download].andand[:description]
+      end
+
+      def url
+        payload.andand[:download].andand[:html_url]
+      end
     end
+
   end
 end
+
+# processed.deep_merge({
+#   extracted: {
+#     :title => "download #{original_hash['payload']['download']['name']} created",
+#     :body => original_hash['payload']['download']['description'],
+#     :url => original_hash['payload']['download']['html_url'],
+#   }
+# })

@@ -2,15 +2,8 @@ require 'andand'
 require 'core_ext'
 require 'payload/accessors'
 
-class Payload
-  include Accessors::General
-  include Accessors::Bithub
-  include Accessors::Blog
-  include Accessors::Disqus
-  include Accessors::Forum
-  include Accessors::Github
-  include Accessors::Twitter
 
+class Payload
   class MissingFeedError < Exception; end
   class MissingTypeError < Exception; end
 
@@ -19,7 +12,10 @@ class Payload
     verify_existance_of_critical_attributes
     initialize_mappings
     remap_feed_and_type
+
+    @extractor = Events::Extractor.new(@data)
   end
+
 
   def remap_feed_and_type
     @data[:meta][:feed] = @feed_mappings[@data[:meta][:feed]]
@@ -42,6 +38,10 @@ class Payload
 
   def raw
     @data
+  end
+
+  def method_missing(method, *args, &block)
+    @extractor.send(method, args, block)
   end
 
   def self.switch_to_snake_case(hash)

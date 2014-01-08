@@ -1,18 +1,20 @@
 module Events
   module Github
-    module Member
-      #Relationships = []
 
-      class Processor
-        def process(original_hash, processed)
-          processed.deep_merge({
-            extracted: {
-              :title => "Member #{event['payload']['member']['login']} added to #{event['repo']['name']}"
-            }
-          })
-        end
+    class Member
+      include Constructable
+      include Events::Github::Accessors::Standard
+
+      def member_name
+        payload.andand[:login]
       end
-
     end
+
   end
 end
+
+# processed.deep_merge({
+#   extracted: {
+#     :title => "Member #{event['payload']['member']['login']} added to #{event['repo']['name']}"
+#   }
+# })

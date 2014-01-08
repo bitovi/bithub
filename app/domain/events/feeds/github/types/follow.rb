@@ -1,18 +1,16 @@
 module Events
   module Github
-    module Follow
-      #Relationships = []
 
-      class Processor
-        def process(original_hash, processed)
-          processed.deep_merge({
-            extracted: {
-              :title => "followed #{original_hash['repo']['name']}"
-            }
-          })
-        end
-      end
-
+    class Follow
+      include Constructable
+      include Events::Github::StandardAccessors
     end
+
   end
 end
+
+# processed.deep_merge({
+#   extracted: {
+#     :title => "followed #{original_hash['repo']['name']}"
+#   }
+# })
