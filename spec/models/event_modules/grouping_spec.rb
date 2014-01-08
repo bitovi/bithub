@@ -1,10 +1,18 @@
 require 'spec_helper'
 
+require './spec/helpers.rb'
+
 describe Grouping do
 
-  before(:all) { @default_rule = create(:rule) }
-  after(:all) { @default_rule.destroy }
-
+  before(:all) do
+    Helpers::Tags.import
+    @default_rule = create(:rule)
+  end
+  
+  after(:all) do
+    @default_rule.destroy
+    Tag.destroy_all
+  end
 
   describe "#group_issues_event" do
     before :each do
