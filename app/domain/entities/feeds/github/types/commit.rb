@@ -8,6 +8,15 @@ module Entities
         references: [],
       }
 
+      class Builder
+        def initialize(payload)
+          @p = payload
+        end
+
+        def build_attrs
+        end
+      end
+
       class Procurer
         include Entities::ProcurementAPI
 

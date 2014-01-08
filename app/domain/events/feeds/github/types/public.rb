@@ -1,18 +1,16 @@
 module Events
   module Github
-    module Public
-      #Relationships = []
 
-      class Processor
-        def process(original_hash, processed)
-          processed.deep_merge({
-            extracted: {
-              :title => "Repository #{original_hash['repo']['name']} goes public!"
-            }
-          })
-        end
-      end
-
+    class Public
+      include Constructable
+      include Events::Github::Accessors::Standard
     end
+
   end
 end
+
+# processed.deep_merge({
+#   extracted: {
+#     :title => "Repository #{original_hash['repo']['name']} goes public!"
+#   }
+# })

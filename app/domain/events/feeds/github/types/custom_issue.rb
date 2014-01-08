@@ -4,6 +4,19 @@ module Events
 
       RELEVANT_CONTENT_ATTRS = ['id', 'title', 'body', 'labels', 'state']
 
+      class Extractor
+
+
+        # def labels(original_hash)
+        #   original_hash['labels']
+        # end
+
+        # def label_names(labels)
+        #   labels.map {|l| l['name'] }.join(',') if labels
+        # end
+
+      end
+
       class Processor
         def process(original_hash, processed)
           processed.deep_merge({
@@ -25,13 +38,6 @@ module Events
           })
         end
 
-        def labels(original_hash)
-          original_hash['labels']
-        end
-
-        def label_names(labels)
-          labels.map {|l| l['name'] }.join(',') if labels
-        end
 
         def content_digest(original_hash)
           seed = RELEVANT_CONTENT_ATTRS.reduce("") {|memo, attr| memo += original_hash[attr].to_s}

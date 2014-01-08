@@ -8,6 +8,23 @@ module Entities
         references: [],
       }
 
+      class Builder
+        def initialize(payload)
+          @p = payload
+        end
+
+        def build_attrs
+          return {
+            title: @p.title
+            body: @p.body
+            url: @p.url
+            props: {
+              commit_id: @p.commit_id
+            }
+          }
+        end
+      end
+
       class Procurer
         include Entities::ProcurementAPI
 
