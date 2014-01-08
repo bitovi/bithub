@@ -24,6 +24,7 @@ class Poller
     initialize_logger
     @exchange = exchange
     @endpoint = endpoint
+    @latest = FIFOFilter.new
 
     @config = {}
     blk.call(@config) if blk # relevant keys: :http_head, :term (forums)
@@ -70,13 +71,7 @@ class Poller
   end
 
   def reject_old(events)
-    @latest ||= []
-
-    new_events = events.reject{|e| @latest.include? e[:content_digest]}
-    @latest += new_events.collect {|e| e[:content_digest]}
-    @latest.shift(@latest.length - backlog_size) if (@latest.length > backlog_size)
-
-    new_events
+    @latest.reject_old(events)
   end
 
   def process(events)

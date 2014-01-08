@@ -1,2 +1,0 @@
-describe IRCBot do
-end

@@ -1,2 +1,0 @@
-describe XMPPBot do
-end
