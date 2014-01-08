@@ -11,8 +11,16 @@ describe Processor do
       
       def load_and_process(event_type)
         resp = Response.load('forums', event_type)['rss']['channel']['item'][0]
+        x = Events::Payload.new(resp)
+
         Processor.new('forums').process(resp)
       end
+
+      it "should have an issue_id" do
+        expect(x.issue_id).to eq resp['payload']['lsdkjfa']['asdlfkja']
+      end
+
+
 
       it_should_behave_like "every event"
       it_should_behave_like "an event with a body and a url"

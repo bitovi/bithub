@@ -1,13 +1,10 @@
 require 'spec_helper'
-require 'services/crawler/poller'
-
 require 'digest/md5'
 
-describe Poller do
+describe FIFOFilter do
+
   describe "#reject_old" do
-    let(:logger) { double(:logger, :info => nil) }
-    let(:exchange) { double(:exchange, :publish => nil) }
-    let(:poller) { Poller.new(logger, exchange,  'https://api.github.com/entities') {|c| c[:backlog_size] = 10}}
+    let(:queue) { FIFOFilter.new(backlog_size: 10) }
 
     it "should have a backlog of 10 items at most" do
       items = (1..13).map {|i| {title: i.to_s, id: i, hash_key: Digest::MD5.hexdigest(i.to_s)} }
