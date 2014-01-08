@@ -28,7 +28,7 @@ class Dispatcher
     # @logger.debug "NEW payload"
     # @logger.debug payload.inspect
 
-    payload = Payload.new(payload)
+    payload = Events::Payload.new(payload)
 
     new_event = @evp.new({
       feed: payload.feed,

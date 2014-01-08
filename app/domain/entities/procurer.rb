@@ -104,48 +104,6 @@ require 'entities/feeds/twitter/twitter'
 
 
 
-      # if own_type?(type(payload))
-      #   find_self(payload)
-      # elsif downstream_type?(type(payload))
-      #   find_as_parent(payload)
-      # elsif upstream_type?(type(payload))
-      #   find_as_children(payload)
-      # elsif reference_type?(type(payload))
-      #   find_references(payload)
-      # end
-
-
-
-    # def own_type?(type)
-    #   #@logger.debug "Procurer#own_type #{type} #{module_name}"
-    #   extract_type_name(self.class) == type
-    # end
-    
-    # def among_relationships?(type)
-    #   upstream_type?(type) || downstream_type?(type) || referenced_type?
-    # end
-
-    # def upstream_type?(type)
-    #   @logger.debug "Procurer#upstream_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
-    #   relationships[:upstream]
-    #   .map {|rl| extract_type_name(rl)}
-    #   .include?(type)
-    # end
-
-    # def downstream_type?(type)
-    #   @logger.debug "Procurer#downstream_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
-    #   relationships[:downstream]
-    #   .map {|rl| extract_type_name(rl)}
-    #   .include?(type)
-    # end
-    
-    # def downstream_type?(type)
-    #   @logger.debug "Procurer#refereced_type? for:#{extract_type_name(self.class)}, payload:#{type}" 
-    #   relationships[:references]
-    #   .map {|rl| extract_type_name(rl)}
-    #   .include?(type)
-    # end
-
     # def extract_type_name(_class)
     #   name = _class.to_s; levels = name.scan(/::/).count
     #   # @logger.debug "Extracting for #{name}"
@@ -156,3 +114,12 @@ require 'entities/feeds/twitter/twitter'
     #   end
     #   type_name if type_name
     # end
+
+# module Entities
+# 	module Helpers
+# 		def feed_type_names(event)
+# 			_, feed, type = event.class.to_s.match(/.*::(.*)::(.*)/).to_a
+#       [feed, type]
+# 		end
+# 	end
+# end

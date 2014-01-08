@@ -48,6 +48,21 @@ module Entities
           end
         end
 
+        # Builder
+        def build
+          Hash.new({
+            title: "pushed to #{@payload.repo_name}",
+            body: @payload.body,
+            :url => "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
+            props: {
+              commit_shas: @payload.commit_shas,
+              repo_name: @payload.repo_name,
+              push_id: @payload.push_id,
+            }
+          })
+        end
+
+        # Finders
         def find_by_push_id
           @persistor.tagged_with(['github', 'push'])
             .where("props -> 'push_id' = '#{@payload.push_id}'")

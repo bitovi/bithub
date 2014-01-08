@@ -37,6 +37,22 @@ module Entities
         def find_references
         end
 
+        # Builder
+        def build
+          Hash.new({
+            title: "commented on issue ##{@payload.nubmer}",
+            body: @payload.body,
+            url: @payload.html_url,
+            props: {
+              repo_name: @payload.repo_name,
+              number: @payload.number,
+              label_names: @payload.label_names,
+              comment_id: @payload.comment_id,
+            }
+          })
+        end
+
+        # Finders
         def find_by_comment_id(comment_id)
           @persistor.tagged_with(['github', 'issue_comment'])
             .where("props -> 'comment_id' = '#{comment_id}'")
