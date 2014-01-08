@@ -30,6 +30,24 @@ module Entities
         def procure_references
         end
 
+        # Builder
+        def build
+          entity = Hash.new({
+            title: @payload.text,
+            url: @payload.html_url,
+            props: {
+              origin_author_id: @payload.origin_author_id,
+              origin_author_name: @payload.origin_author_name,
+              # origin_id: original_hash['id'],
+              # tweet_id: original_hash['id_str'],
+            }
+          })
+
+          entity[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
+          entity
+        end
+
+        # Finders
         def find_original_tweet
           @persistor.tagged_with(['twitter', 'status_event'])
             .where("props -> 'tweet_id' = '#{@payload.retweeted_id}'")
