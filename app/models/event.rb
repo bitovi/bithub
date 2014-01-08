@@ -1,5 +1,4 @@
 require 'digest/md5'
-require 'app/domain/events/dispatcher'
 
 class Event < ActiveRecord::Base
 

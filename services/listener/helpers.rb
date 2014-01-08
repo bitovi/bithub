@@ -12,3 +12,7 @@ def log_key_attrs(event_hash)
   $log.info "meta-feed ======> #{event_hash['meta'].andand['feed']}"
   $log.info "meta-category ==> #{event_hash['meta'].andand['category']}"
 end
+
+def logit(logger, error, payload)
+  logger.error error.inspect
+end

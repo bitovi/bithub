@@ -1,5 +1,4 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
@@ -7,7 +6,10 @@ require 'rspec/autorun'
 require "codeclimate-test-reporter"
 require 'database_cleaner'
 
-CodeClimate::TestReporter.start
+# Ours
+require 'responses/responses'
+
+CodeClimate::TestReporter.start if Rails.env == 'testing'
 DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings event_aggregated_tag_list user_total_score event_total_upvotes)}
 
 # Requires supporting ruby files with custom matchers and macros, etc,
