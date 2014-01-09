@@ -43,7 +43,7 @@ module Entities
             origin_author_name: @payload.origin_author_name,
             tags: [@payload.subforum],
           }
-        }
+        })
       end
 
       # Finders

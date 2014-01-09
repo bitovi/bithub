@@ -1,6 +1,6 @@
 module Entities
   module Blog
-    module Post; end
+    class Post; end
   end
 end
 

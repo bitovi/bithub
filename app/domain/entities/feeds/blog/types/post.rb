@@ -30,9 +30,9 @@ module Entities
       # Builder
       def build
         Hash.new({
-          title: @payload.title
-          url: @payload.link
-          body: @payload.body
+          title: @payload.title,
+          url: @payload.link,
+          body: @payload.body,
         })
       end
 

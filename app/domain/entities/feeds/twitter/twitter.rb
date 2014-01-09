@@ -1,7 +1,7 @@
 module Entities
   module Twitter
-    module Tweet; end
-    module Follow; end
+    class Tweet; end
+    class Follow; end
   end
 end
 

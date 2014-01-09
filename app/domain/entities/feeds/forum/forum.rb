@@ -1,6 +1,6 @@
 module Entities
 	module Forum
-		module Post; end
+		class Post; end
 	end
 end
 

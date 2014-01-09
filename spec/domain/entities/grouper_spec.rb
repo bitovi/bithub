@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Grouping do
+describe Entities::Grouper do
 
   before(:all) { @default_rule = create(:rule) }
   after(:all) { @default_rule.destroy }
