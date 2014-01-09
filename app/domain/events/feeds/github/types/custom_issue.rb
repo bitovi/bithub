@@ -43,9 +43,26 @@ module Events
       end
       
       def repo_name
-        # FIXME ?
+        # FIXME ? how to get ? mayble using REGEX ? :D
       end
     end
 
   end
 end
+
+# processed.deep_merge({
+#   extracted: {
+#     title: original_hash['title'],
+#     body: original_hash['body'],
+#     url: original_hash['html_url'],
+#   },
+#   meta: {
+#     feed: 'github',
+#     type: 'custom_issue_event',
+#     labels: label_names(labels(original_hash)),
+#     issue_id: original_hash['id'],
+#     state: original_hash['state'],
+#     issue_number: original_hash['number'],
+#     repo_name: original_hash['repo']['name'],
+#   }
+# })
