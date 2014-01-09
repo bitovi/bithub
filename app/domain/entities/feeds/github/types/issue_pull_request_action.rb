@@ -42,14 +42,19 @@ module Entities
 
       # Finders
       def find_by_issue_id(issue_id)
-        @persistor.tagged_with(['github', 'issue_action'])
+        @persistor.tagged_with(['github', 'issue_pull_request_action'])
         .where("props -> 'issue_id' = '#{issue_id}'")
+      end
+
+      def find_by_pull_req_id(pull_req_id)
+        @persistor.tagged_with(['github', 'issue_pull_request_action'])
+        .where("props -> 'pull_request_id' = '#{pull_req_id}'")
       end
 
       def find_by_repo_name_and_number(repo_name, number)
         @persistor.where("props -> 'repo_name' = '#{repo_name}'")
         .where("props -> 'number' = '#{number}'")
-        .tagged_with(['github', 'issue_action'])
+        .tagged_with(['github', 'issue_pull_request_action'])
       end
 
       def relationships

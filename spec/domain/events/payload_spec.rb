@@ -6,8 +6,7 @@ describe Preprocessing do
       it "should set the props attr clean up the given dict"
     end
 
-    describe ".to_props" do
-      it "should set the props attribute form a given dict"
+    describe "what" do
     end
-  
+
 end

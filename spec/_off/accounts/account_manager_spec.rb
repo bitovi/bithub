@@ -1,5 +1,4 @@
 require 'spec_helper'
-require Rails.root + 'spec/libs/api_responses'
 
 describe AccountManager do
   let(:github_oauth_data) { oauth_data_hash['omniauth.auth'] }

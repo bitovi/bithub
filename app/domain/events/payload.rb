@@ -11,6 +11,12 @@ module Events
       @event = construct_event(@data)
     end
 
+
+    def kita
+    end
+
+    def kuuu
+    end
     def method_missing(method, *args, &block)
       @event.send(method, *args, &block)
     end

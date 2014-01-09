@@ -3,7 +3,6 @@ require 'nokogiri'
 require 'nori'
 
 require 'core_ext'
-require 'processing/processor'
 
 class ResponseLoader
   ROOT = 'spec/support/responses'
@@ -11,10 +10,6 @@ class ResponseLoader
   def initialize(endpoint = 'events')
     @endpoint = endpoint
     @processors = {}
-  end
-
-  def parsed_and_processed_response(feed, type)
-    process(parse(raw(type, feed), feed), feed)
   end
 
   def parsed_response(feed, type)
@@ -49,14 +44,9 @@ class ResponseLoader
     File.read(path)
   end
 
-  def processor(feed)
-    @processors[feed] ||= Processing::Processor.new(feed)
-  end
-
 
   # Aliases
-
-  alias_method :ppr, :parsed_and_processed_response
   alias_method :pr, :parsed_response
   alias_method :r, :response
 end
+
