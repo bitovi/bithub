@@ -6,6 +6,20 @@ require 'entities/shared/helpers'
 
 module Entities
 
+  class PayloadEntityMapper
+    def initialize(payload)
+      @payload = payload
+    end
+
+    def responsible_entity
+      if @payload.action
+        Entities::Github::IssuePullRequestAction
+      else
+        Entities.const_get(@payload.feed).const_get(@payload.type)
+      end
+    end
+  end
+
   class Procurer
     include Loggable
 
@@ -16,30 +30,25 @@ module Entities
     end
 
     def procure
-      procurer.procure(@payload)
+      entity.procure
     end
     
     def procure_parent
-      procurer.procure_parent(@payload)
+      entity.procure_parent
     end
 
     def procure_children
-      procurer.procure_children(@payload)
+      entity.procure_children
     end
     
     def procure_references
-      procurer.procure_references(@payload)
+      entity.procure_references
     end
     
     private
-    def procurer
+    def entity
       @payload.switch_to_camel_case
-      @subprocurer ||= Entities.const_get(@payload.feed).const_get(@payload.type)::Procurer.new(@persistor)
-    end
-
-    def build_fail
-      @logger.error "Don't know how to build for payload #{@payload}"
-      fail Entities::Errors::BuildingError, "don't know how to build the entity from the supplied payload"
+      @entity ||= PayloadEntityMapper.new(@payload).responsible_entity.new(@persistor, @payload)
     end
   end
   
