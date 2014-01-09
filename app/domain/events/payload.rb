@@ -1,3 +1,7 @@
+require 'events/modules/constructable'
+Dir.glob('app/domain/events/feeds/*/*.rb').each { |f| require f }
+Dir.glob('app/domain/events/feeds/*/types/*.rb').each { |f| require f }
+
 module Events
   class Payload
     class MissingFeedError < Exception; end

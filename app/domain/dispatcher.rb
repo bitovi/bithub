@@ -2,18 +2,11 @@ require 'andand'
 require 'lib/core_ext'
 require 'lib/loggable'
 
-require 'payload/payload'
+require 'events/payload'
 
 require 'entities/procurer'
 require 'entities/determinator'
 require 'entities/grouper'
-
-# Feeds
-require 'events/feeds/blog/blog'
-require 'events/feeds/disqus/disqus'
-require 'events/feeds/forum/forum'
-require 'events/feeds/github/github'
-require 'events/feeds/twitter/twitter'
 
 class Dispatcher
   include Loggable

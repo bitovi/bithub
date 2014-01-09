@@ -20,7 +20,7 @@ module Events
       end
 
       def origin_timestamp
-        Time.strptime(source_data.andand[:published]), "%e %b %Y").utc
+        Time.strptime(source_data.andand[:published], "%e %b %Y").utc
       end
     end
 

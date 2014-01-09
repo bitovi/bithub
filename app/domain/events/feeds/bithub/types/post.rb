@@ -16,7 +16,7 @@ module Events
       end
 
       def body
-        Sanitize.clean(source_data.andand[:body], Sanitize::Config::RELAXED),
+        Sanitize.clean(source_data.andand[:body], Sanitize::Config::RELAXED)
       end
     end
 

@@ -1,9 +1,3 @@
-require 'entities/errors'
-require 'entities/determinator'
-require 'entities/shared/procurement_api'
-require 'entities/shared/finders'
-require 'entities/shared/helpers'
-
 module Entities
 
   class PayloadEntityMapper
