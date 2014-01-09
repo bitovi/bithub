@@ -1,7 +1,3 @@
-# Require all github types
-Dir[File.join('app', 'domain', 'events', 'feeds', 'github', 'types', '*.rb')].each do |f|
-  require f.gsub('app/domain/', '')
-end
 
 module Events
   module Github
@@ -158,4 +154,9 @@ module Events
     end
 
   end
+end
+
+# Require all github types
+Dir[File.join('app', 'domain', 'events', 'feeds', 'github', 'types', '*.rb')].each do |f|
+  require f.gsub('app/domain/', '')
 end

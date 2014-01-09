@@ -1,4 +1,4 @@
 require 'domain/spec_helper'
 
-describe Payload do
+describe Events::Payload do
 end
