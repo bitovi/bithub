@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec/domain/spec_helper'
 
 describe Tagger do
   let(:tag_defs) do

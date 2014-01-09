@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'domain/spec_helper'
 
 describe Grouping do
 
