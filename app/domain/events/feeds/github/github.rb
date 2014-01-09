@@ -9,6 +9,10 @@ module Events
     module Accessors
       module Standard
 
+        def content_digest
+          @digest ||= Digest::MD5.hexdigest(id + self.class)
+        end
+
         def origin_id
           source_data.andand[:id]
         end
@@ -44,7 +48,6 @@ module Events
         def origin_author_gravatar
           actor.andand[:gravatar_id]
         end
-
 
         def origin_timestamp
           ts_str = source_data.andand[:created_at]

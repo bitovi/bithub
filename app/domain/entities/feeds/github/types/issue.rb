@@ -48,7 +48,7 @@ module Entities
             issue_id: @payload.issue_id,
             label_names: @payload.label_names,
             state: @payload.state,
-            action: @payload.action, # IssuePullRequestAction?
+            # action: @payload.action, # IssuePullRequestAction?
           }
         })
       end
