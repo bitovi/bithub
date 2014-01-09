@@ -29,7 +29,7 @@ module Events
       end
 
       def html_url
-        "https://twitter.com/#{origin_author_name}/status/#{origin_id_str}",
+        "https://twitter.com/#{origin_author_name}/status/#{origin_id_str}"
       end
 
       def retweeted_status

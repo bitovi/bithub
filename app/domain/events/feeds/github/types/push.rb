@@ -14,11 +14,11 @@ module Events
       end
 
       def commit_shas
-        commits.map(&:sha)
+        commits.map {|c| c.andand[:sha]}
       end
 
       def commit_messages
-        commits.map(&:message]
+        commits.map {|c| c.andand[:message]}
       end
 
       def commit_shas_csv
