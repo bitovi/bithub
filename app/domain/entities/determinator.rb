@@ -1,4 +1,4 @@
-require 'tagging/tagger'
+require 'tagger'
 require 'lib/loggable'
 
 module Entities

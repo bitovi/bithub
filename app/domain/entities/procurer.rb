@@ -1,3 +1,5 @@
+require 'entities/modules/constructable'
+
 module Entities
 
   class PayloadEntityMapper

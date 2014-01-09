@@ -37,11 +37,11 @@ module Entities
       # Builder
       def build
         Hash.new({
-          title: "commented on a commit in #{@payload.repo_name}"
+          title: "commented on a commit in #{@payload.repo_name}",
           body: @payload.body,
           url: @payload.html_url,
           props: {
-            commit_id: @payload.commit_id
+            commit_id: @payload.commit_id,
           }
         })
       end
