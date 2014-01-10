@@ -15,12 +15,6 @@ module Events
       @event = construct_event(@data)
     end
 
-
-    def kita
-    end
-
-    def kuuu
-    end
     def method_missing(method, *args, &block)
       @event.send(method, *args, &block)
     end
@@ -36,8 +30,8 @@ module Events
     end
 
     def construct_event(payload)
-      feed = payload.andand[:meta].andand[:feed].capitalize
-      type = payload.andand[:meta].andand[:type].capitalize
+      feed = payload.andand[:meta].andand[:feed].camel_case
+      type = payload.andand[:meta].andand[:type].camel_case
       fail MissingFeedError if !feed
       fail MissingTypeError if !type
       Events.const_get(feed).const_get(type).new(payload)
@@ -78,7 +72,6 @@ module Events
 
     private
     def verify_existance_of_critical_attributes
-      puts @data.inspect
       fail MissingFeedError unless @data[:meta][:feed]
       fail MissingTypeError unless @data[:meta][:type]
     end
