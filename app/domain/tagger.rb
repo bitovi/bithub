@@ -1,58 +1,69 @@
-module Tagger
+require 'andand'
+require 'levenshtein'
+require 'lib/core_helpers'
+require 'lib/loggable'
+
+class Tagger
+  include CoreHelpers
+  include Loggable
+  DEFAULT_DELIMITERS = /[ ,.!?;\/]/
+  DEFAULT_THRESHOLD = 1
+  
   class NoTagsProvided < Exception; end
-  class Engine
-    attr_accessor :tags, :delimiters, :levenshtein_treshold
+  class Tag
+    attr_reader :name, :threshold
 
-    DEFAULT_DELIMITERS = /[ ,.!?;\/]/
-    DEFAULT_LEVENSHTEIN_TRESHOLD = 1
+    def initialize(t)
+      @name = t[:name]
+      @aliases = t[:aliases] || []
+      @threshold = t.andand[:props].andand[:levenshtein_treshold].to_i || Tagger::DEFAULT_THRESHOLD
+    end
+    
+    def names
+      [@name] + @aliases
+    end
+  end
 
-    def initialize(tags, opts={})
-      fail Tagger::NoTagsProvided, "tagger must have tags to search for" if tags.nil? || tags.empty?
+  def initialize(tags, opts={})
+    fail NoTagsProvided, "tagger must have tags to search for" if (tags.nil? || tags.empty?)
 
-      @tags = tags || []
-      @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
-      @levenshtein_treshold = opts[:levenshtein_treshold] || DEFAULT_LEVENSHTEIN_TRESHOLD
+    @tags = tags.map{|t| Tag.new(t)} || []
+    @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
+    @threshold = opts[:threshold] || DEFAULT_THRESHOLD
+  end
+
+  def textualize(input)
+    text = []
+
+    if input.is_a?(Array)
+      input.each {|elem| text.push textualize(elem) }
+    elsif input.is_a?(Hash)
+      input.each {|k,v| text.push textualize(v) }
+    else
+      text.push input.to_s
     end
 
-    def textualize(input)
-      text = []
+    text.join(' ')
+  end
 
-      if input.is_a?(Array)
-        input.each {|elem| text.push textualize(elem) }
-      elsif input.is_a?(Hash)
-        input.each {|k,v| text.push textualize(v) }
-      else
-        text.push input.to_s
-      end
+  def tokenize(text)
+    text.downcase.split(@delimiters).reject(&:empty?)
+  end
 
-      text.join(' ')
-    end
+  def find_tags(input)
+    text = textualize(input)
 
-    # tokenize text into array of words
-    def tokenize(text)
-      text.downcase.split(delimiters).reject(&:empty?)
-    end
-
-    # search for tags within plain text
-    def find_tags(input)
-      text = textualize(input)
-
-      tokenize(text).reduce([]) do |result, word|
-        @tags.each do |t|
-          names = [t.name]; names += t.aliases if t.aliases
-          leven_th = t.props['levenshtein_treshold'] || @levenshtein_treshold
-                
-          names.each do |name|
-            if Levenshtein.distance(word, name) <= leven_th.to_i
-              (result << t.name) unless result.include?(t.name)
-              break
-            end
+    tokenize(text).reduce([]) do |result, word|
+      @tags.each do |t|
+        t.names.each do |name|
+          if (Levenshtein.distance(word, name) <= (t.threshold || @threshold))
+            (result << t.name) unless result.include?(t.name)
+            break
           end
         end
-        
-        result
       end
-    end
 
+      result
+    end
   end
 end
