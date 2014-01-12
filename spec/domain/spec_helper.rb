@@ -14,6 +14,6 @@ require 'app/domain/entities/procurer'
 require 'app/domain/queries/query_logic_analyzer'
 require 'app/domain/queries/scope_applier'
 
-require 'app/domain/fifo_filter'
+require 'app/domain/digest_queue'
 require 'app/domain/tagger'
 require 'app/domain/dispatcher'
