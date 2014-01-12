@@ -69,6 +69,8 @@ testee:
 twitter:
   display_name: "Twitter"
   group_list: "feeds, categories"
+  props:
+    order_on_page: "02"
 
 github:
   display_name: "Github"
@@ -106,34 +108,50 @@ community_site:
 app:
   display_name: "App"
   group_list: "categories"
+  props:
+    order_on_page: "09"
 
 article:
   display_name: "Article"
   group_list: "categories"
+  props:
+    order_on_page: "07"
 
 bug:
   display_name: "Bug"
   group_list: "categories, labels"
+  props:
+    order_on_page: "03"
 
 chat:
   display_name: "Chat"
   group_list: "categories"
+  props:
+    order_on_page: "99"
 
 code:
   display_name: "Code"
   group_list: "categories"
+  props:
+    order_on_page: "10"
 
 comment:
   display_name: "Comment"
   group_list: "categories"
+  props:
+    order_on_page: "04"
 
 digest:
   display_name: "Digest"
   group_list: "categories"
+  props:
+    order_on_page: "01"
 
 event:
   display_name: "Event"
   group_list: "categories"
+  props:
+    order_on_page: "11"
 
 feature:
   display_name: "Feature"
@@ -141,6 +159,8 @@ feature:
   aliases:
     - "enhancement"
     - "feature-request"
+  props:
+    order_on_page: "05"
 
 issue:
   display_name: "Issue"
@@ -149,10 +169,14 @@ issue:
 plugin:
   group_list: "categories"
   display_name: "Plugin"
+  props:
+    order_on_page: "08"
 
 question:
   group_list: "categories"
   display_name: "Question"
+  props:
+    order_on_page: "06"
 
 
 ### Twitter specific
