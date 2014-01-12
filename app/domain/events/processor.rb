@@ -4,6 +4,7 @@ require 'andand'
 require 'lib/core_ext'
 require 'lib/loggable'
 require 'events/payload'
+require 'events/modules/errors'
 
 # Require all feed and type files
 Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|

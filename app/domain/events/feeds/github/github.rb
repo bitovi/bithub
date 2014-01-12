@@ -1,4 +1,3 @@
-
 module Events
   module Github
 

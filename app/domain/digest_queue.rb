@@ -2,6 +2,7 @@ require 'digest/md5'
 require 'andand'
 
 class DigestQueue
+  class NoDigestError < Exception; end
   attr_reader :backlog_size
 
   def initialize(initial_events = [], opts = {})
