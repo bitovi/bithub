@@ -22,7 +22,7 @@ describe Query do
   describe ".pluck_and_process_regular_params" do
     it "applies ranges when present and leaves regular params alone" do
       q = Query.new(model, { id: "1", title: "Some title", feed: "github", category: "code"})
-      expect(q.pluck_and_process_regular_params).to eq({id: 1, title: "Some title"})
+      expect(q.pluck_and_process_regular_params).to eq({id: "1", title: "Some title"})
     end
   end
 
