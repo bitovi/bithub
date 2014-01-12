@@ -1,5 +1,4 @@
 class ScopeApplier
-  attr_reader :logic_analyzer
 
   def initialize(query_logic_analyzer)
     @logic_analyzer = query_logic_analyzer
@@ -14,9 +13,9 @@ class ScopeApplier
   end
 
   def apply_negated_attrs_to_scope(scope, params)
-    negated_attrs = logic_analyzer.pluck_and_process_negated_attributes(params)
+    negated_attrs = @logic_analyzer.pluck_and_process_negated_attributes(params)
     negated_attrs.each do |na_name, na_value|
-      scope = scope.where("#{logic_analyzer.table_name}.#{na_name} <> ?", na_value)
+      scope = scope.where("#{@logic_analyzer.table_name}.#{na_name} <> ?", na_value)
     end if negated_attrs
     scope
   end

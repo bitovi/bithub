@@ -11,8 +11,8 @@ require 'app/domain/entities/determinator'
 require 'app/domain/entities/normalizer'
 require 'app/domain/entities/procurer'
 
-require 'app/domain/queries/query_logic_analyzer'
-require 'app/domain/queries/scope_applier'
+require 'app/domain/queries/query'
+require 'app/domain/queries/query_item'
 
 require 'app/domain/digest_queue'
 require 'app/domain/tagger'

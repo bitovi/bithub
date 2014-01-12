@@ -1,8 +1,12 @@
-require 'spec_helper'
+require 'domain/spec_helper'
 
 describe ScopeApplier do
+  let(:model) do
+    model = double("Entity"); model.stub(:table_name => "entities")
+  end
+
   before(:all) do
-    logic_analyzer = QueryLogicAnalyzer.new(Event)
+    logic_analyzer = Query.new(model, {})
     @scope_applier = ScopeApplier.new(logic_analyzer)
   end
 
