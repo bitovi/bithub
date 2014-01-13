@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class PullRequestReviewComment
+    class PullRequestReviewCommentEvent
       include Constructable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Comments

@@ -1,12 +1,12 @@
 module Events
   module Github
 
-    class Member
+    class MemberEvent
       include Constructable
       include Events::Github::Accessors::Standard
 
       def member_name
-        payload.andand[:login]
+        payload.andand[:member][:login]
       end
     end
 

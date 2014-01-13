@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class Push
+    class PushEvent
       include Constructable
       include Events::Github::Accessors::Standard
 
@@ -18,7 +18,7 @@ module Events
       end
 
       def commit_messages
-        commits.map {|c| c.andand[:message]}
+        commits.map {|c| c.andand['message']}
       end
 
       def commit_shas_csv
@@ -35,7 +35,7 @@ module Events
 
       def referenced_number
         if md = commit_messages.join(' ').match(/#(\d*)/)
-          md.andand[1]
+          md.andand[0]
         end
       end
     end

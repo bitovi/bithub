@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class Watch
+    class WatchEvent
       include Constructable
       include Events::Github::Accessors::Standard
     end
