@@ -66,6 +66,14 @@ class EventDecorator < Draper::Decorator
     end
   end
 
+  def original_image_url
+    if has_local_image?(source)
+      source.image.url
+    else
+      nil
+    end    
+  end
+
   def props(thread_awarded = false, awarded_value = nil)
     if source.source_data && source.category.name == 'digest'
       source.props[:repo] = source.source_data['repo']['name'] if cached_tags.include?('watch_event') || cached_tags.include?('fork_event')
