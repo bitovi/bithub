@@ -27,7 +27,7 @@
 					"email": "justinbmeyer@gmail.com",
 					"name": "Justin Meyer"
 				},
-				"message": "making many of the test pages and demos work",
+				"message": "making many of the test pages and demos work, #123",
 				"distinct": true,
 				"url": "https://api.github.com/repos/bitovi/canjs/commits/4814f5a335207303347c28b5768be2ed8c0321af"
 			}
