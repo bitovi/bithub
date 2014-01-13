@@ -7,7 +7,6 @@ require 'nori'
 
 require_relative 'fetchers'
 require 'app/domain/events/processor'
-require 'app/domain/events/errors'
 require 'lib/loggable'
 
 class Poller
@@ -24,7 +23,7 @@ class Poller
     initialize_logger
     @exchange = exchange
     @endpoint = endpoint
-    @latest = FIFOFilter.new
+    @digest_queue = DigestQueue.new
 
     @config = {}
     blk.call(@config) if blk # relevant keys: :http_head, :term (forums)
@@ -62,16 +61,16 @@ class Poller
   end
 
   def handle_success(response)
-    events = decorate(events_from_response(parse(response)))
+    events = decorate(extract_events(parse(response)))
     publish(process(reject_old(events)))
   end
 
   def decorate(events)
-    events.map {|e| { content_digest: make_digest(e), data: e }}
+    events.map {|e| { content_digest: processor.content_digest(e), data: e }}
   end
 
   def reject_old(events)
-    @latest.reject_old(events)
+    @digest_queue.reject_old(events)
   end
 
   def process(events)
@@ -96,11 +95,7 @@ class Poller
     end
   end
 
-  def make_digest(event_hash)
-    processor.content_digest(event_hash)
-  end
-
-  def events_from_response(response_hash)
+  def extract_events(response_hash)
     processor.events_from_response(response_hash)
   end
 
@@ -157,16 +152,8 @@ class Poller
     @logger.info str if es.length > 0
   end
 
-  def log_filtering(es, new_es)
-    @logger.info "Keeping #{new_es.length} new items, out of #{es.length} fetched"
-  end
-
   def log_fetching(url)
     @logger.info "Fetching from: #{url}"
-  end
-
-  def backlog_size
-    @config[:backlog_size] || 100
   end
 
   def http_head

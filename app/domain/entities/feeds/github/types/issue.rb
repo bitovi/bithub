@@ -38,7 +38,7 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        @persistor.new(Hash.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
@@ -50,7 +50,7 @@ module Entities
             state: @payload.state,
             # action: @payload.action, # IssuePullRequestAction?
           }
-        })
+        }))
       end
 
       # Finders

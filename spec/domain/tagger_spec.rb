@@ -1,35 +1,19 @@
-require 'spec/domain/spec_helper'
+require 'domain/spec_helper'
 
 describe Tagger do
-  let(:tag_defs) do
-    [
-      { name: 'canjs', aliases: ['can_js'] },
-      { name: 'jquerypp', aliases: ['jquery_pp', 'jquery++'] },
-      { name: 'stealjs', aliases: ['steal_js', 'steal'] },
-      { name: 'funcunit' },
-      { name: 'documentjs', aliases: ['document_js'] },
-      { name: 'javascriptmvc', aliases: ['jmvc'] },
-      { name: 'testee', aliases: ['testee_js'], props: {levenshtein_treshold: 0} },
-    ]
+
+  subject(:tagger) do
+    Tagger.new([
+      { name: 'canjs', aliases: %w(can_js) },
+      { name: 'jquerypp', aliases: %w(jquery_pp, jquery++) },
+      { name: 'stealjs', aliases: %w(steal_js steal) },
+      { name: 'funcunit', aliases: %w() },
+      { name: 'documentjs', aliases: %w(document_js) },
+      { name: 'javascriptmvc', aliases: %w(jmvc) },
+      { name: 'testee', aliases: %w(testee_js), props: {levenshtein_treshold: 0} },
+    ], {threshold: 1})
   end
 
-  before :all do
-    tag_defs.each do |tag|
-      t = Tag.new({name: tag[:name], aliases: tag[:aliases], props: {}})
-      t.props['levenshtein_treshold'] = tag[:props][:levenshtein_treshold] if tag[:props][:levenshtein_treshold]      
-      t.group_list = %w(projects)
-      t.save
-    end
-  end
-  
-  let(:tagger_config) do
-    { :levenshtein_treshold => 1 }
-  end
-
-  subject(:tagger) do 
-    Tagger::Engine.new(Tag.projects, tagger_config)
-  end
-    
   describe "#textualize" do 
     it "untouches input string" do
       expect(tagger.textualize("Gray fox jumps ...")).to eq "Gray fox jumps ..."
@@ -49,13 +33,12 @@ describe Tagger do
 
     it "recursively concatenates nested arrays and hashes into string" do
       input = [
-               ["start"],
-               {:foo => "foo", :bar => {:baz => ["baz"]}},
-               "stop"
-              ]
+        ["start"],
+        {:foo => "foo", :bar => {:baz => ["baz"]}},
+        "stop"
+      ]
       expect(tagger.textualize(input)).to eq "start foo baz stop"
     end
-
   end
 
   describe "#find_tags" do
@@ -83,7 +66,7 @@ describe Tagger do
       text = "Lots of text, CanJs, a little more text, and then FUNCUNIT, and some jquerypp"
       expect(tagger.find_tags(text)).to match_array %w(canjs funcunit jquerypp)
     end
-    
+
     it "doesn't match tokens with spaces" do
       text = "Lots of text, javascript mvc, a little more text, and then done js, and some jquery pp"
       expect(tagger.find_tags(text)).to match_array %w(javascriptmvc) #because distance(jmvc, mvc) <= 1
@@ -98,7 +81,5 @@ describe Tagger do
       text = "word tested shouldn't be matched, but @canjs should be"
       expect(tagger.find_tags(text)).to match_array %w(canjs)
     end
-    
   end
-  
 end
