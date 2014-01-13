@@ -1,7 +1,7 @@
 module Events
   module Twitter
 
-    class Tweet
+    class StatusEvent
       include Constructable
 
       def content_digest

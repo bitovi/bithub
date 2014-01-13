@@ -1,9 +1,10 @@
 module Events
   module Github
 
-    class Issue
+    class IssuesEvent
       include Constructable
       include Events::Github::Accessors::Standard
+      include Events::Github::Accessors::Labels
       include Events::Github::Accessors::IssuesPullRequests
 
       def issue

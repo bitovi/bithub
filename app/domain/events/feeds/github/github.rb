@@ -6,7 +6,8 @@ module Events
       module Standard
 
         def content_digest
-          @digest ||= Digest::MD5.hexdigest(id + self.class)
+          # CHECK THIS !!!
+          @digest ||= Digest::MD5.hexdigest(origin_event_id.to_s + self.class.name)
         end
 
         def origin_id
@@ -30,7 +31,7 @@ module Events
         end
 
         def repo_name
-          source_data.andand[:name]
+          source_data.andand[:repo].andand[:name]
         end
 
         def origin_author_name
@@ -75,6 +76,16 @@ module Events
         end
       end
 
+      module Labels
+        def labels
+          issue_or_pull_req.andand[:labels]
+        end
+
+        def label_names
+          labels.map {|l| l['name'] }.join(',')
+        end        
+      end
+
       module IssuesPullRequests
         def title
           issue_or_pull_req.andand[:title]
@@ -94,14 +105,6 @@ module Events
 
         def state
           issue_or_pull_req.andand[:state]
-        end
-
-        def labels
-          issue_or_pull_req.andand[:labels]
-        end
-
-        def label_names
-          labels.map {|l| l['name'] }.join(',')
         end
 
         def action

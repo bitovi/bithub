@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class TeamAdd
+    class TeamAddEvent
       include Constructable
       include Events::Github::Accessors::Standard
     end
