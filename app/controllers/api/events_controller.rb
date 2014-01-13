@@ -94,7 +94,7 @@ class Api::EventsController < Api::ApiController
   end
 
   def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
+    @logic_analyzer ||= QueryLogicAnalyzer.new(Event, params)
   end
 
   def scope_applier
