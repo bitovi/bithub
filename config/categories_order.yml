@@ -1,15 +1,15 @@
 # Order of the categories, as they show up in the client
 ---
 categories:
- - digest
- - twitter
- - bug
- - comment
- - feature
- - question
- - article
- - plugin
  - app
- - code
- - event
+ - article
+ - feature
+ - bug
  - chat
+ - code
+ - comment
+ - digest
+ - event
+ - plugin
+ - question
+ - twitter
