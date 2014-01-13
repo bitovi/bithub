@@ -106,10 +106,14 @@ community_site:
 app:
   display_name: "App"
   group_list: "categories"
+  props:
+    priority: 100
 
 article:
   display_name: "Article"
   group_list: "categories"
+  props:
+    priority: 99
 
 bug:
   display_name: "Bug"
@@ -145,6 +149,8 @@ feature:
   aliases:
     - "enhancement"
     - "feature-request"
+  props:
+    priority: 99
 
 issue:
   display_name: "Issue"
