@@ -68,7 +68,7 @@ class EventDecorator < Draper::Decorator
 
   def original_image_url
     if has_local_image?(source)
-      source.image.url
+      local_prefix + source.image.url
     else
       nil
     end    
