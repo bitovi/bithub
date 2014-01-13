@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class Gollum
+    class GollumEvent
       include Constructable
       include Events::Github::Accessors::Standard
 

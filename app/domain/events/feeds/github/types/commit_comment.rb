@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class CommitComment
+    class CommitCommentEvent
       include Constructable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Comments

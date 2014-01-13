@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class Public
+    class PublicEvent
       include Constructable
       include Events::Github::Accessors::Standard
     end
