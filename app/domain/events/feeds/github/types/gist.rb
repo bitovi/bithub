@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class Gist
+    class GistEvent
       include Constructable
       include Events::Github::Accessors::Standard
 
