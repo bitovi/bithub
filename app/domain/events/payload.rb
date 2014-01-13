@@ -7,6 +7,8 @@ module Events
     class MissingFeedError < Exception; end
     class MissingTypeError < Exception; end
 
+    include CoreHelpers
+    
     def initialize(payload)
       @data = symbolize_keys(payload)
       verify_existance_of_critical_attributes
