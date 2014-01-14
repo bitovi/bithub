@@ -2,20 +2,6 @@ require 'entities/modules/constructable'
 
 module Entities
 
-  class PayloadEntityMapper
-    def initialize(payload)
-      @payload = payload
-    end
-
-    def responsible_entity
-      if @payload.action
-        Entities::Github::IssuePullRequestAction
-      else
-        Entities.const_get(@payload.feed).const_get(@payload.type)
-      end
-    end
-  end
-
   class Procurer
     include Loggable
 
@@ -42,9 +28,16 @@ module Entities
     end
     
     private
+
     def entity
-      @payload.switch_to_camel_case
-      @entity ||= PayloadEntityMapper.new(@payload).responsible_entity.new(@persistor, @payload)
+      @feed = @payload.feed.camel_case
+      @type = @payload.type.camel_case
+
+      if Entities.const_get(@feed).respond_to?('mapper')
+        @entity ||= Entities.const_get(@feed).mapper(@payload).new(@persistor, @payload)
+      else
+        @entity ||= Entities.const_get(@feed).const_get(@type).new(@persistor, @payload)
+      end      
     end
   end
   
