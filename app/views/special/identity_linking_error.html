@@ -1,1 +1,9 @@
-NESTO?
+<script type = "text/javascript">
+  if (window.opener && !window.opener.closed) {
+    window.opener.postMessage({
+      type    : 'userLinkError',
+      message : 'This identity is already linked to a different account!'
+    }, "*");
+    window.close();
+  }
+</script>
