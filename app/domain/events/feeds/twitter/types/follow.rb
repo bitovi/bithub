@@ -1,7 +1,7 @@
 module Events
   module Twitter
 
-    class FollowEvent
+    class Follow
       include Constructable
 
       def content_digest
