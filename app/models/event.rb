@@ -64,8 +64,21 @@ class Event < ActiveRecord::Base
   after_validation :reformat_uniqueness_validation
 
   SCOPE_APPLIER_OVERRIDES = {
-    :thread_updated_at => Proc.new do |scope, v, params = {}|
-      args = [params[:clientTz] || 'UTC', v.first, v.last]
+    :thread_updated_date => Proc.new do |scope, v, params = {}|
+
+      if v.is_a?(String)
+        start_date = v
+        end_date   = nil
+      else
+        start_date = v.first
+        end_date   = v.last
+      end
+
+      if end_date.nil?
+        end_date = Date.parse(start_date) + 1.day
+      end
+
+      args = [params[:clientTz] || 'UTC', start_date, end_date]
       scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
     end
   }
