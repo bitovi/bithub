@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class PullRequestEvent
+    class PullRequest
       include Constructable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::IssuesPullRequests

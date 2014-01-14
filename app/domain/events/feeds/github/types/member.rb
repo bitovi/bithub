@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class MemberEvent
+    class Member
       include Constructable
       include Events::Github::Accessors::Standard
 
