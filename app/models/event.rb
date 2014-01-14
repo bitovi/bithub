@@ -37,7 +37,7 @@ class Event < ActiveRecord::Base
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of :origin_date, :origin_ts, :hash_key, :feed_id, :category_id, :rule_id, :tag_list, :title
-  validates_uniqueness_of :hash_key
+  validates_uniqueness_of :hash_key, message: 'Post already exists'
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON
@@ -60,6 +60,8 @@ class Event < ActiveRecord::Base
 
   after_save :update_pagination_table
   after_destroy :update_pagination_table
+
+  after_validation :reformat_uniqueness_validation
 
   SCOPE_APPLIER_OVERRIDES = {
     :thread_updated_at => Proc.new do |scope, v, params = {}|
@@ -230,6 +232,12 @@ class Event < ActiveRecord::Base
   end
 
   private
+
+  def reformat_uniqueness_validation
+    if errors[:hash_key]
+      errors[:base].concat(errors.delete(:hash_key))
+    end
+  end
   
   # Helper methods
   def self.has_an_attribute?(attr)
