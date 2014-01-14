@@ -25,7 +25,7 @@ class AccountManager
     user = nil
 
     begin
-      if current_user_exists?
+      if logged_in?
         user = update_and_merge(name, email)
       elsif identity.has_assigned_user?
         user = identity.user
@@ -41,11 +41,11 @@ class AccountManager
   def create_and_collect(name, email)
     user = identity.build_user({name: name, email: email})
     ActiveRecord::Base.transaction do
-      identity.user.award_points_for_joining(identity.provider)
+      identity.user.award_points_for_linking(identity.provider)
       identity.save!
     end
     
-    # Costly actions done outside of the request
+    # Costly actions done in the background worker
     u = identity.reload.user
     u.delay.collect_authored_events
     u.delay.reward_if_eligible
@@ -56,9 +56,9 @@ class AccountManager
 
   def update_and_merge(name, email)
     ActiveRecord::Base.transaction do
+      current_user.link_ident!(identity)
       current_user.update_blank_oauth_attrs!({name: name, email: email})
-      current_user.award_points_for_joining(identity.provider)
-      current_user.merge_identities!(identity)
+      current_user.award_points_for_linking(identity.provider)
     end
     
     current_user.delay.collect_authored_events
@@ -170,7 +170,7 @@ class AccountManager
     end
   end
 
-  def current_user_exists?
+  def logged_in?
     current_user != nil
   end
 
