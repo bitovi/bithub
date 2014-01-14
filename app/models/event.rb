@@ -79,7 +79,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.scoped_with_includes
-    scope = Event.scoped
+    scope = Event.uniq.scoped
     scope = scope.includes(:author)
     scope = scope.includes(:category)
     scope = scope.includes(:parent)
