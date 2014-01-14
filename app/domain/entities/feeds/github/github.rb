@@ -1,5 +1,10 @@
 module Entities
   module Github
+
+    def self.mapper(payload)
+      self.const_get(payload.type.camel_case.gsub(/Event/,''))
+    end
+        
     class Commit; end
     class CommitComment; end
     class Issue; end

@@ -36,7 +36,7 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        @persistor.new({
           title: "commented on a commit in #{@payload.repo_name}",
           body: @payload.body,
           url: @payload.html_url,

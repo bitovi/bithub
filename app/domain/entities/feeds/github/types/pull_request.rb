@@ -39,7 +39,7 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        @persistor.new({
           title: "Pull request ##{@payload.number} #{@payload.action}",
           body: @payload.body,
           url: @payload.html_url,
