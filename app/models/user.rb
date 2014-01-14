@@ -134,13 +134,14 @@ class User < ActiveRecord::Base
   end
 
   def link_ident!(identity)
+    other_user = identity.user
     if identity.already_linked_to_other_user?
       fail OtherUserAlreadyLinked
-    elsif already_linked_to_current_user?
+    elsif already_linked_to_current_user?(identity)
       self
     else
       self.identities << identity
-      self.delay.snatch_all_and_destroy(other_user)
+      self.delay.snatch_all_and_destroy(other_user) if other_user
       self.save!
     end
   end
