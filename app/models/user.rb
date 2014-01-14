@@ -1,6 +1,8 @@
 require 'digest/md5'
 
 class User < ActiveRecord::Base
+  class OtherUserAlreadyLinked < Exception; end
+
   rolify
   devise :rememberable, :trackable, :omniauthable
 
@@ -131,12 +133,15 @@ class User < ActiveRecord::Base
     self.update_attribute(:total_score, self.score)
   end
 
-  def merge_identities!(identity)
-    other_user = identity.user if identity.user
-    unless self.identities.include?(identity)
+  def link_ident!(identity)
+    if identity.already_linked_to_other_user?
+      fail OtherUserAlreadyLinked
+    elsif already_linked_to_current_user?
+      self
+    else
       self.identities << identity 
+      self.delay.snatch_all_and_destroy(other_user)
       self.save!
-      self.delay.snatch_all_and_destroy(other_user) if other_user
     end
   end
 
@@ -171,7 +176,7 @@ class User < ActiveRecord::Base
     self
   end
 
-  def award_points_for_joining(provider)
+  def award_points_for_linking(provider)
     self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider}."})
     self
   end
@@ -189,6 +194,10 @@ class User < ActiveRecord::Base
     self.country.present?
   end
 
+  def only_one_ident?
+    self.identities.count == 1
+  end
+
   def reward_if_eligible
     if rs = Reward.find_all_qualified_for(self)
       not_already_achieved_rewards = Achievement.reject_achieved_rewards(self, rs)
@@ -201,6 +210,10 @@ class User < ActiveRecord::Base
     if rs = Reward.find_all_qualified_for(self)
       delete_uneligible_achievements if self.rewards.length > rs
     end
+  end
+
+  def already_linked_to_current_user(identity)
+    self.identities.include?(identity)
   end
 
   def delete_uneligible_achievements

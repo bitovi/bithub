@@ -8,6 +8,10 @@ class Identity < ActiveRecord::Base
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
   end
 
+  def already_linked_to_other_user?
+    has_assigned_user? && user.identities.count > 1
+  end
+
   def has_assigned_user?
     !!self.user
   end
