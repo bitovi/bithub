@@ -3,8 +3,21 @@ require 'events/feeds/twitter/types/follow'
 
 module Events
   module Twitter
+    MAPPINGS = {
+      'StatusEvent' => 'Tweet'
+    }
+
+    def self.type(type_name)
+      if MAPPINGS && MAPPINGS.include?(type_name)
+        self.const_get(MAPPINGS[type_name])
+      else
+        self.const_get(type_name)
+      end
+    end
 
     class Processor
+      attr_reader :parsed, :extracted
+
       def initialize
         config = {}
         @config = yield config if block_given?

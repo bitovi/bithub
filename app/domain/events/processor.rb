@@ -12,48 +12,67 @@ Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
 end
 
 module Events
+  MAPPINGS = { }
+
+  def self.feed(feed_name)
+    if MAPPINGS.include?(feed_name)
+      self.const_get(MAPPINGS[feed_name])
+    else
+      self.const_get(feed_name)
+    end
+  end
+
   class Processor
     include Loggable
 
-    def initialize(feed)
+    def initialize(feed, response)
       initialize_logger
-      config = yield Hash.new if block_given?
+      @config = yield Hash.new if block_given?
+      @response = response
       @feed = feed
     end
     
-    def extract(response_hash)
-      subprocessor.events_from_response(response_hash)
+    def parse
+      @parsed ||= subprocessor.parse
+      self
     end
 
-    def decorate(original_hash)
-      e = construct_event(original_hash)
+    def extract
+      @extracted ||= subprocessor.extract
+      self
+    end
 
-      decorated = {
-        content_digest: e.content_digest,
-        source_data: e.source_data,
-        meta: {
-          feed: e.feed,
-          type: e.type,
+    def decorate
+      @extracted.map do |event_hash|
+        e = construct_event
+
+        decorated = {
+          content_digest: e.content_digest,
+          source_data: e.source_data,
+          meta: {
+            feed: e.feed,
+            type: e.type,
+          }
         }
-      }
-      
-      if processor.respond_to? :extract_tags
-        decorated[:meta][:tags] = processor.extract_tags(original_hash)
-      end
 
-      decorated
+        if subprocessor.respond_to? :extract_tags
+          decorated[:meta][:tags] = processor.extract_tags(original_hash)
+        end
+
+        decorated
+      end
     end
 
     private
 
-    def construct_event(original_hash)
-      feed = @feed.capitalize
-      type = subprocessor.determine_event_type(original_hash)
-      Events.const_get(feed).const_get(type).new(original_hash)
+    def construct_event
+      feed_name = @feed.capitalize
+      type_name = subprocessor.determine_event_type(@response)
+      Events.feed(feed_name).type(type_name).new(@response)
     end
     
     def subprocessor
-      @subprocessor ||= Events.const_get(@feed.capitalize)::Processor.new{config}
+      @subprocessor ||= Events.feed(@feed.capitalize)::Processor.new(@response){@config}
     end
   end
 

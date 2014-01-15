@@ -62,26 +62,8 @@ class Poller
   end
 
   def handle_success(response)
-    publish(reject_old(decorate(extract(parse(response)))))
-  end
-  
-  def parse(data)
-    if json_feed?
-      Yajl::Parser.parse(data)
-    elsif rss_feed?
-      @parser ||= Nori.new(:parser => :nokogiri)
-      @parser.parse(data)
-    else
-      fail UnknownFeedTypeException, "can't determine if feed is JSON or XML"
-    end
-  end
-
-  def extract(response)
-    processor.extract(response)
-  end
-
-  def decorate(events)
-    events.map {|e| processor.decorate(e)}
+    decorated_events = processor(response).parse.extract.decorate
+    publish(reject_old(decorated_events))
   end
   
   def reject_old(events)
@@ -102,8 +84,8 @@ class Poller
     end
   end
 
-  def processor
-    @processor ||= Events::Processor.new(@feed) { @config[:processor_config] }
+  def processor(response)
+    Events::Processor.new(@feed, response) { @config[:processor_config] }
   end
 
   def success?(http_resp)

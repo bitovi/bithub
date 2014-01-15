@@ -1,3 +1,5 @@
+require 'lib/core_helpers'
+
 module Events
   class Payload
     class MissingFeedError < Exception; end
