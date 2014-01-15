@@ -10,15 +10,9 @@ module Events
       end
 
       def process(original_hash, processed)
-        processed.deep_merge({
-          meta: {
-            feed: 'forum',
-            type: 'post',
-            tags: [@config.andand[:term]],
-          }
-        })
+        #tags: [@config.andand[:term]],
       end
-      
+
       def determine_event_type(original_hash)
         "Post"
       end

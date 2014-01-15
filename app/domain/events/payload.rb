@@ -1,8 +1,4 @@
-require 'events/modules/constructable'
-Dir.glob('app/domain/events/feeds/*/*.rb').each { |f| require f }
-
 module Events
-
   class Payload
     class MissingFeedError < Exception; end
     class MissingTypeError < Exception; end
@@ -40,6 +36,7 @@ module Events
     end
 
     def remap_feed_and_type
+      @data[:meta][:type].gsub('Event', '')
       @data[:meta][:feed] = @feed_mappings[@data[:meta][:feed]]
       @data[:meta][:type] = @type_mappings[@data[:meta][:type]]
     end
@@ -89,3 +86,6 @@ module Events
 
   end
 end
+
+require 'events/modules/constructable'
+Dir.glob('app/domain/events/feeds/*/*.rb').each { |f| require f }

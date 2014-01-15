@@ -4,7 +4,7 @@ module Events
       include Constructable
 
       def content_digest
-        @digest ||= Digest::MD5.hexdigest(link.to_s + self.class.name)
+        @digest ||= Digest::MD5.hexdigest(link + self.class.name)
       end
 
       def title
