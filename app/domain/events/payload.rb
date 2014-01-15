@@ -7,6 +7,8 @@ module Events
     class MissingFeedError < Exception; end
     class MissingTypeError < Exception; end
 
+    include CoreHelpers
+    
     def initialize(payload)
       @data = symbolize_keys(payload)
       verify_existance_of_critical_attributes
@@ -31,7 +33,7 @@ module Events
 
     def construct_event(payload)
       feed = payload.andand[:meta].andand[:feed].camel_case
-      type = payload.andand[:meta].andand[:type].camel_case
+      type = payload.andand[:meta].andand[:type].camel_case.gsub(/Event/,'')
       fail MissingFeedError if !feed
       fail MissingTypeError if !type
       Events.const_get(feed).const_get(type).new(payload)

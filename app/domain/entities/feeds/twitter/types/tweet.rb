@@ -12,7 +12,7 @@ module Entities
 
 
       def procure
-        if @payload.tweet_id && (entity = find_by_tweet_id(@payload.tweet_id).first)
+        if @payload.tweet_id && (entity = find_by_tweet_id)
           entity
         else
           build
@@ -20,7 +20,7 @@ module Entities
       end
 
       def procure_parent
-        find_original_tweet.first if @payload.retweeted_id
+        find_original_tweet if @payload.retweeted_id
       end
 
       def procure_children
@@ -32,7 +32,7 @@ module Entities
 
       # Builder
       def build
-        entity = Hash.new({
+        entity = @persistor.new({
           title: @payload.text,
           url: @payload.html_url,
           props: {
@@ -48,9 +48,16 @@ module Entities
       end
 
       # Finders
+      def find_by_tweet_id
+        @persistor.tagged_with(['twitter', 'status_event'])
+        .where("props -> 'tweet_id' = '#{@payload.tweet_id}'")
+        .first
+      end
+      
       def find_original_tweet
         @persistor.tagged_with(['twitter', 'status_event'])
         .where("props -> 'tweet_id' = '#{@payload.retweeted_id}'")
+        .first
       end
 
       def find_retweets

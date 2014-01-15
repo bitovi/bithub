@@ -11,7 +11,7 @@ module Entities
       }
 
       def procure
-        if @payload.url && (entity = find_by_url.first)
+        if @payload.link && (entity = find_by_url.first)
           entity
         else
           build
@@ -19,13 +19,13 @@ module Entities
       end
 
       def procure_parent
-        if @payload.url
+        if @payload.link
           find_by_thread_prefix.order("origin_ts ASC").first
         end
       end
 
       def procure_children
-        if @payload.url
+        if @payload.link
           find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
         end
       end
@@ -35,7 +35,7 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        @persistor.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.link,
@@ -49,7 +49,7 @@ module Entities
       # Finders
       def find_by_url
         @persistor.tagged_with('forum')
-        .where(:url => @payload.url)
+        .where(:url => @payload.link)
       end
 
       def find_by_thread_prefix

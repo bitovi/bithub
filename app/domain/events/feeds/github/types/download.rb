@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class DownloadEvent
+    class Download
       include Constructable
       include Events::Github::Accessors::Standard
 
