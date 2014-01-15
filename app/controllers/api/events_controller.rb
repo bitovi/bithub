@@ -12,8 +12,6 @@ class Api::EventsController < Api::ApiController
   rescue_from CanCan::AccessDenied, with: :show_401
     
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
-  CATEGORIES_NAME_ORDER = YAML::load_file('config/categories_order.yml')['categories']
-  CATEGORIES_ID_ORDER = CATEGORIES_NAME_ORDER.map{|el| Tag.where("name = ?", el).pluck(:id)}.flatten
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
@@ -23,7 +21,7 @@ class Api::EventsController < Api::ApiController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = scope_applier.apply_order_to_scope(scope, params, CATEGORIES_ID_ORDER)
+      scope = scope_applier.apply_order_to_scope(scope, params)
       @events = EventDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
       })
