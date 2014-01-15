@@ -1,4 +1,5 @@
 require 'entities/modules/constructable'
+require 'entities/modules/taggable'
 
 module Entities
 
