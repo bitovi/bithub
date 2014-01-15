@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
   def link_ident!(identity)
     if identity.already_linked_to_other_user?
       fail OtherUserAlreadyLinked
-    elsif already_linked_to_current_user?
+    elsif already_linked_to_current_user?(identity)
       self
     else
       self.identities << identity 
@@ -212,7 +212,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def already_linked_to_current_user(identity)
+  def already_linked_to_current_user?(identity)
     self.identities.include?(identity)
   end
 
