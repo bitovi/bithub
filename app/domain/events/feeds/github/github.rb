@@ -1,8 +1,40 @@
 module Events
   module Github
+    class CommitComment; end
+    class Issue; end
+    class IssueComment; end
+    class PullRequest; end
+    class Push; end
+    class Watch; end
+
+    MAPPINGS = {
+      'IssuesEvent' => 'Issue'
+    }
+
+    def self.type(type_name)
+      if MAPPINGS && MAPPINGS.include?(type_name)
+        self.const_get(MAPPINGS[type_name])
+      else
+        self.const_get(type_name)
+      end
+    end
 
     class Processor
+      attr_reader :parsed, :extracted
 
+      def initialize(response)
+        @response = response
+        @config = yield if block_given?
+      end
+      
+      def parse
+        @parsed ||= Yajl::Parser.parse(@response)
+      end
+
+      def extract
+        @extracted ||= parse
+      end
+      
       def determine_event_type(original_hash)
         if github_event?(original_hash)
           original_hash['type']
@@ -11,10 +43,6 @@ module Events
         else
           fail Events::Errors::UnknownTypeException
         end
-      end
-
-      def events_from_response(response)
-        response
       end
 
       private
