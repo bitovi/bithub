@@ -2,7 +2,6 @@ require 'digest/md5'
 require 'em-twitter'
 
 require 'app/domain/events/processor'
-require 'app/domain/events/errors'
 
 class Streamer
   attr_reader :feed, :processor, :connected_as
