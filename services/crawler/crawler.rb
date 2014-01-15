@@ -76,36 +76,36 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- Pollers ---
     # ---------------
 
-    # # --- Github events
-    # feeds[:github][:repos].each do |repo_name, repo_config|
-    #   if repo_config[:events]
-    #     log_registering(repo_config[:events])
-    #     EM.add_periodic_timer(intervals[:github][:events], &Poller.handler(events_exchange, repo_config[:events]) do |c|
-    #       c[:http_head] = gh_http_req_head
-    #     end)
-    #   end
-    # end
+    # --- Github events
+    feeds[:github][:repos].each do |repo_name, repo_config|
+      if repo_config[:events]
+        log_registering(repo_config[:events])
+        EM.add_periodic_timer(intervals[:github][:events], &Poller.handler(events_exchange, repo_config[:events]) do |c|
+          c[:http_head] = gh_http_req_head
+        end)
+      end
+    end
 
 
-    # # --- Forums general feed
-    # log_registering(feeds[:forums][:general])
-    # EM.add_periodic_timer(intervals[:forums], &Poller.handler(events_exchange, feeds[:forums][:general]))
+    # --- Forums general feed
+    log_registering(feeds[:forums][:general])
+    EM.add_periodic_timer(intervals[:forums], &Poller.handler(events_exchange, feeds[:forums][:general]))
 
 
-    # # --- Forums by specific terms
-    # feeds[:forums][:terms].each do |term, term_uri|
-    #   log_registering(term_uri)
-    #   EM.add_periodic_timer(intervals[:forums], &Poller.handler(events_exchange, term_uri) do |c|
-    #     c[:processor_config] = {term: term}
-    #   end)
-    # end
+    # --- Forums by specific terms
+    feeds[:forums][:terms].each do |term, term_uri|
+      log_registering(term_uri)
+      EM.add_periodic_timer(intervals[:forums], &Poller.handler(events_exchange, term_uri) do |c|
+        c[:processor_config] = {term: term}
+      end)
+    end
 
 
-    # # --- Disqus
-    # log_registering(feeds[:disqus][:uri])
-    # EM.add_periodic_timer(intervals[:disqus], &Poller.handler(events_exchange, feeds[:disqus][:uri]) do |c|
-    #   c[:http_query] = feeds[:disqus][:query]
-    # end)
+    # --- Disqus
+    log_registering(feeds[:disqus][:uri])
+    EM.add_periodic_timer(intervals[:disqus], &Poller.handler(events_exchange, feeds[:disqus][:uri]) do |c|
+      c[:http_query] = feeds[:disqus][:query]
+    end)
 
 
     # --- Meetup
@@ -115,23 +115,21 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     end)
 
 
-    # # --- Blog
-    # log_registering(feeds[:blog])
-    # EM.add_periodic_timer(intervals[:blog], &Poller.handler(events_exchange, feeds[:blog]))
+    # --- Blog
+    log_registering(feeds[:blog])
+    EM.add_periodic_timer(intervals[:blog], &Poller.handler(events_exchange, feeds[:blog]))
 
 
     # --- Github issues
     feeds[:github][:repos].each do |repo_name, repo_config|
       if repo_config[:issues]
         [:open, :closed].each do |state|
-          EM.add_timer(phase) do
-            log_registering(repo_config[:issues], {state: state})
-            EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(events_exchange, repo_config[:issues]) do |c|
-              c[:http_head] = gh_http_req_head
-              c[:http_query] = { state: state, per_page: 100 }
-              c[:backlog_size] = 1000
-            end)
-          end
+          log_registering(repo_config[:issues], {state: state})
+          EM.add_periodic_timer(intervals[:github][:issues][state], &Poller.handler(events_exchange, repo_config[:issues]) do |c|
+            c[:http_head] = gh_http_req_head
+            c[:http_query] = { state: state, per_page: 100 }
+            c[:backlog_size] = 1000
+          end)
         end
       end
     end

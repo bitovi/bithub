@@ -7,6 +7,7 @@ require 'nori'
 
 require_relative 'fetchers'
 require 'app/domain/events/processor'
+require 'app/domain/digest_queue'
 require 'lib/loggable'
 
 class Poller
@@ -61,24 +62,30 @@ class Poller
   end
 
   def handle_success(response)
-    events = decorate(extract_events(parse(response)))
-    publish(process(reject_old(events)))
+    publish(reject_old(decorate(extract(parse(response)))))
+  end
+  
+  def parse(data)
+    if json_feed?
+      Yajl::Parser.parse(data)
+    elsif rss_feed?
+      @parser ||= Nori.new(:parser => :nokogiri)
+      @parser.parse(data)
+    else
+      fail UnknownFeedTypeException, "can't determine if feed is JSON or XML"
+    end
+  end
+
+  def extract(response)
+    processor.extract(response)
   end
 
   def decorate(events)
-    events.map {|e| { content_digest: processor.content_digest(e), data: e }}
+    events.map {|e| processor.decorate(e)}
   end
-
+  
   def reject_old(events)
     @digest_queue.reject_old(events)
-  end
-
-  def process(events)
-    begin
-      events.map{|e| processor.process(e[:data])}
-    rescue Events::Errors::InvalidEventException => e
-      log_exception e
-    end
   end
 
   def publish(events)
@@ -93,10 +100,6 @@ class Poller
     rescue Exception => e
       log_exception e
     end
-  end
-
-  def extract_events(response_hash)
-    processor.events_from_response(response_hash)
   end
 
   def processor
@@ -119,21 +122,10 @@ class Poller
     EM.add_timer(t, &fn)
   end
 
-  def parse(data)
-    if json_feed?
-      Yajl::Parser.parse(data)
-    elsif rss_feed?
-      @parser ||= Nori.new(:parser => :nokogiri)
-      @parser.parse(data)
-    else
-      fail UnknownFeedTypeException, "can't determine if feed is JSON or XML"
-    end
-  end
-
   private
 
   def determine_feed(uri)
-    f = %w(github disqus blog forum).select{|f| uri =~ /#{f}/}
+    f = %w(meetup github disqus blog forum).select{|f| uri =~ /#{f}/}
     f.first
   end
 
@@ -165,7 +157,7 @@ class Poller
   end
 
   def json_feed?
-    (@feed == 'github' || @feed == 'disqus')
+    (@feed == 'github' || @feed == 'disqus' || @feed == 'meetup')
   end
 
   def rss_feed?
