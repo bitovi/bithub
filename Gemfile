@@ -60,6 +60,7 @@ group :test, :development do
   gem 'evented-spec'
   gem 'git'
   gem 'database_cleaner'
+  gem 'travis', require: false
 end
 
 group :development do
