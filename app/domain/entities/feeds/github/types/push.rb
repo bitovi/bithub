@@ -24,11 +24,11 @@ module Entities
 
       def procure_children
         if @payload.commits
-          commit_comments = Entities::Github::CommitComment::Procurer
+          commit_comments = Entities::Github::CommitComment
           .new(@persistor, @payload)
           .find_by_multiple_commit_shas.all
 
-          commits = Entities::Github::Commit::Procurer
+          commits = Entities::Github::Commit
           .new(@persistor, @payload)
           .procure
 
