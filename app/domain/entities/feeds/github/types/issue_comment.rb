@@ -38,8 +38,8 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
-          title: "commented on issue ##{@payload.nubmer}",
+        @persistor.new({
+          title: "commented on issue ##{@payload.number}",
           body: @payload.body,
           url: @payload.html_url,
           props: {

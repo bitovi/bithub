@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class CreateEvent
+    class Create
       include Constructable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Refs

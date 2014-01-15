@@ -1,7 +1,7 @@
 module Events
   module Github
 
-    class ForkEvent
+    class Fork
       include Constructable
       include Events::Github::Accessors::Standard
     end

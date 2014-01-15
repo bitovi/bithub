@@ -24,11 +24,11 @@ module Entities
 
       def procure_children
         if @payload.commits
-          commit_comments = Entities::Github::CommitComment::Procurer
+          commit_comments = Entities::Github::CommitComment
           .new(@persistor, @payload)
           .find_by_multiple_commit_shas.all
 
-          commits = Entities::Github::Commit::Procurer
+          commits = Entities::Github::Commit
           .new(@persistor, @payload)
           .procure
 
@@ -50,10 +50,9 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        @persistor.new({
           title: "pushed to #{@payload.repo_name}",
-          body: @payload.body,
-          :url => "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
+          url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           props: {
             commit_shas: @payload.commit_shas,
             repo_name: @payload.repo_name,
