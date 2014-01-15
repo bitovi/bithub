@@ -12,15 +12,6 @@ describe Entities::Procurer do
     @pl_commit_comment.stub(:commit_id => "12345")
     @pl_commit_comment.stub(:switch_to_camel_case => lambda {})
 
-    # @pl_commit = double()
-    # @pl_commit.stub(:feed => "Github")
-    # @pl_commit.stub(:type => "Commit")
-    # @pl_commit.stub(:repo_name => "bitovi/canjs")
-    # @pl_commit.stub(:head => "12345")
-    # @pl_commit.stub(:commit_shas => ["12345","67890"])
-    # @pl_commit.stub(:push_id => "12345")
-    # @pl_commit.stub(:switch_to_camel_case => lambda {})
-
     @pl_issue_comment = double()
     @pl_issue_comment.stub(:feed => "Github")
     @pl_issue_comment.stub(:type => "IssueComment")
@@ -31,12 +22,6 @@ describe Entities::Procurer do
     @pl_issue_comment.stub(:label_names => "foo,bar")
     @pl_issue_comment.stub(:comment_id => "456")
     @pl_issue_comment.stub(:switch_to_camel_case => lambda {})
-
-    # @pl_issue_pull_req_action = double()
-    # @pl_issue_pull_req_action.stub(:feed => "Github")
-    # @pl_issue_pull_req_action.stub(:type => "IssuePullRequestAction")
-    # @pl_issue_pull_req_action.stub(:repo_name => "bitovi/canjs")
-    # @pl_issue_pull_req_action.stub(:switch_to_camel_case => lambda {})
 
     @pl_issue = double()
     @pl_issue.stub(:feed => "Github")
@@ -68,8 +53,10 @@ describe Entities::Procurer do
     @pl_push.stub(:type => "PushEvent") # push_event
     @pl_push.stub(:repo_name => "bitovi/canjs")
     @pl_push.stub(:head => "12345")
-    @pl_push.stub(:commit_shas => ["12345","67890"])
     @pl_push.stub(:push_id => "12345")
+    @pl_push.stub(:commit_shas => ["12345","67890"])
+    @pl_push.stub(:commit_shas_csv => "12345,67890")
+    @pl_push.stub(:commits => [{sha: '12345', message:'first'},{sha: '67890', message:'second'}])
     @pl_push.stub(:switch_to_camel_case => lambda {})
 
     @pl_watch = double()
@@ -94,15 +81,6 @@ describe Entities::Procurer do
       end      
     end
 
-    # context "Commit" do
-    #   describe "#build" do
-    #     it "instances new Entity object" do
-    #       push = Entities::Procurer.new(Entity, @pl_commit).procure        
-    #       expect(push.title).to eq("pushed to bitovi/canjs")          
-    #     end
-    #   end      
-    # end
-
     context "IssueComment" do
       describe "#build" do
         it "instances new Entity object" do
@@ -117,14 +95,6 @@ describe Entities::Procurer do
         end
       end      
     end
-
-    # context "IssuePullRequestAction" do
-    #   describe "#build" do
-    #     it "instances new Entity object" do
-    #       entity = Entities::Procurer.new(Entity, @pl_issue_pull_req_action).procure        
-    #     end
-    #   end      
-    # end
 
     context "Issue" do
       describe "#build" do
@@ -161,12 +131,17 @@ describe Entities::Procurer do
     context "Push" do
       describe "#build" do
         it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_push).procure        
+          entity = Entities::Procurer.new(Entity, @pl_push).procure
           expect(entity.title).to be_a(String)          
-          expect(entity.url).to be_a(String)          
+          expect(entity.url).to be_a(String)     
           expect(entity.props[:repo_name]).to be_a(String)
           expect(entity.props[:commit_shas]).to be_a(Array)
           #expect(entity.props[:push_id]).to be_a(Integer)
+        end
+        it "procures commits" do
+          children = Entities::Procurer.new(Entity, @pl_push).procure_children
+          expect(children.length).to be(2)
+          # additonaly check commit attrs
         end
       end      
     end

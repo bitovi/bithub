@@ -11,10 +11,11 @@ module Entities
       }
 
       def procure
-        if @payload.commits && (commits = find_by_multiple_commit_shas.all)
-          commits
-        else
+        commits = @payload.commits && find_by_multiple_commit_shas.all
+        if commits.empty?
           build_many_from_push
+        else
+          commits
         end
       end
 
@@ -30,6 +31,7 @@ module Entities
       def build_many_from_push
         @payload.commits.map do |commit|
           #Do stuff
+          commit
         end
       end
 
