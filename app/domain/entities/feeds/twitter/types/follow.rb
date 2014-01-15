@@ -10,9 +10,13 @@ module Entities
         references: [],
       }
 
+      def procure
+        build
+      end
+
       # Builder
       def build
-        Hash.new({
+        @persistor.new({
           title: "followed @#{@payload.target_screen_name}",
           props: {
             origin_author_id: @payload.source_id,
