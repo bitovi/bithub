@@ -50,37 +50,39 @@ describe User do
     end
   end
 
-  describe "#merge_identities!" do
-    let(:user) { create(:user, name: 'Nikica', email: 'neektza@gmail.com') }
-    let(:another_user) { create(:user, name: 'Veljko', email: 'veljko@kset.org') }
+  describe "#link_ident!" do
+
+    before :each do
+      @nikica = create(:user, name: 'Nikica', email: 'neektza@gmail.com')
+      @veljko = create(:user, name: 'Veljko', email: 'veljko@kset.org')
+    end
 
     context "when there is already a github identity associated with the user" do
       it "should add a new twitter identity to the existing user" do
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
 
-        user.merge_identities!(identity_twitter)
-        expect(user.reload.identities.where({:provider => 'twitter'}).first).to be
+        @nikica.link_ident!(identity_twitter)
+        expect(@nikica.reload.identities.where({:provider => 'twitter'}).first).to be
       end
     end
 
     context "when there is already a twitter identity associated with the user" do
       it "shoul add a new twitter identity to the existing user" do
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
         identity_github = create(:identity, uid: 987654321, provider: 'github')
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: user)
 
-        user.merge_identities!(identity_github)
-        expect(user.reload.identities.where({:provider => 'github'}).first).to be
+        @nikica.link_ident!(identity_github)
+        expect(@nikica.reload.identities.where({:provider => 'github'}).first).to be
       end
     end
 
     context "when there is already another user that owns the identity being merged" do
       it "should destroy the other user and snatches it's identity" do
-        old_user_id = another_user.id
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: another_user)
-        user.merge_identities!(identity_twitter)
-        expect(User.where(:id => old_user_id).first).to be_nil
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
+        @nikica.link_ident!(identity_twitter)
+        expect(User.where(:id => @veljko).first).to be_nil
       end
     end
   end
@@ -208,11 +210,11 @@ describe User do
     end
   end
   
-  describe "#award_points_for_joining" do
+  describe "#award_points_for_linking" do
     it "should award +1 point for singning in with twitter/github for the first time" do
       @user = create(:user)
-      @user.award_points_for_joining('twitter').save!
-      expect(@user.score).to eq 1
+      @user.award_points_for_linking('twitter').save!
+      expect(@user.reload.score).to eq 1
     end
   end
 
