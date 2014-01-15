@@ -1,14 +1,12 @@
 module Events
   module Disqus
+
     class Post
       include Constructable
 
-      def content_digest
-        @digest ||= Digest::MD5.hexdigest(post_id + self.class.name)
-      end
-
-      def post_id
-        source_data.andand[:id]
+      def origin_id
+        puts "Disqus::Post#origin_id #{source_data}"
+        source_data.andand[:id].to_s
       end
 
       def thread

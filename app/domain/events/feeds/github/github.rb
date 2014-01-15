@@ -1,13 +1,35 @@
 module Events
   module Github
 
+    class Processor
+
+      def determine_event_type(original_hash)
+        if github_event?(original_hash)
+          original_hash['type']
+        elsif github_issue?(original_hash)
+          'custom_issue_event'
+        else
+          fail Events::Errors::UnknownTypeException
+        end
+      end
+
+      def events_from_response(response)
+        response
+      end
+
+      private
+
+      def github_event?(event_hash)
+        not(event_hash['type'].nil?)
+      end
+
+      def github_issue?(issue_hash)
+        not(issue_hash['labels'].nil?) && not(issue_hash['state'].nil?) && not(issue_hash['comments'].nil?)
+      end
+    end
+
     module Accessors
       module Standard
-
-        def content_digest
-          # CHECK THIS !!!
-          @digest ||= Digest::MD5.hexdigest(origin_event_id.to_s + self.class.name)
-        end
 
         def origin_id
           source_data.andand[:id]
@@ -111,50 +133,6 @@ module Events
         end
       end
     end
-
-    class Processor
-      def initialize(original_hash)
-        @data = Events::Payload.new(original_hash)
-      end
-
-      def process(original_hash, processed)
-        if github_event?(original_hash)
-          processed.deep_merge({ meta: { type: @data.type.snake_case }})
-        elsif github_issue?(original_hash)
-          processed.deep_merge({ meta: { type: 'custom_issue_event' }})
-        else
-          fail Events::Errors::UnknownTypeException
-        end
-      end
-
-      def content_digest(original_hash)
-        if github_issue?(original_hash)
-          Events::Github::CustomIssue::Processor.new(original_hash).content_digest
-        elsif github_event?(original_hash)
-          Digest::MD5.hexdigest(@data.origin_event_id.to_s + 'github')
-        end
-      end  
-
-      def events_from_response(response)
-        response
-      end
-
-      private
-
-      def valid_event?(origin_hash)
-        github_event?(origin_hash) || github_issue?(origin_hash)
-      end
-
-      def github_event?(event_hash)
-        not(event_hash['type'].nil?)
-      end
-
-      def github_issue?(issue_hash)
-        not(issue_hash['labels'].nil?) && not(issue_hash['state'].nil?) && not(issue_hash['comments'].nil?)
-      end
-
-    end
-
   end
 end
 

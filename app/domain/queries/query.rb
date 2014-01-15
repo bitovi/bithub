@@ -10,7 +10,6 @@ class Query
     @model.table_name
   end
 
-
   # --- Filters ---
 
   def negations
@@ -27,6 +26,10 @@ class Query
 
   def taggables
     @qis.select{|qi| qi.tag_based?}
+  end
+
+  def orderings
+    @qis.select{|qi| qi.ordering?}
   end
 
 
@@ -46,6 +49,21 @@ class Query
   
   def pluck_and_process_regular_params
     Hash[regulars.collect{|qi| regular_query(qi)}]
+  end
+
+  def pluck_and_process_orderings
+    virtual_attr_pairs = {
+      'upvotes' => 'total_upvotes',
+      'score' => 'total_score',
+      'categories' => "idx(array#{Tag.categories_order}, category_id)"
+    }
+
+    !params[:order].blank?
+    params[:order] = [params[:order]] unless params[:order].kind_of?(Array)
+
+    params[:order].map{|el| el.gsub(':', ' ')}.each do |str_pair|
+      attribute, direction = replace_attr_if_virt(str_pair, virtual_attr_pairs)
+    end
   end
   
   # =========> Tag based params
@@ -71,7 +89,6 @@ class Query
 
   # =========> Regular params
 
-
   def regular_query(qi)
     case
     when qi.between_value?
@@ -93,5 +110,9 @@ class Query
       hash[qi_key] = qi_val
     end
     hash
+  end
+
+  def category_name_order
+    @name_order ||= YAML::load_file('config/categories_order.yml')['categories']
   end
 end
