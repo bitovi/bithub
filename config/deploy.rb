@@ -1,5 +1,7 @@
 require 'capistrano/ext/multistage'
 require 'bundler/capistrano'
+require 'travis/pro'
+
 
 set(:use_sudo, false)
 set(:ssh_options, { :forward_agent => true })
@@ -22,6 +24,9 @@ set(:stages, ['testing', 'staging', 'prod'])
 set(:default_stage, 'testing')
 
 set(:shared_children, shared_children + %w{public/uploads})
+
+set :ci_access_token, "DTaq7IXrUgbhNeaBVtTdcA"
+set :ci_repository, "bitovi/bithub"
 
 namespace :deploy do
 
@@ -69,6 +74,8 @@ namespace :deploy do
 
 end
 
+before('deploy', 'travis:verify')
 before('deploy:restart', 'deploy:recreate_upstart_conf')
 before('deploy:restart', 'deploy:symlink_uploads')
+
 after('deploy', 'db:backup')
