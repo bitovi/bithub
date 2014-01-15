@@ -140,7 +140,7 @@ class User < ActiveRecord::Base
     elsif already_linked_to_current_user?(identity)
       self
     else
-      self.identities << identity
+      self.identities << identity 
       self.delay.snatch_all_and_destroy(other_user) if other_user
       self.save!
     end
