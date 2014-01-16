@@ -5,8 +5,8 @@ module Events
       include Constructable
 
       def origin_id
-        puts "Disqus::Post#origin_id #{source_data}"
-        source_data.andand[:id].to_s
+        # puts "Disqus::Post#origin_id #{source_data}"
+        source_data.andand[:id]
       end
 
       def thread

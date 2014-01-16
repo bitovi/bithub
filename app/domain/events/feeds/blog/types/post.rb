@@ -6,6 +6,10 @@ module Events
       def content_digest
         @digest ||= Digest::MD5.hexdigest(link + self.class.name)
       end
+      
+      def link
+        source_data.andand[:link]
+      end
 
       def title
         source_data.andand[:title]
@@ -13,10 +17,6 @@ module Events
 
       def body
         Sanitize.clean(source_data.andand[:description], Sanitize::Config::RELAXED)
-      end
-
-      def link
-        source_data.andand[:link]
       end
 
       def origin_timestamp

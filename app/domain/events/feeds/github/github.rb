@@ -1,30 +1,62 @@
+require_relative 'accessors'
+
 module Events
   module Github
     class CommitComment; end
+    class Create; end
+    class CustomIssue; end
+    class Delete; end
+    class Download; end
+    class Follow; end
+    class Fork; end
+    class ForkApply; end
+    class Gist; end
+    class Gollum; end
     class Issue; end
     class IssueComment; end
+    class Member; end
+    class Public; end
     class PullRequest; end
+    class PullRequestReviewComment; end
+    class PullRequestReviewComment; end
     class Push; end
+    class TeamAdd; end
     class Watch; end
 
     MAPPINGS = {
-      'IssuesEvent' => 'Issue'
+      'Issues' => 'Issue',
     }
 
-    def self.type(type_name)
+    def self.type(source_data)
+      type_name = extract_type_name(source_data).camel_case.gsub(/Event/,'')
       if MAPPINGS && MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
         self.const_get(type_name)
       end
     end
+      
+    def self.extract_type_name(source_data)
+      if github_event?(source_data)
+        source_data['type']
+      elsif github_issue?(source_data)
+        'custom_issue_event'
+      else
+        fail Events::Errors::UnknownTypeException
+      end
+    end
+
+    def self.github_event?(source_data)
+      not(source_data['type'].nil?)
+    end
+
+    def self.github_issue?(source_data)
+      not(source_data['labels'].nil?) && not(source_data['state'].nil?) && not(source_data['comments'].nil?)
+    end
 
     class Processor
-      attr_reader :parsed, :extracted
-
       def initialize(response)
         @response = response
-        @config = yield if block_given?
       end
       
       def parse
@@ -32,135 +64,10 @@ module Events
       end
 
       def extract
-        @extracted ||= parse
-      end
-      
-      def determine_event_type(original_hash)
-        if github_event?(original_hash)
-          original_hash['type']
-        elsif github_issue?(original_hash)
-          'custom_issue_event'
-        else
-          fail Events::Errors::UnknownTypeException
-        end
-      end
-
-      private
-
-      def github_event?(event_hash)
-        not(event_hash['type'].nil?)
-      end
-
-      def github_issue?(issue_hash)
-        not(issue_hash['labels'].nil?) && not(issue_hash['state'].nil?) && not(issue_hash['comments'].nil?)
+        parse
       end
     end
 
-    module Accessors
-      module Standard
-
-        def origin_id
-          source_data.andand[:id]
-        end
-
-        def origin_event_id
-          origin_id
-        end
-
-        def payload
-          source_data.andand[:payload]
-        end
-
-        def actor
-          source_data.andand[:actor]
-        end
-
-        def repo
-          source_data.andand[:repo]
-        end
-
-        def repo_name
-          source_data.andand[:repo].andand[:name]
-        end
-
-        def origin_author_name
-          actor.andand[:login]
-        end
-
-        def origin_author_id
-          actor.andand[:id]
-        end
-
-        def origin_author_gravatar
-          actor.andand[:gravatar_id]
-        end
-
-        def origin_timestamp
-          ts_str = source_data.andand[:created_at]
-          Time.parse(ts_str).utc
-        end
-      end
-
-      module Comments
-        def comment
-          payload.andand[:comment]
-        end
-
-        def body
-          comment.andand[:body]
-        end
-
-        def html_url
-          comment.andand[:html_url]
-        end
-      end
-
-      module Refs
-        def ref_type
-          payload.andand[:ref_type]
-        end
-
-        def ref
-          payload.andand[:ref]
-        end
-      end
-
-      module Labels
-        def labels
-          issue_or_pull_req.andand[:labels]
-        end
-
-        def label_names
-          labels.map {|l| l['name'] }.join(',')
-        end        
-      end
-
-      module IssuesPullRequests
-        def title
-          issue_or_pull_req.andand[:title]
-        end
-
-        def body
-          issue_or_pull_req.andand[:body]
-        end
-
-        def html_url
-          issue_or_pull_req.andand[:html_url]
-        end
-
-        def number
-          issue_or_pull_req.andand[:number]
-        end
-
-        def state
-          issue_or_pull_req.andand[:state]
-        end
-
-        def action
-          payload.andand[:action]
-        end
-      end
-    end
   end
 end
 

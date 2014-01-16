@@ -3,7 +3,9 @@ require 'andand'
 
 require 'lib/core_ext'
 require 'lib/loggable'
+
 require 'events/payload'
+require 'events/mappings'
 require 'events/modules/errors'
 
 # Require all feed and type files
@@ -12,24 +14,15 @@ Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
 end
 
 module Events
-  MAPPINGS = { }
-
-  def self.feed(feed_name)
-    if MAPPINGS.include?(feed_name)
-      self.const_get(MAPPINGS[feed_name])
-    else
-      self.const_get(feed_name)
-    end
-  end
 
   class Processor
     include Loggable
 
-    def initialize(feed, response)
+    def initialize(response)
       initialize_logger
       @config = yield Hash.new if block_given?
+      @feed = @config.delete(:feed)
       @response = response
-      @feed = feed
     end
     
     def parse
@@ -43,8 +36,8 @@ module Events
     end
 
     def decorate
-      @extracted.map do |event_hash|
-        e = construct_event
+      @decorated ||= @extracted.map do |event_hash|
+        e = construct_event(event_hash)
 
         decorated = {
           content_digest: e.content_digest,
@@ -56,7 +49,7 @@ module Events
         }
 
         if subprocessor.respond_to? :extract_tags
-          decorated[:meta][:tags] = processor.extract_tags(original_hash)
+          decorated[:meta][:tags] = processor.extract_tags(event_hash)
         end
 
         decorated
@@ -65,10 +58,10 @@ module Events
 
     private
 
-    def construct_event
-      feed_name = @feed.capitalize
-      type_name = subprocessor.determine_event_type(@response)
-      Events.feed(feed_name).type(type_name).new(@response)
+    def construct_event(event_hash)
+      event_type = Events.feed(@feed.capitalize).type(event_hash)
+      @logger.debug "==================> class: #{event_type}"
+      event_type.new(event_hash)
     end
     
     def subprocessor

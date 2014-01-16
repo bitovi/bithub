@@ -5,8 +5,8 @@ module Events
       include Constructable
 
       def origin_id
-        puts "Meetup::Event#origin_id #{@data.inspect}"
-        source_data.andand[:id].to_s
+        # puts "Meetup::Event#origin_id #{@data.inspect}"
+        source_data.andand[:id]
       end
 
       def origin_author_id

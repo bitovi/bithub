@@ -1,9 +1,15 @@
 module Events
   module Constructable
     class InvalidDigestSeed < Exception; end
+    include Comparable
+    include CoreHelpers
 
     def initialize(payload)
-      @data = payload
+      if payload[:source_data]
+        @data = payload
+      else
+        @data = { source_data: symbolize_keys(payload) }
+      end
     end
 
     def source_data
@@ -14,17 +20,25 @@ module Events
       @data.andand[:meta]
     end
     
+    def raw
+      @data
+    end
+    
     def feed
-      meta.andand[:feed]
+      feed, _ = module_and_class_names
+      feed.snake_case
+      # meta.andand[:feed]
     end
 
     def type
-      meta.andand[:type]
+      _, type = module_and_class_names
+      type.snake_case
+      # meta.andand[:type]
     end
     
     def content_digest
       if respond_to? :origin_id
-        @digest ||= calc_digest(origin_id)
+        @digest ||= calc_digest(origin_id.to_s)
       else
         fail InvalidDigestSeed
       end
@@ -39,5 +53,9 @@ module Events
       Digest::MD5.hexdigest(seed + self.class.name)
     end
     
+    def module_and_class_names
+      _, feed, type = self.class.name.match(/.*::(.*)::(.*)/).to_a
+      [feed, type]
+    end
   end
 end
