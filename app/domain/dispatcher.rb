@@ -13,14 +13,14 @@ class Dispatcher
   include Loggable
 
   def initialize(event_persistor, entity_persistor)
-    initialize_logger
+    initialize_logger("INFO")
     @evp = event_persistor
     @enp = entity_persistor
   end
 
   def dispatch(payload)
-    # @logger.debug "NEW payload"
-    # @logger.debug payload.inspect
+    @logger.debug "NEW payload"
+    @logger.debug payload.inspect
 
     payload = Events::Payload.new(payload)
 
@@ -31,8 +31,8 @@ class Dispatcher
       source_data: payload.source_data,
     })
 
-    # @logger.debug "NEW event"
-    # @logger.debug new_event.inspect
+    @logger.debug "NEW event"
+    @logger.debug new_event.inspect
 
     procurer = Entities::Procurer.new(@enp, payload)
 
@@ -50,8 +50,8 @@ class Dispatcher
     .reference(references)
     .caused_by(new_event)
 
-    # @logger.debug "NEW entity"
-    # @logger.debug new_entity.inspect
+    @logger.debug "NEW entity"
+    @logger.debug new_entity.inspect
 
     ActiveRecord::Base.transaction do
       new_event.save!

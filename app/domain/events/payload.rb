@@ -3,13 +3,12 @@ require 'events/mappings'
 
 module Events
   class Payload
-    class MissingFeedError < Exception; end
-    class MissingTypeError < Exception; end
+    class InitializationError < Exception; end
     include CoreHelpers
     
     def initialize(payload)
-      fail MissingFeedError unless payload[:meta][:feed]
-      fail MissingTypeError unless payload[:meta][:type]
+      fail InitializationError, 'missing feed' unless payload.andand[:meta].andand[:feed]
+      fail InitializationError, 'missing type' unless payload.andand[:meta].andand[:type]
       @event = construct_event(symbolize_keys(payload))
     end
 

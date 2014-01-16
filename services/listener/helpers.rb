@@ -15,4 +15,5 @@ end
 
 def logit(logger, error, payload)
   logger.error error.inspect
+  logger.error payload.inspect
 end
