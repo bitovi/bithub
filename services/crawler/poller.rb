@@ -85,7 +85,10 @@ class Poller
   end
 
   def processor(response)
-    Events::Processor.new(@feed, response) { @config[:processor_config] }
+    Events::Processor.new(response) do 
+      config = {feed: @feed} #.deep_merge(@config[:processor_config])
+      config
+    end
   end
 
   def success?(http_resp)

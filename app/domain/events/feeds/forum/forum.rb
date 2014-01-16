@@ -3,13 +3,13 @@ require 'events/feeds/forum/types/post'
 
 module Events
   module Forum
+    class Post; end
+
     def self.type(type_name)
-      self.const_get(type_name)
+      Events::Forum::Post
     end
 
     class Processor
-      attr_reader :parsed, :extracted
-
       def initialize(response)
         @response = response
         @config = yield if block_given?
@@ -20,7 +20,7 @@ module Events
       end
 
       def extract
-        @extracted ||= parse['rss']['channel']['item']
+        parse['rss']['channel']['item']
       end
 
       def determine_event_type(original_hash)
