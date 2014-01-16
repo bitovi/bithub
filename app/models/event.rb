@@ -94,7 +94,7 @@ class Event < ActiveRecord::Base
   def self.scope_applier_overrides
     SCOPE_APPLIER_OVERRIDES
   end
-    
+
   @processor ||= Processors::Github.new({feed: 'github'})
 
   def self.github_processor
@@ -102,7 +102,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.scoped_with_includes
-    scope = Event.uniq.scoped
+    scope = Event.scoped
     scope = scope.includes(:author)
     scope = scope.includes(:category)
     scope = scope.includes(:parent)
@@ -196,7 +196,7 @@ class Event < ActiveRecord::Base
   def thread_awarded?
     !self.thread.select{|e| e.awarded?}.blank?
   end
-  
+
   def sum_upvotes
     (self.upvotes.pluck :value).reduce :+
   end
@@ -204,14 +204,14 @@ class Event < ActiveRecord::Base
   def increase_score_in_author
     if self.author
       self.author.total_score += self.rule.authorship_value
-      self.author.save!      
+      self.author.save!
     end
   end
-  
+
   def decrease_score_in_author
     if self.author
       self.author.total_score -= self.rule.authorship_value
-      self.author.save!      
+      self.author.save!
     end
   end
 
@@ -259,7 +259,7 @@ class Event < ActiveRecord::Base
       errors[:base].concat(errors.delete(:hash_key))
     end
   end
-  
+
   # Helper methods
   def self.has_an_attribute?(attr)
     Event.reflections.include?(attr.to_sym) ||
