@@ -1,13 +1,13 @@
 :intervals:
   :github:
-    :events: 2
+    :events: 6
     :issues:
-      :open: 2000
+      :open: 3000
       :closed: 6000
-  :disqus: 2000
-  :forums: 2000
-  :meetup: 2000
-  :blog:   2000
+  :disqus: 3
+  :forums: 4
+  :meetup: 3
+  :blog: 5
 
 :feeds:
   :blog: 'http://www.bitovi.com/blog.rss'
