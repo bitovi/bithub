@@ -11,7 +11,7 @@ module Events
       end
 
       def issue_id
-        # FIXME ?
+        # FIXME ? no attr in source_data
       end
       
       def title
@@ -40,6 +40,10 @@ module Events
 
       def number
         source_data.andand[:number]
+      end
+
+      def updated_at
+        source_data.andand[:updated_at]
       end
       
       def repo_name

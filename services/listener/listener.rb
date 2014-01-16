@@ -9,9 +9,7 @@ require 'config/environment'
 require 'log4r'
 
 require_relative 'helpers'
-
-puts Events.constants
-puts Entities.constants
+require 'dispatcher'
 
 logger = Log4r::Logger.new('listener')
 logger.add(Log4r::StdoutOutputter.new('console', {
@@ -32,15 +30,13 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     channel.fanout("e.events.liveservice") do |liveservice_exchange|
       queue = channel.queue("q.events").bind(input_exchange)
       queue.subscribe do |metadata, payload|
-
         begin
-          event_hash = ActiveSupport::JSON.decode(payload)
-          Events::Dispatcher.new(Event, Entity).dispatch(event_hash)
-
+          Dispatcher.new(Event, Entity).dispatch(ActiveSupport::JSON.decode(payload))
         rescue ActiveRecord::RecordInvalid => err
-          logit(logger, err, event_hash)
-        end
+          logit(logger, err, payload)
+        rescue Events::Payload::InitializationError => err
 
+        end
       end
     end
   end

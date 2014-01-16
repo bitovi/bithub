@@ -21,7 +21,7 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger
+    initialize_logger("INFO")
     @exchange = exchange
     @endpoint = endpoint
     @digest_queue = DigestQueue.new
@@ -66,6 +66,13 @@ class Poller
     publish(reject_old(decorated_events))
   end
   
+  def processor(response)
+    Events::Processor.new(response) do 
+      config = {feed: @feed} #.deep_merge(@config[:processor_config])
+      config
+    end
+  end
+  
   def reject_old(events)
     @digest_queue.reject_old(events)
   end
@@ -75,7 +82,7 @@ class Poller
       log_publishing(events)
       pack_and_publish = lambda do
         events.each do |e|
-          @exchange.publish(Yajl::Encoder.encode(e[:data]))
+          @exchange.publish(Yajl::Encoder.encode(e))
         end
       end
       EM.defer(pack_and_publish) if events.length > 0
@@ -84,12 +91,6 @@ class Poller
     end
   end
 
-  def processor(response)
-    Events::Processor.new(response) do 
-      config = {feed: @feed} #.deep_merge(@config[:processor_config])
-      config
-    end
-  end
 
   def success?(http_resp)
     http_resp.response_header.status.to_s =~ /2../
@@ -127,6 +128,7 @@ class Poller
     str = "Publishing #{es.length} items from #{@endpoint}"
     str += " for #{http_query[:state]} issues" if in_github_issues?
     @logger.info str if es.length > 0
+    @logger.debug es
   end
 
   def log_fetching(url)

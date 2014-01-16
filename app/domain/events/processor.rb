@@ -19,7 +19,7 @@ module Events
     include Loggable
 
     def initialize(response)
-      initialize_logger
+      initialize_logger("INFO")
       @config = yield Hash.new if block_given?
       @feed = @config.delete(:feed)
       @response = response
