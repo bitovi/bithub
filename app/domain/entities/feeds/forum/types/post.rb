@@ -3,7 +3,10 @@ module Entities
 
     class Post
       include Entities::Constructable
-
+      include Entities::Taggable
+      
+      attr_reader :instance
+      
       Relationships = {
         upstream: [],
         downstream: [],
@@ -12,10 +15,13 @@ module Entities
 
       def procure
         if @payload.link && (entity = find_by_url.first)
-          entity
+          @instance = entity
+          @instance.props.symbolize_keys! # hstore!
         else
-          build
+          @instace = build
         end
+        
+        self
       end
 
       def procure_parent
@@ -35,17 +41,28 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        @instance = @persistor.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.link,
           props: {
             origin_author_name: @payload.origin_author_name,
             tags: [@payload.subforum],
+            feed: @payload.feed,
+            type: @payload.type,
           }
         })
+        self
       end
 
+      def persist
+        @instance.save
+      end
+
+      def persist!
+        @instance.save!
+      end
+      
       # Finders
       def find_by_url
         @persistor.tagged_with('forum')
@@ -53,7 +70,7 @@ module Entities
       end
 
       def find_by_thread_prefix
-        thread_url, _ = @payload.url.split('#')
+        thread_url, _ = @payload.link.split('#')
         @persistor.tagged_with(%w(forum post))
         .where("url LIKE '#{thread_url}%'")
       end
