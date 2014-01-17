@@ -30,7 +30,7 @@ module Events
         source_data.andand[:category]
       end
 
-      def origin_timestamp
+      def origin_ts
         Time.parse(source_data.andand[:pubDate]).utc
       end
 
