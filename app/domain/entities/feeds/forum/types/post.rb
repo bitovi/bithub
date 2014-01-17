@@ -3,7 +3,7 @@ module Entities
 
     class Post
       include Entities::Constructable
-      include Entities::Taggable
+      include Entities::Determinable
       
       attr_reader :instance
       

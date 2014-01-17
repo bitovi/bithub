@@ -1,8 +1,15 @@
 module Entities
   module Github
+    MAPPINGS = {
+      'CustomIssue' => 'Issue',
+    }
 
-    def self.mapper(payload)
-      self.const_get(payload.type.camel_case.gsub(/Event/,''))
+    def self.type(payload)
+      if MAPPINGS.include?(payload.type)
+        self.const_get(MAPPINGS[payload.type])
+      else
+        self.const_get(payload.type)
+      end
     end
         
     class Commit; end
