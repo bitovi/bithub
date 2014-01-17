@@ -3,7 +3,7 @@ module Entities
 
     class Post
       include Entities::Constructable
-      include Entities::Taggable
+      include Entities::Determinable
       
       attr_reader :instance
       
@@ -45,11 +45,13 @@ module Entities
           title: @payload.title,
           body: @payload.body,
           url: @payload.link,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
-            origin_author_name: @payload.origin_author_name,
             tags: [@payload.subforum],
             feed: @payload.feed,
             type: @payload.type,
+            origin_author_name: @payload.origin_author_name,
           }
         })
         self
@@ -66,13 +68,14 @@ module Entities
       # Finders
       def find_by_url
         @persistor.tagged_with('forum')
-        .where(:url => @payload.link)
+          .where(:url => @payload.link)
       end
 
       def find_by_thread_prefix
         thread_url, _ = @payload.link.split('#')
         @persistor.tagged_with(%w(forum post))
-        .where("url LIKE '#{thread_url}%'")
+          .where("url LIKE '#{thread_url}%'")
+          .where("#{@persistor.table_name}.id <> #{@instance.id || 'NULL'}")
       end
 
       def relationships

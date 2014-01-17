@@ -19,7 +19,7 @@ code:
   pull_request_event: 10
 
 question:
-  forums: 10
+  forum: 10
   question: 10
 
 chat:
