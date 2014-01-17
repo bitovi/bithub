@@ -34,8 +34,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
           Dispatcher.new(Event, Entity).dispatch(ActiveSupport::JSON.decode(payload))
         rescue ActiveRecord::RecordInvalid => err
           logit(logger, err, payload)
-        rescue Events::Payload::InitializationError => err
-
+        rescue Events::InitializationError => err
         end
       end
     end

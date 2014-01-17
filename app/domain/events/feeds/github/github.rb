@@ -1,4 +1,5 @@
 require_relative 'accessors'
+require 'events/modules/errors'
 
 module Events
   module Github
@@ -38,11 +39,11 @@ module Events
       
     def self.extract_type_name(source_data)
       if github_event?(source_data)
-        source_data['type']
+        source_data['type'].camel_case
       elsif github_issue?(source_data)
-        'custom_issue_event'
+        'CustomIssue'
       else
-        fail Events::Errors::UnknownTypeException
+        fail Events::MappingError, 'unknown Github event type'
       end
     end
 
@@ -65,6 +66,9 @@ module Events
 
       def extract
         parse
+      end
+
+      def decorate
       end
     end
 
