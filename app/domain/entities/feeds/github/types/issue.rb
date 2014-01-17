@@ -69,6 +69,17 @@ module Entities
         Entities::Github::Issue::Relationships
       end
 
+      private
+
+      def taggify_labels
+        if @e.instance.props[:labels]
+          input = @e.instance.props[:labels]
+          Tagger.new(Tag.labels).find_tags(input)
+        else
+          []
+        end
+      end
+
     end
   end
 end
