@@ -4,6 +4,9 @@ module Events
     class Follow
       include Constructable
 
+      def initialize
+      end
+
       def content_digest
         Digest::MD5.hexdigest(source_id.to_s + target_id.to_s + self.class.name)
       end
@@ -30,6 +33,15 @@ module Events
 
       def source_screen_name
         source.andand[:screen_name]
+      end
+
+      def origin_timestamp
+        Time.parse(source_data.andand[:created_at]).utc
+      end
+
+      private
+      def we_are_target?(source_data)
+        %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
       end
     end
 

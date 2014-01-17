@@ -8,7 +8,6 @@ require 'nori'
 require_relative 'fetchers'
 require 'app/domain/events/processor'
 require 'app/domain/digest_queue'
-require 'lib/loggable'
 
 class Poller
   include Loggable
@@ -26,8 +25,8 @@ class Poller
     @endpoint = endpoint
     @digest_queue = DigestQueue.new
 
-    @config = {}
-    blk.call(@config) if blk # relevant keys: :http_head, :term (forums)
+    @config = OpenStruct.new
+    blk.(@config) if blk
 
     @feed ||= determine_feed(endpoint)
   end
@@ -62,14 +61,14 @@ class Poller
   end
 
   def handle_success(response)
-    decorated_events = processor(response).parse.extract.decorate
+    decorated_events = processor(response).parse.extract.decorate.result
     publish(reject_old(decorated_events))
   end
   
   def processor(response)
-    Events::Processor.new(response) do 
-      config = {feed: @feed} #.deep_merge(@config[:processor_config])
-      config
+    Events::Processor.new(response) do |config|
+      config.feed = @feed
+      config.processor_tips = @config.processor_tips
     end
   end
   
@@ -136,11 +135,11 @@ class Poller
   end
 
   def http_head
-    @config[:http_head] || {}
+    @config.http_head || {}
   end
 
   def http_query
-    @config[:http_query] || {}
+    @config.http_query || {}
   end
 
   def json_feed?

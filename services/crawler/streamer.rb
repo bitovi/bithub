@@ -4,6 +4,7 @@ require 'em-twitter'
 require 'app/domain/events/processor'
 
 class Streamer
+  include Loggable
   attr_reader :feed, :processor, :connected_as
 
   ERRBACKS = [
@@ -12,25 +13,26 @@ class Streamer
     "on_too_long", "on_no_data_received",
     "on_close", "on_max_reconnects",
     "on_enhance_your_calm", "on_service_unavailable", 
-    "on_range_unacceptable", "on_reconnect"
+    "on_range_unacceptable", "on_reconnect",
   ]
 
-  def self.connect(log, exchange, stream_auth_and_opts, is_user_stream)
-    self.new(log, exchange, stream_auth_and_opts, is_user_stream).connect
+  def self.connect(exchange, stream_config, &blk)
+    self.new(exchange, stream_config, &blk).setup_handlers
   end
 
-  def initialize(log, exchange, stream_auth_and_opts, is_user_stream)
-    @logger = log
-    @feed = 'twitter'
+  def initialize(exchange, stream_config, &blk)
+    initialize_logger("ERROR")
     @exchange = exchange
-    @stream_auth_and_opts = stream_auth_and_opts
-    @connected_as = stream_auth_and_opts[:oauth][:consumer_key] || "no consumer key!!!"
-    @processor = Events::Processor.new(@feed) {|c| c[:user_stream_flag] = is_user_stream }
+
+    @config = OpenStruct.new
+    blk.(@config) if blk
+
+    @connected_as = stream_config[:oauth][:consumer_key] || "no consumer key!!!"
+    @feed = 'twitter'
+    @stream = EM::Twitter::Client.connect(stream_config)
   end
 
-  def connect
-    @stream = EM::Twitter::Client.connect(@stream_auth_and_opts)
-
+  def setup_handlers
     @stream.each do |result|
       handle_event(result)
     end
@@ -42,28 +44,29 @@ class Streamer
     # dynamically assign the rest of the errbacks
     ERRBACKS.each do |errback|
       @stream.send(errback.to_sym) do
-        @logger.error "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
+        @logger.warn "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
       end
     end
   end
 
-  def handle_event(raw_json)
-    event = Yajl::Parser.parse(raw_json)
+  def handle_event(event_json)
     begin
-      publish(processor.process(event))
-    rescue Events::Errors::InvalidEventException => e
-      if event["friends"]
-        @logger.info "FEED: #{feed} | AS: #{connected_as} | #{e} | Skipping friends list event"
-      else
-        @logger.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event}"
+      if (event = processor(event_json).parse.extract.decorate.result)
+        publish(event)
       end
-    rescue => error
-      @logger.error "FEED: #{feed} | AS: #{connected_as} | #{error}"
+    rescue Events::MappingError => e
+      @logger.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event_json}"
+    end
+  end
+
+  def processor(response)
+    Events::Processor.new(response) do |config| 
+      config.feed = @feed
+      config.is_user_stream = @config.is_user_stream
     end
   end
 
   def publish(event)
-    #log_publishing
     EM.defer do 
       @exchange.publish(Yajl::Encoder.encode(event))
     end
@@ -73,5 +76,4 @@ class Streamer
     str = "Publishing from Twitter"
     @logger.info str
   end
-
 end
