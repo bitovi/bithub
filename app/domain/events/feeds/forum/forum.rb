@@ -1,4 +1,5 @@
 require 'lib/sanitizer'
+require 'lib/configurable'
 require 'events/feeds/forum/types/post'
 
 module Events
@@ -10,9 +11,11 @@ module Events
     end
 
     class Processor
-      def initialize(response)
+      include Configurable
+
+      def initialize(response, &blk)
+        initialize_config
         @response = response
-        @config = yield if block_given?
       end
 
       def parse
@@ -20,15 +23,11 @@ module Events
       end
 
       def extract
-        parse['rss']['channel']['item']
+        @extracted ||= parse['rss']['channel']['item']
       end
 
-      def determine_event_type(original_hash)
-        "Post"
-      end
-      
-      def tags
-        #tags: [@config.andand[:term]],
+      def decorate
+        { meta: { tags: [@config.andand[:term]] }}
       end
     end
 

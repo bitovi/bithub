@@ -3,23 +3,24 @@ require 'events/mappings'
 
 module Events
   class Payload
-    class InitializationError < Exception; end
     include CoreHelpers
+    attr_reader :feed_name
     
-    def initialize(payload)
-      fail InitializationError, 'missing feed' unless payload.andand[:meta].andand[:feed]
-      fail InitializationError, 'missing type' unless payload.andand[:meta].andand[:type]
-      @event = construct_event(symbolize_keys(payload))
+    def initialize(payload, feed_name = nil)
+      @feed_name = feed_name || payload[:meta][:feed]
+      @event = construct_event(source_data(payload))
     end
 
     def method_missing(method, *args, &block)
       @event.send(method, *args, &block)
     end
+
+    def source_data(payload)
+      (sd = (payload['source_data'] || payload[:source_data])) ? sd : payload;
+    end
     
     def construct_event(payload)
-      feed_name = payload.andand[:meta].andand[:feed]
-      type_name = payload.andand[:meta].andand[:type]
-      Events.feed(feed_name).type(type_name).new(payload)
+      Events.feed(@feed_name).type(payload).new(payload)
     end
   end
 end

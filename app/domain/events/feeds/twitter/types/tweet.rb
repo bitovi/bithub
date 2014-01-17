@@ -28,6 +28,10 @@ module Events
         user.andand[:screen_name]
       end
 
+      def origin_timestamp
+        Time.parse(source_data.andand[:created_at]).utc
+      end
+
       def html_url
         "https://twitter.com/#{origin_author_name}/status/#{origin_id_str}"
       end

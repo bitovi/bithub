@@ -18,7 +18,10 @@ module Events
       end
 
       def extract
-        parse['response']
+        @extracted = parse['response']
+      end
+
+      def decorate
       end
     end
 

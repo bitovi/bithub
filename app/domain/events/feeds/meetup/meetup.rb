@@ -11,7 +11,6 @@ module Events
     class Processor
       def initialize(response)
         @response = response
-        @config = yield if block_given?
       end
 
       def parse
@@ -22,8 +21,7 @@ module Events
         @extracted ||= parse['results']
       end
 
-      def tags
-        #tags: [@config.andand[:term]],
+      def decorate
       end
     end
 

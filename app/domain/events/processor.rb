@@ -3,6 +3,7 @@ require 'andand'
 
 require 'lib/core_ext'
 require 'lib/loggable'
+require 'lib/configurable'
 
 require 'events/payload'
 require 'events/mappings'
@@ -17,11 +18,13 @@ module Events
 
   class Processor
     include Loggable
+    include Configurable
 
-    def initialize(response)
+    def initialize(response, &blk)
       initialize_logger("INFO")
-      @config = yield Hash.new if block_given?
-      @feed = @config.delete(:feed)
+      initialize_config(&blk)
+
+      @feed = @config.feed
       @response = response
     end
     
@@ -36,24 +39,22 @@ module Events
     end
 
     def decorate
-      @decorated ||= @extracted.map do |event_hash|
+      @decorated ||= result.map do |event_hash|
         e = construct_event(event_hash)
-
-        decorated = {
+        Hash.new({
           content_digest: e.content_digest,
           source_data: e.source_data,
           meta: {
             feed: e.feed,
             type: e.type,
           }
-        }
-
-        if subprocessor.respond_to? :extract_tags
-          decorated[:meta][:tags] = processor.extract_tags(event_hash)
-        end
-
-        decorated
+        })
       end
+      self
+    end
+
+    def result
+      @decorated || @extracted || @parsed
     end
 
     private
@@ -65,7 +66,9 @@ module Events
     end
     
     def subprocessor
-      @subprocessor ||= Events.feed(@feed.capitalize)::Processor.new(@response){@config}
+      @subprocessor ||= Events.feed(@feed.capitalize)::Processor.new(@response) do |config|
+        config = @config
+      end
     end
   end
 
