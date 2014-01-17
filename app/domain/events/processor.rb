@@ -41,14 +41,11 @@ module Events
     def decorate
       @decorated ||= result.map do |event_hash|
         e = construct_event(event_hash)
-        Hash.new({
+        {
+          meta: { feed: e.feed, type: e.type },
           content_digest: e.content_digest,
           source_data: e.source_data,
-          meta: {
-            feed: e.feed,
-            type: e.type,
-          }
-        })
+        }
       end
       self
     end
@@ -66,7 +63,7 @@ module Events
     end
     
     def subprocessor
-      @subprocessor ||= Events.feed(@feed.capitalize)::Processor.new(@response) do |config|
+      @subprocessor ||= Events.feed(@feed)::Processor.new(@response) do |config|
         config = @config
       end
     end

@@ -7,16 +7,24 @@ module Events
     attr_reader :feed_name
     
     def initialize(payload, feed_name = nil)
-      @feed_name = feed_name || payload[:meta][:feed]
-      @event = construct_event(source_data(payload))
+      @feed_name = feed_name || meta_feed(payload)
+      @event = construct_event(extract_source_data(payload))
     end
 
     def method_missing(method, *args, &block)
       @event.send(method, *args, &block)
     end
 
-    def source_data(payload)
+    def extract_source_data(payload)
       (sd = (payload['source_data'] || payload[:source_data])) ? sd : payload;
+    end
+
+    def meta_type(payload)
+      (payload['meta'].andand['type'] || payload[:meta].andand[:type])
+    end
+    
+    def meta_feed(payload)
+      (payload['meta'].andand['feed'] || payload[:meta].andand[:feed])
     end
     
     def construct_event(payload)

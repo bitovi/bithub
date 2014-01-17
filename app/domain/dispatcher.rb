@@ -19,9 +19,6 @@ class Dispatcher
   end
 
   def dispatch(payload)
-    @logger.debug "NEW payload"
-    @logger.debug payload.inspect
-
     payload = Events::Payload.new(payload)
 
     new_event = @evp.new({

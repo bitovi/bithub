@@ -13,13 +13,11 @@ module Events
     end
 
     def feed
-      feed, _ = module_and_class_names
-      feed
+      @feed ||= module_and_class_names[0]
     end
 
     def type
-      _, type = module_and_class_names
-      type
+      @type ||= module_and_class_names[1]
     end
     
     def content_digest
