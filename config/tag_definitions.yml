@@ -214,6 +214,10 @@ public_event: {}
 
 custom_commit_event: {}
 
+### Forum specific
+
+post: {}
+
 ### Others
 
 jquerymx:
