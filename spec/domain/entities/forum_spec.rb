@@ -1,33 +1,51 @@
 require 'domain/entities/spec_helper'
 
-describe Entities::Procurer do
+describe Entities::Forum::Post do
 
-  before :each do
-    @pl_post = double()
-    @pl_post.stub(:feed => "Forum")
-    @pl_post.stub(:type => "Post")
-    @pl_post.stub(:title => "Some title")
-    @pl_post.stub(:body => "Lorem ipsum")
-    @pl_post.stub(:link => "http://forums.com/foobar")
-    @pl_post.stub(:subforum => "questions")
-    @pl_post.stub(:origin_author_name => "random user")
+  def build_post(attrs={})
+    payload = double()
+    payload.stub(:feed => "forum")
+    payload.stub(:type => "post")
+    payload.stub(:title => attrs[:title] || "Forum post title")
+    payload.stub(:body => attrs[:body] || "Something with canjs ...")
+    payload.stub(:link => attrs[:link] || "http://forums.com/some-post-slug")
+    payload.stub(:subforum => attrs[:subforum] || "questions")
+    payload.stub(:origin_author_name => attrs[:origin_author_name] || "random user")
+    payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
+    Entities::Forum::Post.new(Entity, payload).procure
+  end
+  
+  question = {title: "Question", link: "http://forums.com/question", origin_ts: 2.hours.ago}
+  answer = {title: "Answer", link: "http://forums.com/question#100"}
+  answer2 = {title: "Answer2", link: "http://forums.com/question#200"}
+  unrelated = {title: "Unrelated", link: "http://forums.com/unrelated"}
+
+  describe "#build" do
+    it "instances new Entity object" do
+      post = build_post
+      Entities::Determinator.new(post).determine
+      post.persist!
+      
+      expect(post.instance.title).to be_a(String)
+      expect(post.instance.body).to be_a(String)
+      expect(post.instance.url).to be_a(String)
+      expect(post.instance.props['origin_author_name']).to be_a(String)
+      expect(post.instance.tag_list).to match_array ['canjs', 'post', 'forum', 'question']
+    end
   end
 
-  
-  context "Forum" do
+  describe "#procure_*" do
+    it "checks for parents and children" do
+      a1 = build_post(answer); Entities::Determinator.new(a1).determine; a1.persist!
+      q = build_post(question); Entities::Determinator.new(q).determine; q.persist!
+      a2 = build_post(answer2); Entities::Determinator.new(a2).determine; a2.persist!
+      u = build_post(unrelated); Entities::Determinator.new(u).determine; u.persist!
 
-    context "Post" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_post).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.body).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          expect(entity.props[:origin_author_name]).to be_a(String)
-          expect(entity.props[:tags]).to eq(['questions'])
-       end
-      end      
+      expect(q.procure_children.length).to eq(2)
+      expect(a1.procure_parent.id).to eq(q.instance.id)
+      expect(a2.procure_parent.id).to eq(q.instance.id)
+      expect(u.procure_parent).to be_nil
+      expect(u.procure_children.length).to eq(0)
     end
-
-  end  
+  end
 end
