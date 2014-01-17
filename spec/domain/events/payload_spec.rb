@@ -11,15 +11,7 @@ end
 def build_payload(feed, type, opts = {})
   response_path = opts[:response_path] || "#{feed}/#{type}.json"
   load_path = File.join(['spec/support/responses', response_path])
-  
-  event_hash = {
-    source_data: load_response(load_path),
-    meta: {
-      feed: feed,
-      type: type
-    }
-  }
-  Events::Payload.new event_hash
+  Events::Payload.new(load_response(load_path), feed)
 end
 
 shared_examples_for "every event" do
@@ -30,13 +22,12 @@ end
 
 require 'spec/domain/events/feeds/twitter_spec'
 require 'spec/domain/events/feeds/github_spec'
+require 'spec/domain/events/feeds/blog_spec'
+require 'spec/domain/events/feeds/forum_spec'
+require 'spec/domain/events/feeds/disqus_spec'
 
-#require 'spec/domain/events/feeds/blog_spec'
-#require 'spec/domain/events/feeds/forum_spec'
-#require 'spec/domain/events/feeds/disqus_spec'
-#require 'spec/domain/events/feeds/bithub_spec'
-
-#require 'spec/domain/events/feeds/irc_spec'
-#require 'spec/domain/events/feeds/meetup_spec'
-#require 'spec/domain/events/feeds/stack_exchange_spec'
+# require 'spec/domain/events/feeds/bithub_spec'
+# require 'spec/domain/events/feeds/irc_spec'
+# require 'spec/domain/events/feeds/meetup_spec'
+# require 'spec/domain/events/feeds/stack_exchange_spec'
 

@@ -5,35 +5,21 @@ module Events
     include CoreHelpers
 
     def initialize(payload)
-      if payload[:source_data]
-        @data = payload
-      else
-        @data = { source_data: symbolize_keys(payload) }
-      end
+      @data = symbolize_keys(payload)
     end
 
     def source_data
-      @data.andand[:source_data]
-    end
-
-    def meta
-      @data.andand[:meta]
-    end
-    
-    def raw
       @data
     end
-    
+
     def feed
       feed, _ = module_and_class_names
-      feed.snake_case
-      # meta.andand[:feed]
+      feed
     end
 
     def type
       _, type = module_and_class_names
-      type.snake_case
-      # meta.andand[:type]
+      type
     end
     
     def content_digest

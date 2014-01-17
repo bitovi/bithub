@@ -13,7 +13,7 @@ class Dispatcher
   include Loggable
 
   def initialize(event_persistor, entity_persistor)
-    initialize_logger("INFO")
+    initialize_logger("DEBUG")
     @evp = event_persistor
     @enp = entity_persistor
   end

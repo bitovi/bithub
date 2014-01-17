@@ -18,9 +18,11 @@ module Events
       end
 
       def extract
-        parse['rss']['channel']['item']
+        @extracted ||= parse['rss']['channel']['item']
+      end
+
+      def decorate
       end
     end
-
   end
 end

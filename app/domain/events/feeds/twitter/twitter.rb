@@ -3,11 +3,15 @@ require 'events/feeds/twitter/types/follow'
 
 module Events
   module Twitter
+    class Tweet; end
+    class Follow; end
+
     MAPPINGS = {
       'StatusEvent' => 'Tweet'
     }
 
-    def self.type(type_name)
+    def self.type(source_data)
+      type_name = extract_type_name(source_data).camel_case.gsub('Event','')
       if MAPPINGS && MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
@@ -15,86 +19,57 @@ module Events
       end
     end
 
+    def self.extract_type_name(source_data)
+      if is_follow_event?(source_data)
+        'Follow'
+      elsif is_status_event?(source_data)
+        'Tweet'
+      elsif source_data['friends']
+        fail Events::MappingError, "skipping Twitter 'friends' event"
+      else
+        fail Events::MappingError, "unknown Twitter event type"
+      end
+    end
+
+    def self.is_follow_event?(source_data)
+      ((source_data['event'].andand == 'follow') &&
+        source_data['source'] && source_data['target'])
+    end
+
+    def self.is_status_event?(source_data)
+      (source_data['text'] &&
+        source_data['user'].andand['screen_name'])
+    end
+
     class Processor
+      include Configurable
       attr_reader :parsed, :extracted
 
-      def initialize
-        config = {}
-        @config = yield config if block_given?
+      def initialize(response, &blk)
+        initialize_config
+        @response = response
       end
 
-      def process(original_hash, partly_processed_hash)
-        fail_if_invalid(original_hash)
-
-        partly_processed_hash = partly_processed_hash
-        .deep_merge({ meta: { feed: 'twitter' }})
-
-        if is_user_stream? && is_follow_event?(original_hash)
-          prepare_event_from_user_stream(original_hash, partly_processed_hash)
-        elsif is_public_stream? && is_status_event?(original_hash)
-          prepare_event_from_public_stream(original_hash, partly_processed_hash)
-        end
+      def parse
+        @parsed ||= Yajl::Parser.parse(@response)
       end
 
-      def origin_timestamp(original_hash)
-        fail_if_invalid(original_hash)
-        Time.parse(datetime_str(original_hash)).utc
+      def extract
+        @extracted ||= [parse]
       end
 
-      def unique_attribute(original_hash)
-        (original_hash[:id] || original_hash['id']).to_s
+      def decorate
       end
 
       private
-
-      def datetime_str(original_hash)
-        (str = original_hash['created_at']) ? str : (fail Events::Errors::MissingTimestamp, "missing origin timestamps");
-      end
-
-      def fail_if_invalid(original_hash)
-        fail Events::Errors::InvalidEventException, "not a follow_event nor a status_event" if not(follow_or_status?(original_hash))
-      end
-
-      def follow_or_status?(event_hash)
-        (is_follow_event?(event_hash) && not(we_are_source?(event_hash))) || is_status_event?(event_hash)
-      end
-
-      def is_user_stream?
-        @config['user_stream_flag'] || false
+      def user_stream?
+        @config.is_user_stream
       end
       
-      def is_public_stream?
-        not(@user_stream_flag)
+      def public_stream?
+        not(user_stream?)
       end
-
-      def we_are_source?(event_hash)
-        %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? event_hash['source']['screen_name']
-      end
-
-      def is_follow_event?(event_hash)
-        (event_hash['event'].andand == 'follow') &&
-          has_timestamp?(event_hash) &&
-          has_target_screen_name?(event_hash)
-      end
-
-      def is_status_event?(event_hash)
-        event_hash['text'] &&
-          has_timestamp?(event_hash) &&
-          has_user?(event_hash)
-      end
-
-      def has_target_screen_name?(event_hash)
-        !!event_hash['target']['screen_name']
-      end
-
-      def has_timestamp?(event_hash)
-        !!event_hash['created_at']
-      end
-
-      def has_user?(event_hash)
-        event_hash['user'] && event_hash['user']['screen_name']
-      end
-
     end
+
   end
 end
