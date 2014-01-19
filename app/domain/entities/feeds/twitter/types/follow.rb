@@ -3,6 +3,9 @@ module Entities
 
     class Follow
       include Entities::Constructable
+      include Entities::Determinable
+
+      attr_reader :instance
 
       Relationships = {
         upstream: [],
@@ -16,13 +19,18 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        @instance = @persistor.new({
           title: "followed @#{@payload.target_screen_name}",
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
             origin_author_id: @payload.source_id,
             origin_author_name: @payload.source_screen_name,
           }
         })
+        self
       end
 
       # Finders

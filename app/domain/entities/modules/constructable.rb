@@ -12,6 +12,14 @@ module Entities
       entity
     end
 
+    def persist
+      @instance.save        
+    end
+
+    def persist!
+      @instance.save!
+    end
+
     def p
       @persistor
     end
