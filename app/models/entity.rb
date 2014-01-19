@@ -21,7 +21,7 @@ class Entity < ActiveRecord::Base
   # has_many :references, through: :entity_refs, :source => :entities
 
   belongs_to :parent, :class_name => "Entity"
-  belongs_to :rule, :foreign_key => "rule_id", :class_name => "Rule"
+  belongs_to :scoring_rule, :foreign_key => "rule_id", :class_name => "ScoringRule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"

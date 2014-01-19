@@ -6,7 +6,7 @@ namespace :data do
     puts "Importing/updating scoring rules"
     
     rules = YAML::load_file('config/scoring_rules.yml')
-    existing_rules = Rule.all.each 
+    existing_rules = ScoringRule.all.each 
     
     updated = []
     imported = []
@@ -21,11 +21,11 @@ namespace :data do
         upvote_value: rule['upvote_value']
       }
 
-      if existing = Rule.all.select {|r| r.required_tags.sort == rule_tags.sort}.first
+      if existing = ScoringRule.all.select {|r| r.required_tags.sort == rule_tags.sort}.first
         existing.assign_attributes(attrs)
         existing.save ? updated.push(rule_tags) : failed.push(rule_tags)
       else
-        t = Rule.new(attrs)
+        t = ScoringRule.new(attrs)
         t.save ? imported.push(rule_tags) : failed.push(rule_tags)
       end
     end
