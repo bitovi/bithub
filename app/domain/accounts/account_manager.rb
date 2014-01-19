@@ -119,62 +119,21 @@ class AccountManager
 
   def create_internal_follows!(accts)
     accts.map do |a|
-      for_hk = identity.uid.to_s + (a['id_str'] || a[:id_str]) + 'twitter'
-      hash_key = Digest::MD5.hexdigest(for_hk)
-      screen_name = a[:screen_name] || a['screen_name']
-      nickname = identity.source_data['nickname'] || identity.source_data[:nickname]
-
-      e = Event.new({
-        title: "followed @#{screen_name}",
-        hash_key: hash_key,
-        origin_ts: 1.year.ago,
-        origin_date: 1.year.ago.to_date,
-        thread_updated_at: 1.year.ago,
-        thread_updated_date: 1.year.ago.to_date,
-        props: {
-          origin_author_id: identity.uid,
-          origin_author_name: nickname,
-          target: screen_name,
-          feed: "twitter",
-          category: "digest",
-          type: "follow_event",
-          tags: ["follow_event"]
-        }
-      })
-
-      e.determine.save
-      e
+      Dispatcher.new(
+        Payload.new do
+          Events::Twitter::CustomFollow.new(a, identity)
+        end
+      ).dispatch
     end
   end
 
   def create_internal_watches!(repos)
     repos.map do |r|
-      for_hk = identity.uid.to_s + (r[:id] || r["id"]).to_s + 'github'
-      hash_key = Digest::MD5.hexdigest(for_hk)
-      repo_name = r[:full_name] || r['full_name']
-      nickname = identity.source_data['nickname'] || identity.source_data[:nickname]
-
-      e = Event.new({
-        title: "started watching #{repo_name}",
-        hash_key: hash_key,
-        origin_ts: 1.year.ago,
-        origin_date: 1.year.ago.to_date,
-        thread_updated_at: 1.year.ago,
-        thread_updated_date: 1.year.ago.to_date,
-        props: {
-          origin_author_id: identity.uid,
-          origin_author_name: nickname,
-          repo: repo_name,
-          repo_name: repo_name,
-          feed: "github",
-          type: "watch_event",
-          category: "digest",
-          tags: [r[:name]]
-        }
-      })
-
-      e.determine.save
-      e
+      Dispatcher.new(
+        Payload.new do
+          Events::Github::CustomWatch.new(r, identity)
+        end
+      ).dispatch
     end
   end
 
