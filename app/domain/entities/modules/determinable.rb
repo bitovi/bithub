@@ -9,18 +9,16 @@ module Entities
     end
 
     def determine_category
-      #@logger.debug "Determinator#determine_category, tag_list:#{@instance.tag_list}"
       if (category = CategoryDeterminationRule.determine_category(@instance.tag_list) || @instance.props[:category])
         category = category.snake_case
         @instance.tag_list.add(category)
         @instance.props[:category] = category
         @instance.category = Tag.find_or_create_by_name(category)
       end
-      #@logger.debug "Determinator#determine_category, category:#{Tag.find(@instance.category_id).name}" if @instance.category
     end
 
     def determine_rule
-      @instance.rule = Rule.best_match(@instance.tag_list)
+      @instance.rule = ScoringRule.best_match(@instance.tag_list)
     end
 
     def determine_author
