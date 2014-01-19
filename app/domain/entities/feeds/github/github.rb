@@ -2,6 +2,7 @@ module Entities
   module Github
     MAPPINGS = {
       'CustomIssue' => 'Issue',
+      'CustomWatch' => 'Watch',
     }
 
     def self.type(payload)
