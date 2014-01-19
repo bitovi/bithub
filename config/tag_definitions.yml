@@ -185,6 +185,9 @@ follow_event: {}
 
 status_event: {}
 
+tweet: {}
+
+follow: {}
 
 ### Github specific
 

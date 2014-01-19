@@ -3,24 +3,29 @@ module Entities
 
     class Tweet
       include Entities::Constructable
+      include Entities::Determinable
 
+      attr_reader :instance
+      
       Relationships = {
         upstream: [],
         downstream: [],
         references: [],
       }
 
-
       def procure
         if @payload.tweet_id && (entity = find_by_tweet_id)
-          entity
+          @instance = entity
+          @instance.props.symbolize_keys! # hstore!
         else
           build
         end
+        
+        self
       end
 
       def procure_parent
-        find_original_tweet if @payload.retweeted_id
+        find_original_tweet if @payload.original_tweet_id
       end
 
       def procure_children
@@ -32,36 +37,40 @@ module Entities
 
       # Builder
       def build
-        entity = @persistor.new({
+        @instance = @persistor.new({
           title: @payload.text,
           url: @payload.html_url,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
-            # origin_id: original_hash['id'],
-            # tweet_id: original_hash['id_str'],
+            tweet_id: @payload.tweet_id,
+            retweeted_id: @payload.original_tweet_id
           }
         })
 
-        entity[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
-        entity
+        @instance[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
+        self
       end
 
       # Finders
       def find_by_tweet_id
-        @persistor.tagged_with(['twitter', 'status_event'])
+        @persistor.tagged_with(['twitter', 'tweet'])
         .where("props -> 'tweet_id' = '#{@payload.tweet_id}'")
         .first
       end
       
       def find_original_tweet
-        @persistor.tagged_with(['twitter', 'status_event'])
-        .where("props -> 'tweet_id' = '#{@payload.retweeted_id}'")
+        @persistor.tagged_with(['twitter', 'tweet'])
+        .where("props -> 'tweet_id' = '#{@payload.original_tweet_id}'")
         .first
       end
 
       def find_retweets
-        @persistor.tagged_with(['twitter', 'status_event'])
+        @persistor.tagged_with(['twitter', 'tweet'])
         .where("props -> 'retweeted_id' = '#{@payload.tweet_id}'")
       end
 

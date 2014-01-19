@@ -1,10 +1,10 @@
 digest:
-  follow_event: 10
-  fork_event: 10
-  watch_event: 10
+  follow: 10 # follow_event
+  fork: 10   # fork_event
+  watch: 10  # watch_event
 
 twitter:
-  status_event: 10
+  tweet: 10 # status_event
 
 comment:
   disqus: 10

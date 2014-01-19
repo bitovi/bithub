@@ -1,53 +1,92 @@
 require 'domain/entities/spec_helper'
 
-describe Entities::Procurer do
+describe Entities::Twitter::Tweet do
 
-  before :each do
-    @pl_status = double()
-    @pl_status.stub(:feed => "Twitter")
-    @pl_status.stub(:type => "Tweet")
-    @pl_status.stub(:tweet_id => "1234567")
-    @pl_status.stub(:text => "160 character tweet text")
-    @pl_status.stub(:html_url => "http://twitter.com/foobar")
-    @pl_status.stub(:origin_author_id => "123")
-    @pl_status.stub(:origin_author_name => "canjs")
-    @pl_status.stub(:retweeted_id => nil)
-    @pl_status.stub(:retweet? => false)
+  def build_tweet(attrs={})
+    payload = double()
+    payload.stub(:feed => "twitter")
+    payload.stub(:type => "tweet")
+    payload.stub(:tweet_id => attrs[:tweet_id] || "1234567")
+    payload.stub(:text => attrs[:text] || "160 character tweet text")
+    payload.stub(:html_url => attrs[:html_url] || "http://twitter.com/foobar")
+    payload.stub(:origin_author_id => attrs[:origin_author_id] || "123")
+    payload.stub(:origin_author_name => attrs[:origin_author_name] || "canjs")
+    payload.stub(:original_tweet_id => attrs[:original_tweet_id] || nil)
+    payload.stub(:retweet? => attrs[:text] || false)
+    payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
+    Entities::Twitter::Tweet.new(Entity, payload).procure
   end
 
-  before :each do
-    @pl_follow = double()
-    @pl_follow.stub(:feed => "Twitter")
-    @pl_follow.stub(:type => "Follow")
-    @pl_follow.stub(:source_id => "123")
-    @pl_follow.stub(:source_screen_name => "foobar")
-    @pl_follow.stub(:target_screen_name => "canjs")
+  tweet = {text: "tweet", tweet_id: "12345"}
+  retweet = {text: "retweet", tweet_id: "12346", original_tweet_id: "12345", retweet?: true}
+  retweet2 = {text: "another retweet", tweet_id: "12347", original_tweet_id: "12345", retweet?: true}
+  another_tweet = {text: "another tweet", tweet_id: "12348"}
+
+  describe "#build" do
+    it "instances new Entity object" do
+      entity = build_tweet(tweet)
+      Entities::Determinator.new(entity).determine
+      entity.persist!
+
+      expect(entity.instance.title).to be_a(String)
+      expect(entity.instance.url).to be_a(String)
+      expect(entity.instance.origin_ts).to be_a(Time)
+      expect(entity.instance.thread_updated_ts).to be_a(Time)
+      expect(entity.instance.props['feed']).to eq("twitter")
+      expect(entity.instance.props['type']).to eq("tweet")
+      expect(entity.instance.props['origin_author_id']).to be_a(String)
+      expect(entity.instance.props['origin_author_name']).to be_a(String)
+      expect(entity.instance.props['retweeted_id']).to be_nil
+      
+      expect(entity.procure_children.length).to eq(0)
+      expect(entity.procure_parent).to be_nil
+    end
   end
-  
-  context "Twitter" do
 
-    context "Tweet" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_status).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          expect(entity.props[:origin_author_id]).to be_a(String)
-          expect(entity.props[:origin_author_name]).to be_a(String)
-        end
-      end      
+  describe "#procure_*" do
+    it "checks for parents and children" do
+      rt = build_tweet(retweet); Entities::Determinator.new(rt).determine; rt.persist!
+      tw = build_tweet(tweet); Entities::Determinator.new(tw).determine; tw.persist!
+      rt2 = build_tweet(retweet2); Entities::Determinator.new(rt2).determine; rt2.persist!
+      atw = build_tweet(another_tweet); Entities::Determinator.new(atw).determine; atw.persist!
+
+      expect(tw.procure_children.length).to eq(2)
+      expect(rt.procure_parent.id).to eq(tw.instance.id)
+      expect(rt2.procure_parent.id).to eq(tw.instance.id)
+      expect(atw.procure_parent).to be_nil
+      expect(atw.procure_children.length).to eq(0)
     end
+  end
 
-    context "Follow" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_follow).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.props[:origin_author_id]).to be_a(String)
-          expect(entity.props[:origin_author_name]).to be_a(String)
-        end
-      end      
+end
+
+describe Entities::Twitter::Follow do
+  def build_follow
+    payload = double()
+    payload.stub(:feed => "twitter")
+    payload.stub(:type => "follow")
+    payload.stub(:origin_ts => Time.now)
+    payload.stub(:source_id => "123")
+    payload.stub(:source_screen_name => "foobar")
+    payload.stub(:target_screen_name => "canjs")
+    Entities::Twitter::Follow.new(Entity, payload).procure    
+  end
+
+  describe "#build" do
+    it "instances new Entity object" do
+      entity = build_follow
+      Entities::Determinator.new(entity).determine
+      entity.persist!
+
+      puts entity.instance
+      
+      expect(entity.instance.title).to be_a(String)
+      expect(entity.instance.origin_ts).to be_a(Time)
+      expect(entity.instance.props['feed']).to eq('twitter')
+      expect(entity.instance.props['type']).to eq('follow')
+      expect(entity.instance.props['origin_author_id']).to be_a(String)
+      expect(entity.instance.props['origin_author_name']).to be_a(String)
     end
+  end      
 
-  end  
 end
