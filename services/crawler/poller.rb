@@ -20,7 +20,7 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger("INFO")
+    initialize_logger("DEBUG")
     @exchange = exchange
     @endpoint = endpoint
     @digest_queue = DigestQueue.new
@@ -61,8 +61,8 @@ class Poller
   end
 
   def handle_success(response)
-    decorated_events = processor(response).parse.extract.decorate.result
-    publish(reject_old(decorated_events))
+    processed = processor(response).parse.extract.decorate.result
+    publish(reject_old(processed))
   end
   
   def processor(response)
@@ -127,7 +127,6 @@ class Poller
     str = "Publishing #{es.length} items from #{@endpoint}"
     str += " for #{http_query[:state]} issues" if in_github_issues?
     @logger.info str if es.length > 0
-    @logger.debug es
   end
 
   def log_fetching(url)
@@ -152,5 +151,9 @@ class Poller
 
   def in_github_issues?
     (@feed.eql? 'github') && !!(@endpoint.match /issues/)
+  end
+
+  def count_not_empty(events)
+    events.reject{|e| e.empty?}.count
   end
 end
