@@ -31,6 +31,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       queue = channel.queue("q.events").bind(input_exchange)
       queue.subscribe do |metadata, payload|
         begin
+          logger.debug "KURAC #{payload.inspect}"
           Dispatcher.new(Event, Entity).dispatch(ActiveSupport::JSON.decode(payload))
         rescue ActiveRecord::RecordInvalid => err
           logit(logger, err, payload)
