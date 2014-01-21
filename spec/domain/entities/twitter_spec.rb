@@ -14,7 +14,7 @@ describe Entities::Twitter::Tweet do
     payload.stub(:original_tweet_id => attrs[:original_tweet_id] || nil)
     payload.stub(:retweet? => attrs[:text] || false)
     payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
-    Entities::Twitter::Tweet.new(Entity, payload).procure
+    Entities::Twitter::Tweet.new(payload).procure
   end
 
   tweet = {text: "tweet", tweet_id: "12345"}
@@ -69,7 +69,7 @@ describe Entities::Twitter::Follow do
     payload.stub(:source_id => "123")
     payload.stub(:source_screen_name => "foobar")
     payload.stub(:target_screen_name => "canjs")
-    Entities::Twitter::Follow.new(Entity, payload).procure    
+    Entities::Twitter::Follow.new(payload).procure    
   end
 
   describe "#build" do

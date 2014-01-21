@@ -12,7 +12,7 @@ describe Entities::Forum::Post do
     payload.stub(:subforum => attrs[:subforum] || "questions")
     payload.stub(:origin_author_name => attrs[:origin_author_name] || "random user")
     payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
-    Entities::Forum::Post.new(Entity, payload).procure
+    Entities::Forum::Post.new(payload).procure
   end
   
   question = {title: "Question", link: "http://forums.com/question", origin_ts: 2.hours.ago}
