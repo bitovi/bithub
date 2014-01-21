@@ -23,7 +23,7 @@ describe Entities::Forum::Post do
   describe "#build" do
     it "instances new Entity object" do
       post = build_post
-      Entities::Determinator.new(post).determine
+      post.determine
       post.persist!
       
       expect(post.instance.title).to be_a(String)
@@ -36,10 +36,10 @@ describe Entities::Forum::Post do
 
   describe "#procure_*" do
     it "checks for parents and children" do
-      a1 = build_post(answer); Entities::Determinator.new(a1).determine; a1.persist!
-      q = build_post(question); Entities::Determinator.new(q).determine; q.persist!
-      a2 = build_post(answer2); Entities::Determinator.new(a2).determine; a2.persist!
-      u = build_post(unrelated); Entities::Determinator.new(u).determine; u.persist!
+      a1 = build_post(answer); a1.determine; a1.persist!
+      q = build_post(question); q.determine; q.persist!
+      a2 = build_post(answer2); a2.determine; a2.persist!
+      u = build_post(unrelated); u.determine; u.persist!
 
       expect(q.procure_children.length).to eq(2)
       expect(a1.procure_parent.id).to eq(q.instance.id)

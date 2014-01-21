@@ -1,7 +1,7 @@
 module Entities
   module Github
 
-    class IssuePullRequestAction
+    class IssueAction
       include Entities::Constructable
 
       Relationships = {
@@ -62,5 +62,6 @@ module Entities
       end
     end
 
+    PullRequestAction = IssueAction
   end
 end

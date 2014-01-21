@@ -3,6 +3,9 @@ module Entities
 
     class CommitComment
       include Entities::Constructable
+      include Entities::Determinable
+
+      attr_reader :instance
 
       Relationships = {
         upstream: [Entities::Github::Push],
@@ -10,13 +13,13 @@ module Entities
         references: [],
       }
 
-
       def procure
         if @payload.commit_id && (entity = find_by_commit_id.first)
-          entity
+          @instance = entity
         else
-          build
+          @instance = build
         end
+        self
       end
 
       def procure_parent
@@ -40,7 +43,12 @@ module Entities
           title: "commented on a commit in #{@payload.repo_name}",
           body: @payload.body,
           url: @payload.html_url,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
+            repo_name: @payload.repo_name,
             commit_id: @payload.commit_id,
           }
         })

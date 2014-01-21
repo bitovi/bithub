@@ -4,19 +4,26 @@ module Entities
     ATTRS_FOR_TAGGING = [:url, :title, :body]
     PROPS_TO_TAGS = [:feed, :type, :project, :tags]
 
+    def determine
+      methods = collect_methods(/determine_.*/)
+
+      # we need to execute :determine_tags before the others 
+      methods.unshift(:determine_tags) if methods.delete(:determine_tags)
+      
+      methods.each {|m| self.send(m)}
+    end
+    
     def determine_feed
       @instance.feed = Tag.find_or_create_by_name(@instance.props[:feed])
     end
 
     def determine_category
-      #@logger.debug "Determinator#determine_category, tag_list:#{@instance.tag_list}"
       if (category = CategoryDeterminationRule.determine_category(@instance.tag_list) || @instance.props[:category])
         category = category.snake_case
         @instance.tag_list.add(category)
         @instance.props[:category] = category
         @instance.category = Tag.find_or_create_by_name(category)
       end
-      #@logger.debug "Determinator#determine_category, category:#{Tag.find(@instance.category_id).name}" if @instance.category
     end
 
     def determine_rule
@@ -50,7 +57,7 @@ module Entities
     private
 
     def collect_methods(regexp)
-      (self.private_methods + self.class.instance_methods(false))
+      (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
         .uniq      
     end
