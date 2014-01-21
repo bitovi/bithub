@@ -39,7 +39,7 @@ module Events
           actor.andand[:gravatar_id]
         end
 
-        def origin_timestamp
+        def origin_ts
           ts_str = source_data.andand[:created_at]
           Time.parse(ts_str).utc
         end

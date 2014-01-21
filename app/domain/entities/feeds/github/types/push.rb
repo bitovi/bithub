@@ -3,6 +3,9 @@ module Entities
 
     class Push
       include Entities::Constructable
+      include Entities::Determinable
+
+      attr_reader :instance
 
       Relationships = {
         upstream: [],
@@ -10,16 +13,13 @@ module Entities
         references: [Entities::Github::Issue, Entities::Github::PullRequest],
       }
 
-
       def procure
         if @payload.push_id && (entity = find_by_push_id.first)
-          entity
+          @instance = entity
         else
-          build
+          @instance = build
         end
-      end
-
-      def procure_parent
+        self
       end
 
       def procure_children
@@ -53,7 +53,12 @@ module Entities
         @persistor.new({
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
+            repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
             repo_name: @payload.repo_name,
             push_id: @payload.push_id,

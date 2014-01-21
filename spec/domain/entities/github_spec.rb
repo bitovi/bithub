@@ -1,159 +1,218 @@
 require 'domain/entities/spec_helper'
 
-describe Entities::Procurer do
+def build_standard_github_payload(attrs={})
+  payload = double()
+  payload.stub(:feed => "github")
+  payload.stub(:repo_name => "bitovi/canjs")
+  payload.stub(:origin_ts => Time.now)
+  payload.stub(:switch_to_camel_case => lambda {})
+  payload
+end
 
-  before :each do
-    @pl_commit_comment = double()
-    @pl_commit_comment.stub(:feed => "Github")
-    @pl_commit_comment.stub(:type => "CommitComment")
-    @pl_commit_comment.stub(:repo_name => "bitovi/canjs")
-    @pl_commit_comment.stub(:body => "Lorem ipsum ...")
-    @pl_commit_comment.stub(:html_url => "http://github.com/foobar")
-    @pl_commit_comment.stub(:commit_id => "12345")
-    @pl_commit_comment.stub(:switch_to_camel_case => lambda {})
+def build_issue(attrs={})
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "issue")
+  payload.stub(:title => "Having issue with something on ...")    
+  payload.stub(:body => attrs[:body] || "Long description of an issue with examples ...")
+  payload.stub(:html_url => "http://github.com/issues/123")
+  payload.stub(:number => attrs[:number] || "123")
+  payload.stub(:issue_or_pull_req_number => attrs[:number] || "123")
+  payload.stub(:issue_id => attrs[:issue_id] || "123456")
+  payload.stub(:label_names => "")
+  payload.stub(:state => "open")
+  Entities::Github::Issue.new(Entity, payload).procure
+end
 
-    @pl_issue_comment = double()
-    @pl_issue_comment.stub(:feed => "Github")
-    @pl_issue_comment.stub(:type => "IssueComment")
-    @pl_issue_comment.stub(:repo_name => "bitovi/canjs")
-    @pl_issue_comment.stub(:body => "Lorem ipsum")
-    @pl_issue_comment.stub(:html_url => "http://github.com/foobar")
-    @pl_issue_comment.stub(:number => "123")
-    @pl_issue_comment.stub(:label_names => "foo,bar")
-    @pl_issue_comment.stub(:comment_id => "456")
-    @pl_issue_comment.stub(:switch_to_camel_case => lambda {})
+def build_issue_comment(attrs={})
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "issue_comment")
+  payload.stub(:body => attrs[:body] || "Commenting an issue with something wise ...")
+  payload.stub(:html_url => "http://github.com/issue/123#issuecomment-123456")
+  payload.stub(:number => attrs[:number] || "123")
+  payload.stub(:issue_or_pull_req_number => attrs[:number] || "123")
+  payload.stub(:label_names => "")
+  payload.stub(:comment_id => attrs[:comment_id] || "123456")
+  Entities::Github::IssueComment.new(Entity, payload).procure
+end
 
-    @pl_issue = double()
-    @pl_issue.stub(:feed => "Github")
-    @pl_issue.stub(:type => "Issue")
-    @pl_issue.stub(:repo_name => "bitovi/canjs")
-    @pl_issue.stub(:title => "foobar")    
-    @pl_issue.stub(:body => "Lorem ipsum")
-    @pl_issue.stub(:html_url => "http://github.com/foobar")
-    @pl_issue.stub(:number => "123")
-    @pl_issue.stub(:issue_id => "456")
-    @pl_issue.stub(:label_names => "foo,bar")
-    @pl_issue.stub(:state => "open")
-    @pl_issue.stub(:switch_to_camel_case => lambda {})
+# def build_commit(attrs={})
+#   payload = double()
+#   Entities::Github::Commit.new(Entity, payload).procure  
+# end
 
-    @pl_pull_req = double()
-    @pl_pull_req.stub(:feed => "Github")
-    @pl_pull_req.stub(:type => "PullRequest")
-    @pl_pull_req.stub(:repo_name => "bitovi/canjs")
-    @pl_pull_req.stub(:body => "Lorem ipsum")
-    @pl_pull_req.stub(:html_url => "http://github.com/foobar")
-    @pl_pull_req.stub(:number => "123")
-    @pl_pull_req.stub(:pull_request_id => "456")
-    @pl_pull_req.stub(:state => "open")
-    @pl_pull_req.stub(:action => "open")
-    @pl_pull_req.stub(:switch_to_camel_case => lambda {})
+def build_commit_comment(attrs={})
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "commit_comment")
+  payload.stub(:body => attrs[:body] || "Lorem ipsum ...")
+  payload.stub(:html_url => "http://github.com/foobar")
+  payload.stub(:commit_id => attrs[:comment_id] || "12345")
+  Entities::Github::CommitComment.new(Entity, payload).procure
+end
 
-    @pl_push = double()
-    @pl_push.stub(:feed => "Github") # github
-    @pl_push.stub(:type => "PushEvent") # push_event
-    @pl_push.stub(:repo_name => "bitovi/canjs")
-    @pl_push.stub(:head => "12345")
-    @pl_push.stub(:push_id => "12345")
-    @pl_push.stub(:commit_shas => ["12345","67890"])
-    @pl_push.stub(:commit_shas_csv => "12345,67890")
-    @pl_push.stub(:commits => [{sha: '12345', message:'first'},{sha: '67890', message:'second'}])
-    @pl_push.stub(:switch_to_camel_case => lambda {})
 
-    @pl_watch = double()
-    @pl_watch.stub(:feed => "Github")
-    @pl_watch.stub(:type => "Watch")
-    @pl_watch.stub(:repo_name => "bitovi/canjs")
-    @pl_watch.stub(:switch_to_camel_case => lambda {})    
+def build_pull_req(attrs={})  
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "pull_request")
+  payload.stub(:body => attrs[:body] || "Lorem ipsum")
+  payload.stub(:html_url => "http://github.com/foobar")
+  payload.stub(:number => attrs[:number] || "123")
+  payload.stub(:issue_or_pull_req_number => attrs[:number] || "123")
+  payload.stub(:pull_request_id => "456")
+  payload.stub(:state => "open")
+  payload.stub(:action => "open")
+  Entities::Github::PullRequest.new(Entity, payload).procure
+end
+
+def build_pull_req_comment(attrs={})
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "pull_request_comment")
+  Entities::Github::PullRequestComment.new(Entity, payload).procure
+end
+
+def build_push(attrs={})  
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "push") # push_event
+  payload.stub(:head => "12345")
+  payload.stub(:push_id => "12345")
+  payload.stub(:commit_shas => ["12345","67890"])
+  payload.stub(:commit_shas_csv => "12345,67890")
+  payload.stub(:commits => [{sha: '12345', message:'first'},{sha: '67890', message:'second'}])
+  Entities::Github::Push.new(Entity, payload).procure
+end
+
+def build_watch(attrs={})
+  payload = build_standard_github_payload(attrs)
+  payload.stub(:type => "watch")
+  Entities::Github::Watch.new(Entity, payload).procure
+end
+
+issue_def = {number: "100", issue_id: "1001"}
+issue_def2 = {number: "200", issue_id: "2001"}
+issue_comment_def = {number: "100", comment_id: "1002"}
+issue_comment_def2 = {number: "100", comment_id: "1003"}
+push_def = {}
+pull_req_def = {}
+pull_req_comment_def = {}
+commit_def = {}
+commit_comment_def = {}
+watch_def = {}
+
+describe Entities::Github::Issue do  
+  describe "#build" do
+    it "instances new Entity object" do
+      i = build_issue()
+      i.determine
+      i.persist!
+      
+      expect(i.instance.title).to be_a(String)
+      expect(i.instance.body).to be_a(String)
+      expect(i.instance.url).to be_a(String)
+      expect(i.instance.props['repo_name']).to be_a(String)
+      expect(i.instance.props['number']).not_to be_empty
+      expect(i.instance.props['issue_id']).not_to be_empty
+      expect(i.instance.props['label_names']).to be_a(String)
+      expect(i.instance.props['state']).to be_a(String)
+    end
   end
 
-  
-  context "Github" do
+  describe "#procure_children" do
+    it "checks for children" do
+      ic = build_issue_comment(issue_comment_def); ic.determine; ic.persist!
+      i = build_issue(issue_def); i.determine; i.persist!
+      ic2 = build_issue_comment(issue_comment_def2); ic2.determine; ic2.persist!
+      i2 = build_issue(issue_def2); i2.determine; i2.persist!
 
-    context "CommitComment" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_commit_comment).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.body).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          #expect(entity.props[:commit_id]).to be_a(Integer)
-        end
-      end      
+      expect(i.procure_children.length).to eq(2)
+      expect(i2.procure_children.length).to eq(0)
     end
-
-    context "IssueComment" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_issue_comment).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.body).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          expect(entity.props[:repo_name]).to be_a(String)
-          #expect(entity.props[:number]).to be_a(Integer)
-          expect(entity.props[:label_names]).to be_a(String)
-          #expect(entity.props[:comment_id]).to be_a(Integer)
-        end
-      end      
-    end
-
-    context "Issue" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_issue).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.body).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          expect(entity.props[:repo_name]).to be_a(String)
-          #expect(entity.props[:number]).to be_a(Integer)
-          #expect(entity.props[:issue_id]).to be_a(Integer)
-          expect(entity.props[:label_names]).to be_a(String)
-          expect(entity.props[:state]).to be_a(String)
-        end
-      end      
-    end
-    
-    context "PullRequest" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_pull_req).procure        
-          expect(entity.title).to be_a(String)
-          expect(entity.body).to be_a(String)
-          expect(entity.url).to be_a(String)          
-          expect(entity.props[:repo_name]).to be_a(String)
-          #expect(entity.props[:number]).to be_a(Integer)
-          #expect(entity.props[:pull_request_id]).to be_a(Integer)
-          expect(entity.props[:state]).to be_a(String)
-          expect(entity.props[:action]).to be_a(String)
-        end
-      end      
-    end
-
-    context "Push" do
-      describe "#build" do
-        it "instances new Entity object" do
-          entity = Entities::Procurer.new(Entity, @pl_push).procure
-          expect(entity.title).to be_a(String)          
-          expect(entity.url).to be_a(String)     
-          expect(entity.props[:repo_name]).to be_a(String)
-          expect(entity.props[:commit_shas]).to be_a(Array)
-          #expect(entity.props[:push_id]).to be_a(Integer)
-        end
-        it "procures commits" do
-          children = Entities::Procurer.new(Entity, @pl_push).procure_children
-          expect(children.length).to be(2)
-          # additonaly check commit attrs
-        end
-      end      
-    end
-
-    # context "Watch" do
-    #   describe "#build" do
-    #     it "instances new Entity object" do
-    #       entity = Entities::Procurer.new(Entity, @pl_watch).procure        
-    #       expect(entity.title).to be_a(String)          
-    #     end
-    #   end      
-    # end
-
   end  
+end
+
+describe Entities::Github::IssueComment do
+  describe "#build" do
+    it "instances new Entity object" do
+      ic = build_issue_comment(); ic.determine; ic.persist!
+      
+      expect(ic.instance.title).to be_a(String)
+      expect(ic.instance.body).to be_a(String)
+      expect(ic.instance.url).to be_a(String)
+      expect(ic.instance.props['repo_name']).to be_a(String)
+      expect(ic.instance.props['number']).not_to be_empty
+      expect(ic.instance.props['comment_id']).not_to be_empty
+    end
+  end
+
+  describe "#procure_parent" do
+    it "checks for the parent issue" do
+      ic = build_issue_comment(issue_comment_def); ic.determine; ic.persist!
+      i = build_issue(issue_def); i.determine; i.persist!
+      ic2 = build_issue_comment(issue_comment_def2); ic2.determine; ic2.persist!
+      i2 = build_issue(issue_def2); i2.determine; i2.persist!
+
+      expect(ic.procure_parent.id).to eq(i.instance.id)
+      expect(ic2.procure_parent.id).to eq(i.instance.id)
+    end
+  end
+end
+
+describe Entities::Github::PullRequest do
+  describe "#build" do
+    it "instances new Entity object" do
+      pr = build_pull_req(); pr.determine; pr.persist!
+
+      expect(pr.instance.title).to be_a(String)
+      expect(pr.instance.body).to be_a(String)
+      expect(pr.instance.url).to be_a(String)          
+      expect(pr.instance.props['repo_name']).to be_a(String)
+      expect(pr.instance.props['number']).not_to be_empty
+      expect(pr.instance.props['pull_request_id']).not_to be_empty
+      expect(pr.instance.props['state']).to be_a(String)
+      expect(pr.instance.props['action']).to be_a(String)
+    end
+  end  
+end
+
+# PullRequestComment behaves the same as IssueComment
+# describe Entities::Github::PullRequestComment do
+#   describe "#build" do
+#     it "instances new Entity object"
+#   end  
+# end
+
+describe Entities::Github::Push do
+  describe "#build" do
+    it "instances new Entity object" do
+      p = build_push(); p.determine; p.persist!
+
+      expect(p.instance.title).to be_a(String)
+      expect(p.instance.url).to be_a(String)
+      expect(p.instance.props['repo_name']).to be_a(String)
+      expect(p.instance.props['commit_shas']).not_to be_empty
+      expect(p.instance.props['push_id']).not_to be_empty
+    end
+  end  
+end
+
+# describe Entities::Github::Commit do
+#   describe "#build" do
+#     it "instances new Entity object"
+#   end  
+# end
+
+describe Entities::Github::CommitComment do
+  describe "#build" do
+    it "instances new Entity object" do
+      cc = build_commit_comment(); cc.determine; cc.persist!
+
+      expect(cc.instance.title).to be_a(String)
+      expect(cc.instance.body).to be_a(String)
+      expect(cc.instance.url).to be_a(String)
+      expect(cc.instance.props['repo_name']).to be_a(String)
+      expect(cc.instance.props['commit_id']).not_to be_empty      
+    end
+  end
+  
+  # describe "#procure_parent" do
+  #   it "checks for the parent commit"
+  # end
 end

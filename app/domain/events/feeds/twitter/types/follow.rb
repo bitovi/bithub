@@ -35,7 +35,7 @@ module Events
         source.andand[:screen_name]
       end
 
-      def origin_timestamp
+      def origin_ts
         Time.parse(source_data.andand[:created_at]).utc
       end
 

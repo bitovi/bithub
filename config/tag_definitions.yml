@@ -193,24 +193,32 @@ follow: {}
 
 delete_event: {}
 
+push: {}
 push_event: {}
 
+fork: {}
 fork_event: {}
 
+pull_request: {}
 pull_request_event: {}
 
 create_event: {}
 
+issue: {}
 issues_event: {}
 
+issue_comment: {}
 issue_comment_event: {}
 
+commit_comment: {}
 commit_comment_event: {}
 
+watch: {}
 watch_event: {}
 
 gollum_event: {}
 
+pull_request_review_comment: {}
 pull_request_review_comment_event: {}
 
 public_event: {}

@@ -27,7 +27,7 @@ end
 require 'entities/feeds/github/types/commit'
 require 'entities/feeds/github/types/commit_comment'
 require 'entities/feeds/github/types/issue'
-require 'entities/feeds/github/types/issue_pull_request_action'
+require 'entities/feeds/github/types/issue_action'
 require 'entities/feeds/github/types/issue_comment'
 require 'entities/feeds/github/types/pull_request'
 require 'entities/feeds/github/types/push'

@@ -8,15 +8,15 @@ twitter:
 
 comment:
   disqus: 10
-  commit_comment_event: 10
-  issue_comment_event: 10
-  pull_request_review_comment_event: 10
+  commit_comment: 10 # commit_comment_event
+  issue_comment: 10 # issue_comment_event
+  pull_request_review_comment: 10 # pull_request_review_comment_event
 
 code:
-  push_event: 10
+  push: 10 # push_event
   create_event: 10
   delete_event: 10
-  pull_request_event: 10
+  pull_request: 10 # pull_request_event
 
 question:
   forum: 10
@@ -29,14 +29,14 @@ article:
   blog: 10
 
 issue:
-  issues_event: 10
+  issue: 10 # issues_event
 
 bug:
-  issues_event: 10
+  issue: 10 # issues_event
   bug: 5
 
 feature:
-  issues_event: 10
+  issue: 10 # issues_event
   feature: 5
   feature_request: 5
   enhancement: 5

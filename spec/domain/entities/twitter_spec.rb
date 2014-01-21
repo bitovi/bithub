@@ -25,7 +25,7 @@ describe Entities::Twitter::Tweet do
   describe "#build" do
     it "instances new Entity object" do
       entity = build_tweet(tweet)
-      Entities::Determinator.new(entity).determine
+      entity.determine
       entity.persist!
 
       expect(entity.instance.title).to be_a(String)
@@ -45,10 +45,10 @@ describe Entities::Twitter::Tweet do
 
   describe "#procure_*" do
     it "checks for parents and children" do
-      rt = build_tweet(retweet); Entities::Determinator.new(rt).determine; rt.persist!
-      tw = build_tweet(tweet); Entities::Determinator.new(tw).determine; tw.persist!
-      rt2 = build_tweet(retweet2); Entities::Determinator.new(rt2).determine; rt2.persist!
-      atw = build_tweet(another_tweet); Entities::Determinator.new(atw).determine; atw.persist!
+      rt = build_tweet(retweet); rt.determine; rt.persist!
+      tw = build_tweet(tweet); tw.determine; tw.persist!
+      rt2 = build_tweet(retweet2); rt2.determine; rt2.persist!
+      atw = build_tweet(another_tweet); atw.determine; atw.persist!
 
       expect(tw.procure_children.length).to eq(2)
       expect(rt.procure_parent.id).to eq(tw.instance.id)
@@ -75,11 +75,9 @@ describe Entities::Twitter::Follow do
   describe "#build" do
     it "instances new Entity object" do
       entity = build_follow
-      Entities::Determinator.new(entity).determine
+      entity.determine
       entity.persist!
 
-      puts entity.instance
-      
       expect(entity.instance.title).to be_a(String)
       expect(entity.instance.origin_ts).to be_a(Time)
       expect(entity.instance.props['feed']).to eq('twitter')
