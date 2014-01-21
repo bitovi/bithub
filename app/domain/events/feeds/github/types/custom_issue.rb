@@ -3,6 +3,7 @@ module Events
 
     class CustomIssue
       include Constructable
+
       DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
       
       def content_digest
@@ -31,7 +32,7 @@ module Events
       end
 
       def label_names
-        labels.map(&:name)
+        labels.map{|l| l[:name]}
       end
 
       def state

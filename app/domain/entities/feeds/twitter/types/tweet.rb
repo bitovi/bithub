@@ -14,13 +14,7 @@ module Entities
       }
 
       def procure
-        if @payload.tweet_id && (entity = find_by_tweet_id)
-          @instance = entity
-          @instance.props.symbolize_keys! # hstore!
-        else
-          build
-        end
-        
+        @instance = (@payload.tweet_id && (e = find_by_tweet_id)) ? e : build
         self
       end
 
@@ -37,7 +31,7 @@ module Entities
 
       # Builder
       def build
-        @instance = @persistor.new({
+        e = Entity.new({
           title: @payload.text,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
@@ -52,28 +46,26 @@ module Entities
           }
         })
 
-        @instance[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
-        self
+        e[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
       def find_by_tweet_id
-        @persistor.tagged_with(['twitter', 'tweet'])
+        Entity.tagged_with(['twitter', 'tweet'])
         .where("props -> 'tweet_id' = '#{@payload.tweet_id}'")
-        .first
       end
       
       def find_original_tweet
-        @persistor.tagged_with(['twitter', 'tweet'])
+        Entity.tagged_with(['twitter', 'tweet'])
         .where("props -> 'tweet_id' = '#{@payload.original_tweet_id}'")
-        .first
       end
 
       def find_retweets
-        @persistor.tagged_with(['twitter', 'tweet'])
+        Entity.tagged_with(['twitter', 'tweet'])
         .where("props -> 'retweeted_id' = '#{@payload.tweet_id}'")
       end
-
     end
 
   end

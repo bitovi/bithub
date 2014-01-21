@@ -25,10 +25,10 @@ class ScoringRule< ActiveRecord::Base
   end
 
   def self.default_rule
-    Rule.where("required_tags = ?", [].to_postgres_array(true)).first
+    self.where("required_tags = ?", [].to_postgres_array(true)).first
   end
 
   def self.exact_match(tags)
-    Rule.where("required_tags = ?", tags.to_postgres_array(true)).first
+    self.where("required_tags = ?", tags.to_postgres_array(true)).first
   end
 end

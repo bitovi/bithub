@@ -3,6 +3,9 @@ module Entities
 
     class Post
       include Entities::Constructable
+      include Entities::Determinable
+      
+      attr_reader :instance
 
       Relationships = {
         upstream: [],
@@ -12,10 +15,11 @@ module Entities
 
       def procure
         if @payload.wat && (entity = find_by_wat.first)
-          entity
+          @instance ||= entity
         else
-          build
+          @instance ||= build
         end
+        self
       end
 
       def procure_parent
@@ -29,7 +33,7 @@ module Entities
 
       # Finders
       def find_by_wat?
-        @persistor.where(wat: @payload.wat)
+        Entity.where(wat: @payload.wat)
       end
 
       def relationships

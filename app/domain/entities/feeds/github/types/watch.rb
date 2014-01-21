@@ -3,6 +3,9 @@ module Entities
 
     class Watch
       include Entities::Constructable
+      include Entities::Determinable
+      
+      attr_reader :instance
 
       Relationships = {
         upstream: [],

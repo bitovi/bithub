@@ -14,18 +14,14 @@ module Entities
       }
 
       def procure
-        if @payload.commit_id && (entity = find_by_commit_id.first)
-          @instance = entity
-        else
-          @instance = build
-        end
+        @instance = (@payload.commit_id && (e = find_by_commit_id.first)) ? e : build
         self
       end
 
       def procure_parent
         if @payload.commit_id
           Entities::Github::Push::Procurer
-          .new(@persistor, @payload)
+          .new(@payload)
           .find_by_commit_id
           .first
         end
@@ -39,7 +35,7 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        e = Entity.new({
           title: "commented on a commit in #{@payload.repo_name}",
           body: @payload.body,
           url: @payload.html_url,
@@ -52,16 +48,18 @@ module Entities
             commit_id: @payload.commit_id,
           }
         })
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
       def find_by_commit_id
-        @persistor.tagged_with(['github', 'commit_comment'])
+        Entity.tagged_with(['github', 'commit_comment'])
         .where("props -> 'commit_id' = '#{@payload.commit_id}'")
       end
 
       def find_by_multiple_commit_shas
-        @persistor.tagged_with(['github', 'commit_comment'])
+        Entity.tagged_with(['github', 'commit_comment'])
         .where("position(props -> 'commit_id' in '#{@payload.commit_shas_csv}') > 0")
       end
     end

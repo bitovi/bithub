@@ -25,7 +25,7 @@ describe Entities::Determinator do
       create(:rule, required_tags: %w(canjs code github))
       event = build(:event, tag_list: %w(canjs code github))        
       event.determine_rule
-      rule = Rule.best_match(event.tag_list)
+      rule = ScoringRule.best_match(event.tag_list)
       expect(event.rule).to eq(rule)
     end
   end

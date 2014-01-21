@@ -14,13 +14,7 @@ module Entities
       }
 
       def procure
-        if @payload.link && (entity = find_by_url.first)
-          @instance = entity
-          @instance.props.symbolize_keys! # hstore!
-        else
-          @instace = build
-        end
-        
+        @instance = (@payload.link && (e = find_by_url.first)) ? e : build
         self
       end
 
@@ -41,7 +35,7 @@ module Entities
 
       # Builder
       def build
-        @instance = @persistor.new({
+        e = Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.link,
@@ -54,20 +48,21 @@ module Entities
             origin_author_name: @payload.origin_author_name,
           }
         })
-        self
+        e.props.symbolize_keys! # hstore!
+        e
       end
 
       # Finders
       def find_by_url
-        @persistor.tagged_with('forum')
+        Entity.tagged_with('forum')
           .where(:url => @payload.link)
       end
 
       def find_by_thread_prefix
         thread_url, _ = @payload.link.split('#')
-        @persistor.tagged_with(%w(forum post))
+        Entity.tagged_with(%w(forum post))
           .where("url LIKE '#{thread_url}%'")
-          .where("#{@persistor.table_name}.id <> #{@instance.id || 'NULL'}")
+          .where("#{Entity.table_name}.id <> #{@instance.id || 'NULL'}")
       end
 
       def relationships

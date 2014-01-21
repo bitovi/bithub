@@ -14,12 +14,11 @@ module Entities
       }
 
       def procure
-        if @payload.issue_id && (entity = find_by_issue_id(@payload.issue_id).first)
-          @instance ||= entity
-        else
-          @instance ||= build
-        end
+        @instance = (@payload.issue_id && (e = find_by_issue_id(@payload.issue_id).first)) ? e : build
         self
+      end
+
+      def procure_parent
       end
 
       def procure_children
@@ -35,7 +34,7 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        e = Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
@@ -52,16 +51,18 @@ module Entities
             # action: @payload.action, # IssuePullRequestAction?
           }
         })
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
       def find_by_issue_id(issue_id)
-        @persistor.tagged_with(['github', 'issue'])
+        Entity.tagged_with(['github', 'issue'])
         .where("props -> 'issue_id' = '#{issue_id}'")
       end
 
       def find_by_repo_name_and_number(repo_name, number)
-        @persistor.where("props -> 'repo_name' = '#{repo_name}'")
+        Entity.where("props -> 'repo_name' = '#{repo_name}'")
         .where("props -> 'number' = '#{number}'")
         .tagged_with(['github', 'issue'])
       end

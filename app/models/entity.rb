@@ -21,7 +21,7 @@ class Entity < ActiveRecord::Base
   # has_many :references, through: :entity_refs, :source => :entities
 
   belongs_to :parent, :class_name => "Entity"
-  belongs_to :scoring_rule, :foreign_key => "rule_id", :class_name => "ScoringRule"
+  belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
@@ -30,7 +30,7 @@ class Entity < ActiveRecord::Base
   has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
-  validates_presence_of :origin_ts, :feed_id, :category_id, :rule_id, :tag_list, :title
+  validates_presence_of :origin_ts, :feed_id, :category_id, :scoring_rule_id, :tag_list, :title
 
   serialize :props, ActiveRecord::Coders::Hstore
   serialize :source_data, JSON

@@ -1,4 +1,19 @@
 module Events
+
+  class OAuthIdentity
+    def initialize(ident)
+      @data = ident
+    end
+
+    def uid
+      @data.uid
+    end
+
+    def nickname
+      @data.source_data.andand[:nickname]
+    end
+  end
+
   module Github
     module Accessors
       module Standard

@@ -229,7 +229,7 @@ CREATE TABLE entities (
     url text,
     body text,
     author_id integer,
-    rule_id integer NOT NULL,
+    scoring_rule_id integer NOT NULL,
     feed_id integer NOT NULL,
     category_id integer NOT NULL,
     origin_ts timestamp without time zone NOT NULL,
@@ -480,10 +480,10 @@ CREATE TABLE roles (
 
 
 --
--- Name: rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: scoring_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE rules (
+CREATE TABLE scoring_rules (
     id integer NOT NULL,
     required_tags character varying(255)[],
     authorship_value integer,
@@ -540,10 +540,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.name AS user_name, 
     users.email AS user_email, 
     (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
-    ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
+    ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
            FROM entities, 
-            rules
-          WHERE ((rules.id = entities.rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+            scoring_rules
+          WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
            FROM entities, 
             upvotes
           WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
@@ -559,10 +559,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
   WHERE (((users.name IS NOT NULL) AND (users_roles.role_id IS NULL)) OR (NOT (users_roles.role_id IN ( SELECT roles.id
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
-  ORDER BY ((((( SELECT COALESCE(sum(rules.authorship_value), (0)::bigint) AS "coalesce"
+  ORDER BY ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
       FROM entities, 
-       rules
-     WHERE ((rules.id = entities.rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
+       scoring_rules
+     WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
       FROM entities, 
        upvotes
      WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
@@ -666,7 +666,7 @@ CREATE SEQUENCE rules_id_seq
 -- Name: rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE rules_id_seq OWNED BY rules.id;
+ALTER SEQUENCE rules_id_seq OWNED BY scoring_rules.id;
 
 
 --
@@ -743,8 +743,8 @@ CREATE VIEW user_total_score AS
  SELECT users.id AS user_id, 
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
            FROM entities e, 
-            rules r
-          WHERE ((r.id = e.rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+            scoring_rules r
+          WHERE ((r.id = e.scoring_rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
            FROM entities e, 
             upvotes u
           WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
@@ -863,7 +863,7 @@ ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
+ALTER TABLE ONLY scoring_rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
 
 
 --
@@ -1010,7 +1010,7 @@ ALTER TABLE ONLY roles
 -- Name: rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY rules
+ALTER TABLE ONLY scoring_rules
     ADD CONSTRAINT rules_pkey PRIMARY KEY (id);
 
 
@@ -1180,11 +1180,11 @@ ALTER TABLE ONLY entities
 
 
 --
--- Name: fk_entities_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_entities_scoring_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_rules FOREIGN KEY (rule_id) REFERENCES rules(id);
+    ADD CONSTRAINT fk_entities_scoring_rules FOREIGN KEY (scoring_rule_id) REFERENCES scoring_rules(id);
 
 
 --
@@ -1291,8 +1291,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130429181415');
 
 INSERT INTO schema_migrations (version) VALUES ('20130429201314');
 
-INSERT INTO schema_migrations (version) VALUES ('20130510181611');
-
 INSERT INTO schema_migrations (version) VALUES ('20130520040320');
 
 INSERT INTO schema_migrations (version) VALUES ('20130607045446');
@@ -1358,3 +1356,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131212152452');
 INSERT INTO schema_migrations (version) VALUES ('20131212162518');
 
 INSERT INTO schema_migrations (version) VALUES ('20131212162523');
+
+INSERT INTO schema_migrations (version) VALUES ('20140119061002');

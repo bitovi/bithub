@@ -3,6 +3,9 @@ module Entities
 
     class IssueAction
       include Entities::Constructable
+      include Entities::Determinable
+      
+      attr_reader :instance
 
       Relationships = {
         upstream: [Entities::Github::Issue, Entities::Github::PullRequest],
@@ -12,10 +15,11 @@ module Entities
 
       def procure
         if @payload.issue_id && (entity = find_by_issue_id(@payload.issue_id).first)
-          entity
+          @instance ||= entity
         else
-          build
+          @instance ||= build
         end
+        self
       end
 
       def procure_parent
@@ -42,17 +46,17 @@ module Entities
 
       # Finders
       def find_by_issue_id(issue_id)
-        @persistor.tagged_with(['github', 'issue_pull_request_action'])
+        Entity.tagged_with(['github', 'issue_pull_request_action'])
         .where("props -> 'issue_id' = '#{issue_id}'")
       end
 
       def find_by_pull_req_id(pull_req_id)
-        @persistor.tagged_with(['github', 'issue_pull_request_action'])
+        Entity.tagged_with(['github', 'issue_pull_request_action'])
         .where("props -> 'pull_request_id' = '#{pull_req_id}'")
       end
 
       def find_by_repo_name_and_number(repo_name, number)
-        @persistor.where("props -> 'repo_name' = '#{repo_name}'")
+        Entity.where("props -> 'repo_name' = '#{repo_name}'")
         .where("props -> 'number' = '#{number}'")
         .tagged_with(['github', 'issue_pull_request_action'])
       end

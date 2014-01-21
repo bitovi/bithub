@@ -14,12 +14,13 @@ module Entities
       }
 
       def procure
-        build
+        @instance ||= build
+        self
       end
 
       # Builder
       def build
-        @instance = @persistor.new({
+        e = Entity.new({
           title: "followed @#{@payload.target_screen_name}",
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
@@ -30,7 +31,8 @@ module Entities
             origin_author_name: @payload.source_screen_name,
           }
         })
-        self
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders

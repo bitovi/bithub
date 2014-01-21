@@ -66,20 +66,20 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- Streams ----
     # ----------------
 
-    # --- Twitter public stream
-    logger.info "Registering Twitter - public tweets stream"
-    pub_stream_conn_opts = feeds[:twitter][:public][:streaming]
-    Streamer.connect(events_exchange, pub_stream_conn_opts) do |config|
-      config.is_user_stream = false
-    end
+    # # --- Twitter public stream
+    # logger.info "Registering Twitter - public tweets stream"
+    # pub_stream_conn_opts = feeds[:twitter][:public][:streaming]
+    # Streamer.connect(events_exchange, pub_stream_conn_opts) do |config|
+    #   config.is_user_stream = false
+    # end
 
-    # --- Twitter user streams
-    feeds[:twitter][:user_streams].each do |screen_name, user_stream_conn_opts|
-      logger.info "Registering Twitter - @#{screen_name} user events stream"
-      Streamer.connect(events_exchange, user_stream_conn_opts) do |config|
-        config.is_user_stream = true
-      end
-    end
+    # # --- Twitter user streams
+    # feeds[:twitter][:user_streams].each do |screen_name, user_stream_conn_opts|
+    #   logger.info "Registering Twitter - @#{screen_name} user events stream"
+    #   Streamer.connect(events_exchange, user_stream_conn_opts) do |config|
+    #     config.is_user_stream = true
+    #   end
+    # end
 
     # # --- Meetup open events stream
     # stream_conn_opts = feeds[:meetup][:open_events][:streaming]
