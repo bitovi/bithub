@@ -4,7 +4,7 @@ require 'rake'
 require File.expand_path("../../../../config/environment", __FILE__)
 require 'rspec/rails'
 
-DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings rules category_determination_rules entity_aggregated_tag_list user_total_score entity_total_upvotes)}
+DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings scoring_rules category_determination_rules entity_aggregated_tag_list user_total_score entity_total_upvotes)}
 
 # Seed
 
