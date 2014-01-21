@@ -43,7 +43,7 @@ module Events
 
     class Processor
       include Constructable
-      include Configurable
+      #include Configurable
       attr_reader :parsed, :extracted
 
       def initialize(response, &blk)

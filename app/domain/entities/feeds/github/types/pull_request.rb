@@ -3,29 +3,29 @@ module Entities
 
     class PullRequest
       include Entities::Constructable
+      include Entities::Determinable
 
+      attr_reader :instance
+      
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
         references: [],
       }
 
-
       def procure
         if @payload.pull_request_id && (entity = find_by_pull_request_id(@payload.pull_request_id).first)
-          entity
+          @instance = entity
         else
-          build
+          @instance = build
         end
-      end
-
-      def procure_parent
+        self
       end
 
       def procure_children
         if @payload.repo_name && @payload.issue_or_pull_req_number
           relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl::Procurer.new(@p)
+            acc += rl.new(@payload)
             .find_by_repo_name_and_number(
               @payload.repo_name,
               @payload.issue_or_pull_req_number
@@ -43,7 +43,11 @@ module Entities
           title: "Pull request ##{@payload.number} #{@payload.action}",
           body: @payload.body,
           url: @payload.html_url,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
             pull_request_id: @payload.pull_request_id,

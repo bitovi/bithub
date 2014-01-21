@@ -3,6 +3,9 @@ module Entities
 
     class IssueComment
       include Entities::Constructable
+      include Entities::Determinable
+
+      attr_reader :instance
 
       Relationships = {
         upstream: [Entities::Github::Issue, Entities::Github::PullRequest],
@@ -12,28 +15,24 @@ module Entities
 
       def procure
         if @payload.comment_id && (entity = find_by_comment_id(@payload.comment_id).first)
-          entity
+          @instance = entity
         else
-          build
+          @instance = build
         end
+        self
       end
 
       def procure_parent
         if @payload.repo_name && @payload.issue_or_pull_req_number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl::Procurer.new(@p)
+          matches = relationships[:upstream].inject([]) do |acc, rl|
+            acc.push rl.new(Entity, @payload)
             .find_by_repo_name_and_number(
               @payload.repo_name,
               @payload.issue_or_pull_req_number
             ).first
           end
+          matches.compact.first
         end
-      end
-
-      def procure_children
-      end
-
-      def procure_references
       end
 
       # Builder
@@ -42,22 +41,26 @@ module Entities
           title: "commented on issue ##{@payload.number}",
           body: @payload.body,
           url: @payload.html_url,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
-            label_names: @payload.label_names,
             comment_id: @payload.comment_id,
           }
         })
       end
 
       # Finders
+      
       def find_by_comment_id(comment_id)
         @persistor.tagged_with(['github', 'issue_comment'])
         .where("props -> 'comment_id' = '#{comment_id}'")
       end
 
-      def find_by_repo_name_and_number(repo_name, issue_number)
+      def find_by_repo_name_and_number(repo_name, number)
         @persistor.where("props -> 'repo_name' = '#{repo_name}'")
         .where("props -> 'number' = '#{number}'")
         .tagged_with(['github', 'issue_comment'])
@@ -68,5 +71,7 @@ module Entities
       end
     end
 
+    PullRequestComment = IssueComment
+    
   end
 end
