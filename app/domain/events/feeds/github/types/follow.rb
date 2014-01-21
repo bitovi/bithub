@@ -3,6 +3,7 @@ module Events
 
     class Follow
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
     end
 

@@ -1,8 +1,8 @@
 module Events
   module Bithub
-
     class Post
       include Constructable
+      include Persistable
 
       def content_digest
       end
@@ -19,7 +19,5 @@ module Events
         Sanitize.clean(source_data.andand[:body], Sanitize::Config::RELAXED)
       end
     end
-
   end
 end
-

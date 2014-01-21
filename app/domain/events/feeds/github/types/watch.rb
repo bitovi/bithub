@@ -3,6 +3,7 @@ module Events
 
     class Watch
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
 
       def content_digest

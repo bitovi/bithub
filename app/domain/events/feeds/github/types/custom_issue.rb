@@ -3,6 +3,7 @@ module Events
 
     class CustomIssue
       include Constructable
+      include Persistable
 
       DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
       

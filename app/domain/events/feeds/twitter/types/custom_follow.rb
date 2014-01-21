@@ -3,6 +3,7 @@ module Events
 
     class CustomFollow
       include Constructable
+      include Persistable
 
       def initialize(account, identity)
         @account = Account.new(account)

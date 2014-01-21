@@ -5,6 +5,7 @@ module Events
 
     class Post
       include Constructable
+      include Persistable
 
       def content_digest
         calc_digest(link)
