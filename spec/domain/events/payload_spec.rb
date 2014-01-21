@@ -22,9 +22,9 @@ end
 
 require 'spec/domain/events/feeds/twitter_spec'
 require 'spec/domain/events/feeds/github_spec'
-require 'spec/domain/events/feeds/blog_spec'
-require 'spec/domain/events/feeds/forum_spec'
-require 'spec/domain/events/feeds/disqus_spec'
+#require 'spec/domain/events/feeds/blog_spec'
+#require 'spec/domain/events/feeds/forum_spec'
+#require 'spec/domain/events/feeds/disqus_spec'
 
 # require 'spec/domain/events/feeds/bithub_spec'
 # require 'spec/domain/events/feeds/irc_spec'

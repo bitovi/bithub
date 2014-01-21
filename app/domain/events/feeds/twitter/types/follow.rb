@@ -4,9 +4,6 @@ module Events
     class Follow
       include Constructable
 
-      def initialize
-      end
-
       def content_digest
         Digest::MD5.hexdigest(source_id.to_s + target_id.to_s + self.class.name)
       end
@@ -40,6 +37,7 @@ module Events
       end
 
       private
+      
       def we_are_target?(source_data)
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
       end

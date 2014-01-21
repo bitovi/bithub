@@ -7,8 +7,8 @@ describe Events::Payload do
   describe "#initialize" do
     context "Twitter" do
 
-      context "StatusEvent (Tweet)" do
-        let(:payload) { build_payload('twitter','status_event') }
+      context "Tweet (status_event)" do
+        let(:payload) { build_payload('twitter','tweet', {response_path: 'twitter/status_event.json'}) }
 
         it_should_behave_like "every twitter event"
         it "creates Payload object with mapping methods" do
@@ -25,8 +25,8 @@ describe Events::Payload do
         end        
       end
 
-      context "FollowEvent" do
-        let(:payload) { build_payload('twitter','follow_event') }
+      context "Follow" do
+        let(:payload) { build_payload('twitter','follow', {response_path: 'twitter/follow_event.json'}) }
         
         it_should_behave_like "every twitter event"
         it "creates Payload object with mapping methods" do
