@@ -12,7 +12,7 @@ describe Events::Payload do
       expect(payload.origin_author_name).to be_a(String)
       expect(payload.origin_author_id).to be_a(Integer)
       expect(payload.origin_author_gravatar).to be_a(String)
-      expect(payload.origin_timestamp).to be_a(Time)
+      expect(payload.origin_ts).to be_a(Time)
     end
   end
 

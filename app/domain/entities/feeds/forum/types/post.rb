@@ -57,14 +57,6 @@ module Entities
         self
       end
 
-      def persist
-        @instance.save
-      end
-
-      def persist!
-        @instance.save!
-      end
-      
       # Finders
       def find_by_url
         @persistor.tagged_with('forum')

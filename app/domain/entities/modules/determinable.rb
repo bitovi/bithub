@@ -4,6 +4,15 @@ module Entities
     ATTRS_FOR_TAGGING = [:url, :title, :body]
     PROPS_TO_TAGS = [:feed, :type, :project, :tags]
 
+    def determine
+      methods = collect_methods(/determine_.*/)
+
+      # we need to execute :determine_tags before the others 
+      methods.unshift(:determine_tags) if methods.delete(:determine_tags)
+      
+      methods.each {|m| self.send(m)}
+    end
+    
     def determine_feed
       @instance.feed = Tag.find_or_create_by_name(@instance.props[:feed])
     end
@@ -48,7 +57,7 @@ module Entities
     private
 
     def collect_methods(regexp)
-      (self.private_methods + self.class.instance_methods(false))
+      (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
         .uniq      
     end

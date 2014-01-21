@@ -3,7 +3,10 @@ module Entities
 
     class Issue
       include Entities::Constructable
+      include Entities::Determinable
 
+      attr_reader :instance
+      
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
@@ -12,23 +15,17 @@ module Entities
 
       def procure
         if @payload.issue_id && (entity = find_by_issue_id(@payload.issue_id).first)
-          entity
+          @instance ||= entity
         else
-          build
+          @instance ||= build
         end
-      end
-
-      def procure_parent
+        self
       end
 
       def procure_children
         if @payload.repo_name && @payload.issue_or_pull_req_number
           relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl::Procurer.new(@p)
-            .find_by_repo_name_and_number(
-              @payload.repo_name,
-              @payload.issue_or_pull_req_number
-            ).all
+            acc += rl.new(Entity, @payload).find_by_repo_name_and_number(@payload.repo_name, @payload.number).all
           end
         end
       end
@@ -42,7 +39,11 @@ module Entities
           title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
           props: {
+            feed: @payload.feed,
+            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
             issue_id: @payload.issue_id,
@@ -72,8 +73,8 @@ module Entities
       private
 
       def taggify_labels
-        if @e.instance.props[:labels]
-          input = @e.instance.props[:labels]
+        if @instance.props[:labels]
+          input = @instance.props[:labels]
           Tagger.new(Tag.labels).find_tags(input)
         else
           []
