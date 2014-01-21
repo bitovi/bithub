@@ -25,11 +25,7 @@ module Entities
       def procure_parent
         if @payload.repo_name && @payload.issue_or_pull_req_number
           relationships[:upstream].reduce([]) do |acc, rl|
-            acc += rl::Procurer.new(@p)
-            .find_by_repo_name_and_number(
-              @payload.repo_name,
-              @payload.issue_or_pull_req_number
-            ).first
+            acc += rl.new(@payload).find_by_repo_name_and_number.first
           end
         end
       end
@@ -45,19 +41,19 @@ module Entities
       end
 
       # Finders
-      def find_by_issue_id(issue_id)
+      def find_by_issue_id
         Entity.tagged_with(['github', 'issue_pull_request_action'])
-        .where("props -> 'issue_id' = '#{issue_id}'")
+        .where("props -> 'issue_id' = '#{@payload.issue_id}'")
       end
 
-      def find_by_pull_req_id(pull_req_id)
+      def find_by_pull_req_id
         Entity.tagged_with(['github', 'issue_pull_request_action'])
-        .where("props -> 'pull_request_id' = '#{pull_req_id}'")
+        .where("props -> 'pull_request_id' = '#{@payload.pull_req_id}'")
       end
 
-      def find_by_repo_name_and_number(repo_name, number)
-        Entity.where("props -> 'repo_name' = '#{repo_name}'")
-        .where("props -> 'number' = '#{number}'")
+      def find_by_repo_name_and_number
+        Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        .where("props -> 'number' = '#{@payload.number}'")
         .tagged_with(['github', 'issue_pull_request_action'])
       end
 
