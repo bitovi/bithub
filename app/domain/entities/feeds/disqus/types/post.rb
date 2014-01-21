@@ -40,8 +40,7 @@ module Entities
 
       # Finders
       def find_by_post_id
-        Entity
-          .tagged_with('disqus')
+        Entity.tagged_with(%w(disqus post))
           .where("props -> 'post_id' = '#{@payload.post_id}'")
       end
 

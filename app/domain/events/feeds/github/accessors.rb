@@ -72,6 +72,10 @@ module Events
         def html_url
           comment.andand[:html_url]
         end
+
+        def comment_id
+          comment.andand[:id]
+        end
       end
 
       module Refs

@@ -43,6 +43,10 @@ module Events
         source_data.andand[:number]
       end
 
+      def origin_timestamp
+        source_data.andand[:created_at]
+      end
+
       def updated_at
         source_data.andand[:updated_at]
       end

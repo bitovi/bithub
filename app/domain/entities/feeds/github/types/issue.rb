@@ -22,7 +22,7 @@ module Entities
       end
 
       def procure_children
-        if @payload.repo_name && @payload.issue_or_pull_req_number
+        if @payload.repo_name && @payload.number
           relationships[:downstream].reduce([]) do |acc, rl|
             acc += rl.new(@payload).find_by_repo_name_and_number.all
           end

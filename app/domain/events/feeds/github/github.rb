@@ -43,6 +43,7 @@ module Events
       elsif github_issue?(source_data)
         'CustomIssue'
       else
+        puts "=================> DATA : #{source_data}"
         fail Events::MappingError, 'unknown Github event type'
       end
     end

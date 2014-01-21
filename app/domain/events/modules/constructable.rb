@@ -27,6 +27,10 @@ module Events
         fail InvalidDigestSeed
       end
     end
+
+    def origin_ts
+      origin_timestamp
+    end
     
     def origin_timestamp_iso
       origin_timestamp.iso8601
