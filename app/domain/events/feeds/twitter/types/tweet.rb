@@ -3,6 +3,7 @@ module Events
 
     class Status
       include Constructable
+      include Persistable
 
       def content_digest
         Digest::MD5.hexdigest(origin_id.to_s + self.class.name)

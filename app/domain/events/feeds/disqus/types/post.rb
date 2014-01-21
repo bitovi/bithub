@@ -1,8 +1,8 @@
 module Events
   module Disqus
-
     class Post
       include Constructable
+      include Persistable
 
       def origin_id
         # puts "Disqus::Post#origin_id #{source_data}"
@@ -34,6 +34,5 @@ module Events
         Time.parse(source_data.andand[:createdAt]+'Z').utc
       end
     end
-
   end
 end

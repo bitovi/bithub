@@ -3,6 +3,7 @@ module Events
 
     class CustomWatch
       include Constructable
+      include Persistable
 
       def initialize(repo, identity)
         @repo = Repo.new(repo)

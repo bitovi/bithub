@@ -3,6 +3,7 @@ module Events
 
     class TeamAdd
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
     end
 
