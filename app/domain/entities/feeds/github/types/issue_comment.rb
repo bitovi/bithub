@@ -14,18 +14,14 @@ module Entities
       }
 
       def procure
-        if @payload.comment_id && (entity = find_by_comment_id(@payload.comment_id).first)
-          @instance = entity
-        else
-          @instance = build
-        end
+        @instance ||= (@payload.comment_id && (e = find_by_comment_id.first)) : e : build
         self
       end
 
       def procure_parent
         if @payload.repo_name && @payload.issue_or_pull_req_number
           matches = relationships[:upstream].inject([]) do |acc, rl|
-            acc.push rl.new(Entity, @payload)
+            acc.push rl.new(@payload)
             .find_by_repo_name_and_number(
               @payload.repo_name,
               @payload.issue_or_pull_req_number
@@ -37,7 +33,7 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        e = Entity.new({
           title: "commented on issue ##{@payload.number}",
           body: @payload.body,
           url: @payload.html_url,
@@ -51,18 +47,20 @@ module Entities
             comment_id: @payload.comment_id,
           }
         })
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
       
-      def find_by_comment_id(comment_id)
-        @persistor.tagged_with(['github', 'issue_comment'])
-        .where("props -> 'comment_id' = '#{comment_id}'")
+      def find_by_comment_id
+        Entity.tagged_with(['github', 'issue_comment'])
+        .where("props -> 'comment_id' = '#{@payload.comment_id}'")
       end
 
-      def find_by_repo_name_and_number(repo_name, number)
-        @persistor.where("props -> 'repo_name' = '#{repo_name}'")
-        .where("props -> 'number' = '#{number}'")
+      def find_by_repo_name_and_number
+        Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        .where("props -> 'number' = '#{@payload.number}'")
         .tagged_with(['github', 'issue_comment'])
       end
 

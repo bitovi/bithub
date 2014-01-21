@@ -5,11 +5,17 @@ module Entities
       'CustomWatch' => 'Watch',
     }
 
-    def self.type(payload)
-      if MAPPINGS.include?(payload.type)
-        self.const_get(MAPPINGS[payload.type])
+    def self.type(arg)
+      if arg.is_a? String
+        type_name = arg
+      elsif arg.is_a? Payload
+        type_name = arg.type
+      end
+
+      if MAPPINGS.include?(type_name)
+        self.const_get(MAPPINGS[type_name])
       else
-        self.const_get(payload.type)
+        self.const_get(type_name)
       end
     end
         

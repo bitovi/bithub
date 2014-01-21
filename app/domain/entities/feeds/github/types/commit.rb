@@ -3,6 +3,9 @@ module Entities
 
     class Commit
       include Entities::Constructable
+      include Entities::Determinable
+      
+      attr_reader :instance
 
       Relationships = {
         upstream: [Entities::Github::Push],
@@ -17,6 +20,13 @@ module Entities
         else
           commits
         end
+        self
+
+          # @instance ||= entity
+        # else
+          # @instance ||= build
+        # end
+        # self
       end
 
       def procure_parent
@@ -36,7 +46,7 @@ module Entities
       end
 
       def find_by_multiple_commit_shas
-        @persistor.tagged_with(['github', 'commit'])
+        Entity.tagged_with(['github', 'commit'])
         .where("position(props -> 'commit_sha' in '#{@payload.commit_shas_csv}') > 0")
       end
     end

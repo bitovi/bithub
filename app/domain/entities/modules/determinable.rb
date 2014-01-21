@@ -27,7 +27,7 @@ module Entities
     end
 
     def determine_rule
-      @instance.rule = ScoringRule.best_match(@instance.tag_list)
+      @instance.scoring_rule = ScoringRule.best_match(@instance.tag_list)
     end
 
     def determine_author
@@ -42,7 +42,6 @@ module Entities
     end
 
     def determine_tags
-
       taggify_methods = collect_methods(/taggify_.*/)
 
       tags = taggify_methods
@@ -63,7 +62,7 @@ module Entities
     end
     
     def taggify_content
-      input = ATTRS_FOR_TAGGING.map {|attr| @instance[attr] if @instance[attr]}.compact
+      input = ATTRS_FOR_TAGGING.map {|attr| @instance.andand[attr]}.compact
       Tagger.new(Tag.projects).find_tags(input)
     end
 

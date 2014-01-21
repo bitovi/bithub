@@ -4,50 +4,28 @@ require 'entities/modules/determinable'
 module Entities
 
   class Procurer
+    class DelegationError < Exception; end
     include Loggable
 
-    def initialize(persistor, payload)
+    def initialize(payload)
       initialize_logger
-      @persistor = persistor
-      @payload = payload
-    end
-
-    def procure
-      entity.procure
+      construct_entity(payload)
     end
     
-    def procure_parent
-      entity.procure_parent
-    end
-
-    def procure_children
-      entity.procure_children
-    end
-    
-    def procure_references
-      entity.procure_references
+    def method_missing(method, *args, &block)
+      if @entity.respond_to? method
+        @entity.send(method, *args, &block)
+      else
+        fail DelegationError, "#{@entity_class} doesn't respond to #{method}"
+      end
     end
     
     private
-
-    def entity
-      @feed = @payload.feed.camel_case
-      @type = @payload.type.camel_case
-
-      if Entities.const_get(@feed).respond_to?('mapper')
-        @entity ||= Entities.const_get(@feed).mapper(@payload).new(@persistor, @payload)
-      else
-        @entity ||= Entities.const_get(@feed).const_get(@type).new(@persistor, @payload)
-      end      
+    def construct_entity(payload)
+      @entity_class  = Entities.feed(payload.feed).type(payload.type)
+      @entity ||= @entity_class.new(payload)
     end
   end
-  
-  module Github; end
-  module Twitter; end
-  module Forum; end
-  module Blog; end
-  module Disqus; end
-  module Meetup; end
 end
 
 # Feeds
@@ -56,6 +34,7 @@ require 'entities/feeds/disqus/disqus'
 require 'entities/feeds/forum/forum'
 require 'entities/feeds/github/github'
 require 'entities/feeds/twitter/twitter'
+require 'entities/feeds/meetup/meetup'
 
 
 # def self.new_from_bithub(args)

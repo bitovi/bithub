@@ -23,8 +23,3 @@ module Events
   end
 end
 
-# extracted: {
-#   title: original_hash['title'],
-#   url: original_hash['url'],
-#   body: Sanitize.clean(original_hash['body'], Sanitize::Config::RELAXED),
-# },

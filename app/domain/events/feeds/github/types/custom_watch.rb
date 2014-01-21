@@ -27,7 +27,7 @@ module Events
       end
 
       def title
-        "started watching #{repo_name}",
+        "started watching #{repo_name}"
       end
 
       def repo_name
@@ -56,6 +56,5 @@ module Events
         end
       end
     end
-
   end
 end

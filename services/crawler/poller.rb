@@ -11,8 +11,7 @@ require 'app/domain/digest_queue'
 
 class Poller
   include Loggable
-  #include Fetchers::Fake if %w(development test).include?(ENV['ENV'])
-  #include Fetchers::HTTP if %w(testing staging production).include?(ENV['ENV'])
+  # include Fetchers::Fake
   include Fetchers::HTTP
 
   def self.handler(exchange, endpoint, &blk)
@@ -20,7 +19,7 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger("DEBUG")
+    initialize_logger("INFO")
     @exchange = exchange
     @endpoint = endpoint
     @digest_queue = DigestQueue.new
@@ -29,6 +28,8 @@ class Poller
     blk.(@config) if blk
 
     @feed ||= determine_feed(endpoint)
+
+    # @logger.info "Dev mode, responses cached to and read from #{FAKE_RESPONSES}" if ENV['ENV'] == 'development'
   end
 
   def handler
@@ -110,7 +111,7 @@ class Poller
   private
 
   def determine_feed(uri)
-    f = %w(meetup github disqus blog forum).select{|f| uri =~ /#{f}/}
+    f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
     f.first
   end
 

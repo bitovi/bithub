@@ -4,7 +4,7 @@ module Entities
     class PullRequest
       include Entities::Constructable
       include Entities::Determinable
-
+      
       attr_reader :instance
       
       Relationships = {
@@ -14,12 +14,11 @@ module Entities
       }
 
       def procure
-        if @payload.pull_request_id && (entity = find_by_pull_request_id(@payload.pull_request_id).first)
-          @instance = entity
-        else
-          @instance = build
-        end
+        @instance = (@payload.pull_request_id && (e = find_by_pull_request_id.first)) : e : build
         self
+      end
+
+      def procure_parent
       end
 
       def procure_children
@@ -39,7 +38,7 @@ module Entities
 
       # Builder
       def build
-        @persistor.new({
+        e = Entity.new({
           title: "Pull request ##{@payload.number} #{@payload.action}",
           body: @payload.body,
           url: @payload.html_url,
@@ -55,19 +54,22 @@ module Entities
             action: @payload.action, # IssuePullRequestAction?
           }
         })
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
-      def find_by_pull_request_id(pr_id)
-        @persistor.tagged_with(['github', 'pull_request'])
-        .where("props -> 'pull_request_id' = '#{pr_id}'")
+      def find_by_pull_request_id
+        Entity.tagged_with(['github', 'pull_request'])
+        .where("props -> 'pull_request_id' = '#{@payload.pull_request_id}'")
       end
 
       def find_by_repo_name_and_number(repo_name, number)
-        @persistor.where("props -> 'repo_name' = '#{repo_name}'")
-        .where("props -> 'number' = '#{number}'")
+        Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        .where("props -> 'number' = '#{@payload.number}'")
         .tagged_with(['github', 'pull_request'])
       end
+
 
       def relationships
         Entities::Github::PullRequest::Relationships

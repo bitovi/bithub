@@ -3,6 +3,9 @@ module Entities
 
     class Post
       include Entities::Constructable
+      include Entities::Determinable
+
+      attr_reader :instance
 
       Relationships = {
         upstream: [],
@@ -11,11 +14,8 @@ module Entities
       }
 
       def procure
-        if @payload.url && (entity = find_by_url.first)
-          entity
-        else
-          build
-        end
+        @instance = (@payload.link && (e = find_by_url.first)) ? e : build
+        self
       end
 
       def procure_parent
@@ -29,20 +29,22 @@ module Entities
 
       # Builder
       def build
-        Hash.new({
+        e = Entity.new({
           title: @payload.title,
           url: @payload.link,
-          body: @payload.body,
+          body: Sanitize.clean(@payload.body, Sanitize::Config::RELAXED),
         })
+        e.props.symbolize_keys!
+        e
       end
 
       # Finders
       def find_by_url
-        @persistor.where(url: @payload.url)
+        Entity.where(url: @payload.link)
       end
 
       def relationships
-        Entities::Blog::Post::Relationships
+        Entity::Blog::Post::Relationships
       end
     end
 

@@ -1,7 +1,6 @@
 module Fetchers
   module Fake
     FAKE_RESPONSES = File.expand_path(File.join(File.basename(__FILE__), '..', 'tmp', 'fake_responses'))
-    puts "===> Dev mode, responses cached to and read from #{FAKE_RESPONSES}"
 
     def fetch(link = nil)
       remote = link || @endpoint
@@ -44,10 +43,15 @@ module Fetchers
     end
 
     def resource_location(remote)
-      feed = determine_feed(remote)
-      _, path_suffix = remote.match(/\.com(\/.*)*$/).to_a
+      # @logger.debug "URI: =========================> #{remote}"
 
-      filename = feed + path_suffix.gsub(/\//, '_')
+      feed = determine_feed(remote)
+      # @logger.debug "FEED: ========================> #{feed}"
+
+      _, path_suffix = remote.match(/\.com(\/.*)*$/).to_a
+      # @logger.debug "PATH_SUFFIX: ========================> #{path_suffix}"
+
+      filename = feed.concat path_suffix.gsub(/\//, '_')
       File.join(FAKE_RESPONSES, filename)
     end
 
