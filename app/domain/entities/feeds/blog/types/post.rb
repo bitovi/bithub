@@ -40,7 +40,8 @@ module Entities
 
       # Finders
       def find_by_url
-        Entity.where(url: @payload.link)
+        Entity.tagged_with(%w(blog post))
+        .where(url: @payload.link)
       end
 
       def relationships

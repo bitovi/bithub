@@ -11,19 +11,12 @@ module Entities
     end
 
     def determine
-      begin
-        @e.determine_feed
-        @e.determine_tags
-        @e.determine_tags
-        @e.determine_category
-        @e.determine_rule
-        @e.determine_author
-      rescue NoMethodError => e
-        puts "--- GLUPOST"
-        puts "=========================================> #{@e.class.name}"
-        puts "=========================================> #{@e.instance}"
-      end
-
+      @e.determine_feed
+      @e.determine_tags
+      @e.determine_tags
+      @e.determine_category
+      @e.determine_rule
+      @e.determine_author
     end
 
   end

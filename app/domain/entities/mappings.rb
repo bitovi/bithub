@@ -1,4 +1,12 @@
 module Entities
+  module Github; end
+  module Twitter; end
+  module Forum; end
+  module Blog; end
+  module Disqus; end
+  module Meetup; end
+  module Bithub; end
+
   MAPPINGS = {}
 
   def self.feed(feed_name)
@@ -9,11 +17,4 @@ module Entities
       self.const_get(feed_name)
     end
   end
-
-  module Github; end
-  module Twitter; end
-  module Forum; end
-  module Blog; end
-  module Disqus; end
-  module Meetup; end
 end

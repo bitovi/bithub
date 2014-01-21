@@ -54,7 +54,7 @@ module Entities
 
       # Finders
       def find_by_url
-        Entity.tagged_with('forum')
+        Entity.tagged_with(%w(forum post))
           .where(:url => @payload.link)
       end
 

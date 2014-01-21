@@ -19,16 +19,19 @@ module Entities
       end
 
       def procure_parent
-        if @payload.repo_name && @payload.issue_or_pull_req_number
+        if @payload.repo_name && @payload.number
           matches = relationships[:upstream].inject([]) do |acc, rl|
             acc.push rl.new(@payload)
             .find_by_repo_name_and_number(
               @payload.repo_name,
-              @payload.issue_or_pull_req_number
+              @payload.number
             ).first
           end
           matches.compact.first
         end
+      end
+
+      def procure_children
       end
 
       # Builder

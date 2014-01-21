@@ -16,35 +16,26 @@ class Dispatcher
 
   def initialize(response)
     initialize_logger("DEBUG")
-
-    # if response.is_a? Events::Payload
-    #   @payload = response
-    # else
-      @payload = Events::Payload.new(response)
-    # end
+    @response = response
   end
 
   def dispatch
-    new_event = Event.new({
-      feed: @payload.feed,
-      type: @payload.type,
-      content_digest: @payload.content_digest,
-      source_data: @payload.source_data,
+    event = Events::Dispatcher.construct_event(@response)
+    entity = Entities::Procurer.new(event).procure
+    
+    @logger.info "Event : #{event.class.name}"
+    @logger.debug "Entity : #{entity.class.name}"
+
+    event_record = Event.new({
+      feed: event.feed,
+      type: event.type,
+      content_digest: event.content_digest,
+      source_data: event.source_data,
     })
-
-    @logger.info "Payload FEED::TYPE => #{@payload.feed}::#{@payload.type}"
-
-    entity = Entities::Procurer.new(@payload).procure
-
-    @logger.debug "================================ DETERMIN:"
-    @logger.debug entity.inspect
 
     Entities::Determinator.new(entity).determine
     Entities::Normalizer.new(entity).normalize
     Entities::Grouper.new(entity).group
-
-    # @logger.debug "================================ FINALY:"
-    # @logger.debug entity.inspect
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

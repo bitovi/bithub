@@ -22,7 +22,7 @@ module Entities
     
     private
     def construct_entity(payload)
-      @entity_class  = Entities.feed(payload.feed).type(payload.type)
+      @entity_class = Entities.feed(payload.feed).type(payload.type)
       @entity ||= @entity_class.new(payload)
     end
   end
