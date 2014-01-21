@@ -2,10 +2,10 @@ module Events
   module Persistable
     def build
       @instance = Event.new({
-        feed: event.feed,
-        type: event.type,
-        content_digest: event.content_digest,
-        source_data: event.source_data,
+        feed: feed,
+        type: type,
+        content_digest: content_digest,
+        source_data: source_data,
       })
     end
 

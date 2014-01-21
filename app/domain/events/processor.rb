@@ -2,12 +2,11 @@ require 'digest/md5'
 require 'andand'
 
 require 'lib/core_ext'
+require 'lib/core_helpers'
 require 'lib/loggable'
 require 'lib/configurable'
 
-require 'events/payload'
-require 'events/mappings'
-require 'events/modules/errors'
+require 'events/dispatcher'
 
 # Require all feed and type files
 Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
@@ -40,7 +39,7 @@ module Events
 
     def decorate
       @decorated ||= result.map do |event_hash|
-        e = construct_event(event_hash)
+        e = Events::Dispatcher.dispatch(event_hash, @feed)
         {
           meta: { feed: e.feed, type: e.type },
           content_digest: e.content_digest,
@@ -55,12 +54,6 @@ module Events
     end
 
     private
-
-    def construct_event(event_hash)
-      event_type = Events.feed(@feed.capitalize).type(event_hash)
-      @logger.debug "==================> class: #{event_type}"
-      event_type.new(event_hash)
-    end
     
     def subprocessor
       @subprocessor ||= Events.feed(@feed)::Processor.new(@response) do |config|
