@@ -3,13 +3,8 @@ require 'lib/core_ext'
 require 'lib/core_helpers'
 require 'lib/loggable'
 
-require 'events/payload'
-
-require 'entities/mappings'
-require 'entities/procurer'
-require 'entities/determinator'
-require 'entities/grouper'
-require 'entities/normalizer'
+require 'events/dispatcher'
+require 'entities/dispatcher'
 
 class Dispatcher
   include Loggable
@@ -19,17 +14,15 @@ class Dispatcher
   end
 
   def dispatch(response)
-    event = Events::Dispatcher.construct_event(response)
-    entity = Entities::Dispatcher.construct_entity(event)
+    event = Events::Dispatcher.dispatch(response)
+    entity = Entities::Dispatcher.dispatch(event)
     
-    event.build
-
     @logger.info "Event : #{event.class.name}"
     @logger.debug "Entity : #{entity.class.name}"
 
-    Entities::Determinator.new(entity).determine
-    Entities::Normalizer.new(entity).normalize
-    Entities::Grouper.new(entity).group
+    # Entities::Determinator.new(entity).determine
+    # Entities::Normalizer.new(entity).normalize
+    # Entities::Grouper.new(entity).group
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!
