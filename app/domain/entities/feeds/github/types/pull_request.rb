@@ -14,7 +14,7 @@ module Entities
       }
 
       def procure
-        @instance = (@payload.pull_request_id && (e = find_by_pull_request_id.first)) : e : build
+        @instance = (@payload.pull_request_id && (e = find_by_pull_request_id.first)) ? e : build
         self
       end
 
