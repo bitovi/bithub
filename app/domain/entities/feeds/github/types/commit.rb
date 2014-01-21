@@ -14,19 +14,12 @@ module Entities
       }
 
       def procure
-        commits = @payload.commits && find_by_multiple_commit_shas.all
-        if commits.empty?
-          build_many_from_push
+        if commit = @payload.sha && find_by_commit_sha
+          @instance = commit
         else
-          commits
+          @instance = build
         end
         self
-
-          # @instance ||= entity
-        # else
-          # @instance ||= build
-        # end
-        # self
       end
 
       def procure_parent
@@ -38,6 +31,22 @@ module Entities
       def procure_references
       end
 
+      def build
+        @persistor.new({
+          title: @payload.message,
+          origin_ts: @payload.origin_ts,
+          thread_updated_ts: @payload.origin_ts,
+          props: {
+            feed: @payload.feed,
+            type: @payload.type,
+            repo_name: @payload.repo_name,
+            sha: @payload.sha
+          }
+        });
+      end
+
+      private
+
       def build_many_from_push
         @payload.commits.map do |commit|
           #Do stuff
@@ -45,9 +54,10 @@ module Entities
         end
       end
 
-      def find_by_multiple_commit_shas
+      def find_by_commit_sha
         Entity.tagged_with(['github', 'commit'])
-        .where("position(props -> 'commit_sha' in '#{@payload.commit_shas_csv}') > 0")
+          .where("props -> 'sha' = '#{@payload.sha}'")
+          .first
       end
     end
 
