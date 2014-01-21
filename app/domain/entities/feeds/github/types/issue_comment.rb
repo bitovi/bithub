@@ -14,7 +14,7 @@ module Entities
       }
 
       def procure
-        @instance ||= (@payload.comment_id && (e = find_by_comment_id.first)) : e : build
+        @instance ||= (@payload.comment_id && (e = find_by_comment_id.first)) ? e : build
         self
       end
 

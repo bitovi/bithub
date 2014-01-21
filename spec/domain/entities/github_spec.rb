@@ -20,7 +20,7 @@ def build_issue(attrs={})
   payload.stub(:issue_id => attrs[:issue_id] || "123456")
   payload.stub(:label_names => "")
   payload.stub(:state => "open")
-  Entities::Github::Issue.new(Entity, payload).procure
+  Entities::Github::Issue.new(payload).procure
 end
 
 def build_issue_comment(attrs={})
@@ -32,7 +32,7 @@ def build_issue_comment(attrs={})
   payload.stub(:issue_or_pull_req_number => attrs[:number] || "123")
   payload.stub(:label_names => "")
   payload.stub(:comment_id => attrs[:comment_id] || "123456")
-  Entities::Github::IssueComment.new(Entity, payload).procure
+  Entities::Github::IssueComment.new(payload).procure
 end
 
 # def build_commit(attrs={})
@@ -46,7 +46,7 @@ def build_commit_comment(attrs={})
   payload.stub(:body => attrs[:body] || "Lorem ipsum ...")
   payload.stub(:html_url => "http://github.com/foobar")
   payload.stub(:commit_id => attrs[:comment_id] || "12345")
-  Entities::Github::CommitComment.new(Entity, payload).procure
+  Entities::Github::CommitComment.new(payload).procure
 end
 
 
@@ -60,13 +60,13 @@ def build_pull_req(attrs={})
   payload.stub(:pull_request_id => "456")
   payload.stub(:state => "open")
   payload.stub(:action => "open")
-  Entities::Github::PullRequest.new(Entity, payload).procure
+  Entities::Github::PullRequest.new(payload).procure
 end
 
 def build_pull_req_comment(attrs={})
   payload = build_standard_github_payload(attrs)
   payload.stub(:type => "pull_request_comment")
-  Entities::Github::PullRequestComment.new(Entity, payload).procure
+  Entities::Github::PullRequestComment.new(payload).procure
 end
 
 def build_push(attrs={})  
@@ -77,13 +77,13 @@ def build_push(attrs={})
   payload.stub(:commit_shas => ["12345","67890"])
   payload.stub(:commit_shas_csv => "12345,67890")
   payload.stub(:commits => [{sha: '12345', message:'first'},{sha: '67890', message:'second'}])
-  Entities::Github::Push.new(Entity, payload).procure
+  Entities::Github::Push.new(payload).procure
 end
 
 def build_watch(attrs={})
   payload = build_standard_github_payload(attrs)
   payload.stub(:type => "watch")
-  Entities::Github::Watch.new(Entity, payload).procure
+  Entities::Github::Watch.new(payload).procure
 end
 
 issue_def = {number: "100", issue_id: "1001"}
