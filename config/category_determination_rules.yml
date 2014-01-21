@@ -13,6 +13,7 @@ comment:
   pull_request_review_comment: 10 # pull_request_review_comment_event
 
 code:
+  commit: 10
   push: 10 # push_event
   create_event: 10
   delete_event: 10

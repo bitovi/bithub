@@ -194,6 +194,7 @@ follow: {}
 delete_event: {}
 
 push: {}
+commit: {}
 push_event: {}
 
 fork: {}

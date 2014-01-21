@@ -38,6 +38,13 @@ module Events
           md.andand[0]
         end
       end
+
+      def commit_by_sha(sha)
+        if commit_shas.include?(sha)
+          commits.select {|c| c.andand[:sha] == sha}.first
+        end
+      end
+
     end
 
   end

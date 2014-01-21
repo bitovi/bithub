@@ -12,9 +12,14 @@ module Entities
         downstream: [Entities::Github::CommitComment, Entities::Github::Commit],
         references: [Entities::Github::Issue, Entities::Github::PullRequest],
       }
-
+      
       def procure
-        @instance = (@payload.push_id && (e = find_by_push_id.first)) ? e : build
+        if @payload.push_id && (e = find_by_push_id.first)
+          e.props.symbolize_keys!
+          @instance = e
+        else
+          @instance = build
+        end
         self
       end
 
@@ -58,12 +63,21 @@ module Entities
             type: @payload.type,
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
-            repo_name: @payload.repo_name,
             push_id: @payload.push_id,
           }
         })
-        e.props.symbolize_keys!
-        e
+      end
+
+      def build_children
+        @payload.commit_shas.map do |sha|
+          Entities::Github::Commit.new(@payload, sha).procure
+        end
+      end
+
+      def create_children
+        children = build_children
+        children.each {|c| c.determine; c.persist!}        
+        children
       end
 
       # Finders
