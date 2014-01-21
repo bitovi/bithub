@@ -69,14 +69,19 @@ def build_pull_req_comment(attrs={})
   Entities::Github::PullRequestComment.new(payload).procure
 end
 
-def build_push(attrs={})  
+def build_push(attrs={})
+  commits = [{sha: '12345', message:'first'},{sha: '67890', message:'second'}]
+  
   payload = build_standard_github_payload(attrs)
   payload.stub(:type => "push") # push_event
   payload.stub(:head => "12345")
   payload.stub(:push_id => "12345")
   payload.stub(:commit_shas => ["12345","67890"])
   payload.stub(:commit_shas_csv => "12345,67890")
-  payload.stub(:commits => [{sha: '12345', message:'first'},{sha: '67890', message:'second'}])
+  payload.stub(:commit_by_sha) do |sha|
+    commits.select {|c| c[:sha] == sha}.first
+  end
+  payload.stub(:commits => commits)
   Entities::Github::Push.new(payload).procure
 end
 
@@ -99,7 +104,7 @@ watch_def = {}
 
 describe Entities::Github::Issue do  
   describe "#build" do
-    it "instances new Entity object" do
+    it "instances new Github Issue entity" do
       i = build_issue()
       i.determine
       i.persist!
@@ -130,7 +135,7 @@ end
 
 describe Entities::Github::IssueComment do
   describe "#build" do
-    it "instances new Entity object" do
+    it "instances new Github Issue Comment entity" do
       ic = build_issue_comment(); ic.determine; ic.persist!
       
       expect(ic.instance.title).to be_a(String)
@@ -157,7 +162,7 @@ end
 
 describe Entities::Github::PullRequest do
   describe "#build" do
-    it "instances new Entity object" do
+    it "instances new Github Pull Request entity" do
       pr = build_pull_req(); pr.determine; pr.persist!
 
       expect(pr.instance.title).to be_a(String)
@@ -181,14 +186,18 @@ end
 
 describe Entities::Github::Push do
   describe "#build" do
-    it "instances new Entity object" do
+    it "instances new Github Push entity " do
       p = build_push(); p.determine; p.persist!
 
+      # check push
       expect(p.instance.title).to be_a(String)
       expect(p.instance.url).to be_a(String)
       expect(p.instance.props['repo_name']).to be_a(String)
       expect(p.instance.props['commit_shas']).not_to be_empty
       expect(p.instance.props['push_id']).not_to be_empty
+
+      # check children
+      #expect(Entity.tagged_with(['github','commit']).where(:parent_id => p.instance.id).count).to eq(2)
     end
   end  
 end
