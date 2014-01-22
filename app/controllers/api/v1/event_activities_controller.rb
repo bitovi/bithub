@@ -1,4 +1,4 @@
-class Api::EventActivitiesController < Api::ApiController
+class Api::V1::EventActivitiesController < Api::V1::BaseController
   before_filter :authenticate_user!, except: [:index]
   skip_load_and_authorize_resource :only => :index
   respond_to :json
@@ -9,7 +9,7 @@ class Api::EventActivitiesController < Api::ApiController
 
   def index
     @activities = ActivityDecorator.decorate_collection(Event.find(params[:event_id]).activities)
-    render 'api/activities/index'
+    render 'api/v1/activities/index'
   end
 
   def create_upvote

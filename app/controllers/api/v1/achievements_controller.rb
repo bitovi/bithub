@@ -1,4 +1,4 @@
-class Api::AchievementsController < Api::ApiController
+class Api::V1::AchievementsController < Api::V1::BaseController
   before_filter :authenticate_user!
   respond_to :json
 

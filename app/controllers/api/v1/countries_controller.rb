@@ -1,4 +1,4 @@
-class Api::CountriesController < ApplicationController
+class Api::V1::CountriesController < Api::V1::BaseController
   load_and_authorize_resource
   respond_to :json
 

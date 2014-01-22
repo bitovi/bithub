@@ -1,4 +1,4 @@
-class Api::ApiController < ActionController::Base
+class Api::V1::BaseController < ActionController::Base
 
   def home
     render :text => "Bithub API v1"
