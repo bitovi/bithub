@@ -1,10 +1,7 @@
 module Entities
   module Bithub
 
-    class Post
-      include Entities::Constructable
-      include Entities::Determinable
-      
+    class Post < Entity
       attr_reader :instance
 
       Relationships = {
@@ -20,15 +17,6 @@ module Entities
           @instance ||= build
         end
         self
-      end
-
-      def procure_parent
-      end
-
-      def procure_children
-      end
-
-      def procure_references
       end
 
       # Finders

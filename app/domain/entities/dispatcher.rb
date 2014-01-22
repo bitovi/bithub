@@ -1,6 +1,5 @@
 require 'entities/mappings'
-require 'entities/modules/constructable'
-require 'entities/modules/determinable'
+require 'entities/entity'
 
 module Entities
   module Dispatcher

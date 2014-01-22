@@ -1,7 +1,7 @@
 module Entities
   module Forum
 
-    class Post
+    class Post < Protocol
       include Entities::Constructable
       include Entities::Determinable
       
@@ -28,9 +28,6 @@ module Entities
         if @payload.link
           find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
         end
-      end
-
-      def procure_references
       end
 
       # Builder

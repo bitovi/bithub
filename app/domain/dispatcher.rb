@@ -16,13 +16,12 @@ class Dispatcher
   def dispatch(response)
     event = Events::Dispatcher.dispatch(response)
     entity = Entities::Dispatcher.dispatch(event)
-    
+
+
     @logger.info "Event : #{event.class.name}"
     @logger.debug "Entity : #{entity.class.name}"
 
-    # Entities::Determinator.new(entity).determine
-    # Entities::Normalizer.new(entity).normalize
-    # Entities::Grouper.new(entity).group
+    entity.procure.determine.group.normalize.persist
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

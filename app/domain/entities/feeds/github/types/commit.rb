@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class Commit
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
+    class Commit < Protocol
 
       Relationships = {
         upstream: [Entities::Github::Push],
