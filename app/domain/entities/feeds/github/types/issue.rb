@@ -21,9 +21,6 @@ module Entities
         self
       end
 
-      def procure_parent
-      end
-
       def procure_children
         if @payload.repo_name && @payload.number
           relationships[:downstream].reduce([]) do |acc, rl|

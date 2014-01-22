@@ -10,7 +10,6 @@ module Events
     class MappingError < Exception; end
 
     include Constructable
-    include Normalizable
     include Persistable
     include Comparable
     include Digestable
