@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Follow
-      include Constructable
-      include Persistable
+    class Follow < Protocol
       include Events::Github::Accessors::Standard
     end
 

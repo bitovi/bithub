@@ -8,10 +8,6 @@ module Events
       @data = symbolize_keys(payload)
     end
 
-    def source_data
-      @data
-    end
-
     def feed
       @feed ||= module_and_class_names[0]
     end
@@ -20,14 +16,6 @@ module Events
       @type ||= module_and_class_names[1]
     end
     
-    def content_digest
-      if respond_to? :origin_id
-        @digest ||= calc_digest(origin_id.to_s)
-      else
-        fail InvalidDigestSeed
-      end
-    end
-
     def origin_ts
       origin_timestamp
     end
@@ -37,9 +25,6 @@ module Events
     end
 
     private
-    def calc_digest(seed)
-      Digest::MD5.hexdigest(seed + self.class.name)
-    end
     
     def module_and_class_names
       _, feed, type = self.class.name.match(/.*::(.*)::(.*)/).to_a

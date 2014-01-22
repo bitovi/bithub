@@ -1,8 +1,6 @@
 module Events
   module Blog
-    class Post
-      include Constructable
-      include Persistable
+    class Post < Protocol
 
       def content_digest
         @digest ||= Digest::MD5.hexdigest(link + self.class.name)

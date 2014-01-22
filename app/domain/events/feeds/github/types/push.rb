@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Push
-      include Constructable
-      include Persistable
+    class Push < Protocol
       include Events::Github::Accessors::Standard
 
       def push_id

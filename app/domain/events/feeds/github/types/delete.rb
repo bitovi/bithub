@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Delete
-      include Constructable
-      include Persistable
+    class Delete < Protocol
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Refs
     end

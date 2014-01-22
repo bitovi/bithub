@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Commit
-      include Constructable
-      include Persistable
+    class Commit < Protocol
       include Events::Github::Accessors::Standard
 
       def initialize(persistor, payload, commit)

@@ -1,8 +1,6 @@
 module Events
   module Disqus
-    class Post
-      include Constructable
-      include Persistable
+    class Post < Protocol
 
       def origin_id
         # puts "Disqus::Post#origin_id #{source_data}"

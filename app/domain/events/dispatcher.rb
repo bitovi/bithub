@@ -1,7 +1,5 @@
 require 'events/mappings'
-require 'events/modules/constructable'
-require 'events/modules/persistable'
-require 'events/modules/errors'
+require 'events/protocol'
 
 module Events
   module Dispatcher

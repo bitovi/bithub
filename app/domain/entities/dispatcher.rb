@@ -1,5 +1,5 @@
 require 'entities/mappings'
-require 'entities/entity'
+require 'entities/protocol'
 
 module Entities
   module Dispatcher

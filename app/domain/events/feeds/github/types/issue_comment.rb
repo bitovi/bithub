@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class IssueComment
-      include Constructable
-      include Persistable
+    class IssueComment < Protocol
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Labels
       include Events::Github::Accessors::IssuesPullRequests

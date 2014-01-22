@@ -2,10 +2,6 @@ module Entities
   module Forum
 
     class Post < Protocol
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
       
       Relationships = {
         upstream: [],

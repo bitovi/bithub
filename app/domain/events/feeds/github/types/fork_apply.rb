@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class ForkApply
-      include Constructable
-      include Persistable
+    class ForkApply < Protocol
       include Events::Github::Accessors::Standard
     end
 

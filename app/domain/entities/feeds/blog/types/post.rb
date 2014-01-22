@@ -14,15 +14,6 @@ module Entities
         self
       end
 
-      def procure_parent
-      end
-
-      def procure_children
-      end
-
-      def procure_references
-      end
-
       # Builder
       def build
         e = Entity.new({
