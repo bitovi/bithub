@@ -6,11 +6,18 @@ module Entities
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
-        references: [],
+        references: [
+          #Entities::Github::Commit,
+          #Entities::Github::CommitComment,
+          Entities::Github::PullRequest,
+          Entities::Github::Issue,
+          Entities::Github::IssueComment,
+          #Entities::Github::PullRequestComment, # same as IssueComment
+        ]
       }
 
       def procure
-        @instance = (@payload.issue_id && (e = find_by_issue_id(@payload.issue_id).first)) ? e : build
+        @instance = (@payload.issue_id && (e = find_by_issue_id.first)) ? e : build
         self
       end
 
@@ -26,6 +33,11 @@ module Entities
       end
 
       def procure_references
+        if @payload.repo_name && @payload.number
+          relationships[:references].reduce([]) do |acc, rl|
+            acc += rl.new(@payload).find_by_repo_name_and_number.all
+          end
+        end        
       end
 
       # Builder
@@ -52,15 +64,16 @@ module Entities
       end
 
       # Finders
-      def find_by_issue_id(issue_id)
+      def find_by_issue_id
         Entity.tagged_with(['github', 'issue'])
-        .where("props -> 'issue_id' = '#{issue_id}'")
+        .where("props -> 'issue_id' = '#{@payload.issue_id}'")
       end
 
-      def find_by_repo_name_and_number(repo_name, number)
-        Entity.where("props -> 'repo_name' = '#{repo_name}'")
-        .where("props -> 'number' = '#{number}'")
-        .tagged_with(['github', 'issue'])
+      def find_by_repo_name_and_number
+        Entity
+          .tagged_with(['github', 'issue'])
+          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
+          .where("props -> 'number' = '#{@payload.number}'")        
       end
 
       def relationships
