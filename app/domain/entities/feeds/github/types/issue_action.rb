@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class IssueAction
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
+    class IssueAction < Protocol
 
       Relationships = {
         upstream: [Entities::Github::Issue, Entities::Github::PullRequest],

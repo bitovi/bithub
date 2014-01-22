@@ -1,10 +1,12 @@
-require 'lib/core_helpers'
 require 'events/mappings'
+require 'events/modules/constructable'
+require 'events/modules/persistable'
+require 'events/modules/errors'
 
 module Events
   module Dispatcher
 
-    def self.construct_event(payload, feed_name = nil)
+    def self.dispatch(payload, feed_name = nil)
       feed_name ||= self.meta_feed(payload)
       sd = extract_source_data(payload)
       Events.feed(feed_name).type(sd).new(sd)
@@ -24,5 +26,4 @@ module Events
   end
 end
 
-require 'events/modules/constructable'
 Dir.glob('app/domain/events/feeds/*/*.rb').each { |f| require f }

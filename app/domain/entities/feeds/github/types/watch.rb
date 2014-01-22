@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class Watch
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
+    class Watch < Protocol
 
       Relationships = {
         upstream: [],

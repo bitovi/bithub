@@ -1,9 +1,5 @@
 module Entities
-
-  module Constructable
-    def initialize(payload)
-      @payload = payload
-    end
+  module Persistable
 
     def persist
       @instance.save        
@@ -13,5 +9,4 @@ module Entities
       @instance.save!
     end
   end
-
 end

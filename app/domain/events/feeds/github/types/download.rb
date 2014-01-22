@@ -3,6 +3,7 @@ module Events
 
     class Download
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
 
       def name

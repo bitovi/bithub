@@ -3,6 +3,7 @@ module Events
 
     class PullRequestReviewComment
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Comments
     end

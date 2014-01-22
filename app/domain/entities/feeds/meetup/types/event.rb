@@ -1,11 +1,7 @@
 module Entities
   module Meetup
 
-    class Event
-      include Entities::Constructable
-      include Entities::Determinable
-
-      attr_reader :instance
+    class Event < Protocol
 
       def procure
         @instance = (@payload.event_id && (e = find_by_event_id.first)) ? e : build

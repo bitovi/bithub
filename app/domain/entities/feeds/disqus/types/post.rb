@@ -1,11 +1,7 @@
 module Entities
   module Disqus
 
-    class Post
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
+    class Post < Protocol
 
       Relationships = {
         upstream: [],
@@ -16,15 +12,6 @@ module Entities
       def procure
         @instance = (@payload.post_id && (e = find_by_post_id.first)) ? e : build
         self
-      end
-
-      def procure_parent
-      end
-
-      def procure_children
-      end
-
-      def procure_references
       end
 
       # Builder
