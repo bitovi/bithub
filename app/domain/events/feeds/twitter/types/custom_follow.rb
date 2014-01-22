@@ -1,9 +1,7 @@
 module Events
   module Twitter
 
-    class CustomFollow
-      include Constructable
-      include Persistable
+    class CustomFollow < Protocol
 
       def initialize(account, identity)
         @account = Account.new(account)

@@ -1,9 +1,7 @@
 module Events
   module Twitter
 
-    class Follow
-      include Constructable
-      include Persistable
+    class Follow < Protocol
 
       def content_digest
         Digest::MD5.hexdigest(source_id.to_s + target_id.to_s + self.class.name)

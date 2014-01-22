@@ -1,8 +1,7 @@
 module Events
   module Meetup
 
-    class Event
-      include Constructable
+    class Event < Protocol
 
       def origin_id
         source_data.andand[:id]
