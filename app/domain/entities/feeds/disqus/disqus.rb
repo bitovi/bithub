@@ -3,7 +3,7 @@ module Entities
     class Post < Protocol; end
 
     def self.type(arg)
-      Entities::Blog::Post
+      Entities::Disqus::Post
     end
   end
 end

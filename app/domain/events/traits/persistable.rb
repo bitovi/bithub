@@ -7,6 +7,7 @@ module Events
         content_digest: content_digest,
         source_data: source_data,
       })
+      self
     end
 
     def persist

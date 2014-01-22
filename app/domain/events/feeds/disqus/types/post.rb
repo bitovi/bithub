@@ -7,6 +7,10 @@ module Events
         source_data.andand[:id]
       end
 
+      def post_id
+        origin_id
+      end
+
       def thread
         source_data.andand[:thread]
       end

@@ -3,8 +3,8 @@ require 'lib/core_ext'
 require 'lib/core_helpers'
 require 'lib/loggable'
 
-require 'events/dispatcher'
-require 'entities/dispatcher'
+require_relative 'events/dispatcher'
+require_relative 'entities/dispatcher'
 
 class Dispatcher
   include Loggable
@@ -18,10 +18,9 @@ class Dispatcher
     entity = Entities::Dispatcher.dispatch(event)
 
 
-    @logger.info "Event : #{event.class.name}"
-    @logger.debug "Entity : #{entity.class.name}"
+    @logger.info "MAPPING, Event : Entity => #{event.class.name} : #{entity.class.name}"
 
-    entity.procure.determine.group.normalize.persist
+    entity.procure.determine.persist if event.build.persist
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

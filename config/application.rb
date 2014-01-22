@@ -21,7 +21,7 @@ module Bithub
     config.active_record.schema_format = :sql
 
     # Autoload lib folder
-    config.autoload_paths += %W(#{config.root})
+    config.autoload_paths += %W(#{Rails.root}/app/domain #{Rails.root}/lib)
 
     # Enable the asset pipeline
     config.assets.enabled = true
