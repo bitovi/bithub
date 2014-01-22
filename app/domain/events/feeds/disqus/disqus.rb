@@ -1,8 +1,8 @@
-require 'events/feeds/disqus/types/post'
+require_relative 'types/post'
 
 module Events
   module Disqus
-    class Post; end
+    class Post < Protocol; end
 
     def self.type(type_name)
       Events::Disqus::Post

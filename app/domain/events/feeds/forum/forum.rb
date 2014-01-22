@@ -1,10 +1,10 @@
 require 'lib/sanitizer'
 require 'lib/configurable'
-require 'events/feeds/forum/types/post'
+require_relative 'types/post'
 
 module Events
   module Forum
-    class Post; end
+    class Post < Protocol; end
 
     def self.type(type_name)
       Events::Forum::Post

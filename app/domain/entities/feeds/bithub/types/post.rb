@@ -2,7 +2,6 @@ module Entities
   module Bithub
 
     class Post < Protocol 
-      attr_reader :instance
 
       Relationships = {
         upstream: [],

@@ -12,10 +12,10 @@ module Entities
       end
     end
     
-    class Tweet; end
-    class Follow; end
+    class Tweet < Protocol; end
+    class Follow < Protocol; end
   end
 end
 
-require 'entities/feeds/twitter/types/tweet'
-require 'entities/feeds/twitter/types/follow'
+require_relative 'types/tweet'
+require_relative 'types/follow'

@@ -1,10 +1,10 @@
-require 'events/feeds/twitter/types/tweet'
-require 'events/feeds/twitter/types/follow'
+require_relative 'types/tweet'
+require_relative 'types/follow'
 
 module Events
   module Twitter
-    class Tweet; end
-    class Follow; end
+    class Tweet < Protocol; end
+    class Follow < Protocol; end
 
     MAPPINGS = {
       'StatusEvent' => 'Tweet'

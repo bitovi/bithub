@@ -1,8 +1,8 @@
-require 'events/feeds/blog/types/post'
+require_relative 'types/post'
 
 module Events
   module Blog
-    class Post; end
+    class Post < Protocol; end
 
     def self.type(type_name)
       Events::Blog::Post

@@ -1,6 +1,6 @@
 module Entities
   module Disqus
-    class Post; end
+    class Post < Protocol; end
 
     def self.type(arg)
       Entities::Blog::Post
@@ -8,4 +8,4 @@ module Entities
   end
 end
 
-require 'entities/feeds/disqus/types/post'
+require_relative 'types/post'

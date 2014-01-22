@@ -1,8 +1,8 @@
-require 'events/feeds/meetup/types/event'
+require_relative 'types/event'
 
 module Events
   module Meetup
-    class Event; end
+    class Event < Protocol; end
 
     def self.type(type_name)
       Events::Meetup::Event

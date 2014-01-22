@@ -1,7 +1,7 @@
 require 'domain/entities/spec_helper'
 
-require 'domain/entities/github_issue_spec'
-require 'domain/entities/github_push_spec'
+require_relative 'github_issue_spec'
+require_relative 'github_push_spec'
 
 
 # Helpers functions for mocking payloads

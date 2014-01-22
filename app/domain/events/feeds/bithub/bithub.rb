@@ -1,4 +1,4 @@
-require 'events/feeds/blog/types/post'
+require_relative 'types/post'
 
 module Events
   module Bithub

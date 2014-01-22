@@ -1,5 +1,6 @@
 require 'domain/spec_helper'
 
+require 'app/domain/events/processor'
 require 'app/domain/events/protocol'
 
 def load_response(path)

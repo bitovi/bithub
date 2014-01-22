@@ -2,26 +2,26 @@ require_relative 'accessors'
 
 module Events
   module Github
-    class CommitComment; end
-    class Create; end
-    class CustomIssue; end
-    class Delete; end
-    class Download; end
-    class Follow; end
-    class Fork; end
-    class ForkApply; end
-    class Gist; end
-    class Gollum; end
-    class Issue; end
-    class IssueComment; end
-    class Member; end
-    class Public; end
-    class PullRequest; end
-    class PullRequestReviewComment; end
-    class PullRequestReviewComment; end
-    class Push; end
-    class TeamAdd; end
-    class Watch; end
+    class CommitComment < Protocol; end
+    class Create < Protocol; end
+    class CustomIssue < Protocol; end
+    class Delete < Protocol; end
+    class Download < Protocol; end
+    class Follow < Protocol; end
+    class Fork < Protocol; end
+    class ForkApply < Protocol; end
+    class Gist < Protocol; end
+    class Gollum < Protocol; end
+    class Issue < Protocol; end
+    class IssueComment < Protocol; end
+    class Member < Protocol; end
+    class Public < Protocol; end
+    class PullRequest < Protocol; end
+    class PullRequestReviewComment < Protocol; end
+    class PullRequestReviewComment < Protocol; end
+    class Push < Protocol; end
+    class TeamAdd < Protocol; end
+    class Watch < Protocol; end
 
     MAPPINGS = {
       'Issues' => 'Issue',

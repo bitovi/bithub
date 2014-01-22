@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Entities::Determinator do
+describe Entities::Determinable do
 
   describe "#determine_feed" do
     it "determines a feed" do
