@@ -70,7 +70,7 @@ def build_pull_req_comment(attrs={})
 end
 
 def build_push(attrs={})
-  commits = [{sha: '12345', message:'first'},{sha: '67890', message:'second'}]
+  commits = [{sha: '12345', message:'first, with ref to #100 ...'},{sha: '67890', message:'second'}]
   
   payload = build_standard_github_payload(attrs)
   payload.stub(:type => "push") # push_event
@@ -81,6 +81,6 @@ def build_push(attrs={})
   payload.stub(:commit_by_sha) do |sha|
     commits.select {|c| c[:sha] == sha}.first
   end
-  payload.stub(:commits => commits)
+  payload.stub(:commits => attrs[:commits] || commits)
   Entities::Github::Push.new(payload).procure
 end

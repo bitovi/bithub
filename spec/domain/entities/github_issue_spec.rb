@@ -1,7 +1,8 @@
 issue_def = {number: "100", issue_id: "1001"}
-issue_def2 = {number: "200", issue_id: "2001"}
+issue_def2 = {number: "200", issue_id: "2001", body: "referencing issue #100 ..."}
 issue_comment_def = {number: "100", comment_id: "1002"}
 issue_comment_def2 = {number: "100", comment_id: "1003"}
+issue_comment_def3 = {number: "200", comment_id: "1004", body: "referencing issue #100 ..."}
 
 describe Entities::Github::Issue do  
   describe "#build" do
@@ -34,7 +35,17 @@ describe Entities::Github::Issue do
   end  
 
   describe "#procure_references" do
-    it "checks for entities contain references to exact issue"
+    it "checks for entities contain references to exact issue" do
+      # issue
+      i = build_issue(issue_def); i.determine; i.persist!
+
+      # entities with references to the issue above
+      i2 = build_issue(issue_def2); i2.determine; i2.persist!
+      ic3 = build_issue_comment(issue_comment_def3); ic3.determine; ic3.persist!
+      p = build_push(); p.determine; p.persist!
+
+      expect(i.procure_references.length).to eq(3)
+    end
   end  
 end
 

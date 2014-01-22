@@ -1,5 +1,4 @@
 require_relative 'accessors'
-require 'events/modules/errors'
 
 module Events
   module Github

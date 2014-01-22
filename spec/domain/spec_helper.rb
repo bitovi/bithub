@@ -6,13 +6,10 @@ $:.unshift(File.expand_path(File.join('app', 'domain')))
 require 'lib/core_ext'
 require 'lib/core_helpers'
 
-require 'app/domain/events/payload'
 require 'app/domain/events/processor'
+require 'app/domain/events/protocol'
 
-require 'app/domain/entities/grouper'
-require 'app/domain/entities/determinator'
-require 'app/domain/entities/normalizer'
-require 'app/domain/entities/procurer'
+require 'app/domain/entities/protocol'
 
 require 'app/domain/queries/query'
 require 'app/domain/queries/query_item'
