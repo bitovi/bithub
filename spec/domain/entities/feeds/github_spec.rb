@@ -1,7 +1,7 @@
 require 'domain/entities/spec_helper'
 
-require_relative 'github_issue_spec'
-require_relative 'github_push_spec'
+#require_relative 'github_issue_spec'
+#1require_relative 'github_push_spec'
 
 
 # Helpers functions for mocking payloads
@@ -11,6 +11,7 @@ def build_standard_github_payload(attrs={})
   payload.stub(:feed => "github")
   payload.stub(:repo_name => "bitovi/canjs")
   payload.stub(:origin_ts => Time.now)
+  payload.stub(:references => attrs[:references] || [])
   payload.stub(:switch_to_camel_case => lambda {})
   payload
 end

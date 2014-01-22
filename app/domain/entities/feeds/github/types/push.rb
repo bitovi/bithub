@@ -15,21 +15,21 @@ module Entities
           @instance = e
         else
           @instance = build
-          build_children          
+          build_children
         end
         self
       end
 
-      # def procure_references
-      #   if @payload.repo_name && @payload.referenced_issue_number
-      #     relationships[:references].reduce([]) do |acc, rl|
-      #       acc += rl.find_by_repo_name_and_number(
-      #         @payload.referenced_repo_name,
-      #         @payload.referenced_number
-      #       ).all
-      #     end
-      #   end
-      # end
+      def procure_references
+        if @payload.repo_name && @payload.referenced_issue_number
+          relationships[:references].reduce([]) do |acc, rl|
+            acc += rl.find_by_repo_name_and_number(
+              @payload.referenced_repo_name,
+              @payload.referenced_number
+            ).all
+          end
+        end
+      end
 
       # Builder
       def build

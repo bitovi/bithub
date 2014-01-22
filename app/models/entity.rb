@@ -16,10 +16,17 @@ class Entity < ActiveRecord::Base
   acts_as_taggable
   mount_uploader :image, EventImageUploader
 
-  # has_many :events
-  # has_many :entity_refs
-  # has_many :references, through: :entity_refs, :source => :entities
+  has_many :events
+  has_many :entity_refs, foreign_key: "from_id"
+  has_many :referencing, through: :entity_refs, source: :target
 
+  # has_and_belongs_to_many :references,
+  # :class_name => "Entity",
+  # :join_table => "entity_refs",
+  # :foreign_key => "from_id",
+  # :association_foreign_key => "to_id"
+  
+  
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
