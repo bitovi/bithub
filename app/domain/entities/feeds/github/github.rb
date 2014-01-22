@@ -19,23 +19,23 @@ module Entities
       end
     end
         
-    class Commit; end
-    class CommitComment; end
-    class Issue; end
-    class IssueAction; end
-    class IssueComment; end
-    class PullRequest; end
-    class Pull; end
-    class Push; end
-    class Watch; end
+    class Commit < Protocol; end
+    class CommitComment < Protocol; end
+    class Issue < Protocol; end
+    class IssueAction < Protocol; end
+    class IssueComment < Protocol; end
+    class PullRequest < Protocol; end
+    class Pull < Protocol; end
+    class Push < Protocol; end
+    class Watch < Protocol; end
   end
 end
 
-require 'entities/feeds/github/types/commit'
-require 'entities/feeds/github/types/commit_comment'
-require 'entities/feeds/github/types/issue'
-require 'entities/feeds/github/types/issue_action'
-require 'entities/feeds/github/types/issue_comment'
-require 'entities/feeds/github/types/pull_request'
-require 'entities/feeds/github/types/push'
-require 'entities/feeds/github/types/watch'
+require_relative 'types/commit'
+require_relative 'types/commit_comment'
+require_relative 'types/issue'
+require_relative 'types/issue_action'
+require_relative 'types/issue_comment'
+require_relative 'types/pull_request'
+require_relative 'types/push'
+require_relative 'types/watch'

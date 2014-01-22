@@ -1,16 +1,16 @@
-require 'entities/traits/determinable'
-require 'entities/traits/groupable'
-require 'entities/traits/normalizable'
-require 'entities/traits/persistable'
+require_relative 'traits/determinable'
+require_relative 'traits/groupable'
+require_relative 'traits/normalizable'
+require_relative 'traits/persistable'
 
 module Entities
   class Protocol
+
     class DeterminationError < Exception; end
     class NormalizationError < Exception; end
     class BuildingError < Exception; end
     class GroupingError < Exception; end
 
-    include Constructable
     include Determinable
     include Groupable
     include Normalizable
@@ -27,3 +27,10 @@ module Entities
     end
   end
 end
+
+require_relative 'feeds/blog/blog'
+require_relative 'feeds/disqus/disqus'
+require_relative 'feeds/forum/forum'
+require_relative 'feeds/github/github'
+require_relative 'feeds/twitter/twitter'
+require_relative 'feeds/meetup/meetup'

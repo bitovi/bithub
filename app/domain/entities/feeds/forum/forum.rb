@@ -1,6 +1,6 @@
 module Entities
 	module Forum
-		class Post; end
+		class Post < Protocol; end
 
     def self.type(arg)
       Entities::Forum::Post
@@ -9,4 +9,4 @@ module Entities
 	end
 end
 
-require 'entities/feeds/forum/types/post'
+require_relative 'types/post'

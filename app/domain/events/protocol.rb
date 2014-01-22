@@ -1,7 +1,7 @@
-require 'events/modules/constructable'
-require 'events/modules/persistable'
-require 'events/modules/comparable'
-require 'events/modules/digestable'
+require_relative 'traits/constructable'
+require_relative 'traits/persistable'
+require_relative 'traits/comparable'
+require_relative 'traits/digestable'
 
 module Events
   class Protocol

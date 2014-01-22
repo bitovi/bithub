@@ -1,6 +1,6 @@
 module Entities
   module Meetup
-    class Event; end
+    class Event < Protocol; end
 
     def self.type(type_name)
       Entities::Meetup::Event
@@ -9,4 +9,4 @@ module Entities
   end
 end
 
-require 'entities/feeds/meetup/types/event'
+require_relative 'types/event'

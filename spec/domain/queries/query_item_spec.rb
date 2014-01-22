@@ -1,4 +1,4 @@
-require 'domain/spec_helper'
+require 'domain/queries/spec_helper'
 
 describe QueryItem do
   let(:model) { double() }

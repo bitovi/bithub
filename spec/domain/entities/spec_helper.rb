@@ -1,5 +1,7 @@
-require 'domain/spec_helper'
 require 'rake'
+require 'domain/spec_helper'
+
+require 'app/domain/entities/protocol'
 
 require File.expand_path("../../../../config/environment", __FILE__)
 require 'rspec/rails'

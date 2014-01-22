@@ -16,7 +16,7 @@ module Entities
 
       def procure_parent
         if @payload.commit_id
-          Entities::Github::Push::Procurer
+          Entities::Github::Push
           .new(@payload)
           .find_by_commit_id
           .first
