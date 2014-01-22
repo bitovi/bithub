@@ -14,42 +14,26 @@ module Entities
       }
       
       def procure
-        if @payload.push_id && (e = find_by_push_id.first)
+        if @payload.push_id && (e = find_by_push_id.where(:parent_id => nil).first)
           e.props.symbolize_keys!
           @instance = e
         else
           @instance = build
+          build_children          
         end
         self
       end
 
-      def procure_parent
-      end
-
-      def procure_children
-        if @payload.commits
-          commit_comments = Entities::Github::CommitComment
-          .new(@payload)
-          .find_by_multiple_commit_shas.all
-
-          commits = Entities::Github::Commit
-          .new(@payload)
-          .procure
-
-          entities = [] + commit_comments + commits
-        end
-      end
-
-      def procure_references
-        if @payload.repo_name && @payload.referenced_issue_number
-          relationships[:references].reduce([]) do |acc, rl|
-            acc += rl.find_by_repo_name_and_number(
-              @payload.referenced_repo_name,
-              @payload.referenced_number
-            ).all
-          end
-        end
-      end
+      # def procure_references
+      #   if @payload.repo_name && @payload.referenced_issue_number
+      #     relationships[:references].reduce([]) do |acc, rl|
+      #       acc += rl.find_by_repo_name_and_number(
+      #         @payload.referenced_repo_name,
+      #         @payload.referenced_number
+      #       ).all
+      #     end
+      #   end
+      # end
 
       # Builder
       def build
@@ -70,17 +54,14 @@ module Entities
 
       def build_children
         @payload.commit_shas.map do |sha|
-          Entities::Github::Commit.new(@payload, sha).procure
+          commit = Entities::Github::Commit.new(@payload, sha).procure
+          commit.determine;
+          @instance.children.push commit.instance
         end
       end
 
-      def create_children
-        children = build_children
-        children.each {|c| c.determine; c.persist!}        
-        children
-      end
-
       # Finders
+      
       def find_by_push_id
         Entity.tagged_with(['github', 'push'])
         .where("props -> 'push_id' = '#{@payload.push_id}'")
@@ -90,6 +71,7 @@ module Entities
         Entity.tagged_with(['github', 'push'])
         .where("props -> 'commit_shas' LIKE '%#{@payload.commit_id}%'")
       end
+
     end
 
   end
