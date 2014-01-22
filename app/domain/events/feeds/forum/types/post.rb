@@ -3,9 +3,7 @@ require 'lib/sanitizer'
 module Events
   module Forum
 
-    class Post
-      include Constructable
-      include Persistable
+    class Post < Protocol
 
       def content_digest
         calc_digest(link)

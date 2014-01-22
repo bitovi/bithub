@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class CustomWatch
-      include Constructable
-      include Persistable
+    class CustomWatch < Protocol
 
       def initialize(repo, identity)
         @repo = Repo.new(repo)

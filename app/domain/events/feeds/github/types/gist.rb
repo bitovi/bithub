@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Gist
-      include Constructable
-      include Persistable
+    class Gist < Protocol
       include Events::Github::Accessors::Standard
 
       def action

@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Gollum
-      include Constructable
-      include Persistable
+    class Gollum < Protocol
       include Events::Github::Accessors::Standard
 
       def pages

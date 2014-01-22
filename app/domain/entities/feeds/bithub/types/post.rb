@@ -1,7 +1,7 @@
 module Entities
   module Bithub
 
-    class Post < Entity
+    class Post < Protocol 
       attr_reader :instance
 
       Relationships = {

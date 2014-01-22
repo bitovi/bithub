@@ -1,3 +1,8 @@
+require 'entities/traits/determinable'
+require 'entities/traits/groupable'
+require 'entities/traits/normalizable'
+require 'entities/traits/persistable'
+
 module Entities
   class Protocol
     class DeterminationError < Exception; end
@@ -15,6 +20,10 @@ module Entities
 
     def initialize(payload)
       @payload = payload
+    end
+    
+    def find_by_origin_uid(uid)
+      Entity.where("props -> 'origin_author_id' = ?", uid)
     end
   end
 end

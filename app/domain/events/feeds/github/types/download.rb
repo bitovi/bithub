@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class Download
-      include Constructable
-      include Persistable
+    class Download < Protocol
       include Events::Github::Accessors::Standard
 
       def name

@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class CommitComment
-      include Constructable
-      include Persistable
+    class CommitComment < Protocol
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Comments
 

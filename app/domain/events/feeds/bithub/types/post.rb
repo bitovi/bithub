@@ -1,8 +1,6 @@
 module Events
   module Bithub
-    class Post
-      include Constructable
-      include Persistable
+    class Post < Protocol
 
       def content_digest
       end

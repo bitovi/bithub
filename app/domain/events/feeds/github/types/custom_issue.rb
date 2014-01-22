@@ -1,9 +1,7 @@
 module Events
   module Github
 
-    class CustomIssue
-      include Constructable
-      include Persistable
+    class CustomIssue < Protocol
 
       DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
       
