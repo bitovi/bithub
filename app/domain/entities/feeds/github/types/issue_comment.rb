@@ -21,11 +21,7 @@ module Entities
       def procure_parent
         if @payload.repo_name && @payload.number
           matches = relationships[:upstream].inject([]) do |acc, rl|
-            acc.push rl.new(@payload)
-            .find_by_repo_name_and_number(
-              @payload.repo_name,
-              @payload.number
-            ).first
+            acc.push rl.new(@payload).find_by_repo_name_and_number.first
           end
           matches.compact.first
         end
@@ -62,9 +58,10 @@ module Entities
       end
 
       def find_by_repo_name_and_number
-        Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
-        .where("props -> 'number' = '#{@payload.number}'")
-        .tagged_with(['github', 'issue_comment'])
+        Entity
+          .tagged_with(['github', 'issue_comment'])
+          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
+          .where("props -> 'number' = '#{@payload.number}'")
       end
 
       def relationships
