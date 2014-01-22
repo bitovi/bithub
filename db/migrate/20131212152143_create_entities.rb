@@ -9,6 +9,7 @@ class CreateEntities < ActiveRecord::Migration
       t.references :rule, :null => false
       t.references :feed, :null => false
       t.references :category, :null => false
+      t.references :parent
 
       t.datetime :origin_ts, :null => false
       t.datetime :thread_updated_ts, :null => false

@@ -232,6 +232,7 @@ CREATE TABLE entities (
     scoring_rule_id integer NOT NULL,
     feed_id integer NOT NULL,
     category_id integer NOT NULL,
+    parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
     thread_updated_ts timestamp without time zone NOT NULL,
     image character varying(255),
@@ -1290,8 +1291,6 @@ INSERT INTO schema_migrations (version) VALUES ('20130305172111');
 INSERT INTO schema_migrations (version) VALUES ('20130429181415');
 
 INSERT INTO schema_migrations (version) VALUES ('20130429201314');
-
-INSERT INTO schema_migrations (version) VALUES ('20130510181611');
 
 INSERT INTO schema_migrations (version) VALUES ('20130520040320');
 

@@ -60,7 +60,7 @@ module Entities
         .where("props -> 'pull_request_id' = '#{@payload.pull_request_id}'")
       end
 
-      def find_by_repo_name_and_number(repo_name, number)
+      def find_by_repo_name_and_number
         Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
         .where("props -> 'number' = '#{@payload.number}'")
         .tagged_with(['github', 'pull_request'])
