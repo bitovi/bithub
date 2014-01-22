@@ -6,14 +6,7 @@ module Entities
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
-        references: [
-          #Entities::Github::Commit,
-          #Entities::Github::CommitComment,
-          Entities::Github::PullRequest,
-          Entities::Github::Issue,
-          Entities::Github::IssueComment,
-          #Entities::Github::PullRequestComment, # same as IssueComment
-        ]
+        references: []
       }
 
       def procure
@@ -27,14 +20,6 @@ module Entities
             acc += rl.new(@payload).find_by_repo_name_and_number.all
           end
         end
-      end
-
-      def procure_references
-        if @payload.repo_name && @payload.number
-          relationships[:references].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.all
-          end
-        end        
       end
 
       # Builder
@@ -58,6 +43,12 @@ module Entities
         })
         e.props.symbolize_keys!
         e
+      end
+
+      def build_references
+        Entity.tagged_with(['github','issue'])
+          .where("props -> 'number' = ANY(#{@payload.references.to_postgres_array})")
+          .each {|e| @instance.referencing.push e}
       end
 
       # Finders

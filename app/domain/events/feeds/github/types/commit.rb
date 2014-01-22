@@ -29,6 +29,10 @@ module Events
       def author_email
         @commit.andand[:name].andand[:email]
       end
+      
+      def references
+        message.scan(/#\d+/).map {|m| m.gsub('#','')}
+      end
     end
     
   end
