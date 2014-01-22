@@ -76,8 +76,8 @@ github:
   display_name: "Github"
   group_list: "feeds"
 
-forums:
-  display_name: "Forums"
+forum:
+  display_name: "Forum"
   group_list: "feeds"
 
 irc:

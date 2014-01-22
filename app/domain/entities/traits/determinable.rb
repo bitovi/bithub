@@ -62,7 +62,7 @@ module Entities
     end
     
     def taggify_content
-      input = ATTRS_FOR_TAGGING.map {|attr| @instance.andand[attr]}.compact
+      input = ATTRS_FOR_TAGGING.map {|attr| @instance.send(attr)}.compact
       Tagger.new(Tag.projects).find_tags(input)
     end
 

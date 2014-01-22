@@ -10,12 +10,12 @@ module Entities
       }
 
       def procure
-        @instance = (@payload.tweet_id && (e = find_by_tweet_id)) ? e : build
+        @instance = (@payload.tweet_id && (e = find_by_tweet_id.first)) ? e : build
         self
       end
 
       def procure_parent
-        find_original_tweet if @payload.original_tweet_id
+        find_original_tweet.first if @payload.original_tweet_id
       end
 
       def procure_children
