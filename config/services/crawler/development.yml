@@ -1,13 +1,13 @@
 :intervals:
     :github:
-        :events: 5
+        :events: 2
         :issues:
             :open: 5
             :closed: 6000
-    :disqus: 5
-    :forum: 5
-    :meetup: 5
-    :blog: 5
+    :disqus: 3
+    :forum: 2
+    :meetup: 3
+    :blog: 2
     :twitter: 5
 
 :feeds:

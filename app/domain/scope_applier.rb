@@ -39,11 +39,15 @@ class ScopeApplier
   
   def apply_order_to_scope
     if (orderings = @query.pluck_and_process_orderings)
-      orderings.each do |attribute, direction|
-        @scope = @scope.order("#{attribute} #{direction}")
-      end
+      # orderings.each do |attribute, direction|
+      #   @scope = @scope.order("#{attribute} #{direction}")
+      # end
     end
     self
+  end
+
+  def result
+    @scope
   end
 
   private

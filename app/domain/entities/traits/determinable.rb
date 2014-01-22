@@ -11,6 +11,7 @@ module Entities
       methods.unshift(:determine_tags) if methods.delete(:determine_tags)
       
       methods.each {|m| self.send(m)}
+      self
     end
     
     def determine_feed

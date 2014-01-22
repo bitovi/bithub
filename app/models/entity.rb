@@ -17,8 +17,6 @@ class Entity < ActiveRecord::Base
   mount_uploader :image, EventImageUploader
 
   # has_many :events
-  # has_many :entity_refs
-  # has_many :references, through: :entity_refs, :source => :entities
 
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
