@@ -3,6 +3,7 @@ module Events
 
     class Gist
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
 
       def action

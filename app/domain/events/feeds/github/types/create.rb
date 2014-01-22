@@ -3,6 +3,7 @@ module Events
 
     class Create
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Refs
     end

@@ -1,11 +1,7 @@
 module Entities
   module Twitter
 
-    class Follow
-      include Entities::Constructable
-      include Entities::Determinable
-
-      attr_reader :instance
+    class Follow < Protocol
 
       Relationships = {
         upstream: [],

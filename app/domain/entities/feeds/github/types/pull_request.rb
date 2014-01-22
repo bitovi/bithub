@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class PullRequest
-      include Entities::Constructable
-      include Entities::Determinable
-      
-      attr_reader :instance
+    class PullRequest < Protocol
       
       Relationships = {
         upstream: [],

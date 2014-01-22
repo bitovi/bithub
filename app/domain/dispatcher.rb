@@ -3,39 +3,25 @@ require 'lib/core_ext'
 require 'lib/core_helpers'
 require 'lib/loggable'
 
-require 'events/payload'
-
-require 'entities/mappings'
-require 'entities/procurer'
-require 'entities/determinator'
-require 'entities/grouper'
-require 'entities/normalizer'
+require 'events/dispatcher'
+require 'entities/dispatcher'
 
 class Dispatcher
   include Loggable
 
-  def initialize(response)
+  def initialize
     initialize_logger("DEBUG")
-    @response = response
   end
 
-  def dispatch
-    event = Events::Dispatcher.construct_event(@response)
-    entity = Entities::Procurer.new(event).procure
-    
+  def dispatch(response)
+    event = Events::Dispatcher.dispatch(response)
+    entity = Entities::Dispatcher.dispatch(event)
+
+
     @logger.info "Event : #{event.class.name}"
     @logger.debug "Entity : #{entity.class.name}"
 
-    event_record = Event.new({
-      feed: event.feed,
-      type: event.type,
-      content_digest: event.content_digest,
-      source_data: event.source_data,
-    })
-
-    Entities::Determinator.new(entity).determine
-    Entities::Normalizer.new(entity).normalize
-    Entities::Grouper.new(entity).group
+    entity.procure.determine.group.normalize.persist
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

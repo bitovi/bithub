@@ -2,6 +2,7 @@ module Events
   module Blog
     class Post
       include Constructable
+      include Persistable
 
       def content_digest
         @digest ||= Digest::MD5.hexdigest(link + self.class.name)
@@ -23,6 +24,5 @@ module Events
         Time.strptime(source_data.andand[:published], "%e %b %Y").utc
       end
     end
-
   end
 end

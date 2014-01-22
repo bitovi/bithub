@@ -3,6 +3,7 @@ module Events
 
     class Member
       include Constructable
+      include Persistable
       include Events::Github::Accessors::Standard
 
       def member_name
