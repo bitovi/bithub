@@ -1,9 +1,7 @@
 module Events
   module Twitter
 
-    class Status
-      include Constructable
-      include Persistable
+    class Status < Protocol
 
       def content_digest
         Digest::MD5.hexdigest(origin_id.to_s + self.class.name)
