@@ -19,6 +19,7 @@ module Entities
           @instance = commit
         else
           @instance = build
+          #build_references
         end
         self
       end
@@ -49,6 +50,15 @@ module Entities
         });
       end
 
+      def build_references
+        @payload.references.each do |ref|
+          Entity
+            .tagged_with(['github','issue'])
+            .where("props -> 'issue_id' == '#{ref}'")
+            .each {|e| @instance.references.push e.instance}
+        end
+      end
+      
       private
 
       def find_by_commit_sha
