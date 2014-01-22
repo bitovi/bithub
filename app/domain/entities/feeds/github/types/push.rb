@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class Push
-      include Entities::Constructable
-      include Entities::Determinable
-
-      attr_reader :instance
+    class Push < Protocol
 
       Relationships = {
         upstream: [],

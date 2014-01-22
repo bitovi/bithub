@@ -1,11 +1,7 @@
 module Entities
   module Github
 
-    class Issue
-      include Entities::Constructable
-      include Entities::Determinable
-
-      attr_reader :instance
+    class Issue < Protocol
       
       Relationships = {
         upstream: [],
