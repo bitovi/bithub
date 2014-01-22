@@ -1,6 +1,6 @@
 require 'digest/md5'
 
-class Api::EventsController < Api::ApiController
+class Api::V1::EventsController < Api::V1::BaseController
   before_filter :authenticate_user!, except: [:index, :show, :summary, :pagination]
   
   respond_to :json
@@ -21,12 +21,12 @@ class Api::EventsController < Api::ApiController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = scope_applier.apply_order_to_scope(scope, params)
+      scope = scope_applier(params, scope).apply_order_to_scope.result
       @events = EventDecorator.decorate_collection(scope.all, {
-        context: { excluded_attributes: logic_analyzer.pluck_excluded_attributes(params) }
+        context: { excluded_attributes: query_logic(params).exclusions }
       })
       @ev_relations = EventRelations.new(@events.map{|e| e.id })
-      render :index
+      render 'api/v1/events/index'
     end
   end
 
@@ -81,29 +81,34 @@ class Api::EventsController < Api::ApiController
   private # SCOPE BUILDING
 
   def build_scope(muster_query, params)
-    scope = Event.scoped_with_includes
+    scope = Entity.scoped_with_includes
     scope = scope.not_children if !counting?
     scope = scope.no_irc_nor_digest if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
-    scope = scope_applier.apply_negated_attrs_to_scope(scope, params)
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
-    scope = scope_applier.apply_regular_params_to_scope(scope, params)
-    scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
+
+    scope_applier(params, scope)
+    .apply_negated_attrs_to_scope
+    .apply_muster_query_to_scope(muster_query)
+    .apply_regular_params_to_scope
+    .apply_tag_based_params_to_scope
+    .result
   end
 
-  def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Event, params)
+  def query_logic(params)
+    @query_logic ||= QueryLogic::Query.new(Entity, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(params, current_scope = nil)
+    ScopeApplier.new((current_scope || Entity.scoped), query_logic(params))
   end
 
   def date_filtered_sumamry(tag, params)
     scope = Event.scoped.tagged_with(tag)
-    scope = scope_applier.apply_tag_based_params_to_scope(scope, params)
-    scope = scope_applier.apply_regular_params_to_scope(scope, params)
-    scope.count
+
+    scope_applier(scope, params)
+    .apply_tag_based_params_to_scope
+    .apply_regular_params_to_scope
+    .result.count
   end
 
   def custom_cache_key(event)
