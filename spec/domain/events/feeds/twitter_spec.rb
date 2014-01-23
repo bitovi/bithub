@@ -1,4 +1,6 @@
-describe Events::Payload do
+require 'app/domain/events/feeds/twitter/twitter.rb'
+
+describe Events::Twitter do
 
   shared_examples_for "every twitter event" do
     it_should_behave_like "every event"
