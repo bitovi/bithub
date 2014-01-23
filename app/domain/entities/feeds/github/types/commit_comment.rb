@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class CommitComment < Protocol
+      include Entities::Github::Referencable
 
       Relationships = {
         upstream: [Entities::Github::Push],

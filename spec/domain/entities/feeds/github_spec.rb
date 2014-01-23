@@ -71,7 +71,10 @@ def build_pull_req_comment(attrs={})
 end
 
 def build_push(attrs={})
-  commits = [{sha: '12345', message:'first, with ref to #100 ...'},{sha: '67890', message:'second'}]
+  commits = [
+    {sha: '12345', message:'first, with ref to #100 and #200 ...'},
+    {sha: '67890', message:'second, with ref to #100'}
+  ]
   
   payload = build_standard_github_payload(attrs)
   payload.stub(:type => "push") # push_event
