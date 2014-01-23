@@ -33,6 +33,8 @@ describe Entities::Github::Issue do
       expect(i.instance.title).to be_a(String)
       expect(i.instance.body).to be_a(String)
       expect(i.instance.url).to be_a(String)
+      expect(i.instance.feed_name).to eq('github')
+      expect(i.instance.type_name).to eq('issue')
       expect(i.instance.props['repo_name']).to be_a(String)
       expect(i.instance.props['number']).not_to be_empty
       expect(i.instance.props['issue_id']).not_to be_empty
@@ -82,6 +84,8 @@ describe Entities::Github::IssueComment do
       expect(ic.instance.title).to be_a(String)
       expect(ic.instance.body).to be_a(String)
       expect(ic.instance.url).to be_a(String)
+      expect(ic.instance.feed_name).to eq('github')
+      expect(ic.instance.type_name).to eq('issue_comment')
       expect(ic.instance.props['repo_name']).to be_a(String)
       expect(ic.instance.props['number']).not_to be_empty
       expect(ic.instance.props['comment_id']).not_to be_empty
@@ -109,6 +113,8 @@ describe Entities::Github::PullRequest do
       expect(pr.instance.title).to be_a(String)
       expect(pr.instance.body).to be_a(String)
       expect(pr.instance.url).to be_a(String)          
+      expect(pr.instance.feed_name).to eq('github')
+      expect(pr.instance.type_name).to eq('pull_request')
       expect(pr.instance.props['repo_name']).to be_a(String)
       expect(pr.instance.props['number']).not_to be_empty
       expect(pr.instance.props['pull_request_id']).not_to be_empty
