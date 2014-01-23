@@ -29,6 +29,10 @@ module Events
         source_data.andand[:category]
       end
 
+      def term
+        meta.andand[:term]
+      end
+
       def origin_ts
         Time.parse(source_data.andand[:pubDate]).utc
       end
