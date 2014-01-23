@@ -54,7 +54,6 @@ group :test, :testing, :development do
   gem 'evented-spec'
   gem 'git'
   gem 'database_cleaner'
-  gem 'webmock'
   gem 'capistrano'
   gem 'capistrano-ext'
   gem 'bullet'

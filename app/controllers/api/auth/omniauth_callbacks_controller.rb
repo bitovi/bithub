@@ -1,4 +1,4 @@
-class Api::V1::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def github
     oauthorize "github"

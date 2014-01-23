@@ -1,13 +1,14 @@
 Bithub::Application.routes.draw do
 
   devise_for :users,
-    controllers: { omniauth_callbacks: "api/v1/auth/omniauth_callbacks" }
+    controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   as :user do 
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
   namespace :api, :defaults => { :format => 'json' } do
+    match '/auth/session' => 'auth/session_info#current_session'
 
     namespace :v2 do
       match '*path', :to => redirect("/api/v2")
@@ -15,8 +16,6 @@ Bithub::Application.routes.draw do
     end
 
     namespace :v1 do
-      match '/auth/session' => 'auth/session_info#current_session'
-
       resources :events, :except => [:new, :edit] do
         resources 'activities', :only => :index, :to => 'event_activities#index'
         resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'
@@ -56,9 +55,8 @@ Bithub::Application.routes.draw do
 
       root :to => "base#home"
     end
+  
+    root :to => "base#home"
   end
-
-  match 'api/v:number/*path', :to => redirect("/api/v1/%{path}")
-  match 'api/*path', :to => redirect("/api/v1/%{path}")
 
 end
