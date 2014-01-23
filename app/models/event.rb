@@ -9,11 +9,9 @@ class Event < ActiveRecord::Base
   validates_presence_of :content_digest
   validates_uniqueness_of :content_digest
 
-  serialize :extracted, JSON
   serialize :source_data, JSON
-  serialize :source_json, JSON
 
-  #belongs_to :entity
+  belongs_to :entity
 
   # def initialize(args = {})
   #   args[:id] = Event.next_id

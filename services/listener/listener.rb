@@ -32,7 +32,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
       queue.subscribe do |metadata, payload|
         begin
           response = ActiveSupport::JSON.decode(payload)
-          Dispatcher.new(response).dispatch
+          Dispatcher.new.dispatch(response)
         rescue ActiveRecord::RecordInvalid => err
           logit(logger, err, payload)
         rescue Events::InitializationError => err
