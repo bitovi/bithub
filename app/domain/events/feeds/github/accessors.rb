@@ -60,7 +60,7 @@ module Events
         end
 
         def references
-          body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+          body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
         end        
       end
 

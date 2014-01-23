@@ -81,6 +81,7 @@ def build_push(attrs={})
   payload.stub(:push_id => "12345")
   payload.stub(:commit_shas => ["12345","67890"])
   payload.stub(:commit_shas_csv => "12345,67890")
+  payload.stub(:commit_messages => ["100","200"])
   payload.stub(:commit_by_sha) do |sha|
     commits.select {|c| c[:sha] == sha}.first
   end
