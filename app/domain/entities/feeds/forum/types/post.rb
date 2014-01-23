@@ -35,7 +35,7 @@ module Entities
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            tags: [@payload.subforum] + [@payload.term],
+            tags: [@payload.subforum, @payload.term],
             origin_author_name: @payload.origin_author_name,
           }
         })

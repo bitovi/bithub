@@ -53,6 +53,10 @@ module Events
       def repo_name
         # FIXME ? how to get ? mayble using REGEX ? :D
       end
+        
+      def references
+        body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+      end        
     end
 
   end

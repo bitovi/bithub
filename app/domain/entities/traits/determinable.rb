@@ -30,7 +30,7 @@ module Entities
     def determine_category
       if (category = CategoryDeterminationRule.best_match(@instance.tag_list))
         @instance.tag_list.add category.snake_case
-        @instance.category_name = category.camel_case
+        @instance.category_name = category.snake_case
       end
     end
 
