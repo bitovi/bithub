@@ -234,9 +234,9 @@ describe Events::Github do
         it_should_behave_like "every github event"
         it "creates Payload object with mapping methods" do
           expect(payload.push_id).to be_a(Integer)
-          expect(payload.commits).to be_a(Array)
-          expect(payload.commit_shas).to be_a(Array)
-          expect(payload.commit_messages).to be_a(Array)
+          expect(payload.commits.length).to eq(1)
+          expect(payload.commit_shas.length).to eq(1)
+          expect(payload.commit_messages.length).to eq(1)
           expect(payload.commit_shas_csv).to be_a(String)
           expect(payload.referenced_repo_name).to be_a(String)
           expect(payload.head).to be_a(String)

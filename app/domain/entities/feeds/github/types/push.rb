@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class Push < Protocol
+      include Entities::Github::Referencable
 
       Relationships = {
         upstream: [],
@@ -58,6 +59,11 @@ module Entities
           
           @instance.children.push commit.instance          
         end
+      end
+
+      # override Referencable
+      def search_for_references_in_content
+        @payload.commit_messages
       end
 
       # Finders
