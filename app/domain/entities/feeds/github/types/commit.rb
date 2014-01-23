@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class Commit < Protocol
+      include Entities::Github::Referencable
 
       Relationships = {
         upstream: [Entities::Github::Push],
@@ -19,7 +20,6 @@ module Entities
           @instance = commit
         else
           @instance = build
-          #build_references
         end
         self
       end
@@ -50,15 +50,11 @@ module Entities
         });
       end
 
-      def build_references
-        @payload.references.each do |ref|
-          Entity
-            .tagged_with(['github','issue'])
-            .where("props -> 'issue_id' == '#{ref}'")
-            .each {|e| @instance.references.push e.instance}
-        end
+      # override Referencable
+      def search_for_references_in_content
+        @commit[:message].scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end
-      
+
       private
 
       def find_by_commit_sha
