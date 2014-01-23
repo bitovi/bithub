@@ -15,8 +15,9 @@ class Entity < ActiveRecord::Base
 
   acts_as_taggable
   mount_uploader :image, EventImageUploader
+  serialize :props, ActiveRecord::Coders::Hstore
 
-  # has_many :events
+  has_many :events
   
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
@@ -30,8 +31,6 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of :origin_ts, :feed_id, :category_id, :scoring_rule_id, :tag_list, :title
 
-  serialize :props, ActiveRecord::Coders::Hstore
-  serialize :source_data, JSON
 
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
@@ -60,10 +59,6 @@ class Entity < ActiveRecord::Base
 
   def children_with_includes
     self.children.merge(Entity.scoped_with_includes)
-  end
-
-  def self.next_id
-    ActiveRecord::Base.connection.execute("SELECT nextval('#{Entity.sequence_name}') AS id;").first['id'].to_i
   end
 
   def thread
@@ -150,6 +145,14 @@ class Entity < ActiveRecord::Base
 
   def cached_tags
     self.cached_tag_list.split(',').map {|t| t.strip}
+  end
+  
+  def last_modified_by
+    events.order('created_at DESC').first
+  end
+
+  def source_data
+    last_modified_by.andand.source_data
   end
 
   private

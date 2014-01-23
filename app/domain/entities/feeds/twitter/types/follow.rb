@@ -25,6 +25,7 @@ module Entities
             type: @payload.type,
             origin_author_id: @payload.source_id,
             origin_author_name: @payload.source_screen_name,
+            target_screen_name: @payload.target_screen_name,
           }
         })
         e.props.symbolize_keys!

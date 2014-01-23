@@ -22,27 +22,27 @@ class Api::V1::EventsController < Api::V1::BaseController
       render :json => { :count => scope.count(muster_query[:count]) }
     else
       scope = scope_applier(params, scope).apply_order_to_scope.result
-      @events = EventDecorator.decorate_collection(scope.all, {
+      @events = EntityDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: query_logic(params).exclusions }
       })
-      @ev_relations = EventRelations.new(@events.map{|e| e.id })
+      @ev_relations = EntityRelations.new(@events.map{|e| e.id })
       render 'api/v1/events/index'
     end
   end
 
   def show
-    @event = EventDecorator.decorate(Event.find(params[:id]))
-    @ev_relations = EventRelations.new(@event.id)
+    @event = EntityDecorator.decorate(Entity.find(params[:id]))
+    @ev_relations = EntityRelations.new(@event.id)
     render :show
   end
 
   def create
-    e = Event.new_from_bithub(params[:event])
+    e = Entity.new_from_bithub(params[:event])
     e.author = current_user if !current_user.has_role?(:admin) || !posting_for_antoher_user?(params)
     if e.save
       e.bump_thread
-      @event = EventDecorator.decorate(e)
-      @ev_relations = EventRelations.new(@event.id)
+      @event = EntityDecorator.decorate(e)
+      @ev_relations = EntityRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
@@ -50,11 +50,11 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def update
-    authorize! :manage, Event, :message => "No rights to manage events."
-    e = Event.find(params[:id])
+    authorize! :manage, Entity, :message => "No rights to manage events."
+    e = Entity.find(params[:id])
     if e.update_from_bithub(params[:event])
-      @event = EventDecorator.decorate(e)
-      @ev_relations = EventRelations.new(@event.id)
+      @event = EntityDecorator.decorate(e)
+      @ev_relations = EntityRelations.new(@event.id)
       render :show
     else
       render :json => msg_hash(e, 'events', 'update'), :status => 406
@@ -62,8 +62,8 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def destroy
-    authorize! :manage, Event, :message => "No rights to manage events."
-    Event.find(params[:id]).destroy
+    authorize! :manage, Entity, :message => "No rights to manage events."
+    Entity.find(params[:id]).destroy
     render :json => { error: t('api.events.destroy.success') }
   end
 
@@ -103,7 +103,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def date_filtered_sumamry(tag, params)
-    scope = Event.scoped.tagged_with(tag)
+    scope = Entity.scoped.tagged_with(tag)
 
     scope_applier(scope, params)
     .apply_tag_based_params_to_scope

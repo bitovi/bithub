@@ -1,4 +1,4 @@
-class EventRelations
+class EntityRelations
   
   def initialize(ids)
     @ids = ids
@@ -7,7 +7,7 @@ class EventRelations
   def children
 
     if @children_for.nil?
-      @children_for = Event.scoped_with_includes.where(parent_id: @ids)
+      @children_for = Entity.scoped_with_includes.where(parent_id: @ids)
     end
 
     @children_for || []

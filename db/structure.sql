@@ -297,10 +297,10 @@ CREATE TABLE tags (
 --
 
 CREATE VIEW entity_aggregated_tag_list AS
- SELECT e.id AS entity_id,
+ SELECT e.id AS entity_id, 
     string_agg((t.name)::text, ','::text) AS tag_list
-   FROM entities e,
-    tags t,
+   FROM entities e, 
+    tags t, 
     taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
@@ -355,9 +355,9 @@ CREATE TABLE upvotes (
 --
 
 CREATE VIEW entity_total_upvotes AS
- SELECT e.id AS entity_id,
+ SELECT e.id AS entity_id, 
     sum(u.value) AS upvotes_sum
-   FROM entities e,
+   FROM entities e, 
     upvotes u
   WHERE (e.id = u.applies_to_id)
   GROUP BY e.id;
@@ -376,7 +376,7 @@ CREATE TABLE events (
     updated_at timestamp without time zone NOT NULL,
     type character varying(255),
     feed character varying(255),
-    source_json json
+    entity_id integer
 );
 
 
@@ -537,18 +537,18 @@ CREATE TABLE users_roles (
 --
 
 CREATE MATERIALIZED VIEW leaderboard AS
- SELECT users.id AS user_id,
-    users.name AS user_name,
-    users.email AS user_email,
-    (users.props -> 'avatar_url'::text) AS user_gravatar_url,
+ SELECT users.id AS user_id, 
+    users.name AS user_name, 
+    users.email AS user_email, 
+    (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
     ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities,
+           FROM entities, 
             scoring_rules
           WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-           FROM entities,
+           FROM entities, 
             upvotes
           WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-           FROM entities,
+           FROM entities, 
             awards
           WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
@@ -561,13 +561,13 @@ CREATE MATERIALIZED VIEW leaderboard AS
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
   ORDER BY ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
-      FROM entities,
+      FROM entities, 
        scoring_rules
      WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-      FROM entities,
+      FROM entities, 
        upvotes
      WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-      FROM entities,
+      FROM entities, 
        awards
      WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
       FROM internals
@@ -582,13 +582,13 @@ CREATE MATERIALIZED VIEW leaderboard AS
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT (e.origin_ts)::date AS origin_date,
-    (t.name)::text AS category,
+ SELECT (e.origin_ts)::date AS origin_date, 
+    (t.name)::text AS category, 
     count(*) AS cnt
-   FROM tags t,
-    taggings tt,
-    tags mt,
-    entities e,
+   FROM tags t, 
+    taggings tt, 
+    tags mt, 
+    entities e, 
     taggings et
   WHERE (((((((tt.tag_id = mt.id) AND (tt.taggable_id = t.id)) AND ((tt.taggable_type)::text = 'ActsAsTaggableOn::Tag'::text)) AND (et.tag_id = t.id)) AND (et.taggable_id = e.id)) AND ((et.taggable_type)::text = 'Entity'::text)) AND ((mt.name)::text = 'categories'::text))
   GROUP BY (e.origin_ts)::date, (t.name)::text
@@ -741,15 +741,15 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE VIEW user_total_score AS
- SELECT users.id AS user_id,
+ SELECT users.id AS user_id, 
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities e,
+           FROM entities e, 
             scoring_rules r
           WHERE ((r.id = e.scoring_rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
+           FROM entities e, 
             upvotes u
           WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
+           FROM entities e, 
             awards a
           WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
@@ -1359,3 +1359,7 @@ INSERT INTO schema_migrations (version) VALUES ('20131212162518');
 INSERT INTO schema_migrations (version) VALUES ('20131212162523');
 
 INSERT INTO schema_migrations (version) VALUES ('20140119061002');
+
+INSERT INTO schema_migrations (version) VALUES ('20140123003102');
+
+INSERT INTO schema_migrations (version) VALUES ('20140123003458');
