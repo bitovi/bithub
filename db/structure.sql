@@ -961,6 +961,14 @@ ALTER TABLE ONLY entity_refs
 
 
 --
+-- Name: entity_refs_unique_from_to; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY entity_refs
+    ADD CONSTRAINT entity_refs_unique_from_to UNIQUE (from_id, to_id);
+
+
+--
 -- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1054,6 +1062,20 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: entity_refs_on_from_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX entity_refs_on_from_id ON entity_refs USING btree (from_id);
+
+
+--
+-- Name: entity_refs_on_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
 
 
 --
@@ -1352,3 +1374,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140123003458');
 INSERT INTO schema_migrations (version) VALUES ('20140123005015');
 
 INSERT INTO schema_migrations (version) VALUES ('20140123075124');
+
+INSERT INTO schema_migrations (version) VALUES ('20140123185242');
