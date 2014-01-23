@@ -1,8 +1,8 @@
-require 'domain/spec_helper'
+require 'domain/entities/spec_helper'
 
 describe Entities::Groupable do
 
-  before(:all) { @default_rule = create(:rule) }
+  before(:all) { @default_rule = create(:scoring_rule) }
   after(:all) { @default_rule.destroy }
 
 
