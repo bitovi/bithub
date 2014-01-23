@@ -5,7 +5,7 @@ module Events
       include Events::Github::Accessors::Standard
 
       def content_digest
-        seed = identity.uid.to_s + repo_id.to_s
+        seed = origin_author_name + repo_name
         calc_digest(seed)
       end
 
