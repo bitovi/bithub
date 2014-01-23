@@ -33,14 +33,12 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
             push_id: @payload.push_id,

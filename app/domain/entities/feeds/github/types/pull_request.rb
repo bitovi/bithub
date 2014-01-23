@@ -34,15 +34,13 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: "Pull request ##{@payload.number} #{@payload.action}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
             pull_request_id: @payload.pull_request_id,
@@ -50,8 +48,6 @@ module Entities
             action: @payload.action, # IssuePullRequestAction?
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

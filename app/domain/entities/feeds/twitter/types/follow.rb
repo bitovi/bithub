@@ -16,20 +16,16 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: "followed @#{@payload.target_screen_name}",
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             origin_author_id: @payload.source_id,
             origin_author_name: @payload.source_screen_name,
             target_screen_name: @payload.target_screen_name,
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

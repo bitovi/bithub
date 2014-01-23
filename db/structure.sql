@@ -230,8 +230,6 @@ CREATE TABLE entities (
     body text,
     author_id integer,
     scoring_rule_id integer NOT NULL,
-    feed_id integer NOT NULL,
-    category_id integer NOT NULL,
     parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
     thread_updated_ts timestamp without time zone NOT NULL,
@@ -240,7 +238,10 @@ CREATE TABLE entities (
     total_upvotes integer,
     props hstore,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    feed_name character varying(255),
+    type_name character varying(255),
+    category_name character varying(255)
 );
 
 
@@ -1165,22 +1166,6 @@ ALTER TABLE ONLY awards
 
 
 --
--- Name: fk_entities_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
-
-
---
--- Name: fk_entities_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
-
-
---
 -- Name: fk_entities_scoring_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1363,3 +1348,7 @@ INSERT INTO schema_migrations (version) VALUES ('20140119061002');
 INSERT INTO schema_migrations (version) VALUES ('20140123003102');
 
 INSERT INTO schema_migrations (version) VALUES ('20140123003458');
+
+INSERT INTO schema_migrations (version) VALUES ('20140123005015');
+
+INSERT INTO schema_migrations (version) VALUES ('20140123075124');

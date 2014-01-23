@@ -41,13 +41,11 @@ module Entities
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: 'commit',
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
             push_id: @payload.push_id,
           }
-        });
+        })
       end
 
       def build_references

@@ -16,13 +16,11 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: @payload.title,
           body: @payload.message,
           url: @payload.url,
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

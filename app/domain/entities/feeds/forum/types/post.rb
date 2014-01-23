@@ -28,21 +28,17 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.link,
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            tags: [@payload.subforum],
-            feed: @payload.feed,
-            type: @payload.type,
+            tags: [@payload.subforum] + [@payload.term],
             origin_author_name: @payload.origin_author_name,
           }
         })
-        e.props.symbolize_keys! # hstore!
-        e
       end
 
       # Finders

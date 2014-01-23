@@ -8,7 +8,8 @@ class Entity < ActiveRecord::Base
 
   attr_accessible :id,
     :body, :title, :url,
-    :feed, :category, :tag_list, :author,
+    :tag_list, :author,
+    :feed_name, :type_name, :category_name, 
     :origin_ts, :thread_updated_ts,
     :created_at, :updated_at,
     :props, :image, :total_upvotes
@@ -21,16 +22,16 @@ class Entity < ActiveRecord::Base
   
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
-  belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
-  belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
   has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
-  validates_presence_of :origin_ts, :feed_id, :category_id, :scoring_rule_id, :tag_list, :title
-
+  validates_presence_of  :title,
+    :feed_name, :type_name, :category_name,
+    :origin_ts, :thread_updated_ts,
+    :scoring_rule_id, :tag_list
 
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }

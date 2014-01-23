@@ -24,15 +24,13 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
             issue_id: @payload.issue_id,
@@ -41,8 +39,6 @@ module Entities
             # action: @payload.action, # IssuePullRequestAction?
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       def build_references
