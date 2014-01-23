@@ -1,4 +1,4 @@
-class EventDecorator < Draper::Decorator
+class EntityDecorator < Draper::Decorator
   S3_PREFIX = "http://s3.amazonaws.com/bithub"
   
   delegate_all
@@ -16,7 +16,7 @@ class EventDecorator < Draper::Decorator
   end
 
   def title
-    if source.cached_tags.include?('status_event') && !source.source_data['entities']['urls'].blank?
+    if source.cached_tags.include?('tweet')
       apply_hyperlinks(source.title, source.source_data['entities']['urls'])
     else
       source.title
@@ -67,22 +67,6 @@ class EventDecorator < Draper::Decorator
   end
 
   def props(thread_awarded = false, awarded_value = nil)
-    if source.source_data && source.category.name == 'digest'
-      source.props[:repo] = source.source_data['repo']['name'] if cached_tags.include?('watch_event') || cached_tags.include?('fork_event')
-      source.props[:target] = source.source_data['target']['screen_name'] if cached_tags.include?('follow_event')
-    end
-
-    if source.feed && source.feed.name == 'github'
-      if source.props && (source.props['repo'] || source.props['repo_name'])
-        source.props[:repo_name] = source.props['repo'] || source.props['repo_name']
-      elsif source.source_data && source.source_data['repo']
-        source.props[:repo_name] = source.source_data['repo']['name']
-      end
-    end
-    
-    if cached_tags and cached_tags.include?('push_event')
-      source.props[:commits] = source.source_data['payload']['commits']
-    end
 
     if source.source_data && source.source_data['user'] && source.source_data['user']['profile_image_url']
       source.props[:origin_author_avatar_url] = source.source_data['user']['profile_image_url']
@@ -96,15 +80,6 @@ class EventDecorator < Draper::Decorator
     #source.props[:awarded_value] = source.awards.first.value if source.awards.first
 
     source.props
-  end
-
-  # TODO replace with method_missing + delegate
-  def source_data
-    if excluded_attributes_include?('source_data')
-      nil
-    else
-      source.source_data
-    end
   end
 
   private
