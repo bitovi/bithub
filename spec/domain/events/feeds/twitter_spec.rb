@@ -1,4 +1,4 @@
-require 'app/domain/events/feeds/twitter/twitter.rb'
+require 'domain/events/spec_helper.rb'
 
 describe Events::Twitter do
 

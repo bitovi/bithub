@@ -12,10 +12,6 @@ namespace :test do
     t.pattern = FileList["spec/domain"]
   end
 
-  RSpec::Core::RakeTask.new(:services) do |t|
-    t.pattern = FileList["spec/services"]
-  end
-
   RSpec::Core::RakeTask.new(:models) do |t|
     t.pattern = FileList["spec/models"]
   end

@@ -1,4 +1,4 @@
-require 'app/domain/events/feeds/github/github.rb'
+require 'domain/events/spec_helper.rb'
 
 describe Events::Github do
 

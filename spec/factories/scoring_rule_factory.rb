@@ -1,6 +1,6 @@
 FactoryGirl.define do
 
-  factory :rule do
+  factory :scoring_rule do
     required_tags []
     authorship_value 0
     upvote_value 1

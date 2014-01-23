@@ -1,4 +1,4 @@
-require 'domain/spec_helper'
+require 'domain/entities/spec_helper'
 
 describe Entities::Determinable do
 
@@ -22,7 +22,7 @@ describe Entities::Determinable do
 
   describe "#determine_rule" do
     it "determines a rule" do
-      create(:rule, required_tags: %w(canjs code github))
+      create(:scoring_rule, required_tags: %w(canjs code github))
       event = build(:event, tag_list: %w(canjs code github))        
       event.determine_rule
       rule = ScoringRule.best_match(event.tag_list)
