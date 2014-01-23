@@ -58,6 +58,10 @@ module Events
           ts_str = source_data.andand[:created_at]
           Time.parse(ts_str).utc
         end
+
+        def references
+          body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+        end        
       end
 
       module Comments
