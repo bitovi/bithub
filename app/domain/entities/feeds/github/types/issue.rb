@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class Issue < Protocol
+      include Entities::Github::Referencable
       
       Relationships = {
         upstream: [],
@@ -43,12 +44,6 @@ module Entities
         })
         e.props.symbolize_keys!
         e
-      end
-
-      def build_references
-        Entity.tagged_with(['github','issue'])
-          .where("props -> 'number' = ANY(#{@payload.references.to_postgres_array})")
-          .each {|e| @instance.referencing.push e}
       end
 
       # Finders
