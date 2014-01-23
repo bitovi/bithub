@@ -4,11 +4,8 @@ class CategoryDeterminationRule < ActiveRecord::Base
 
   validates_uniqueness_of :name
 
-  def self.determine_category(tags)
-    match_best(CategoryDeterminationRule.all, tags)
-  end
-
-  def self.match_best(rules, tags)
+  def self.best_match(tags)
+    rules = CategoryDeterminationRule.all
     best = calculate_scores(rules, tags).max {|a,b| a[:score] <=> b[:score]}
     (best && (best[:score] > 0)) ? best[:name] : nil
   end

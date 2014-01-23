@@ -16,13 +16,11 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: @payload.title,
           url: @payload.link,
           body: Sanitize.clean(@payload.body, Sanitize::Config::RELAXED),
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

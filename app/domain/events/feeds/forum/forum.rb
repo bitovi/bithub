@@ -1,5 +1,4 @@
 require 'lib/sanitizer'
-require 'lib/configurable'
 require_relative 'types/post'
 
 module Events
@@ -27,7 +26,7 @@ module Events
       end
 
       def decorate
-        { meta: { tags: [@config.andand[:term]] }}
+        { meta: { term: [@config.term] }}
       end
     end
 

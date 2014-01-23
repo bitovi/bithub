@@ -40,11 +40,7 @@ module Events
     def decorate
       @decorated ||= result.map do |event_hash|
         e = Events::Dispatcher.dispatch(event_hash, @feed)
-        {
-          meta: { feed: e.feed, type: e.type },
-          content_digest: e.content_digest,
-          source_data: e.source_data,
-        }
+        e.to_json.deep_merge(subprocessor.decorate)
       end
       self
     end

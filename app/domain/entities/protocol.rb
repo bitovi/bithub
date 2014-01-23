@@ -26,6 +26,14 @@ module Entities
       Entity.where("props -> 'origin_author_id' = ?", uid)
     end
 
+    def feed_name
+      self.class.name.match(/::(.+)::/).to_a[1]
+    end
+
+    def type_name
+      self.class.name.match(/::.*::(.+)$/).to_a[1]
+    end
+
   end
 end
 

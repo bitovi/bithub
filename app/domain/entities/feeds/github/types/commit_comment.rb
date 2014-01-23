@@ -31,21 +31,17 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: "commented on a commit in #{@payload.repo_name}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             repo_name: @payload.repo_name,
             commit_id: @payload.commit_id,
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

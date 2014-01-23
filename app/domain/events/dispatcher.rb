@@ -6,8 +6,7 @@ module Events
 
     def self.dispatch(payload, feed_name = nil)
       feed_name ||= self.meta_feed(payload)
-      sd = extract_source_data(payload)
-      Events.feed(feed_name).type(sd).new(sd)
+      Events.feed(feed_name).type(extract_source_data(payload)).new(payload)
     end
 
     def self.extract_source_data(payload)

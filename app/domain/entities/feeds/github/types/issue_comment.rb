@@ -28,22 +28,18 @@ module Entities
 
       # Builder
       def build
-        e = Entity.new({
+        Entity.new({
           title: "commented on issue ##{@payload.number}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             repo_name: @payload.repo_name,
             number: @payload.number,
             comment_id: @payload.comment_id,
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       # Finders

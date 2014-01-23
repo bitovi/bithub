@@ -20,7 +20,7 @@ class Dispatcher
 
     @logger.info "MAPPING, Event : Entity => #{event.class.name} : #{entity.class.name}"
 
-    entity.procure.determine.persist if event.build.persist
+    entity.procure.determine.persist! if event.build.persist!
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

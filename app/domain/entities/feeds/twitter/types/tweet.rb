@@ -33,17 +33,13 @@ module Entities
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
             tweet_id: @payload.tweet_id,
             retweeted_id: @payload.original_tweet_id
           }
         })
-
         e[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
-        e.props.symbolize_keys!
         e
       end
 

@@ -11,8 +11,8 @@ module Entities
     end
 
     def clean_junk_from_props
-      @instance.props.delete('tags')
-      @instance.props.delete('origin_author_feed') # Events from Bithub have this
+      @instance.props.delete(:tags)
+      @instance.props.delete(:origin_author_feed) # Events from Bithub have this
     end
   end
 end

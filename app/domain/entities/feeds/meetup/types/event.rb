@@ -18,19 +18,15 @@ module Entities
       end
 
       def build
-        e = Entity.new({
+        Entity.new({
           title: @payload.name,
           body: @payload.description,
           url: @payload.url,
           origin_ts: @payload.origin_timestamp,
           props: {
-            feed: @payload.feed,
-            type: @payload.type,
             event_id: @payload.event_id,
           }
         })
-        e.props.symbolize_keys!
-        e
       end
 
       def find_by_event_id

@@ -2,7 +2,7 @@ module Entities
   module Determinable
 
     ATTRS_FOR_TAGGING = [:url, :title, :body]
-    PROPS_TO_TAGS = [:feed, :type, :project, :tags]
+    PROPS_TO_TAGS = [:project, :tags]
 
     def determine
       methods = collect_methods(/determine_.*/)
@@ -14,16 +14,23 @@ module Entities
       self
     end
     
-    def determine_feed
-      @instance.feed = Tag.find_or_create_by_name(@instance.props[:feed])
+    def determine_tags
+      taggify_methods = collect_methods(/taggify_.*/)
+
+      tags = taggify_methods
+        .reduce([]) {|acc, m| acc += self.send(m)}
+        .flatten
+        .compact
+        .map {|t| t.snake_case}
+      
+      @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?      
     end
 
+    
     def determine_category
-      if (category = CategoryDeterminationRule.determine_category(@instance.tag_list) || @instance.props[:category])
-        category = category.snake_case
-        @instance.tag_list.add(category)
-        @instance.props[:category] = category
-        @instance.category = Tag.find_or_create_by_name(category)
+      if (category = CategoryDeterminationRule.best_match(@instance.tag_list))
+        @instance.tag_list.add category.snake_case
+        @instance.category_name = category.camel_case
       end
     end
 
@@ -42,24 +49,16 @@ module Entities
       @instance.author = ident.user if ident && ident.user
     end
 
-    def determine_tags
-      taggify_methods = collect_methods(/taggify_.*/)
-
-      tags = taggify_methods
-        .reduce([]) {|acc, m| acc += self.send(m)}
-        .flatten
-        .compact
-        .map {|t| t.snake_case}
-      
-      @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?      
-    end
-
     private
 
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
         .uniq      
+    end
+
+    def taggify_feed_and_type_name
+      [feed_name.snake_case, type_name.snake_case]
     end
     
     def taggify_content
