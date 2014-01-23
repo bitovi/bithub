@@ -1,4 +1,5 @@
 require 'domain/spec_helper'
+require 'app/domain/tagger'
 
 describe Tagger do
 

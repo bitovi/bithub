@@ -1,2 +1,4 @@
-require 'app/domain/queries/query'
-require 'app/domain/queries/query_item'
+require 'domain/spec_helper.rb'
+
+require 'query_logic/query'
+require 'query_logic/query_item'

@@ -6,14 +6,10 @@ ENV['RAILS_ENV'] = "test"
 task :default => :test
 task :test => %w(test:domain)
 
-namespace :test do
+1namespace :test do
 
   RSpec::Core::RakeTask.new(:domain) do |t|
     t.pattern = FileList["spec/domain"]
-  end
-
-  RSpec::Core::RakeTask.new(:services) do |t|
-    t.pattern = FileList["spec/services"]
   end
 
   RSpec::Core::RakeTask.new(:models) do |t|
