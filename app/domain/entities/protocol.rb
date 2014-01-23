@@ -2,6 +2,7 @@ require_relative 'traits/determinable'
 require_relative 'traits/groupable'
 require_relative 'traits/normalizable'
 require_relative 'traits/persistable'
+require_relative 'traits/referencable'
 
 module Entities
   class Protocol

@@ -50,6 +50,7 @@ module Entities
         @payload.commit_shas.map do |sha|
           commit = Entities::Github::Commit.new(@payload, sha).procure
           commit.determine;
+          commit.build_references;
           @instance.children.push commit.instance
         end
       end

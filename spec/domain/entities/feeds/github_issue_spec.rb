@@ -1,8 +1,27 @@
-issue_def = {number: "100", issue_id: "1001"}
-issue_def2 = {number: "200", issue_id: "2001", body: "referencing issue #100 ...", references: [100]}
-issue_comment_def = {number: "100", comment_id: "1002"}
-issue_comment_def2 = {number: "100", comment_id: "1003"}
-issue_comment_def3 = {number: "200", comment_id: "1004", body: "referencing issue #100 ..."}
+issue_def = {
+  number: "100",
+  issue_id: "1001"
+}
+issue_def2 = {
+  number: "200",
+  issue_id: "2001",
+  body: "referencing issue #100 ...",
+  references: [100]
+}
+issue_comment_def = {
+  number: "100",
+  comment_id: "1002"
+}
+issue_comment_def2 = {
+  number: "100",
+  comment_id: "1003"
+}
+issue_comment_def3 = {
+  number: "200",
+  comment_id: "1004",
+  body: "referencing issue #100 ...",
+  references: [100]
+}
 
 describe Entities::Github::Issue do  
   describe "#build" do
@@ -36,17 +55,21 @@ describe Entities::Github::Issue do
 
   describe "#procure_references" do
     it "checks for entities contain references to exact issue" do
-      # issue
+      
+      # issue #100;
       i = build_issue(issue_def); i.determine; i.persist!
 
-      # entities with references to the issue above
-      i2 = build_issue(issue_def2); i2.determine; i2.build_references; i2.persist!
-      #ic3 = build_issue_comment(issue_comment_def3); ic3.determine; ic3.persist!
-      #p = build_push(); p.determine; p.persist!
+      # issue #200; ref issue #100
+      i2 = build_issue(issue_def2); i2.determine; i2.persist!
 
-      puts "#{i.instance.id}; #{i2.instance.id}; #{EntityRef.all.inspect}"
+      # ref issue #100
+      ic3 = build_issue_comment(issue_comment_def3); ic3.determine; ic3.persist!
+      
+      # ref issue #100 and #200 in first commit, ref issue #200 in second commit
+      p = build_push(); p.determine; p.persist! 
 
-      expect(i.instance.reload.referenced.length).to eq(3)
+      expect(i.instance.referenced.length).to eq(4)
+      expect(i2.instance.referenced.length).to eq(1)
     end
   end  
 end

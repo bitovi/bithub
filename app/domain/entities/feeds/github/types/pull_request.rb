@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class PullRequest < Protocol
+      include Entities::Github::Referencable
       
       Relationships = {
         upstream: [],

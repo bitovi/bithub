@@ -2,6 +2,7 @@ module Entities
   module Github
 
     class IssueComment < Protocol
+      include Entities::Github::Referencable
 
       Relationships = {
         upstream: [Entities::Github::Issue, Entities::Github::PullRequest],

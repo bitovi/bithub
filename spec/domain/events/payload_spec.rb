@@ -1,6 +1,7 @@
 require 'domain/spec_helper'
 
 require 'app/domain/events/protocol'
+require 'app/domain/events/dispatcher'
 
 def load_response(path)
   loaders = {
@@ -13,7 +14,8 @@ end
 def build_payload(feed, type, opts = {})
   response_path = opts[:response_path] || "#{feed}/#{type}.json"
   load_path = File.join(['spec/support/responses', response_path])
-  Events::Payload.new(load_response(load_path), feed)
+  #Events::Payload.new(load_response(load_path), feed)
+  Events::Dispatcher.dispatch(load_response(load_path), feed)
 end
 
 shared_examples_for "every event" do
