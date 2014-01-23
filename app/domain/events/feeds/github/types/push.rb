@@ -32,16 +32,6 @@ module Events
         payload.andand[:head]
       end
 
-      # def referenced_number
-      #   if md = commit_messages.join(' ').match(/#(\d*)/)
-      #     md.andand[0]
-      #   end
-      # end
-
-      def references
-        "".scan(/#\d+/).map {|m| m.gsub('#','')}
-      end
-
       def commit_by_sha(sha)
         if commit_shas.include?(sha)
           commits.select {|c| c.andand[:sha] == sha}.first
