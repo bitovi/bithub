@@ -28,11 +28,11 @@ module Entities
     end
 
     def feed_name
-      self.class.name.match(/::(.+)::/).to_a[1]
+      self.class.name.match(/::(.+)::/).to_a[1].snake_case
     end
 
     def type_name
-      self.class.name.match(/::.*::(.+)$/).to_a[1]
+      self.class.name.match(/::.*::(.+)$/).to_a[1].snake_case
     end
 
   end
