@@ -31,7 +31,7 @@ module Events
         source_data.andand[:author].andand[:name]
       end
 
-      def origin_timestamp
+      def origin_ts
         # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
         Time.parse(source_data.andand[:createdAt]+'Z').utc
       end

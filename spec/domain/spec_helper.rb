@@ -6,5 +6,5 @@ $:.unshift(File.expand_path(File.join('app', 'domain')))
 require 'lib/core_ext'
 require 'lib/core_helpers'
 
-require 'app/domain/digest_queue'
-require 'app/domain/tagger'
+require 'events/processor'
+require 'events/protocol'
