@@ -70,8 +70,8 @@ describe Entities::Github::Issue do
       # ref issue #100 and #200 in first commit, ref issue #200 in second commit
       p = build_push(); p.determine; p.persist! 
 
-      expect(i.instance.referenced.length).to eq(4)
-      expect(i2.instance.referenced.length).to eq(1)
+      expect(i.instance.referenced.length).to eq(5)
+      expect(i2.instance.referenced.length).to eq(2)
     end
   end  
 end
