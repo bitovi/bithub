@@ -32,8 +32,8 @@ describe Entities::Twitter::Tweet do
       expect(entity.instance.url).to be_a(String)
       expect(entity.instance.origin_ts).to be_a(Time)
       expect(entity.instance.thread_updated_ts).to be_a(Time)
-      expect(entity.instance.props['feed']).to eq("twitter")
-      expect(entity.instance.props['type']).to eq("tweet")
+      expect(entity.instance.feed_name).to eq("twitter")
+      expect(entity.instance.type_name).to eq("tweet")
       expect(entity.instance.props['origin_author_id']).to be_a(String)
       expect(entity.instance.props['origin_author_name']).to be_a(String)
       expect(entity.instance.props['retweeted_id']).to be_nil
@@ -80,8 +80,8 @@ describe Entities::Twitter::Follow do
 
       expect(entity.instance.title).to be_a(String)
       expect(entity.instance.origin_ts).to be_a(Time)
-      expect(entity.instance.props['feed']).to eq('twitter')
-      expect(entity.instance.props['type']).to eq('follow')
+      expect(entity.instance.feed_name).to eq('twitter')
+      expect(entity.instance.type_name).to eq('follow')
       expect(entity.instance.props['origin_author_id']).to be_a(String)
       expect(entity.instance.props['origin_author_name']).to be_a(String)
     end

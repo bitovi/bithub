@@ -51,7 +51,12 @@ module Entities
           commit = Entities::Github::Commit.new(@payload, sha).procure
           commit.determine;
           commit.build_references;
-          @instance.children.push commit.instance
+
+          # set this up manually b/c AR will call save instead of persist on children
+          commit.instance.feed_name = "github"
+          commit.instance.type_name = "commit"
+          
+          @instance.children.push commit.instance          
         end
       end
 
