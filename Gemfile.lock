@@ -97,8 +97,6 @@ GEM
     coderay (1.1.0)
     connection_pool (1.2.0)
     cookiejar (0.3.0)
-    crack (0.4.1)
-      safe_yaml (~> 0.9.0)
     dalli (2.6.2)
     database_cleaner (1.2.0)
     devise (2.2.3)
@@ -298,7 +296,6 @@ GEM
       rubinius-core-api
     rubinius-core-api (0.0.1)
     ruby_gntp (0.3.4)
-    safe_yaml (0.9.7)
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
     sawyer (0.5.1)
@@ -333,9 +330,6 @@ GEM
     uniform_notifier (1.4.0)
     warden (1.2.1)
       rack (>= 1.0)
-    webmock (1.16.0)
-      addressable (>= 2.2.7)
-      crack (>= 0.3.2)
     yajl-ruby (1.1.0)
 
 PLATFORMS
@@ -399,5 +393,4 @@ DEPENDENCIES
   sanitize
   twitter
   unicorn
-  webmock
   yajl-ruby
