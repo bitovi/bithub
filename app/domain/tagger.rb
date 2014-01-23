@@ -13,10 +13,10 @@ class Tagger
   class Tag
     attr_reader :name, :threshold
 
-    def initialize(t)
+    def initialize(t, opts={})
       @name = t[:name]
       @aliases = t[:aliases] || []
-      @threshold = t.andand[:props].andand[:levenshtein_treshold].to_i || Tagger::DEFAULT_THRESHOLD
+      @threshold = t.andand[:props].andand[:levenshtein_treshold].andand.to_i || opts.andand[:threshold].andand
     end
     
     def names
@@ -27,9 +27,9 @@ class Tagger
   def initialize(tags, opts={})
     fail NoTagsProvided, "tagger must have tags to search for" if (tags.nil? || tags.empty?)
 
-    @tags = tags.map{|t| Tag.new(t)} || []
     @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
     @threshold = opts[:threshold] || DEFAULT_THRESHOLD
+    @tags = tags.map{|t| Tag.new(t, {threshold: @threshold})} || []
   end
 
   def textualize(input)
