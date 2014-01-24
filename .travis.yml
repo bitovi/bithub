@@ -7,7 +7,9 @@ notifications:
   recipients:
     - veljko@kset.org
     - neektza@gmail.com
+    - konjevic@gmail.com
 addons:
+  postgresql: 9.3
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
 rvm:
