@@ -1,23 +1,23 @@
 digest:
-  follow: 10 # follow_event
-  fork: 10   # fork_event
-  watch: 10  # watch_event
+  follow: 10
+  fork: 10
+  watch: 10
 
 twitter:
-  tweet: 10 # status_event
+  tweet: 10
 
 comment:
   disqus: 10
-  commit_comment: 10 # commit_comment_event
-  issue_comment: 10 # issue_comment_event
-  pull_request_review_comment: 10 # pull_request_review_comment_event
+
+github_commet:
+  commit_comment: 10
+  issue_comment: 10
+  pull_request_review_comment: 10
 
 code:
   commit: 10
-  push: 10 # push_event
-  create_event: 10
-  delete_event: 10
-  pull_request: 10 # pull_request_event
+  push: 10
+  pull_request: 10
 
 question:
   forum: 10
@@ -30,14 +30,14 @@ article:
   blog: 10
 
 issue:
-  issue: 10 # issues_event
+  issue: 10
 
 bug:
-  issue: 10 # issues_event
+  issue: 10
   bug: 5
 
 feature:
-  issue: 10 # issues_event
+  issue: 10
   feature: 5
   feature_request: 5
   enhancement: 5
