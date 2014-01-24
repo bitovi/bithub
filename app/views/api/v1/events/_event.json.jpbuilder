@@ -1,8 +1,9 @@
 json.cache! ("v1" + custom_cache_key(event)) do
 	json.(event, :id, :title, :body, :parent_id, :origin_ts,  :created_at, :updated_at, :thread_updated_ts, :url)
 
-	json.category event.category.name
-	json.feed event.feed.name
+	json.feed event.feed_name
+	json.type event.type_name
+	json.category event.category_name
 	json.tags event.cached_tags
 
 	json.upvotes @ev_relations.calculate_upvotes_for(event)

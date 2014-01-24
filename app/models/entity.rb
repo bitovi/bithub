@@ -55,7 +55,7 @@ class Entity < ActiveRecord::Base
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  scope :no_irc_nor_digest, lambda { where("props -> 'feed' <> 'irc' AND props -> 'category' <> 'digest'") }
+  scope :no_irc_nor_digest, lambda { where("props -> 'feed_name' <> 'irc' AND props -> 'category_name' <> 'digest'") }
 
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
@@ -64,9 +64,7 @@ class Entity < ActiveRecord::Base
   def self.scoped_with_includes
     scope = Entity.scoped
     scope = scope.includes(:author)
-    scope = scope.includes(:category)
     scope = scope.includes(:parent)
-    scope = scope.includes(:feed)
     scope
   end
 
