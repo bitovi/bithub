@@ -5,7 +5,7 @@ commit_comment_def = {}
 describe Entities::Github::Push do
   describe "#build" do
     it "instances new Github Push entity " do
-      p = build_push(); p.determine; p.persist!
+      p = build_push(); p.determine.group.normalize.persist!
 
       # check push
       expect(p.instance.title).to be_a(String)

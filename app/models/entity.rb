@@ -18,13 +18,13 @@ class Entity < ActiveRecord::Base
   mount_uploader :image, EventImageUploader
   serialize :props, ActiveRecord::Coders::Hstore
 
-  has_and_belongs_to_many :referencing,
+  has_and_belongs_to_many :references_to,
   :class_name => "Entity",
   :join_table => "entity_refs",
   :foreign_key => "from_id",
   :association_foreign_key => "to_id"
   
-  has_and_belongs_to_many :referenced,
+  has_and_belongs_to_many :referenced_from,
   :class_name => "Entity",
   :join_table => "entity_refs",
   :foreign_key => "to_id",

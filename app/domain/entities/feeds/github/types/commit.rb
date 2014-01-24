@@ -35,12 +35,8 @@ module Entities
         })
       end
 
-      def find_parent
-        # TODO
-      end
-
       # override Referencable
-      def search_for_references_in_content
+      def references_in_content
         @commit[:message].scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end
 

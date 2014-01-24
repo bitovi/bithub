@@ -31,26 +31,14 @@ module Entities
       def build_children
         @payload.commit_shas.map do |sha|
           commit = Entities::Github::Commit.new(@payload, sha).procure
-          commit.determine
-          commit.build_references
-          commit
+          commit.determine.group
+          commit.instance
         end
       end
       
-      def find_references
-        if @payload.repo_name && @payload.referenced_issue_number
-          relationships[:references].reduce([]) do |acc, rl|
-            acc += rl.find_by_repo_name_and_number(
-              @payload.referenced_repo_name,
-              @payload.referenced_number
-            ).all
-          end
-        end
-      end
-
       # override Referencable
-      def search_for_references_in_content
-        @payload.commit_messages
+      def references_in_content
+        @payload.referenced_issue_numbers
       end
 
       # Finders

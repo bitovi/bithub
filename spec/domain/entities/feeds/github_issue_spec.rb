@@ -6,7 +6,7 @@ issue_def2 = {
   number: "200",
   issue_id: "2001",
   body: "referencing issue #100 ...",
-  references: [100]
+  referenced_issue_numbers: ['100']
 }
 issue_comment_def = {
   number: "100",
@@ -20,15 +20,13 @@ issue_comment_def3 = {
   number: "200",
   comment_id: "1004",
   body: "referencing issue #100 ...",
-  references: [100]
+  referenced_issue_numbers: ['100']
 }
 
 describe Entities::Github::Issue do  
   describe "#build" do
-    it "instances new Github Issue entity" do
-      i = build_issue()
-      i.determine
-      i.persist!
+    it "instances new Github::Issue entity" do
+      i = build_issue(); i.determine.persist!
       
       expect(i.instance.title).to be_a(String)
       expect(i.instance.body).to be_a(String)
@@ -43,43 +41,35 @@ describe Entities::Github::Issue do
     end
   end
 
-  describe "#procure_children" do
+  describe "children finding/building" do
     it "checks for children" do
-      ic = build_issue_comment(issue_comment_def); ic.determine; ic.persist!
-      i = build_issue(issue_def); i.determine; i.persist!
-      ic2 = build_issue_comment(issue_comment_def2); ic2.determine; ic2.persist!
-      i2 = build_issue(issue_def2); i2.determine; i2.persist!
+      ic = build_issue_comment(issue_comment_def)   ; ic.determine.group.normalize.persist!
+      i = build_issue(issue_def)                    ; i.determine.group.normalize.persist!
+      ic2 = build_issue_comment(issue_comment_def2) ; ic2.determine.group.normalize.persist!
+      i2 = build_issue(issue_def2)                  ; i2.determine.group.normalize.persist!
 
-      expect(i.procure_children.length).to eq(2)
-      expect(i2.procure_children.length).to eq(0)
+      expect(i.find_children.length).to eq(2)
+      expect(i2.find_children.length).to eq(0)
     end
   end  
 
-  describe "#procure_references" do
+  describe "reference building" do
     it "checks for entities contain references to exact issue" do
-      
-      # issue #100;
-      i = build_issue(issue_def); i.determine; i.persist!
+      i = build_issue(issue_def)                    ; i.determine.group.normalize.persist!
+      i2 = build_issue(issue_def2)                  ; i2.determine.group.normalize.persist!
+      ic3 = build_issue_comment(issue_comment_def3) ; ic3.determine.group.normalize.persist!
+      p = build_push()                              ; p.determine.group.normalize.persist!
 
-      # issue #200; ref issue #100
-      i2 = build_issue(issue_def2); i2.determine; i2.persist!
-
-      # ref issue #100
-      ic3 = build_issue_comment(issue_comment_def3); ic3.determine; ic3.persist!
-      
-      # ref issue #100 and #200 in first commit, ref issue #200 in second commit
-      p = build_push(); p.determine; p.persist! 
-
-      expect(i.instance.referenced.length).to eq(5)
-      expect(i2.instance.referenced.length).to eq(2)
+      expect(i.instance.referenced_from.length).to eq(5)
+      expect(i2.instance.referenced_from.length).to eq(2)
     end
   end  
 end
 
 describe Entities::Github::IssueComment do
   describe "#build" do
-    it "instances new Github Issue Comment entity" do
-      ic = build_issue_comment(); ic.determine; ic.persist!
+    it "builds a new Github::IssueComment entity" do
+      ic = build_issue_comment(); ic.determine.persist!
       
       expect(ic.instance.title).to be_a(String)
       expect(ic.instance.body).to be_a(String)
@@ -92,22 +82,22 @@ describe Entities::Github::IssueComment do
     end
   end
 
-  describe "#procure_parent" do
+  describe "parent finding/building" do
     it "checks for the parent issue" do
-      ic = build_issue_comment(issue_comment_def); ic.determine; ic.persist!
-      i = build_issue(issue_def); i.determine; i.persist!
-      ic2 = build_issue_comment(issue_comment_def2); ic2.determine; ic2.persist!
-      i2 = build_issue(issue_def2); i2.determine; i2.persist!
+      ic = build_issue_comment(issue_comment_def)   ; ic.determine.group.normalize.persist!
+      i = build_issue(issue_def)                    ; i.determine.group.normalize.persist!
+      ic2 = build_issue_comment(issue_comment_def2) ; ic2.determine.group.normalize.persist!
+      i2 = build_issue(issue_def2)                  ; i2.determine.group.normalize.persist!
 
-      expect(ic.procure_parent.id).to eq(i.instance.id)
-      expect(ic2.procure_parent.id).to eq(i.instance.id)
+      expect(ic.find_parent.id).to eq(i.instance.id)
+      expect(ic2.find_parent.id).to eq(i.instance.id)
     end
   end
 end
 
 describe Entities::Github::PullRequest do
   describe "#build" do
-    it "instances new Github Pull Request entity" do
+    it "instances new Github::PullRequest entity" do
       pr = build_pull_req(); pr.determine; pr.persist!
 
       expect(pr.instance.title).to be_a(String)
@@ -124,10 +114,5 @@ describe Entities::Github::PullRequest do
   end  
 end
 
+describe Entities::Github::PullRequest
 # PullRequestComment behaves the same as IssueComment
-# describe Entities::Github::PullRequestComment do
-#   describe "#build" do
-#     it "instances new Entity object"
-#   end  
-# end
-

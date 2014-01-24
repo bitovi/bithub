@@ -35,18 +35,18 @@ describe Entities::Forum::Post do
     end
   end
 
-  describe "#procure_*" do
-    it "checks for parents and children" do
+  describe "#find_parents,#find_children" do
+    it "tries to find parents and children" do
       a1 = build_post(answer); a1.determine; a1.persist!
       q = build_post(question); q.determine; q.persist!
       a2 = build_post(answer2); a2.determine; a2.persist!
       u = build_post(unrelated); u.determine; u.persist!
 
-      expect(q.procure_children.length).to eq(2)
-      expect(a1.procure_parent.id).to eq(q.instance.id)
-      expect(a2.procure_parent.id).to eq(q.instance.id)
-      expect(u.procure_parent).to be_nil
-      expect(u.procure_children.length).to eq(0)
+      expect(q.find_children.length).to eq(2)
+      expect(a1.find_parent.id).to eq(q.instance.id)
+      expect(a2.find_parent.id).to eq(q.instance.id)
+      expect(u.find_parent).to be_nil
+      expect(u.find_children.length).to eq(0)
     end
   end
 end
