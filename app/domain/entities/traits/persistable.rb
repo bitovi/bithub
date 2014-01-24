@@ -7,14 +7,16 @@ module Entities
     end
 
     def persist
-      puts "=======================> #{@instance.inspect}"
       set_feed_and_type
-      @instance.save        
+      @instance.parent.save if @instance.parent
+      @instance.children.each {|c| c.save} if @instance.children
+      @instance.save
     end
 
     def persist!
-      puts "=======================> #{@instance.inspect}"
       set_feed_and_type
+      @instance.parent.save! if @instance.parent
+      @instance.children.each {|c| c.save!} if @instance.children
       @instance.save!
     end
   end

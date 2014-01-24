@@ -24,6 +24,10 @@ module Events
         commit_shas.join(',')
       end
 
+      def referenced_issue_numbers
+        commit_messages.join(' ').scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
+      end
+
       def referenced_repo_name
         repo_name
       end

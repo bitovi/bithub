@@ -59,7 +59,7 @@ module Events
           Time.parse(ts_str).utc
         end
 
-        def references
+        def referenced_issue_numbers
           body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
         end        
       end

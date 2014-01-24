@@ -4,15 +4,16 @@ module Entities
     def group
       join_family
       adopt
-      reference
+      associate_references
       self
     end
 
     def adopt
       if self.respond_to? :find_children
-        find_children.andand.each { |child| child.parent = @instance }
-      elsif self.respond_to? :build_children
-        build_children.andand.each { |child| child.parent = @instance }
+        @instance.children += find_children
+      end
+      if self.respond_to? :build_children
+        @instance.children += build_children
       end
       self
     end
@@ -20,17 +21,19 @@ module Entities
     def join_family
       if self.respond_to? :find_parent
         @instance.parent = find_parent
-      elsif self.respond_to? :build_parent
+      end
+      if self.respond_to? :build_parent
         @instance.parent = build_parent
       end
       self
     end
 
-    def reference
+    def associate_references
       if self.respond_to? :find_references
-        @instance.referenced += find_references
-      elsif self.respond_to? :build_references
-        @instance.referenced += build_references
+        @instance.references_to += find_references
+      end
+      if self.respond_to? :build_references
+        @instance.references_to += build_references
       end
       self
     end

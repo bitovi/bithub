@@ -38,8 +38,8 @@ describe Entities::Twitter::Tweet do
       expect(entity.instance.props['origin_author_name']).to be_a(String)
       expect(entity.instance.props['retweeted_id']).to be_nil
       
-      expect(entity.procure_children.length).to eq(0)
-      expect(entity.procure_parent).to be_nil
+      expect(entity.find_children.length).to eq(0)
+      expect(entity.find_parent).to be_nil
     end
   end
 
@@ -50,11 +50,11 @@ describe Entities::Twitter::Tweet do
       rt2 = build_tweet(retweet2); rt2.determine; rt2.persist!
       atw = build_tweet(another_tweet); atw.determine; atw.persist!
 
-      expect(tw.procure_children.length).to eq(2)
-      expect(rt.procure_parent.id).to eq(tw.instance.id)
-      expect(rt2.procure_parent.id).to eq(tw.instance.id)
-      expect(atw.procure_parent).to be_nil
-      expect(atw.procure_children.length).to eq(0)
+      expect(tw.find_children.length).to eq(2)
+      expect(rt.find_parent.id).to eq(tw.instance.id)
+      expect(rt2.find_parent.id).to eq(tw.instance.id)
+      expect(atw.find_parent).to be_nil
+      expect(atw.find_children.length).to eq(0)
     end
   end
 
