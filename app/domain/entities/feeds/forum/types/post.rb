@@ -9,24 +9,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.link && (e = find_by_url.first)) ? e : build
-        self
+      def find
+        @payload.link && find_by_url.first
       end
-
-      def procure_parent
-        if @payload.link
-          find_by_thread_prefix.order("origin_ts ASC").first
-        end
-      end
-
-      def procure_children
-        if @payload.link
-          find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
-        end
-      end
-
-      # Builder
+      
       def build
         Entity.new({
           title: @payload.title,
@@ -39,6 +25,18 @@ module Entities
             origin_author_name: @payload.origin_author_name,
           }
         })
+      end
+
+      def find_parent
+        if @payload.link
+          find_by_thread_prefix.order("origin_ts ASC").first
+        end
+      end
+
+      def find_children
+        if @payload.link
+          find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
+        end
       end
 
       # Finders

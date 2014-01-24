@@ -10,26 +10,16 @@ module Entities
       }
 
       def procure
-        if @payload.issue_id && (entity = find_by_issue_id(@payload.issue_id).first)
-          @instance ||= entity
-        else
-          @instance ||= build
-        end
+        @instance = (@payload.issue_id && (e = find_by_issue_id.first)) ? e : build
         self
       end
 
-      def procure_parent
+      def find_parent
         if @payload.repo_name && @payload.number
           relationships[:upstream].reduce([]) do |acc, rl|
             acc += rl.new(@payload).find_by_repo_name_and_number.first
           end
         end
-      end
-
-      def procure_children
-      end
-
-      def procure_references
       end
 
       # Builder

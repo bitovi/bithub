@@ -19,12 +19,12 @@ class User < ActiveRecord::Base
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
-  has_many :events, :foreign_key => "author_id", :class_name => "Event", :dependent => :nullify
+  has_many :entities, :foreign_key => "author_id", :class_name => "Entity", :dependent => :nullify
 
   has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
-  has_many :anteups, :through => :events
-  has_many :upvotes, :through => :events
-  has_many :awards, :through => :events
+  has_many :anteups, :through => :entities
+  has_many :upvotes, :through => :entities
+  has_many :awards, :through => :entities
 
   has_many :identities, :dependent => :destroy
   
@@ -95,7 +95,7 @@ class User < ActiveRecord::Base
   end
 
   def authored_events_total
-    self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
+    self.entities.reduce(0) { |acc, e| acc + e.scoring_rule.authorship_value }
   end
 
   def upvotes_total

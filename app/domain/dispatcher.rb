@@ -17,10 +17,13 @@ class Dispatcher
     event = Events::Dispatcher.dispatch(response)
     entity = Entities::Dispatcher.dispatch(event)
 
-
     @logger.info "MAPPING, Event : Entity => #{event.class.name} : #{entity.class.name}"
 
-    entity.procure.determine.persist! if event.build.persist!
+
+    ActiveRecord::Base.transaction do
+      event.build.persist!
+      entity.procure.determine.group.normalize.persist!
+    end
 
     # ActiveRecord::Base.transaction do
     #   new_event.save!

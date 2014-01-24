@@ -15,22 +15,8 @@ module Entities
         @commit = @payload.commit_by_sha(sha)
       end
 
-      def procure
-        if commit = @payload.commits && find_by_commit_sha
-          @instance = commit
-        else
-          @instance = build
-        end
-        self
-      end
-
-      def procure_parent
-      end
-
-      def procure_children
-      end
-
-      def procure_references
+      def find
+        @commit.andand[:sha] && find_by_commit_sha.first
       end
 
       def build
@@ -40,13 +26,17 @@ module Entities
           url: @commit.andand[:url],
           origin_ts: @payload.origin_ts,
           thread_updated_ts: @payload.origin_ts,
-          
           props: {
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
-            push_id: @payload.push_id,
-          }
+          }, # set next manually b/c AR will call save instead of persist on children
+          feed_name: feed_name.snake_case,
+          type_name: type_name.snake_case,
         })
+      end
+
+      def find_parent
+        # TODO
       end
 
       # override Referencable
@@ -59,7 +49,6 @@ module Entities
       def find_by_commit_sha
         Entity.tagged_with(['github', 'commit'])
           .where("props -> 'sha' = '#{@commit[:sha]}'")
-          .first
       end
     end
 

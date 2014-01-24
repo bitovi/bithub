@@ -10,21 +10,17 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance ||= (@payload.comment_id && (e = find_by_comment_id.first)) ? e : build
-        self
+      def find
+        @payload.comment_id && find_by_comment_id.first
       end
 
-      def procure_parent
+      def find_parent
         if @payload.repo_name && @payload.number
           matches = relationships[:upstream].inject([]) do |acc, rl|
             acc.push rl.new(@payload).find_by_repo_name_and_number.first
           end
           matches.compact.first
         end
-      end
-
-      def procure_children
       end
 
       # Builder

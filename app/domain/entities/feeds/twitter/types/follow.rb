@@ -9,12 +9,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance ||= build
-        self
+      def find
+        # TODO
       end
 
-      # Builder
       def build
         Entity.new({
           title: "followed @#{@payload.target_screen_name}",
@@ -28,11 +26,6 @@ module Entities
         })
       end
 
-      # Finders
-      def find_by_author_id_and_target
-      end
-
     end
-
   end
 end

@@ -10,27 +10,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.commit_id && (e = find_by_commit_id.first)) ? e : build
-        self
+      def find
+        @payload.commit_id && find_by_commit_id.first
       end
 
-      def procure_parent
-        if @payload.commit_id
-          Entities::Github::Push
-          .new(@payload)
-          .find_by_commit_id
-          .first
-        end
-      end
-
-      def procure_children
-      end
-
-      def procure_references
-      end
-
-      # Builder
       def build
         Entity.new({
           title: "commented on a commit in #{@payload.repo_name}",
@@ -43,6 +26,15 @@ module Entities
             commit_id: @payload.commit_id,
           }
         })
+      end
+
+      def find_children
+        if @payload.commit_id
+          Entities::Github::Push
+          .new(@payload)
+          .find_by_commit_id
+          .first
+        end
       end
 
       # Finders
