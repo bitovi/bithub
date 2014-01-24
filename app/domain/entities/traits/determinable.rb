@@ -28,6 +28,7 @@ module Entities
 
     
     def determine_category
+      puts "===================> #{@instance.tag_list}"
       if (category = CategoryDeterminationRule.best_match(@instance.tag_list))
         @instance.tag_list.add category.snake_case
         @instance.category_name = category.snake_case
@@ -54,7 +55,7 @@ module Entities
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
-        .uniq      
+        .uniq
     end
 
     def taggify_feed_and_type_name
@@ -75,7 +76,7 @@ module Entities
       # match tag objects
       search_tags.map {|p| Tag.find_by_name(p) }
         .compact
-        .map {|t| t.name}      
+        .map {|t| t.name}
     end
 
   end  

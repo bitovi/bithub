@@ -56,6 +56,8 @@ Bithub::Application.routes.draw do
 
       root :to => "base#home"
     end
-  
   end
+
+  match 'api/v:number/*path', :to => redirect("/api/v1/%{path}")
+  match 'api/*path', :to => redirect("/api/v1/%{path}")
 end
