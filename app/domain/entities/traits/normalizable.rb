@@ -4,6 +4,7 @@ module Entities
     def normalize
       set_thread_ts_to_origin_ts
       clean_junk_from_props
+      self
     end
 
     def set_thread_ts_to_origin_ts

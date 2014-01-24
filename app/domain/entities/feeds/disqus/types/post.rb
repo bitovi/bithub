@@ -9,12 +9,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.post_id && (e = find_by_post_id.first)) ? e : build
-        self
+      def find
+        @payload.post_id && find_by_post_id.first
       end
 
-      # Builder
       def build
         Entity.new({
           title: @payload.title,

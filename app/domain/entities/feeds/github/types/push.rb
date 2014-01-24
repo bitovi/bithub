@@ -9,30 +9,11 @@ module Entities
         downstream: [Entities::Github::CommitComment, Entities::Github::Commit],
         references: [Entities::Github::Issue, Entities::Github::PullRequest],
       }
-      
-      def procure
-        if @payload.push_id && (e = find_by_push_id.where(:parent_id => nil).first)
-          e.props.symbolize_keys!
-          @instance = e
-        else
-          @instance = build
-          build_children
-        end
-        self
+
+      def find
+        @payload.push_id && find_by_push_id.where(:parent_id => nil).first
       end
 
-      def procure_references
-        if @payload.repo_name && @payload.referenced_issue_number
-          relationships[:references].reduce([]) do |acc, rl|
-            acc += rl.find_by_repo_name_and_number(
-              @payload.referenced_repo_name,
-              @payload.referenced_number
-            ).all
-          end
-        end
-      end
-
-      # Builder
       def build
         Entity.new({
           title: "pushed to #{@payload.repo_name}",
@@ -50,14 +31,20 @@ module Entities
       def build_children
         @payload.commit_shas.map do |sha|
           commit = Entities::Github::Commit.new(@payload, sha).procure
-          commit.determine;
-          commit.build_references;
-
-          # set this up manually b/c AR will call save instead of persist on children
-          commit.instance.feed_name = "github"
-          commit.instance.type_name = "commit"
-          
-          @instance.children.push commit.instance          
+          commit.determine
+          commit.build_references
+          commit
+        end
+      end
+      
+      def find_references
+        if @payload.repo_name && @payload.referenced_issue_number
+          relationships[:references].reduce([]) do |acc, rl|
+            acc += rl.find_by_repo_name_and_number(
+              @payload.referenced_repo_name,
+              @payload.referenced_number
+            ).all
+          end
         end
       end
 

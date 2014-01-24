@@ -19,7 +19,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   private
 
   def oauthorize(kind)
-    @user = AccountManager.new(current_user).find_or_create_user(kind, env["omniauth.auth"])
+    @user = Accounts::AccountManager.new(current_user).find_or_create_user(kind, env["omniauth.auth"])
     if @user
       flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => kind
       session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]

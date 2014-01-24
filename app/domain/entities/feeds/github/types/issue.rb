@@ -10,20 +10,10 @@ module Entities
         references: []
       }
 
-      def procure
-        @instance = (@payload.issue_id && (e = find_by_issue_id.first)) ? e : build
-        self
+      def find
+        @payload.issue_id && find_by_issue_id.first
       end
-
-      def procure_children
-        if @payload.repo_name && @payload.number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.all
-          end
-        end
-      end
-
-      # Builder
+      
       def build
         Entity.new({
           title: @payload.title,
@@ -37,9 +27,16 @@ module Entities
             issue_id: @payload.issue_id,
             label_names: @payload.label_names,
             state: @payload.state,
-            # action: @payload.action, # IssuePullRequestAction?
           }
         })
+      end
+
+      def find_children
+        if @payload.repo_name && @payload.number
+          relationships[:downstream].reduce([]) do |acc, rl|
+            acc += rl.new(@payload).find_by_repo_name_and_number.all
+          end
+        end
       end
 
       # Finders

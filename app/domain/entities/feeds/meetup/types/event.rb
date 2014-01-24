@@ -3,20 +3,10 @@ module Entities
 
     class Event < Protocol
 
-      def procure
-        @instance = (@payload.event_id && (e = find_by_event_id.first)) ? e : build
-        self
+      def find
+        @payload.event_id && find_by_event_id.first
       end
-
-      def procure_parent
-      end
-
-      def procure_children
-      end
-
-      def procure_references
-      end
-
+      
       def build
         Entity.new({
           title: @payload.name,
@@ -24,6 +14,7 @@ module Entities
           url: @payload.url,
           origin_ts: @payload.origin_timestamp,
           props: {
+            event_id: @payload.event_id,
             event_id: @payload.event_id,
           }
         })
@@ -33,7 +24,6 @@ module Entities
         Entity.tagged_with(['meetup', 'event'])
         .where("props -> 'event_id' = '#{@payload.event_id}'")
       end
-
     end
 
   end

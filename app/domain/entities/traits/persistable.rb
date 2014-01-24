@@ -7,11 +7,13 @@ module Entities
     end
 
     def persist
+      puts "=======================> #{@instance.inspect}"
       set_feed_and_type
       @instance.save        
     end
 
     def persist!
+      puts "=======================> #{@instance.inspect}"
       set_feed_and_type
       @instance.save!
     end

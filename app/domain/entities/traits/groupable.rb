@@ -9,19 +9,29 @@ module Entities
     end
 
     def adopt
-      procure_children.andand.each do |child|
-        child.parent = @instance
+      if self.respond_to? :find_children
+        find_children.andand.each { |child| child.parent = @instance }
+      elsif self.respond_to? :build_children
+        build_children.andand.each { |child| child.parent = @instance }
       end
       self
     end
 
     def join_family
-      @instance.parent = procure_parent
+      if self.respond_to? :find_parent
+        @instance.parent = find_parent
+      elsif self.respond_to? :build_parent
+        @instance.parent = build_parent
+      end
       self
     end
 
     def reference
-      @instance.references += procure_references
+      if self.respond_to? :find_references
+        @instance.referenced += find_references
+      elsif self.respond_to? :build_references
+        @instance.referenced += build_references
+      end
       self
     end
 

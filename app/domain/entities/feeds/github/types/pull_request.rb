@@ -10,30 +10,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.pull_request_id && (e = find_by_pull_request_id.first)) ? e : build
-        self
+      def find
+        @payload.pull_request_id && find_by_pull_request_id.first
       end
-
-      def procure_parent
-      end
-
-      def procure_children
-        if @payload.repo_name && @payload.number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload)
-            .find_by_repo_name_and_number(
-              @payload.repo_name,
-              @payload.number
-            ).all
-          end
-        end
-      end
-
-      def procure_references
-      end
-
-      # Builder
+      
       def build
         Entity.new({
           title: "Pull request ##{@payload.number} #{@payload.action}",
@@ -51,6 +31,18 @@ module Entities
         })
       end
 
+      def find_children
+        if @payload.repo_name && @payload.number
+          relationships[:downstream].reduce([]) do |acc, rl|
+            acc += rl.new(@payload)
+            .find_by_repo_name_and_number(
+              @payload.repo_name,
+              @payload.number
+            ).all
+          end
+        end
+      end
+
       # Finders
       def find_by_pull_request_id
         Entity.tagged_with(['github', 'pull_request'])
@@ -62,7 +54,6 @@ module Entities
         .where("props -> 'number' = '#{@payload.number}'")
         .tagged_with(['github', 'pull_request'])
       end
-
 
       def relationships
         Entities::Github::PullRequest::Relationships

@@ -9,23 +9,10 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.tweet_id && (e = find_by_tweet_id.first)) ? e : build
-        self
+      def find
+        @payload.tweet_id && find_by_tweet_id.first
       end
 
-      def procure_parent
-        find_original_tweet.first if @payload.original_tweet_id
-      end
-
-      def procure_children
-        find_retweets.all if @payload.tweet_id
-      end
-
-      def procure_references
-      end
-
-      # Builder
       def build
         e = Entity.new({
           title: @payload.text,
@@ -41,6 +28,14 @@ module Entities
         })
         e[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
         e
+      end
+      
+      def find_parent
+        @payload.original_tweet_id && find_original_tweet.first
+      end
+
+      def find_children
+        @payload.tweet_id && find_retweets.all
       end
 
       # Finders
