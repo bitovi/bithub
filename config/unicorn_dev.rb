@@ -1,16 +1,16 @@
-worker_processes 1
+worker_processes 3
 timeout 30
 preload_app true
 
 # Unix socket
-listen "/home/veljko/projects/bitovi/bithub/tmp/sockets/unicorn.sock", :backlog => 64
+listen "./tmp/sockets/unicorn.sock", :backlog => 64
 
 # PID
-pid "/home/veljko/projects/bitovi/bithub/tmp/sockets/unicorn.pid"
+pid "./tmp/pids/unicorn.pid"
 
 # Logs
-#stderr_path "/home/bithub/web/shared/log/unicorn.stderr.log"
-#stdout_path "/home/bithub/web/shared/log/unicorn.stdout.log"
+stderr_path "./tmp/unicorn.stderr.log"
+stdout_path "./tmp/unicorn.stdout.log"
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
