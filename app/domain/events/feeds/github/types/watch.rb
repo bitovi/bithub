@@ -9,10 +9,6 @@ module Events
         calc_digest(seed)
       end
 
-      def title
-        "started watching #{repo_name}"
-      end
-
     end
   end
 end
