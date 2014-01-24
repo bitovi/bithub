@@ -17,7 +17,7 @@ json.cache! ("v1" + custom_cache_key(event)) do
 	json.image_url event.image_url(params[:size])
 	
 	json.children @ev_relations.children_for_event(event) do |c|
-		json.partial! "api/events/event", event: EventDecorator.decorate(c)
+		json.partial! "api/v1/events/event", event: EntityDecorator.decorate(c)
 	end
 
 	json.source_data event.source_data
