@@ -21,6 +21,7 @@ module Entities
           props: {
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
+            repo_name: @payload.repo_name,
           }
         }
       end
