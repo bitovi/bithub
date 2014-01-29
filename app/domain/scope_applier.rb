@@ -39,9 +39,7 @@ class ScopeApplier
   
   def apply_order_to_scope
     if (orderings = @query.pluck_and_process_orderings)
-      # orderings.each do |attribute, direction|
-      #   @scope = @scope.order("#{attribute} #{direction}")
-      # end
+      @scope = @scope.order(orderings)
     end
     self
   end
@@ -51,12 +49,4 @@ class ScopeApplier
   end
 
   private
-  def replace_attr_if_virt(pair, virtual_attr_pairs)
-    attribute, direction = pair.split
-    if virtual_attr_pairs[attribute]
-      [virtual_attr_pairs[attribute], direction]
-    else
-      [attribute, direction]
-    end
-  end
 end

@@ -1,12 +1,3 @@
-def remove_prefix(repo_name)
-  repo_name.gsub(/.*\//, '')
-end
-
-def repo_name(url)
-  match_groups = url.match("\/repos\/(.*)\/issues\/\d*")
-  match_groups.andand[1]
-end
-
 def log_key_attrs(event_hash)
   $log.info "hk =============> #{event_hash['hash_key']}"
   $log.info "meta-feed ======> #{event_hash['meta'].andand['feed']}"
@@ -14,6 +5,4 @@ def log_key_attrs(event_hash)
 end
 
 def logit(logger, error, payload)
-  logger.error error.inspect
-  logger.error payload.inspect
 end

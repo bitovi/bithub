@@ -2,6 +2,11 @@ require_relative 'query_item'
 
 module QueryLogic
   class Query
+    VIRT_ATTRS = {
+      'upvotes' => 'total_upvotes',
+      'score' => 'total_score',
+      'categories' => "idx(array#{Tag.categories_order}, category_id)"
+    }
 
     def initialize(model, params)
       @qis = params.map {|kv| QueryItem.new(model, kv)}
@@ -53,18 +58,9 @@ module QueryLogic
     end
 
     def pluck_and_process_orderings
-      virtual_attr_pairs = {
-        'upvotes' => 'total_upvotes',
-        'score' => 'total_score',
-        'categories' => "idx(array#{Tag.categories_order}, category_id)"
-      }
-
-      # !params[:order].blank?
-      # params[:order] = [params[:order]] unless params[:order].kind_of?(Array)
-
-      # params[:order].map{|el| el.gsub(':', ' ')}.each do |str_pair|
-      #   attribute, direction = replace_attr_if_virt(str_pair, virtual_attr_pairs)
-      # end
+      orderings.map do |el|
+        replace_attr_if_virt(el.value)
+      end
     end
 
     # =========> Tag based params
@@ -102,6 +98,20 @@ module QueryLogic
     end
 
     # ========> Helper methods
+    def wrap_orderings_to_array(params)
+      if (o = params[:order]) && not(o.is_a? Array)
+        o = [o]
+      end
+    end
+  
+    def replace_attr_if_virt(pair)
+      attribute, direction = pair.split
+      if VIRT_ATTRS[attribute]
+        [VIRT_ATTRS[attribute], direction].join ' '
+      else
+        [attribute, direction].join ' '
+      end
+    end
 
     def merge_with_existing_keys(hash, qi)
       qi_key, qi_val = qi

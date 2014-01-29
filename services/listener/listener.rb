@@ -30,14 +30,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     channel.fanout("e.events.liveservice") do |liveservice_exchange|
       queue = channel.queue("q.events").bind(input_exchange)
       queue.subscribe do |metadata, payload|
-        begin
-          response = ActiveSupport::JSON.decode(payload)
-          Dispatcher.new.dispatch(response)
-        rescue ActiveRecord::RecordInvalid => err
-          logit(logger, err, payload)
-        rescue Events::InitializationError => err
-          logit(logger, err, payload)
-        end
+        response = ActiveSupport::JSON.decode(payload)
+        Dispatcher.new.dispatch(response)
       end
     end
   end

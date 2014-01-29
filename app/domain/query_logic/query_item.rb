@@ -13,7 +13,13 @@ module QueryLogic
     end
 
     def value
-      (negation?) ? @value.gsub(/^!(.*)$/, '\1') : @value
+      if negation? 
+        @value.gsub(/^!(.*)$/, '\1')
+      elsif ordering?
+        @value.gsub(':', ' ')
+      else
+        @value
+      end
     end
 
     def regular_and_valid?
@@ -38,6 +44,10 @@ module QueryLogic
 
     def exclusion?
       OPTIONAL_LOGIC[:exclude] == @name || OPTIONAL_LOGIC[:exclude] == @name.to_s
+    end
+
+    def ordering?
+      (@name =~ /order/) && ((@value.include? ':desc') || (@value.include? ':asc'))
     end
 
     def tag_based?

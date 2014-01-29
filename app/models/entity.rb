@@ -55,7 +55,7 @@ class Entity < ActiveRecord::Base
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  scope :no_irc_nor_digest, lambda { where("props -> 'feed_name' <> 'irc' AND props -> 'category_name' <> 'digest'") }
+  scope :no_irc_nor_digest, lambda { where("feed_name <> 'irc' AND category_name <> 'digest'") }
 
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author

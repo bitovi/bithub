@@ -18,6 +18,7 @@ module Entities
           title: @payload.title,
           body: @payload.message,
           url: @payload.url,
+          origin_ts: @payload.origin_ts,
         })
       end
 
