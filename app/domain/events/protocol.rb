@@ -56,5 +56,7 @@ module Events
       [feed, type]
     end
 
+    alias_method :feed_name, :feed
+    alias_method :type_name, :type
   end
 end

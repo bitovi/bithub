@@ -25,7 +25,6 @@ module Entities
           body: @commit.andand[:message],
           url: @commit.andand[:url],
           origin_ts: @payload.origin_ts,
-          thread_updated_ts: @payload.origin_ts,
           props: {
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],

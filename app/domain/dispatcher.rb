@@ -25,12 +25,11 @@ class Dispatcher
         entity.procure.determine.group.normalize.persist!
       end
     rescue ActiveRecord::RecordInvalid => err
-      @logger.error err
-      @logger.error "EVENT #{event} : #{entity}"
-    rescue Events::InitializationError => err
-      @logger.error err
-      @logger.error "EVENT #{event} : #{entity}"
-      # logger.error payload
+      @logger.error "#{event.feed}:#{event.type} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | #{entity.instance.tag_list}"
+
+      # unless err.message == "Validation failed: Content digest has already been taken"
+        # @logger.error entity.instance.inspect if event.type_name == "Push" || event.type_name == "push"
+      # end
     end
   end
 end
