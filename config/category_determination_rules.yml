@@ -1,43 +1,47 @@
 digest:
-  follow: 10
-  fork: 10
-  watch: 10
+    follow: 10
+    fork: 10
+    watch: 10
 
 twitter:
-  tweet: 10
+    tweet: 10
 
 comment:
-  disqus: 10
+    disqus: 10
 
-github_commet:
-  commit_comment: 10
-  issue_comment: 10
-  pull_request_review_comment: 10
+github_comment:
+    commit_comment: 10
+    issue_comment: 10
+    pull_request_review_comment: 10
 
 code:
-  commit: 10
-  push: 10
-  pull_request: 10
+    commit: 10
+    push: 10
+    pull_request: 10
 
 question:
-  forum: 10
-  question: 10
+    forum: 10
+    question: 10
 
 chat:
-  irc: 10
+    irc: 10
 
 article:
-  blog: 10
+    blog: 10
 
 issue:
-  issue: 10
+    issue: 10
 
 bug:
-  issue: 10
-  bug: 5
+    issue: 10
+    bug: 5
 
 feature:
-  issue: 10
-  feature: 5
-  feature_request: 5
-  enhancement: 5
+    issue: 10
+    feature: 5
+    feature_request: 5
+    enhancement: 5
+
+event:
+    meetup: 20
+    event: 1
