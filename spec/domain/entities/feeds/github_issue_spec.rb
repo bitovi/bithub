@@ -26,7 +26,7 @@ issue_comment_def3 = {
 describe Entities::Github::Issue do  
   describe "#build" do
     it "instances new Github::Issue entity" do
-      i = build_issue(); i.determine.persist!
+      i = build_issue(); i.determine.normalize.persist!
       
       expect(i.instance.title).to be_a(String)
       expect(i.instance.body).to be_a(String)
@@ -35,7 +35,7 @@ describe Entities::Github::Issue do
       expect(i.instance.type_name).to eq('issue')
       expect(i.instance.props['repo_name']).to be_a(String)
       expect(i.instance.props['number']).not_to be_empty
-      expect(i.instance.props['issue_id']).not_to be_empty
+      expect(i.instance.props['origin_id']).not_to be_empty
       expect(i.instance.props['label_names']).to be_a(String)
       expect(i.instance.props['state']).to be_a(String)
     end
@@ -69,7 +69,7 @@ end
 describe Entities::Github::IssueComment do
   describe "#build" do
     it "builds a new Github::IssueComment entity" do
-      ic = build_issue_comment(); ic.determine.persist!
+      ic = build_issue_comment(); ic.determine.normalize.persist!
       
       expect(ic.instance.title).to be_a(String)
       expect(ic.instance.body).to be_a(String)
@@ -78,7 +78,7 @@ describe Entities::Github::IssueComment do
       expect(ic.instance.type_name).to eq('issue_comment')
       expect(ic.instance.props['repo_name']).to be_a(String)
       expect(ic.instance.props['number']).not_to be_empty
-      expect(ic.instance.props['comment_id']).not_to be_empty
+      expect(ic.instance.props['origin_id']).not_to be_empty
     end
   end
 
@@ -98,7 +98,7 @@ end
 describe Entities::Github::PullRequest do
   describe "#build" do
     it "instances new Github::PullRequest entity" do
-      pr = build_pull_req(); pr.determine; pr.persist!
+      pr = build_pull_req(); pr.determine.normalize.persist!
 
       expect(pr.instance.title).to be_a(String)
       expect(pr.instance.body).to be_a(String)
@@ -107,7 +107,7 @@ describe Entities::Github::PullRequest do
       expect(pr.instance.type_name).to eq('pull_request')
       expect(pr.instance.props['repo_name']).to be_a(String)
       expect(pr.instance.props['number']).not_to be_empty
-      expect(pr.instance.props['pull_request_id']).not_to be_empty
+      expect(pr.instance.props['origin_id']).not_to be_empty
       expect(pr.instance.props['state']).to be_a(String)
       expect(pr.instance.props['action']).to be_a(String)
     end

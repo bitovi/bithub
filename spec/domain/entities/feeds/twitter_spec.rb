@@ -25,8 +25,7 @@ describe Entities::Twitter::Tweet do
   describe "#build" do
     it "instances new Entity object" do
       entity = build_tweet(tweet)
-      entity.determine
-      entity.persist!
+      entity.determine.normalize.persist!
 
       expect(entity.instance.title).to be_a(String)
       expect(entity.instance.url).to be_a(String)
@@ -45,10 +44,10 @@ describe Entities::Twitter::Tweet do
 
   describe "#procure_*" do
     it "checks for parents and children" do
-      rt = build_tweet(retweet); rt.determine; rt.persist!
-      tw = build_tweet(tweet); tw.determine; tw.persist!
-      rt2 = build_tweet(retweet2); rt2.determine; rt2.persist!
-      atw = build_tweet(another_tweet); atw.determine; atw.persist!
+      rt = build_tweet(retweet)        ; rt.determine.normalize.persist!
+      tw = build_tweet(tweet)          ; tw.determine.group.normalize.persist!
+      rt2 = build_tweet(retweet2)      ; rt2.determine.group.normalize.persist!
+      atw = build_tweet(another_tweet) ; atw.determine.group.normalize.persist!
 
       expect(tw.find_children.length).to eq(2)
       expect(rt.find_parent.id).to eq(tw.instance.id)
@@ -75,8 +74,7 @@ describe Entities::Twitter::Follow do
   describe "#build" do
     it "instances new Entity object" do
       entity = build_follow
-      entity.determine
-      entity.persist!
+      entity.determine.group.normalize.persist!
 
       expect(entity.instance.title).to be_a(String)
       expect(entity.instance.origin_ts).to be_a(Time)
