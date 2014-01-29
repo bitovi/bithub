@@ -3,12 +3,17 @@ module Entities
 
     def normalize
       set_thread_ts_to_origin_ts
+      set_total_upvotes
       clean_junk_from_props
       self
     end
 
     def set_thread_ts_to_origin_ts
       @instance.thread_updated_ts = @instance.origin_ts
+    end
+
+    def set_total_upvotes
+      @instance.total_upvotes = 0 if @instance.new_record?
     end
 
     def clean_junk_from_props

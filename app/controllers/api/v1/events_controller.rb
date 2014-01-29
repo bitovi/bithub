@@ -21,7 +21,6 @@ class Api::V1::EventsController < Api::V1::BaseController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      scope = scope_applier(params, scope).apply_order_to_scope.result
       @events = EntityDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: query_logic(params).exclusions }
       })
@@ -91,6 +90,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     .apply_muster_query_to_scope(muster_query)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
+    .apply_order_to_scope
     .result
   end
 

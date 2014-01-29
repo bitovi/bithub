@@ -10,7 +10,7 @@ module Entities
 
     def adopt
       if self.respond_to? :find_children
-        @instance.children += find_children
+        @instance.children += (c = find_children) if c
       end
       if self.respond_to? :build_children
         @instance.children += build_children
@@ -20,7 +20,7 @@ module Entities
 
     def join_family
       if self.respond_to? :find_parent
-        @instance.parent = find_parent
+        @instance.parent = (p = find_parent) if p
       end
       if self.respond_to? :build_parent
         @instance.parent = build_parent

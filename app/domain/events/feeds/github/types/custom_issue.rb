@@ -54,7 +54,7 @@ module Events
         # FIXME ? how to get ? mayble using REGEX ? :D
       end
         
-      def references
+      def referenced_issue_numbers
         body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end        
     end
