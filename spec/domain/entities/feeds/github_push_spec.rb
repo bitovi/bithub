@@ -12,7 +12,7 @@ describe Entities::Github::Push do
       expect(p.instance.url).to be_a(String)
       expect(p.instance.props['repo_name']).to be_a(String)
       expect(p.instance.props['commit_shas']).not_to be_empty
-      expect(p.instance.props['push_id']).not_to be_empty
+      expect(p.instance.props['origin_id']).not_to be_empty
 
       # procure commits
       expect(Entity.where(:parent_id => p.instance.id).count).to eq(2)
@@ -29,7 +29,7 @@ end
 describe Entities::Github::CommitComment do
   describe "#build" do
     it "instances new Entity object" do
-      cc = build_commit_comment(); cc.determine; cc.persist!
+      cc = build_commit_comment(); cc.determine.normalize.persist!
 
       expect(cc.instance.title).to be_a(String)
       expect(cc.instance.body).to be_a(String)

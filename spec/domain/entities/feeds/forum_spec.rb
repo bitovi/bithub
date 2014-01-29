@@ -24,8 +24,7 @@ describe Entities::Forum::Post do
   describe "#build" do
     it "instances new Entity object" do
       post = build_post
-      post.determine
-      post.persist!
+      post.determine.normalize.persist!
       
       expect(post.instance.title).to be_a(String)
       expect(post.instance.body).to be_a(String)
@@ -37,10 +36,10 @@ describe Entities::Forum::Post do
 
   describe "#find_parents,#find_children" do
     it "tries to find parents and children" do
-      a1 = build_post(answer); a1.determine; a1.persist!
-      q = build_post(question); q.determine; q.persist!
-      a2 = build_post(answer2); a2.determine; a2.persist!
-      u = build_post(unrelated); u.determine; u.persist!
+      a1 = build_post(answer)   ; a1.determine.group.normalize.persist!
+      q = build_post(question)  ; q.determine.group.normalize.persist!
+      a2 = build_post(answer2)  ; a2.determine.group.normalize.persist!
+      u = build_post(unrelated) ; u.determine.group.normalize.persist!
 
       expect(q.find_children.length).to eq(2)
       expect(a1.find_parent.id).to eq(q.instance.id)
