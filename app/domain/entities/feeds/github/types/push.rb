@@ -19,7 +19,6 @@ module Entities
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
-          thread_updated_ts: @payload.origin_ts,
           props: {
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
@@ -30,9 +29,12 @@ module Entities
 
       def build_children
         @payload.commit_shas.map do |sha|
-          commit = Entities::Github::Commit.new(@payload, sha).procure
-          commit.determine.group
-          commit.instance
+          Entities::Github::Commit.new(@payload, sha)
+            .procure
+            .determine
+            .group
+            .normalize
+            .instance
         end
       end
       
