@@ -5,6 +5,9 @@ module QueryLogic
     VIRT_ATTRS = {
       'upvotes' => 'total_upvotes',
       'score' => 'total_score',
+      'feed' => 'feed_name',
+      'type' => 'type_name',
+      'category' => 'category_name',
       'categories' => "idx(array#{Tag.categories_order}, category_id)"
     }
 

@@ -34,7 +34,7 @@ module Entities
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
-            comment_id: @payload.comment_id,
+            origin_id: @payload.comment_id,
           }
         })
       end
@@ -43,7 +43,7 @@ module Entities
       
       def find_by_comment_id
         Entity.tagged_with(['github', 'issue_comment'])
-        .where("props -> 'comment_id' = '#{@payload.comment_id}'")
+        .where("props -> 'origin_id' = '#{@payload.comment_id}'")
       end
 
       def find_by_repo_name_and_number

@@ -24,7 +24,7 @@ module Entities
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
-            pull_request_id: @payload.pull_request_id,
+            origin_id: @payload.pull_request_id,
             state: @payload.state,
             action: @payload.action, # IssuePullRequestAction?
           }
@@ -46,7 +46,7 @@ module Entities
       # Finders
       def find_by_pull_request_id
         Entity.tagged_with(['github', 'pull_request'])
-        .where("props -> 'pull_request_id' = '#{@payload.pull_request_id}'")
+        .where("props -> 'origin_id' = '#{@payload.pull_request_id}'")
       end
 
       def find_by_repo_name_and_number

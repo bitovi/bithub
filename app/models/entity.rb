@@ -10,6 +10,7 @@ class Entity < ActiveRecord::Base
     :body, :title, :url,
     :tag_list, :author,
     :feed_name, :type_name, :category_name, 
+    :feed_id, :type_id, :category_id, 
     :origin_ts, :thread_updated_ts,
     :created_at, :updated_at,
     :props, :image, :total_upvotes
@@ -32,6 +33,9 @@ class Entity < ActiveRecord::Base
 
   has_many :events
   
+  belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
+  belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
+  belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   belongs_to :author, :foreign_key => "author_id", :class_name => "User"
@@ -42,6 +46,7 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of  :title,
     :feed_name, :type_name, :category_name,
+    :feed_id, :type_id, :category_id,
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 

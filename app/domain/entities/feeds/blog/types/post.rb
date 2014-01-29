@@ -18,6 +18,7 @@ module Entities
           title: @payload.title,
           url: @payload.link,
           body: Sanitize.clean(@payload.body, Sanitize::Config::RELAXED),
+          origin_ts: @payload.origin_timestamp,
         })
       end
 
