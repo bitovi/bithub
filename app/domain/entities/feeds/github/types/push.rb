@@ -23,7 +23,7 @@ module Entities
           props: {
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
-            push_id: @payload.push_id,
+            origin_id: @payload.push_id,
           }
         })
       end
@@ -45,7 +45,7 @@ module Entities
       
       def find_by_push_id
         Entity.tagged_with(['github', 'push'])
-        .where("props -> 'push_id' = '#{@payload.push_id}'")
+        .where("props -> 'origin_id' = '#{@payload.push_id}'")
       end
 
       def find_by_commit_id

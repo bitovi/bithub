@@ -29,6 +29,7 @@ module Entities
           props: {
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
+            origin_id: @commit.andand[:sha],
           }, # set next manually b/c AR will call save instead of persist on children
           feed_name: feed_name.snake_case,
           type_name: type_name.snake_case,
