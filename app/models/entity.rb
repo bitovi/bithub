@@ -8,8 +8,8 @@ class Entity < ActiveRecord::Base
 
   attr_accessible :id,
     :body, :title, :url,
-    :tag_list, :author,
-    :feed_name, :type_name, :category_name, 
+    :tag_list, :owners, :ownerships,
+    :feed_name, :type_name, :category_name,
     :feed_id, :type_id, :category_id, 
     :origin_ts, :thread_updated_ts,
     :created_at, :updated_at,
@@ -20,25 +20,27 @@ class Entity < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
 
   has_and_belongs_to_many :references_to,
-  :class_name => "Entity",
-  :join_table => "entity_refs",
-  :foreign_key => "from_id",
+  :class_name => 'Entity',
+  :join_table => 'entity_refs',
+  :foreign_key => 'from_id',
   :association_foreign_key => "to_id"
   
   has_and_belongs_to_many :referenced_from,
-  :class_name => "Entity",
-  :join_table => "entity_refs",
-  :foreign_key => "to_id",
+  :class_name => 'Entity',
+  :join_table => 'entity_refs',
+  :foreign_key => 'to_id',
   :association_foreign_key => "from_id"
 
   has_many :events
+  
+  has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
+  has_many :owners, through: :ownerships, source: :owner
   
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
-  belongs_to :author, :foreign_key => "author_id", :class_name => "User"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
   has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
@@ -71,6 +73,14 @@ class Entity < ActiveRecord::Base
     scope = scope.includes(:author)
     scope = scope.includes(:parent)
     scope
+  end
+
+  def author=(user)
+    self.ownerships.build(owner: user, type: :author)
+  end
+
+  def author
+    self.ownerships.select{|a| a.type == 'author'}.first.owner
   end
 
   def children_with_includes
