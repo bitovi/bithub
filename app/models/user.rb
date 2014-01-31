@@ -19,7 +19,8 @@ class User < ActiveRecord::Base
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
-  has_many :entities, :foreign_key => "author_id", :class_name => "Entity", :dependent => :nullify
+  has_many :ownerships, foreign_key: 'owner_id', :dependent => :destroy
+  has_many :entities, through: 'ownerships', source: 'entity'
 
   has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
   has_many :anteups, :through => :entities

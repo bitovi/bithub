@@ -1,6 +1,6 @@
 class ScoringRule < ActiveRecord::Base
-  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value, :priority
-  has_many :events
+  attr_accessible :required_tags, :ownership_value, :upvote_value, :award_value, :priority
+  has_many :entities
 
   def self.best_match(tags = [])
     return self.default_rule unless tags && tags.count > 0

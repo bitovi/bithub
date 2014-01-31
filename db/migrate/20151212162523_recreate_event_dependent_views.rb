@@ -1,48 +1,50 @@
 class RecreateEventDependentViews < ActiveRecord::Migration
   def up
-    execute <<-SQL
+    execute <<-CACHED_TAG_LIST
       CREATE VIEW entity_aggregated_tag_list AS
       SELECT e.id AS entity_id, string_agg(t.name, ',') AS tag_list
       FROM entities AS e, tags AS t, taggings AS e_t
       WHERE e.id = e_t.taggable_id AND e_t.tag_id = t.id
       GROUP BY e.id;
-    SQL
+    CACHED_TAG_LIST
     
-    execute <<-SQL
+    execute <<-TOTAL_UPVOTES
       CREATE VIEW entity_total_upvotes AS
       SELECT e.id AS entity_id, sum(u.value) AS upvotes_sum
       FROM entities AS e, upvotes AS u
       WHERE e.id = u.applies_to_id
       GROUP BY e.id;
-    SQL
+    TOTAL_UPVOTES
     
-    execute <<-SQL
+    execute <<-TOTAL_SCORE
       CREATE VIEW user_total_score AS
       SELECT users.id AS user_id,
       (
-        (SELECT COALESCE(sum(r.authorship_value),0)
-        FROM entities AS e, rules AS r
-        WHERE r.id = e.rule_id
-        AND e.author_id = users.id)
+        (SELECT COALESCE(sum(o.value),0)
+        FROM entities AS e, ownerships AS o
+        WHERE e.id = o.entity_id
+        AND o.owner_id = users.id)
         +
         (SELECT COALESCE(sum(u.value),0)
-        FROM entities AS e, upvotes AS u
+        FROM entities AS e, ownerships AS o, upvotes AS u
         WHERE u.applies_to_id = e.id
-        AND e.author_id = users.id)
+        AND e.id = o.entity_id
+        AND o.owner_id = users.id)
         +
         (SELECT COALESCE(sum(a.value),0)
-        FROM entities AS e, awards AS a
+        FROM entities AS e, ownerships AS o, awards AS a
         WHERE a.applies_to_id = e.id
-        AND e.author_id = users.id)
+        AND e.id = o.entity_id
+        AND o.owner_id = users.id)
         +
         (SELECT COALESCE(sum(i.value),0)
         FROM internals AS i
         WHERE i.receiver_id = users.id)
       ) AS score_sum
       FROM users;
-    SQL
+    TOTAL_SCORE
 
-    execute <<-SQL
+    execute <<-PAGINATION
       CREATE MATERIALIZED VIEW pagination AS
       SELECT
         e.origin_ts::date AS origin_date,
@@ -58,9 +60,9 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       AND mt.name = 'categories'
       GROUP BY origin_date, category 
       ORDER BY origin_date desc;
-    SQL
+    PAGINATION
     
-    execute <<-SQL
+    execute <<-LEADERBOAD
       CREATE MATERIALIZED VIEW LEADERBOARD AS
       SELECT
         users.id AS user_id,
@@ -68,36 +70,33 @@ class RecreateEventDependentViews < ActiveRecord::Migration
         users.email AS user_email,
         props -> 'avatar_url' AS user_gravatar_url,
         (
-          (SELECT coalesce(sum(rules.authorship_value),0)
-            FROM entities, rules
-            WHERE rules.id = entities.rule_id
-            AND entities.author_id = users.id)
+          (SELECT coalesce(sum(r.ownership_value),0)
+            FROM entities AS e, ownerships AS o, scoring_rules AS r
+            WHERE r.id = e.scoring_rule_id
+            AND e.id = o.entity_id
+            AND o.owner_id = users.id)
           +
-          (SELECT coalesce(sum(upvotes.value),0)
-            FROM entities, upvotes
-            WHERE upvotes.applies_to_id = entities.id
-            AND entities.author_id = users.id)
+          (SELECT coalesce(sum(u.value),0)
+            FROM entities AS e, ownerships AS o, upvotes AS u
+            WHERE u.applies_to_id = e.id
+            AND e.id = o.entity_id
+            AND o.owner_id = users.id)
           +
-          (SELECT coalesce(sum(awards.value),0)
-            FROM entities, awards
-            WHERE awards.applies_to_id = entities.id
-            AND entities.author_id = users.id)
+          (SELECT coalesce(sum(a.value),0)
+            FROM entities AS e, ownerships AS o, awards AS a
+            WHERE a.applies_to_id = e.id
+            AND e.id = o.entity_id
+            AND o.owner_id = users.id)
           +
           (SELECT coalesce(sum(internals.value),0)
             FROM internals
             WHERE internals.receiver_id = users.id)
-          -
-          (SELECT coalesce(sum(anteups.value),0)
-            FROM anteups
-            WHERE anteups.actor_id = users.id
-            AND anteups.fullfilled = true)
         ) AS user_score
-      FROM users LEFT JOIN users_roles ON users.id = users_roles.user_id
-      WHERE name IS NOT NULL
-      AND role_id IS NULL
-      OR role_id NOT IN (SELECT id FROM roles WHERE name = 'bitovian' OR name = 'admin')
+      FROM users JOIN users_roles ON users.id = users_roles.user_id
+      WHERE users.name IS NOT NULL
+      AND (users_roles.role_id IS NULL OR users_roles.role_id NOT IN (SELECT id FROM roles WHERE name = 'bitovian' OR name = 'admin'))
       ORDER BY user_score desc;
-    SQL
+    LEADERBOAD
   end
 
   def down
