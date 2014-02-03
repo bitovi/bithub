@@ -7,8 +7,12 @@ module Events
         Digest::MD5.hexdigest(origin_id.to_s + self.class.name)
       end
 
-      def origin_id
+      def tweet_id
         source_data.andand[:id]
+      end
+
+      def tweet_id_str
+        source_data.andand[:id_str]
       end
       
       def text
@@ -41,6 +45,10 @@ module Events
 
       def original_tweet_id
         retweeted_status.andand[:id]
+      end
+      
+      def original_tweet_id_str
+        retweeted_status.andand[:id_str]
       end
       
       def retweet?

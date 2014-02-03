@@ -12,8 +12,12 @@ module Events
     class Processor
       include Configurable
 
+      class Configuration
+        attr_accessor :term
+      end
+
       def initialize(response, &blk)
-        initialize_config
+        initialize_config(&blk)
         @response = response
       end
 
