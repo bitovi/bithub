@@ -16,6 +16,10 @@ module Events
       def pull_request_id
         pull_request.andand[:id]
       end
+
+      def origin_id
+        pull_request_id
+      end
     end
 
   end

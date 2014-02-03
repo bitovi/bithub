@@ -12,6 +12,8 @@ module Entities
         type_name = arg.type
       end
 
+      puts "KURAC ==================> #{arg.inspect}"
+
       if MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
