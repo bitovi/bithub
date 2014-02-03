@@ -24,14 +24,5 @@ class AlterEvents < ActiveRecord::Migration
   end
 
   def down
-    # add_column :events, :title, :text
-    # add_column :events, :body, :text
-    # add_column :events, :url, :text
-    # add_column :events, :parent_id, :int
-    # add_column :events, :author_id, :int
-    # add_column :events, :hash_key, :string
-
-    # remove_column :events, :type
-    # remove_column :events, :source_json
   end
 end

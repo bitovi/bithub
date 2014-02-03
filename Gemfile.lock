@@ -37,7 +37,7 @@ GEM
       activesupport (= 3.2.14)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activerecord-postgres-array (0.0.10)
+    activerecord-postgres-array (0.0.9)
       activerecord
     activerecord-postgres-hstore (0.7.7)
       activerecord (>= 3.1)
@@ -105,12 +105,11 @@ GEM
       activerecord (>= 3.0, < 4.1)
       delayed_job (>= 3.0, < 4.1)
     descendants_tracker (0.0.3)
-    devise (3.2.2)
+    devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 3.2.6, < 5)
-      thread_safe (~> 0.1)
-      warden (~> 1.2.3)
+      railties (~> 3.1)
+      warden (~> 1.2.1)
     diff-lcs (1.2.5)
     docile (1.1.2)
     dotenv (0.9.0)
@@ -404,7 +403,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-postgres-array
+  activerecord-postgres-array (= 0.0.9)
   activerecord-postgres-hstore
   activerecord-postgresql-extensions
   acts-as-taggable-on
@@ -424,7 +423,7 @@ DEPENDENCIES
   database_cleaner
   delayed_job
   delayed_job_active_record
-  devise
+  devise (~> 2.2)
   dotenv-rails
   draper
   em-http-request
@@ -458,7 +457,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9)
   redcarpet
   rmagick
-  rolify
+  rolify (~> 3.2)
   rspec
   rspec-rails
   ruby_gntp
