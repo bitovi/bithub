@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class Api::V1::EventsController < Api::V1::BaseController
   before_filter :authenticate_user!, except: [:index, :show, :summary, :pagination]
-  
+
   respond_to :json
   helper_method :custom_cache_key
   helper_method :list_cache_key
@@ -15,6 +15,8 @@ class Api::V1::EventsController < Api::V1::BaseController
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
+    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
     
@@ -36,12 +38,18 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def create
-    e = Entity.new_from_bithub(params[:event])
-    e.author = current_user if !current_user.has_role?(:admin) || !posting_for_antoher_user?(params)
+    e = Event.new_from_bithub( params[:event].clone ) # destructive!
+    e.author = current_user if !current_user.has_role?(:admin) || !posting_for_another_user?(params[:event])
+    
     if e.save
       e.bump_thread
       @event = EntityDecorator.decorate(e)
       @ev_relations = EntityRelations.new(@event.id)
+
+      if author = @event.author
+        Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
+      end
+      
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
@@ -73,8 +81,10 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def pagination
-    summary = Pagination.grouped
-    render :json => summary
+    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+    
+    @dates = Pagination.grouped(params)
+    render :pagination_index
   end
 
   private # SCOPE BUILDING
@@ -138,7 +148,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     params['order'] =~ /upvotes/
   end
 
-  def posting_for_antoher_user?(params)
-    params['postas'] && !params['postas'].blank?
+  def posting_for_another_user?(params)
+    params[:origin_author_id] != nil && params[:origin_author_feed] != nil
   end
 end

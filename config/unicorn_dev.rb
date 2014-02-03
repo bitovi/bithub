@@ -3,10 +3,10 @@ timeout 30
 preload_app true
 
 # Unix socket
-listen "unix:/tmp/unicorn.sock", :backlog => 64
+listen "unix:./tmp/unicorn.sock", :backlog => 64
 
 # PID
-pid "/tmp/unicorn.pid"
+pid "./tmp/unicorn.pid"
 
 # Logs
 stderr_path "./tmp/unicorn.stderr.log"

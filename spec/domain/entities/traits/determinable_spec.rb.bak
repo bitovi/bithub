@@ -2,6 +2,9 @@ require 'domain/entities/spec_helper'
 
 describe Entities::Determinable do
 
+  before(:all) { Helpers::Tags.import }
+  after(:all) { Tag.destroy_all }
+
   describe "#determine_feed" do
     it "determines a feed" do
       event = build(:event, props: {feed: 'github'})        
@@ -32,30 +35,18 @@ describe Entities::Determinable do
 
   describe "#determine_tags" do
 
-    before :all do
-      @tags = [Tag.create({:name => 'foo'}),
-               Tag.create({:name => 'bar'}),
-               Tag.create({:name => 'github'}),
-               Tag.create({:name => 'canjs', :aliases => ['can_js']}),
-               Tag.create({:name => 'javascriptmvc'}),
-               Tag.create({:name => 'feature', :aliases => ['enhancement', 'feature']}),
-              ]
-    end
-
-    after :all do
-      @tags.each {|t| t.destroy}
+    it "determines tags from props" do
+      event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(funcunit)})
+      event.determine_tags
+      event.tag_list.should =~ %w(canjs github funcunit)
     end
     
-    it "determines tags from props" do
-      event = build(:event, props: {category: 'code', project: 'canjs', feed: 'github', tags: %w(foo bar)})
-      event.determine_tags
-      event.tag_list.should =~ %w(canjs github foo bar)
-    end
     it "determines tags from event content" do
       event = build(:event, title: 'Foo canjs', body: 'Lorem ipsum javascriptmvc ...', props: {})
       event.determine_tags
       event.tag_list.should =~ %w(canjs javascriptmvc)
     end
+    
     it "determines tags from labels" do
       event = build(:event, props: {labels: ['enhancement']})
       event.determine_tags

@@ -7,6 +7,7 @@ Bithub::Application.routes.draw do
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
+  match '/uploads/*other' => "uploads#index"
 
   namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'auth/session_info#current_session'

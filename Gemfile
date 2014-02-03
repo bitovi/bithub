@@ -21,6 +21,9 @@ gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array'
 gem 'activerecord-postgresql-extensions'
 gem 'acts-as-taggable-on'
+gem 'daemons'
+gem 'delayed_job'
+gem 'delayed_job_active_record'
 gem 'jbuilder'
 gem 'jpbuilder'
 gem 'draper'
@@ -55,6 +58,10 @@ group :test, :testing, :development do
   gem 'evented-spec'
   gem 'git'
   gem 'database_cleaner'
+  gem 'travis', require: false
+end
+
+group :development do
   gem 'capistrano'
   gem 'capistrano-ext'
   gem 'bullet'

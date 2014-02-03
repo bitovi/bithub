@@ -10,9 +10,9 @@ comment:
     disqus: 10
 
 github_comment:
-    commit_comment: 10
-    issue_comment: 10
-    pull_request_review_comment: 10
+    commit_comment_event: 10
+    issue_comment_event: 10
+    pull_request_review_comment_event: 10
 
 code:
     commit: 10
