@@ -50,7 +50,7 @@ testee:
   display_name: "Testee.js"
   group_list: "projects, req_friends"
   props:
-    levenshtein_treshold: 0
+    levenshtein_treshold: "0"
   aliases:
     - "testeejs"
     - "testee_js"
@@ -164,11 +164,8 @@ feature:
     - "enhancement"
     - "feature-request"
   props:
-<<<<<<< HEAD
     order_on_page: "05"
-=======
-    priority: 99
->>>>>>> dev
+    priority: "99"
 
 issue:
   display_name: "Issue"

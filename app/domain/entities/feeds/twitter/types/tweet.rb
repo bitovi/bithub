@@ -39,7 +39,7 @@ module Entities
 
       # Finders
       def find_by_tweet_id
-        Entity.
+        Entity
         .feed('twitter')
         .type('tweet')
         .where(origin_id: @payload.tweet_id_str)

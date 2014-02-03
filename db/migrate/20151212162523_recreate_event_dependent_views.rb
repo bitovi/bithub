@@ -43,27 +43,25 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       ) AS score_sum
       FROM users;
     TOTAL_SCORE
-
+    
     execute <<-PAGINATION
       CREATE MATERIALIZED VIEW pagination AS
-      SELECT
-        e.origin_ts::date AS origin_date,
-        t.name::text AS category,
-        count (*) AS cnt
-      FROM tags AS t,taggings AS tt, tags AS mt, entities AS e, taggings AS et
-      WHERE tt.tag_id = mt.id
-      AND tt.taggable_id = t.id
-      AND tt.taggable_type = 'ActsAsTaggableOn::Tag'
-      AND et.tag_id = t.id
-      AND et.taggable_id = e.id
-      AND et.taggable_type = 'Entity'
-      AND mt.name = 'categories'
-      GROUP BY origin_date, category 
-      ORDER BY origin_date desc;
+        SELECT e.thread_updated_ts AS "ts",
+               e.id AS id,
+               categories.name AS category,
+               ARRAY(
+                 SELECT t.name
+                   FROM taggings AS tt, tags AS t
+                   WHERE tt.taggable_type = 'Event' AND tt.tag_id = t.id AND tt.taggable_id = e.id
+               ) AS tags
+	      FROM entities AS e
+            LEFT JOIN tags AS categories ON e.category_id = categories.id
+          WHERE e.parent_id IS NULL
+	      ORDER BY e.thread_updated_ts DESC;
     PAGINATION
-    
+
     execute <<-LEADERBOAD
-      CREATE MATERIALIZED VIEW LEADERBOARD AS
+      CREATE MATERIALIZED VIEW leaderboard AS
       SELECT
         users.id AS user_id,
         users.name AS user_name,

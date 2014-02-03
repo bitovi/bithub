@@ -3,14 +3,14 @@ timeout 30
 preload_app true
 
 # Unix socket
-listen "unix:./tmp/unicorn.sock", :backlog => 64
+listen "unix:./tmp/sockets/unicorn.sock", :backlog => 64
 
 # PID
-pid "./tmp/unicorn.pid"
+pid "./tmp/pids/unicorn.pid"
 
 # Logs
-stderr_path "./tmp/unicorn.stderr.log"
-stdout_path "./tmp/unicorn.stdout.log"
+stderr_path "./log/unicorn.stderr.log"
+stdout_path "./log/unicorn.stdout.log"
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
