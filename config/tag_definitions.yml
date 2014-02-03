@@ -216,6 +216,10 @@ post: {}
 
 rsvp: {}
 
+### IRC specific
+
+message: {}
+
 ### Others
 
 bitovi:

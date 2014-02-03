@@ -1,0 +1,4 @@
+server:  'irc.freenode.org'
+nick:    'bithub-bot'
+channels:
+  - '#canjs'

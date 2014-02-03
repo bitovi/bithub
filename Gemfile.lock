@@ -6,13 +6,6 @@ GIT
       activesupport (~> 3.0)
       rack (~> 1.4)
 
-GIT
-  remote: git://github.com/tbuehlmann/ponder.git
-  revision: 930912e1b78b41afa1359121aca46197e9edff9c
-  specs:
-    ponder (0.2.0)
-      eventmachine (>= 0.12.10)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -93,6 +86,7 @@ GEM
       activesupport (>= 3.2.0)
     celluloid (0.15.2)
       timers (~> 1.1.0)
+    cinch (2.0.11)
     codeclimate-test-reporter (0.1.1)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
@@ -353,6 +347,7 @@ DEPENDENCIES
   capistrano
   capistrano-ext
   carrierwave
+  cinch
   codeclimate-test-reporter
   dalli
   database_cleaner
@@ -384,7 +379,6 @@ DEPENDENCIES
   omniauth-meetup
   omniauth-twitter
   pg
-  ponder!
   pry-rails
   rails (= 3.2.14)
   rb-fsevent (~> 0.9)
