@@ -59,8 +59,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
 
   channel = AMQP::Channel.new(connection)
 
-  channel.direct("e.events") do |events_exchange|
-    queue = channel.queue("q.events").bind(events_exchange)
+  channel.direct("e.events") do |ex|
+    queue = channel.queue("q.events").bind(ex)
 
     # ----------------
     # --- Streams ----
@@ -69,14 +69,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # # --- Twitter public stream
     # logger.info "Registering Twitter - public tweets stream"
     # pub_stream_conn_opts = feeds[:twitter][:public][:streaming]
-    # Streamer.connect(events_exchange, pub_stream_conn_opts) do |config|
+    # Streamer.connect(ex, pub_stream_conn_opts) do |config|
     #   config.is_user_stream = false
     # end
 
     # # --- Twitter user streams
     # feeds[:twitter][:user_streams].each do |screen_name, user_stream_conn_opts|
     #   logger.info "Registering Twitter - @#{screen_name} user events stream"
-    #   Streamer.connect(events_exchange, user_stream_conn_opts) do |config|
+    #   Streamer.connect(ex, user_stream_conn_opts) do |config|
     #     config.is_user_stream = true
     #   end
     # end
@@ -84,99 +84,88 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # # --- Meetup open events stream
     # stream_conn_opts = feeds[:meetup][:open_events][:streaming]
     # logger.info "Registering Meetup - open events stream"
-    # Streamer.connect(events_exchange, stream_conn_opts) do |config|
+    # Streamer.connect(ex, stream_conn_opts) do |config|
     # end
 
     # ---------------
     # --- Pollers ---
     # ---------------
 
+
     # --- Github
     feeds[:github][:repos].each do |repo_name, repo_config|
 
       if repo_config[:events]
         log_registering(repo_config[:events])
-        EM.add_periodic_timer(
-          intervals[:github][:events],
-          &Poller.handler(events_exchange, repo_config[:events]) do |config|
-            config.http_head = transform_head(feeds[:github][:head])
-          end
-        )
+
+        EM.add_periodic_timer(intervals[:github][:events], Poller.new(ex, repo_config[:events]) do |c|
+          c.http_head = transform_head(feeds[:github][:head])
+        end.handler)
       end
 
       if repo_config[:issues]
         [:open, :closed].each do |state|
           log_registering(repo_config[:issues], {state: state})
-          EM.add_periodic_timer(
-            intervals[:github][:issues][state],
-            &Poller.handler(events_exchange, repo_config[:issues]) do |config|
-              config.http_head = transform_head(feeds[:github][:head])
-              config.http_query = { state: state, per_page: 100 }
-              config.backlog_size = 1000
-            end
-          )
+
+          EM.add_periodic_timer(intervals[:github][:issues][state], Poller.new(ex, repo_config[:issues]) do |c|
+            c.http_head = transform_head(feeds[:github][:head])
+            c.http_query = { state: state, per_page: 100 }
+            c.digest_queue_config = { backlog_size: 1000 }
+          end.extend(Pageable).handler)
         end
       end
     end
     
-    
+
     # --- Meetup open events
     feed_config = feeds[:meetup][:open_events][:polling]
     log_registering(feed_config[:url])
-    EM.add_periodic_timer(
-      intervals[:meetup],
-      &Poller.handler(events_exchange, feed_config[:url]) do |c|
-        c.http_query = feed_config[:query]
-      end
-    )
+
+    EM.add_periodic_timer(intervals[:meetup], Poller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+    end.handler)
+    
+    # --- Meetup rsvps
+    feed_config = feeds[:meetup][:rsvps]
+    log_registering(feed_config[:url])
+
+    EM.add_periodic_timer(intervals[:meetup], Poller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+      c.boot_data_url = feed_config[:boot_data_url]
+    end.extend(Bootable).extend(Bootable::RSVPs).boot.handler)
 
 
     # --- Twitter statuses
     feed_config = feeds[:twitter][:public][:polling]
     log_registering(feed_config[:url])
-    EM.add_periodic_timer(
-      intervals[:twitter],
-      &Poller.handler(events_exchange, feed_config[:url]) do |c|
-        c.http_query = feed_config[:query]
-      end
-    )
+    EM.add_periodic_timer(intervals[:twitter], Poller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+    end.handler)
 
 
     # --- Forums general feed
     log_registering(feeds[:forum][:general][:url])
-    EM.add_periodic_timer(
-      intervals[:forum],
-      &Poller.handler(events_exchange, feeds[:forum][:general][:url])
-    )
+    EM.add_periodic_timer(intervals[:forum], Poller.new(ex, feeds[:forum][:general][:url]).handler)
     
 
     # --- Forums questions feed
     log_registering(feeds[:forum][:questions][:url])
-    EM.add_periodic_timer(
-      intervals[:forum],
-      &Poller.handler(events_exchange, feeds[:forum][:questions][:url]) do |config|
-        config.processor_tips = { tags: ['question'] }
-      end
-    )
+    EM.add_periodic_timer(intervals[:forum], Poller.new(ex, feeds[:forum][:questions][:url]) do |c|
+      c.processor_config = { term: 'question' }
+    end.handler)
 
 
     # --- Disqus
     feed_config = feeds[:disqus][:posts]
     log_registering(feed_config[:url])
-    EM.add_periodic_timer(
-      intervals[:disqus],
-      &Poller.handler(events_exchange, feed_config[:url]) do |config|
-        config.http_query = feed_config[:query]
-      end
-    )
+    EM.add_periodic_timer(intervals[:disqus], Poller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+    end.handler)
 
 
     # --- Blog
     log_registering(feeds[:blog][:url])
-    EM.add_periodic_timer(
-      intervals[:blog],
-      &Poller.handler(events_exchange, feeds[:blog][:url])
-    )
+    EM.add_periodic_timer(intervals[:blog], Poller.new(ex, feeds[:blog][:url]).handler)
 
     # ----------------
     # --- No more! ---

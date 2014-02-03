@@ -228,8 +228,9 @@ CREATE TABLE entities (
     title text,
     url text,
     body text,
-    author_id integer,
     scoring_rule_id integer NOT NULL,
+    feed_id integer NOT NULL,
+    category_id integer NOT NULL,
     parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
     thread_updated_ts timestamp without time zone NOT NULL,
@@ -241,7 +242,9 @@ CREATE TABLE entities (
     updated_at timestamp without time zone NOT NULL,
     feed_name character varying(255),
     type_name character varying(255),
-    category_name character varying(255)
+    category_name character varying(255),
+    type_id integer,
+    origin_id character varying(255)
 );
 
 
@@ -468,6 +471,22 @@ ALTER SEQUENCE internals_id_seq OWNED BY internals.id;
 
 
 --
+-- Name: ownerships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE ownerships (
+    id integer NOT NULL,
+    owner_id integer,
+    entity_id integer,
+    scoring_rule_id integer,
+    value integer,
+    type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -488,12 +507,13 @@ CREATE TABLE roles (
 CREATE TABLE scoring_rules (
     id integer NOT NULL,
     required_tags character varying(255)[],
-    authorship_value integer,
+    ownership_value integer,
     award_value integer,
     upvote_value integer,
     priority integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    valid_until timestamp without time zone
 );
 
 
@@ -542,40 +562,61 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.name AS user_name,
     users.email AS user_email,
     (users.props -> 'avatar_url'::text) AS user_gravatar_url,
-    ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities,
-            scoring_rules
-          WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-           FROM entities,
-            upvotes
-          WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-           FROM entities,
-            awards
-          WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+    (((( SELECT COALESCE(sum(r.ownership_value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            scoring_rules r
+          WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            upvotes u
+          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            awards a
+          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
-          WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
-           FROM anteups
-          WHERE ((anteups.actor_id = users.id) AND (anteups.fullfilled = true)))) AS user_score
+          WHERE (internals.receiver_id = users.id))) AS user_score
    FROM (users
-   LEFT JOIN users_roles ON ((users.id = users_roles.user_id)))
-  WHERE (((users.name IS NOT NULL) AND (users_roles.role_id IS NULL)) OR (NOT (users_roles.role_id IN ( SELECT roles.id
+   JOIN users_roles ON ((users.id = users_roles.user_id)))
+  WHERE ((users.name IS NOT NULL) AND ((users_roles.role_id IS NULL) OR (NOT (users_roles.role_id IN ( SELECT roles.id
       FROM roles
-     WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text))))))
-  ORDER BY ((((( SELECT COALESCE(sum(scoring_rules.authorship_value), (0)::bigint) AS "coalesce"
-      FROM entities,
-       scoring_rules
-     WHERE ((scoring_rules.id = entities.scoring_rule_id) AND (entities.author_id = users.id))) + ( SELECT COALESCE(sum(upvotes.value), (0)::bigint) AS "coalesce"
-      FROM entities,
-       upvotes
-     WHERE ((upvotes.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(awards.value), (0)::bigint) AS "coalesce"
-      FROM entities,
-       awards
-     WHERE ((awards.applies_to_id = entities.id) AND (entities.author_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+     WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text)))))))
+  ORDER BY (((( SELECT COALESCE(sum(r.ownership_value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       scoring_rules r
+     WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       upvotes u
+     WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       awards a
+     WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
       FROM internals
-     WHERE (internals.receiver_id = users.id))) - ( SELECT COALESCE(sum(anteups.value), (0)::bigint) AS "coalesce"
-      FROM anteups
-     WHERE ((anteups.actor_id = users.id) AND (anteups.fullfilled = true)))) DESC
+     WHERE (internals.receiver_id = users.id))) DESC
   WITH NO DATA;
+
+
+--
+-- Name: ownerships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE ownerships_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ownerships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE ownerships_id_seq OWNED BY ownerships.id;
 
 
 --
@@ -743,16 +784,18 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 
 CREATE VIEW user_total_score AS
  SELECT users.id AS user_id,
-    (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
+    (((( SELECT COALESCE(sum(o.value), (0)::bigint) AS "coalesce"
            FROM entities e,
-            scoring_rules r
-          WHERE ((r.id = e.scoring_rule_id) AND (e.author_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+            ownerships o
+          WHERE ((e.id = o.entity_id) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
            FROM entities e,
+            ownerships o,
             upvotes u
-          WHERE ((u.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
            FROM entities e,
+            ownerships o,
             awards a
-          WHERE ((a.applies_to_id = e.id) AND (e.author_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
+          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
           WHERE (i.receiver_id = users.id))) AS score_sum
    FROM users;
@@ -845,6 +888,13 @@ ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_s
 --
 
 ALTER TABLE ONLY internals ALTER COLUMN id SET DEFAULT nextval('internals_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ownerships ALTER COLUMN id SET DEFAULT nextval('ownerships_id_seq'::regclass);
 
 
 --
@@ -998,6 +1048,14 @@ ALTER TABLE ONLY identities
 
 ALTER TABLE ONLY internals
     ADD CONSTRAINT internals_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ownerships_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY ownerships
+    ADD CONSTRAINT ownerships_pkey PRIMARY KEY (id);
 
 
 --
@@ -1188,6 +1246,22 @@ ALTER TABLE ONLY awards
 
 
 --
+-- Name: fk_entities_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
+
+
+--
+-- Name: fk_entities_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT fk_entities_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
+
+
+--
 -- Name: fk_entities_scoring_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1196,11 +1270,11 @@ ALTER TABLE ONLY entities
 
 
 --
--- Name: fk_entities_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_entities_type_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_users FOREIGN KEY (author_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_entities_type_tags FOREIGN KEY (type_id) REFERENCES tags(id);
 
 
 --
@@ -1217,6 +1291,22 @@ ALTER TABLE ONLY internals
 
 ALTER TABLE ONLY internals
     ADD CONSTRAINT fk_internals_receiver_users FOREIGN KEY (receiver_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_ownerships_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ownerships
+    ADD CONSTRAINT fk_ownerships_entities FOREIGN KEY (entity_id) REFERENCES entities(id);
+
+
+--
+-- Name: fk_ownerships_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ownerships
+    ADD CONSTRAINT fk_ownerships_users FOREIGN KEY (owner_id) REFERENCES users(id);
 
 
 --
@@ -1361,10 +1451,6 @@ INSERT INTO schema_migrations (version) VALUES ('20131212152203');
 
 INSERT INTO schema_migrations (version) VALUES ('20131212152452');
 
-INSERT INTO schema_migrations (version) VALUES ('20131212162518');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212162523');
-
 INSERT INTO schema_migrations (version) VALUES ('20140119061002');
 
 INSERT INTO schema_migrations (version) VALUES ('20140123003102');
@@ -1373,6 +1459,14 @@ INSERT INTO schema_migrations (version) VALUES ('20140123003458');
 
 INSERT INTO schema_migrations (version) VALUES ('20140123005015');
 
-INSERT INTO schema_migrations (version) VALUES ('20140123075124');
-
 INSERT INTO schema_migrations (version) VALUES ('20140123185242');
+
+INSERT INTO schema_migrations (version) VALUES ('20140130154056');
+
+INSERT INTO schema_migrations (version) VALUES ('20140130162354');
+
+INSERT INTO schema_migrations (version) VALUES ('20140203135744');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162518');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162523');

@@ -12,6 +12,9 @@ Bithub::Application.routes.draw do
     match '/auth/session' => 'auth/session_info#current_session'
 
     namespace :v2 do
+      namespace :crawler do
+        get :event_ids, to: 'boot#event_ids'
+      end
       match '*path', :to => redirect("/api/v2")
       root :to => "base#home"
     end

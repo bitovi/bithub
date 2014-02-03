@@ -17,6 +17,10 @@ module Events
       def issue_id
         issue.andand[:id]
       end
+
+      def origin_id
+        issue_id
+      end
     end
 
   end
