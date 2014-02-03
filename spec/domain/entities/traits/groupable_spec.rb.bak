@@ -5,6 +5,15 @@ describe Entities::Groupable do
   before(:all) { @default_rule = create(:scoring_rule) }
   after(:all) { @default_rule.destroy }
 
+  before(:all) do
+    Helpers::Tags.import
+    @default_rule = create(:rule)
+  end
+  
+  after(:all) do
+    @default_rule.destroy
+    Tag.destroy_all
+  end
 
   describe "#group_issues_event" do
     before :each do

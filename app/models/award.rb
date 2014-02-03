@@ -9,7 +9,9 @@ class Award < ActiveRecord::Base
   validate :thread_not_already_awarded
   
   after_create :bust_event_cache
-  after_destroy :decrease_score_in_associated_user
+
+  after_destroy :update_cached_score_in_associated_user
+  after_destroy :check_if_still_eligible_for_rewards
 
   def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
@@ -24,13 +26,12 @@ class Award < ActiveRecord::Base
       when :based_on_rule
         award = Award.create!({actor: actor, applies_to: applies_to, value: Award.rule_based_value(applies_to)})
       end
-      award.increase_score_in_associated_user!
+      award.update_cached_score_in_associated_user
       award.reward_associated_user_if_eligible
     end
     
     award
   end
-
 
   #private
   
@@ -70,21 +71,20 @@ class Award < ActiveRecord::Base
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
 
-  def increase_score_in_associated_user!
-    if self.applies_to.author
-      self.applies_to.author.total_score += self.value
-      self.applies_to.author.save!
-    end
-  end
-
-  def decrease_score_in_associated_user!
-    if self.applies_to.author
-      self.applies_to.author.total_score -= self.value
-      self.applies_to.author.save!
-    end
+  def update_cached_score_in_associated_user
+    self.applies_to.author.update_total_score if self.applies_to.author
   end
 
   def reward_associated_user_if_eligible
     self.applies_to.author.reward_if_eligible if self.applies_to.author
   end
+
+  def check_if_still_eligible_for_rewards
+    self.applies_to.author.validate_eligibility if self.applies_to.author
+  end
+
+  handle_asynchronously :update_cached_score_in_associated_user
+  handle_asynchronously :reward_associated_user_if_eligible
+  handle_asynchronously :check_if_still_eligible_for_rewards
+
 end

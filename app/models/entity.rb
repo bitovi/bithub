@@ -70,6 +70,44 @@ class Entity < ActiveRecord::Base
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
+  
+  after_save :update_pagination_table
+  after_destroy :update_pagination_table
+  
+  after_validation :reformat_uniqueness_validation
+
+
+  SCOPE_APPLIER_OVERRIDES = {
+    :thread_updated_date => Proc.new do |scope, v, params = {}|
+
+      if v.is_a?(String)
+        start_date = v
+        end_date   = nil
+      else
+        start_date = v.first
+        end_date   = v.last
+      end
+
+      if start_date.is_a?(String)
+        start_date = Date.parse(start_date)
+      end
+
+      if end_date.nil?
+        end_date = start_date
+      elsif end_date.is_a?(String)
+        end_date = Date.parse(end_date)
+      end
+
+      end_date = end_date + 1.day - 1.second
+
+      args = [params[:clientTz] || 'UTC', start_date, end_date]
+      scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+    end
+  }
+
+  def self.scope_applier_overrides
+    SCOPE_APPLIER_OVERRIDES
+  end
     
   def self.scoped_with_includes
     scope = Entity.scoped
@@ -127,7 +165,11 @@ class Entity < ActiveRecord::Base
   end
   
   def sum_upvotes
-    (self.upvotes.pluck :value).reduce :+
+    self.upvotes.sum('value')
+  end
+ 
+  def update_total_upvotes
+    self.update_attribute(:total_upvotes, sum_upvotes)
   end
 
   def increase_score_in_author
@@ -146,22 +188,6 @@ class Entity < ActiveRecord::Base
 
   def reward_user_if_eligible
     self.author.reward_if_eligible if self.author
-  end
-
-  def cache_key
-    case
-    when new_record?
-      "#{self.class.model_name.cache_key}/new"
-    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_at])
-      event_updated_utc = event_updated.utc.to_s(:number)
-      thread_updated_utc = thread_updated.utc.to_s(:number)
-      "#{self.class.model_name.cache_key}/#{id}-#{event_updated_utc}-#{thread_updated_utc}"
-    when timestamp = self[:updated_at]
-      timestamp = timestamp.utc.to_s(:number)
-      "#{self.class.model_name.cache_key}/#{id}-#{timestamp}"
-    else
-      "#{self.class.model_name.cache_key}/#{id}"
-    end
   end
 
   def top_level_parent
@@ -183,6 +209,26 @@ class Entity < ActiveRecord::Base
   def source_data
     last_modified_by.andand.source_data
   end
+  
+  def update_pagination_table
+    Pagination.refresh
+  end
+  
+  def cache_key
+    case
+    when new_record?
+      "#{self.class.model_name.cache_key}/new"
+    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_at])
+      event_updated_utc = event_updated.utc.to_s(:number)
+      thread_updated_utc = thread_updated.utc.to_s(:number)
+      "#{self.class.model_name.cache_key}/#{id}-#{event_updated_utc}-#{thread_updated_utc}"
+    when timestamp = self[:updated_at]
+      timestamp = timestamp.utc.to_s(:number)
+      "#{self.class.model_name.cache_key}/#{id}-#{timestamp}"
+    else
+      "#{self.class.model_name.cache_key}/#{id}"
+    end
+  end
 
   private
   
@@ -192,5 +238,11 @@ class Entity < ActiveRecord::Base
     Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
     Event.attribute_names.include?(attr.to_s) ||
     Event.attribute_names.include?(attr.to_s.pluralize)
+  end
+  
+  def reformat_uniqueness_validation
+    if errors[:hash_key]
+      errors[:base].concat(errors.delete(:hash_key))
+    end
   end
 end

@@ -104,12 +104,14 @@ app:
   group_list: "categories"
   props:
     order_on_page: "09"
+    priority: "100"
 
 article:
   display_name: "Article"
   group_list: "categories"
   props:
     order_on_page: "07"
+    priority: "99"
 
 bug:
   display_name: "Bug"
@@ -139,6 +141,10 @@ github_comment:
   display_name: "Github Comment"
   group_list: "categories"
 
+github_comment:
+  display_name: "Github Comment"
+  group_list: "categories"
+
 digest:
   display_name: "Digest"
   group_list: "categories"
@@ -158,7 +164,11 @@ feature:
     - "enhancement"
     - "feature-request"
   props:
+<<<<<<< HEAD
     order_on_page: "05"
+=======
+    priority: 99
+>>>>>>> dev
 
 issue:
   display_name: "Issue"
