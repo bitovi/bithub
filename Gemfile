@@ -75,7 +75,7 @@ gem 'htmlentities'
 # ----------------
 # services/irc-bot
 # ----------------
-gem 'ponder', :github => 'tbuehlmann/ponder'
+gem 'cinch'
 
 # -----------------
 # services/xmpp-bot

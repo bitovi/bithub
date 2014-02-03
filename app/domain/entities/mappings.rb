@@ -6,6 +6,7 @@ module Entities
   module Disqus; end
   module Meetup; end
   module Bithub; end
+  module Irc; end
 
   MAPPINGS = {}
 
