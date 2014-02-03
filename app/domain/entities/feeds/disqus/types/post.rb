@@ -19,13 +19,16 @@ module Entities
           body: @payload.message,
           url: @payload.url,
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.post_id,
         })
       end
 
       # Finders
       def find_by_post_id
-        Entity.tagged_with(%w(disqus post))
-          .where("props -> 'post_id' = '#{@payload.post_id}'")
+        Entity
+        .feed('disqus')
+        .type('post')
+        .where(origin_id: @payload.post_id)
       end
 
       def relationships

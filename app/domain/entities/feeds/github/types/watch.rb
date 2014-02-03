@@ -18,22 +18,26 @@ module Entities
         Entity.new({
           title: "started watching #{@payload.repo_name}",
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.watch_id,
           props: {
+            repo_name: @payload.repo_name,
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
-            repo_name: @payload.repo_name,
-            origin_id: @payload.origin_id,
           }
         })
       end
 
       def find_by_origin_id
-        Entity.tagged_with(%w(github watch))
-        .where("props -> 'origin_id' = '#{@payload.origin_id}'")
+        Entity
+        .feed('github')
+        .type('watch')
+        .where(origin_id: @payload.origin_id)
       end
 
       def find_by_actor_and_repo_name
-        Entity.tagged_with(%w(github watch))
+        Entity
+        .feed('github')
+        .type('watch')
         .where("props -> 'origin_author_id' = '#{@payload.origin_author_id}'")
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
       end

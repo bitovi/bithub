@@ -43,8 +43,9 @@ module Entities
       private
 
       def find_by_commit_sha
-        Entity.tagged_with(['github', 'commit'])
-          .where("props -> 'sha' = '#{@commit[:sha]}'")
+        Entity
+        .tagged_with(['github', 'commit'])
+        .where("props -> 'sha' = '#{@commit[:sha]}'")
       end
     end
 

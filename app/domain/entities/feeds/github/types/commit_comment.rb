@@ -20,6 +20,7 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.comment_id,
           props: {
             repo_name: @payload.repo_name,
             commit_id: @payload.commit_id,
@@ -38,13 +39,14 @@ module Entities
 
       # Finders
       def find_by_commit_id
-        Entity.tagged_with(['github', 'commit_comment'])
-        .where("props -> 'commit_id' = '#{@payload.commit_id}'")
+        Entity
+        .tagged_with(['github', 'commit_comment'])
+        .where(origin_id: @payload.commit_id)
       end
 
       def find_by_multiple_commit_shas
         Entity.tagged_with(['github', 'commit_comment'])
-        .where("position(props -> 'commit_id' in '#{@payload.commit_shas_csv}') > 0")
+        .where("position(origin_id in '#{@payload.commit_shas_csv}') > 0")
       end
     end
 
