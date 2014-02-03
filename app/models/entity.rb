@@ -1,6 +1,3 @@
-require 'digest/md5'
-VALID_FEEDS_FOR_IDENT = %w(github twitter)
-
 class Entity < ActiveRecord::Base
 
   class EventHasNoParentException < Error; end
