@@ -8,7 +8,6 @@ module Events
       end
     end
 
-
     def calc_digest(seed)
       Digest::MD5.hexdigest(seed + self.class.name)
     end
