@@ -30,10 +30,10 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.comment_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
-            origin_id: @payload.comment_id,
           }
         })
       end
@@ -41,15 +41,18 @@ module Entities
       # Finders
       
       def find_by_comment_id
-        Entity.tagged_with(['github', 'issue_comment'])
-        .where("props -> 'origin_id' = '#{@payload.comment_id}'")
+        Entity
+        .feed('github')
+        .type('issue_comment')
+        .where(origin_id: @payload.comment_id)
       end
 
       def find_by_repo_name_and_number
         Entity
-          .tagged_with(['github', 'issue_comment'])
-          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-          .where("props -> 'number' = '#{@payload.number}'")
+        .feed('github')
+        .type('issue_comment')
+        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        .where("props -> 'number' = '#{@payload.number}'")
       end
 
       def relationships

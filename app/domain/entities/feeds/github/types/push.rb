@@ -19,10 +19,10 @@ module Entities
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.push_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
-            origin_id: @payload.push_id,
           }
         })
       end
@@ -46,12 +46,16 @@ module Entities
       # Finders
       
       def find_by_push_id
-        Entity.tagged_with(['github', 'push'])
-        .where("props -> 'origin_id' = '#{@payload.push_id}'")
+        Entity
+        .feed('github')
+        .type('push')
+        .where(origin_id: @payload.push_id.to_s)
       end
 
       def find_by_commit_id
-        Entity.tagged_with(['github', 'push'])
+        Entity
+        .feed('github')
+        .type('push')
         .where("props -> 'commit_shas' LIKE '%#{@payload.commit_id}%'")
       end
 

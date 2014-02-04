@@ -20,12 +20,11 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.pull_request_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
-            origin_id: @payload.pull_request_id,
             state: @payload.state,
-            action: @payload.action, # IssuePullRequestAction?
           }
         })
       end
@@ -44,14 +43,18 @@ module Entities
 
       # Finders
       def find_by_pull_request_id
-        Entity.tagged_with(['github', 'pull_request'])
-        .where("props -> 'origin_id' = '#{@payload.pull_request_id}'")
+        Entity
+        .feed('github')
+        .type('pull_request')
+        .where(origin_id: @payload.pull_request_id)
       end
 
       def find_by_repo_name_and_number
-        Entity.where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        Entity
+        .feed('github')
+        .type('pull_request')
+        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
         .where("props -> 'number' = '#{@payload.number}'")
-        .tagged_with(['github', 'pull_request'])
       end
 
       def relationships

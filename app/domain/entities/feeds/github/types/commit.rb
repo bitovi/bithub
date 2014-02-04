@@ -25,10 +25,10 @@ module Entities
           body: @commit.andand[:message],
           url: @commit.andand[:url],
           origin_ts: @payload.origin_ts,
+          origin_id: @commit.andand[:sha],
           props: {
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
-            origin_id: @commit.andand[:sha],
           }, # set next manually b/c AR will call save instead of persist on children
           feed_name: feed_name.snake_case,
           type_name: type_name.snake_case,
@@ -43,8 +43,10 @@ module Entities
       private
 
       def find_by_commit_sha
-        Entity.tagged_with(['github', 'commit'])
-          .where("props -> 'sha' = '#{@commit[:sha]}'")
+        Entity
+        .feed('github')
+        .type('commit')
+        .where(origin_id: @commit[:sha])
       end
     end
 

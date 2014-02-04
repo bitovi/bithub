@@ -20,10 +20,10 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
+          origin_id: @payload.issue_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
-            origin_id: @payload.issue_id,
             label_names: @payload.label_names,
             state: @payload.state,
           }
@@ -40,15 +40,18 @@ module Entities
 
       # Finders
       def find_by_issue_id
-        Entity.tagged_with(['github', 'issue'])
-        .where("props -> 'origin_id' = '#{@payload.issue_id}'")
+        Entity
+        .feed('github')
+        .type('issue')
+        .where(origin_id: @payload.issue_id)
       end
 
       def find_by_repo_name_and_number
         Entity
-          .tagged_with(['github', 'issue'])
-          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-          .where("props -> 'number' = '#{@payload.number}'")        
+        .feed('github')
+        .type('issue')
+        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
+        .where("props -> 'number' = '#{@payload.number}'")        
       end
 
       def relationships

@@ -5,71 +5,80 @@ require 'yajl'
 require 'nokogiri'
 require 'nori'
 
-require_relative 'fetchers'
 require 'app/domain/events/processor'
 require 'app/domain/digest_queue'
 
+require_relative 'extensions/bootable'
+require_relative 'extensions/fakeable'
+require_relative 'extensions/pageable'
+
 class Poller
   include Loggable
-  # include Fetchers::Fake
-  include Fetchers::HTTP
 
-  def self.handler(exchange, endpoint, &blk)
-    new(exchange, endpoint, &blk).handler
+  class Configuration
+    attr_accessor :http_query, :http_head,
+      :digest_queue_config,
+      :processor_config,
+      :boot_data_url
   end
 
   def initialize(exchange, endpoint, &blk)
     initialize_logger("INFO")
-    @exchange = exchange
-    @endpoint = endpoint
-    @digest_queue = DigestQueue.new
-
-    @config = OpenStruct.new
+    @config = Configuration.new
     blk.(@config) if blk
 
-    @feed ||= determine_feed(endpoint)
+    @exchange = exchange
+    @endpoint = endpoint
 
-    # @logger.info "Dev mode, responses cached to and read from #{FAKE_RESPONSES}" if ENV['ENV'] == 'development'
+    @digest_queue = DigestQueue.new([], @config.digest_queue_config || {})
+    @feed ||= determine_feed(endpoint)
   end
 
   def handler
-    lambda { fetch }
-  end
-
-  def fetch_next_page(http_req)
-    if (link_header = http_req.response_header['LINK'])
-      if (next_page_url = link_by_type(link_header, 'next').andand[:url])
-        #log_fetching(next_page_url)
-        fetch(next_page_url)
-      end
+    if bootable?
+      lambda { booted? ? fetch : delay(lambda {boot}, 1) }
+    else
+      lambda { fetch }
     end
   end
+    
+  def fetch(link = nil)
+    link = link || @endpoint
 
-  def link_by_type(link_header, type)
-    parse_link_header(link_header).select{|l| l[:type] == type}.first
+    http_req = EM::HttpRequest.new(link).get({
+      query: http_query,
+      head: http_head
+    })
+
+    http_req.callback { callback(http_req) }
+    http_req.errback { errback(http_req) }
   end
 
-  def parse_link_header(lh)
-    # TODO select only links that have 'rel' attr
-    lh.split(',').map do |rel|
-      with_rel_attrs = pluck_pagination(rel)
-      Hash[[:whole, :url, :type].zip with_rel_attrs]
+  def callback(http_req)
+    if success?(http_req)
+      delay(1, lambda {next_page(http_req)}) if pageable?
+      handle_success(http_req.response)
+    else
+      handle_errors(http_req)
     end
   end
-
-  def pluck_pagination(rel)
-    (rel.match /<(.*)>; rel="(.*)"/).to_a
+  
+  def errback(http_req)
+    log_http_status(http_req, :error)
   end
 
-  def handle_success(response)
-    processed = processor(response).parse.extract.decorate.result
+  def handle_success(http_resp)
+    processed = processor(http_resp).parse.extract.decorate.result
     publish(reject_old(processed))
   end
   
-  def processor(response)
-    Events::Processor.new(response) do |config|
-      config.feed = @feed
-      config.processor_tips = @config.processor_tips
+  def handle_errors(http_req)
+    if client_error?(http_req)
+      log_http_status(http_req, :error)
+    elsif server_error?(http_req)
+      log_http_status(http_req, :warn)
+    else
+      log_http_status(http_req, :error)
     end
   end
   
@@ -91,7 +100,6 @@ class Poller
     end
   end
 
-
   def success?(http_resp)
     http_resp.response_header.status.to_s =~ /2../
   end
@@ -109,6 +117,25 @@ class Poller
   end
 
   private
+
+  # --- Roles
+
+  def pageable?
+    self.is_a? Pageable
+  end
+
+  def bootable?
+    self.is_a? Bootable
+  end
+
+  # --- /Roles
+  
+  def processor(response)
+    Events::Processor.new(response) do |config|
+      config.feed = @feed
+      config.term = @config.processor_config[:term]
+    end
+  end
 
   def determine_feed(uri)
     f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
@@ -157,4 +184,5 @@ class Poller
   def count_not_empty(events)
     events.reject{|e| e.empty?}.count
   end
+
 end

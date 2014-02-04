@@ -1,42 +1,35 @@
 class Pagination < ActiveRecord::Base
   self.table_name = :pagination
 
-  scope :by_category, lambda {|c| where(:category => c)}
+  def self.grouped(args)
+    tags = args[:tags] || []
+    limit = args[:limit] || 30
+    offset = args[:offset] || 0
+    tz = args[:clientTz] || "UTC"
 
+    query = "SELECT p.date, hstore(array_agg(p.category)::text[], array_agg(p.cnt)::text[]) AS counts FROM 
+               (SELECT (ts AT TIME ZONE 'UTC' AT TIME ZONE '#{tz}')::date AS date, category, COUNT(*) AS cnt 
+                  FROM pagination AS p 
+                  WHERE #{tags.to_postgres_array} <@ tags 
+                  GROUP BY date, category
+                  ORDER BY date DESC) AS p
+               GROUP BY p.date
+               ORDER BY p.date DESC
+               LIMIT #{limit} OFFSET #{offset};"
 
-  def self.grouped_db
-    select_command = <<-SQL
-      "date",
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'chat' and ip."date" = pagination."date")::int as chat,
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category = 'digest' and ip."date" = pagination."date")::int as digest,
-      (select coalesce(sum(cnt),0) from pagination ip where ip.category <> 'digest' and ip.category <> 'chat' and ip."date" = pagination."date")::int as other
-    SQL
-
-    self.select(select_command).group("\"date\"").order("\"date\" desc")
-  end
-  
-  def self.grouped
-    grouped_rows = {}
-    self.all.each do |row|
-      type = row.category.to_sym
-
-      if grouped_rows[row.date].nil?
-        grouped_rows[row.date] = {chat: 0, digest: 0, other: 0}
-      end
-
-      if type == :chat
-        grouped_rows[row.date][:chat] += row.cnt
-      elsif type == :digest
-        grouped_rows[row.date][:digest] += row.cnt
-      else
-        grouped_rows[row.date][:other] += row.cnt
-      end
+    ActiveRecord::Base.connection.execute(query).map do |row|
+      {'date' => row['date']}.merge Hash[ from_hstore(row['counts']).map {|k,v| [k,v.to_i]} ]
     end
-
-    grouped_rows
   end
 
   def self.refresh
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW \"#{self.table_name}\";")
   end
+
+  private
+
+  def self.from_hstore str
+    ActiveRecord::Coders::Hstore.load(str)
+  end
+  
 end

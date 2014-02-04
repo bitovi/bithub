@@ -2,8 +2,8 @@
     :github:
         :events: 5
         :issues:
-            :open: 5
-            :closed: 6000
+            :open: 7
+            :closed: 5
     :disqus: 5
     :forum: 5
     :meetup: 5
@@ -42,6 +42,12 @@
                     :text: "canjs"
             :streaming:
                 :url: "http://stream.meetup.com/2/open_events"
+        :rsvps:
+            :url: "https://api.meetup.com/2/rsvps"
+            :query:
+                :sign: "true"
+                :key: "663a24605a37767831495d6332546b4a"
+            :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
 
 
     :github:
