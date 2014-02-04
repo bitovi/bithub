@@ -42,12 +42,12 @@ module Events
     end
 
     class Processor
-      include Configurable
-
       attr_reader :parsed, :extracted
+      class Configuration; end
 
       def initialize(response, &blk)
-        initialize_config
+        @config = Configuration.new
+        blk.(@config) if blk
         @response = response
       end
 

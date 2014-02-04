@@ -1,5 +1,6 @@
 module Entities
   module Normalizable
+    ARGS_TO_PROPS = ['category', 'project', 'type', 'feed', 'tags', 'origin_author_id', 'origin_author_feed', 'location']
 
     def normalize
       set_thread_ts_to_origin_ts
@@ -33,5 +34,14 @@ module Entities
       @instance.props.delete(:tags)
       @instance.props.delete(:origin_author_feed) # Events from Bithub have this
     end
+
+    # def to_props_and_clean(args)
+    #   ARGS_TO_PROPS.each do |arg|
+    #     self.props[arg] = args.delete(arg) if args[arg]
+    #   end
+
+    #   self.props['scheduled_for'] = DateTime.parse(args.delete(:datetime)) if args[:datetime] && args[:datetime].present?
+    #   args
+    # end
   end
 end
