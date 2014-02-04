@@ -283,7 +283,7 @@ CREATE TABLE entities (
     type_name character varying(255),
     category_name character varying(255),
     type_id integer,
-    origin_id character varying(255)
+    origin_id integer
 );
 
 

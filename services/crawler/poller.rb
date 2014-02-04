@@ -133,7 +133,7 @@ class Poller
   def processor(response)
     Events::Processor.new(response) do |config|
       config.feed = @feed
-      config.term = @config.processor_config[:term]
+      config.term = @config.processor_config[:term] if @config.processor_config
     end
   end
 

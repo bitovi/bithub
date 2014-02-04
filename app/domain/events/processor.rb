@@ -4,7 +4,6 @@ require 'andand'
 require 'lib/core_ext'
 require 'lib/core_helpers'
 require 'lib/loggable'
-require 'lib/configurable'
 
 require 'events/dispatcher'
 
@@ -14,7 +13,6 @@ Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
 end
 
 module Events
-
   class Processor
     include Loggable
     class Configuration

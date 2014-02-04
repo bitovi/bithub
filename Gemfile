@@ -27,6 +27,7 @@ gem 'delayed_job_active_record'
 gem 'jbuilder'
 gem 'jpbuilder'
 gem 'draper'
+gem 'enumerize'
 gem 'redcarpet'
 gem 'foreman'
 gem 'sanitize'
@@ -48,7 +49,7 @@ gem 'octokit', '~> 2.0'
 
 group :test, :testing, :development do
   gem 'factory_girl_rails'
-  gem 'rspec'
+  gem 'rspec', '~> 2.14'
   gem 'rspec-rails'
   gem 'guard-rspec', '~> 4.0', require: false
   gem 'database_cleaner'

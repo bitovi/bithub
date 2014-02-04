@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe Tagger do
 
   before :all do
-    TaggerHelpers.import_tags
+    import_tags
   end
 
   after :all do

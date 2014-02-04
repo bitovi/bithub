@@ -1,5 +1,3 @@
-require 'lib/configurable'
-
 require_relative 'traits/persistable'
 require_relative 'traits/comparable'
 require_relative 'traits/digestable'

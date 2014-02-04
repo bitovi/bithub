@@ -4,10 +4,10 @@ class Entity < ActiveRecord::Base
   class DistinctFieldNotKnown < Error; end
 
   attr_accessible :id,
-    :body, :title, :url,
+    :body, :title, :url, :origin_id,
     :tag_list, :owners, :ownerships,
     :feed_name, :type_name, :category_name,
-    :feed_id, :type_id, :category_id, 
+    :feed_id, :type_id, :category_id,
     :origin_ts, :thread_updated_ts,
     :created_at, :updated_at,
     :props, :image, :total_upvotes
@@ -118,7 +118,7 @@ class Entity < ActiveRecord::Base
   end
 
   def author
-    self.ownerships.select{|a| a.type == 'author'}.first.owner
+    self.ownerships.andand.select{|a| a.type == 'author'}.first.owner
   end
 
   def children_with_includes

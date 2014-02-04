@@ -19,8 +19,9 @@ module Bithub
     config.active_support.escape_html_entities_in_json = true
     config.active_record.whitelist_attributes = true
     config.active_record.schema_format = :sql
+    config.i18n.enforce_available_locales = false
 
-    # Autoload lib folder
+    # Autoload 'lib' and 'domain' folders
     config.autoload_paths += %W(#{Rails.root}/app/domain #{Rails.root}/lib)
 
     # Enable the asset pipeline

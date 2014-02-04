@@ -1,3 +1,5 @@
+require 'lib/api_wrappers/github'
+require 'lib/api_wrappers/bithub'
 require 'yaml'
 require 'git'
 
@@ -34,5 +36,4 @@ module Helpers
     opts[:username] && g.config('user.name', opts[:username])
     opts[:email] && g.config('user.email', opts[:email])
   end
-
 end
