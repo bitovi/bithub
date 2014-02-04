@@ -47,12 +47,42 @@
           :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
   
       :user_feeds:
-        :bitovi_bithub:
+        :bitovi:
           :host: userstream.twitter.com
           :method: GET
           :path: /1.1/user.json
           :oauth:
-            :consumer_key: "O8LBlzL77IMhcUd58PaCA"
-            :consumer_secret: "GgBnHe2pyNbVQoBiZYMqeRM39juGphZ4tsCcpn79uTM"
-            :token: "1911709506-lxbZcO7DbjeZ4D6HlfpHTmYaMgyNwKyD1x3OcZs"
-            :token_secret: "H4mVLnP21EUD2zkvfonQfIOMS0GVT585bXhRNMT9ZI"
+            :consumer_key: "FXZGJo7JIApbFaAaDExdg"
+            :consumer_secret: "BWcyzCqBDtN0YAtiwn2C5RFuc156rmFNi2NjFWxpwY"
+            :token: "123763453-A69bA6vBuHh2nEwQRl5ZgBQPBsumSNF7B1ljkay1"
+            :token_secret: "JqAjP4Kg4p9Tokb7XOiAaEB3HY1JjQUB7Sw7pe2uU4Wcl"
+
+        :canjs:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "PfslPpcKKNF71HZ3KUhxw"
+            :consumer_secret: "fz5ZrZOMqCMHV3OYWOZBKpZh446WwO1gmU5mQ2v1g"
+            :token: "523041627-kZqhQDeqTeT5wGvSoEsKmsQNANtnEBtqOrJ21zvs"
+            :token_secret: "Z13h6S6HgOf5BSdgXo0PtmTcLDMdj1pacEM6q5gGVFV2w"
+
+        :jquerypp:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "CPOUJMA2FuKHQxnx2jQ"
+            :consumer_secret: "m9QRVGO7aIXRXXU7u7VtSYFV17ZtcK7Qy4Yfb6JEg0"
+            :token: "589215872-GX13o9ZdBqGFuYv3XlBwPNobixzs7K32xQgul0ZQ"
+            :token_secret: "zZ2sRHYRURE54UiejrXtzAaVuO2RuiIeDVyv0CCxcljS0"
+
+        :javascriptmvc:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "JLQjLY4U3HkHY7QDlhBtWA"
+            :consumer_secret: "onuJXBvTq4uNbUA0WF09edo6sXGgfBHbMvcx5jv8s"
+            :token: "56956664-UHcaq3W6O3ocUU6k5gOkvT6IMsYcLpxG9extWIQTY"
+            :token_secret: "CRsa23cttiFITHIEuAx0EcDps0A7r4n30qHquigzHTO6E"
