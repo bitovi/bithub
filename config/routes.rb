@@ -7,11 +7,15 @@ Bithub::Application.routes.draw do
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
+  match '/uploads/*other' => "uploads#index"
 
   namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'auth/session_info#current_session'
 
     namespace :v2 do
+      namespace :crawler do
+        get :event_ids, to: 'boot#event_ids'
+      end
       match '*path', :to => redirect("/api/v2")
       root :to => "base#home"
     end

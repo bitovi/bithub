@@ -10,7 +10,7 @@ Bithub::Application.configure do
 
   # Enable serving static files because of Rack::Cache (HTTP
   # cache invalidation is possible this way)
-  config.serve_static_assets = true
+  config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
   config.assets.compress = true

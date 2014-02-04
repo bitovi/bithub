@@ -11,7 +11,7 @@ class EntityDecorator < Draper::Decorator
     if !source.parent
       source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
     else
-      source.upvotes.reduce(0) { |acc, u| acc += u.value }
+      source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
     end
   end
 
@@ -40,6 +40,10 @@ class EntityDecorator < Draper::Decorator
     end
   end
 
+  def source_body
+    source.body
+  end
+
   # deprecated: use 'author' or 'props.origin_author_*' attrs
   def actor
     (author && author[:name]) ? author[:name] : source.props['origin_author_name']
@@ -64,6 +68,14 @@ class EntityDecorator < Draper::Decorator
     else
       ""
     end
+  end
+
+  def original_image_url
+    if has_local_image?(source)
+      local_prefix + source.image.url
+    else
+      nil
+    end    
   end
 
   def props(thread_awarded = false, awarded_value = nil)

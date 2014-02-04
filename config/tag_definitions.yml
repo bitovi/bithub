@@ -50,7 +50,7 @@ testee:
   display_name: "Testee.js"
   group_list: "projects, req_friends"
   props:
-    levenshtein_treshold: 0
+    levenshtein_treshold: "0"
   aliases:
     - "testeejs"
     - "testee_js"
@@ -104,12 +104,14 @@ app:
   group_list: "categories"
   props:
     order_on_page: "09"
+    priority: "100"
 
 article:
   display_name: "Article"
   group_list: "categories"
   props:
     order_on_page: "07"
+    priority: "99"
 
 bug:
   display_name: "Bug"
@@ -139,6 +141,10 @@ github_comment:
   display_name: "Github Comment"
   group_list: "categories"
 
+github_comment:
+  display_name: "Github Comment"
+  group_list: "categories"
+
 digest:
   display_name: "Digest"
   group_list: "categories"
@@ -159,6 +165,7 @@ feature:
     - "feature-request"
   props:
     order_on_page: "05"
+    priority: "99"
 
 issue:
   display_name: "Issue"

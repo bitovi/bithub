@@ -1,1 +1,3 @@
-json.(reward, :id, :title, :description, :point_minimum, :display_point_minimum, :disabled_ts, :image)
+json.(reward, :id, :title, :description, :point_minimum, :display_point_minimum, :disabled_ts)
+json.original_image_url reward.image.url
+

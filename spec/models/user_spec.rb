@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+Delayed::Worker.delay_jobs = false
+
 describe User do
   describe "#score" do
     before :all do
@@ -48,42 +50,44 @@ describe User do
     end
   end
 
-  describe "#merge_identities!" do
-    let(:user) { create(:user, name: 'Nikica', email: 'neektza@gmail.com') }
-    let(:another_user) { create(:user, name: 'Veljko', email: 'veljko@kset.org') }
+  describe "#link_ident!" do
+
+    before :each do
+      @nikica = create(:user, name: 'Nikica', email: 'neektza@gmail.com')
+      @veljko = create(:user, name: 'Veljko', email: 'veljko@kset.org')
+    end
 
     context "when there is already a github identity associated with the user" do
       it "should add a new twitter identity to the existing user" do
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
 
-        user.merge_identities!(identity_twitter)
-        expect(user.reload.identities.where({:provider => 'twitter'}).first).to be
+        @nikica.link_ident!(identity_twitter)
+        expect(@nikica.reload.identities.where({:provider => 'twitter'}).first).to be
       end
     end
 
     context "when there is already a twitter identity associated with the user" do
       it "shoul add a new twitter identity to the existing user" do
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
         identity_github = create(:identity, uid: 987654321, provider: 'github')
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: user)
 
-        user.merge_identities!(identity_github)
-        expect(user.reload.identities.where({:provider => 'github'}).first).to be
+        @nikica.link_ident!(identity_github)
+        expect(@nikica.reload.identities.where({:provider => 'github'}).first).to be
       end
     end
 
     context "when there is already another user that owns the identity being merged" do
       it "should destroy the other user and snatches it's identity" do
-        old_user_id = another_user.id
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: user)
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: another_user)
-        user.merge_identities!(identity_twitter)
-        expect(User.where(:id => old_user_id).first).to be_nil
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
+        @nikica.link_ident!(identity_twitter)
+        expect(User.where(:id => @veljko).first).to be_nil
       end
     end
   end
 
-  describe "#reassign_events_to" do
+  describe "#snatch_events_from" do
     it "transfers events" do
       v = create(:user, name: 'Veljko')
       n = create(:user, name: 'Nikica')
@@ -92,30 +96,13 @@ describe User do
       e2 = create(:twitter_follow_event, author: v)
       e3 = create(:twitter_tweet, author: v)
 
-      v.reload.reassign_events_to(n)
+      n.reload.snatch_events_from(v)
       v.reload.events.should =~ []
       n.reload.events.should =~ [e1, e2, e3]
     end
   end
 
-  describe "#reassign_activities_to" do
-    it "transfers upvotes/awards/internals/anteups in which the user is an point receiver" do
-      v = create(:user, name: 'Veljko')
-      n = create(:user, name: 'Nikica')
-
-      issue = create(:github_issue, author: v)
-      issue_comment = create(:github_issue_comment, parent: issue, author: v)
-
-      upvote = create(:upvote, applies_to: issue, actor: n)
-      award = create(:award, applies_to: issue_comment, actor: n)
-
-      v.reload.reassign_activities_to(n)
-      n.reload.activities_raw =~ [upvote, issue]
-      v.reload.activities_raw =~ []
-    end
-  end
-
-  describe "#reassign_actions_to" do
+  describe "#snatch_actions_from" do
     it "transfers upvotes/awards/internals/anteups in which the user is an actor" do
       v = create(:user, name: 'Veljko')
       n = create(:user, name: 'Nikica')
@@ -126,12 +113,25 @@ describe User do
       upvote = create(:upvote, applies_to: issue, actor: n)
       award = create(:award, applies_to: issue_comment, actor: n)
 
-      n.reload.reassign_actions_to(v)
+      v.reload.snatch_actions_from(n)
       v.reload.actions.should =~ [upvote, award] 
       n.reload.actions.should =~ []
     end
   end
 
+  describe "#snatch_internals_from" do
+    it "transfers internals" do
+      v = create(:user, name: 'Veljko')
+      n = create(:user, name: 'Nikica')
+
+      i = Internal.create!({receiver: n, value: 1, comment: "Completed profile."})
+
+      v.reload.snatch_internals_from(n)
+      v.reload.internals.should =~ [i]
+      n.reload.internals.should =~ []      
+    end
+  end
+  
   describe "#reward_if_eligible" do
     it "should create one achievement for each award that the user is eligible for" do
       author = create(:user, name: "Nikica")
@@ -201,20 +201,20 @@ describe User do
     end
   end
 
-  describe "#award_points_for_completing_profile" do
+  describe "#check_and_award_points_for_completing_profile" do
     it "should award +1 point for competing profile" do
       @user = create(:user)
       @user.stub(:completed_profile?).and_return(true)
-      @user.award_points_for_completing_profile
+      @user.check_and_award_points_for_completing_profile
       expect(@user.score).to eq 1
     end
   end
   
-  describe "#award_points_for_joining" do
+  describe "#award_points_for_linking" do
     it "should award +1 point for singning in with twitter/github for the first time" do
       @user = create(:user)
-      @user.award_points_for_joining('twitter').save!
-      expect(@user.score).to eq 1
+      @user.award_points_for_linking('twitter').save!
+      expect(@user.reload.score).to eq 1
     end
   end
 

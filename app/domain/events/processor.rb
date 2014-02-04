@@ -17,11 +17,15 @@ module Events
 
   class Processor
     include Loggable
-    include Configurable
+    class Configuration
+      attr_accessor :term, :feed
+    end
 
     def initialize(response, &blk)
       initialize_logger("INFO")
-      initialize_config(&blk)
+
+      @config = Configuration.new
+      blk.(@config) if blk
 
       @feed = @config.feed
       @response = response
@@ -53,7 +57,7 @@ module Events
     
     def subprocessor
       @subprocessor ||= Events.feed(@feed)::Processor.new(@response) do |config|
-        config = @config
+        config.term = @config.term
       end
     end
   end

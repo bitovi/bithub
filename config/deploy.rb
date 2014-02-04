@@ -1,5 +1,7 @@
 require 'capistrano/ext/multistage'
 require 'bundler/capistrano'
+require 'travis/pro'
+
 
 set(:use_sudo, false)
 set(:ssh_options, { :forward_agent => true })
@@ -22,6 +24,9 @@ set(:stages, ['testing', 'staging', 'prod'])
 set(:default_stage, 'testing')
 
 set(:shared_children, shared_children + %w{public/uploads})
+
+set :ci_access_token, "DTaq7IXrUgbhNeaBVtTdcA"
+set :ci_repository, "bitovi/bithub"
 
 namespace :deploy do
 
@@ -48,18 +53,18 @@ namespace :deploy do
     envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
     env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
     run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
-    run "sudo /usr/bin/service bithub-listener start"
+    run "sudo /usr/bin/service bithub start"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener stop"
+    run "sudo /usr/bin/service bithub stop"
   end
 
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub-listener --log /var/log/bithub/listener --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
+    run "#{current_path}/bin/foreman export --app bithub --log /var/log/bithub/web --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
   end
 
   desc "Symling uploads from shared to public folder"
@@ -69,6 +74,8 @@ namespace :deploy do
 
 end
 
+before('deploy', 'travis:verify')
 before('deploy:restart', 'deploy:recreate_upstart_conf')
 before('deploy:restart', 'deploy:symlink_uploads')
+
 after('deploy', 'db:backup')

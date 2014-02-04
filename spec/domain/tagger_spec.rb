@@ -1,18 +1,22 @@
-require 'domain/spec_helper'
-require 'app/domain/tagger'
+require 'spec_helper'
+require './spec/helpers.rb'
 
 describe Tagger do
 
-  subject(:tagger) do
-    Tagger.new([
-      { name: 'canjs', aliases: %w(can_js) },
-      { name: 'jquerypp', aliases: %w(jquery_pp, jquery++) },
-      { name: 'stealjs', aliases: %w(steal_js steal) },
-      { name: 'funcunit', aliases: %w() },
-      { name: 'documentjs', aliases: %w(document_js) },
-      { name: 'javascriptmvc', aliases: %w(jmvc) },
-      { name: 'testee', aliases: %w(testee_js), props: {levenshtein_treshold: 0} },
-    ], {threshold: 1})
+  before :all do
+    Helpers::Tags.import
+  end
+
+  after :all do
+    Tag.destroy_all
+  end
+  
+  let(:tagger_config) do
+    { :levenshtein_treshold => 1 }
+  end
+
+  subject(:tagger) do 
+    Tagger::Engine.new(Tag.projects, tagger_config)
   end
 
   describe "#textualize" do 

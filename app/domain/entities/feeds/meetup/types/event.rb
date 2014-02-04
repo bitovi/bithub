@@ -13,16 +13,18 @@ module Entities
           body: @payload.description,
           url: @payload.url,
           origin_ts: @payload.origin_timestamp,
+          origin_id: @payload.event_id,
           props: {
-            event_id: @payload.event_id,
             event_id: @payload.event_id,
           }
         })
       end
 
       def find_by_event_id
-        Entity.tagged_with(['meetup', 'event'])
-        .where("props -> 'event_id' = '#{@payload.event_id}'")
+        Entity
+        .feed('meetup')
+        .type('event')
+        .where(origin_id: @payload.event_id)
       end
     end
 
