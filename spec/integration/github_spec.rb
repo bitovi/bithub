@@ -5,9 +5,10 @@ require 'uri'
 require 'yajl'
 
 # ours
-require "./spec/integration_testing/helpers.rb"
 require 'github'
 require 'bithub'
+
+require_relative "support/helpers.rb"
 
 $config = Helpers.load_config
 $rabbitmq = $config[:rabbitmq]

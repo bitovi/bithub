@@ -1,10 +1,9 @@
-require 'spec_helper'
-require './spec/helpers.rb'
+require_relative 'spec_helper'
 
 describe Tagger do
 
   before :all do
-    Helpers::Tags.import
+    TaggerHelpers.import_tags
   end
 
   after :all do

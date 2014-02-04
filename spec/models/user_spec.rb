@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'support/spec_helper'
 
 Delayed::Worker.delay_jobs = false
 

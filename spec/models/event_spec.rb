@@ -1,5 +1,4 @@
-require 'spec_helper'
-require 'digest/md5'
+require_relative 'support/spec_helper'
 
 require './spec/helpers.rb'
 
