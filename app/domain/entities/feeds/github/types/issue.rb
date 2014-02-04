@@ -20,7 +20,7 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.issue_id,
+          origin_id: @payload.issue_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,
