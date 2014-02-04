@@ -19,7 +19,7 @@ module Entities
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.push_id,
+          origin_id: @payload.push_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
@@ -49,7 +49,7 @@ module Entities
         Entity
         .feed('github')
         .type('push')
-        .where(origin_id: @payload.push_id)
+        .where(origin_id: @payload.push_id.to_s)
       end
 
       def find_by_commit_id

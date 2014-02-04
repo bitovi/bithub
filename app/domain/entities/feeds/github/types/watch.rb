@@ -18,7 +18,7 @@ module Entities
         Entity.new({
           title: "started watching #{@payload.repo_name}",
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.watch_id,
+          origin_id: @payload.watch_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             origin_author_id: @payload.origin_author_id,

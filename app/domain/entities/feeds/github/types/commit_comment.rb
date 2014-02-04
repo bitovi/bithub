@@ -20,7 +20,7 @@ module Entities
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.comment_id,
+          origin_id: @payload.comment_id.to_s,
           props: {
             repo_name: @payload.repo_name,
             commit_id: @payload.commit_id,
@@ -41,7 +41,7 @@ module Entities
       def find_by_commit_id
         Entity
         .tagged_with(['github', 'commit_comment'])
-        .where(origin_id: @payload.commit_id)
+        .where(origin_id: @payload.commit_id.to_s)
       end
 
       def find_by_multiple_commit_shas

@@ -27,7 +27,7 @@ module Entities
         Entity.new({
           title: "Issue ##{@payload.number} #{@payload.action}",
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.origin_id,
+          origin_id: @payload.origin_id_to_s,
           props: {
             repo_name: @payload.repo_name,
             number: @payload.number,

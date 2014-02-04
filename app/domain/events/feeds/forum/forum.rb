@@ -10,14 +10,14 @@ module Events
     end
 
     class Processor
-      include Configurable
-
       class Configuration
         attr_accessor :term
       end
 
       def initialize(response, &blk)
-        initialize_config(&blk)
+        @config = Configuration.new
+        blk.(@config) if blk
+
         @response = response
       end
 
