@@ -1,7 +1,9 @@
 require 'andand'
 require 'levenshtein'
-require 'lib/core_helpers'
-require 'lib/loggable'
+
+require 'core_ext'
+require 'core_helpers'
+require 'loggable'
 
 class Tagger
   include CoreHelpers

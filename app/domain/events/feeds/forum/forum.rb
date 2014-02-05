@@ -1,4 +1,4 @@
-require 'lib/sanitizer'
+require 'sanitizer'
 require_relative 'types/post'
 
 module Events

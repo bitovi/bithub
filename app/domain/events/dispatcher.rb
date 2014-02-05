@@ -22,5 +22,3 @@ module Events
     end
   end
 end
-
-Dir.glob('app/domain/events/feeds/*/*.rb').each { |f| require f }

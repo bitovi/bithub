@@ -1,4 +1,4 @@
-require 'lib/sanitizer'
+require 'sanitizer'
 
 module Events
   module Forum

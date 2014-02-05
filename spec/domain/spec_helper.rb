@@ -7,8 +7,8 @@ def make_dummy_event(i)
   Hash.new({content_digest: Digest::MD5.hexdigest(i.to_s), data: {title: "Event #{i}"}})
 end
 
-require 'lib/core_ext'
-require 'lib/core_helpers'
+require 'core_ext'
+require 'core_helpers'
 
 require 'events/processor'
 require 'events/protocol'

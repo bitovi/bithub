@@ -13,8 +13,8 @@ require 'log4r'
 require 'andand'
 require 'awesome_print'
 
-require 'lib/core_ext'
-require 'lib/core_helpers'
+require 'core_ext'
+require 'core_helpers'
 require 'app/domain/events/dispatcher'
 
 ### Config

@@ -58,3 +58,12 @@ module Events
     alias_method :type_name, :type
   end
 end
+
+require 'events/feeds/bithub/bithub'
+require 'events/feeds/github/github'
+require 'events/feeds/twitter/twitter'
+require 'events/feeds/disqus/disqus'
+require 'events/feeds/forum/forum'
+require 'events/feeds/blog/blog'
+require 'events/feeds/irc/irc'
+require 'events/feeds/meetup/meetup'
