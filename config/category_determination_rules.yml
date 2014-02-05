@@ -28,6 +28,13 @@ chat:
 
 article:
     blog: 10
+    article: 10
+
+app:
+    app: 10
+
+plugin:
+    plugin: 10
 
 issue:
     issue: 10
@@ -44,4 +51,4 @@ feature:
 
 event:
     meetup: 20
-    event: 1
+    event: 10

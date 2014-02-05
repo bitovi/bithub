@@ -1,69 +1,69 @@
 -
   required_tags: []
-  authorship_value: 0
+  ownership_value: 0
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - article
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - twitter
-  authorship_value: 1
+  ownership_value: 1
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - plugin
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - example
-  authorship_value: 0
+  ownership_value: 0
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - bug
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - feature
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - app
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - code
-  authorship_value: 0
+  ownership_value: 0
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - comment
-  authorship_value: 0
+  ownership_value: 0
   award_value: 0
   upvote_value: 1
 
@@ -71,7 +71,7 @@
   required_tags:
     - issue_comment
     - bug
-  authorship_value: 0
+  ownership_value: 0
   award_value: 0
   upvote_value: 1
 
@@ -79,7 +79,7 @@
   required_tags:
     - fork
     - digest
-  authorship_value: 1
+  ownership_value: 1
   award_value: 0
   upvote_value: 1
 
@@ -87,7 +87,7 @@
   required_tags:
     - watch
     - digest
-  authorship_value: 1
+  ownership_value: 1
   award_value: 0
   upvote_value: 1
 
@@ -95,13 +95,13 @@
   required_tags:
     - follow
     - twitter
-  authorship_value: 1
+  ownership_value: 1
   award_value: 0
   upvote_value: 1
 
 -
   required_tags:
     - event
-  authorship_value: 2
+  ownership_value: 2
   award_value: 0
   upvote_value: 1
