@@ -517,9 +517,8 @@ CREATE TABLE ownerships (
     id integer NOT NULL,
     owner_id integer,
     entity_id integer,
-    scoring_rule_id integer,
     value integer,
-    type character varying(255),
+    ownership_type character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -546,7 +545,7 @@ CREATE TABLE roles (
 CREATE TABLE scoring_rules (
     id integer NOT NULL,
     required_tags character varying(255)[],
-    ownership_value integer,
+    authorship_value integer,
     award_value integer,
     upvote_value integer,
     priority integer,
@@ -601,7 +600,7 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.name AS user_name,
     users.email AS user_email,
     (users.props -> 'avatar_url'::text) AS user_gravatar_url,
-    (((( SELECT COALESCE(sum(r.ownership_value), (0)::bigint) AS "coalesce"
+    (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
            FROM entities e,
             ownerships o,
             scoring_rules r
@@ -621,7 +620,7 @@ CREATE MATERIALIZED VIEW leaderboard AS
   WHERE ((users.name IS NOT NULL) AND ((users_roles.role_id IS NULL) OR (NOT (users_roles.role_id IN ( SELECT roles.id
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text)))))))
-  ORDER BY (((( SELECT COALESCE(sum(r.ownership_value), (0)::bigint) AS "coalesce"
+  ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
       FROM entities e,
        ownerships o,
        scoring_rules r
