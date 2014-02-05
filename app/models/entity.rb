@@ -117,8 +117,24 @@ class Entity < ActiveRecord::Base
     self.ownerships << Ownership.new(owner: user, ownership_type: :author).determine_value
   end
 
+  def organizer=(user)
+    self.ownerships << Ownership.new(owner: user, ownership_type: :host).determine_value
+  end
+  
+  def organizer=(user)
+    self.ownerships << Ownership.new(owner: user, ownership_type: :organizer).determine_value
+  end
+
   def author
     self.ownerships.select{|a| a.ownership_type == :author}.first.andand.owner
+  end
+  
+  def organizer
+    self.ownerships.select{|a| a.ownership_type == :organizer}.first.andand.owner
+  end
+  
+  def host
+    self.ownerships.select{|a| a.ownership_type == :host}.first.andand.owner
   end
 
   def children_with_includes

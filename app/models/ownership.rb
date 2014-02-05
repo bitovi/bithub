@@ -12,6 +12,14 @@ class Ownership < ActiveRecord::Base
   validates_uniqueness_of :owner_id, scope: [:entity_id, :ownership_type]
 
   def determine_value
+    Rails.logger.debug self.inspect
+    if self.ownership_type == :author
+      self.value = self.entity.scoring_rule.ownership_value
+    elsif self.ownership_type == :host
+      self.value = 10
+    elsif self.ownership_type == :organizer
+      self.value = 15
+    end
     self
   end
 end
