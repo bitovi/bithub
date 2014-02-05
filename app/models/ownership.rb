@@ -10,4 +10,8 @@ class Ownership < ActiveRecord::Base
 
   validates_presence_of :ownership_type
   validates_uniqueness_of :owner_id, scope: [:entity_id, :ownership_type]
+
+  def determine_value
+    self
+  end
 end
