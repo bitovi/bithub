@@ -20,7 +20,7 @@ Bithub::Application.routes.draw do
       root :to => "base#home"
     end
 
-    namespace :v1 do
+    namespace :v1, :defaults => { :format => 'json', :handler => 'jpbuilder' } do
       resources :events, :except => [:new, :edit] do
         resources 'activities', :only => :index, :to => 'event_activities#index'
         resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'

@@ -14,9 +14,8 @@ require 'yaml'
 require 'ostruct'
 
 # Ours
-require 'lib/core_ext'
-require 'lib/loggable'
-require 'lib/configurable'
+require 'core_ext'
+require 'loggable'
 require 'services/crawler/poller'
 require 'services/crawler/streamer'
 

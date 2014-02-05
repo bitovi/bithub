@@ -1,7 +1,7 @@
 require 'andand'
-require 'lib/core_ext'
-require 'lib/core_helpers'
-require 'lib/loggable'
+require 'core_ext'
+require 'core_helpers'
+require 'loggable'
 
 require_relative 'events/dispatcher'
 require_relative 'entities/dispatcher'

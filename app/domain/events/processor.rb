@@ -1,16 +1,11 @@
 require 'digest/md5'
 require 'andand'
 
-require 'lib/core_ext'
-require 'lib/core_helpers'
-require 'lib/loggable'
+require 'core_ext'
+require 'core_helpers'
+require 'loggable'
 
 require 'events/dispatcher'
-
-# Require all feed and type files
-Dir[File.join('app', 'domain', 'events', 'feeds', '**', '*.rb')].each do |f|
-  require f
-end
 
 module Events
   class Processor
