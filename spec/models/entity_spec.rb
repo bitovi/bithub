@@ -6,77 +6,13 @@ describe Entity do
   after(:all) { Tag.destroy_all }
 
   context "upon creation" do
-    before(:all) { @default_rule = create(:rule) }
+    before(:all) { @default_rule = create(:scoring_rule) }
     after(:all) { @default_rule.destroy }
 
     describe "#save" do
       it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
         generic_event = build(:event)
         expect{generic_event.save!}.to raise_error
-      end
-    end
-
-    describe "#new_from_bithub" do
-      before :all do
-        @comment_category_determination_rule = create(:category_determination_rule, name: "comment", scorings: {comment: 1})
-      end
-      after :all do
-        @comment_category_determination_rule.destroy
-      end
-      
-      let(:args) { original_args }
-      let(:ev) { Event.new_from_bithub(args) }
-
-      it "determines tags" do
-        expect(ev.tag_list).to be_instance_of(ActsAsTaggableOn::TagList)
-      end
-
-      it "determines a feed" do
-        expect(ev.feed).to be_instance_of(Tag)
-      end
-
-      it "determines a category" do
-        expect(ev.category).to be_instance_of(Tag)
-      end
-
-      it "assigns the body" do
-        expect(ev.body).to be_instance_of(String)
-      end
-
-      it "assigns the title" do
-        expect(ev.title).to be_instance_of(String)
-      end
-
-      it "calculates the hash key" do
-        expect(ev.hash.class).to be
-      end
-
-      it "sets the origin and thread timestamps" do
-        expect(ev.origin_ts).to be
-        expect(ev.origin_date).to be
-        expect(ev.thread_updated_at).to be
-        expect(ev.thread_updated_date).to be
-      end
-
-    end
-
-    describe "#update_from_bithub" do
-      
-      before(:each) do
-        @ev = Event.new_from_bithub(original_args)
-        @ev.update_from_bithub(updated_args)        
-      end
-
-      it "re-determines the feed" do
-        expect(@ev.feed).to eq(Tag.find_by_name(updated_args[:feed]))
-      end
-
-      it "re-determines the category" do
-        expect(@ev.category).to eq(Tag.find_by_name(updated_args[:category]))
-      end
-
-      it "re-determines tags" do
-        @ev.tag_list.should =~ only_tags(updated_args)
       end
     end
 
@@ -102,26 +38,6 @@ describe Entity do
       end
     end
 
-    describe ".prepare_commit" do
-      it "should assign the 'custom_commit_event' as :type to new commits" do
-        push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
-        prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
-
-        expect(prepared_event[1][:type]).to eq('custom_commit_event')
-      end
-      
-      it "should assign the commit SHA as the hash_key attribute to new commits" do
-        push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
-        prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
-        expect(prepared_event[0][:hash_key]).to eq(push.source_data[:payload][:commits][0][:sha])
-      end
-
-      it "should assign timestamps to new commits" do
-        push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
-        prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
-        expect(prepared_event[0][:origin_ts]).to be
-      end
-    end
 
     describe "#thread" do
       it "fetches the event itself wrapped in an array if there is no thread" do
