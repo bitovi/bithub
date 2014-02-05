@@ -4,19 +4,19 @@ namespace :data do
 
     puts "---"
     puts "Importing/updating scoring rules"
-    
+
     rules = YAML::load_file('config/scoring_rules.yml')
-    existing_rules = ScoringRule.all.each 
-    
+    existing_rules = ScoringRule.all.each
+
     updated = []
     imported = []
     failed = []
-    
+
     rules.each do |rule|
       rule_tags = rule['required_tags']
       attrs = {
         required_tags: rule['required_tags'],
-        authorship_value: rule['authorship_value'],
+        ownership_value: rule['ownership_value'],
         award_value: rule['award_value'],
         upvote_value: rule['upvote_value']
       }
@@ -29,7 +29,7 @@ namespace :data do
         t.save ? imported.push(rule_tags) : failed.push(rule_tags)
       end
     end
-    
+
     puts "Summary:"
     puts "  #{imported.length} rules imported"
     puts "  #{updated.length} rules updated"
