@@ -64,3 +64,23 @@ end
     #     expect(prepared_event[0][:origin_ts]).to be
     #   end
     # end
+
+# def original_args
+#   ActiveSupport::HashWithIndifferentAccess.new({
+#     title: 'A new entity arrives!',
+#     body: 'Whasaaap?',
+#     category: 'comment',
+#     feed: 'github',
+#     tags: ['issue_comment', 'canjs']
+#   })
+# end
+
+# def updated_args
+#   ActiveSupport::HashWithIndifferentAccess.new({
+#     title: 'Changed title',
+#     body: 'Changed body',
+#     category: 'code',
+#     feed: 'twitter',
+#     tags: ['push_event', 'jquerypp']
+#   })
+# end

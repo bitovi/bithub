@@ -231,13 +231,10 @@ class Entity < ActiveRecord::Base
     case
     when new_record?
       "#{self.class.model_name.cache_key}/new"
-    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_at])
+    when (event_updated = self[:updated_at]) && (thread_updated = self[:thread_updated_ts])
       event_updated_utc = event_updated.utc.to_s(:number)
       thread_updated_utc = thread_updated.utc.to_s(:number)
       "#{self.class.model_name.cache_key}/#{id}-#{event_updated_utc}-#{thread_updated_utc}"
-    when timestamp = self[:updated_at]
-      timestamp = timestamp.utc.to_s(:number)
-      "#{self.class.model_name.cache_key}/#{id}-#{timestamp}"
     else
       "#{self.class.model_name.cache_key}/#{id}"
     end

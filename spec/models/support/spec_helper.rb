@@ -1,7 +1,5 @@
-ENV["RAILS_ENV"] ||= 'test'
-
-RAILS_ROOT = File.expand_path("../../../..", __FILE__)
-require File.join(RAILS_ROOT, 'config', 'environment')
+require 'spec_helper'
+require File.join(PROJECT_ROOT, 'config', 'environment')
 
 require 'digest/md5'
 require 'rspec/rails'
