@@ -31,5 +31,7 @@ class Dispatcher
         # @logger.error entity.instance.inspect if event.type_name == "Push" || event.type_name == "push"
       # end
     end
+
+    entity.instance
   end
 end
