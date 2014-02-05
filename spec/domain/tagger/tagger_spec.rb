@@ -15,7 +15,7 @@ describe Tagger do
   end
 
   subject(:tagger) do 
-    Tagger::Engine.new(Tag.projects, tagger_config)
+    Tagger.new(Tag.projects, tagger_config)
   end
 
   describe "#textualize" do 
