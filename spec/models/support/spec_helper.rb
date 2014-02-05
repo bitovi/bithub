@@ -8,7 +8,7 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'database_cleaner'
 
-DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings event_aggregated_tag_list user_total_score event_total_upvotes)}
+DatabaseCleaner.strategy = :truncation, {:except => %w(tags taggings user_total_score entity_total_upvotes entity_aggregated_tag_list) }
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
