@@ -68,7 +68,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
         users.email AS user_email,
         props -> 'avatar_url' AS user_gravatar_url,
         (
-          (SELECT coalesce(sum(r.ownership_value),0)
+          (SELECT coalesce(sum(r.authorship_value),0)
             FROM entities AS e, ownerships AS o, scoring_rules AS r
             WHERE r.id = e.scoring_rule_id
             AND e.id = o.entity_id
