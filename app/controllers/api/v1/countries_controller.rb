@@ -6,23 +6,25 @@ class Api::V1::CountriesController < Api::V1::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    scope = build_scope(request.env['muster.query'])
-    scope = scope_applier.apply_order_to_scope(scope, params)
+    scope = build_scope(request.env['muster.query'], params)
     @countries = scope.all
     render :index
   end
-  
-  def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Country)
+
+  def query_logic(params)
+    @logic_analyzer ||= QueryLogic::Query.new(Country, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(params, current_scope = nil)
+    @scope_applier ||= ScopeApplier.new(current_scope || Country.scoped, query_logic(params))
   end
 
-  def build_scope(muster_query)
+  def build_scope(muster_query, params)
     scope = Country.scoped
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
+
+    scope_applier(params, scope)
+    .apply_order_to_scope
+    .result
   end
 
 end
