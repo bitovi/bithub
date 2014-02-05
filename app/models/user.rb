@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
   has_many :ownerships, foreign_key: 'owner_id', :dependent => :destroy
-  has_many :entities, through: 'ownerships', source: 'entity'
+  has_many :entities, through: :ownerships, source: 'entity'
 
   has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
   has_many :anteups, :through => :entities

@@ -6,7 +6,7 @@ module Accounts
     class NotUsernameException < Exception; end
 
     def initialize
-      Twitter.configure do |config|
+      Twitter::REST::Client.new do |config|
         config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
         config.consumer_secret = ENV['TWITTER_CONSUMER_SECRET']
         config.oauth_token = ENV['TWITTER_OAUTH_TOKEN']
@@ -27,7 +27,7 @@ module Accounts
 
     def followed_acct_ids(uid)
       fail NotUIDException unless uid.is_a? Integer
-      Twitter.friend_ids(uid)
+      Twitter::User.friend_ids(uid)
     end
 
     def watched_repo_names(username)
