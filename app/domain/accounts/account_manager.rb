@@ -42,7 +42,7 @@ module Accounts
     def create_and_collect(name, email)
       user = identity.build_user({name: name, email: email})
       ActiveRecord::Base.transaction do
-        identity.user.award_points_for_joining(identity.provider)
+        identity.user.award_points_for_linking(identity.provider)
         identity.save!
       end
 
@@ -61,8 +61,8 @@ module Accounts
     def update_and_merge(name, email)
       ActiveRecord::Base.transaction do
         current_user.update_blank_oauth_attrs!({name: name, email: email})
-        current_user.award_points_for_joining(identity.provider)
-        current_user.merge_identities!(identity)
+        current_user.award_points_for_linking(identity.provider)
+        current_user.link_ident!(identity)
         current_user.reload.collect_authored_events.reward_if_eligible
       end
 
@@ -90,7 +90,7 @@ module Accounts
       rs = user_api.watched_repos(username)
 
       remote_repo_watches = rs.map{|r| (r[:full_name] || r['full_name'])} & RELEVANT_REPO_NAMES
-      present_repo_watches = Event.tagged_with(%w(github watch_event))
+      present_repo_watches = Entity.tagged_with(%w(github watch_event))
       .event_by_origin_uid(identity.uid.to_s)
       .map {|e| e.source_data.andand['repo'].andand['full_name'] || e.props.andand['repo_name']}
       .uniq
@@ -105,7 +105,7 @@ module Accounts
     def missing_friends
       fs = user_api.followed_acct_ids(identity.uid)
 
-      remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}      
+      remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}
       present_friend_ids = Event.tagged_with(%w(twitter follow_event))
       .event_by_origin_uid(identity.uid.to_s)
       .map{|e| e.source_data.andand['target'].andand['id']}
