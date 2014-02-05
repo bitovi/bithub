@@ -1,6 +1,6 @@
 class EntityDecorator < Draper::Decorator
   S3_PREFIX = "http://s3.amazonaws.com/bithub"
-  
+
   delegate_all
 
   def tag_names
@@ -75,7 +75,7 @@ class EntityDecorator < Draper::Decorator
       local_prefix + source.image.url
     else
       nil
-    end    
+    end
   end
 
   def props(thread_awarded = false, awarded_value = nil)
@@ -138,7 +138,7 @@ class EntityDecorator < Draper::Decorator
       text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>")
     end
   end
-  
+
   # NOTE: this is a quick fix, would be better to add newlines only when they're missing
   def add_newline_before_fenced_code_block(text)
     i=0;
@@ -150,4 +150,3 @@ class EntityDecorator < Draper::Decorator
   end
 
 end
-

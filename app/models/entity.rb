@@ -21,7 +21,7 @@ class Entity < ActiveRecord::Base
   :join_table => 'entity_refs',
   :foreign_key => 'from_id',
   :association_foreign_key => "to_id"
-  
+
   has_and_belongs_to_many :referenced_from,
   :class_name => 'Entity',
   :join_table => 'entity_refs',
@@ -29,10 +29,10 @@ class Entity < ActiveRecord::Base
   :association_foreign_key => "from_id"
 
   has_many :events
-  
+
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
   has_many :owners, through: :ownerships, source: :owner
-  
+
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
   belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
@@ -67,10 +67,10 @@ class Entity < ActiveRecord::Base
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_destroy :decrease_score_in_author
-  
+
   after_save :update_pagination_table
   after_destroy :update_pagination_table
-  
+
   after_validation :reformat_uniqueness_validation
 
 
@@ -105,10 +105,10 @@ class Entity < ActiveRecord::Base
   def self.scope_applier_overrides
     SCOPE_APPLIER_OVERRIDES
   end
-    
+
   def self.scoped_with_includes
     scope = Entity.scoped
-    scope = scope.includes(:author)
+    scope = scope.includes(:owners)
     scope = scope.includes(:parent)
     scope
   end
@@ -118,7 +118,7 @@ class Entity < ActiveRecord::Base
   end
 
   def author
-    self.ownerships.andand.select{|a| a.type == 'author'}.first.owner
+    self.ownerships.select{|a| a.type == 'author'}.first.andand.owner
   end
 
   def children_with_includes
@@ -160,11 +160,11 @@ class Entity < ActiveRecord::Base
   def thread_awarded?
     !self.thread.select{|e| e.awarded?}.blank?
   end
-  
+
   def sum_upvotes
     self.upvotes.sum('value')
   end
- 
+
   def update_total_upvotes
     self.update_attribute(:total_upvotes, sum_upvotes)
   end
@@ -172,14 +172,14 @@ class Entity < ActiveRecord::Base
   def increase_score_in_author
     if self.author
       self.author.total_score += self.rule.authorship_value
-      self.author.save!      
+      self.author.save!
     end
   end
-  
+
   def decrease_score_in_author
     if self.author
       self.author.total_score -= self.rule.authorship_value
-      self.author.save!      
+      self.author.save!
     end
   end
 
@@ -198,7 +198,7 @@ class Entity < ActiveRecord::Base
   def cached_tags
     self.cached_tag_list.split(',').map {|t| t.strip}
   end
-  
+
   def last_modified_by
     events.order('created_at DESC').first
   end
@@ -206,11 +206,11 @@ class Entity < ActiveRecord::Base
   def source_data
     last_modified_by.andand.source_data
   end
-  
+
   def update_pagination_table
     Pagination.refresh
   end
-  
+
   def cache_key
     case
     when new_record?
@@ -228,7 +228,7 @@ class Entity < ActiveRecord::Base
   end
 
   private
-  
+
   # Helper methods
   def self.has_an_attribute?(attr)
     Event.reflections.include?(attr.to_sym) ||
@@ -236,7 +236,7 @@ class Entity < ActiveRecord::Base
     Event.attribute_names.include?(attr.to_s) ||
     Event.attribute_names.include?(attr.to_s.pluralize)
   end
-  
+
   def reformat_uniqueness_validation
     if errors[:hash_key]
       errors[:base].concat(errors.delete(:hash_key))

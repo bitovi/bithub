@@ -30,31 +30,31 @@ class User < ActiveRecord::Base
   has_many :awards, :through => :entities
 
   has_many :identities, :dependent => :destroy
-  
+
   has_many :achievements, :dependent => :destroy
   has_many :rewards, :through => :achievements
 
   before_save :calculate_avatar_url
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
-  
+
   after_update :check_and_award_points_for_completing_profile
 
   def activities
     activities = []
 
-    self.events.joins(:rule).all.each do |e|
+    self.entities.joins(:scoring_rule).all.each do |e|
       activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
     self.awards.select(['awards.*', 'events.title']).all.each do |a|
-      activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})  
+      activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})
     end
 
     self.upvotes.select(['upvotes.*', 'events.title']).all.each do |u|
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
-    
+
     self.anteups.select(['anteups.*', 'events.title']).all.each do |u|
       activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
     activities += self.internals.all
     activities
   end
-  
+
   def actions
     actions = []
     actions += self.awards_as_actor.all
@@ -141,7 +141,7 @@ class User < ActiveRecord::Base
     elsif already_linked_to_current_user?(identity)
       self
     else
-      self.identities << identity 
+      self.identities << identity
       self.delay.snatch_all_and_destroy(other_user) if other_user
       self.save!
     end

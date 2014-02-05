@@ -7,8 +7,7 @@ class Api::V1::RewardsController < Api::V1::BaseController
   rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
-    scope = build_scope(request.env['muster.query'])
-    scope = scope_applier.apply_order_to_scope(scope, params)
+    scope = build_scope(request.env['muster.query'], params)
     @rewards = scope.all
     render :index
   end
@@ -37,7 +36,7 @@ class Api::V1::RewardsController < Api::V1::BaseController
       render :json => msg_hash(@reward, 'update'), :status => 406
     end
   end
-  
+
   def destroy
     authorize! :manage, Reward, :message => "No rights to manage rewards."
     @reward = Reward.find(params[:id])
@@ -47,21 +46,24 @@ class Api::V1::RewardsController < Api::V1::BaseController
       render :json => msg_hash(@reward, 'destroy'), :status => 406
     end
   end
-  
+
   # SCOPE BUILDING
   # --------------
 
-  def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Reward)
+  def query_logic(params)
+    @logic_analyzer ||= QueryLogic::Query.new(Reward, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(params, current_scope = nil)
+    @scope_applier ||= ScopeApplier.new(current_scope || Reward.scoped, query_logic(params))
   end
 
-  def build_scope(muster_query)
+  def build_scope(muster_query, params)
     scope = Reward.scoped
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
+
+    scope_applier(params, scope)
+    .apply_order_to_scope
+    .result
   end
 
 end

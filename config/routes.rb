@@ -3,7 +3,7 @@ Bithub::Application.routes.draw do
   devise_for :users,
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
-  as :user do 
+  as :user do
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
@@ -62,6 +62,6 @@ Bithub::Application.routes.draw do
     end
   end
 
-  match 'api/v:number/*path', :to => redirect("/api/v1/%{path}")
-  match 'api/*path', :to => redirect("/api/v1/%{path}")
+  match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
+  match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
