@@ -8,21 +8,21 @@ module Events
       Events::Irc::Message
     end
 
-    class Processor
-      def initialize(response)
-        @response = response
-      end
+    # class Processor
+    #   def initialize(response)
+    #     @response = response
+    #   end
 
-      def parse
-        #@parsed ||= foo
-      end
+    #   def parse
+    #     #@parsed ||= foo
+    #   end
 
-      def extract
-      end
+    #   def extract
+    #   end
 
-      def decorate
-      end
-    end
+    #   def decorate
+    #   end
+    # end
     
   end
 end
