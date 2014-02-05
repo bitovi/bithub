@@ -669,7 +669,7 @@ CREATE MATERIALIZED VIEW pagination AS
     ARRAY( SELECT t.name
            FROM taggings tt,
             tags t
-          WHERE ((((tt.taggable_type)::text = 'Event'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
+          WHERE ((((tt.taggable_type)::text = 'Entity'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
    FROM (entities e
    LEFT JOIN tags categories ON ((e.category_id = categories.id)))
   WHERE (e.parent_id IS NULL)
@@ -1533,3 +1533,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140203135744');
 INSERT INTO schema_migrations (version) VALUES ('20151212162518');
 
 INSERT INTO schema_migrations (version) VALUES ('20151212162523');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162524');
