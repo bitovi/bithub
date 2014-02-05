@@ -7,7 +7,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   def twitter
     oauthorize "twitter"
   end
-  
+
   def meetup
     oauthorize "meetup"
   end
@@ -20,7 +20,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
 
   def oauthorize(kind)
     begin
-      if (@user = AccountManager.new(current_user).find_or_create_user(kind, env["omniauth.auth"]))
+      if (@user = Accounts::AccountManager.new(current_user).find_or_create_user(kind, env["omniauth.auth"]))
         flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => kind
         session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]
         sign_in @user, :event => :authentication
