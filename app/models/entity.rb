@@ -114,7 +114,7 @@ class Entity < ActiveRecord::Base
   end
 
   def author=(user)
-    self.ownerships.build(owner: user, ownership_type: :author)
+    self.ownerships << Ownership.new(owner: user, ownership_type: :author).determine_value
   end
 
   def author
