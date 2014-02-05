@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city,
     :email, :name, :postal, :email,
     :remember_me, :state, :country,
-    :events, :total_score
+    :entities, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
@@ -87,10 +87,10 @@ class User < ActiveRecord::Base
   end
 
   def score
-    self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
+    self.authored_entities_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
 
-  def authored_events_total
+  def authored_entities_total
     self.ownerships.sum(:value)
   end
 
@@ -110,11 +110,11 @@ class User < ActiveRecord::Base
     self.anteups_as_actor.fullfilled.sum('value')
   end
 
-  def collect_authored_events
+  def collect_authored_entities
     identities.each do |ident|
-      events = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
-      if events
-        events.each do |event|
+      entities = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
+      if entities
+        entities.each do |event|
           event.update_attribute(:author_id, self.id)
         end
       end
@@ -146,7 +146,7 @@ class User < ActiveRecord::Base
   end
 
   def snatch_all_and_destroy(whom)
-    self.snatch_events_from(whom)
+    self.snatch_entities_from(whom)
     self.snatch_actions_from(whom)
     self.snatch_internals_from(whom)
     self.update_total_score
@@ -154,8 +154,8 @@ class User < ActiveRecord::Base
     whom.destroy
   end
 
-  def snatch_events_from(whom)
-    whom.events.update_all(:author_id => self)
+  def snatch_entities_from(whom)
+    whom.ownerships.where(:ownership_type => :author).update_all(:owner_id => self)
   end
 
   def snatch_actions_from(whom)

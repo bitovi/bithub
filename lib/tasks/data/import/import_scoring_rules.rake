@@ -16,7 +16,7 @@ namespace :data do
       rule_tags = rule['required_tags']
       attrs = {
         required_tags: rule['required_tags'],
-        ownership_value: rule['ownership_value'],
+        authorship_value: rule['authorship_value'],
         award_value: rule['award_value'],
         upvote_value: rule['upvote_value']
       }
