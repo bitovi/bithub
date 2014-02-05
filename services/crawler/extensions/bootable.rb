@@ -7,7 +7,7 @@ module Bootable
   module RSVPs
 
     def boot
-      @logger.info "Booting #{@feed}."
+      @logger.info "{BOOTING} #{@feed}."
 
       http_req = EM::HttpRequest.new(@config.boot_data_url).get({
         query: http_query,
@@ -21,8 +21,13 @@ module Bootable
     end
 
     def bootstrap(response)
-      @config.http_query.merge!({event_id: Yajl::Parser.parse(response.response)})
-      @booted = true
+      begin
+        data = Yajl::Parser.parse(response.response)
+        @config.http_query.merge!({event_id: data})
+        @booted = true
+      rescue Yajl::ParseError => err
+        @logger.info "{BOOTING} #{@feed} : Response parse error, web component probably not booted yet."
+      end
     end
   end
 

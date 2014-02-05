@@ -1,9 +1,11 @@
-CRAWLER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
-ROOT_DIR = File.expand_path(File.join(CRAWLER_DIR, '..', '..'))
+ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
+LIB_DIR = File.join(ROOT_DIR, 'lib')
+SERVICES_DIR = File.join(ROOT_DIR, 'services')
 
-$:.unshift(ROOT_DIR)
 $:.unshift(DOMAIN_DIR)
+$:.unshift(LIB_DIR)
+$:.unshift(SERVICES_DIR)
 
 # Theirs
 require 'bundler/setup'
@@ -16,8 +18,8 @@ require 'ostruct'
 # Ours
 require 'core_ext'
 require 'loggable'
-require 'services/crawler/poller'
-require 'services/crawler/streamer'
+require 'crawler/poller'
+require 'crawler/streamer'
 
 # paths to config files based on env
 config_path = File.join(ROOT_DIR, 'config', 'services', 'crawler', "#{ENV['ENV']}.yml")
