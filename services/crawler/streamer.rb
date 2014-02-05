@@ -1,7 +1,7 @@
 require 'digest/md5'
 require 'em-twitter'
 
-require 'app/domain/events/processor'
+require 'events/processor'
 
 class Streamer
   include Loggable

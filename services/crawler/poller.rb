@@ -5,8 +5,8 @@ require 'yajl'
 require 'nokogiri'
 require 'nori'
 
-require 'app/domain/events/processor'
-require 'app/domain/digest_queue'
+require 'events/processor'
+require 'digest_queue'
 
 require_relative 'extensions/bootable'
 require_relative 'extensions/fakeable'
@@ -36,7 +36,7 @@ class Poller
 
   def handler
     if bootable?
-      lambda { booted? ? fetch : delay(lambda {boot}, 1) }
+      lambda { booted? ? fetch : delay(1, lambda {boot}) }
     else
       lambda { fetch }
     end
