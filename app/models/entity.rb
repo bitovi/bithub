@@ -120,7 +120,7 @@ class Entity < ActiveRecord::Base
   def organizer=(user)
     self.ownerships << Ownership.new(owner: user, ownership_type: :host).determine_value
   end
-  
+
   def organizer=(user)
     self.ownerships << Ownership.new(owner: user, ownership_type: :organizer).determine_value
   end
@@ -128,11 +128,11 @@ class Entity < ActiveRecord::Base
   def author
     self.ownerships.select{|a| a.ownership_type == :author}.first.andand.owner
   end
-  
+
   def organizer
     self.ownerships.select{|a| a.ownership_type == :organizer}.first.andand.owner
   end
-  
+
   def host
     self.ownerships.select{|a| a.ownership_type == :host}.first.andand.owner
   end

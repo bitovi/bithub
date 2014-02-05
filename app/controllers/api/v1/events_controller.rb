@@ -10,7 +10,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_401
-    
+
   DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
@@ -19,10 +19,11 @@ class Api::V1::EventsController < Api::V1::BaseController
 
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
-    
+
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
+      Rails.logger.info "=== #{scope.includes_values}"
       @events = EntityDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: query_logic(params).exclusions }
       })
@@ -38,18 +39,31 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def create
-    e = Event.new_from_bithub( params[:event].clone ) # destructive!
-    e.author = current_user if !current_user.has_role?(:admin) || !posting_for_another_user?(params[:event])
-    
-    if e.save
-      e.bump_thread
+    source_data = params.clone['event']
+    source_data['origin_ts'] = Time.now.utc
+
+    # handle post-as
+    if !current_user.has_role?(:admin) || !posting_for_another_user?(params[:event])
+      source_data['origin_author_id'] == current_user[:id]
+      source_data['origin_author_feed'] == 'bithub'
+    end
+
+    data = {
+      source_data: source_data,
+      meta: {
+        feed: 'bithub',
+        type: 'post'
+      }
+    }
+
+    if e = Dispatcher.new.dispatch(data)
       @event = EntityDecorator.decorate(e)
       @ev_relations = EntityRelations.new(@event.id)
 
-      if author = @event.author
-        Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      end
-      
+      #   if author = @event.author
+      #     Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
+      #   end
+
       render :show
     else
       render :json => msg_hash(e, 'events', 'create'), :status => 406
@@ -82,7 +96,7 @@ class Api::V1::EventsController < Api::V1::BaseController
 
   def pagination
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
-    
+
     @dates = Pagination.grouped(params)
     render :pagination_index
   end

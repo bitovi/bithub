@@ -3,6 +3,11 @@ module Events
     class Post < Protocol
 
       def content_digest
+        calc_digest(title.to_s + project.to_s + category.to_s + origin_ts.strftime('%Y-%m-%d'))
+      end
+
+      def id
+        source_data.andand[:id]
       end
 
       def title
@@ -16,6 +21,35 @@ module Events
       def body
         Sanitize.clean(source_data.andand[:body], Sanitize::Config::RELAXED)
       end
+
+      def location
+        source_data.andand[:location]
+      end
+
+      def project
+        source_data.andand[:project]
+      end
+
+      def category
+        source_data.andand[:category]
+      end
+
+      def scheduled_for
+        source_data.andand[:datetime]
+      end
+
+      def origin_ts
+        source_data.andand[:origin_ts]
+      end
+
+      def origin_author_id
+        source_data.andand[:origin_author_id]
+      end
+
+      def origin_author_feed
+        source_data.andand[:origin_author_feed]
+      end
+
     end
   end
 end

@@ -1,33 +1,29 @@
 module Entities
   module Bithub
+    class Post < Protocol
 
-    class Post < Protocol 
-
-      Relationships = {
-        upstream: [],
-        downstream: [],
-        references: [],
-      }
-
-      def procure
-        if @payload.wat && (entity = find_by_wat.first)
-          @instance ||= entity
-        else
-          @instance ||= build
-        end
-        self
+      def find
+        Entity.where(id: @payload.id).first
       end
 
-      # Finders
-      def find_by_wat?
-        Entity.where(wat: @payload.wat)
-      end
-
-      def relationships
-        Entities::Bithub::Post::Relationships
+      def build
+        Entity.new({
+          title: @payload.title,
+          body: @payload.body,
+          url: @payload.url,
+          origin_ts: @payload.origin_ts,
+          props: {
+            scheduled_for: @payload.scheduled_for,
+            location: @payload.location,
+            project: @payload.project,
+            tags: @payload.category,
+            origin_author_id: @payload.origin_author_id,
+            origin_author_feed: @payload.origin_author_feed
+            #origin_author_name: @payload.origin_author_name
+          }
+        })
       end
 
     end
-
   end
 end
