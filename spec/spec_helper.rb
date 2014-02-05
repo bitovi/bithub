@@ -10,7 +10,7 @@ require "codeclimate-test-reporter"
 
 CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
 
-TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'tag_definitions.yml')
+TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
 
 def import_tags
   tags = YAML::load_file(TAG_DEFINITIONS_PATH)
