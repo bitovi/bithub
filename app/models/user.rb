@@ -47,15 +47,15 @@ class User < ActiveRecord::Base
       activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
-    self.awards.select(['awards.*', 'events.title']).all.each do |a|
+    self.awards.select(['awards.*', 'entities.title']).all.each do |a|
       activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})
     end
 
-    self.upvotes.select(['upvotes.*', 'events.title']).all.each do |u|
+    self.upvotes.select(['upvotes.*', 'entities.title']).all.each do |u|
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
-    self.anteups.select(['anteups.*', 'events.title']).all.each do |u|
+    self.anteups.select(['anteups.*', 'entities.title']).all.each do |u|
       activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
