@@ -12,11 +12,11 @@ class Api::V1::TagsController < Api::V1::BaseController
   def index
 
     mq = request.env['muster.query']
-    
-    # overridedefault limit (50)    
-    mq['limit'] = 1000
 
-    scope = build_scope(mq)
+    # overridedefault limit (50)
+    mq['limit'] = 1000 if mq['limit'] < 1000
+
+    scope = build_scope(mq, params)
     scope = scope.tagged_with(params[:type].pluralize) if params[:type]
 
     # replace ordering by priority if any
@@ -26,10 +26,10 @@ class Api::V1::TagsController < Api::V1::BaseController
     end
 
     @tags = scope.all
-    
+
     render :index
   end
-  
+
   def show
     @tag = Tag.find(params[:id])
     render :show
@@ -54,7 +54,7 @@ class Api::V1::TagsController < Api::V1::BaseController
       render :json => msg_hash(@tag, 'update'), :status => 406
     end
   end
-  
+
   def destroy
     authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.find(params[:id])
@@ -64,21 +64,24 @@ class Api::V1::TagsController < Api::V1::BaseController
       render :json => msg_hash(@tag, 'destroy'), :status => 406
     end
   end
-  
+
 
   # SCOPE BUILDING
   # --------------
 
-  def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Event)
+  def query_logic(params)
+    @logic_analyzer ||= QueryLogic::Query.new(Tag, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(params, current_scope = nil)
+    @scope_applier ||= ScopeApplier.new(current_scope || Tag.scoped, query_logic(params))
   end
 
-  def build_scope(muster_query)
+  def build_scope(muster_query, params)
     scope = Tag.scoped
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
+
+    scope_applier(params, scope)
+    .apply_muster_query_to_scope(muster_query)
+    .result
   end
 end
