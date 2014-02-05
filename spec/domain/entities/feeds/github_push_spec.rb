@@ -43,3 +43,24 @@ describe Entities::Github::CommitComment do
   #   it "checks for the parent commit"
   # end
 end
+
+    # describe ".prepare_commit" do
+    #   it "should assign the 'custom_commit_event' as :type to new commits" do
+    #     push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
+    #     prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
+
+    #     expect(prepared_event[1][:type]).to eq('custom_commit_event')
+    #   end
+      
+    #   it "should assign the commit SHA as the hash_key attribute to new commits" do
+    #     push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
+    #     prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
+    #     expect(prepared_event[0][:hash_key]).to eq(push.source_data[:payload][:commits][0][:sha])
+    #   end
+
+    #   it "should assign timestamps to new commits" do
+    #     push = build(:github_push, :with_push_event_source_data, props: { type: "push_event", feed: "github", commits: "3sdaf4s,43a2aa8,295aa54" })
+    #     prepared_event = Event.prepare_commit(push.source_data[:payload][:commits].first, push)
+    #     expect(prepared_event[0][:origin_ts]).to be
+    #   end
+    # end
