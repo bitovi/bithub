@@ -1,5 +1,4 @@
-require 'spec_helper'
-require 'digest/md5'
+require_relative 'support/spec_helper'
 
 describe CategoryDeterminationRule do
   
@@ -17,7 +16,7 @@ describe CategoryDeterminationRule do
         result = [{:name => "foo", :score => 1},
                   {:name => "foobarbaz", :score => 3},
                   {:name => "foobar", :score => 2}]
-        expect(CategoryDeterminationRule.calculate_scores(rules, tags)).to eq(result)
+        expect(CategoryDeterminationRule.calculate_scores(tags, rules)).to eq(result)
       end
     end
 
@@ -26,17 +25,17 @@ describe CategoryDeterminationRule do
       it "matches rule with highest score and returns it's name" do
         rules =  [@rule1, @rule2, @rule3]
         tags = ["foo","bar","baz"]
-        expect(CategoryDeterminationRule.match_best(rules, tags)).to eq(@rule2.name)
+        expect(CategoryDeterminationRule.best_match(tags, rules)).to eq(@rule2.name)
       end
 
       it "returns nil if there is no match with score higher than 0" do
-        expect(CategoryDeterminationRule.match_best([@rule2], ["more","tags"])).to eq(nil)
+        expect(CategoryDeterminationRule.best_match(["more","tags"], [@rule2])).to eq(nil)
       end
 
       it "returns first match if more rules achieve the same score" do
         rules =  [@rule1, @rule2, @rule3]
         tags = ["foo","bar"]
-        expect(CategoryDeterminationRule.match_best(rules, tags)).to eq(@rule2.name)
+        expect(CategoryDeterminationRule.best_match(tags, rules)).to eq(@rule2.name)
       end
 
     end
