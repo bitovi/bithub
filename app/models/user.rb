@@ -1,5 +1,3 @@
-require 'digest/md5'
-
 class User < ActiveRecord::Base
   class OtherUserAlreadyLinked < Exception; end
 
@@ -93,19 +91,19 @@ class User < ActiveRecord::Base
   end
 
   def authored_events_total
-    self.entities.reduce(0) { |acc, e| acc + e.scoring_rule.authorship_value }
+    self.ownerships.sum(:value)
   end
 
   def upvotes_total
-    self.upvotes.sum('value')
+    self.upvotes.sum(:value)
   end
 
   def awards_total
-    self.awards.sum('value')
+    self.awards.sum(:value)
   end
 
   def internals_total
-    self.internals.sum('value')
+    self.internals.sum(:value)
   end
 
   def fulfilled_anteups_total
@@ -179,7 +177,7 @@ class User < ActiveRecord::Base
   end
 
   def award_points_for_linking(provider)
-    self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider}."})
+    self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider.capitalize}."})
     self
   end
 

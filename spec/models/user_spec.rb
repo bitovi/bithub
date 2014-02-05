@@ -5,7 +5,7 @@ Delayed::Worker.delay_jobs = false
 describe User do
   describe "#score" do
     before :all do
-      @rule = create(:rule, authorship_value: 33, award_value: 0, upvote_value: 11)
+      @rule = create(:scoring_rule, authorship_value: 33, award_value: 0, upvote_value: 11)
       @author = create(:user, name: "Nikica")
       @actor = create(:user, name: "Veljko")
     end
@@ -135,7 +135,7 @@ describe User do
   describe "#reward_if_eligible" do
     it "should create one achievement for each award that the user is eligible for" do
       author = create(:user, name: "Nikica")
-      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:scoring_rule, upvote_value: 155), author: author))
       r1 = Reward.create({title: "A mug.", point_minimum: 50})
       r2 = Reward.create({title: "A snake!", point_minimum: 100})
       r3 = Reward.create({title: "An aligatro!!", point_minimum: 155})
@@ -146,7 +146,7 @@ describe User do
 
     it "should create an achievement only for rewards that are not already achievement/present" do
       author = create(:user, name: "Nikica")
-      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:scoring_rule, upvote_value: 155), author: author))
       r1 = Reward.create({title: "A mug.", point_minimum: 50})
       author.reward_if_eligible
       
@@ -159,7 +159,7 @@ describe User do
 
     it "doesn't create duplicate achievements" do
       author = create(:user, name: "Nikica")
-      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:rule, upvote_value: 155), author: author))
+      Upvote.create_based_on_rule(create(:user, name: "Veljko"), create(:event_determined, rule: create(:scoring_rule, upvote_value: 155), author: author))
       r = Reward.create({title: "A mug.", point_minimum: 50})
       
       author.reward_if_eligible

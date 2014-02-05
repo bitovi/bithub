@@ -114,11 +114,11 @@ class Entity < ActiveRecord::Base
   end
 
   def author=(user)
-    self.ownerships.build(owner: user, type: :author)
+    self.ownerships.build(owner: user, ownership_type: :author)
   end
 
   def author
-    self.ownerships.select{|a| a.type == 'author'}.first.andand.owner
+    self.ownerships.select{|a| a.ownership_type == :author}.first.andand.owner
   end
 
   def children_with_includes

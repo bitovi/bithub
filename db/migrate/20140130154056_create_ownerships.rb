@@ -5,7 +5,7 @@ class CreateOwnerships < ActiveRecord::Migration
       t.references :entity
       t.references :scoring_rule
       t.integer :value
-      t.string :type
+      t.string :ownership_type
 
       t.timestamps
     end
