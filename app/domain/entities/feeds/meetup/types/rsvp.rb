@@ -28,8 +28,8 @@ module Entities
       end
       
       def find_parent
-        if @payload.event_id
-          Entities::Meetup::Event.find_by_event_id(@payload.event_id).first
+        if @payload.parent_event_id
+          Entities::Meetup::Event.find_by_event_id(@payload.parent_event_id).first
         end
       end
 
@@ -42,7 +42,7 @@ module Entities
         Entity
         .feed('meetup')
         .type('rsvp')
-        .where(origin_id: rsvp_id)
+        .where(origin_id: rsvp_id.to_s)
       end
 
       def self.find_by_event_id(event_id)

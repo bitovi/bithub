@@ -41,7 +41,7 @@ module Entities
         Entity
         .feed('meetup')
         .type('event')
-        .where(origin_id: event_id)
+        .where(origin_id: event_id.to_s)
       end
     end
 

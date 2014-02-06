@@ -8,7 +8,7 @@ module QueryLogic
       'feed' => 'feed_name',
       'type' => 'type_name',
       'category' => 'category_name',
-      'categories' => "idx(array#{Tag.categories_order}, category_id)"
+      'categories' => "idx(array#{Tag.categories_order}, category_id)",
     }
 
     def initialize(model, params)
@@ -46,6 +46,9 @@ module QueryLogic
       @qis.select{|qi| qi.ordering?}
     end
 
+    def qi(name)
+      @qis.select{|qi| qi.name == name}.first
+    end
 
     # --- API ---
 
