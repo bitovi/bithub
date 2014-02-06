@@ -5,8 +5,8 @@ module Entities
     }
 
     def self.type(payload)
-      if MAPPINGS.include?(payload.type)
-        self.const_get(MAPPINGS[payload.type])
+      if MAPPINGS.include?(payload.type_name)
+        self.const_get(MAPPINGS[payload.type_name])
       else
         self.const_get(payload.type)
       end
