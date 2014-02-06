@@ -27,6 +27,8 @@ module Entities
           origin_ts: @payload.origin_ts,
           origin_id: @commit.andand[:sha],
           props: {
+            origin_author_id: @payload.origin_author_id,
+            origin_author_name: @payload.origin_author_name,
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
           }, # set next manually b/c AR will call save instead of persist on children

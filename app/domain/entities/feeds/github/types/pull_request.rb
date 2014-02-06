@@ -22,6 +22,8 @@ module Entities
           origin_ts: @payload.origin_ts,
           origin_id: @payload.pull_request_id.to_s,
           props: {
+            origin_author_id: @payload.origin_author_id,
+            origin_author_name: @payload.origin_author_name,
             repo_name: @payload.repo_name,
             number: @payload.number,
             state: @payload.state,
