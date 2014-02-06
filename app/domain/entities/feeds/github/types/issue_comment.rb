@@ -47,12 +47,12 @@ module Entities
       end
 
       # Finders
-      
+
       def find_by_comment_id
         Entity
         .feed('github')
         .type('issue_comment')
-        .where(origin_id: @payload.comment_id)
+        .where(origin_id: @payload.comment_id.to_s)
       end
 
       def find_by_repo_name_and_number
@@ -69,6 +69,6 @@ module Entities
     end
 
     PullRequestComment = IssueComment
-    
+
   end
 end

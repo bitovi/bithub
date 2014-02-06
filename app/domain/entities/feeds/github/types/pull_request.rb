@@ -3,7 +3,7 @@ module Entities
 
     class PullRequest < Protocol
       include Entities::Github::Referencable
-      
+
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
@@ -13,7 +13,7 @@ module Entities
       def find
         @payload.pull_request_id && find_by_pull_request_id.first
       end
-      
+
       def build
         Entity.new({
           title: "Pull request ##{@payload.number} #{@payload.action}",
@@ -55,7 +55,7 @@ module Entities
         Entity
         .feed('github')
         .type('pull_request')
-        .where(origin_id: @payload.pull_request_id)
+        .where(origin_id: @payload.pull_request_id.to_s)
       end
 
       def find_by_repo_name_and_number

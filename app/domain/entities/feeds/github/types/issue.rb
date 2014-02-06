@@ -3,7 +3,7 @@ module Entities
 
     class Issue < Protocol
       include Entities::Github::Referencable
-      
+
       Relationships = {
         upstream: [],
         downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
@@ -13,7 +13,7 @@ module Entities
       def find
         @payload.issue_id && find_by_issue_id.first
       end
-      
+
       def build
         Entity.new({
           title: @payload.title,
@@ -53,7 +53,7 @@ module Entities
         Entity
         .feed('github')
         .type('issue')
-        .where(origin_id: @payload.issue_id)
+        .where(origin_id: @payload.issue_id.to_s)
       end
 
       def find_by_repo_name_and_number
@@ -61,7 +61,7 @@ module Entities
         .feed('github')
         .type('issue')
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-        .where("props -> 'number' = '#{@payload.number}'")        
+        .where("props -> 'number' = '#{@payload.number}'")
       end
 
       def relationships
