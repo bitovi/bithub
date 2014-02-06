@@ -7,6 +7,10 @@ module Events
         Digest::MD5.hexdigest(origin_id.to_s + self.class.name)
       end
 
+      def origin_id
+        tweet_id_str
+      end
+
       def tweet_id
         source_data.andand[:id]
       end
@@ -14,7 +18,7 @@ module Events
       def tweet_id_str
         source_data.andand[:id_str]
       end
-      
+
       def text
         source_data.andand[:text]
       end
@@ -36,7 +40,7 @@ module Events
       end
 
       def html_url
-        "https://twitter.com/#{origin_author_name}/status/#{origin_id_str}"
+        "https://twitter.com/#{origin_author_name}/status/#{origin_id}"
       end
 
       def retweeted_status
@@ -46,11 +50,11 @@ module Events
       def original_tweet_id
         retweeted_status.andand[:id]
       end
-      
+
       def original_tweet_id_str
         retweeted_status.andand[:id_str]
       end
-      
+
       def retweet?
         !!retweeted_status
       end

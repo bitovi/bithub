@@ -8,10 +8,10 @@ module Entities
       if MAPPINGS.include?(payload.type_name)
         self.const_get(MAPPINGS[payload.type_name])
       else
-        self.const_get(payload.type)
+        self.const_get(payload.type_name)
       end
     end
-    
+
     class Tweet < Protocol; end
     class Follow < Protocol; end
   end
