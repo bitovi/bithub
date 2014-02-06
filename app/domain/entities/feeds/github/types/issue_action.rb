@@ -9,17 +9,8 @@ module Entities
         references: [],
       }
 
-      def procure
-        @instance = (@payload.issue_id && (e = find_by_issue_id.first)) ? e : build
-        self
-      end
-
-      def find_parent
-        if @payload.repo_name && @payload.number
-          relationships[:upstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.first
-          end
-        end
+      def find
+        @payload.issue_id && find_by_origin_id.first
       end
 
       # Builder
@@ -27,7 +18,7 @@ module Entities
         Entity.new({
           title: "Issue ##{@payload.number} #{@payload.action}",
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.origin_id_to_s,
+          origin_id: @payload.origin_id.to_s,
           props: {
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
@@ -40,19 +31,23 @@ module Entities
         })
       end
 
-      # Finders
-      def find_by_issue_id
-        Entity
-        .feed('github')
-        .type('issue_action')
-        .where(origin_id: @payload.origin_id)
+      def find_parent
+        if @payload.repo_name && @payload.number
+          matches = relationships[:upstream].reduce([]) do |acc, rl|
+            acc << rl.new(@payload).find_by_repo_name_and_number.first
+          end
+          parent = matches.compact.first
+          # parent.update_from_child(@payload.issue)
+          parent
+        end
       end
 
-      def find_by_pull_req_id
+      # Finders
+      def find_by_origin_id
         Entity
         .feed('github')
         .type('issue_action')
-        .where(origin_id: @payload.origin_id)
+        .where(origin_id: (@payload.issue_id || @payload.pull_request_id).to_s)
       end
 
       def find_by_repo_name_and_number

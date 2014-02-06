@@ -5,6 +5,7 @@ module Entities
       join_family
       adopt
       associate_references
+      write_history
       self
     end
 
@@ -40,6 +41,10 @@ module Entities
         @instance.references_to += build_references
       end
       self
+    end
+
+    def write_history
+      @instance.events << @payload.instance
     end
 
   end

@@ -92,7 +92,6 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- Pollers ---
     # ---------------
 
-
     # --- Github
     feeds[:github][:repos].each do |repo_name, repo_config|
 

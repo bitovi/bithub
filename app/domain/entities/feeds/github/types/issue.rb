@@ -11,25 +11,30 @@ module Entities
       }
 
       def find
-        @payload.issue_id && find_by_issue_id.first
+        @payload.issue_id && find_by_origin_id.first
       end
 
       def build
-        Entity.new({
+        built = Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           origin_id: @payload.issue_id.to_s,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
             repo_name: @payload.repo_name,
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
           }
         })
+
+        if @payload.origin_author_id && @payload.origin_author_name
+          built[:origin_author_id] = @payload.origin_author_id
+          built[:origin_author_name] = @payload.origin_author_name
+        end
+
+        built
       end
 
       def update
@@ -38,6 +43,12 @@ module Entities
         @instance.props[:label_names] = @payload.label_names
         @instance.props[:state] = @payload.label_names
         super
+      end
+
+      def update_from_child
+        @instance.title = @payload.issue.title
+        @instance.body = @payload.issue.body
+        @instance.props[:labels] = @payload.issue.labels
       end
 
       def find_children
@@ -49,7 +60,7 @@ module Entities
       end
 
       # Finders
-      def find_by_issue_id
+      def find_by_origin_id
         Entity
         .feed('github')
         .type('issue')

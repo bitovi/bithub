@@ -13,6 +13,15 @@ module Entities
     class GroupingError < Exception; end
     class Unupdatable < Exception; end
 
+    class MissingCriticalTags < Exception
+      attr_accessor :tags
+
+      def initialize(message = nil, tags = nil)
+        super(message)
+        self.tags = tags
+      end
+    end
+
     include Determinable
     include Groupable
     include Normalizable

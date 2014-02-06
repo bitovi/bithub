@@ -207,6 +207,10 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  def missing_critical_tags?
+    !self.type || !self.feed || !self.category
+  end
+
   private
 
   # Helper methods

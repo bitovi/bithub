@@ -17,9 +17,11 @@ module Entities
       def find_parent
         if @payload.repo_name && @payload.number
           matches = relationships[:upstream].inject([]) do |acc, rl|
-            acc.push rl.new(@payload).find_by_repo_name_and_number.first
+            acc << rl.new(@payload).find_by_repo_name_and_number.first
           end
-          matches.compact.first
+          parent = matches.compact.first
+          # parent.update_from_child(@payload.issue)
+          parent
         end
       end
 
