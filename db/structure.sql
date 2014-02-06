@@ -417,8 +417,8 @@ CREATE TABLE events (
     source_data text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    type character varying(255),
-    feed character varying(255),
+    type_name character varying(255),
+    feed_name character varying(255),
     entity_id integer
 );
 

@@ -16,8 +16,8 @@ class AlterEvents < ActiveRecord::Migration
     remove_column :events, :origin_date
     remove_column :events, :origin_ts
 
-    add_column :events, :type, :string, null: true
-    add_column :events, :feed, :string, null: true
+    add_column :events, :type_name, :string, null: true
+    add_column :events, :feed_name, :string, null: true
     add_column :events, :source_json, :json
     
     rename_column :events, :hash_key, :content_digest

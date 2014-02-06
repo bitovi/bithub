@@ -42,12 +42,12 @@ module Events
       @data == other
     end
     
-    def feed
-      @feed ||= module_and_class_names[0]
+    def feed_name
+      @feed_name ||= module_and_class_names[0]
     end
 
-    def type
-      @type ||= module_and_class_names[1]
+    def type_name
+      @type_name ||= module_and_class_names[1]
     end
 
     def origin_ts
@@ -59,12 +59,9 @@ module Events
     end
     
     def module_and_class_names
-      _, feed, type = self.class.name.match(/.*::(.*)::(.*)/).to_a
-      [feed, type]
+      _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
+      [@feed_name, @type_name]
     end
-
-    alias_method :feed_name, :feed
-    alias_method :type_name, :type
   end
 end
 

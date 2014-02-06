@@ -14,18 +14,23 @@ module Bootable
         head: http_head
       })
 
-      http_req.callback {|r| bootstrap(r) }
+      http_req.callback {|r| set_query(r) }
       http_req.errback {|r| log_http_status(r, :error) }
-
       self
     end
 
-    def bootstrap(response)
+    def reboot
+      @logger.info "{REBOOTING} #{@feed}"
+      @booted = false
+      @config.http_query.delete(:event_id)
+    end
+
+    def set_query(response)
       begin
         event_ids = Yajl::Parser.parse(response.response)
         @config.http_query.merge!({event_id: event_ids.join(',')})
-        @logger.debug "KURAC ====================> #{@config.http_query.inspect}"
         @booted = true
+        delay(@config.reboot_delay, lambda { reboot })
       rescue Yajl::ParseError => err
         @logger.info "{BOOTING} #{@feed} : Response parse error, web component probably not booted yet."
       end

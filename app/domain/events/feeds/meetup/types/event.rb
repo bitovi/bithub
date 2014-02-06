@@ -32,11 +32,13 @@ module Events
       end
       
       def origin_author_id
-        source_data.andand[:event_hosts].first.andand[:member_id]
+        source_data.andand[:event_hosts]
+        .andand.first.andand[:member_id]
       end
 
       def origin_author_name
-        source_data.andand[:event_hosts].first.andand[:member_name]
+        source_data.andand[:event_hosts]
+        .andand.first.andand[:member_name]
       end
 
       def origin_timestamp

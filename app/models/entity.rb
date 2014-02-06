@@ -49,9 +49,9 @@ class Entity < ActiveRecord::Base
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 
-  scope :feed, lambda {|f| tagged_with f}
-  scope :type, lambda {|t| tagged_with t}
-  scope :category, lambda {|c| tagged_with c}
+  scope :feed, lambda {|f| where(feed_name: f) }
+  scope :type, lambda {|t| where(type_name: t) }
+  scope :category, lambda {|c| where(category_name: c) }
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
