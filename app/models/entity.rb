@@ -73,39 +73,6 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-
-  SCOPE_APPLIER_OVERRIDES = {
-    :thread_updated_date => Proc.new do |scope, v, params = {}|
-
-      if v.is_a?(String)
-        start_date = v
-        end_date   = nil
-      else
-        start_date = v.first
-        end_date   = v.last
-      end
-
-      if start_date.is_a?(String)
-        start_date = Date.parse(start_date)
-      end
-
-      if end_date.nil?
-        end_date = start_date
-      elsif end_date.is_a?(String)
-        end_date = Date.parse(end_date)
-      end
-
-      end_date = end_date + 1.day - 1.second
-
-      args = [params[:clientTz] || 'UTC', start_date, end_date]
-      scope = scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
-    end
-  }
-
-  def self.scope_applier_overrides
-    SCOPE_APPLIER_OVERRIDES
-  end
-
   def self.scoped_with_includes
     scope = Entity.scoped
     scope = scope.includes(:owners)
