@@ -19,8 +19,8 @@ module Entities
             project: @payload.project,
             tags: @payload.category,
             origin_author_id: @payload.origin_author_id,
-            origin_author_feed: @payload.origin_author_feed
-            #origin_author_name: @payload.origin_author_name
+            origin_author_feed: @payload.origin_author_feed,
+            origin_author_name: @payload.origin_author_name
           }
         })
       end
@@ -29,6 +29,7 @@ module Entities
         @instance.title = @payload.title
         @instance.body = @payload.body
         @instance.url = @payload.url
+        @instance.image = @payload.image
         @instance.props[:scheduled_for] = @payload.scheduled_for
         @instance.props[:location] = @payload.location
         # TODO tags?
