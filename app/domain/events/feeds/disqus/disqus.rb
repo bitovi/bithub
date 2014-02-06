@@ -4,7 +4,7 @@ module Events
   module Disqus
     class Post < Protocol; end
 
-    def self.type(type_name)
+    def self.type(sd)
       Events::Disqus::Post
     end
 

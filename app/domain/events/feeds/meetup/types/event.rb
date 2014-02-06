@@ -8,7 +8,7 @@ module Events
       end
       
       def event_id
-        origin_id
+        origin_id.to_s
       end
 
       def name

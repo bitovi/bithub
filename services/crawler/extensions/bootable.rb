@@ -22,8 +22,9 @@ module Bootable
 
     def bootstrap(response)
       begin
-        data = Yajl::Parser.parse(response.response)
-        @config.http_query.merge!({event_id: data})
+        event_ids = Yajl::Parser.parse(response.response)
+        @config.http_query.merge!({event_id: event_ids.join(',')})
+        @logger.debug "KURAC ====================> #{@config.http_query.inspect}"
         @booted = true
       rescue Yajl::ParseError => err
         @logger.info "{BOOTING} #{@feed} : Response parse error, web component probably not booted yet."

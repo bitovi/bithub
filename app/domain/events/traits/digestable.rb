@@ -4,7 +4,7 @@ module Events
       if respond_to? :origin_id
         @digest ||= calc_digest(origin_id.to_s)
       else
-        fail InvalidDigestSeed
+        fail InvalidDigestSeed.new("missing a seed", source_data)
       end
     end
 

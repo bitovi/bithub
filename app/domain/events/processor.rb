@@ -15,7 +15,7 @@ module Events
     end
 
     def initialize(response, &blk)
-      initialize_logger("INFO")
+      initialize_logger("DEBUG")
 
       @config = Configuration.new
       blk.(@config) if blk
