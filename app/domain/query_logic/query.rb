@@ -13,6 +13,11 @@ module QueryLogic
 
     def initialize(model, params)
       @qis = params.map {|kv| QueryItem.new(model, kv)}
+      @raw = params
+    end
+
+    def clientTz
+      @raw[:clientTz] || 'UTC'
     end
 
     def table_name

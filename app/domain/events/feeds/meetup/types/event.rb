@@ -28,7 +28,8 @@ module Events
       end
       
       def scheduled_at
-        Time.at(source_data.andand[:time]).utc
+        unix_epoch = source_data.andand[:time].to_i / 1000
+        Time.at(unix_epoch).utc
       end
       
       def origin_author_id
@@ -42,7 +43,8 @@ module Events
       end
 
       def origin_timestamp
-        Time.at(source_data.andand[:created]).utc
+        unix_epoch = source_data.andand[:created].to_i / 1000
+        Time.at(unix_epoch).utc
       end
     end
   end
