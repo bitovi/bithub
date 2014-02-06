@@ -9,7 +9,7 @@ module Entities
       if arg.is_a? String
         type_name = arg
       elsif arg.is_a? Payload
-        type_name = arg.type
+        type_name = arg.type_name
       end
 
       if MAPPINGS.include?(type_name)
