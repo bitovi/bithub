@@ -28,11 +28,20 @@ module Entities
       @instance.category = Tag.find_by_name(@instance.category_name)
       @instance.feed = Tag.find_by_name(@instance.feed_name)
       @instance.type = Tag.find_by_name(@instance.type_name)
+      if @instance.missing_critical_tags?
+        report_missing_tags
+      end
     end
 
     def clean_junk_from_props
       @instance.props.delete(:tags)
       @instance.props.delete(:origin_author_feed) # Events from Bithub have this
+    end
+
+    private
+    def report_missing_tags
+      missing_tags = %w(feed type category).select{|an| self.instance.send(an).nil?}
+      fail Entities::Protocol::MissingCriticalTags.new('must have type, feed and category tags assigned', missing_tags)
     end
 
     # def to_props_and_clean(args)

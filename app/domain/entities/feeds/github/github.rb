@@ -9,14 +9,24 @@ module Entities
       if arg.is_a? String
         type_name = arg
       elsif arg.is_a? Events::Protocol
+        payload = arg
         type_name = arg.type_name
       end
 
       if MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
+      elsif issue_action?(payload)
+        Entities::Github::IssueAction
       else
         self.const_get(type_name)
       end
+    end
+
+    def self.issue_action?(payload)
+      payload.respond_to?(:state) &&
+        payload.respond_to?(:action) &&
+        not(payload.class.name =~ /IssueComment/) &&
+        payload.action != 'opened'
     end
 
     class Commit < Protocol; end

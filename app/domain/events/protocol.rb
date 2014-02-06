@@ -24,10 +24,22 @@ module Events
     include Digestable
     include JSONable
 
+    attr_reader :instance
+
     def initialize(payload)
       raw_data = symbolize_keys(payload)
       @data = {}
       @data[:source_data] = (sd = raw_data[:source_data]) ? sd : raw_data
+    end
+
+    def build
+      @instance = Event.new({
+        feed_name: feed_name,
+        type_name: type_name,
+        content_digest: content_digest,
+        source_data: source_data,
+      })
+      self
     end
 
     def source_data

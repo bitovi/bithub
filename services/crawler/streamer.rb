@@ -7,6 +7,10 @@ class Streamer
   include Loggable
   attr_reader :feed, :processor, :connected_as
 
+  class Configuration
+    attr_accessor :is_user_stream
+  end
+
   ERRBACKS = [
     "on_unauthorized", "on_forbidden",
     "on_not_found", "on_not_acceptable",

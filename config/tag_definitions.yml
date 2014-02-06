@@ -205,6 +205,8 @@ issue: {}
 
 issue_comment: {}
 
+issue_action: {}
+
 commit_comment: {}
 
 watch: {}

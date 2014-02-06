@@ -42,6 +42,18 @@ module Events
         source_data.andand[:number]
       end
 
+      def user
+        source_data.andand[:user]
+      end
+
+      def origin_author_id
+        user.andand[:id]
+      end
+
+      def origin_author_name
+        user.andand[:login]
+      end
+
       def origin_timestamp
         source_data.andand[:created_at]
       end
