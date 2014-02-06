@@ -5,7 +5,7 @@ module Events
   module Dispatcher
 
     def self.dispatch(payload, feed_name = nil)
-      feed_name ||= self.meta_feed(payload)
+      feed_name ||= self.meta_feed_name(payload)
       Events.feed(feed_name).type(extract_source_data(payload)).new(payload)
     end
 
@@ -13,12 +13,12 @@ module Events
       (sd = (payload['source_data'] || payload[:source_data])) ? sd : payload;
     end
 
-    def self.meta_type(payload)
-      (payload['meta'].andand['type'] || payload[:meta].andand[:type])
+    def self.meta_type_name(payload)
+      (payload['meta'].andand['type_name'] || payload[:meta].andand[:type_name])
     end
     
-    def self.meta_feed(payload)
-      (payload['meta'].andand['feed'] || payload[:meta].andand[:feed])
+    def self.meta_feed_name(payload)
+      (payload['meta'].andand['feed_name'] || payload[:meta].andand[:feed_name])
     end
   end
 end

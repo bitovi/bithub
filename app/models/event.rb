@@ -1,8 +1,9 @@
 class Event < ActiveRecord::Base
   belongs_to :entity
 
-  attr_accessible :content_digest, :feed, :type,
-    :created_at, :updated_at, :extracted,
+  attr_accessible :content_digest,
+    :feed_name, :type_name,
+    :created_at, :updated_at,
     :source_data, :source_json
 
   validates_presence_of :content_digest

@@ -23,6 +23,10 @@ module Events
         member.andand[:member_id]
       end
 
+      def response
+        source_data.andand[:response]
+      end
+
       def origin_author_name
         member.andand[:name]
       end
@@ -32,7 +36,7 @@ module Events
       end
 
       def parent_event_id
-        parent_event_id.andand[:id]
+        parent_event.andand[:id]
       end
 
       def origin_timestamp
