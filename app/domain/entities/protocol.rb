@@ -30,7 +30,7 @@ module Entities
     end
 
     def update_if_found
-      update if @instance.andand.changed?
+      update if @instance.andand.changed? && not(@instance.new_record?)
       self
     end
       
