@@ -18,6 +18,10 @@ module Events
         source_data.andand[:url]
       end
 
+      def image
+        source_data.andand[:image]
+      end
+
       def body
         Sanitize.clean(source_data.andand[:body], Sanitize::Config::RELAXED)
       end
