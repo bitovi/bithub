@@ -24,6 +24,16 @@ module Entities
         })
       end
 
+      def update
+        @instance.title = @payload.title
+        @instance.body = @payload.body
+        @instance.url = @payload.url
+        @instance.props[:scheduled_for] = @payload.scheduled_for
+        @instance.props[:location] = @payload.location
+        # TODO tags?
+        super
+      end
+
     end
   end
 end

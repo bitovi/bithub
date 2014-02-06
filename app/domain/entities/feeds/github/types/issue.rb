@@ -30,6 +30,14 @@ module Entities
         })
       end
 
+      def update
+        @instance.title = @payload.title
+        @instance.body = @payload.body
+        @instance.props[:label_names] = @payload.label_names
+        @instance.props[:state] = @payload.label_names
+        super
+      end
+
       def find_children
         if @payload.repo_name && @payload.number
           relationships[:downstream].reduce([]) do |acc, rl|
