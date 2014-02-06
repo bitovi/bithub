@@ -3,6 +3,7 @@ class ScopeApplier
   def initialize(initial, query)
     @scope = (initial.class.name =~ /Relation/) ? initial : initial.scoped
     @query = query
+    apply_overrides
   end
 
   def apply_muster_query_to_scope(muster_query)
@@ -33,11 +34,7 @@ class ScopeApplier
   def apply_regular_params_to_scope
     if (regpars = @query.pluck_and_process_regular_params)
       regpars.each do |k,v|
-        if self.respond_to? "override_#{k}"
-          @scope = self.send("override_#{k}", v)
-        else
-          @scope = @scope.where(regpars)
-        end
+        @scope = @scope.where(regpars)
       end
     end
     self
@@ -50,33 +47,31 @@ class ScopeApplier
     self
   end
 
+  def apply_overrides
+    thread_updated_ts = @query.qi('thread_updated_date')
+    unless thread_updated_ts.nil?
+      @scope = override_thread_updated_date(thread_updated_ts.value)
+    end
+  end
+
   def result
     @scope
   end
   
   private
-  def override_thread_updated_date(val)
-    if val.is_a?(String)
-      start_date = val
-      end_date   = nil
-    else
-      start_date = val.first
-      end_date   = val.last
-    end
+    def override_thread_updated_date(val)
+      start_date, end_date = val.split(':')
 
-    if start_date.is_a?(String)
+      if end_date.nil?
+        end_date = start_date
+      end
+
       start_date = Date.parse(start_date)
+      end_date   = Date.parse(end_date)
+
+      end_date = end_date + 1.day - 1.second
+
+      args = [@query.clientTz, start_date, end_date]
+      @scope.where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
     end
-
-    if end_date.nil?
-      end_date = start_date
-    elsif end_date.is_a?(String)
-      end_date = Date.parse(end_date)
-    end
-
-    end_date = end_date + 1.day - 1.second
-
-    args = [@query.clientTz, start_date, end_date]
-    @scope.where("thread_updated_at AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
-  end
 end

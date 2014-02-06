@@ -98,6 +98,10 @@ class Api::V1::EventsController < Api::V1::BaseController
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
 
     @dates = Pagination.grouped(params)
+
+    Rails.logger.info @dates
+
+
     render :pagination_index
   end
 
