@@ -22,7 +22,7 @@ class Dispatcher
     begin
       ActiveRecord::Base.transaction do
         event.build.persist!
-        entity.procure.determine.group.normalize.persist!
+        entity.procure.update_if_found.determine.group.normalize.persist!
       end
     rescue ActiveRecord::RecordInvalid => err
       @logger.error "#{event.feed}:#{event.type} -> #{entity.feed_name}:#{entity.type_name} | #{err.message}"

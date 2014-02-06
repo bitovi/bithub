@@ -11,6 +11,7 @@ module Entities
     class NormalizationError < Exception; end
     class BuildingError < Exception; end
     class GroupingError < Exception; end
+    class Unupdatable < Exception; end
 
     include Determinable
     include Groupable
@@ -26,6 +27,15 @@ module Entities
     def procure
       @instance = (e = find) ? e : build
       self
+    end
+
+    def update_if_found
+      update if @instance.andand.changed?
+      self
+    end
+      
+    def update
+      fail Unupdatable, 'trying to update a new record' if @instance.new_record?
     end
     
     def find_by_origin_uid(uid)

@@ -38,6 +38,12 @@ module Entities
         })
       end
 
+      def update
+        @instance.title = @payload.title
+        @instance.body = @payload.body
+        super
+      end
+
       # Finders
       
       def find_by_comment_id
