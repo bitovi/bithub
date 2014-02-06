@@ -23,7 +23,7 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger("INFO")
+    initialize_logger("DEBUG")
     @config = Configuration.new
     blk.(@config) if blk
 

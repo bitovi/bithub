@@ -4,10 +4,19 @@ require_relative 'traits/digestable'
 require_relative 'traits/jsonable'
 
 module Events
-  class InitializationError < Exception; end
-  class BuildingError < Exception; end
-  class MappingError < Exception; end
-  class InvalidDigestSeed < Exception; end
+  class EventException < Exception
+    attr_accessor :source_data
+
+    def initialize(message = nil, source_data = nil)
+      super(message)
+      self.source_data = source_data
+    end
+  end
+
+  class InitializationError < EventException; end
+  class BuildingError < EventException; end
+  class MappingError < EventException; end
+  class InvalidDigestSeed < EventException; end
 
   class Protocol
     include CoreHelpers
