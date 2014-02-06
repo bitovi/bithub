@@ -8,7 +8,7 @@ module Entities
     def self.type(arg)
       if arg.is_a? String
         type_name = arg
-      elsif arg.is_a? Payload
+      elsif arg.is_a? Events::Protocol
         type_name = arg.type_name
       end
 
@@ -18,7 +18,7 @@ module Entities
         self.const_get(type_name)
       end
     end
-        
+
     class Commit < Protocol; end
     class CommitComment < Protocol; end
     class Issue < Protocol; end
