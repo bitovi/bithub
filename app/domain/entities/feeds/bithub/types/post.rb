@@ -12,6 +12,7 @@ module Entities
           body: @payload.body,
           url: @payload.url,
           origin_ts: @payload.origin_ts,
+          image: @payload.image,
           props: {
             scheduled_for: @payload.scheduled_for,
             location: @payload.location,
