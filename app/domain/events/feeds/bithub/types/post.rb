@@ -43,11 +43,15 @@ module Events
       end
 
       def origin_ts
-        source_data.andand[:origin_ts]
+        Time.strptime(source_data.andand[:origin_ts], '%Y-%m-%dT%H:%M:%S%z').utc
       end
 
       def origin_author_id
         source_data.andand[:origin_author_id]
+      end
+
+      def origin_author_name
+        source_data.andand[:origin_author_name]
       end
 
       def origin_author_feed
