@@ -29,7 +29,7 @@ module Events
       
       def scheduled_at
         unix_epoch = source_data.andand[:time].to_i / 1000
-        Time.at(unix_epoch).utc
+        Time.at(unix_epoch).utc.iso8601
       end
       
       def origin_author_id
@@ -45,6 +45,27 @@ module Events
       def origin_timestamp
         unix_epoch = source_data.andand[:created].to_i / 1000
         Time.at(unix_epoch).utc
+      end
+
+      def venue
+        source_data.andand[:venue] || {}
+      end
+
+      def composite_location
+        v = venue
+
+        country = v[:country] || ""
+
+        if country == 'us'
+          country = country.upcase
+        else
+          country = country.capitalize
+        end
+
+        address = [v[:address_1], v[:address_2], v[:address_3]].compact.join(' ')
+        city    = [v[:city], v[:state], v[:zip]].compact.join(' ')
+        
+        "#{v[:name]}, #{address}, #{city}, #{country}"
       end
     end
   end

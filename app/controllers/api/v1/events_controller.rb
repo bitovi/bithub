@@ -23,7 +23,6 @@ class Api::V1::EventsController < Api::V1::BaseController
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
-      Rails.logger.info "=== #{scope.includes_values}"
       @events = EntityDecorator.decorate_collection(scope.all, {
         context: { excluded_attributes: query_logic(params).exclusions }
       })
@@ -98,10 +97,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
 
     @dates = Pagination.grouped(params)
-
-    Rails.logger.info @dates
-
-
+    
     render :pagination_index
   end
 
