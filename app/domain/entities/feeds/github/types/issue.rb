@@ -42,7 +42,7 @@ module Entities
         @instance.title = @payload.title
         @instance.body = @payload.body
         @instance.props[:label_names] = @payload.label_names
-        @instance.props[:state] = @payload.label_names
+        @instance.props[:state] = @payload.state
         super
       end
 
