@@ -28,7 +28,7 @@ module Entities
       # Builder
       def build
         Entity.new({
-          title: "commented on issue ##{@payload.issue_or_pull_req_number}",
+          title: "Comment on issue ##{@payload.issue_or_pull_req_number}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
@@ -75,6 +75,10 @@ module Entities
 
       def relationships
         Entities::Github::IssueComment::Relationships
+      end
+
+      def nice_name
+        self.class.name.gsub('Entities::Github','')
       end
     end
 

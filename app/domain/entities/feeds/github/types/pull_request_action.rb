@@ -1,10 +1,10 @@
 module Entities
   module Github
 
-    class IssueAction < Protocol
+    class PullRequestAction < IssueAction
 
       Relationships = {
-        upstream: [Entities::Github::Issue],
+        upstream: [Entities::Github::PullRequest],
         downstream: [],
         references: [],
       }
@@ -12,20 +12,11 @@ module Entities
       def find
         nil
       end
-      
-      def find_parent
-        if @payload.repo_name && @payload.number
-          matches = relationships[:upstream].reduce([]) do |acc, rl|
-            acc << rl.new(@payload).find_by_repo_name_and_number.first
-          end
-          parent = matches.compact.first
-        end
-      end
 
       # Builder
       def build
         entity = Entity.new({
-          title: "#{@payload.nice_name} ##{@payload.number} #{@payload.action}",
+          title: "Pull Request ##{@payload.number} #{@payload.action}",
           origin_ts: @payload.origin_ts,
           origin_id: @payload.origin_id.to_s,
           props: {
@@ -44,15 +35,6 @@ module Entities
         entity
       end
 
-      def update_parent
-        @instance.parent.title = @payload.title
-        @instance.parent.body = @payload.body
-        @instance.parent.props[:state] = @payload.state
-        if @payload.respond_to? :label_names
-          @instance.parent.props[:label_names] = @payload.label_names
-        end
-      end
-
       # Finders
       def find_by_origin_id
         scope = Entity.feed('github')
@@ -63,24 +45,16 @@ module Entities
       def find_by_repo_name_and_number
         Entity
         .feed('github')
-        .type(my_type_tag)
+        .type('pull_request_action')
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
         .where("props -> 'number' = '#{@payload.number}'")
 
       end
 
-      def my_type_tag
-        if self.class.name =~ /Issue/
-          'issue_action'
-        end
-      end
-
       def relationships
         Entities::Github::IssueAction::Relationships
       end
-      
     end
 
-    PullRequestAction = IssueAction
   end
 end

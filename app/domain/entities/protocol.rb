@@ -26,10 +26,12 @@ module Entities
     include Groupable
     include Normalizable
     include Persistable
+    include Loggable
     
     attr_reader :instance
 
     def initialize(payload)
+      initialize_logger("DEBUG")
       @payload = payload
     end
 

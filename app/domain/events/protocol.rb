@@ -4,6 +4,7 @@ require_relative 'traits/digestable'
 require_relative 'traits/jsonable'
 
 module Events
+
   class EventException < Exception
     attr_accessor :source_data
 
@@ -23,10 +24,12 @@ module Events
     include Persistable
     include Digestable
     include JSONable
+    include Loggable
 
     attr_reader :instance
 
     def initialize(payload)
+      initialize_logger("DEBUG")
       raw_data = symbolize_keys(payload)
       @data = {}
       @data[:source_data] = (sd = raw_data[:source_data]) ? sd : raw_data
@@ -53,7 +56,7 @@ module Events
     def ==(other)
       @data == other
     end
-    
+
     def feed_name
       @feed_name ||= module_and_class_names[0]
     end

@@ -12,7 +12,11 @@ module Events
       def commit_id
         payload.andand[:comment].andand[:commit_id]
       end
-      
+
+      def origin_id
+        comment_id
+      end
+
     end
 
   end

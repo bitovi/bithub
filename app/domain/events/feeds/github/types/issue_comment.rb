@@ -2,10 +2,13 @@ module Events
   module Github
 
     class IssueComment < Protocol
-
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Labels
       include Events::Github::Accessors::Comments
+      
+      def origin_id
+        comment_id
+      end
 
       def issue
         payload.andand[:issue]
@@ -44,11 +47,9 @@ module Events
         issue_or_pull_req.andand[:number]
       end
 
-      def issue_wrapper
-        Events::Github::Issues.new(issue)
-      end
-
       alias_method :number, :issue_or_pull_req_number
+      alias_method :state, :issue_or_pull_req_state
+      alias_method :label_names, :issue_or_pull_req_label_names
     end
 
   end
