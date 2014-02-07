@@ -18,7 +18,6 @@ module Events
     class Public < Protocol; end
     class PullRequest < Protocol; end
     class PullRequestReviewComment < Protocol; end
-    class PullRequestReviewComment < Protocol; end
     class Push < Protocol; end
     class TeamAdd < Protocol; end
     class Watch < Protocol; end

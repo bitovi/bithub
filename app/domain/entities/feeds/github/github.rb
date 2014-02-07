@@ -23,10 +23,8 @@ module Entities
     end
 
     def self.issue_action?(payload)
-      payload.respond_to?(:state) &&
-        payload.respond_to?(:action) &&
-        not(payload.class.name =~ /IssueComment/) &&
-        payload.action != 'opened'
+      (payload.class.name =~ /Issue/ || payload.class.name =~ /PullRequest/) && not(payload.class.name =~ /IssueComment/)
+      payload.respond_to?(:state) && payload.respond_to?(:action) && payload.action != 'opened'
     end
 
     class Commit < Protocol; end
