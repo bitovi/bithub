@@ -68,7 +68,11 @@ module Events
         
       def referenced_issue_numbers
         body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
-      end        
+      end
+
+      alias_method :actor, :user
+      alias_method :actor_id, :origin_author_id
+      alias_method :actor_name, :origin_author_name
     end
 
   end
