@@ -37,7 +37,7 @@ module Events
         def repo_name
           source_data.andand[:repo].andand[:name]
         end
-        
+
         def actor_id
           actor.andand[:id]
         end
@@ -60,8 +60,8 @@ module Events
         end
 
         def referenced_issue_numbers
-          body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
-        end        
+          body ? body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s} : []
+        end
       end
 
       module Comments
@@ -99,7 +99,7 @@ module Events
 
         def label_names
           labels.andand.map {|l| l[:name] }.andand.join(',')
-        end        
+        end
       end
 
       module IssuesPullRequests
