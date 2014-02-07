@@ -2,7 +2,7 @@ module Entities
   module Forum
 
     class Post < Protocol
-      
+
       Relationships = {
         upstream: [],
         downstream: [],
@@ -12,11 +12,11 @@ module Entities
       def find
         @payload.link && find_by_url.first
       end
-      
+
       def build
         Entity.new({
           title: @payload.title,
-          body: @payload.body,
+          body: @payload.sanitized_body,
           url: @payload.link,
           origin_ts: @payload.origin_ts,
           props: {
