@@ -44,10 +44,8 @@ module Entities
     end
 
     def write_history
-      @instance.events << @payload.instance
+      @instance.events << @payload.instance if @payload.instance
     end
 
   end
 end
-
-

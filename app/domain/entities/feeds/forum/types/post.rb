@@ -28,7 +28,7 @@ module Entities
 
       def find_parent
         if @payload.link
-          find_by_thread_prefix.order("origin_ts ASC").first
+          find_by_thread_prefix.where("origin_ts < ?", @payload.origin_ts).order("origin_ts ASC").first
         end
       end
 
@@ -46,9 +46,10 @@ module Entities
 
       def find_by_thread_prefix
         thread_url, _ = @payload.link.split('#')
-        Entity.tagged_with(%w(forum post))
-          .where("url LIKE '#{thread_url}%'")
-          .where("#{Entity.table_name}.id <> #{@instance.id || 'NULL'}")
+
+        scope = Entity.feed('forum').where("url LIKE '#{thread_url}%'")
+        scope = scope.where("#{Entity.table_name}.id <> #{@instance.id}") if @instance.id
+        scope
       end
 
       def relationships
