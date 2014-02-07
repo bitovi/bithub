@@ -49,7 +49,7 @@ module Entities
         Entity
         .feed('meetup')
         .type('rsvp')
-        .where("props -> 'event_id' = #{event_id}")
+        .where("props -> 'event_id' = '#{event_id.to_s}'")
       end
     end
 

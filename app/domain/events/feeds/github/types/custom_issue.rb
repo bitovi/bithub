@@ -50,6 +50,10 @@ module Events
         user.andand[:id]
       end
 
+      def origin_author_avatar_url
+        user.andand[:avatar_url]
+      end
+
       def origin_author_name
         user.andand[:login]
       end
@@ -72,7 +76,8 @@ module Events
 
       alias_method :actor, :user
       alias_method :actor_id, :origin_author_id
-      alias_method :actor_name, :origin_author_name
+      alias_method :actor_login, :origin_author_name
+      alias_method :actor_avatar_url, :origin_author_avatar_url
     end
 
   end
