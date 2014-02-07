@@ -22,6 +22,8 @@ module Events
     class Push < Protocol; end
     class TeamAdd < Protocol; end
     class Watch < Protocol; end
+    class Public < Protocol; end
+    class Create < Protocol; end
 
     MAPPINGS = {
       'Issues' => 'Issue',
@@ -35,7 +37,7 @@ module Events
         self.const_get(type_name)
       end
     end
-      
+
     def self.extract_type_name(source_data)
       if github_event?(source_data)
         source_data['type'].camel_case
@@ -58,7 +60,7 @@ module Events
       def initialize(response)
         @response = response
       end
-      
+
       def parse
         @parsed ||= Yajl::Parser.parse(@response)
       end
