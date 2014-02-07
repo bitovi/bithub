@@ -11,7 +11,7 @@ module Events
       end
 
       def issue_id
-        # FIXME ? no attr in source_data
+        source_data.andand[:id]
       end
       
       def title
@@ -31,7 +31,7 @@ module Events
       end
 
       def label_names
-        labels.map{|l| l[:name]}
+        labels.map {|l| l[:name] }.join(',')
       end
 
       def state
@@ -67,13 +67,15 @@ module Events
       end
       
       def repo_name
-        # FIXME ? how to get ? mayble using REGEX ? :D
+        url = source_data.andand[:url]
+        url.match(/repos\/(.*)\/issues/).andand[1]
       end
         
       def referenced_issue_numbers
         body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end
 
+      alias_method :origin_id, :issue_id
       alias_method :actor, :user
       alias_method :actor_id, :origin_author_id
       alias_method :actor_login, :origin_author_name
@@ -82,20 +84,3 @@ module Events
 
   end
 end
-
-# processed.deep_merge({
-#   extracted: {
-#     title: original_hash['title'],
-#     body: original_hash['body'],
-#     url: original_hash['html_url'],
-#   },
-#   meta: {
-#     feed: 'github',
-#     type: 'custom_issue_event',
-#     labels: label_names(labels(original_hash)),
-#     issue_id: original_hash['id'],
-#     state: original_hash['state'],
-#     issue_number: original_hash['number'],
-#     repo_name: original_hash['repo']['name'],
-#   }
-# })
