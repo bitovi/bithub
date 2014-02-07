@@ -17,6 +17,14 @@ module Events
         source_data.andand[:description]
       end
 
+      def sanitized_body
+        sanitize(body)
+      end
+
+      def url
+        link
+      end
+
       def link
         source_data.andand[:link]
       end
@@ -24,7 +32,7 @@ module Events
       def origin_author_name
         source_data.andand[:'dc:creator']
       end
-      
+
       def subforum
         source_data.andand[:category]
       end
@@ -38,9 +46,11 @@ module Events
       end
 
       private
-      def sanitize(txt)
-        (@sanitizer ||= Sanitizer.new).sanitize(txt)
+
+      def sanitize(input)
+        (@sanitizer ||= Sanitizer.new).sanitize_forum_post(input)
       end
+
     end
 
   end
