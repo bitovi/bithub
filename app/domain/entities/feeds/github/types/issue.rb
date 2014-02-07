@@ -16,7 +16,7 @@ module Entities
 
       def build
         built = Entity.new({
-          title: @payload.title,
+          title: "Issue ##{@payload.number} opened: #{@payload.title}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
@@ -46,10 +46,13 @@ module Entities
         super
       end
 
-      def update_from_child
-        #@instance.title = @payload.issue.title
-        #@instance.body = @payload.issue.body
-        #@instance.props[:label_names] = @payload.issue.labels
+      def update_from_children
+        # most_recent_child = @instance.children.order("origin_ts DESC").first
+        # data = most_recent_child.last_modified_by.source_data
+        # @instance.title = data.andand[:
+        # @instance.body = @payload.issue.body
+        # @instance.props[:label_names] = @payload.issue.labels
+        # @instance.props[:label_names] = @payload.issue.state
       end
 
       def find_children

@@ -102,7 +102,7 @@ module Events
         end
 
         def label_names
-          labels.map {|l| l[:name] }.join(',')
+          labels.andand.map {|l| l[:name] }.andand.join(',')
         end        
       end
 
