@@ -35,10 +35,15 @@ module Events
     end
 
     def decorate
-      @decorated ||= result.map do |event_hash|
-        e = Events::Dispatcher.dispatch(event_hash, @feed)
-        e.to_json.deep_merge(subprocessor.decorate)
+      begin
+        @decorated ||= result.map do |event_hash|
+          e = Events::Dispatcher.dispatch(event_hash, @feed)
+          e.to_json.deep_merge(subprocessor.decorate)
+        end
+      rescue Events::InvalidDigestSeed => err
+        @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | #{err.source_data}"
       end
+
       self
     end
 

@@ -12,7 +12,7 @@ module Entities
         Entity.new({
           title: title,
           origin_ts: @payload.origin_ts,
-          origin_id: @payload.create_id.to_s,
+          #origin_id: TODO ? ,
           props: {
             origin_author_id: @payload.actor_id,
             origin_author_name: @payload.actor_login,

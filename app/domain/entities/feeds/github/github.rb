@@ -23,7 +23,12 @@ module Entities
     end
 
     def self.issue_action?(payload)
-      (payload.class.name =~ /Issue/ || payload.class.name =~ /PullRequest/) && not(payload.class.name =~ /IssueComment/)
+      (payload.class.name =~ /PullRequest/ || payload.class.name =~ /Issue/) && not(payload.class.name =~ /IssueComment/)
+      payload.respond_to?(:state) && payload.respond_to?(:action) && payload.action != 'opened'
+    end
+
+    def self.pull_request_action?(payload)
+      payload.class.name =~ /PullRequest/ && not(payload.class.name =~ /IssueComment/)
       payload.respond_to?(:state) && payload.respond_to?(:action) && payload.action != 'opened'
     end
 
@@ -41,9 +46,9 @@ end
 
 require_relative 'types/commit'
 require_relative 'types/commit_comment'
+require_relative 'types/issue_comment'
 require_relative 'types/issue'
 require_relative 'types/issue_action'
-require_relative 'types/issue_comment'
 require_relative 'types/pull_request'
 require_relative 'types/push'
 require_relative 'types/watch'

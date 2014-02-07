@@ -18,12 +18,8 @@ module Events
     module Accessors
       module Standard
 
-        def origin_id
+        def event_id
           source_data.andand[:id]
-        end
-
-        def origin_event_id
-          origin_id
         end
 
         def payload

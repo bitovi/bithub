@@ -16,7 +16,7 @@ module Entities
 
       def build
         built = Entity.new({
-          title: "Pull Request ##{@payload.number} #{@payload.action} opened : #{@payload.title}",
+          title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
@@ -37,6 +37,14 @@ module Entities
 
         built
       end
+      
+      def find_children
+        if @payload.repo_name && @payload.number
+          relationships[:downstream].reduce([]) do |acc, rl|
+            acc += rl.new(@payload).find_by_repo_name_and_number.all
+          end
+        end
+      end
 
       def update
         @instance.title = @payload.title
@@ -47,14 +55,17 @@ module Entities
       end
       
       def update_from_children
-      end
+        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+        most_recent_child.props.symbolize_keys!
+        most_recent_child.source_data.symbolize_keys!
 
-      def find_children
-        if @payload.repo_name && @payload.number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.all
-          end
-        end
+        data = most_recent_child.last_modified_by.source_data
+        event = Events::Dispatcher.dispatch(data, 'github')
+
+        @instance.title = event.title if event.respond_to? :title
+        @instance.body = event.body if event.respond_to? :body
+        @instance.props[:state] = event.state
+        @instance.props[:label_names] = event.label_names
       end
 
       # Finders
