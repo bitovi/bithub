@@ -7,15 +7,16 @@ describe Entities::Forum::Post do
     payload.stub(:feed => "forum")
     payload.stub(:type => "post")
     payload.stub(:title => attrs[:title] || "Forum post title")
-    payload.stub(:body => attrs[:body] || "Something with canjs ...")
+    payload.stub(:sanitized_body => attrs[:body] || "Something with canjs ...")
     payload.stub(:link => attrs[:link] || "http://forums.com/some-post-slug")
     payload.stub(:subforum => attrs[:subforum] || "questions")
     payload.stub(:term => attrs[:term] || "question")
     payload.stub(:origin_author_name => attrs[:origin_author_name] || "random user")
     payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
+    payload.stub(:instance => nil)
     Entities::Forum::Post.new(payload).procure
   end
-  
+
   question = {title: "Question", link: "http://forums.com/question", origin_ts: 2.hours.ago}
   answer = {title: "Answer", link: "http://forums.com/question#100"}
   answer2 = {title: "Answer2", link: "http://forums.com/question#200"}
@@ -25,7 +26,7 @@ describe Entities::Forum::Post do
     it "instances new Entity object" do
       post = build_post
       post.determine.normalize.persist!
-      
+
       expect(post.instance.title).to be_a(String)
       expect(post.instance.body).to be_a(String)
       expect(post.instance.url).to be_a(String)
