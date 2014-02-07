@@ -20,6 +20,8 @@ module Events
       def origin_id
         pull_request_id
       end
+
+      alias_method :issue_id, :pull_request_id
     end
 
   end

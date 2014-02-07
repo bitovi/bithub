@@ -17,6 +17,8 @@ class Dispatcher
     event = Events::Dispatcher.dispatch(response)
     entity = Entities::Dispatcher.dispatch(event)
 
+    return nil if entity.nil?
+
     @logger.info "MAPPING: #{event.class.name} -> #{entity.class.name}"
 
     begin
