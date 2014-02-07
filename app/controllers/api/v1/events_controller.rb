@@ -11,7 +11,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_401
 
-  DEFAULT_CATEGORIES_TO_SUMMARZIE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
+  DEFAULT_CATEGORIES_TO_SUMMARIZE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
@@ -89,7 +89,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def summary
-    cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARZIE
+    cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
     @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_sumamry(cat, params)]}]
     render :summary
   end
