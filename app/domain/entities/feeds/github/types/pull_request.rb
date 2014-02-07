@@ -37,7 +37,7 @@ module Entities
 
         built
       end
-      
+
       def find_children
         if @payload.repo_name && @payload.number
           relationships[:downstream].reduce([]) do |acc, rl|
@@ -53,19 +53,20 @@ module Entities
         @instance.props[:state] = @payload.state
         super
       end
-      
+
       def update_from_children
-        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
-        most_recent_child.props.symbolize_keys!
-        most_recent_child.source_data.symbolize_keys!
+        if most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+          most_recent_child.props.symbolize_keys!
+          most_recent_child.source_data.symbolize_keys!
 
-        data = most_recent_child.last_modified_by.source_data
-        event = Events::Dispatcher.dispatch(data, 'github')
+          data = most_recent_child.last_modified_by.source_data
+          event = Events::Dispatcher.dispatch(data, 'github')
 
-        @instance.title = event.title if event.respond_to? :title
-        @instance.body = event.body if event.respond_to? :body
-        @instance.props[:state] = event.state
-        @instance.props[:label_names] = event.label_names
+          @instance.title = event.title if event.respond_to? :title
+          @instance.body = event.body if event.respond_to? :body
+          @instance.props[:state] = event.state
+          @instance.props[:label_names] = event.label_names
+        end
       end
 
       # Finders
