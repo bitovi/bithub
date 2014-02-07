@@ -18,6 +18,8 @@ code:
     commit: 10
     push: 10
     pull_request: 10
+    create: 10
+    public: 10
 
 question:
     forum: 10
