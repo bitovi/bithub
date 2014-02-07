@@ -15,9 +15,15 @@ module Entities
           @instance.children += c
         end
       end
+
       if self.respond_to? :build_children
         @instance.children += build_children
       end
+
+      if @instance.children
+        update_from_children if self.respond_to? :update_from_children
+      end
+
       self
     end
 
@@ -27,9 +33,15 @@ module Entities
           @instance.parent = p
         end
       end
+
       if self.respond_to? :build_parent
         @instance.parent = build_parent
       end
+
+      if @instance.parent
+        update_parent if self.respond_to? :update_parent
+      end
+
       self
     end
 

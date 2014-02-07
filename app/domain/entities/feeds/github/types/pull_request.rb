@@ -15,28 +15,38 @@ module Entities
       end
 
       def build
-        Entity.new({
-          title: "Pull request ##{@payload.number} #{@payload.action}",
+        built = Entity.new({
+          title: "Pull Request ##{@payload.number} #{@payload.action} opened : #{@payload.title}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           origin_id: @payload.pull_request_id.to_s,
           props: {
-            origin_author_id: @payload.actor_id,
-            origin_author_name: @payload.actor_login,
-            origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.number,
+            label_names: @payload.label_names,
             state: @payload.state,
           }
         })
+
+        if @payload.actor
+          built[:origin_author_id] = @payload.actor_id
+          built[:origin_author_name] = @payload.actor_login
+          built[:origin_author_avatar_url] = @payload.actor_avatar_url
+        end
+
+        built
       end
 
       def update
         @instance.title = @payload.title
         @instance.body = @payload.body
+        @instance.props[:label_names] = @payload.label_names
         @instance.props[:state] = @payload.state
         super
+      end
+      
+      def update_from_children
       end
 
       def find_children

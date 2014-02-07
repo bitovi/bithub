@@ -10,7 +10,7 @@ module Entities
       }
 
       def find
-        @payload.issue_id && find_by_origin_id.first
+        @payload.origin_id && find_by_origin_id.first
       end
 
       # Builder
@@ -29,8 +29,19 @@ module Entities
             action: @payload.action,
           }
         })
-        entity.props[:label_names] = @payload.label_names if @payload.respond_to? :label_names
+        if @payload.respond_to? :label_names
+          entity.props[:label_names] = @payload.label_names
+        end
         entity
+      end
+
+      def update_parent
+        @instance.parent.title = @payload.title
+        @instance.parent.body = @payload.body
+        @instance.parent.props[:state] = @payload.state
+        if @payload.respond_to? :label_names
+          @instance.parent.props[:label_names] = @payload.label_names
+        end
       end
 
       def find_parent
@@ -39,25 +50,31 @@ module Entities
             acc << rl.new(@payload).find_by_repo_name_and_number.first
           end
           parent = matches.compact.first
-          # parent.update_from_child(@payload.issue)
-          parent
         end
       end
 
       # Finders
       def find_by_origin_id
-        Entity
-        .feed('github')
-        .type('issue_action')
-        .where(origin_id: (@payload.issue_id || @payload.pull_request_id).to_s)
+        scope = Entity.feed('github')
+        .type(my_type_tag)
+        .where(origin_id: @payload.origin_id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
         .feed('github')
-        .type('issue_action')
+        .type(my_type_tag)
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
         .where("props -> 'number' = '#{@payload.number}'")
+
+      end
+
+      def my_type_tag
+        if self.class.name =~ /Issue/
+          'issue_action'
+        elsif self.class.name =~ /PullRequest/
+          'pull_request_action'
+        end
       end
 
       def relationships
