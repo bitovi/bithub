@@ -47,9 +47,9 @@ module Entities
       end
 
       def update_from_child
-        @instance.title = @payload.issue.title
-        @instance.body = @payload.issue.body
-        @instance.props[:labels] = @payload.issue.labels
+        #@instance.title = @payload.issue.title
+        #@instance.body = @payload.issue.body
+        #@instance.props[:label_names] = @payload.issue.labels
       end
 
       def find_children
@@ -83,8 +83,8 @@ module Entities
       private
 
       def taggify_labels
-        if @instance.props[:labels]
-          input = @instance.props[:labels]
+        if @instance.props[:label_names]
+          input = @instance.props[:label_names]
           Tagger.new(Tag.labels).find_tags(input)
         else
           []

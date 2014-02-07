@@ -124,7 +124,7 @@ class EntityDecorator < Draper::Decorator
       context[:excluded_attributes].include?(attr.to_s))
   end
 
-  def apply_hyperlinks(text, urls)
+  def apply_hyperlinks(text, urls = [])
     urls.reduce(text) do |acc, url|
       range = url['indices']; link = text.slice(*range)
       text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>")
