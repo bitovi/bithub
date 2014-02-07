@@ -9,7 +9,7 @@ module Events
       end
 
       def content_digest
-        seed = origin_author_name + repo_name
+        seed = actor_login + repo_name
         calc_digest(seed)
       end
 

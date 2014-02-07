@@ -15,7 +15,7 @@ module Entities
 
       # Builder
       def build
-        Entity.new({
+        entity = Entity.new({
           title: "Issue ##{@payload.number} #{@payload.action}",
           origin_ts: @payload.origin_ts,
           origin_id: @payload.origin_id.to_s,
@@ -25,11 +25,12 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.number,
-            label_names: @payload.label_names,
             state: @payload.state,
             action: @payload.action,
           }
         })
+        entity.props[:label_names] = @payload.label_names if @payload.respond_to? :label_names
+        entity
       end
 
       def find_parent

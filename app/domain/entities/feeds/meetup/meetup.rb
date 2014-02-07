@@ -3,7 +3,15 @@ module Entities
     class Event < Protocol; end
     class Rsvp < Protocol; end
 
-    def self.type(type_name)
+    def self.type(arg)
+      
+      if arg.is_a? String
+        type_name = arg
+      elsif arg.is_a? Events::Protocol
+        payload = arg
+        type_name = arg.type_name
+      end
+
       if MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else

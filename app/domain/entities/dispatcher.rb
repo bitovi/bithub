@@ -4,7 +4,8 @@ require 'entities/protocol'
 module Entities
   module Dispatcher
     def self.dispatch(event)
-      Entities.feed(event.feed_name).type(event).new(event)
+      entityType = Entities.feed(event.feed_name).type(event)
+      entityType.new(event) unless entityType.nil?
     end
   end
 end

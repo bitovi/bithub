@@ -18,7 +18,7 @@ module Entities
       elsif issue_action?(payload)
         Entities::Github::IssueAction
       else
-        self.const_get(type_name)
+        self.const_get(type_name) if self.constants.include? type_name.to_sym
       end
     end
 
