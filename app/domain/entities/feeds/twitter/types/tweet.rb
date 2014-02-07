@@ -23,6 +23,8 @@ module Entities
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
             retweeted_id: @payload.original_tweet_id_str,
+            entities_urls: @payload.entities_urls,
+            origin_author_avatar_url: @payload.user_profile_image_url,
           }
         })
         e[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?

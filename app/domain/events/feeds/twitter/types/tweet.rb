@@ -35,6 +35,10 @@ module Events
         user.andand[:screen_name]
       end
 
+      def user_profile_image_url
+        user.andand[:profile_image_url]
+      end
+
       def origin_ts
         Time.parse(source_data.andand[:created_at]).utc
       end
@@ -53,6 +57,14 @@ module Events
 
       def original_tweet_id_str
         retweeted_status.andand[:id_str]
+      end
+
+      def entities
+        source_data.andand[:entities]
+      end
+
+      def entities_urls
+        entities.andand[:urls]
       end
 
       def retweet?
