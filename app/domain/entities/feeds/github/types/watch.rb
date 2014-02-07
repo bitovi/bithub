@@ -39,7 +39,7 @@ module Entities
         Entity
         .feed('github')
         .type('watch')
-        .where("props -> 'origin_author_id' = '#{@payload.origin_author_id}'")
+        .where("props -> 'origin_author_id' = '#{@payload.actor_id}'")
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
       end
 
