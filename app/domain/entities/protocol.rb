@@ -35,11 +35,12 @@ module Entities
 
     def procure
       @instance = (e = find) ? e : build
+      @instance.props.symbolize_keys!
       self
     end
 
     def update_if_found
-      update if @instance.andand.changed? && not(@instance.new_record?)
+      update unless @instance.new_record?
       self
     end
       
