@@ -1,4 +1,5 @@
 require 'domain/spec_helper'
+require 'yaml'
 
 def load_response(path)
   loaders = {

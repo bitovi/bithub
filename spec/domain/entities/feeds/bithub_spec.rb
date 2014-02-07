@@ -10,11 +10,13 @@ describe Entities::Bithub::Post do
     payload.stub(:title => attrs[:title] || "Posting some content from bithub ...")
     payload.stub(:url => attrs[:url] || "http://bithub.com/foobar")
     payload.stub(:body => attrs[:body] || "Lorem ipsum ...")
+    payload.stub(:image => "")
     payload.stub(:category => attrs[:category] || "article")
     payload.stub(:project => attrs[:project] || "canjs")
     payload.stub(:location => attrs[:location] || nil)
     payload.stub(:scheduled_for => attrs[:scheduled_for] || nil)
     payload.stub(:origin_author_id => attrs[:origin_author_id] || nil)
+    payload.stub(:origin_author_name => attrs[:origin_author_name] || nil)
     payload.stub(:origin_author_feed => attrs[:origin_author_feed] || nil)
     payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
     Entities::Bithub::Post.new(payload).procure

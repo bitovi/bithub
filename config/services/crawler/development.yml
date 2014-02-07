@@ -1,12 +1,12 @@
 :intervals:
     :github:
-        :events: 5
+        :events: 5000
         :issues:
-            :open: 30
-            :closed: 60
+            :open: 30000
+            :closed: 60000
     :disqus: 10000
     :forum: 12000
-    :meetup: 30
+    :meetup: 3
     :blog: 3000
     :twitter: 10000
 

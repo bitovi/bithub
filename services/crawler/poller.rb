@@ -51,8 +51,11 @@ class Poller
       head: http_head
     })
 
+    log_fetching(link)
+
     http_req.callback { callback(http_req) }
     http_req.errback { errback(http_req) }
+
   end
 
   def callback(http_req)
