@@ -41,17 +41,21 @@ module Events
         def repo_name
           source_data.andand[:repo].andand[:name]
         end
-
-        def origin_author_name
-          actor.andand[:login]
-        end
-
-        def origin_author_id
+        
+        def actor_id
           actor.andand[:id]
         end
 
-        def origin_author_gravatar
+        def actor_login
+          actor.andand[:login]
+        end
+
+        def actor_gravatar_id
           actor.andand[:gravatar_id]
+        end
+
+        def actor_avatar_url
+          actor.andand[:avatar_url]
         end
 
         def origin_ts

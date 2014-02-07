@@ -20,8 +20,9 @@ module Entities
           origin_ts: @payload.origin_ts,
           origin_id: @payload.watch_id.to_s,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
+            origin_author_id: @payload.actor_id,
+            origin_author_name: @payload.actor_login,
+            origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
           }
         })
@@ -38,7 +39,7 @@ module Entities
         Entity
         .feed('github')
         .type('watch')
-        .where("props -> 'origin_author_id' = '#{@payload.origin_author_id}'")
+        .where("props -> 'origin_author_id' = '#{@payload.actor_id}'")
         .where("props -> 'repo_name' = '#{@payload.repo_name}'")
       end
 

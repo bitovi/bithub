@@ -17,7 +17,7 @@ class EntityDecorator < Draper::Decorator
 
   def title
     if source.cached_tags.include?('tweet')
-      apply_hyperlinks(source.title, source.source_data['entities']['urls'])
+      apply_hyperlinks(source.title, source.props['entities_urls'])
     else
       source.title
     end
@@ -79,18 +79,10 @@ class EntityDecorator < Draper::Decorator
   end
 
   def props(thread_awarded = false, awarded_value = nil)
-
-    if source.source_data && source.source_data['user'] && source.source_data['user']['profile_image_url']
-      source.props[:origin_author_avatar_url] = source.source_data['user']['profile_image_url']
-    elsif source.source_data && source.source_data['actor'] && source.source_data['actor']['avatar_url']
-      source.props[:origin_author_avatar_url] = source.source_data['actor']['avatar_url']
-    end
-
     source.props[:thread_awarded] = thread_awarded
     source.props[:awarded_value] = awarded_value
     #source.props[:thread_awarded] = source.thread_awarded?
     #source.props[:awarded_value] = source.awards.first.value if source.awards.first
-
     source.props
   end
 
