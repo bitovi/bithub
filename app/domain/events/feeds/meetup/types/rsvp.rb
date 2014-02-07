@@ -43,6 +43,10 @@ module Events
         unix_epoch = source_data.andand[:created].to_i / 1000
         Time.at(unix_epoch).utc
       end
+
+      def origin_author_avatar_url
+        source_data.andand[:member_photo].andand[:thumb_link]
+      end
       
     end
   end
