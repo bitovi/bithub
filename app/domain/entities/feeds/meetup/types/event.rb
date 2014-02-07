@@ -22,6 +22,10 @@ module Entities
           props: {
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
+            origin_author_name: @payload.origin_author_name,
+            location: @payload.composite_location,
+            venue: @payload.venue,
+            scheduled_at: @payload.scheduled_at,
           }
         })
       end

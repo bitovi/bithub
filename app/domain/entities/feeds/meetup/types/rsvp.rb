@@ -23,6 +23,7 @@ module Entities
             origin_author_name: @payload.origin_author_name,
             event_id: @payload.parent_event_id,
             response: @payload.response,
+            origin_author_avatar_url: @payload.origin_author_avatar_url,
           }
         })
       end
