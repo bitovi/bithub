@@ -60,7 +60,9 @@ module Events
         end
 
         def referenced_issue_numbers
-          body ? body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s} : []
+          bla = (body ? body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s} : [])
+          puts "BLA #{bla}"
+          bla
         end
       end
 

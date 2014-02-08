@@ -26,12 +26,13 @@ describe Dispatcher do
       end
       @issue1 = Entity.feed('github').type('issue').number(1).first
       @issue2 = Entity.feed('github').type('issue').number(2).first
-      @pull_req = Entity.feed('github').type('pull_request').number(3).first
+      @pull_req3 = Entity.feed('github').type('pull_request').number(3).first
+      @pull_req4 = Entity.feed('github').type('pull_request').number(4).first
       @push = Entity.feed('github').type('push').first
     end
 
     after :all do
-      ActiveRecord::Base.connection.execute("delete from events; delete from entities;")
+      # ActiveRecord::Base.connection.execute("delete from events; delete from entities;")
     end
 
     it "testcase - existence" do
@@ -42,19 +43,19 @@ describe Dispatcher do
     it "testcase - state" do
       expect(@issue1.state).to eq "open"
       expect(@issue2.state).to eq "open"
-      expect(@pull_req.state).to eq "closed"
+      expect(@pull_req3.state).to eq "closed"
     end
 
     it "testcase - children" do
       expect(@issue1.children.count).to eq 4
       expect(@issue2.children.count).to eq 4
-      expect(@pull_req.children.count).to eq 7
+      expect(@pull_req3.children.count).to eq 7
     end
     
     it "testcase - labels" do
       expect(@issue1.label_names).to eq "bug"
       expect(@issue2.label_names).to eq "enhancement,question"
-      expect(@pull_req.label_names).to eq "invalid"
+      expect(@pull_req3.label_names).to eq "invalid"
     end
 
     it "testcase - titles and bodies" do
@@ -63,7 +64,7 @@ describe Dispatcher do
 
     it "testcase - references from body" do
       expect(@issue1.referenced_from).to eq [@issue2]
-      expect(@issue1.references_to).to eq [@pull_req]
+      expect(@issue1.references_to).to eq [@pull_req3]
     end
 
     it "testcase - pushes and commits" do
