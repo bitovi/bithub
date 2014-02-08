@@ -2,6 +2,37 @@ module Entities
   module Bithub
     class Post < Protocol
 
+      def self.forge(params, current_user)
+        source_data = params.clone['event'].symbolize_keys
+
+        posting_for_another_user = !source_data[:origin_author_id].blank? &&
+                                   !source_data[:origin_author_feed].blank?
+
+        source_data[:origin_ts] = Time.now.utc unless params[:id]
+        source_data[:id]        = params[:id] if params[:id]
+
+          # handle post-as
+        if !current_user.has_role?(:admin) || !posting_for_another_user
+          source_data[:origin_author_id]   = current_user.id
+          source_data[:origin_author_feed] = 'bithub'
+        end
+
+        Rails.logger.info "-------------------------------------------"
+        Rails.logger.info source_data
+        Rails.logger.info "-------------------------------------------"
+
+
+        data = {
+          source_data: source_data,
+          meta: {
+            feed_name: 'bithub',
+            type: 'post'
+          }
+        }
+
+        ::Dispatcher.new.dispatch(data)
+      end
+
       def find
         Entity.where(id: @payload.id).first
       end
@@ -32,7 +63,7 @@ module Entities
         @instance.image = @payload.image
         @instance.props[:scheduled_for] = @payload.scheduled_for
         @instance.props[:location] = @payload.location
-        # TODO tags?
+        @instance.props[:tags] = @payload.tags
         super
       end
 

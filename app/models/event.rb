@@ -10,4 +10,5 @@ class Event < ActiveRecord::Base
   validates_uniqueness_of :content_digest
 
   serialize :source_data, JSON
+
 end
