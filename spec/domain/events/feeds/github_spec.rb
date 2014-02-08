@@ -6,14 +6,14 @@ describe Events::Github do
     it_should_behave_like "every event"
 
     it "has common github event attributes" do
-      expect(payload.origin_id).to be_a(String)
-      expect(payload.origin_event_id).to be_a(String)
+      expect(payload.event_id).to be # String or Integer
       expect(payload.actor).to be_a(Hash)
       expect(payload.repo).to be_a(Hash)
       expect(payload.repo_name).to be_a(String)
-      expect(payload.origin_author_name).to be_a(String)
-      expect(payload.origin_author_id).to be_a(Integer)
-      expect(payload.origin_author_gravatar).to be_a(String)
+      expect(payload.actor).to be_a(Hash)
+      expect(payload.actor_id).to be_a(Integer)
+      expect(payload.actor_login).to be_a(String)
+      expect(payload.actor_avatar_url).to be_a(String)
       expect(payload.origin_ts).to be_a(Time)
     end
   end
@@ -22,7 +22,7 @@ describe Events::Github do
     it "has common github comment event attributes" do
       expect(payload.comment).to be_a(Hash)
       expect(payload.body).to be_a(String)
-      expect(payload.html_url).to be_a(String)      
+      expect(payload.html_url).to be_a(String)
     end
   end
 
@@ -42,15 +42,14 @@ describe Events::Github do
 
   shared_examples_for "every github issues or pull requests event" do
     it "has refs attributes" do
-      expect(payload.title).to be_a(String)
-      expect(payload.body).to be_a(String)
+      #expect(payload.body).to be_a(String)
       expect(payload.html_url).to be_a(String)
       expect(payload.number).to be_a(Integer)
       expect(payload.state).to be_a(String)
       expect(payload.action).to be_a(String)
     end
   end
-  
+
   describe "#initialize" do
     context "Github" do
 
@@ -61,10 +60,10 @@ describe Events::Github do
 
         it_should_behave_like "every github event"
         it_should_behave_like "every github comment event"
-        
+
         it "creates Payload object with mapping methods" do
           expect(payload.commit_id).to be_a(String)
-        end        
+        end
       end
 
       context "CreateEvent" do
@@ -83,7 +82,7 @@ describe Events::Github do
       #   it_should_behave_like "every github event"
       #   it "creates Payload object with mapping methods" do
       #     expect(payload.push_id).to be_a(Integer)
-      #   end        
+      #   end
       # end
 
       context "DeleteEvent" do
@@ -106,7 +105,7 @@ describe Events::Github do
           expect(payload.name).to be_a(String)
           expect(payload.description).to be_a(String)
           expect(payload.url).to be_a(String)
-        end        
+        end
       end
 
       context "FollowEvent" do
@@ -146,7 +145,7 @@ describe Events::Github do
           expect(payload.action).to be_a(String)
           expect(payload.html_url).to be_a(String)
           expect(payload.description).to be_a(String)
-        end        
+        end
       end
 
       context "GollumEvent" do
@@ -159,7 +158,7 @@ describe Events::Github do
           expect(payload.pages).to be_a(Array)
           expect(payload.page_titles).to be_a(Array)
           expect(payload.page_urls).to be_a(Array)
-        end        
+        end
       end
 
       context "IssueCommentEvent" do
@@ -193,7 +192,7 @@ describe Events::Github do
         it_should_behave_like "every github event"
         it "creates Payload object with mapping methods" do
           expect(payload.member_name).to be_a(String)
-        end        
+        end
       end
 
       context "PublicEvent" do
@@ -243,7 +242,7 @@ describe Events::Github do
 
           # SHOULD IT RETURN JUST AN INT OR PREFIXED WITH #
           #expect(payload.referenced_number).to be_a(String)
-        end        
+        end
       end
 
       context "TeamAddEvent" do

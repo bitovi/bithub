@@ -9,9 +9,9 @@ module Entities
         downstream: [],
         references: [],
       }
-      
+
       def find
-        @payload.origin_id && find_by_actor_and_repo_name.first
+        @payload.event_id && find_by_actor_and_repo_name.first
       end
 
       def build
