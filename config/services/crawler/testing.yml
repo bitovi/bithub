@@ -1,0 +1,88 @@
+:intervals:
+  :github:
+    :events: 30
+    :issues:
+      :open: 300
+      :closed: 7200
+  :disqus: 30
+  :forums: 120
+  :blog: 600
+
+:feeds:
+  :blog: 'http://www.bitovi.com/blog.rss'
+
+  :forums:
+    :general: 'https://forum.javascriptmvc.com/feed'
+    :terms:
+      :questions: 'https://forum.javascriptmvc.com/feed/filter/questions'
+
+  :disqus:
+    :uri: 'http://disqus.com/api/3.0/posts/list.json'
+    :query:
+      :forum:
+        - 'jmvcs3'
+        - 'bitovi'
+      :related:
+        - 'thread'
+        - 'forum'
+      :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
+  
+  :github:
+    :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
+    :repos:
+      :testy:
+        :events: 'https://api.github.com/repos/bithub-test/testy/events'
+        :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
+
+  :twitter:
+    :streams:
+      :public_feed:
+        :path: '/1.1/statuses/filter.json'
+        :params:
+          :track: canjs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++
+        :oauth:
+          :consumer_key: "huCmG0TZ7vs6leLqLNlGQ"
+          :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
+          :token: "55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw"
+          :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+  
+      :user_feeds:
+        :bitovi:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "FXZGJo7JIApbFaAaDExdg"
+            :consumer_secret: "BWcyzCqBDtN0YAtiwn2C5RFuc156rmFNi2NjFWxpwY"
+            :token: "123763453-A69bA6vBuHh2nEwQRl5ZgBQPBsumSNF7B1ljkay1"
+            :token_secret: "JqAjP4Kg4p9Tokb7XOiAaEB3HY1JjQUB7Sw7pe2uU4Wcl"
+
+        :canjs:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "PfslPpcKKNF71HZ3KUhxw"
+            :consumer_secret: "fz5ZrZOMqCMHV3OYWOZBKpZh446WwO1gmU5mQ2v1g"
+            :token: "523041627-kZqhQDeqTeT5wGvSoEsKmsQNANtnEBtqOrJ21zvs"
+            :token_secret: "Z13h6S6HgOf5BSdgXo0PtmTcLDMdj1pacEM6q5gGVFV2w"
+
+        :jquerypp:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "CPOUJMA2FuKHQxnx2jQ"
+            :consumer_secret: "m9QRVGO7aIXRXXU7u7VtSYFV17ZtcK7Qy4Yfb6JEg0"
+            :token: "589215872-GX13o9ZdBqGFuYv3XlBwPNobixzs7K32xQgul0ZQ"
+            :token_secret: "zZ2sRHYRURE54UiejrXtzAaVuO2RuiIeDVyv0CCxcljS0"
+
+        :javascriptmvc:
+          :host: userstream.twitter.com
+          :method: GET
+          :path: /1.1/user.json
+          :oauth:
+            :consumer_key: "JLQjLY4U3HkHY7QDlhBtWA"
+            :consumer_secret: "onuJXBvTq4uNbUA0WF09edo6sXGgfBHbMvcx5jv8s"
+            :token: "56956664-UHcaq3W6O3ocUU6k5gOkvT6IMsYcLpxG9extWIQTY"
+            :token_secret: "CRsa23cttiFITHIEuAx0EcDps0A7r4n30qHquigzHTO6E"

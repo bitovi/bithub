@@ -1,17 +1,17 @@
-require 'spec_helper'
+require_relative 'support/spec_helper'
 
 describe Anteup do
 
   before :each do
     @actor = create(:user, name: "Some user")
-    @event = create(:event_determined, title: "Event in anteup_spec, before each")
+    @entity = create(:entity_determined, title: "Event in anteup_spec, before each")
 
-    @anteup = Anteup.create_anteup(@actor, @event, 76)
+    @anteup = Anteup.create_anteup(@actor, @entity, 76)
   end
 
   describe ".create_anteup" do
     it "sets the target event" do 
-      expect(@anteup.applies_to).to eq(@event)
+      expect(@anteup.applies_to).to eq(@entity)
     end
 
     it "sets the actor" do
@@ -28,8 +28,8 @@ describe Anteup do
   end
 
   describe ".fullfill_anteups" do
-    it "sets fullfill to true on anteups belonging to an event" do 
-      Anteup.fullfill_by_event(@event)
+    it "sets fullfill to true on anteups belonging to an entity" do 
+      Anteup.fullfill_by(@entity)
       expect(@anteup.reload.fullfilled).to eq(true)
     end
   end

@@ -1,0 +1,17 @@
+log4r_config:
+  # define all loggers:
+  loggers:
+    - name          : rails
+      level         : DEBUG
+      trace         : 'true'
+      outputters    : 
+      - console
+ 
+  # define all outputters (incl. formatters)
+  outputters:
+  - type: StdoutOutputter
+    name: console
+    formatter:
+      date_pattern: '%H:%M:%S'
+      pattern     : '%d %l: %m'
+      type        : PatternFormatter

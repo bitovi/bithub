@@ -1,3 +1,6 @@
-listener: ruby ./app/listener.rb
-worker:  bundle exec rake jobs:work
-web: bundle exec unicorn_rails -c /usr/local/etc/unicorn.rb
+listener: ruby ./services/listener/listener.rb
+crawler: ruby ./services/crawler/crawler.rb
+web: unicorn_rails -c ./config/unicorn_dev.rb
+#irc_bot: ruby ./services/irc_bot/irc_bot.rb
+#liveservice: node ./services/live/app/app.js
+#xmpp_bot: ruby ./services/xmpp-bot/app/xmpp_bot.rb

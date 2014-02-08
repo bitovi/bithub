@@ -2,7 +2,7 @@ class Upvote < ActiveRecord::Base
   attr_accessible :actor, :applies_to, :value
   after_save :bust_event_cache
 
-  belongs_to :applies_to, :class_name => "Event"
+  belongs_to :applies_to, :class_name => "Entity"
   belongs_to :actor, :class_name => "User"
 
   validates_presence_of :applies_to_id
@@ -17,7 +17,7 @@ class Upvote < ActiveRecord::Base
   def self.create_based_on_rule(actor, applies_to)
     upvote = nil
     ActiveRecord::Base.transaction do
-      upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.rule.upvote_value})
+      upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.scoring_rule.upvote_value})
       upvote.update_cached_upvotes_in_associated_event
       upvote.update_cached_score_in_associated_user
       upvote.reward_associated_user_if_eligible

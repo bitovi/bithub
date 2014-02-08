@@ -1,7 +1,7 @@
 class Award < ActiveRecord::Base
   attr_accessible :actor, :applies_to, :value
 
-  belongs_to :applies_to, :class_name => "Event"
+  belongs_to :applies_to, :class_name => "Entity"
   belongs_to :actor, :class_name => "User"
 
   validates_presence_of :applies_to_id
@@ -46,9 +46,9 @@ class Award < ActiveRecord::Base
   
   def self.rule_based_value(event)
     if p = event.parent
-      [p.rule.award_value, p.upvotes.sum('value')].reduce(&:+)
+      [p.scoring_rule.award_value, p.upvotes.sum('value')].reduce(&:+)
     else
-      [event.rule.award_value, event.upvotes.sum('value')].reduce(&:+)
+      [event.scoring_rule.award_value, event.upvotes.sum('value')].reduce(&:+)
     end
   end
 

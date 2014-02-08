@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @tags do |t|
+    json.partial! "api/v1/tags/tag", tag: t
+  end
+end

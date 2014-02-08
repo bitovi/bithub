@@ -51,6 +51,10 @@ class Tag < ActsAsTaggableOn::Tag
     Tag.group_counts.pluck(:name)
   end
 
+  def self.categories_order
+    @categories_order ||= self.categories.order("props -> 'order_on_page'").pluck(:id)
+  end
+
   ###
   def self.to_name_aliases_hash(group)
     Hash[ Tag.where(:name => @tag_groups[group]).map {|tag| [tag.name, tag.aliases || [tag.name]]} ]
@@ -66,10 +70,8 @@ class Tag < ActsAsTaggableOn::Tag
       }.merge(t.props.symbolize_keys)
     end
   end
-  ###
   
   def self.find_by_name(name)
     Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
   end
-  
 end

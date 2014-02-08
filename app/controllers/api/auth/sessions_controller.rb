@@ -1,4 +1,4 @@
-class Api::Auth::SessionsController < Api::ApiController
+class Api::Auth::SessionsController < Api::V1::BaseController
 
   def index
   end

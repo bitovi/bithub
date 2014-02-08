@@ -1,0 +1,164 @@
+<rss version="2.0"
+ 	 xmlns:dc="http://purl.org/dc/elements/1.1/"
+ 	 xmlns:atom="http://www.w3.org/2005/Atom">
+
+	<channel>
+		<title>JavaScriptMVC Forum</title>
+		<atom:link href="http://forum.javascriptmvc.com/ForumRss.do?forumGroupId=32525000000003001" rel="self" type="application/rss+xml"/>
+		<link>http://forum.javascriptmvc.com</link>
+		<description><![CDATA[A place to ask and answer all things JavaScriptMVC]]></description>
+		<pubDate>Thu, 24 Oct 2013 14:01:05 -0700</pubDate>
+
+		<item>
+			<title>Re : Stealing files from controls.</title>
+			<link>http://forum.javascriptmvc.com/topic/stealing-files-from-controls#32525000001456009</link>
+			<dc:creator>thecountofzero</dc:creator>
+			<description><![CDATA[Why are you stealing and trying to use the inherited (child) control from within the super (parent) control?<div><br></div><div>It seems like an architectural issue to me. You shouldn't be referencing a control that will extend the current control from within that current control. From the perspective of the parent, the child doesn't exist. Only the child should know about the control from which it extends.</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/stealing-files-from-controls#32525000001456009</guid>
+			<pubDate>Thu, 24 Oct 2013 07:01:05 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>can.Component inserted event fires twice on the same element</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-interted-events-fires-two-times-on-the-same-element#32525000001452078</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Well I actually can not reproduce this in fiddle. It happens in one of my controls with all the components with custom tags that I try to init: scope inits once, but inserted event fires twice.<div><br></div><div>What can be the cause of such behaviour?</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-interted-events-fires-two-times-on-the-same-element#32525000001452078</guid>
+			<pubDate>Thu, 24 Oct 2013 01:24:49 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.Component inheritance</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001452075</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Well it is not hard to implement. Do you think scope (as object) and helpers should be extended?<div><br></div><div>Just interesting why are you not a big fun of inheriting? And how would you recommend to extend component's functionality?&nbsp;</div><div><br></div><div>Embedding it in new extended component, like that:</div><div><br></div><div><ol class="code"><li><span style="font-size: 10pt;">&lt;extended-component&gt;</span></li><li><span style="font-size: 10pt;">&nbsp; &nbsp; &nbsp; &lt;component&gt;</span><span style="font-size: 10pt;">&lt;/component&gt;</span></li><li><span style="font-size: 10pt;">&lt;/extended-component&gt;</span></li></ol></div><div><br></div><div>?</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001452075</guid>
+			<pubDate>Wed, 23 Oct 2013 13:17:29 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Can component is not initialized with tempates loaded via steal</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001452073</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Well, that actually makes sense not to use simple words. Though you allow to this with <b>can.view.mustache(..)&nbsp;</b>templates.]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001452073</guid>
+			<pubDate>Wed, 23 Oct 2013 03:42:46 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Pass compute to scope via attributes</title>
+			<link>http://forum.javascriptmvc.com/topic/pass-compute-to-scope-via-attributes#32525000001452068</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[<div>Wouldn't it make sense to be able to pass can.compute made of parent scope's property like:</div><div><br></div><div><ol class="code"><li><span style="font-size: 10pt;">&lt;my-component attr="property()"/&gt;</span></li></ol></div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/pass-compute-to-scope-via-attributes#32525000001452068</guid>
+			<pubDate>Wed, 23 Oct 2013 02:33:54 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Can component is not initialized with tempates loaded via steal</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001454005</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[<div dir="auto"><div>Per some spec (html5 or web components) you are only supposed to use custom tags with dashes or colons. Every simple word is reserved.&nbsp;<br><br>Sent from my iPhone</div><div><br>On Oct 22, 2013, at 4:02 PM, JavaScriptMVC Forum &lt;<a href="mailto:noreply@zohodiscussions.com" target="_blank">noreply@zohodiscussions.com</a>&gt; wrote:<br><br></div></div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001454005</guid>
+			<pubDate>Tue, 22 Oct 2013 15:21:41 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Can component is not initialized with tempates loaded via steal</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001452059</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Well it still doesn't work with tags that DOES NOT contain dashes of colons. If I append such tag using can.view.mustache component is initialized, if I render it in steal loaded template it is not initialized; If I add dash or colon in a tag name, component will be initialized.]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-is-not-initialized-with-tempates-loaded-via-steal#32525000001452059</guid>
+			<pubDate>Tue, 22 Oct 2013 14:02:40 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.Component inheritance</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001457001</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[<div dir="ltr">It currently doesn't support inheritance.  I've never been a big fan of it in our apps. I'd accept a patch that makes it possible.</div><div><br clear="all"><div><div><br></div>
+Justin Meyer<div><div>847-924-6039</div></div></div>
+<br><br><div></div></div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001457001</guid>
+			<pubDate>Tue, 22 Oct 2013 10:01:33 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>can.Component inheritance</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001452054</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Is can.Component supposed to have some inheritance mechanics?&nbsp;<div><br></div><div>I notices that inherited (extended) component &nbsp;scope and events are just overwritten and there is no access to parent's methods/events.</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-inheritance#32525000001452054</guid>
+			<pubDate>Tue, 22 Oct 2013 09:12:48 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Support of jquery 2.0 (can.Component)</title>
+			<link>http://forum.javascriptmvc.com/topic/support-of-jquery-2-0-can-component#32525000001452048</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Can.Component "Inserted" event does not work with jquery 2.0<div><br></div><div><a href="http://jsfiddle.net/xKc3H/231/">http://jsfiddle.net/xKc3H/231/</a></div><div><br></div><div>When do you plan to support jquery 2.0?</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/support-of-jquery-2-0-can-component#32525000001452048</guid>
+			<pubDate>Tue, 22 Oct 2013 05:14:50 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.Component (control) methods</title>
+			<link>http://forum.javascriptmvc.com/topic/can-component-control-methods#32525000001452045</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Ok, I got it, thanks for the explanation =)<div>It is very interesting point about "who owns the state".</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-component-control-methods#32525000001452045</guid>
+			<pubDate>Tue, 22 Oct 2013 00:23:11 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.com can.Component docs issue</title>
+			<link>http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001452043</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[<div><a href="http://postimg.org/image/pds4rtdph/">http://postimg.org/image/pds4rtdph/</a></div><div>It seems that for tabs widget there should be other code no?</div><br>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001452043</guid>
+			<pubDate>Tue, 22 Oct 2013 00:20:40 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.com can.Component docs issue</title>
+			<link>http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001456007</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[To be specific, the tree-combo and tabs demos on that page show up as a tree-combo and tabs widget.]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001456007</guid>
+			<pubDate>Mon, 21 Oct 2013 16:04:37 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : can.com can.Component docs issue</title>
+			<link>http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001456005</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[that doesn't show up for me. &nbsp;What browser? &nbsp;Cache cleared?]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/can-com-can-component-docs-issue#32525000001456005</guid>
+			<pubDate>Mon, 21 Oct 2013 16:03:24 -0700</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Generated production files are empty!</title>
+			<link>http://forum.javascriptmvc.com/topic/generated-production-files-are-empty#32525000001456003</link>
+			<dc:creator>tony</dc:creator>
+			<description><![CDATA[That's what I'm finding so strange here. I've removed the absolute paths and steal finds the files just fine. At least a) it doesn't report a problem and b) I can see requests to my app server for the files that are returned properly.<div><br></div><div>Still, the contents of the included files just aren't there in the generated production.js file.</div><div><br></div><div>I'm at the point of tracing/debugging steal itself, but I can't find the place where the code is actually written to the generated file. Could someone point me to that spot? (Or, if you have an idea of where my problem lies, that'd be even better!)</div>]]></description>
+			<category>StealJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/generated-production-files-are-empty#32525000001456003</guid>
+			<pubDate>Mon, 21 Oct 2013 09:44:00 -0700</pubDate>
+		</item>
+	</channel>
+</rss>
