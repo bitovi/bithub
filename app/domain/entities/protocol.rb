@@ -54,6 +54,10 @@ module Entities
       Entity.where("props -> 'origin_author_id' = ?", uid)
     end
 
+    def nice_name
+      self.class.name.gsub(/^Entities::.*::/, '')
+    end
+
     def feed_name
       self.class.name.match(/::(.+)::/).to_a[1]
     end
