@@ -30,26 +30,52 @@ set :ci_repository, "bitovi/bithub"
 
 namespace :deploy do
 
-  desc "Zero-downtime restart of Unicorn"
-  task :restart, :except => { :no_release => true } do
-    run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub-listener restart"
+  # desc "Zero-downtime restart of Unicorn"
+  # task :restart, :except => { :no_release => true } do
+  #   run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
+  #   run "sudo /usr/bin/service bithub-listener restart"
 
-    timeout = 10
-    puts "Waiting for #{timeout} seconds before killing old unicorn master processes"
-    sleep timeout
+  #   timeout = 10
+  #   puts "Waiting for #{timeout} seconds before killing old unicorn master processes"
+  #   sleep timeout
 
-    run "ps aux |grep \"[m]aster (old)\"" do |channel, stream, data|
-      data.split(/\r?\n/).each do |row|
-        attrs = row.split()
-        puts "Killing old unicorn_rails master with PID #{attrs[1]}"
-        run "kill #{attrs[1]}"
-      end
-    end
+  #   run "ps aux |grep \"[m]aster (old)\"" do |channel, stream, data|
+  #     data.split(/\r?\n/).each do |row|
+  #       attrs = row.split()
+  #       puts "Killing old unicorn_rails master with PID #{attrs[1]}"
+  #       run "kill #{attrs[1]}"
+  #     end
+  #   end
+  # end
+
+  ### Listener
+
+  desc "Start listener"
+  task :start_listener, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-listener start"
   end
 
+  desc "Stop listener"
+  task :stop_listener, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-listener stop"
+  end
+
+  ### Crawler
+
+  desc "Start crawler"
+  task :start_crawler, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-crawler start"
+  end
+
+  desc "Stop crawler"
+  task :stop_crawler, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-crawler stop"
+  end
+
+  ### Web service - unicorn
+
   desc "Start unicorn"
-  task :start, :except => { :no_release => true } do
+  task :start_web, :except => { :no_release => true } do
     envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
     env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
     run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
@@ -57,10 +83,36 @@ namespace :deploy do
   end
 
   desc "Stop unicorn"
-  task :stop, :except => { :no_release => true } do
+  task :stop_web, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
     run "sudo /usr/bin/service bithub stop"
   end
+
+  ### IRC bot
+
+  desc "Start IRC bot"
+  task :start_ircbot, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-irc_bot stop"
+  end
+
+  desc "Stop IRC bot"
+  task :stop_ircbot, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-irc_bot stop"
+  end
+
+  ### Live service
+
+  desc "Start live service"
+  task :start_liveservice, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-liveservice stop"
+  end
+
+  desc "Stop live service"
+  task :stop_liveservice, :except => { :no_release => true } do
+    run "sudo /usr/bin/service bithub-liveservice stop"
+  end
+
+  ### Other tasks
 
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
@@ -74,8 +126,8 @@ namespace :deploy do
 
 end
 
-before('deploy', 'travis:verify')
+#before('deploy', 'travis:verify')
 before('deploy:restart', 'deploy:recreate_upstart_conf')
 before('deploy:restart', 'deploy:symlink_uploads')
 
-after('deploy', 'db:backup')
+#after('deploy', 'db:backup')
