@@ -11,6 +11,11 @@ def latest_dataset
   ActiveSupport::JSON.decode(File.read(Dir.glob("spec/domain/support/*.json").last))
 end
 
+def action_or_comment?(x)
+  x['type'] == 'IssueCommentEvent' || (x['type'] == 'IssuesEvent' && x['payload']['action'] != 'opened')
+end
+
+
 describe Dispatcher do
 
   describe "#dispatch" do
@@ -22,6 +27,7 @@ describe Dispatcher do
       @issue1 = Entity.feed('github').type('issue').number(1).first
       @issue2 = Entity.feed('github').type('issue').number(2).first
       @pull_req = Entity.feed('github').type('pull_request').number(3).first
+      @push = Entity.feed('github').type('push').first
     end
 
     after :all do
@@ -34,15 +40,15 @@ describe Dispatcher do
     end
 
     it "testcase - state" do
-      expect(@issue1.state).to eq "closed"
+      expect(@issue1.state).to eq "open"
       expect(@issue2.state).to eq "open"
-      expect(@pull_req.state).to eq "open"
+      expect(@pull_req.state).to eq "closed"
     end
 
     it "testcase - children" do
-      expect(@issue1.children.count).to eq 2
-      expect(@issue2.children.count).to eq 3
-      expect(@pull_req.children.count).to eq 5
+      expect(@issue1.children.count).to eq 4
+      expect(@issue2.children.count).to eq 4
+      expect(@pull_req.children.count).to eq 7
     end
     
     it "testcase - labels" do
@@ -55,6 +61,20 @@ describe Dispatcher do
       expect(@issue2.title).to eq "Sa labelom na pocetku, sa izmjenjenim tajtlom"
     end
 
-  end
+    it "testcase - references from body" do
+      expect(@issue1.referenced_from).to eq [@issue2]
+      expect(@issue1.references_to).to eq [@pull_req]
+    end
 
+    it "testcase - pushes and commits" do
+      expect(@push.children.count).to eq 3
+    end
+
+    it "testcase - references from commits" do
+    end
+
+    it "testcase - multi-level parentship" do
+    end
+
+  end
 end
