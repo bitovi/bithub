@@ -64,6 +64,10 @@ module Events
     def type_name
       @type_name ||= module_and_class_names[1]
     end
+    
+    def nice_name
+      self.class.name.gsub(/^Events::.*::/, '')
+    end
 
     def origin_ts
       origin_timestamp
@@ -71,6 +75,14 @@ module Events
     
     def origin_timestamp_iso
       origin_timestamp.iso8601
+    end
+
+    def referenced_issue_numbers 
+      []
+    end
+
+    def referenced_issue_numbers_csv
+      referenced_issue_numbers.join(',')
     end
     
     def module_and_class_names

@@ -46,9 +46,27 @@ module Entities
     end
 
     def associate_references
-      if self.respond_to? :find_references
-        @instance.references_to += find_references
+
+      if self.respond_to? :find_references_from_self
+        if (refs = find_references_from_self)
+          if @instance.parent
+            @instance.parent.references_to += refs
+          else
+            @instance.references_to += refs
+          end
+        end
       end
+
+      if self.respond_to? :find_references_to_self
+        if (refs = find_references_to_self)
+          if refs.reduce(false) {|acc, p| acc || not(p.parent.nil?)}
+            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }
+          else
+            @instance.referenced_from += refs
+          end
+        end
+      end
+
       if self.respond_to? :build_references
         @instance.references_to += build_references
       end
