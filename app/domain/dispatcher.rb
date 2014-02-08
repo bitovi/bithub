@@ -16,9 +16,10 @@ class Dispatcher
   def dispatch(response, hint=nil)
     event = Events::Dispatcher.dispatch(response, hint)
     entity = Entities::Dispatcher.dispatch(event)
-    
+
     @logger.debug "MAPPING: #{event.class.name} -> #{entity.class.name}"
-    return nil if event.nil? || entity.nil?b
+    
+    return nil if event.nil? || entity.nil?
 
     begin
       ActiveRecord::Base.transaction do

@@ -54,7 +54,7 @@ module Accounts
         Rails.logger.error e.message
       end
 
-      identity.reload.user.collect_authored_events.reward_if_eligible
+      identity.reload.user.collect_authored_entities.reward_if_eligible
       user
     end
 
@@ -63,7 +63,7 @@ module Accounts
         current_user.update_blank_oauth_attrs!({name: name, email: email})
         current_user.award_points_for_linking(identity.provider)
         current_user.link_ident!(identity)
-        current_user.reload.collect_authored_events.reward_if_eligible
+        current_user.reload.collect_authored_entities.reward_if_eligible
       end
 
       begin
@@ -90,8 +90,8 @@ module Accounts
       rs = user_api.watched_repos(username)
 
       remote_repo_watches = rs.map{|r| (r[:full_name] || r['full_name'])} & RELEVANT_REPO_NAMES
-      present_repo_watches = Entity.tagged_with(%w(github watch_event))
-      .event_by_origin_uid(identity.uid.to_s)
+      present_repo_watches = Entity.tagged_with(%w(github watch))
+      .entity_by_origin_uid(identity.uid.to_s)
       .map {|e| e.source_data.andand['repo'].andand['full_name'] || e.props.andand['repo_name']}
       .uniq
 
@@ -106,8 +106,8 @@ module Accounts
       fs = user_api.followed_acct_ids(identity.uid)
 
       remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}
-      present_friend_ids = Event.tagged_with(%w(twitter follow_event))
-      .event_by_origin_uid(identity.uid.to_s)
+      present_friend_ids = Entity.tagged_with(%w(twitter follow))
+      .entity_by_origin_uid(identity.uid.to_s)
       .map{|e| e.source_data.andand['target'].andand['id']}
       .uniq
 
