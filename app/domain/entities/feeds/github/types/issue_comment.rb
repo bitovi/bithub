@@ -15,7 +15,7 @@ module Entities
       end
 
       def find_parent
-        if @payload.repo_name && @payload.number
+        if @payload.repo_name && @payload.issue_or_pull_req_number
           matches = relationships[:upstream].inject([]) do |acc, rl|
             acc << rl.new(@payload).find_by_repo_name_and_number.first
           end
@@ -28,7 +28,7 @@ module Entities
       # Builder
       def build
         Entity.new({
-          title: "commented on issue ##{@payload.number}",
+          title: "Comment on issue ##{@payload.issue_or_pull_req_number}",
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
@@ -38,7 +38,8 @@ module Entities
             origin_author_name: @payload.actor_login,
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
-            number: @payload.number,
+            number: @payload.issue_or_pull_req_number,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
       end
@@ -47,6 +48,13 @@ module Entities
         @instance.title = @payload.title
         @instance.body = @payload.body
         super
+      end
+
+      def update_parent
+        @instance.parent.title = @payload.issue_or_pull_req_title
+        @instance.parent.body = @payload.issue_or_pull_req_body
+        @instance.parent.props[:state] = @payload.issue_or_pull_req_state
+        @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
       end
 
       # Finders
@@ -68,6 +76,10 @@ module Entities
 
       def relationships
         Entities::Github::IssueComment::Relationships
+      end
+
+      def nice_name
+        self.class.name.gsub('Entities::Github','')
       end
     end
 

@@ -1,0 +1,80 @@
+require 'domain/spec_helper'
+require File.expand_path(File.join(PROJECT_ROOT, "config/environment"))
+
+require 'dispatcher'
+
+def dataset(x)
+  ActiveSupport::JSON.decode(File.read("spec/domain/support/interaction#{x}.json"))
+end
+
+def latest_dataset
+  ActiveSupport::JSON.decode(File.read(Dir.glob("spec/domain/support/*.json").last))
+end
+
+def action_or_comment?(x)
+  x['type'] == 'IssueCommentEvent' || (x['type'] == 'IssuesEvent' && x['payload']['action'] != 'opened')
+end
+
+
+describe Dispatcher do
+
+  describe "#dispatch" do
+
+    before :all do
+      latest_dataset.each do |event_data|
+        Dispatcher.new.dispatch(event_data, 'github')
+      end
+      @issue1 = Entity.feed('github').type('issue').number(1).first
+      @issue2 = Entity.feed('github').type('issue').number(2).first
+      @pull_req = Entity.feed('github').type('pull_request').number(3).first
+      @push = Entity.feed('github').type('push').first
+    end
+
+    after :all do
+      ActiveRecord::Base.connection.execute("delete from events; delete from entities;")
+    end
+
+    it "testcase - existence" do
+      expect(Entity.count).to eq latest_dataset.size
+      expect(Event.count).to eq latest_dataset.size
+    end
+
+    it "testcase - state" do
+      expect(@issue1.state).to eq "open"
+      expect(@issue2.state).to eq "open"
+      expect(@pull_req.state).to eq "closed"
+    end
+
+    it "testcase - children" do
+      expect(@issue1.children.count).to eq 4
+      expect(@issue2.children.count).to eq 4
+      expect(@pull_req.children.count).to eq 7
+    end
+    
+    it "testcase - labels" do
+      expect(@issue1.label_names).to eq "bug"
+      expect(@issue2.label_names).to eq "enhancement,question"
+      expect(@pull_req.label_names).to eq "invalid"
+    end
+
+    it "testcase - titles and bodies" do
+      expect(@issue2.title).to eq "Sa labelom na pocetku, sa izmjenjenim tajtlom"
+    end
+
+    it "testcase - references from body" do
+      expect(@issue1.referenced_from).to eq [@issue2]
+      expect(@issue1.references_to).to eq [@pull_req]
+    end
+
+    it "testcase - pushes and commits" do
+      expect(@push.children.count).to eq 3
+    end
+
+    it "testcase - references from commits" do
+    end
+
+    it "testcase - multi-level parentship" do
+    end
+
+  end
+end

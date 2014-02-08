@@ -25,7 +25,6 @@ after_fork do |server, worker|
   Signal.trap('TERM', &stop)
   Signal.trap('INT', &stop)
 
-  # Replace with MongoDB or whatever
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.establish_connection
     Rails.logger.info('Connected to ActiveRecord')

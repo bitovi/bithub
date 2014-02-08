@@ -18,7 +18,6 @@ module Events
     class Public < Protocol; end
     class PullRequest < Protocol; end
     class PullRequestReviewComment < Protocol; end
-    class PullRequestReviewComment < Protocol; end
     class Push < Protocol; end
     class TeamAdd < Protocol; end
     class Watch < Protocol; end
@@ -40,7 +39,7 @@ module Events
 
     def self.extract_type_name(source_data)
       if github_event?(source_data)
-        source_data['type'].camel_case
+        (source_data[:type] || source_data['type']).camel_case
       elsif github_issue?(source_data)
         'CustomIssue'
       else

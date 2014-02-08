@@ -1,5 +1,8 @@
 require 'domain/spec_helper'
 
+require 'events/processor'
+require 'events/protocol'
+
 def load_response(path)
   loaders = {
     json: Proc.new {|p| YAML::load_file(p)},

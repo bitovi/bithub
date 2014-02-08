@@ -23,11 +23,11 @@ issue_comment_def3 = {
   referenced_issue_numbers: ['100']
 }
 
-describe Entities::Github::Issue do  
+describe Entities::Github::Issue do
   describe "#build" do
     it "instances new Github::Issue entity" do
       i = build_issue(); i.determine.normalize.persist!
-      
+
       expect(i.instance.title).to be_a(String)
       expect(i.instance.body).to be_a(String)
       expect(i.instance.url).to be_a(String)
@@ -35,7 +35,7 @@ describe Entities::Github::Issue do
       expect(i.instance.type_name).to eq('issue')
       expect(i.instance.props['repo_name']).to be_a(String)
       expect(i.instance.props['number']).not_to be_empty
-      expect(i.instance.props['origin_id']).not_to be_empty
+      #expect(i.instance.props['origin_id']).not_to be_empty
       expect(i.instance.props['label_names']).to be_a(String)
       expect(i.instance.props['state']).to be_a(String)
     end
@@ -51,7 +51,7 @@ describe Entities::Github::Issue do
       expect(i.find_children.length).to eq(2)
       expect(i2.find_children.length).to eq(0)
     end
-  end  
+  end
 
   describe "reference building" do
     it "checks for entities contain references to exact issue" do
@@ -63,14 +63,14 @@ describe Entities::Github::Issue do
       expect(i.instance.referenced_from.length).to eq(5)
       expect(i2.instance.referenced_from.length).to eq(2)
     end
-  end  
+  end
 end
 
 describe Entities::Github::IssueComment do
   describe "#build" do
     it "builds a new Github::IssueComment entity" do
       ic = build_issue_comment(); ic.determine.normalize.persist!
-      
+
       expect(ic.instance.title).to be_a(String)
       expect(ic.instance.body).to be_a(String)
       expect(ic.instance.url).to be_a(String)
@@ -78,7 +78,7 @@ describe Entities::Github::IssueComment do
       expect(ic.instance.type_name).to eq('issue_comment')
       expect(ic.instance.props['repo_name']).to be_a(String)
       expect(ic.instance.props['number']).not_to be_empty
-      expect(ic.instance.props['origin_id']).not_to be_empty
+      #expect(ic.instance.props['origin_id']).not_to be_empty
     end
   end
 
@@ -102,16 +102,16 @@ describe Entities::Github::PullRequest do
 
       expect(pr.instance.title).to be_a(String)
       expect(pr.instance.body).to be_a(String)
-      expect(pr.instance.url).to be_a(String)          
+      expect(pr.instance.url).to be_a(String)
       expect(pr.instance.feed_name).to eq('github')
       expect(pr.instance.type_name).to eq('pull_request')
       expect(pr.instance.props['repo_name']).to be_a(String)
       expect(pr.instance.props['number']).not_to be_empty
-      expect(pr.instance.props['origin_id']).not_to be_empty
+      #expect(pr.instance.props['origin_id']).not_to be_empty
       expect(pr.instance.props['state']).to be_a(String)
-      expect(pr.instance.props['action']).to be_a(String)
+      #expect(pr.instance.props['action']).to be_a(String)
     end
-  end  
+  end
 end
 
 describe Entities::Github::PullRequest

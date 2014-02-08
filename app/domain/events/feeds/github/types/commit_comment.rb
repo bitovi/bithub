@@ -13,6 +13,10 @@ module Events
         payload.andand[:comment].andand[:commit_id]
       end
 
+      def origin_id
+        comment_id
+      end
+
       def content_digest
         seed = "#{actor_login}#{repo_name}#{commit_id}#{comment_id}"
         calc_digest(seed)

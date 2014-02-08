@@ -26,16 +26,25 @@ module Entities
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
 
         if @payload.actor
-          built[:origin_author_id] = @payload.actor_id
-          built[:origin_author_name] = @payload.actor_login
-          built[:origin_author_avatar_url] = @payload.actor_avatar_url
+          built.props[:origin_author_id] = @payload.actor_id
+          built.props[:origin_author_name] = @payload.actor_login
+          built.props[:origin_author_avatar_url] = @payload.actor_avatar_url
         end
 
         built
+      end
+
+      def find_children
+        if @payload.repo_name && @payload.number
+          relationships[:downstream].reduce([]) do |acc, rl|
+            acc += rl.new(@payload).find_by_repo_name_and_number.all
+          end
+        end
       end
 
       def update
@@ -46,18 +55,18 @@ module Entities
         super
       end
 
-      def update_from_child
-        #@instance.title = @payload.issue.title
-        #@instance.body = @payload.issue.body
-        #@instance.props[:label_names] = @payload.issue.labels
-      end
+      def update_from_children
+        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+        most_recent_child.props.symbolize_keys!
+        most_recent_child.source_data.symbolize_keys!
 
-      def find_children
-        if @payload.repo_name && @payload.number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.all
-          end
-        end
+        data = most_recent_child.last_modified_by.source_data
+        event = Events::Dispatcher.dispatch(data, 'github')
+
+        @instance.title = event.title if event.respond_to? :title
+        @instance.body = event.body if event.respond_to? :body
+        @instance.props[:state] = event.state
+        @instance.props[:label_names] = event.label_names
       end
 
       # Finders

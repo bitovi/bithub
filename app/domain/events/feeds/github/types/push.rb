@@ -7,7 +7,11 @@ module Events
       def push_id
         payload.andand[:push_id]
       end
-      
+
+      def origin_id
+        push_id
+      end
+
       def commits
         payload.andand[:commits]
       end

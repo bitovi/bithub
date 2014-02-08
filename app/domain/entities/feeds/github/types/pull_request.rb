@@ -15,28 +15,28 @@ module Entities
       end
 
       def build
-        Entity.new({
-          title: "Pull request ##{@payload.number} #{@payload.action}",
+        built = Entity.new({
+          title: @payload.title,
           body: @payload.body,
           url: @payload.html_url,
           origin_ts: @payload.origin_ts,
           origin_id: @payload.pull_request_id.to_s,
           props: {
-            origin_author_id: @payload.actor_id,
-            origin_author_name: @payload.actor_login,
-            origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.number,
+            label_names: @payload.label_names,
             state: @payload.state,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
-      end
 
-      def update
-        @instance.title = @payload.title
-        @instance.body = @payload.body
-        @instance.props[:state] = @payload.state
-        super
+        if @payload.actor
+          built.props[:origin_author_id] = @payload.actor_id
+          built.props[:origin_author_name] = @payload.actor_login
+          built.props[:origin_author_avatar_url] = @payload.actor_avatar_url
+        end
+
+        built
       end
 
       def find_children
@@ -44,6 +44,29 @@ module Entities
           relationships[:downstream].reduce([]) do |acc, rl|
             acc += rl.new(@payload).find_by_repo_name_and_number.all
           end
+        end
+      end
+
+      def update
+        @instance.title = @payload.title
+        @instance.body = @payload.body
+        @instance.props[:label_names] = @payload.label_names
+        @instance.props[:state] = @payload.state
+        super
+      end
+
+      def update_from_children
+        if most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+          most_recent_child.props.symbolize_keys!
+          most_recent_child.source_data.symbolize_keys!
+
+          data = most_recent_child.last_modified_by.source_data
+          event = Events::Dispatcher.dispatch(data, 'github')
+
+          @instance.title = event.title if event.respond_to? :title
+          @instance.body = event.body if event.respond_to? :body
+          @instance.props[:state] = event.state
+          @instance.props[:label_names] = event.label_names
         end
       end
 

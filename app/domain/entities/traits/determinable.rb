@@ -7,13 +7,13 @@ module Entities
     def determine
       methods = collect_methods(/determine_.*/)
 
-      # we need to execute :determine_tags before the others 
+      # we need to execute :determine_tags before the others
       methods.unshift(:determine_tags) if methods.delete(:determine_tags)
-      
+
       methods.each {|m| self.send(m)}
       self
     end
-    
+
     def determine_tags
       taggify_methods = collect_methods(/taggify_.*/)
 
@@ -22,11 +22,11 @@ module Entities
         .flatten
         .compact
         .map {|t| t.snake_case}
-      
-      @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?      
+
+      @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     end
 
-    
+
     def determine_category
       if (category = CategoryDeterminationRule.best_match(@instance.tag_list))
         @instance.tag_list.add category.snake_case
@@ -39,10 +39,10 @@ module Entities
     end
 
     def determine_author
-      uid = @instance.props[:origin_author_id] 
+      uid = @instance.props[:origin_author_id]
       if f = @instance.props[:origin_author_feed] # Coming from Bithub
         ident = Identity.find_or_create_with_provider_and_uid(f, uid)
-      else f = @instance.props[:feed] # Coming from crawler
+      else f = feed_name.snake_case # Coming from crawler
         ident = Identity.find_by_provider_and_uid(f, uid)
       end
 
@@ -60,7 +60,7 @@ module Entities
     def taggify_feed_and_type_name
       [feed_name.snake_case, type_name.snake_case]
     end
-    
+
     def taggify_content
       input = ATTRS_FOR_TAGGING.map {|attr| @instance.send(attr)}.compact
       Tagger.new(Tag.projects).find_tags(input)
@@ -78,5 +78,5 @@ module Entities
         .map {|t| t.name}
     end
 
-  end  
+  end
 end

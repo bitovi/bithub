@@ -26,10 +26,12 @@ module Entities
     include Groupable
     include Normalizable
     include Persistable
+    include Loggable
     
     attr_reader :instance
 
     def initialize(payload)
+      initialize_logger("DEBUG")
       @payload = payload
     end
 
@@ -50,6 +52,10 @@ module Entities
     
     def find_by_origin_uid(uid)
       Entity.where("props -> 'origin_author_id' = ?", uid)
+    end
+
+    def nice_name
+      self.class.name.gsub(/^Entities::.*::/, '')
     end
 
     def feed_name

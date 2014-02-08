@@ -15,9 +15,15 @@ module Entities
           @instance.children += c.is_a?(Array) ? c : [c]
         end
       end
+
       if self.respond_to? :build_children
         @instance.children += build_children
       end
+
+      if @instance.children
+        update_from_children if self.respond_to? :update_from_children
+      end
+
       self
     end
 
@@ -27,16 +33,40 @@ module Entities
           @instance.parent = p
         end
       end
+
       if self.respond_to? :build_parent
         @instance.parent = build_parent
       end
+
+      if @instance.parent
+        update_parent if self.respond_to? :update_parent
+      end
+
       self
     end
 
     def associate_references
-      if self.respond_to? :find_references
-        @instance.references_to += find_references
+
+      if self.respond_to? :find_references_from_self
+        if (refs = find_references_from_self)
+          if @instance.parent
+            @instance.parent.references_to += refs
+          else
+            @instance.references_to += refs
+          end
+        end
       end
+
+      if self.respond_to? :find_references_to_self
+        if (refs = find_references_to_self)
+          if refs.reduce(false) {|acc, p| acc || not(p.parent.nil?)}
+            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }
+          else
+            @instance.referenced_from += refs
+          end
+        end
+      end
+
       if self.respond_to? :build_references
         @instance.references_to += build_references
       end
