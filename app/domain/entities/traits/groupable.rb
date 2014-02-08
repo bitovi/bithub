@@ -12,7 +12,7 @@ module Entities
     def adopt
       if self.respond_to? :find_children
         if (c = find_children)
-          @instance.children += c
+          @instance.children += c.is_a?(Array) ? c : [c]
         end
       end
       if self.respond_to? :build_children

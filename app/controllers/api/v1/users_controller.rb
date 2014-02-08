@@ -94,6 +94,6 @@ class Api::V1::UsersController < Api::V1::BaseController
   end
 
   def user_apis
-    @user_apis ||= ThirdPartyUserInformer.new
+    @user_apis ||= Accounts::ThirdPartyUserInformer.new
   end
 end

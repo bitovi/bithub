@@ -3,7 +3,18 @@ module Events
     class Post < Protocol
 
       def content_digest
-        calc_digest(title.to_s + project.to_s + category.to_s + origin_ts.strftime('%Y-%m-%d'))
+        calc_digest(
+          title.to_s + 
+          project.to_s + 
+          category.to_s + 
+          body.to_s +
+          image.to_s +
+          location.to_s +
+          url.to_s +
+          origin_author_id.to_s +
+          tags.sort.join(',') +
+          scheduled_for.to_s
+        )
       end
 
       def id
@@ -43,7 +54,12 @@ module Events
       end
 
       def origin_ts
-        Time.strptime(source_data.andand[:origin_ts], '%Y-%m-%dT%H:%M:%S%z').utc
+        #Rails.logger.info "TIME ORIGIN TS -------------------- #{source_data.andand[:origin_ts]} source_data.andand[:origin_ts].class"
+        if source_data.andand[:origin_ts].is_a? String
+          Time.strptime(source_data.andand[:origin_ts], '%Y-%m-%dT%H:%M:%S%z').utc
+        else
+          source_data.andand[:origin_ts]
+        end
       end
 
       def origin_author_id
@@ -56,6 +72,10 @@ module Events
 
       def origin_author_feed
         source_data.andand[:origin_author_feed]
+      end
+
+      def tags
+        source_data.andand[:tags] || []
       end
 
     end
