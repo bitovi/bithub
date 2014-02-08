@@ -18,7 +18,7 @@ class Dispatcher
     entity = Entities::Dispatcher.dispatch(event)
 
     return nil if event.nil? || entity.nil?
-    # @logger.info "MAPPING: #{event.class.name} -> #{entity.class.name}"
+    @logger.info "MAPPING: #{event.class.name} -> #{entity.class.name}"
 
     begin
       ActiveRecord::Base.transaction do
