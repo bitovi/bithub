@@ -6,8 +6,7 @@ describe Events::Github do
     it_should_behave_like "every event"
 
     it "has common github event attributes" do
-      expect(payload.origin_id).to be # String or Integer
-      expect(payload.origin_event_id).to be # String or Integer
+      expect(payload.event_id).to be # String or Integer
       expect(payload.actor).to be_a(Hash)
       expect(payload.repo).to be_a(Hash)
       expect(payload.repo_name).to be_a(String)
@@ -43,8 +42,7 @@ describe Events::Github do
 
   shared_examples_for "every github issues or pull requests event" do
     it "has refs attributes" do
-      expect(payload.title).to be_a(String)
-      expect(payload.body).to be_a(String)
+      #expect(payload.body).to be_a(String)
       expect(payload.html_url).to be_a(String)
       expect(payload.number).to be_a(Integer)
       expect(payload.state).to be_a(String)
