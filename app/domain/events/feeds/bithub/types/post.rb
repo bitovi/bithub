@@ -76,6 +76,10 @@ module Events
 
       def tags
         source_data.andand[:tags] || []
+      end 
+
+      def local_author_id
+        source_data.andand[:local_author_id]
       end
 
     end

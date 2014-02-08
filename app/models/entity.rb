@@ -85,7 +85,7 @@ class Entity < ActiveRecord::Base
   end
 
   def author=(user)
-    self.ownerships << Ownership.new(owner: user, ownership_type: :author).determine_value
+    self.ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
   end
 
   def organizer=(user)
@@ -97,11 +97,15 @@ class Entity < ActiveRecord::Base
   end
 
   def author
-    self.ownerships.select{|a| a.ownership_type == :author}.first.andand.owner
+    self.ownerships.select{|a| a.is_authorship? }.first.andand.owner
   end
 
   def organizer
-    self.ownerships.select{|a| a.ownership_type == :organizer}.first.andand.owner
+    self.ownerships.select{|a| a.is_organizership? }.first.andand.owner
+  end
+
+  def host
+    self.ownerships.select{|a| a.is_hostship? }.first.andand.owner
   end
 
   def state
@@ -110,10 +114,6 @@ class Entity < ActiveRecord::Base
 
   def label_names
     self.props.andand["label_names"]
-  end
-
-  def host
-    self.ownerships.select{|a| a.ownership_type == :host}.first.andand.owner
   end
 
   def children_with_includes
@@ -166,14 +166,14 @@ class Entity < ActiveRecord::Base
 
   def increase_score_in_author
     if self.author
-      self.author.total_score += self.rule.authorship_value
+      self.author.total_score += self.scoring_rule.authorship_value
       self.author.save!
     end
   end
 
   def decrease_score_in_author
     if self.author
-      self.author.total_score -= self.rule.authorship_value
+      self.author.total_score -= self.scoring_rule.authorship_value
       self.author.save!
     end
   end

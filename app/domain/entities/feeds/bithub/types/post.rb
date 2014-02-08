@@ -13,8 +13,8 @@ module Entities
 
           # handle post-as
         if !current_user.has_role?(:admin) || !posting_for_another_user
-          source_data[:origin_author_id]   = current_user.id
-          source_data[:origin_author_feed] = 'bithub'
+          source_data[:local_author_id] = current_user.id
+          #source_data[:origin_author_feed] = 'bithub'
         end
 
         Rails.logger.info "-------------------------------------------"
@@ -38,7 +38,7 @@ module Entities
       end
 
       def build
-        Entity.new({
+        entity = Entity.new({
           title: @payload.title,
           body: @payload.body,
           url: @payload.url,
@@ -54,6 +54,22 @@ module Entities
             origin_author_name: @payload.origin_author_name
           }
         })
+
+        
+
+        entity
+      end
+
+      def determine_author
+        unless @payload.local_author_id.nil?
+          @instance.author = User.find(@payload.local_author_id)
+        else
+          ident = Identity.find_or_create_with_provider_and_uid(
+            @instance.props[:origin_author_feed],
+            @instance.props[:origin_author_id]
+          )
+          @instance.author = ident.user if ident && ident.user
+        end
       end
 
       def update
