@@ -30,90 +30,6 @@ set :ci_repository, "bitovi/bithub"
 
 namespace :deploy do
 
-  # desc "Zero-downtime restart of Unicorn"
-  # task :restart, :except => { :no_release => true } do
-  #   run "kill -s USR2 `cat #{shared_path}/pids/unicorn.pid`"
-  #   run "sudo /usr/bin/service bithub-listener restart"
-
-  #   timeout = 10
-  #   puts "Waiting for #{timeout} seconds before killing old unicorn master processes"
-  #   sleep timeout
-
-  #   run "ps aux |grep \"[m]aster (old)\"" do |channel, stream, data|
-  #     data.split(/\r?\n/).each do |row|
-  #       attrs = row.split()
-  #       puts "Killing old unicorn_rails master with PID #{attrs[1]}"
-  #       run "kill #{attrs[1]}"
-  #     end
-  #   end
-  # end
-
-  ### Listener
-
-  desc "Start listener"
-  task :start_listener, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-listener start"
-  end
-
-  desc "Stop listener"
-  task :stop_listener, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-listener stop"
-  end
-
-  ### Crawler
-
-  desc "Start crawler"
-  task :start_crawler, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-crawler start"
-  end
-
-  desc "Stop crawler"
-  task :stop_crawler, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-crawler stop"
-  end
-
-  ### Web service - unicorn
-
-  desc "Start unicorn"
-  task :start_web, :except => { :no_release => true } do
-    envs = capture "cat #{current_path}/.env_#{app_env} | egrep '^[A-Z]'"
-    env_hash = Hash[envs.lines.map {|l| l.strip.split('=')}]
-    run "cd #{current_path}; ./bin/unicorn_rails -D -c config/unicorn.rb", { env: env_hash }
-    run "sudo /usr/bin/service bithub start"
-  end
-
-  desc "Stop unicorn"
-  task :stop_web, :except => { :no_release => true } do
-    run "kill -s QUIT `cat #{shared_path}/pids/unicorn.pid`"
-    run "sudo /usr/bin/service bithub stop"
-  end
-
-  ### IRC bot
-
-  desc "Start IRC bot"
-  task :start_ircbot, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-irc_bot stop"
-  end
-
-  desc "Stop IRC bot"
-  task :stop_ircbot, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-irc_bot stop"
-  end
-
-  ### Live service
-
-  desc "Start live service"
-  task :start_liveservice, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-liveservice stop"
-  end
-
-  desc "Stop live service"
-  task :stop_liveservice, :except => { :no_release => true } do
-    run "sudo /usr/bin/service bithub-liveservice stop"
-  end
-
-  ### Other tasks
-
   desc "Recreate Upstart configuration"
   task(:recreate_upstart_conf) do
     run "#{current_path}/bin/foreman export --app bithub --log /var/log/bithub/web --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
@@ -124,6 +40,65 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
   end
 
+  namespace :listener do
+    desc "Start listener"
+    task :start, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-listener start"
+    end
+
+    desc "Stop listener"
+    task :stop, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-listener stop"
+    end
+  end
+
+  namespace :crawler do
+    desc "Start crawler"
+    task :start, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-crawler start"
+    end
+
+    desc "Stop crawler"
+    task :stop, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-crawler stop"
+    end
+  end
+
+  namespace :web do
+    desc "Start unicorn"
+    task :start, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-web start"
+    end
+
+    desc "Stop unicorn"
+    task :stop, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-web stop"
+    end
+  end
+
+  namespace :ircbot do
+    desc "Start IRC bot"
+    task :start, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-irc_bot stop"
+    end
+
+    desc "Stop IRC bot"
+    task :stop, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-irc_bot stop"
+    end
+  end
+
+  namespace :liveservice do
+    desc "Start live service"
+    task :start, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-liveservice stop"
+    end
+
+    desc "Stop live service"
+    task :stop, :except => { :no_release => true } do
+      run "sudo /usr/bin/service bithub-liveservice stop"
+    end
+  end
 end
 
 #before('deploy', 'travis:verify')
