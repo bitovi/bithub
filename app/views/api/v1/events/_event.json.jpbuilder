@@ -1,0 +1,25 @@
+json.cache! ("v1" + custom_cache_key(event)) do
+	json.(event, :id, :title, :body, :url, :source_body, :parent_id, :origin_ts, :thread_updated_ts, :created_at, :updated_at)
+
+	json.feed event.feed_name
+	json.type event.type_name
+	json.category event.category_name
+	json.tags event.cached_tags
+
+	json.upvotes event.upvotes
+
+	json.author event.author
+	json.actor event.actor
+	json.props event.props(@ev_relations.thread_awarded(event), @ev_relations.awards_for_event(event))
+
+	json.has_parent event.has_parent
+
+	json.image_url event.image_url(params[:size])
+	json.original_image_url event.original_image_url
+
+	json.children @ev_relations.children_for_event(event) do |c|
+		json.partial! "api/v1/events/event", event: EntityDecorator.decorate(c)
+	end
+
+	#json.source_data event.source_data
+end

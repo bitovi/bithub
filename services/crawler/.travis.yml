@@ -1,0 +1,9 @@
+language: ruby
+script:
+  - bundle exec rspec
+notifications:
+  recipients:
+    - veljko@kset.org
+    - neektza@gmail.com
+rvm:
+  - 1.9.3

@@ -19,12 +19,6 @@ javascriptmvc:
     - "jmvc"
     - "java_script_mvc"
 
-donejs:
-  display_name: "DoneJS"
-  group_list: "projects"
-  aliases:
-    - "done_js"
-
 stealjs:
   display_name: "StealJS"
   group_list: "projects, req_friends"
@@ -56,7 +50,7 @@ testee:
   display_name: "Testee.js"
   group_list: "projects, req_friends"
   props:
-    levenshtein_treshold: 0
+    levenshtein_treshold: "0"
   aliases:
     - "testeejs"
     - "testee_js"
@@ -69,13 +63,15 @@ testee:
 twitter:
   display_name: "Twitter"
   group_list: "feeds, categories"
+  props:
+    order_on_page: "02"
 
 github:
   display_name: "Github"
   group_list: "feeds"
 
-forums:
-  display_name: "Forums"
+forum:
+  display_name: "Forum"
   group_list: "feeds"
 
 irc:
@@ -94,8 +90,8 @@ bithub:
   display_name: "Bithub"
   group_list: "feeds, projects"
 
-community_site:
-  display_name: "Community site"
+meetup:
+  display_name: "Meetup"
   group_list: "feeds"
 
 
@@ -107,28 +103,42 @@ app:
   display_name: "App"
   group_list: "categories"
   props:
-    priority: 100
+    order_on_page: "09"
+    priority: "100"
 
 article:
   display_name: "Article"
   group_list: "categories"
   props:
-    priority: 99
+    order_on_page: "07"
+    priority: "99"
 
 bug:
   display_name: "Bug"
   group_list: "categories, labels"
+  props:
+    order_on_page: "03"
 
 chat:
   display_name: "Chat"
   group_list: "categories"
+  props:
+    order_on_page: "99"
 
 code:
   display_name: "Code"
   group_list: "categories"
+  props:
+    order_on_page: "10"
 
 comment:
   display_name: "Comment"
+  group_list: "categories"
+  props:
+    order_on_page: "04"
+
+github_comment:
+  display_name: "Github Comment"
   group_list: "categories"
 
 github_comment:
@@ -138,10 +148,14 @@ github_comment:
 digest:
   display_name: "Digest"
   group_list: "categories"
+  props:
+    order_on_page: "01"
 
 event:
   display_name: "Event"
   group_list: "categories"
+  props:
+    order_on_page: "11"
 
 feature:
   display_name: "Feature"
@@ -150,7 +164,8 @@ feature:
     - "enhancement"
     - "feature-request"
   props:
-    priority: 99
+    order_on_page: "05"
+    priority: "99"
 
 issue:
   display_name: "Issue"
@@ -159,53 +174,67 @@ issue:
 plugin:
   group_list: "categories"
   display_name: "Plugin"
+  props:
+    order_on_page: "08"
 
 question:
   group_list: "categories"
   display_name: "Question"
+  props:
+    order_on_page: "06"
 
 
 ### Twitter specific
 
-follow_event: {}
+tweet: {}
 
-status_event: {}
-
+follow: {}
 
 ### Github specific
 
-delete_event: {}
+push: {}
 
-push_event: {}
+commit: {}
 
-fork_event: {}
+fork: {}
 
-pull_request_event: {}
+pull_request: {}
 
 create_event: {}
 
-issues_event: {}
+issue: {}
 
-issue_comment_event: {}
+issue_comment: {}
 
-commit_comment_event: {}
+issue_action: {}
 
-watch_event: {}
+commit_comment: {}
+
+watch: {}
 
 gollum_event: {}
 
-pull_request_review_comment_event: {}
+pull_request_review_comment: {}
 
-public_event: {}
+commit: {}
 
-custom_commit_event: {}
+public: {}
+
+create: {}
+
+### Forum specific
+
+post: {}
+
+### Meetup specific
+
+rsvp: {}
+
+### IRC specific
+
+message: {}
 
 ### Others
-
-jquerymx:
-  display_name: "jQueryMX"
-  aliases:
-    - "j_query_mx"
 
 bitovi:
   display_name: "Bitovi"

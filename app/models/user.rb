@@ -1,5 +1,3 @@
-require 'digest/md5'
-
 class User < ActiveRecord::Base
   class OtherUserAlreadyLinked < Exception; end
 
@@ -10,7 +8,7 @@ class User < ActiveRecord::Base
   attr_accessible :address, :city,
     :email, :name, :postal, :email,
     :remember_me, :state, :country,
-    :events, :total_score
+    :entities, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
@@ -21,12 +19,13 @@ class User < ActiveRecord::Base
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
 
-  has_many :events, :foreign_key => "author_id", :class_name => "Event", :dependent => :nullify
+  has_many :ownerships, foreign_key: 'owner_id', :dependent => :destroy
+  has_many :entities, through: :ownerships, source: 'entity'
 
   has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
-  has_many :anteups, :through => :events
-  has_many :upvotes, :through => :events
-  has_many :awards, :through => :events
+  has_many :anteups, :through => :entities
+  has_many :upvotes, :through => :entities
+  has_many :awards, :through => :entities
 
   has_many :identities, :dependent => :destroy
 
@@ -42,19 +41,19 @@ class User < ActiveRecord::Base
   def activities
     activities = []
 
-    self.events.joins(:rule).all.each do |e|
+    self.entities.joins(:scoring_rule).all.each do |e|
       activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
     end
 
-    self.awards.select(['awards.*', 'events.title']).all.each do |a|
+    self.awards.select(['awards.*', 'entities.title']).all.each do |a|
       activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})
     end
 
-    self.upvotes.select(['upvotes.*', 'events.title']).all.each do |u|
+    self.upvotes.select(['upvotes.*', 'entities.title']).all.each do |u|
       activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
-    self.anteups.select(['anteups.*', 'events.title']).all.each do |u|
+    self.anteups.select(['anteups.*', 'entities.title']).all.each do |u|
       activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
     end
 
@@ -88,34 +87,34 @@ class User < ActiveRecord::Base
   end
 
   def score
-    self.authored_events_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
+    self.authored_entities_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
 
-  def authored_events_total
-    self.events.reduce(0) { |acc, ev| acc + ev.rule.authorship_value }
+  def authored_entities_total
+    self.ownerships.sum(:value)
   end
 
   def upvotes_total
-    self.upvotes.sum('value')
+    self.upvotes.sum(:value)
   end
 
   def awards_total
-    self.awards.sum('value')
+    self.awards.sum(:value)
   end
 
   def internals_total
-    self.internals.sum('value')
+    self.internals.sum(:value)
   end
 
   def fulfilled_anteups_total
     self.anteups_as_actor.fullfilled.sum('value')
   end
 
-  def collect_authored_events
+  def collect_authored_entities
     identities.each do |ident|
-      events = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
-      if events
-        events.each do |event|
+      entities = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
+      if entities
+        entities.each do |event|
           event.update_attribute(:author_id, self.id)
         end
       end
@@ -140,14 +139,14 @@ class User < ActiveRecord::Base
     elsif already_linked_to_current_user?(identity)
       self
     else
-      self.identities << identity 
+      self.identities << identity
       self.delay.snatch_all_and_destroy(other_user) if other_user
       self.save!
     end
   end
 
   def snatch_all_and_destroy(whom)
-    self.snatch_events_from(whom)
+    self.snatch_entities_from(whom)
     self.snatch_actions_from(whom)
     self.snatch_internals_from(whom)
     self.update_total_score
@@ -155,8 +154,8 @@ class User < ActiveRecord::Base
     whom.destroy
   end
 
-  def snatch_events_from(whom)
-    whom.events.update_all(:author_id => self)
+  def snatch_entities_from(whom)
+    whom.ownerships.where(:ownership_type => :author).update_all(:owner_id => self)
   end
 
   def snatch_actions_from(whom)
@@ -178,7 +177,7 @@ class User < ActiveRecord::Base
   end
 
   def award_points_for_linking(provider)
-    self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider}."})
+    self.internals.build({receiver: self, value: 1, comment: "Logged in with #{provider.capitalize}."})
     self
   end
 

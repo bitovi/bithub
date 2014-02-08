@@ -1,0 +1,74 @@
+{
+	"id": "1920474493",
+	"type": "PullRequestReviewCommentEvent",
+	"actor": {
+		"id":338316,
+		"login":"daffl",
+		"gravatar_id":
+		"a14850281f19396480bdba4aab2d52ef",
+		"url":"https://api.github.com/users/daffl",
+		"avatar_url":"https://gravatar.com/avatar/a14850281f19396480bdba4aab2d52ef?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png&r=x"
+	},
+	"repo": {
+		"id": 3228363,
+		"name": "bitovi/canjs",
+		"url": "https://api.github.com/repos/bitovi/canjs"
+	},
+	"payload": {
+		"comment": {
+			"url": "https://api.github.com/repos/bitovi/canjs/pulls/comments/8386073",
+			"id": 8386073,
+			"diff_hunk": "@@ -7,6 +7,15 @@ steal(\"can/util\", function( can ) {\n \t\tmakeArray = can.makeArray,\n \t\t// Used for hookup `id`s.\n \t\thookupId = 1,\n+\t\tmakeRenderer = function(textRenderer) {\n+\t\t\tvar renderer = function() {\n+\t\t\t\treturn $view.frag(renderer.render.apply(this, arguments));\n+\t\t\t}\n+\t\t\trenderer.render = function() {\n+\t\t\t\treturn textRenderer.apply(textRenderer, arguments);",
+			"path": "view/view.js",
+			"position": 9,
+			"original_position": 9,
+			"commit_id": "69837e08b91a9e7553268bbffea89af46bd40c7b",
+			"original_commit_id": "69837e08b91a9e7553268bbffea89af46bd40c7b",
+			"user": {
+				"login": "daffl",
+				"id": 338316,
+				"avatar_url": "https://gravatar.com/avatar/a14850281f19396480bdba4aab2d52ef?d=https%3A%2F%2Fidenticons.github.com%2F37105a2d2576d072b38f426e7b443a2c.png&r=x",
+				"gravatar_id": "a14850281f19396480bdba4aab2d52ef",
+				"url": "https://api.github.com/users/daffl",
+				"html_url": "https://github.com/daffl",
+				"followers_url": "https://api.github.com/users/daffl/followers",
+				"following_url": "https://api.github.com/users/daffl/following{/other_user}",
+				"gists_url": "https://api.github.com/users/daffl/gists{/gist_id}",
+				"starred_url": "https://api.github.com/users/daffl/starred{/owner}{/repo}",
+				"subscriptions_url": "https://api.github.com/users/daffl/subscriptions",
+				"organizations_url": "https://api.github.com/users/daffl/orgs",
+				"repos_url": "https://api.github.com/users/daffl/repos",
+				"events_url": "https://api.github.com/users/daffl/events{/privacy}",
+				"received_events_url": "https://api.github.com/users/daffl/received_events",
+				"type": "User",
+				"site_admin": false
+			},
+			"body": "Shoot, this should be `textRenderer.apply(this, arguments);`",
+			"created_at": "2013-12-16T23:02:57Z",
+			"updated_at": "2013-12-16T23:02:57Z",
+			"html_url": "https://github.com/bitovi/canjs/pull/608#discussion_r8386073",
+			"pull_request_url": "https://api.github.com/repos/bitovi/canjs/pulls/608",
+			"_links": {
+				"self": {
+					"href":"https://api.github.com/repos/bitovi/canjs/pulls/comments/8386073"
+				},
+				"html": {
+					"href":"https://github.com/bitovi/canjs/pull/608#discussion_r8386073"
+				},
+				"pull_request": {
+					"href":"https://api.github.com/repos/bitovi/canjs/pulls/608"
+				}
+			}
+		}
+	},
+	"public": true,
+	"created_at": "2013-12-16T23:02:57Z",
+	"org": {
+		"id": 2782656,
+		"login":"bitovi",
+		"gravatar_id": "89162cee14c11672d134cfafed24d1be",
+		"url": "https://api.github.com/orgs/bitovi",
+		"avatar_url": "https://gravatar.com/avatar/89162cee14c11672d134cfafed24d1be?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png&r=x"
+	},
+	"content_digest":"86858dda52a6c8b6b7147cc3ae34c432"
+}

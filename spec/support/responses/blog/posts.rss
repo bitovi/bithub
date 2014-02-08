@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Bitovi - Blog</title>
+		<description>Blog posts published by the Bitovi team</description>
+		<link>http://www.bitovi.com</link>
+
+			<item>
+				<title>CanJS US Meetup Sponsors</title>
+				<description>CanJS's meetups have plenty of great sponsors.</description>
+				<published>07 Oct 2013</published>
+				<link>http://www.bitovi.com/blog/2013/10/01-canjs-meetup-sponsors.html</link>
+			</item>
+
+			<item>
+				<title>CanJS US Meetups</title>
+				<description>Come learn CanJS! CanJS’s community and Bitovi are starting local CanJS meetups across the United States.</description>
+				<published>01 Oct 2013</published>
+				<link>http://www.bitovi.com/blog/2013/10/canjs-us-meetups.html</link>
+			</item>
+
+			<item>
+				<title>JavaScriptMVC's development process</title>
+				<description>Learn how JavaScriptMVC guides you to building maintainable applications.</description>
+				<published>13 Aug 2013</published>
+				<link>http://www.bitovi.com/blog/2013/08/javascriptmvcs-development-process.html</link>
+			</item>
+
+			<item>
+				<title>JavaScriptMVC 3.3 Released!</title>
+				<description>JavaScriptMVC 3.3 is out. Learn what's in the new release.</description>
+				<published>03 Aug 2013</published>
+				<link>http://www.bitovi.com/blog/2013/08/javascriptmvc-3.3.html</link>
+			</item>
+
+			<item>
+				<title>The Coffee Shop User Experience Lab</title>
+				<description>A fast, inexpensive way to do user experience testing with virtually no planning</description>
+				<published>24 May 2013</published>
+				<link>http://www.bitovi.com/blog/2013/05/coffee-shop-lab-fast-inexpensive-user-experience-testing.html</link>
+			</item>
+
+			<item>
+				<title>Weekly Widget 7 - Computes and Sliders</title>
+				<description>Learn why can.compute is the last API you will ever need as we explore using it.</description>
+				<published>24 Apr 2013</published>
+				<link>http://www.bitovi.com/blog/2013/04/weekly-widget-compute-slider.html</link>
+			</item>
+
+			<item>
+				<title>Take a Step Back - Simple Tips to Quickly Check a Design for Usability</title>
+				<description>Simple Tips to Quickly Check a Design for Usability</description>
+				<published>12 Apr 2013</published>
+				<link>http://www.bitovi.com/blog/2013/04/take-a-step-back-simple-tips-to-quickly-check-a-design-for-usability.html</link>
+			</item>
+
+			<item>
+				<title>Weekly Widget 6 - Instantaneous Web Apps</title>
+				<description>Learn how to make apps more responsive with queued requests.</description>
+				<published>18 Mar 2013</published>
+				<link>http://www.bitovi.com/blog/2013/03/weekly-widget-instantaneous-web-apps.html</link>
+			</item>
+
+			<item>
+				<title>Weekly Widget 5 - Real-Time Chat</title>
+				<description>Sending and receiving messages using Socket.IO and can.Model.</description>
+				<published>19 Feb 2013</published>
+				<link>http://www.bitovi.com/blog/2013/02/weekly-widget-chat.html</link>
+			</item>
+
+			<item>
+				<title>Weekly Widget 4 - Show More with $.Range</title>
+				<description>Learn to use jQuery++'s $.Range to create content aware show / hide buttons.</description>
+				<published>07 Feb 2013</published>
+				<link>http://www.bitovi.com/blog/2013/02/weekly-widget-show-more.html</link>
+			</item>
+
+	</channel>
+</rss>
