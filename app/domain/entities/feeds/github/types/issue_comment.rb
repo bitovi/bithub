@@ -39,6 +39,7 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.issue_or_pull_req_number,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
       end

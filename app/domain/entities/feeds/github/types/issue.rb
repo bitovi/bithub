@@ -26,6 +26,7 @@ module Entities
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
 

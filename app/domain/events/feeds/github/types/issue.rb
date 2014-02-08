@@ -22,10 +22,6 @@ module Events
         issue_id
       end
 
-      def nice_name
-        self.class.name.gsub('Events::Github::','')
-      end
-
     end
   end
 end
