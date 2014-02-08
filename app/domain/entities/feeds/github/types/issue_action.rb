@@ -24,7 +24,7 @@ module Entities
 
       # Builder
       def build
-        entity = Entity.new({
+        built = Entity.new({
           title: "#{@payload.nice_name} ##{@payload.number} #{@payload.action}",
           origin_ts: @payload.origin_ts,
           origin_id: @payload.origin_id.to_s,
@@ -39,9 +39,9 @@ module Entities
           }
         })
         if @payload.respond_to? :label_names
-          entity.props[:label_names] = @payload.label_names
+          built.props[:label_names] = @payload.label_names
         end
-        entity
+        built
       end
 
       def update_parent

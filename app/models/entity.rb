@@ -52,6 +52,11 @@ class Entity < ActiveRecord::Base
   scope :feed, lambda {|f| where(feed_name: f) }
   scope :type, lambda {|t| where(type_name: t) }
   scope :category, lambda {|c| where(category_name: c) }
+
+  scope :number, lambda {|n| where("props -> 'number' = :val", val: n.to_s) }
+  scope :repo_name, lambda {|rn| where("props -> 'repo_name' = :val", val: rn) }
+  scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
+
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
@@ -61,7 +66,6 @@ class Entity < ActiveRecord::Base
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
   scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :not_children, lambda { where("parent_id IS NULL") }
-  scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
   scope :no_irc_nor_digest, lambda { where("feed_name <> 'irc' AND category_name <> 'digest'") }
 
   after_create :reward_user_if_eligible
@@ -98,6 +102,14 @@ class Entity < ActiveRecord::Base
 
   def organizer
     self.ownerships.select{|a| a.ownership_type == :organizer}.first.andand.owner
+  end
+
+  def state
+    self.props.andand["state"]
+  end
+
+  def label_names
+    self.props.andand["label_names"]
   end
 
   def host

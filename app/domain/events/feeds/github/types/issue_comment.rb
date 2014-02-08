@@ -47,6 +47,7 @@ module Events
         issue_or_pull_req.andand[:number]
       end
 
+      alias_method :title, :issue_or_pull_req_title
       alias_method :number, :issue_or_pull_req_number
       alias_method :state, :issue_or_pull_req_state
       alias_method :label_names, :issue_or_pull_req_label_names

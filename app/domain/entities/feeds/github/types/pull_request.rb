@@ -30,9 +30,9 @@ module Entities
         })
 
         if @payload.actor
-          built[:origin_author_id] = @payload.actor_id
-          built[:origin_author_name] = @payload.actor_login
-          built[:origin_author_avatar_url] = @payload.actor_avatar_url
+          built.props[:origin_author_id] = @payload.actor_id
+          built.props[:origin_author_name] = @payload.actor_login
+          built.props[:origin_author_avatar_url] = @payload.actor_avatar_url
         end
 
         built
