@@ -14,13 +14,13 @@ module Entities
           # handle post-as
         if !current_user.has_role?(:admin) || !posting_for_another_user
           source_data[:local_author_id] = current_user.id
-          #source_data[:origin_author_feed] = 'bithub'
         end
 
-        Rails.logger.info "-------------------------------------------"
-        Rails.logger.info source_data
-        Rails.logger.info "-------------------------------------------"
-
+        if !current_user.has_role?(:admin)
+          source_data.delete(:origin_author_id)
+          source_data.delete(:origin_author_name)
+          source_data.delete(:origin_author_feed)
+        end
 
         data = {
           source_data: source_data,
@@ -80,6 +80,11 @@ module Entities
         @instance.props[:scheduled_for] = @payload.scheduled_for
         @instance.props[:location] = @payload.location
         @instance.props[:tags] = @payload.tags
+
+        @instance.props[:origin_author_feed] = @payload.origin_author_feed if @payload.origin_author_feed
+        @instance.props[:origin_author_id]   = @payload.origin_author_id if @payload.origin_author_id
+        @instance.props[:origin_author_name] = @payload.origin_author_name if @payload.origin_author_name
+
         super
       end
 
