@@ -15,7 +15,7 @@ module Events
       if MAPPINGS && MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
-        self.const_get(type_name)
+        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
       end
     end
 
@@ -24,10 +24,8 @@ module Events
         'Follow'
       elsif is_status_event?(source_data)
         'Tweet'
-      elsif source_data['friends']
-        fail Events::MappingError, "skipping Twitter 'friends' event"
       else
-        fail Events::MappingError, "unknown Twitter event type"
+        'NonExistingType'
       end
     end
 

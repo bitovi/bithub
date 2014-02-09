@@ -89,6 +89,28 @@ describe Dispatcher do
       expect(@push.children.count).to eq 3
     end
 
+    it "testase - non existing event types will not break anything" do
+      pairs = [
+        %w(foo bar),
+        %w(github nonExistingType),
+        %w(twitter nonExistingType),
+        %w(bithub nonExistingType),
+        %w(meetup nonExistingType),
+      ]
+      expect {
+        pairs.each do |pair|
+          feed, type = pair
+          Dispatcher.new.dispatch({
+            'meta' => {
+              'feed_name' => feed,
+              'type_name' => type
+            },
+            'source_data' => {}
+          })
+        end
+      }.not_to raise_error
+    end
+
     it "testcase - references from commits" do
     end
 
