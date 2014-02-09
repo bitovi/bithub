@@ -20,7 +20,7 @@ module Entities
       end
 
       def build
-        Entity.new({
+        built = Entity.new({
           title: "pushed to #{@payload.repo_name}",
           body: @commit.andand[:message],
           url: @commit.andand[:url],
@@ -32,11 +32,14 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
-            references_to: references_in_content_csv,
           }, # set next manually b/c AR will call save instead of persist on children
           feed_name: feed_name.snake_case,
           type_name: type_name.snake_case,
         })
+
+        built.props[:references_to] = references_in_content_csv unless references_in_content_csv.blank?
+
+        built 
       end
 
       # override Referencable
