@@ -53,8 +53,8 @@ class Entity < ActiveRecord::Base
   scope :type, lambda {|t| where(type_name: t) }
   scope :category, lambda {|c| where(category_name: c) }
 
-  scope :number, lambda {|n| where("props -> 'number' = :val", val: n.to_s) }
-  scope :repo_name, lambda {|rn| where("props -> 'repo_name' = :val", val: rn) }
+  scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
+  scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
 
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
@@ -70,6 +70,7 @@ class Entity < ActiveRecord::Base
 
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
+  after_create :adopt_references_from_children
   after_destroy :decrease_score_in_author
 
   after_save :update_pagination_table
@@ -221,6 +222,39 @@ class Entity < ActiveRecord::Base
 
   def missing_critical_tags?
     !self.type || !self.feed || !self.category
+  end
+
+  def adopt_references_from_children
+    #return
+    children = self.children.pluck(:id)
+
+    unless children.empty?
+      references_to   = EntityRef.where(to_id: children).all
+      references_from = EntityRef.where(from_id: children).all
+
+      references_to_ids   = Entity.where(id: references_to.pluck(:from_id).uniq).map { |e|
+        e.parent ? e.parent_id : e.id
+      }.uniq.compact
+
+      references_from_ids = Entity.where(id: references_from.pluck(:to_id).uniq).map { |e|
+        e.parent ? e.parent_id : e.id
+      }.uniq.compact
+
+      references_to.map(&:destroy)
+      references_from.map(&:destroy)
+
+      references_to_ids.map do |from_id|
+        EntityRef.create_reference({from_id: from_id, to_id: self.id}) if from_id != self.id
+      end
+
+      references_from_ids.map do |to_id|
+        EntityRef.create_reference({to_id: to_id, from_id: self.id}) if to_id != self.id
+      end
+
+      EntityRef.where(from_id: self.id).joins(:target).where('COALESCE(entities.parent_id, 0) <> 0').destroy_all
+      EntityRef.where(to_id: self.id).joins(:source).where('COALESCE(entities.parent_id, 0) <> 0').destroy_all
+
+    end
   end
 
   private
