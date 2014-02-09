@@ -32,8 +32,8 @@ module Accounts
         identity.save!
       end
 
-      self.delay.create_missing_repos_and_watches!
-      identity.reload.user.collect_authored_entities.reward_if_eligible
+      create_missing_repos_and_stars!
+      # identity.reload.user.collect_authored_entities.reward_if_eligible
       user
     end
 
@@ -45,7 +45,7 @@ module Accounts
         current_user.reload.collect_authored_entities.reward_if_eligible
       end
 
-      self.delay.create_missing_repos_and_watches!
+      create_missing_repos_and_stars!
       current_user
     end
 
@@ -58,14 +58,20 @@ module Accounts
     end
 
     def create_internal_follows!
-      ApiCache.where(provider: 'twitter', uid: @identity.uid).each do |res|
-        Dispatcher.new(Events::Twitter::CustomFollow.new(res.name, @identity)).dispatch
+      Rails.logger.info "TU SAM U FOLLOW"
+      ApiCache.where(provider: @identity.provider, uid: @identity.uid.to_s).each do |res|
+        Rails.logger.info "KURCA GRAHA uid:#{@identity.uid} -> acct: #{res.name}"
+        data = { }
+        Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
     
     def create_internal_stars!
-      ApiCache.where(provider: 'github', uid: @identity.uid).each do |res|
-        Dispatcher.new(Events::Github::CustomWatch.new(res.name, @identity)).dispatch
+      Rails.logger.info "TU SAM U STAR"
+      ApiCache.where(provider: @identity.provider, uid: @identity.uid.to_s).each do |res|
+        Rails.logger.info "KURCA MAHUNA uid:#{@identity.uid} -> repo: #{res.name}"
+        data = { }
+        Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
 
@@ -86,6 +92,9 @@ module Accounts
         raise "Provider #{provider} not handled"
       end
       [name, email]
+    end
+
+    def uid_from(oauth_data)
     end
 
     def self.name_from(oauth_data)
