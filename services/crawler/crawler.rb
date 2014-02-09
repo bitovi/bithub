@@ -132,6 +132,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     logger.info feed_config
 
     EM.add_periodic_timer(intervals[:meetup], Poller.new(ex, feed_config[:url]) do |c|
+      logger.info "ZOVEM RSVP"
       c.http_query = feed_config[:query]
       c.boot_data_url = feed_config[:boot_data_url]
       c.reboot_delay = 10 

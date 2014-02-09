@@ -16,8 +16,8 @@ class Api::V1::UsersController < Api::V1::BaseController
       if !muster_query[:count].blank?
         render :json => { :count => scope.count(muster_query[:count]) }
       else
-        scope = scope_applier.apply_order_to_scope(scope, muster_query)
-        @users = UserDecorator.decorate_collection(scope.all)
+        scope = scope_applier.apply_order_to_scope
+        @users = UserDecorator.decorate_collection(scope.result.all)
         render :index
       end
     end
@@ -81,16 +81,16 @@ class Api::V1::UsersController < Api::V1::BaseController
   def build_scope(muster_query, params)
     scope = User.scoped
     scope = scope.only_not_null_names
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
-    scope = scope_applier.apply_regular_params_to_scope(scope, params)
+    scope = scope_applier(scope).apply_muster_query_to_scope(muster_query)
+    scope = scope_applier(scope).apply_regular_params_to_scope
   end
   
   def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(User)
+    @logic_analyzer ||= QueryLogic::Query.new(User, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(current_scope = nil)
+    @scope_applier ||= ScopeApplier.new(current_scope || User.scoped, logic_analyzer) 
   end
 
   def user_apis
