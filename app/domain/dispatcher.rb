@@ -17,8 +17,9 @@ class Dispatcher
     event = Events::Dispatcher.dispatch(response, hint)
     entity = Entities::Dispatcher.dispatch(event)
 
+    @logger.debug "MAPPING: #{event.class.name} -> #{entity.class.name}"
+    
     return nil if event.nil? || entity.nil?
-    @logger.info "MAPPING: #{event.class.name} -> #{entity.class.name}"
 
     begin
       ActiveRecord::Base.transaction do
@@ -34,7 +35,6 @@ class Dispatcher
       @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message}"
     end
 
-    # [event.instance, entity.instance]
-    entity.instance
+    [event.instance, entity.instance]
   end
 end
