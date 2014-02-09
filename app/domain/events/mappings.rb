@@ -14,7 +14,7 @@ module Events
     if MAPPINGS.include?(feed_name)
       self.const_get(MAPPINGS[feed_name])
     else
-      self.const_get(feed_name)
+      self.constants.include?(feed_name.to_sym) ? self.const_get(feed_name) : nil
     end
   end
 end
