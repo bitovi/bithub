@@ -8,6 +8,7 @@ module Accounts
 
     def find_or_create_user(provider, oauth_data)
       name, email = self.class.pluck_data_for(provider, oauth_data)
+      @oauth_data = oauth_data
       @identity = Identity.find_or_create_with_oauth_data(oauth_data)
       user = nil
 
@@ -40,8 +41,8 @@ module Accounts
     def update_and_merge(name, email)
       ActiveRecord::Base.transaction do
         current_user.update_blank_oauth_attrs!({name: name, email: email})
-        current_user.award_points_for_linking(identity.provider)
-        current_user.link_ident!(identity)
+        current_user.award_points_for_linking(@identity.provider)
+        current_user.link_ident!(@identity)
         current_user.reload.collect_authored_entities.reward_if_eligible
       end
 
@@ -50,27 +51,37 @@ module Accounts
     end
 
     def create_missing_repos_and_stars!
-      if identity.provider == 'twitter'
+      if @identity.provider == 'twitter'
         create_internal_follows!
-      elsif identity.provider == 'github'
+      elsif @identity.provider == 'github'
         create_internal_stars!
       end
     end
 
     def create_internal_follows!
-      Rails.logger.info "TU SAM U FOLLOW"
       ApiCache.where(provider: @identity.provider, uid: @identity.uid.to_s).each do |res|
-        Rails.logger.info "KURCA GRAHA uid:#{@identity.uid} -> acct: #{res.name}"
-        data = { }
+        data = {
+          source_data: {
+            uid: uid_from(@oauth_data),
+            nickname: nickname_from(@oauth_data),
+            target_screen_name: res.name,
+            custom_follow: true,
+          },
+        }
         Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
     
     def create_internal_stars!
-      Rails.logger.info "TU SAM U STAR"
       ApiCache.where(provider: @identity.provider, uid: @identity.uid.to_s).each do |res|
-        Rails.logger.info "KURCA MAHUNA uid:#{@identity.uid} -> repo: #{res.name}"
-        data = { }
+        data = {
+          source_data: {
+            uid: uid_from(@oauth_data),
+            nickname: nickname_from(@oauth_data),
+            repo_name: res.name,
+            custom_watch: true,
+          }
+        }
         Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
@@ -95,8 +106,14 @@ module Accounts
     end
 
     def uid_from(oauth_data)
+      oauth_data['uid']
     end
 
+    def nickname_from(oauth_data)
+      oauth_data['info']['nickname']
+    end
+
+    # Class methods
     def self.name_from(oauth_data)
       oauth_data['info']['name']
     end

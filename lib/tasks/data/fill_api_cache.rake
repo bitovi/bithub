@@ -12,10 +12,10 @@ namespace :data do
       end
     end
 
-    # important_accounts.each do |acct|
-    #   ids = api.follower_ids(acct.name).map{|uid| uid.to_s}.each do |uid|
-    #     ApiCache.create({name: acct.name, uid: uid, provider: 'twitter'})
-    #   end
-    # end
+    important_accounts.each do |acct|
+      ids = api.follower_ids(acct.name).map{|uid| uid.to_s}.each do |uid|
+        ApiCache.create({name: acct.name, uid: uid, provider: 'twitter'})
+      end
+    end
   end
 end
