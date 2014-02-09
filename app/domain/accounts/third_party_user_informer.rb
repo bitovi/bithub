@@ -24,26 +24,12 @@ module Accounts
       github.search.users(q).items
     end
 
-    def followed_acct_ids(uid)
-      fail NotUIDException unless uid.is_a? Integer
-      Twitter::User.friend_ids(uid)
+    def follower_ids(screen_name)
+      @twitter.follower_ids(screen_name).map{|id| id}
     end
 
-    def watched_repo_names(username)
-      fail NotUsernameException unless username.is_a? String
-      res = github.activity.watching.watched :user => username
-      res.response.body.map{|r| r['full_name']}
-    end
-
-    def followed_accts(uid)
-      fail NotUIDException unless uid.is_a? Integer
-      Twitter.friends(uid)
-    end
-
-    def watched_repos(username)
-      fail NotUsernameException unless username.is_a? String
-      res = github.activity.watching.watched({user: username})
-      res.response.body
+    def stargazer_ids(repo, user = 'bitovi')
+      @github.activity.starring.list(user, repo).map{|sg| sg.id}
     end
 
   end

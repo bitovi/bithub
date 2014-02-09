@@ -1,22 +1,8 @@
 module Accounts
   class AccountManager
-    attr_reader :user_api, :current_user, :identity
-
-    RELEVANT_REPO_NAMES = Tag.tagged_with('req_favourites').map {|t| "bitovi/#{t.name}"}
-    #RELEVANT_REPO_NAMES += %w(steal testee.js)
-    #RELEVANT_REPO_NAMES << 'bithub-test/testy' if (Rails.env == 'test' || Rails.env == 'testing')
-
-    RELEVANT_TWITTER_ACCOUNTS = {
-      123763453 => 'bitovi',
-      523041627 => 'canjs',
-      589215872 => 'jquerypp',
-      171351462 => 'funcunit',
-      56956664 => 'javascriptmvc',
-      12345678 => 'bitovi_bithub'
-    }
+    attr_reader :current_user, :identity
 
     def initialize(current_user = nil)
-      @user_api = ThirdPartyUserInformer.new
       @current_user = current_user
     end
 
@@ -46,14 +32,7 @@ module Accounts
         identity.save!
       end
 
-      begin
-        create_missing_repos_and_watches!
-      rescue Twitter::Error => e
-        Rails.logger.error e.message
-      rescue Github::Error => e
-        Rails.logger.error e.message
-      end
-
+      self.delay.create_missing_repos_and_watches!
       identity.reload.user.collect_authored_entities.reward_if_eligible
       user
     end
@@ -66,75 +45,27 @@ module Accounts
         current_user.reload.collect_authored_entities.reward_if_eligible
       end
 
-      begin
-        create_missing_repos_and_watches!
-      rescue Twitter::Error => e
-        Rails.logger.error e.message
-      rescue Github::Error => e
-        Rails.logger.error e.message
-      end
-
+      self.delay.create_missing_repos_and_watches!
       current_user
     end
 
-    def create_missing_repos_and_watches!
+    def create_missing_repos_and_stars!
       if identity.provider == 'twitter'
-        create_internal_follows!(missing_friends)
+        create_internal_follows!
       elsif identity.provider == 'github'
-        create_internal_watches!(missing_repos)
+        create_internal_stars!
       end
     end
 
-    def missing_repos
-      username = identity.source_data['nickname'] || identity.source_data[:nickname]
-      rs = user_api.watched_repos(username)
-
-      remote_repo_watches = rs.map{|r| (r[:full_name] || r['full_name'])} & RELEVANT_REPO_NAMES
-      present_repo_watches = Entity.tagged_with(%w(github watch))
-      .entity_by_origin_uid(identity.uid.to_s)
-      .map {|e| e.source_data.andand['repo'].andand['full_name'] || e.props.andand['repo_name']}
-      .uniq
-
-      if (missing_repos = (remote_repo_watches - present_repo_watches)).length > 0
-        rs.select{|r| missing_repos.include?(r[:full_name] || r['full_name'])}
-      else
-        []
+    def create_internal_follows!
+      ApiCache.where(provider: 'twitter', uid: @identity.uid).each do |res|
+        Dispatcher.new(Events::Twitter::CustomFollow.new(res.name, @identity)).dispatch
       end
     end
-
-    def missing_friends
-      fs = user_api.followed_acct_ids(identity.uid)
-
-      remote_friend_ids = fs.select{|f| RELEVANT_TWITTER_ACCOUNTS.keys.include?(f)}
-      present_friend_ids = Entity.tagged_with(%w(twitter follow))
-      .entity_by_origin_uid(identity.uid.to_s)
-      .map{|e| e.source_data.andand['target'].andand['id']}
-      .uniq
-
-      if (missing_friends_ids = (remote_friend_ids - present_friend_ids)).length > 0
-        missing_friends_ids.map {|id| {:id_str => id.to_s, :screen_name => RELEVANT_TWITTER_ACCOUNTS[id]}}
-      else
-        []
-      end
-    end
-
-    def create_internal_follows!(accts)
-      accts.map do |a|
-        Dispatcher.new(
-          Payload.new do
-            Events::Twitter::CustomFollow.new(a, identity)
-          end
-        ).dispatch
-      end
-    end
-
-    def create_internal_watches!(repos)
-      repos.map do |r|
-        Dispatcher.new(
-          Payload.new do
-            Events::Github::CustomWatch.new(r, identity)
-          end
-        ).dispatch
+    
+    def create_internal_stars!
+      ApiCache.where(provider: 'github', uid: @identity.uid).each do |res|
+        Dispatcher.new(Events::Github::CustomWatch.new(res.name, @identity)).dispatch
       end
     end
 

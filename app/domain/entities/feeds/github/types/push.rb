@@ -15,7 +15,7 @@ module Entities
       end
 
       def build
-        Entity.new({
+        built = Entity.new({
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
@@ -26,9 +26,12 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
+
+        built 
       end
 
       def build_children
