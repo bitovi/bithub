@@ -14,7 +14,7 @@ class Api::V1::EventActivitiesController < Api::V1::BaseController
 
   def create_upvote
     authorize! :create_upvote, Upvote, :message => "No right to create an upvote!"
-    event = Event.find(params[:event_id])
+    event = Entity.find(params[:event_id])
     upvote = Upvote.create_based_on_rule(current_user, event)
     if upvote
       render :json => upvote
@@ -28,7 +28,7 @@ class Api::V1::EventActivitiesController < Api::V1::BaseController
 
   def create_award
     authorize! :create_award, Award, :message => "No right to create an award!"
-    event = Event.find(params[:event_id])
+    event = Entity.find(params[:event_id])
 
     begin
       award = Award.create_based_on_strategy(current_user, event, strategy: :double_parents_upvotes)

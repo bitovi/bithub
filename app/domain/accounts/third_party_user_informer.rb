@@ -1,12 +1,12 @@
 module Accounts
   class ThirdPartyUserInformer
-    attr_reader :github
+    attr_reader :github, :twitter
 
     class NotUIDException < Exception; end
     class NotUsernameException < Exception; end
 
     def initialize
-      Twitter::REST::Client.new do |config|
+      @twitter = Twitter::REST::Client.new do |config|
         config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
         config.consumer_secret = ENV['TWITTER_CONSUMER_SECRET']
         config.oauth_token = ENV['TWITTER_OAUTH_TOKEN']
@@ -17,12 +17,11 @@ module Accounts
     end
 
     def from_twitter(q)
-      Twitter.user_search(q)
+      twitter.user_search(q)
     end
 
     def from_github(q)
-      res = github.search.users(q)
-      res.users
+      github.search.users(q).items
     end
 
     def followed_acct_ids(uid)

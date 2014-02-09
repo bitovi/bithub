@@ -75,7 +75,7 @@ module Enumerable
     Proc.new do |thing, *args|
       @procs.map do |proc|
         proc.call(thing, *args)
-      end
+      end unless  @procs.nil?
     end
   end
 
