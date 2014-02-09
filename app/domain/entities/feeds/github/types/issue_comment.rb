@@ -27,7 +27,7 @@ module Entities
 
       # Builder
       def build
-        Entity.new({
+        built = Entity.new({
           title: "Comment on issue ##{@payload.issue_or_pull_req_number}",
           body: @payload.body,
           url: @payload.html_url,
@@ -39,9 +39,12 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.issue_or_pull_req_number,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
+
+        built
       end
 
       def update
@@ -56,7 +59,6 @@ module Entities
         @instance.parent.body = @payload.issue_or_pull_req_body
         @instance.parent.props[:state] = @payload.issue_or_pull_req_state
         @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
-        super
       end
 
       # Finders
