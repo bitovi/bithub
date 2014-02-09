@@ -67,6 +67,16 @@ module Events
         
         "#{v[:name]}, #{address}, #{city}, #{country}"
       end
+
+      def latitude
+        v = venue
+        (v.andand[:lat] || "").to_s
+      end
+
+      def longitude
+        v = venue
+        (v.andand[:lon] || "").to_s
+      end
     end
   end
 end
