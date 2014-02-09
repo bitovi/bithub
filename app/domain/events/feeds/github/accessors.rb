@@ -60,9 +60,15 @@ module Events
         end
 
         def referenced_issue_numbers
-          bla = (body ? body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s} : [])
-          puts "BLA #{bla}"
-          bla
+          (body ? body.scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s} : [])
+        end
+
+        def referenced_issue_numbers_csv
+          referenced_issue_numbers.join(',')
+        end
+
+        def referenced_repo_name
+          nil
         end
       end
 

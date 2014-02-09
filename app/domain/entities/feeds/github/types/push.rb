@@ -26,6 +26,7 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             commit_shas: @payload.commit_shas,
+            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
       end
@@ -41,11 +42,6 @@ module Entities
         end
       end
       
-      # override Referencable
-      def references_in_content
-        @payload.referenced_issue_numbers
-      end
-
       # Finders
       
       def find_by_push_id

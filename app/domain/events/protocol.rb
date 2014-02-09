@@ -6,11 +6,11 @@ require_relative 'traits/jsonable'
 module Events
 
   class EventException < Exception
-    attr_accessor :source_data
+    attr_accessor :context
 
-    def initialize(message = nil, source_data = nil)
+    def initialize(message = nil, context = nil)
       super(message)
-      self.source_data = source_data
+      self.context = context
     end
   end
 
@@ -81,10 +81,6 @@ module Events
       []
     end
 
-    def referenced_issue_numbers_csv
-      referenced_issue_numbers.join(',')
-    end
-    
     def module_and_class_names
       _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
       [@feed_name, @type_name]

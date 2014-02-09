@@ -48,20 +48,24 @@ module Entities
     def associate_references
 
       if self.respond_to? :find_references_from_self
-        if (refs = find_references_from_self)
-          if @instance.parent
-            @instance.parent.references_to += refs
+        if (refs = find_references_from_self) #ENTITY
+          if @instance.parent.present?
+            puts "KOMPLEKSNI SLUCAJ OD SEBE"
+            @instance.parent.references_to += refs.reject{|e| @instance.references_to.include?(e)}.uniq
           else
+            puts "JEDNOSTAVNI SLUCAJ OD SEBE"
             @instance.references_to += refs
           end
         end
       end
 
       if self.respond_to? :find_references_to_self
-        if (refs = find_references_to_self)
-          if refs.reduce(false) {|acc, p| acc || not(p.parent.nil?)}
-            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }
+        if (refs = find_references_to_self) #ENTITY
+          if refs.reduce(false) {|acc, p| acc || p.parent.present?}
+            puts "KOMPLEKSNI SLUCAJ PREMA SEBI"
+            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }.reject{|e| @instance.referenced_from.include?(e)}.uniq
           else
+            puts "JEDNOSTAVNI SLUCAJ PREMA SEBI"
             @instance.referenced_from += refs
           end
         end
