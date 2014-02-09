@@ -15,9 +15,11 @@ class Dispatcher
 
   def dispatch(response, hint=nil)
     event = Events::Dispatcher.dispatch(response, hint)
+    Rails.logger.info "KURCA OVO JE EVENT #{event.inspect}"
     return nil if event.nil?
     
     entity = Entities::Dispatcher.dispatch(event)
+    Rails.logger.info "KURCA OVO JE ENTITY #{entity.inspect}"
     return nil if entity.nil?
 
     @logger.info "MAPPING: #{event.class.name} -> #{entity.class.name}"

@@ -3,30 +3,22 @@ module Events
 
     class CustomFollow < Protocol
 
-      def initialize(account, identity)
-        @screen_name = account
-        @identity = identity
-      end
-
-      def source_data
-        { identity: @identity, target: @screen_name }
-      end
 
       def content_digest
-        seed = @identity.uid.to_s + @screen_name
+        seed = identity_uid.to_s + target_screen_name
         calc_digest(seed)
       end
 
-      def origin_author_id
-        @identity.uid
+      def identity_uid
+        source_data.andand[:uid]
       end
 
-      def origin_author_name
-        @identity.nickname
+      def identity_nickname
+        source_data.andand[:nickname]
       end
 
-      def title
-        "followed @#{screen_name}"
+      def target_screen_name
+        source_data.andand[:target_screen_name]
       end
       
       def origin_timestamp
@@ -34,18 +26,12 @@ module Events
       end
 
       def taggify_target_screen_name
-        [@account.screen_name]
+        [target_screen_name]
       end
 
-      class Account
-        def initialize(acct)
-          @data = acct
-        end
-
-        def screen_name
-          @data.andand[:screen_name]
-        end
-      end
+      alias_method :origin_author_id, :identity_uid
+      alias_method :origin_author_name, :identity_nickname
+      alias_method :target, :target_screen_name
     end
 
   end
