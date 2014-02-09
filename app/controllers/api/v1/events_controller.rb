@@ -54,7 +54,7 @@ class Api::V1::EventsController < Api::V1::BaseController
 
   def summary
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
-    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_sumamry(cat, params)]}]
+    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
     render :summary
   end
 
@@ -118,7 +118,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     ScopeApplier.new((current_scope || Entity.scoped), query_logic(params))
   end
 
-  def date_filtered_sumamry(tag, params)
+  def date_filtered_summary(tag, params)
     scope = Entity.scoped.tagged_with(tag)
 
     scope_applier(scope, params)
