@@ -2,7 +2,6 @@ module Events
   module Github
 
     class Follow < Protocol
-      include Events::Github::Accessors::Standard
     end
 
   end

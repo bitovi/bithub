@@ -487,6 +487,25 @@ CREATE TABLE identities (
 
 
 --
+-- Name: identities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE identities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: identities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
+
+
+--
 -- Name: internals; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -944,6 +963,13 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY internals ALTER COLUMN id SET DEFAULT nextval('internals_id_seq'::regclass);
 
 
@@ -1108,6 +1134,14 @@ ALTER TABLE ONLY events
 
 
 --
+-- Name: identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: internals_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1164,6 +1198,14 @@ ALTER TABLE ONLY tags
 
 
 --
+-- Name: unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT unique_uid_provider_combination UNIQUE (provider, uid);
+
+
+--
 -- Name: upvotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1212,6 +1254,13 @@ CREATE INDEX index_api_cache_on_uid_and_provider ON api_cache USING btree (uid, 
 --
 
 CREATE INDEX index_events_on_props ON events USING gist (props);
+
+
+--
+-- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --

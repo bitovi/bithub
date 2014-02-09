@@ -4,16 +4,16 @@ module Events
     class CustomFollow < Protocol
 
       def initialize(account, identity)
-        @account = Account.new(account)
-        @identity = OAuthIdentity.new(identity)
+        @screen_name = account
+        @identity = identity
       end
 
       def source_data
-        { identity: @identity, target: @account }
+        { identity: @identity, target: @screen_name }
       end
 
       def content_digest
-        seed = @identity.uid.to_s + @account.id.to_s
+        seed = @identity.uid.to_s + @screen_name
         calc_digest(seed)
       end
 
