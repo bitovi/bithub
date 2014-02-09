@@ -47,6 +47,7 @@ module Entities
       def update
         @instance.title = @payload.title
         @instance.body = @payload.body
+        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
         super
       end
 
@@ -55,6 +56,7 @@ module Entities
         @instance.parent.body = @payload.issue_or_pull_req_body
         @instance.parent.props[:state] = @payload.issue_or_pull_req_state
         @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
+        super
       end
 
       # Finders
@@ -76,10 +78,6 @@ module Entities
 
       def relationships
         Entities::Github::IssueComment::Relationships
-      end
-
-      def nice_name
-        self.class.name.gsub('Entities::Github','')
       end
     end
 

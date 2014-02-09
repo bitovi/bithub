@@ -3,12 +3,11 @@ module Events
 
     def content_digest
       if respond_to?(:event_id)
-        digest = calc_digest(event_id.to_s)
-        digest
+        calc_digest(event_id.to_s)
       elsif respond_to?(:origin_id)
         calc_digest(origin_id.to_s)
       else
-        fail InvalidDigestSeed.new("missing a seed", source_data)
+        fail InvalidDigestSeed.new("don't know how to calculate digest", nice_name)
       end
     end
 

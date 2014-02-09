@@ -16,9 +16,6 @@ class Dispatcher
   def dispatch(response, hint=nil)
     event = Events::Dispatcher.dispatch(response, hint)
     entity = Entities::Dispatcher.dispatch(event)
-
-    @logger.debug "MAPPING: #{event.class.name} -> #{entity.class.name}"
-    
     return nil if event.nil? || entity.nil?
 
     begin
@@ -28,9 +25,9 @@ class Dispatcher
       end
 
     rescue Events::InvalidDigestSeed => err
-      @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | #{err.source_data}"
+      @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | for: #{err.context}"
     rescue Entities::Protocol::MissingCriticalTags => err
-      @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | #{err.tags}"
+      @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message} | missing: #{err.tags.join(',')}"
     rescue ActiveRecord::RecordInvalid => err
       @logger.error "#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name} | #{err.message}"
     end

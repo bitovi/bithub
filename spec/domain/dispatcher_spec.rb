@@ -11,19 +11,22 @@ def latest_dataset
   ActiveSupport::JSON.decode(File.read(Dir.glob("spec/domain/support/*.json").last))
 end
 
-def action_or_comment?(x)
-  x['type'] == 'IssueCommentEvent' || (x['type'] == 'IssuesEvent' && x['payload']['action'] != 'opened')
+def prepare_data(which)
+  if which == :latest
+    latest_dataset.each {|event_data| Dispatcher.new.dispatch(event_data, 'github')}
+  elsif which.is_a? Number
+    dataset(which).each {|event_data| Dispatcher.new.dispatch(event_data, 'github')}
+  end
 end
-
 
 describe Dispatcher do
 
   describe "#dispatch" do
 
     before :all do
-      latest_dataset.each do |event_data|
-        Dispatcher.new.dispatch(event_data, 'github')
-      end
+      # import_needed_shit
+      prepare_data(:latest)
+
       @issue1 = Entity.feed('github').type('issue').number(1).first
       @issue2 = Entity.feed('github').type('issue').number(2).first
       @pull_req3 = Entity.feed('github').type('pull_request').number(3).first
@@ -32,7 +35,7 @@ describe Dispatcher do
     end
 
     after :all do
-      # ActiveRecord::Base.connection.execute("delete from events; delete from entities;")
+      ActiveRecord::Base.connection.execute("delete from events; delete from entities; delete from entity_refs;")
     end
 
     it "testcase - existence" do
@@ -62,8 +65,11 @@ describe Dispatcher do
       expect(@issue2.title).to eq "Sa labelom na pocetku, sa izmjenjenim tajtlom"
     end
 
-    it "testcase - references from body" do
+    it "testcase - references from" do
       expect(@issue1.referenced_from).to eq [@issue2]
+    end
+
+    it "testcase - references to" do
       expect(@issue1.references_to).to eq [@pull_req3]
     end
 

@@ -11,7 +11,6 @@ namespace :data do
     failed = []
 
     rules.each do |category, scorings|
-
       if existing = CategoryDeterminationRule.where({:name => category}).first
         existing.update_attributes({:scorings => scorings}) ? updated.push(category) : failed.push(category)
       else
@@ -21,7 +20,6 @@ namespace :data do
           failed.push(category)
         end
       end
-      
     end
 
     puts "Summary:"

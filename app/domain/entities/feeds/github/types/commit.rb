@@ -32,6 +32,7 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             sha: @commit.andand[:sha],
+            references_to: references_in_content_csv,
           }, # set next manually b/c AR will call save instead of persist on children
           feed_name: feed_name.snake_case,
           type_name: type_name.snake_case,
@@ -41,6 +42,10 @@ module Entities
       # override Referencable
       def references_in_content
         @commit[:message].scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+      end
+
+      def references_in_content_csv
+        references_in_content.join(',')
       end
 
       private
