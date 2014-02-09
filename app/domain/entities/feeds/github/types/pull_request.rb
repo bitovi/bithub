@@ -26,9 +26,10 @@ module Entities
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
 
         if @payload.actor
           built.props[:origin_author_id] = @payload.actor_id

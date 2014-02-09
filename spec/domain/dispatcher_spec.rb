@@ -24,7 +24,7 @@ describe Dispatcher do
   describe "#dispatch" do
 
     before :all do
-      # import_needed_shit
+      #import_needed_shit
       prepare_data(:latest)
 
       @issue1 = Entity.feed('github').type('issue').number(1).first
@@ -71,6 +71,18 @@ describe Dispatcher do
 
     it "testcase - references to" do
       expect(@issue1.references_to).to eq [@pull_req3]
+    end
+
+    it "testcase - children have no references_to" do
+      expect(@issue1.children.reduce(false){|acc, c|
+        acc || c.references_to.present?
+      }).to eq false
+    end
+
+    it "testcase - children have no references_from" do
+      expect(@issue2.children.reduce(false){|acc, c|
+        acc || c.references_to.present?
+      }).to eq false
     end
 
     it "testcase - pushes and commits" do

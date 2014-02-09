@@ -3,10 +3,11 @@ module Entities
     module Referencable
 
       def find_references_from_self
-        if references_in_content
+        if references_in_content && !references_in_content_csv.blank?
           Entity
           .feed('github')
           .repo_name(@payload.repo_name)
+          .where("props ? 'number'")
           .where("string_to_array(props -> 'number', ',') @> string_to_array('#{references_in_content_csv}', ',')")
           .all
         end
@@ -17,6 +18,7 @@ module Entities
           Entity
           .feed('github')
           .repo_name(@payload.repo_name)
+          .where("props ? 'references_to'")
           .where("string_to_array('#{@payload.number}', ',') @> string_to_array(props -> 'references_to', ',')")
           .all
         end
