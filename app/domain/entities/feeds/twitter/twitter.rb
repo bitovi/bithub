@@ -8,7 +8,7 @@ module Entities
       if MAPPINGS.include?(payload.type_name)
         self.const_get(MAPPINGS[payload.type_name])
       else
-        self.const_get(payload.type_name)
+        self.constants.include?(type_name.to_sym) ? self.const_get(payload.type_name) : nil
       end
     end
 

@@ -15,8 +15,10 @@ class Dispatcher
 
   def dispatch(response, hint=nil)
     event = Events::Dispatcher.dispatch(response, hint)
+    return nil if event.nil?
+    
     entity = Entities::Dispatcher.dispatch(event)
-    return nil if event.nil? || entity.nil?
+    return nil if entity.nil?
 
     begin
       ActiveRecord::Base.transaction do
