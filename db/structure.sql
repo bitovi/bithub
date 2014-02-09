@@ -340,10 +340,10 @@ CREATE TABLE tags (
 --
 
 CREATE VIEW entity_aggregated_tag_list AS
- SELECT e.id AS entity_id, 
+ SELECT e.id AS entity_id,
     string_agg((t.name)::text, ','::text) AS tag_list
-   FROM entities e, 
-    tags t, 
+   FROM entities e,
+    tags t,
     taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
@@ -398,9 +398,9 @@ CREATE TABLE upvotes (
 --
 
 CREATE VIEW entity_total_upvotes AS
- SELECT e.id AS entity_id, 
+ SELECT e.id AS entity_id,
     sum(u.value) AS upvotes_sum
-   FROM entities e, 
+   FROM entities e,
     upvotes u
   WHERE (e.id = u.applies_to_id)
   GROUP BY e.id;
@@ -453,25 +453,6 @@ CREATE TABLE identities (
     user_id integer,
     uid bigint
 );
-
-
---
--- Name: identities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE identities_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: identities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 
 --
@@ -596,21 +577,21 @@ CREATE TABLE users_roles (
 --
 
 CREATE MATERIALIZED VIEW leaderboard AS
- SELECT users.id AS user_id, 
-    users.name AS user_name, 
-    users.email AS user_email, 
-    (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
+ SELECT users.id AS user_id,
+    users.name AS user_name,
+    users.email AS user_email,
+    (users.props -> 'avatar_url'::text) AS user_gravatar_url,
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             scoring_rules r
           WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             upvotes u
           WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             awards a
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
@@ -621,16 +602,16 @@ CREATE MATERIALIZED VIEW leaderboard AS
       FROM roles
      WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text)))))))
   ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-      FROM entities e, 
-       ownerships o, 
+      FROM entities e,
+       ownerships o,
        scoring_rules r
      WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-      FROM entities e, 
-       ownerships o, 
+      FROM entities e,
+       ownerships o,
        upvotes u
      WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-      FROM entities e, 
-       ownerships o, 
+      FROM entities e,
+       ownerships o,
        awards a
      WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
       FROM internals
@@ -662,11 +643,11 @@ ALTER SEQUENCE ownerships_id_seq OWNED BY ownerships.id;
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT e.thread_updated_ts AS ts, 
-    e.id, 
-    categories.name AS category, 
+ SELECT e.thread_updated_ts AS ts,
+    e.id,
+    categories.name AS category,
     ARRAY( SELECT t.name
-           FROM taggings tt, 
+           FROM taggings tt,
             tags t
           WHERE ((((tt.taggable_type)::text = 'Entity'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
    FROM (entities e
@@ -821,17 +802,17 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE VIEW user_total_score AS
- SELECT users.id AS user_id, 
+ SELECT users.id AS user_id,
     (((( SELECT COALESCE(sum(o.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
+           FROM entities e,
             ownerships o
           WHERE ((e.id = o.entity_id) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             upvotes u
           WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             awards a
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
@@ -919,13 +900,6 @@ ALTER TABLE ONLY entity_refs ALTER COLUMN id SET DEFAULT nextval('entity_refs_id
 --
 
 ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_seq'::regclass);
 
 
 --
@@ -1088,14 +1062,6 @@ ALTER TABLE ONLY events
 
 
 --
--- Name: identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY identities
-    ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
-
-
---
 -- Name: internals_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1152,14 +1118,6 @@ ALTER TABLE ONLY tags
 
 
 --
--- Name: unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY identities
-    ADD CONSTRAINT unique_uid_provider_combination UNIQUE (provider, uid);
-
-
---
 -- Name: upvotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1201,13 +1159,6 @@ CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
 --
 
 CREATE INDEX index_events_on_props ON events USING gist (props);
-
-
---
--- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --

@@ -59,7 +59,6 @@ module Entities
         @instance.parent.body = @payload.issue_or_pull_req_body
         @instance.parent.props[:state] = @payload.issue_or_pull_req_state
         @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
-        super
       end
 
       # Finders
