@@ -33,7 +33,7 @@ module Events
       if MAPPINGS && MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
-        self.const_get(type_name)
+        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
       end
     end
 
@@ -43,7 +43,7 @@ module Events
       elsif github_issue?(source_data)
         'CustomIssue'
       else
-        fail Events::MappingError, 'unknown Github event type'
+        'NonExistingType'
       end
     end
 

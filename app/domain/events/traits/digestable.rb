@@ -12,7 +12,7 @@ module Events
     end
 
     def calc_digest(seed)
-      Digest::MD5.hexdigest(seed + self.class.name)
+     (self.nil? || seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
     end
   end
 end
