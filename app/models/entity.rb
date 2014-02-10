@@ -1,8 +1,4 @@
 class Entity < ActiveRecord::Base
-
-  class EventHasNoParentException < Error; end
-  class DistinctFieldNotKnown < Error; end
-
   attr_accessible :id,
     :body, :title, :url, :origin_id,
     :tag_list, :owners, :ownerships,

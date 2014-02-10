@@ -7,14 +7,12 @@ module Events
   module Bithub; end
   module Meetup; end
 
-  MAPPINGS = {}
-
   def self.feed(feed_name)
-    feed_name = feed_name.camel_case
-    if MAPPINGS.include?(feed_name)
-      self.const_get(MAPPINGS[feed_name])
+    feed_name = feed_name.andand.camel_case.andand.to_sym
+    if self.constants.include?(feed_name)
+      self.const_get(feed_name)
     else
-      self.constants.include?(feed_name.to_sym) ? self.const_get(feed_name) : nil
+      fail MappingError.new("Couldn't find valid feed", feed_name)
     end
   end
 end

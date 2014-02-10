@@ -7,7 +7,7 @@ module Events
       elsif respond_to?(:origin_id)
         calc_digest(origin_id.to_s)
       else
-        fail InvalidDigestSeed.new("don't know how to calculate digest", nice_name)
+        fail BuildingError.new("Couldn't calculate digest. Probably missing a seed.", nice_name)
       end
     end
 

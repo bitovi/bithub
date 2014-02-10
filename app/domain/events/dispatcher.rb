@@ -6,11 +6,7 @@ module Events
 
     def self.dispatch(payload, feed_name = nil)
       feed_name ||= self.meta_feed_name(payload)
-      feed = Events.feed(feed_name)
-      unless feed.nil?
-        type = feed.type(extract_source_data(payload))
-        type.new(payload) unless type.nil?
-      end
+      Events.feed(feed_name).type(extract_source_data(payload)).new(payload)
     end
 
     def self.extract_source_data(payload)

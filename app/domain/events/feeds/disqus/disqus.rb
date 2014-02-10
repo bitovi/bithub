@@ -4,7 +4,7 @@ module Events
   module Disqus
     class Post < Protocol; end
 
-    def self.type(sd)
+    def self.type(source_data)
       Events::Disqus::Post
     end
 
