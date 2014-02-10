@@ -26,9 +26,10 @@ module Entities
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
 
         if @payload.actor
           built.props[:origin_author_id] = @payload.actor_id
@@ -52,11 +53,15 @@ module Entities
         @instance.body = @payload.body
         @instance.props[:label_names] = @payload.label_names
         @instance.props[:state] = @payload.state
+        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
         super
       end
 
       def update_from_children
         most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+
+        return if most_recent_child.nil?
+
         most_recent_child.props.symbolize_keys!
         most_recent_child.source_data.symbolize_keys!
 

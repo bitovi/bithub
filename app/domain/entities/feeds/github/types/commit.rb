@@ -20,7 +20,7 @@ module Entities
       end
 
       def build
-        Entity.new({
+        built = Entity.new({
           title: "pushed to #{@payload.repo_name}",
           body: @commit.andand[:message],
           url: @commit.andand[:url],
@@ -36,11 +36,19 @@ module Entities
           feed_name: feed_name.snake_case,
           type_name: type_name.snake_case,
         })
+
+        built.props[:references_to] = references_in_content_csv unless references_in_content_csv.blank?
+
+        built 
       end
 
       # override Referencable
       def references_in_content
         @commit[:message].scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+      end
+
+      def references_in_content_csv
+        references_in_content.join(',')
       end
 
       private

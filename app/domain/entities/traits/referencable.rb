@@ -3,31 +3,39 @@ module Entities
     module Referencable
 
       def find_references_from_self
-        Entity
-          .type('github')
-          .tagged_with(['issue', 'pull_request'], :any => true)
-          .where("props -> 'number' = ANY(#{references_in_content.to_postgres_array})")
-          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-          .all
-      end
-      
-      def find_references_to_self
-        if nice_name =~ /Issue/ || nice_name =~ /PullRequest/
+        if references_in_content && !references_in_content_csv.blank?
           Entity
-          .type('github')
-          .tagged_with(['issue', 'pull_request', 'issue_comment'], :any => true)
-          .where("'#{@payload.number}' = ANY(string_to_array(entities.props -> 'references_to', ','))")
-          .where("props -> 'repo_name' = '#{@payload.repo_name}'")
+          .feed('github')
+          .repo_name(@payload.repo_name)
+          .where("props ? 'number'")
+          .where("string_to_array(props -> 'number', ',') @> string_to_array('#{references_in_content_csv}', ',')")
           .all
-        else
-          []
         end
+      end
+
+      def find_references_to_self
+        if @payload.respond_to? :number
+          Entity
+          .feed('github')
+          .repo_name(@payload.repo_name)
+          .where("props ? 'references_to'")
+          .where("string_to_array('#{@payload.number}', ',') @> string_to_array(props -> 'references_to', ',')")
+          .all
+        end
+      end
+
+      def referenced_repo_name
+        @payload.referenced_repo_name || @payload.repo_name
       end
 
       def references_in_content
         @payload.referenced_issue_numbers
       end
-      
+
+      def references_in_content_csv
+        references_in_content.join(',')
+      end
+
     end    
   end
 end

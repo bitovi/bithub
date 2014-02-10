@@ -15,7 +15,7 @@ module Entities
       end
 
       def build
-        Entity.new({
+        built = Entity.new({
           title: "pushed to #{@payload.repo_name}",
           url: "https://github.com/#{@payload.repo_name}/commit/#{@payload.head}",
           origin_ts: @payload.origin_ts,
@@ -28,6 +28,10 @@ module Entities
             commit_shas: @payload.commit_shas,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
+
+        built 
       end
 
       def build_children
@@ -41,11 +45,6 @@ module Entities
         end
       end
       
-      # override Referencable
-      def references_in_content
-        @payload.referenced_issue_numbers
-      end
-
       # Finders
       
       def find_by_push_id

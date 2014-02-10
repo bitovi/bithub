@@ -1,3 +1,4 @@
+require 'pp'
 class EntityDecorator < Draper::Decorator
   S3_PREFIX = "http://s3.amazonaws.com/bithub"
 
@@ -18,6 +19,7 @@ class EntityDecorator < Draper::Decorator
   def title
     if source.cached_tags.include?('tweet')
       apply_hyperlinks(source.title, source.props['entities_urls'])
+
     else
       source.title
     end
@@ -124,10 +126,16 @@ class EntityDecorator < Draper::Decorator
       context[:excluded_attributes].include?(attr.to_s))
   end
 
-  def apply_hyperlinks(text, urls = [])
+  def apply_hyperlinks(text, urls )
+
+    Rails.logger.info urls
+    
+    urls = ActiveSupport::JSON.decode(urls || '[]')
+
     urls.reduce(text) do |acc, url|
-      range = url['indices']; link = text.slice(*range)
-      text.gsub(link, "<a href=#{url['url']}>" + url['display_url'] + "</a>")
+      range = url["indices"]
+      link = text.slice(*range)
+      text.gsub(link, "<a href=#{url["url"]}>" + url["display_url"] + "</a>")
     end
   end
 

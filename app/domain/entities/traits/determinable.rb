@@ -8,6 +8,7 @@ module Entities
       methods = collect_methods(/determine_.*/)
 
       # we need to execute :determine_tags before the others
+      methods.unshift(:determine_rule) if methods.delete(:determine_rule)
       methods.unshift(:determine_tags) if methods.delete(:determine_tags)
 
       methods.each {|m| self.send(m)}
@@ -39,12 +40,10 @@ module Entities
     end
 
     def determine_author
-      uid = @instance.props[:origin_author_id]
-      if f = @instance.props[:origin_author_feed] # Coming from Bithub
-        ident = Identity.find_or_create_with_provider_and_uid(f, uid)
-      else f = feed_name.snake_case # Coming from crawler
-        ident = Identity.find_by_provider_and_uid(f, uid)
-      end
+      ident = Identity.find_by_provider_and_uid(
+        feed_name.snake_case,
+        @instance.props[:origin_author_id]
+      )
 
       @instance.author = ident.user if ident && ident.user
     end

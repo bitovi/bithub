@@ -7,7 +7,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       WHERE e.id = e_t.taggable_id AND e_t.tag_id = t.id
       GROUP BY e.id;
     CACHED_TAG_LIST
-    
+
     execute <<-TOTAL_UPVOTES
       CREATE VIEW entity_total_upvotes AS
       SELECT e.id AS entity_id, sum(u.value) AS upvotes_sum
@@ -15,7 +15,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       WHERE e.id = u.applies_to_id
       GROUP BY e.id;
     TOTAL_UPVOTES
-    
+
     execute <<-TOTAL_SCORE
       CREATE VIEW user_total_score AS
       SELECT users.id AS user_id,
@@ -43,7 +43,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
       ) AS score_sum
       FROM users;
     TOTAL_SCORE
-    
+
     execute <<-PAGINATION
       CREATE MATERIALIZED VIEW pagination AS
         SELECT e.thread_updated_ts AS "ts",
@@ -90,7 +90,7 @@ class RecreateEventDependentViews < ActiveRecord::Migration
             FROM internals
             WHERE internals.receiver_id = users.id)
         ) AS user_score
-      FROM users JOIN users_roles ON users.id = users_roles.user_id
+      FROM users LEFT JOIN users_roles ON users.id = users_roles.user_id
       WHERE users.name IS NOT NULL
       AND (users_roles.role_id IS NULL OR users_roles.role_id NOT IN (SELECT id FROM roles WHERE name = 'bitovian' OR name = 'admin'))
       ORDER BY user_score desc;

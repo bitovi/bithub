@@ -1,10 +1,8 @@
-require_relative 'types/tweet'
-require_relative 'types/follow'
-
 module Events
   module Twitter
     class Tweet < Protocol; end
     class Follow < Protocol; end
+    class CustomFollow < Protocol; end
 
     MAPPINGS = {
       'StatusEvent' => 'Tweet'
@@ -15,7 +13,7 @@ module Events
       if MAPPINGS && MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
-        self.const_get(type_name)
+        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
       end
     end
 
@@ -24,10 +22,10 @@ module Events
         'Follow'
       elsif is_status_event?(source_data)
         'Tweet'
-      elsif source_data['friends']
-        fail Events::MappingError, "skipping Twitter 'friends' event"
+      elsif source_data[:custom_follow]
+        'CustomFollow'
       else
-        fail Events::MappingError, "unknown Twitter event type"
+        'NonExistingType'
       end
     end
 
@@ -74,3 +72,7 @@ module Events
 
   end
 end
+
+require_relative 'types/tweet'
+require_relative 'types/follow'
+require_relative 'types/custom_follow'

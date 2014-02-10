@@ -18,7 +18,7 @@ module Events
       end
 
       def content_digest
-        seed = actor_login + repo_name + commit_id.to_s + comment_id.to_s
+        seed = "#{actor_login}#{repo_name}#{commit_id}#{comment_id}"
         calc_digest(seed)
       end
 
