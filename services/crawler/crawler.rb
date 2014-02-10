@@ -18,6 +18,7 @@ require 'yaml'
 require 'core_ext'
 require 'loggable'
 require 'crawler/poller'
+require 'crawler/rsvp_poller'
 require 'crawler/streamer'
 
 # paths to config files based on env
@@ -122,7 +123,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     feed_config = feeds[:meetup][:open_events][:polling]
     log_registering(feed_config[:url])
 
-    EM.add_periodic_timer(intervals[:meetup], Poller.new(ex, feed_config[:url]) do |c|
+    EM.add_periodic_timer(intervals[:meetup][:events], Poller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
     end.handler)
     
@@ -130,13 +131,11 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     feed_config = feeds[:meetup][:rsvps]
     log_registering(feed_config[:url])
 
-    logger.info feed_config
-
-    EM.add_periodic_timer(intervals[:meetup], Poller.new(ex, feed_config[:url]) do |c|
+    EM.add_periodic_timer(intervals[:meetup][:rsvps], RsvpPoller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
       c.boot_data_url = feed_config[:boot_data_url]
       c.reboot_delay = 10 
-    end.extend(Bootable).extend(Bootable::RSVPs).boot.handler)
+    end.boot.handler)
 
 
     # --- Forums general feed

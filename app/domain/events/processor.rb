@@ -38,11 +38,14 @@ module Events
       @extracted ||= subprocessor.extract
       self
     end
-
+    
     def decorate
       @decorated ||= result.map do |event_hash|
-        e = Events::Dispatcher.dispatch(event_hash, @config.feed)
-        e.to_json.deep_merge(subprocessor.decorate)
+        Events::Dispatcher.dispatch(event_hash, @config.feed)
+      end.reject do |event|
+        tweet_from_user_stream?(event)
+      end.map do |event|
+        event.to_json.deep_merge(subprocessor.decorate)
       end
       self
     end
@@ -52,6 +55,10 @@ module Events
     end
 
     private
+
+    def tweet_from_user_stream?(event)
+      event.nice_name =~ /Tweet/ && @config.user_stream?
+    end
     
     def subprocessor
       @subprocessor ||= Events.feed(@config.feed)::Processor.new(@response) do |config|
