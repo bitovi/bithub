@@ -49,8 +49,7 @@
       :query:
         :sign: "true"
         :key: "663a24605a37767831495d6332546b4a"
-        :fields: "event_hosts"
-      :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
+      :boot_data_url: "http://staging.bithub.com/api/v2/crawler/event_ids"
 
   :twitter:
     :public:
