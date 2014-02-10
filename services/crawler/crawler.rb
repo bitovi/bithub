@@ -67,13 +67,13 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- Streams ----
     # ----------------
 
-    # # --- Twitter public stream
-    # logger.info "Registering Twitter - public tweets stream"
-    # conn_opts = feeds[:twitter][:public][:streaming]
-    # Streamer.connect(ex, conn_opts) do |config|
-    #   config.user_stream = false
-    #   config.connected_as = "public stream"
-    # end
+    # --- Twitter public stream
+    logger.info "Registering Twitter - public tweets stream"
+    conn_opts = feeds[:twitter][:public][:streaming]
+    Streamer.connect(ex, conn_opts) do |config|
+      config.user_stream = false
+      config.connected_as = "public stream"
+    end
 
     # --- Twitter user streams
     feeds[:twitter][:user_streams].each do |screen_name, conn_opts|
