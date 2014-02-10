@@ -66,13 +66,15 @@ end
 
 describe Entities::Twitter::Follow do
   def build_follow
-    payload = double()
+    payload = double("Entities::Twitter::Follow")
     payload.stub(:feed => "twitter")
     payload.stub(:type => "follow")
     payload.stub(:origin_ts => Time.now)
     payload.stub(:source_id => "123")
     payload.stub(:source_screen_name => "foobar")
     payload.stub(:target_screen_name => "canjs")
+    payload.stub(:origin_author_id => "123")
+    payload.stub(:origin_author_name => "foobar")
     payload.stub(:instance => nil)
     Entities::Twitter::Follow.new(payload).procure
   end
