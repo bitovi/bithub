@@ -13,12 +13,13 @@ module Entities
         type_name = arg.type_name.to_sym
       end
 
-      if MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
+
+      if issue_action?(payload)
+        Entities::Github::IssueAction
+      elsif MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
         self.const_get(MAPPINGS[type_name])
       elsif self.constants.include?(type_name)
         self.const_get(type_name)
-      elsif issue_action?(payload)
-        Entities::Github::IssueAction
       else
         fail MappingError.new("Couldn't find valid type for Github", type_name)
       end
