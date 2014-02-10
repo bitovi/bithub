@@ -105,3 +105,17 @@
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+
+- required_tags:
+    - rsvp
+    - confirmed
+  authorship_value: 2
+  award_value: 0
+  upvote_value: 0
+
+- required_tags:
+    - rsvp
+    - waitlist
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0

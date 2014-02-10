@@ -32,14 +32,12 @@ module Events
         Time.at(unix_epoch).utc.iso8601
       end
       
-      def origin_author_id
-        source_data.andand[:event_hosts]
-        .andand.first.andand[:member_id]
+      def event_hosts
+        source_data.andand[:event_hosts] || []
       end
 
-      def origin_author_name
-        source_data.andand[:event_hosts]
-        .andand.first.andand[:member_name]
+      def event_host_ids_csv
+        event_hosts.map{|h| h.andand[:member_id]}.compact.join(',')
       end
 
       def origin_timestamp

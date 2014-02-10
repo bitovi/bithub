@@ -4,12 +4,14 @@ class Ownership < ActiveRecord::Base
   attr_accessible :entity, :owner, :ownership_type, :value
 
   belongs_to :owner, class_name: "User"
+  belongs_to :host, conditions: { ownership_type: 'host' }, class_name: "User"
   belongs_to :entity
+
   enumerize :ownership_type, in: [:author, :host, :organizer]
 
   validates_presence_of :ownership_type
   validates_uniqueness_of :owner_id, scope: [:entity_id, :ownership_type]
-  validates_uniqueness_of :entity_id, scope: [:ownership_type]
+  # validates_uniqueness_of :entity_id, scope: [:ownership_type]
 
   after_create :update_total_score_in_owner
   after_destroy :update_total_score_in_owner

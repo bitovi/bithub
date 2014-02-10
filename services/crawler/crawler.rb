@@ -18,6 +18,7 @@ require 'yaml'
 require 'core_ext'
 require 'loggable'
 require 'crawler/poller'
+require 'crawler/rsvp_poller'
 require 'crawler/streamer'
 
 # paths to config files based on env
@@ -66,13 +67,13 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- Streams ----
     # ----------------
 
-    # --- Twitter public stream
-    logger.info "Registering Twitter - public tweets stream"
-    conn_opts = feeds[:twitter][:public][:streaming]
-    Streamer.connect(ex, conn_opts) do |config|
-      config.user_stream = false
-      config.connected_as = "public stream"
-    end
+    # # --- Twitter public stream
+    # logger.info "Registering Twitter - public tweets stream"
+    # conn_opts = feeds[:twitter][:public][:streaming]
+    # Streamer.connect(ex, conn_opts) do |config|
+    #   config.user_stream = false
+    #   config.connected_as = "public stream"
+    # end
 
     # --- Twitter user streams
     feeds[:twitter][:user_streams].each do |screen_name, conn_opts|
@@ -127,14 +128,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     end.handler)
     
     # --- Meetup rsvps
-    # feed_config = feeds[:meetup][:rsvps]
-    # log_registering(feed_config[:url])
+    feed_config = feeds[:meetup][:rsvps]
+    log_registering(feed_config[:url])
 
-    # EM.add_periodic_timer(intervals[:meetup][:rsvps], RsvpPoller.new(ex, feed_config[:url]) do |c|
-    #   c.http_query = feed_config[:query]
-    #   c.boot_data_url = feed_config[:boot_data_url]
-    #   c.reboot_delay = 10 
-    # end.boot.handler)
+    EM.add_periodic_timer(intervals[:meetup][:rsvps], RsvpPoller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+      c.boot_data_url = feed_config[:boot_data_url]
+      c.reboot_delay = 10 
+    end.boot.handler)
 
 
     # --- Forums general feed
