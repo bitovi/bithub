@@ -17,6 +17,7 @@ def build_standard_github_payload(name, attrs={})
   # payload.stub(:origin_author_name => "username")
   payload.stub(:origin_ts => Time.now)
   payload.stub(:referenced_issue_numbers => attrs[:referenced_issue_numbers] || [])
+  payload.stub(:referenced_issue_numbers_csv => attrs[:referenced_issue_numbers_csv] || "")
   payload.stub(:switch_to_camel_case => lambda {})
   payload.stub(:instance => nil)
   payload
@@ -43,6 +44,7 @@ def build_issue_comment(attrs={})
   payload.stub(:number => attrs[:number] || "123")
   payload.stub(:issue_or_pull_req_number => attrs[:issue_or_pull_req_number] || "123")
   payload.stub(:label_names => "")
+  payload.stub(:issue_or_pull_req_title => "some title")
   payload.stub(:comment_id => attrs[:comment_id] || "123456")
   Entities::Github::IssueComment.new(payload).procure
 end
