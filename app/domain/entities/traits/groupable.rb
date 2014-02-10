@@ -12,7 +12,7 @@ module Entities
     def adopt
       if self.respond_to? :find_children
         if (c = find_children)
-          @instance.children += c
+          @instance.children += c.is_a?(Array) ? c : [c]
         end
       end
 
@@ -48,8 +48,8 @@ module Entities
     def associate_references
 
       if self.respond_to? :find_references_from_self
-        if (refs = find_references_from_self)
-          if @instance.parent
+        if (refs = find_references_from_self) #ENTITY
+          if @instance.parent.present?
             @instance.parent.references_to += refs
           else
             @instance.references_to += refs
@@ -58,18 +58,18 @@ module Entities
       end
 
       if self.respond_to? :find_references_to_self
-        if (refs = find_references_to_self)
-          if refs.reduce(false) {|acc, p| acc || not(p.parent.nil?)}
-            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }
+        if (refs = find_references_to_self) #ENTITY
+          if refs.reduce(false) {|acc, p| acc || p.parent.present?}
+            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }.reject{|e| @instance.referenced_from.include?(e)}.uniq
           else
             @instance.referenced_from += refs
           end
         end
       end
 
-      if self.respond_to? :build_references
-        @instance.references_to += build_references
-      end
+      #if self.respond_to? :build_references
+      #  @instance.references_to += build_references
+      #end
       self
     end
 

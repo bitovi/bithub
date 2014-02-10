@@ -38,47 +38,12 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   def create
-    source_data = params.clone['event']
-    source_data['origin_ts'] = Time.now.utc
-
-    # handle post-as
-    if !current_user.has_role?(:admin) || !posting_for_another_user?(params[:event])
-      source_data['origin_author_id'] == current_user[:id]
-      source_data['origin_author_feed'] == 'bithub'
-    end
-
-    data = {
-      source_data: source_data,
-      meta: {
-        feed: 'bithub',
-        type: 'post'
-      }
-    }
-
-    if e = Dispatcher.new.dispatch(data)
-      @event = EntityDecorator.decorate(e)
-      @ev_relations = EntityRelations.new(@event.id)
-
-      #   if author = @event.author
-      #     Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      #   end
-
-      render :show
-    else
-      render :json => msg_hash(e, 'events', 'create'), :status => 406
-    end
+    create_or_update
   end
 
   def update
     authorize! :manage, Entity, :message => "No rights to manage events."
-    e = Entity.find(params[:id])
-    if e.update_from_bithub(params[:event])
-      @event = EntityDecorator.decorate(e)
-      @ev_relations = EntityRelations.new(@event.id)
-      render :show
-    else
-      render :json => msg_hash(e, 'events', 'update'), :status => 406
-    end
+    create_or_update
   end
 
   def destroy
@@ -89,7 +54,7 @@ class Api::V1::EventsController < Api::V1::BaseController
 
   def summary
     cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
-    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_sumamry(cat, params)]}]
+    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
     render :summary
   end
 
@@ -102,6 +67,33 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   private # SCOPE BUILDING
+
+  def create_or_update
+    method        = params[:id].nil?? 'create' : 'update'
+    event, entity = Entities::Bithub::Post.forge(params, current_user)
+
+    errors = [event, entity].reduce({}){|memo, model|
+      memo.merge(model.errors)
+    }
+
+    errors.delete(:base) if errors[:base].empty?
+
+    if errors.blank?
+      @event = EntityDecorator.decorate(entity)
+      @ev_relations = EntityRelations.new(@event.id)
+
+      #   if author = @event.author
+      #     Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
+      #   end
+
+      render :show
+    else
+      render :json => {
+        message: t("api.entities.#{method}.error"),
+        errors:  errors
+      }, :status => 406
+    end
+  end
 
   def build_scope(muster_query, params)
     scope = Entity.scoped_with_includes
@@ -126,7 +118,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     ScopeApplier.new((current_scope || Entity.scoped), query_logic(params))
   end
 
-  def date_filtered_sumamry(tag, params)
+  def date_filtered_summary(tag, params)
     scope = Entity.scoped.tagged_with(tag)
 
     scope_applier(scope, params)
@@ -162,7 +154,4 @@ class Api::V1::EventsController < Api::V1::BaseController
     params['order'] =~ /upvotes/
   end
 
-  def posting_for_another_user?(params)
-    params[:origin_author_id] != nil && params[:origin_author_feed] != nil
-  end
 end

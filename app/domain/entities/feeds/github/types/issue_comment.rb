@@ -27,7 +27,7 @@ module Entities
 
       # Builder
       def build
-        Entity.new({
+        built = Entity.new({
           title: "Comment on issue ##{@payload.issue_or_pull_req_number}",
           body: @payload.body,
           url: @payload.html_url,
@@ -39,14 +39,18 @@ module Entities
             origin_author_avatar_url: @payload.actor_avatar_url,
             repo_name: @payload.repo_name,
             number: @payload.issue_or_pull_req_number,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
+
+        built
       end
 
       def update
         @instance.title = @payload.title
         @instance.body = @payload.body
+        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
         super
       end
 
@@ -76,10 +80,6 @@ module Entities
 
       def relationships
         Entities::Github::IssueComment::Relationships
-      end
-
-      def nice_name
-        self.class.name.gsub('Entities::Github','')
       end
     end
 

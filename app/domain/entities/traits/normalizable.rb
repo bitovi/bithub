@@ -3,7 +3,7 @@ module Entities
     ARGS_TO_PROPS = ['category', 'project', 'type', 'feed', 'tags', 'origin_author_id', 'origin_author_feed', 'location']
 
     def normalize
-      set_thread_ts_to_origin_ts
+      set_thread_ts
       set_total_upvotes
       set_feed_and_type_names
       set_ids_for_category_feed_and_type
@@ -11,7 +11,7 @@ module Entities
       self
     end
 
-    def set_thread_ts_to_origin_ts
+    def set_thread_ts
       @instance.thread_updated_ts = @instance.origin_ts
     end
 

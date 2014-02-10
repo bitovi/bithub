@@ -52,6 +52,15 @@ module Entities
         .type('rsvp')
         .where("props -> 'event_id' = '#{event_id.to_s}'")
       end
+
+      def persist
+        super unless @instance.parent_id.nil?
+      end
+
+      def persist!
+        super unless @instance.parent_id.nil?
+      end
+
     end
 
   end

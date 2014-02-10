@@ -26,8 +26,14 @@ module Entities
             location: @payload.composite_location,
             venue: @payload.venue,
             scheduled_at: @payload.scheduled_at,
+            latitude: @payload.latitude,
+            longitude: @payload.longitude,
           }
         })
+      end
+
+      def set_thread_ts
+        @instance.thread_updated_ts = @instance.props[:scheduled_at]
       end
 
       def find_children

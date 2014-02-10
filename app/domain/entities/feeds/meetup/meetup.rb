@@ -15,7 +15,7 @@ module Entities
       if MAPPINGS.include?(type_name)
         self.const_get(MAPPINGS[type_name])
       else
-        self.const_get(type_name)
+        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
       end
     end
 

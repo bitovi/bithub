@@ -26,9 +26,10 @@ module Entities
             number: @payload.number,
             label_names: @payload.label_names,
             state: @payload.state,
-            references_to: @payload.referenced_issue_numbers_csv,
           }
         })
+
+        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
 
         if @payload.actor
           built.props[:origin_author_id] = @payload.actor_id
@@ -52,6 +53,7 @@ module Entities
         @instance.body = @payload.body
         @instance.props[:label_names] = @payload.label_names
         @instance.props[:state] = @payload.state
+        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
         super
       end
 
@@ -89,6 +91,7 @@ module Entities
       def relationships
         Entities::Github::PullRequest::Relationships
       end
+
     end
 
   end
