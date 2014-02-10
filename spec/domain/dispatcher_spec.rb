@@ -89,7 +89,7 @@ describe Dispatcher do
       expect(@push.children.count).to eq 3
     end
 
-    it "testase - non existing event types will not break anything" do
+    it "testcase - non existing event types will not break anything" do
       pairs = [
         %w(foo bar),
         %w(github nonExistingType),
