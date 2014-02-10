@@ -79,7 +79,7 @@ class Streamer
   end
 
   def log_publishing(event)
-    @logger.info "#{base_log_format} | Publishing tweet"
+    @logger.info "#{base_log_format} | Publishing #{event.size} tweets"
     @logger.debug event.inspect
   end
 
