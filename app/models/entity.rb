@@ -28,6 +28,7 @@ class Entity < ActiveRecord::Base
 
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
   has_many :owners, through: :ownerships, source: :owner
+  has_many :hosts, through: :ownerships, source: :host
 
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
@@ -90,26 +91,8 @@ class Entity < ActiveRecord::Base
     self.ownerships.where(ownership_type: :author).destroy_all
   end
 
-  def host=(user)
-    self.ownerships.where(ownership_type: :host).destroy_all
-    self.ownerships << Ownership.new(owner: user, ownership_type: :host).determine_value
-  end
-
-  def organizer=(user)
-    self.ownerships.where(ownership_type: :organizer).destroy_all
-    self.ownerships << Ownership.new(owner: user, ownership_type: :organizer).determine_value
-  end
-
   def author
     self.ownerships.select{|a| a.is_authorship? }.first.andand.owner
-  end
-
-  def organizer
-    self.ownerships.select{|a| a.is_organizership? }.first.andand.owner
-  end
-
-  def host
-    self.ownerships.select{|a| a.is_hostship? }.first.andand.owner
   end
 
   def state

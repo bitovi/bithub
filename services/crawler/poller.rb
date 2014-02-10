@@ -18,9 +18,7 @@ class Poller
   class Configuration
     attr_accessor :http_query, :http_head,
       :digest_queue_config,
-      :processor_config,
-      :boot_data_url,
-      :reboot_delay
+      :processor_config
   end
 
   def initialize(exchange, endpoint, &blk)

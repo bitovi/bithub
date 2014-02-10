@@ -38,7 +38,7 @@ module Events
       @extracted ||= subprocessor.extract
       self
     end
-
+    
     def decorate
       @decorated ||= result.map do |event_hash|
         Events::Dispatcher.dispatch(event_hash, @config.feed)
