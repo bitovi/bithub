@@ -5,10 +5,10 @@ require 'events/processor'
 
 class Streamer
   include Loggable
-  attr_reader :feed, :processor, :connected_as
 
   class Configuration
-    attr_accessor :is_user_stream
+    attr_accessor :user_stream, :connected_as
+    def user_stream?; @user_stream; end
   end
 
   ERRBACKS = [
@@ -25,13 +25,12 @@ class Streamer
   end
 
   def initialize(exchange, stream_config, &blk)
-    initialize_logger("ERROR")
+    initialize_logger("INFO")
     @exchange = exchange
 
-    @config = OpenStruct.new
+    @config = Configuration.new
     blk.(@config) if blk
 
-    @connected_as = stream_config[:oauth][:consumer_key] || "no consumer key!!!"
     @feed = 'twitter'
     @stream = EM::Twitter::Client.connect(stream_config)
   end
@@ -42,42 +41,55 @@ class Streamer
     end
 
     @stream.on_error do |message|
-      @logger.error "#{@stream} connected as #{@connected_as} ERROR: #{message}"
+      @logger.error "#{base_log_format} | error: #{message}"
     end
 
     # dynamically assign the rest of the errbacks
     ERRBACKS.each do |errback|
       @stream.send(errback.to_sym) do
-        @logger.warn "#{@stream} connected as #{@connected_as} somethin happen: #{errback}"
+        @logger.warn "#{base_log_format} | #{errback}"
       end
     end
   end
 
   def handle_event(event_json)
-    begin
-      if (event = processor(event_json).parse.extract.decorate.result)
-        publish(event)
-      end
-    rescue Events::MappingError => e
-      @logger.error "FEED: #{feed} | AS: #{connected_as} | #{e} | #{event_json}"
-    end
+    event = processor(event_json).parse.extract.decorate.result
+    publish(event)
+  rescue Events::MappingError => err
+    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
+  rescue Events::BuildingError=> err
+    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
   end
 
   def processor(response)
     Events::Processor.new(response) do |config| 
       config.feed = @feed
-      config.is_user_stream = @config.is_user_stream
+      config.user_stream = @config.user_stream?
     end
   end
 
-  def publish(event)
-    EM.defer do 
-      @exchange.publish(Yajl::Encoder.encode(event))
+  def publish(events)
+    log_publishing(events)
+    pack_and_publish = lambda do
+      events.each do |e|
+        @exchange.publish(Yajl::Encoder.encode(e))
+      end
     end
+    EM.defer(pack_and_publish) if events.length > 0
   end
 
-  def log_publishing
-    str = "Publishing from Twitter"
-    @logger.info str
+  def log_publishing(event)
+    @logger.info "#{base_log_format} | Publishing tweet"
+    @logger.debug event.inspect
+  end
+
+  private
+
+  def user
+    @config.connected_as
+  end
+
+  def base_log_format
+    "Feed: #{@feed} | User: @#{user}"
   end
 end

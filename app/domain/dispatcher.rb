@@ -45,4 +45,3 @@ class Dispatcher
     nil
   end
 end
-#{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name}

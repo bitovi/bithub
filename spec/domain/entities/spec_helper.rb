@@ -15,11 +15,9 @@ load File.expand_path("../../../../lib/tasks/data/import/import_category_determi
 load File.expand_path("../../../../lib/tasks/data/import/import_scoring_rules.rake", __FILE__)
 
 Rake::Task.define_task(:environment)
-silence_stream(STDOUT) do
-  Rake::Task["data:import_or_update_tags"].invoke
-  Rake::Task["data:import_category_determination_rules"].invoke
-  Rake::Task["data:import_scoring_rules"].invoke
-end
+Rake::Task["data:import_or_update_tags"].invoke
+Rake::Task["data:import_category_determination_rules"].invoke
+Rake::Task["data:import_scoring_rules"].invoke
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods

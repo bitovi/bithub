@@ -24,7 +24,7 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger("DEBUG")
+    initialize_logger("INFO")
     @config = Configuration.new
     blk.(@config) if blk
 
@@ -74,6 +74,10 @@ class Poller
   def handle_success(http_resp)
     processed = processor(http_resp).parse.extract.decorate.result
     publish(reject_old(processed))
+  rescue Events::MappingError => err
+    @logger.error "Feed #{@feed} | #{err} | #{err.context} | #{event_json}"
+  rescue Events::BuildingError=> err
+    @logger.error "Feed #{@feed} | #{err} | #{err.context} | #{event_json}"
   end
   
   def handle_errors(http_req)
@@ -86,22 +90,25 @@ class Poller
     end
   end
   
+  def processor(response)
+    Events::Processor.new(response) do |config|
+      config.feed = @feed
+      config.term = @config.processor_config[:term] if @config.processor_config
+    end
+  end
+  
   def reject_old(events)
     @digest_queue.reject_old(events)
   end
 
   def publish(events)
-    begin
-      log_publishing(events)
-      pack_and_publish = lambda do
-        events.each do |e|
-          @exchange.publish(Yajl::Encoder.encode(e))
-        end
+    log_publishing(events)
+    pack_and_publish = lambda do
+      events.each do |e|
+        @exchange.publish(Yajl::Encoder.encode(e))
       end
-      EM.defer(pack_and_publish) if events.length > 0
-    rescue Exception => e
-      log_exception e
     end
+    EM.defer(pack_and_publish) if events.length > 0
   end
 
   def success?(http_resp)
@@ -134,12 +141,6 @@ class Poller
 
   # --- /Roles
   
-  def processor(response)
-    Events::Processor.new(response) do |config|
-      config.feed = @feed
-      config.term = @config.processor_config[:term] if @config.processor_config
-    end
-  end
 
   def determine_feed(uri)
     f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
