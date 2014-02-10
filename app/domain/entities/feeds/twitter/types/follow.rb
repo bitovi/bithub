@@ -14,7 +14,6 @@ module Entities
       end
 
       def build
-        Rails.logger.info "KURCA BUILDAM TWITTER"
         Entity.new({
           title: "followed @#{@payload.target_screen_name}",
           origin_ts: @payload.origin_ts,
@@ -25,7 +24,7 @@ module Entities
           }
         })
       end
-      
+
       def relationships
         Entities::Twitter::Follow::Relationships
       end
