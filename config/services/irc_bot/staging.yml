@@ -1,4 +1,4 @@
-server:  'irc.freenode.org'
-nick:    'bithub-bot'
+server:  'chat.freenode.org'
+nick:    'bithub-bot-staging'
 channels:
   - '#canjs'
