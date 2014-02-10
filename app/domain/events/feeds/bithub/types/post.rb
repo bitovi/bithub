@@ -31,7 +31,7 @@ module Events
       end
 
       def image
-        source_data.andand[:image]
+        source_data.andand[:image] || @_image
       end
 
       def body
@@ -75,12 +75,31 @@ module Events
         source_data.andand[:origin_author_feed]
       end
 
+      def thumb
+
+      end
+
       def tags
-        source_data.andand[:tags] || []
+        source_tags = source_data.andand[:tags] || []
+        source_tags = source_tags.split(',') if source_tags.is_a? String
+        source_tags
       end 
 
       def local_author_id
         source_data.andand[:local_author_id]
+      end
+
+      def instance_without_file
+        @_image = @instance.source_data.delete("image") || @instance.source_data.delete(:image)
+        @instance
+      end
+
+      def persist
+        instance_without_file.save
+      end
+
+      def persist!
+        instance_without_file.save!
       end
 
     end

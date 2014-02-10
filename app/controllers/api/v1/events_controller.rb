@@ -72,7 +72,11 @@ class Api::V1::EventsController < Api::V1::BaseController
     method        = params[:id].nil?? 'create' : 'update'
     event, entity = Entities::Bithub::Post.forge(params, current_user)
 
-    errors = [event, entity].reduce({}){|memo, model|
+    errors = [event, entity].compact.reduce({}){|memo, model|
+      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++"
+      Rails.logger.info model.errors.inspect
+      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++"
+
       memo.merge(model.errors)
     }
 
