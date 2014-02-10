@@ -33,16 +33,16 @@ class Dispatcher
     nil
   rescue Events::BuildingError => err
     @logger.error "#{err.message} | event type: #{err.context.inspect}"
-    nil
+    [event.andand.instance, entity.andand.instance]
   rescue Entities::NormalizationError => err
     @logger.error "#{err.message} | missing tags: #{err.context.join(',')}"
-    nil
+    [event.andand.instance, entity.andand.instance]
   rescue Entities::UpdatingError => err
     @logger.error "#{err.message} | updating: #{err.context.inspect}"
-    nil
+    [event.andand.instance, entity.andand.instance]
   rescue ActiveRecord::RecordInvalid => err
     @logger.error "#{err.message} | #{err.record.errors.messages}"
-    nil
+    [event.andand.instance, entity.andand.instance]
   end
 end
 #{event.feed_name}:#{event.type_name} -> #{entity.feed_name}:#{entity.type_name}

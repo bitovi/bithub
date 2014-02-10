@@ -14,5 +14,6 @@ module Events
     def calc_digest(seed)
      (self.nil? || seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
     end
+
   end
 end
