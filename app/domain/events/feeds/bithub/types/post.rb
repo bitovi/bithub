@@ -76,7 +76,9 @@ module Events
       end
 
       def tags
-        source_data.andand[:tags] || []
+        source_tags = source_data.andand[:tags] || []
+        source_tags = source_tags.split(',') if source_tags.is_a? String
+        source_tags
       end 
 
       def local_author_id
