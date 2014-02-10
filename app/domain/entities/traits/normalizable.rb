@@ -41,7 +41,7 @@ module Entities
     private
     def report_missing_tags
       missing_tags = %w(feed type category).select{|an| self.instance.send(an).nil?}
-      fail Entities::Protocol::MissingCriticalTags.new('must have type, feed and category tags assigned', missing_tags)
+      fail NormalizationError.new('Must have type, feed and category tags assigned to persist', missing_tags)
     end
 
     # def to_props_and_clean(args)

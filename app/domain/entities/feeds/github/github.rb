@@ -1,24 +1,26 @@
 module Entities
   module Github
     MAPPINGS = {
-      'CustomIssue' => 'Issue',
-      'CustomWatch' => 'Watch',
+      :CustomIssue => :Issue,
+      :CustomWatch => :Watch,
     }
 
     def self.type(arg)
       if arg.is_a? String
-        type_name = arg
+        type_name = arg.to_sym
       elsif arg.is_a? Events::Protocol
         payload = arg
-        type_name = arg.type_name
+        type_name = arg.type_name.to_sym
       end
 
-      if MAPPINGS.include?(type_name)
+      if MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
         self.const_get(MAPPINGS[type_name])
+      elsif self.constants.include?(type_name)
+        self.const_get(type_name)
       elsif issue_action?(payload)
         Entities::Github::IssueAction
       else
-        self.const_get(type_name) if self.constants.include? type_name.to_sym
+        fail MappingError.new("Couldn't find valid type for Github", type_name)
       end
     end
 

@@ -5,7 +5,7 @@ module Events
   module Forum
     class Post < Protocol; end
 
-    def self.type(sd)
+    def self.type(source_data)
       Events::Forum::Post
     end
 

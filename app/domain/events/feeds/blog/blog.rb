@@ -4,7 +4,7 @@ module Events
   module Blog
     class Post < Protocol; end
 
-    def self.type(sd)
+    def self.type(source_data)
       Events::Blog::Post
     end
 
