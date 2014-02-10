@@ -17,6 +17,8 @@ class Dispatcher
     event = Events::Dispatcher.dispatch(response, hint)
     entity = Entities::Dispatcher.dispatch(event)
 
+    @logger.info "Mapping: #{event.class.name} -> #{entity.class.name}"
+
     ActiveRecord::Base.transaction do
       event.build.persist!
       entity.procure.update_if_found.determine.group.normalize.persist!
