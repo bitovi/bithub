@@ -65,7 +65,7 @@
         :query:
           q: 'canjs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++'
 
-    :user_feeds:
+    :user_streams:
       :bitovi:
         :host: userstream.twitter.com
         :method: GET
