@@ -5,3 +5,6 @@ TODO
 * provjeriti sta je sa RSVPima
 * provjeriti jel radi edit slike
 * provjerit bodovanje meetupa (event,rsvp)
+* twitter stream
+* pogledat testove
+* target za twitter follow je undefined
