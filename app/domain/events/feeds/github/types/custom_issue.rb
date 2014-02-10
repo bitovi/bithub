@@ -75,6 +75,10 @@ module Events
         body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end
 
+      def referenced_issue_numbers_csv
+        referenced_issue_numbers.join(',')
+      end
+
       alias_method :origin_id, :issue_id
       alias_method :actor, :user
       alias_method :actor_id, :origin_author_id
