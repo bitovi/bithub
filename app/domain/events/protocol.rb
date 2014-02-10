@@ -5,19 +5,16 @@ require_relative 'traits/jsonable'
 
 module Events
 
-  class EventException < Exception
+  class EventError < Exception
     attr_accessor :context
-
     def initialize(message = nil, context = nil)
       super(message)
       self.context = context
     end
   end
 
-  class InitializationError < EventException; end
-  class BuildingError < EventException; end
-  class MappingError < EventException; end
-  class InvalidDigestSeed < EventException; end
+  class BuildingError < EventError; end
+  class MappingError < EventError; end
 
   class Protocol
     include CoreHelpers
@@ -33,8 +30,6 @@ module Events
       raw_data = symbolize_keys(payload)
       @data = {}
       @data[:source_data] = (sd = raw_data[:source_data]) ? sd : raw_data
-      
-      Rails.logger.info "KURCA BUILDAM event"
     end
 
     def build

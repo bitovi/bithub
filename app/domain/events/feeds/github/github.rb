@@ -26,15 +26,17 @@ module Events
     class Create < Protocol; end
 
     MAPPINGS = {
-      'Issues' => 'Issue',
+      :Issues => :Issue,
     }
 
     def self.type(source_data)
-      type_name = extract_type_name(source_data).camel_case.gsub(/Event/,'')
-      if MAPPINGS && MAPPINGS.include?(type_name)
+      type_name = extract_type_name(source_data).andand.camel_case.andand.gsub(/Event/,'').andand.to_sym
+      if MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
         self.const_get(MAPPINGS[type_name])
+      elsif self.constants.include?(type_name)
+        self.const_get(type_name)
       else
-        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
+        fail MappingError.new("Couldn't find valid type for Github", type_name)
       end
     end
 
@@ -45,8 +47,6 @@ module Events
         'CustomIssue'
       elsif source_data[:custom_watch]
         'CustomWatch'
-      else
-        'NonExistingType'
       end
     end
 

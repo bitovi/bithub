@@ -4,18 +4,17 @@ module Entities
     class Rsvp < Protocol; end
 
     def self.type(arg)
-      
       if arg.is_a? String
-        type_name = arg
+        type_name = arg.capitalize.to_sym
       elsif arg.is_a? Events::Protocol
         payload = arg
-        type_name = arg.type_name
+        type_name = arg.type_name.capitalize.to_sym
       end
 
-      if MAPPINGS.include?(type_name)
-        self.const_get(MAPPINGS[type_name])
+      if self.constants.include?(type_name)
+        self.const_get(type_name)
       else
-        self.constants.include?(type_name.to_sym) ? self.const_get(type_name) : nil
+        fail MappingError.new("Couldn't find valid type for Meetup", type_name)
       end
     end
 

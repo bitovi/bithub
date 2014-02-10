@@ -1,19 +1,23 @@
 module Entities
   module Twitter
+    class Tweet < Protocol; end
+    class Follow < Protocol; end
+
     MAPPINGS = {
-      'CustomFollow' => 'Follow',
+      :CustomFollow => :Follow,
     }
 
     def self.type(payload)
-      if MAPPINGS.include?(payload.type_name)
-        self.const_get(MAPPINGS[payload.type_name])
+      type_name = payload.type_name.capitalize.andand.to_sym
+      if MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
+        self.const_get(MAPPINGS[type_name])
+      elsif self.constants.include?(type_name)
+        self.const_get(type_name)
       else
-        self.constants.include?(type_name.to_sym) ? self.const_get(payload.type_name) : nil
+        fail MappingError.new("Couldn't find valid type for Twitter", type_name)
       end
     end
 
-    class Tweet < Protocol; end
-    class Follow < Protocol; end
   end
 end
 
