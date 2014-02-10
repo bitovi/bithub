@@ -42,26 +42,30 @@ class User < ActiveRecord::Base
     activities = []
 
     self.entities.joins(:scoring_rule).all.each do |e|
-      activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.scoring_rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at})
+      activities.push({:type => 'author', :id => e.id, :title => e.title, :value => e.scoring_rule.authorship_value, :upvotes => e.sum_upvotes, :created_at => e.created_at, origin_ts: (e.respond_to?(:origin_ts) ? e.origin_ts : nil)})
     end
 
     self.awards.select(['awards.*', 'entities.title']).all.each do |a|
-      activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at})
+      activities.push({:type => 'award', :id => a.id, :event_id => a.applies_to_id, :title => a.title, :value => a.value, :created_at => a.created_at, origin_ts: (a.respond_to?(:origin_ts) ? a.origin_ts : nil)})
     end
 
     self.upvotes.select(['upvotes.*', 'entities.title']).all.each do |u|
-      activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+      activities.push({:type => 'upvote', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at, origin_ts: (u.respond_to?(:origin_ts) ? u.origin_ts : nil)})
     end
 
     self.anteups.select(['anteups.*', 'entities.title']).all.each do |u|
-      activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at})
+      activities.push({:type => 'anteup', :id => u.id, :title => u.title, :value => u.value, :created_at => u.created_at, origin_ts: (u.respond_to?(:origin_ts) ? u.origin_ts : nil)})
     end
 
     self.internals.all.each do |i|
-      activities.push({:type => 'internal', :id => i.id, :title => i.comment, :value => i.value, :created_at => i.created_at})
+      activities.push({:type => 'internal', :id => i.id, :title => i.comment, :value => i.value, :created_at => i.created_at, origin_ts: (i.respond_to?(:origin_ts) ? i.origin_ts : nil)})
     end
 
-    activities.sort {|x, y| x[:created_at] <=> y[:created_at]}
+    activities.sort {|x, y| 
+      sort_x = x[:origin_ts] || x[:created_at]
+      sort_y = y[:origin_ts] || y[:created_at]
+      sort_x <=> sort_y
+    }
   end
 
   def activities_raw
