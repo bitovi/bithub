@@ -127,15 +127,15 @@ class EntityDecorator < Draper::Decorator
   end
 
   def apply_hyperlinks(text, urls )
-    return text
+
+    Rails.logger.info urls
     
-    urls = [] if urls.nil?
-    urls = [urls] unless urls.is_a? Array
+    urls = ActiveSupport::JSON.decode(urls || '[]')
 
     urls.reduce(text) do |acc, url|
-      range = url[:indices]
+      range = url["indices"]
       link = text.slice(*range)
-      text.gsub(link, "<a href=#{url[:url]}>" + url[:display_url] + "</a>")
+      text.gsub(link, "<a href=#{url["url"]}>" + url["display_url"] + "</a>")
     end
   end
 
