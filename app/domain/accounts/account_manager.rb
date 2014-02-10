@@ -34,7 +34,7 @@ module Accounts
       end
 
       create_missing_repos_and_stars!
-      # identity.reload.user.collect_authored_entities.reward_if_eligible
+      identity.reload.user.collect_authored_entities.reward_if_eligible
       user
     end
 
