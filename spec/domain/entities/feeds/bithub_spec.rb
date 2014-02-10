@@ -18,7 +18,7 @@ describe Entities::Bithub::Post do
     payload.stub(:origin_author_id => attrs[:origin_author_id] || nil)
     payload.stub(:origin_author_name => attrs[:origin_author_name] || nil)
     payload.stub(:origin_author_feed => attrs[:origin_author_feed] || nil)
-    payload.stub(:local_author_id => attrs[:local_author_id] || 123)
+    payload.stub(:local_author_id => attrs[:local_author_id] || nil)
     payload.stub(:origin_ts => attrs[:origin_ts] || Time.now)
     Entities::Bithub::Post.new(payload).procure
   end
