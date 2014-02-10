@@ -6,7 +6,9 @@
       :closed: 7200
   :disqus: 30
   :forum: 120
-  :meetup: 120
+  :meetup:
+    :rsvps: 120
+    :events: 300
   :blog: 600
   :twitter: 900
 
