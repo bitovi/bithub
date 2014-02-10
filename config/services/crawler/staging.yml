@@ -49,6 +49,7 @@
       :query:
         :sign: "true"
         :key: "tvputsc8ff38ftmslc0q2ldbdv"
+        :fields: "event_hosts"
       :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
 
   :twitter:
