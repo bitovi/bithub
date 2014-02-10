@@ -1,5 +1,6 @@
 module Entities
   module Meetup
+
     class Event < Protocol
       
       Relationships = {
@@ -20,16 +21,23 @@ module Entities
           origin_ts: @payload.origin_timestamp,
           origin_id: @payload.event_id,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            origin_author_name: @payload.origin_author_name,
             location: @payload.composite_location,
             venue: @payload.venue,
             scheduled_at: @payload.scheduled_at,
             latitude: @payload.latitude,
             longitude: @payload.longitude,
+            event_hosts: ActiveSupport::JSON.encode(@payload.event_hosts),
+            event_host_ids: @payload.event_host_ids_csv,
           }
         })
+      end
+
+      def determine_hosts
+        @payload.event_hosts.each do |host|
+          if (ident = Identity.find_by_provider_and_uid('meetup', host.andand[:member_id]))
+            @instance.hosts << ident.user if ident.user
+          end
+        end
       end
 
       def set_thread_ts

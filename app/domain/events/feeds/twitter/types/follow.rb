@@ -43,6 +43,10 @@ module Events
       def we_are_target?(source_data)
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
       end
+
+      def we_are_source?(event_hash)
+        %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? source_screen_name
+      end
     end
 
   end

@@ -6,7 +6,9 @@
             :closed: 12000
     :disqus: 2500
     :forum: 2500
-    :meetup: 5000
+    :meetup:
+        :rsvps: 10
+        :events: 8
     :blog: 6000
     :twitter: 3000
 
@@ -40,6 +42,7 @@
                     :sign: "true"
                     :key: "663a24605a37767831495d6332546b4a"
                     :text: "canjs"
+                    :fields: "event_hosts"
             :streaming:
                 :url: "http://stream.meetup.com/2/open_events"
         :rsvps:

@@ -8,6 +8,12 @@ module Entities
         references: [],
       }
 
+      ResponseMapping = {
+        'yes' => 'confirmed',
+        'no' => 'rejected',
+        'waitlist' => 'waitlist',
+      }
+
       def find
         @payload.rsvp_id && find_by_rsvp_id.first
       end
@@ -21,9 +27,9 @@ module Entities
           props: {
             origin_author_id: @payload.origin_author_id,
             origin_author_name: @payload.origin_author_name,
+            origin_author_avatar_url: @payload.origin_author_avatar_url,
             event_id: @payload.parent_event_id,
             response: @payload.response,
-            origin_author_avatar_url: @payload.origin_author_avatar_url,
           }
         })
       end
@@ -32,6 +38,10 @@ module Entities
         if @payload.parent_event_id
           Entities::Meetup::Event.find_by_event_id(@payload.parent_event_id).first
         end
+      end
+
+      def taggify_state
+        [ResponseMapping[@payload.response]]
       end
 
       def find_by_rsvp_id
