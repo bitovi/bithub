@@ -3,57 +3,33 @@ module Events
 
     class CustomWatch < Protocol
 
-      def initialize(repo, identity)
-        @repo = Repo.new(repo)
-        @identity = identity
-      end
-      
-      def source_data
-        { identity: @identity, target: @repo }
-      end
-
       def content_digest
-        seed = identity.uid.to_s + repo.id.to_s
+        seed = identity_uid.to_s + repo_name
         calc_digest(seed)
       end
       
-      def origin_author_id
-        @identity.uid
+      def identity_uid
+        source_data.andand[:uid]
       end
 
-      def origin_author_name
-        @identity.source_data[:nickname]
-      end
-
-      def title
-        "started watching #{repo_name}"
+      def identity_nickname
+        source_data.andand[:nickname]
       end
 
       def repo_name
-        @repo[:name]
-      end
-
-      def repo_full_name
-        @repo[:full_name]
-      end
-
-      def taggify_target_repo_name
-        [@repo.name]
+        ['bitovi', source_data.andand[:repo_name]].compact.join('/')
       end
 
       def origin_timestamp
-        2.years.ago # TODO set to when?
+        2.years.ago
       end
 
-      class Repo
-        def initialize(repo)
-          @data = repo
-        end
-
-        def name
-          @data.andand[:name]
-        end
+      def taggify_target_repo_name
+        [repo_name]
       end
+
+      alias_method :actor_id, :identity_uid
+      alias_method :actor_login, :identity_nickname
     end
   end
 end

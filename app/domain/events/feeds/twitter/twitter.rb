@@ -1,10 +1,8 @@
-require_relative 'types/tweet'
-require_relative 'types/follow'
-
 module Events
   module Twitter
     class Tweet < Protocol; end
     class Follow < Protocol; end
+    class CustomFollow < Protocol; end
 
     MAPPINGS = {
       'StatusEvent' => 'Tweet'
@@ -24,6 +22,8 @@ module Events
         'Follow'
       elsif is_status_event?(source_data)
         'Tweet'
+      elsif source_data[:custom_follow]
+        'CustomFollow'
       else
         'NonExistingType'
       end
@@ -72,3 +72,7 @@ module Events
 
   end
 end
+
+require_relative 'types/tweet'
+require_relative 'types/follow'
+require_relative 'types/custom_follow'

@@ -5,6 +5,7 @@ module Events
     class CommitComment < Protocol; end
     class Create < Protocol; end
     class CustomIssue < Protocol; end
+    class CustomWatch < Protocol; end
     class Delete < Protocol; end
     class Download < Protocol; end
     class Follow < Protocol; end
@@ -42,13 +43,15 @@ module Events
         (source_data[:type] || source_data['type']).camel_case
       elsif github_issue?(source_data)
         'CustomIssue'
+      elsif source_data[:custom_watch]
+        'CustomWatch'
       else
         'NonExistingType'
       end
     end
 
     def self.github_event?(source_data)
-      not(source_data['type'].nil?)
+      !!(source_data['type']) || !!(source_data[:type])
     end
 
     def self.github_issue?(source_data)

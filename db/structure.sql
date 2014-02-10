@@ -125,6 +125,37 @@ ALTER SEQUENCE anteups_id_seq OWNED BY anteups.id;
 
 
 --
+-- Name: api_cache; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE api_cache (
+    id integer NOT NULL,
+    provider character varying(255),
+    name character varying(255),
+    uid character varying(255)
+);
+
+
+--
+-- Name: api_cache_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE api_cache_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: api_cache_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE api_cache_id_seq OWNED BY api_cache.id;
+
+
+--
 -- Name: awards; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -876,6 +907,13 @@ ALTER TABLE ONLY anteups ALTER COLUMN id SET DEFAULT nextval('anteups_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY api_cache ALTER COLUMN id SET DEFAULT nextval('api_cache_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY awards ALTER COLUMN id SET DEFAULT nextval('awards_id_seq'::regclass);
 
 
@@ -1005,6 +1043,14 @@ ALTER TABLE ONLY achievements
 
 ALTER TABLE ONLY anteups
     ADD CONSTRAINT anteups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: api_cache_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY api_cache
+    ADD CONSTRAINT api_cache_pkey PRIMARY KEY (id);
 
 
 --
@@ -1194,6 +1240,13 @@ CREATE INDEX entity_refs_on_from_id ON entity_refs USING btree (from_id);
 --
 
 CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
+
+
+--
+-- Name: index_api_cache_on_uid_and_provider; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_api_cache_on_uid_and_provider ON api_cache USING btree (uid, provider);
 
 
 --
@@ -1534,3 +1587,5 @@ INSERT INTO schema_migrations (version) VALUES ('20151212162518');
 INSERT INTO schema_migrations (version) VALUES ('20151212162523');
 
 INSERT INTO schema_migrations (version) VALUES ('20151212162524');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162525');

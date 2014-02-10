@@ -33,6 +33,8 @@ module Events
       raw_data = symbolize_keys(payload)
       @data = {}
       @data[:source_data] = (sd = raw_data[:source_data]) ? sd : raw_data
+      
+      Rails.logger.info "KURCA BUILDAM event"
     end
 
     def build
