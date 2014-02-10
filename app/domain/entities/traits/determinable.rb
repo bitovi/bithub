@@ -2,7 +2,7 @@ module Entities
   module Determinable
 
     ATTRS_FOR_TAGGING = [:url, :title, :body]
-    PROPS_TO_TAGS = [:project, :tags]
+    PROPS_TO_TAGS = [:project, :tags, :state]
 
     def determine
       methods = collect_methods(/determine_.*/)
