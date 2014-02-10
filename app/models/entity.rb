@@ -82,14 +82,21 @@ class Entity < ActiveRecord::Base
   end
 
   def author=(user)
+    self.remove_author
     self.ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
   end
 
-  def organizer=(user)
+  def remove_author
+    self.ownerships.where(ownership_type: :author).destroy_all
+  end
+
+  def host=(user)
+    self.ownerships.where(ownership_type: :host).destroy_all
     self.ownerships << Ownership.new(owner: user, ownership_type: :host).determine_value
   end
 
   def organizer=(user)
+    self.ownerships.where(ownership_type: :organizer).destroy_all
     self.ownerships << Ownership.new(owner: user, ownership_type: :organizer).determine_value
   end
 
