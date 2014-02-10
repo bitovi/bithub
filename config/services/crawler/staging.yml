@@ -40,7 +40,7 @@
         :url: "https://api.meetup.com/2/open_events"
         :query:
           :sign: "true"
-          :key: "tvputsc8ff38ftmslc0q2ldbdv"
+          :key: "663a24605a37767831495d6332546b4a"
           :text: "canjs"
       :streaming:
         :url: "http://stream.meetup.com/2/open_events"
@@ -48,7 +48,7 @@
       :url: "https://api.meetup.com/2/rsvps"
       :query:
         :sign: "true"
-        :key: "tvputsc8ff38ftmslc0q2ldbdv"
+        :key: "663a24605a37767831495d6332546b4a"
         :fields: "event_hosts"
       :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
 
