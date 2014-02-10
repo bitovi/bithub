@@ -6,7 +6,7 @@ PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $:.unshift PROJECT_ROOT
 
 require 'rspec/mocks'
-require "codeclimate-test-reporter"
+require 'codeclimate-test-reporter'
 
 CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
 
@@ -15,7 +15,7 @@ CATEGORY_RULES = File.join(PROJECT_ROOT, 'config', 'category_determination_rules
 SCORING_RULES = File.join(PROJECT_ROOT, 'config', 'scoring_rules.yml')
 
 def import_needed_shit
-  ActiveRecord::Base.connection.execute("delete from tags; delete from scoring_rules; delete from category_determination_rules;")
+  #ActiveRecord::Base.connection.execute("delete from tags; delete from scoring_rules; delete from category_determination_rules;")
   import_tags
   import_category_rules
   import_scoring_rules
