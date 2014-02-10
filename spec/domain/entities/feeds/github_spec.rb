@@ -44,7 +44,11 @@ def build_issue_comment(attrs={})
   payload.stub(:number => attrs[:number] || "123")
   payload.stub(:issue_or_pull_req_number => attrs[:issue_or_pull_req_number] || "123")
   payload.stub(:label_names => "")
+  payload.stub(:issue_or_pull_req_body => "lorem ipsum")
   payload.stub(:issue_or_pull_req_title => "some title")
+  payload.stub(:issue_or_pull_req_state => "open")
+  payload.stub(:issue_or_pull_req_action => "created")
+  payload.stub(:issue_or_pull_req_label_names => "")
   payload.stub(:comment_id => attrs[:comment_id] || "123456")
   Entities::Github::IssueComment.new(payload).procure
 end
