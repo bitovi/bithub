@@ -39,7 +39,7 @@ class Dispatcher
     @logger.error "#{err.message} | updating: #{err.context.inspect}"
     nil
   rescue ActiveRecord::RecordInvalid => err
-    @logger.error "#{err.message}"
+    @logger.error "#{err.message} | #{err.record.errors.messages}"
     nil
   end
 end
