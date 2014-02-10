@@ -8,14 +8,12 @@ module Entities
   module Bithub; end
   module Irc; end
 
-  MAPPINGS = {}
-
   def self.feed(feed_name)
-    feed_name = feed_name.camel_case
-    if MAPPINGS.include?(feed_name)
-      self.const_get(MAPPINGS[feed_name])
-    else
+    feed_name = feed_name.andand.camel_case.andand.to_sym
+    if self.constants.include?(feed_name)
       self.const_get(feed_name)
+    else
+      fail MappingError.new("Couldn't find valid feed", feed_name)
     end
   end
 end

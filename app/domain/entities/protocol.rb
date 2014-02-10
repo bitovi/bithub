@@ -5,29 +5,26 @@ require_relative 'traits/persistable'
 require_relative 'traits/referencable'
 
 module Entities
-  class Protocol
 
-    class DeterminationError < Exception; end
-    class NormalizationError < Exception; end
-    class BuildingError < Exception; end
-    class GroupingError < Exception; end
-    class Unupdatable < Exception; end
-
-    class MissingCriticalTags < Exception
-      attr_accessor :tags
-
-      def initialize(message = nil, tags = nil)
-        super(message)
-        self.tags = tags
-      end
+  class EntityError < Exception
+    attr_accessor :context
+    def initialize(message = nil, context = nil)
+      super(message)
+      self.context = context
     end
+  end
 
+  class MappingError < EntityError; end
+  class UpdatingError < EntityError; end
+  class NormalizationError < EntityError; end
+
+  class Protocol
     include Determinable
     include Groupable
     include Normalizable
     include Persistable
     include Loggable
-    
+
     attr_reader :instance
 
     def initialize(payload)
@@ -45,11 +42,11 @@ module Entities
       update unless @instance.new_record?
       self
     end
-      
+
     def update
-      fail Unupdatable, 'trying to update a new record' if @instance.new_record?
+      fail UpdatingError.new('Trying to update a new record', @instance) if @instance.new_record?
     end
-    
+
     def find_by_origin_uid(uid)
       Entity.where("props -> 'origin_author_id' = ?", uid)
     end

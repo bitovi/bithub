@@ -11,6 +11,8 @@ module Events
         Events::Meetup::Rsvp
       elsif source_data['event_url']
         Events::Meetup::Event
+      else
+        fail MappingError.new("Couldn't find valid type for Meetup")
       end
     end
 

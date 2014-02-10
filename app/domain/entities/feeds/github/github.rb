@@ -1,16 +1,16 @@
 module Entities
   module Github
     MAPPINGS = {
-      'CustomIssue' => 'Issue',
-      'CustomWatch' => 'Watch',
+      :CustomIssue => :Issue,
+      :CustomWatch => :Watch,
     }
 
     def self.type(arg)
       if arg.is_a? String
-        type_name = arg
+        type_name = arg.to_sym
       elsif arg.is_a? Events::Protocol
         payload = arg
-        type_name = arg.type_name
+        type_name = arg.type_name.to_sym
       end
 
       if MAPPINGS.include?(type_name)
