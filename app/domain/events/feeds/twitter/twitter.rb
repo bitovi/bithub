@@ -10,6 +10,7 @@ module Events
 
     def self.type(source_data)
       type_name = extract_type_name(source_data).andand.camel_case.andand.gsub('Event','').andand.to_sym
+
       if MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
         self.const_get(MAPPINGS[type_name])
       elsif self.constants.include?(type_name)
@@ -35,13 +36,18 @@ module Events
     end
 
     def self.is_status_event?(source_data)
-      (source_data['text'] &&
-        source_data['user'].andand['screen_name'])
+      (source_data['text'] && source_data['user'].andand['screen_name'])
     end
 
     class Processor
       attr_reader :parsed, :extracted
-      class Configuration; end
+
+      class Configuration
+        attr_writer :user_stream
+        def user_stream?
+          @user_stream
+        end
+      end
 
       def initialize(response, &blk)
         @config = Configuration.new
@@ -62,7 +68,7 @@ module Events
 
       private
       def user_stream?
-        @config.is_user_stream
+        @config.user_stream?
       end
       
       def public_stream?

@@ -10,22 +10,27 @@ require 'events/dispatcher'
 module Events
   class Processor
     include Loggable
+
     class Configuration
       attr_accessor :term, :feed
+      attr_writer :user_stream
+      def user_stream?; @user_stream; end
     end
 
     def initialize(response, &blk)
-      initialize_logger("DEBUG")
+      initialize_logger("INFO")
 
       @config = Configuration.new
       blk.(@config) if blk
 
-      @feed = @config.feed
       @response = response
     end
     
     def parse
       @parsed ||= subprocessor.parse
+      self
+    rescue Yajl::ParseError => err
+      @logger.error "Processor parsing error | #{err}"
       self
     end
 
@@ -35,15 +40,10 @@ module Events
     end
 
     def decorate
-      begin
-        @decorated ||= result.map do |event_hash|
-          e = Events::Dispatcher.dispatch(event_hash, @feed)
-          e.to_json.deep_merge(subprocessor.decorate)
-        end
-      rescue Events::InvalidDigestSeed => err
-        @logger.error "#{err.message} | #{err.source_data}"
+      @decorated ||= result.map do |event_hash|
+        e = Events::Dispatcher.dispatch(event_hash, @config.feed)
+        e.to_json.deep_merge(subprocessor.decorate)
       end
-
       self
     end
 
@@ -54,8 +54,9 @@ module Events
     private
     
     def subprocessor
-      @subprocessor ||= Events.feed(@feed)::Processor.new(@response) do |config|
-        config.term = @config.term
+      @subprocessor ||= Events.feed(@config.feed)::Processor.new(@response) do |config|
+        config.term = @config.term if config.respond_to? :term=
+        config.user_stream = @config.user_stream? if config.respond_to? :user_stream=
       end
     end
   end

@@ -22,7 +22,7 @@ module Bootable
     def reboot
       @logger.info "{REBOOTING} #{@feed}"
       @booted = false
-      @config.http_query.delete(:event_id)
+      @config.http_query[:event_id] = ""
     end
 
     def set_query(response)
