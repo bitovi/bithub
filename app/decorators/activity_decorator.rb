@@ -17,6 +17,11 @@ class ActivityDecorator < Draper::Decorator
     source[:upvotes] || nil
   end
 
+  def created_at
+    Rails.logger.info source.inspect
+    source[:origin_ts] || source[:created_at]
+  end
+
   def actor
     if source.instance_of? Event
       source.author ? source.author : nil

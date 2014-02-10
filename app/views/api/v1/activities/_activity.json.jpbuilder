@@ -1,3 +1,5 @@
-json.(activity, :created_at, :id, :value, :type, :title)
+json.(activity, :id, :value, :type, :title)
+
+json.created_at activity.created_at
 
 json.upvotes activity.upvotes
