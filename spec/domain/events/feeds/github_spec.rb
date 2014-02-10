@@ -23,6 +23,8 @@ describe Events::Github do
       expect(payload.comment).to be_a(Hash)
       expect(payload.body).to be_a(String)
       expect(payload.html_url).to be_a(String)
+      expect(payload.number).to be_a(Integer)
+      expect(payload.state).to be_a(String)
     end
   end
 
@@ -42,7 +44,6 @@ describe Events::Github do
 
   shared_examples_for "every github issues or pull requests event" do
     it "has refs attributes" do
-      #expect(payload.body).to be_a(String)
       expect(payload.html_url).to be_a(String)
       expect(payload.number).to be_a(Integer)
       expect(payload.state).to be_a(String)
@@ -159,7 +160,7 @@ describe Events::Github do
 
         it_should_behave_like "every github event"
         it_should_behave_like "every github comment event"
-        it_should_behave_like "every github issues or pull requests event"
+        #it_should_behave_like "every github issues or pull requests event"
         it_should_behave_like "every github event with labels"
         #it "creates Payload object with mapping methods"
       end

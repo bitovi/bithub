@@ -73,6 +73,7 @@ describe Entities::Twitter::Follow do
     payload.stub(:source_id => "123")
     payload.stub(:source_screen_name => "foobar")
     payload.stub(:target_screen_name => "canjs")
+    payload.stub(:origin_author_id => "123")
     payload.stub(:instance => nil)
     Entities::Twitter::Follow.new(payload).procure
   end
