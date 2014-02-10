@@ -82,10 +82,6 @@ class User < ActiveRecord::Base
     actions
   end
 
-  def cached_score
-    Leaderboard.where(user_id: self.id).first.user_score || 0
-  end
-
   def score
     self.authored_entities_total + self.upvotes_total + self.awards_total + self.internals_total - self.fulfilled_anteups_total
   end
@@ -112,10 +108,10 @@ class User < ActiveRecord::Base
 
   def collect_authored_entities
     identities.each do |ident|
-      entities = Event.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
+      entities = Entity.where("props -> 'origin_author_id' = :uid", uid: ident.uid.to_s)
       if entities
         entities.each do |event|
-          event.update_attribute(:author_id, self.id)
+          event.author = self
         end
       end
     end

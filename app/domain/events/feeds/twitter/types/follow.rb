@@ -35,8 +35,11 @@ module Events
         Time.parse(source_data.andand[:created_at]).utc
       end
 
+      alias_method :origin_author_id, :source_id
+      alias_method :origin_author_name, :source_screen_name
+
       private
-      
+
       def we_are_target?(source_data)
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
       end
