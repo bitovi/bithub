@@ -68,11 +68,21 @@ module Entities
             @instance.props[:origin_author_feed],
             @instance.props[:origin_author_id]
           )
-          @instance.author = ident.user if ident && ident.user
+          if ident && ident.user
+            @instance.author = ident.user
+          else
+            @instance.remove_author
+          end
         end
       end
 
       def update
+        Rails.logger.info "----------------------------------"
+        Rails.logger.info @payload.inspect
+        Rails.logger.info "----------------------------------"
+
+
+
         @instance.title = @payload.title
         @instance.body = @payload.body
         @instance.url = @payload.url
