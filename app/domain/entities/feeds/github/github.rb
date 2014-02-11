@@ -1,40 +1,5 @@
 module Entities
   module Github
-    MAPPINGS = {
-      :CustomIssue => :Issue,
-      :CustomWatch => :Watch,
-    }
-
-    def self.type(arg)
-      if arg.is_a? String
-        type_name = arg.to_sym
-      elsif arg.is_a? Events::Protocol
-        payload = arg
-        type_name = arg.type_name.to_sym
-      end
-
-
-      if issue_action?(payload)
-        Entities::Github::IssueAction
-      elsif MAPPINGS.include?(type_name) && self.constants.include?(MAPPINGS[type_name])
-        self.const_get(MAPPINGS[type_name])
-      elsif self.constants.include?(type_name)
-        self.const_get(type_name)
-      else
-        fail MappingError.new("Couldn't find valid type for Github", type_name)
-      end
-    end
-
-    def self.issue_action?(payload)
-      (payload.class.name =~ /PullRequest/ || payload.class.name =~ /Issue/) && not(payload.class.name =~ /IssueComment/)
-      payload.respond_to?(:state) && payload.respond_to?(:action) && payload.action != 'opened'
-    end
-
-    def self.pull_request_action?(payload)
-      payload.class.name =~ /PullRequest/ && not(payload.class.name =~ /IssueComment/)
-      payload.respond_to?(:state) && payload.respond_to?(:action) && payload.action != 'opened'
-    end
-
     class Commit < Protocol; end
     class CommitComment < Protocol; end
     class Issue < Protocol; end
@@ -49,12 +14,12 @@ end
 
 require_relative 'types/commit'
 require_relative 'types/commit_comment'
-require_relative 'types/issue_comment'
+require_relative 'types/create'
+require_relative 'types/fork'
 require_relative 'types/issue'
 require_relative 'types/issue_action'
+require_relative 'types/issue_comment'
+require_relative 'types/public'
 require_relative 'types/pull_request'
 require_relative 'types/push'
 require_relative 'types/watch'
-require_relative 'types/fork'
-require_relative 'types/public'
-require_relative 'types/create'

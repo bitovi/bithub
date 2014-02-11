@@ -22,16 +22,7 @@ module Entities
           source_data.delete(:origin_author_feed)
         end
 
-        data = {
-          source_data: source_data,
-          meta: {
-            feed_name: 'bithub',
-            type_name: 'event'
-            type: 'event'
-          }
-        }
-
-        ::Dispatcher.new.dispatch(data)
+        ::Dispatcher.new.dispatch(source_data, 'bithub')
       end
 
       def find
