@@ -72,10 +72,10 @@ class Poller
   def handle_success(http_resp)
     processed = processor(http_resp).parse.extract.decorate.result
     publish(reject_old(processed))
-  rescue Events::MappingError => err
-    @logger.error "Feed #{@feed} | #{err} | #{err.context} | #{event_json}"
+  rescue Events::DispatchError => err
+    @logger.error "Feed #{@feed} | #{err} | #{err.context}"
   rescue Events::BuildingError=> err
-    @logger.error "Feed #{@feed} | #{err} | #{err.context} | #{event_json}"
+    @logger.error "Feed #{@feed} | #{err} | #{err.context}"
   end
   
   def handle_errors(http_req)

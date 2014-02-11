@@ -1,26 +1,21 @@
+require_relative 'errors'
 require_relative 'traits/persistable'
-require_relative 'traits/comparable'
-require_relative 'traits/digestable'
-require_relative 'traits/jsonable'
+require_relative 'traits/serializable'
 
 module Events
-
-  class EventError < Exception
-    attr_accessor :context
-    def initialize(message = nil, context = nil)
-      super(message)
-      self.context = context
-    end
-  end
-
-  class BuildingError < EventError; end
-  class MappingError < EventError; end
+  module Github; end
+  module Twitter; end
+  module Forum; end
+  module Blog; end
+  module Disqus; end
+  module Bithub; end
+  module Meetup; end
+  module Irc; end
 
   class Protocol
     include CoreHelpers
     include Persistable
-    include Digestable
-    include JSONable
+    include Serializable
     include Loggable
 
     attr_reader :instance
@@ -28,30 +23,25 @@ module Events
     def initialize(payload)
       initialize_logger("DEBUG")
       raw_data = symbolize_keys(payload)
-      @data = {}
-      @data[:source_data] = (sd = raw_data[:source_data]) ? sd : raw_data
+      @data = (sd = raw_data[:source_data]) ? sd : raw_data;
     end
 
-    def build
-      @instance = Event.new({
-        feed_name: feed_name,
-        type_name: type_name,
-        content_digest: content_digest,
-        source_data: source_data,
-      })
-      self
+    def content_digest
+      if respond_to?(:event_id)
+        calc_digest(event_id.to_s)
+      elsif respond_to?(:origin_id)
+        calc_digest(origin_id.to_s)
+      else
+        fail BuildingError.new("Couldn't calculate digest. Probably missing a seed.", nice_name)
+      end
+    end
+
+    def calc_digest(seed)
+      @digest ||= (seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
     end
 
     def source_data
-      @data.andand[:source_data]
-    end
-
-    def meta
-      @data.andand[:meta]
-    end
-
-    def ==(other)
-      @data == other
+      @data
     end
 
     def feed_name
@@ -62,8 +52,8 @@ module Events
       @type_name ||= module_and_class_names[1]
     end
     
-    def nice_name
-      self.class.name.gsub(/^Events::.*::/, '')
+    def ==(other)
+      @data == other
     end
 
     def origin_ts
@@ -76,6 +66,10 @@ module Events
 
     def referenced_issue_numbers 
       []
+    end
+    
+    def nice_name
+      self.class.name.gsub(/^Events::.*::/, '')
     end
 
     def module_and_class_names
