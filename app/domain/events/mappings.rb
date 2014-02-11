@@ -6,9 +6,12 @@ module Events
   module Disqus; end
   module Bithub; end
   module Meetup; end
+  module Irc; end
 
   def self.feed(feed_name)
     feed_name = feed_name.andand.camel_case.andand.to_sym
+
+    puts "==== #{feed_name}"
     if self.constants.include?(feed_name)
       self.const_get(feed_name)
     else
