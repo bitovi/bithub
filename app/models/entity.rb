@@ -46,25 +46,34 @@ class Entity < ActiveRecord::Base
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 
+  # Basic
   scope :feed, lambda {|f| where(feed_name: f) }
+  scope :no_feed, lambda {|f| where("feed_name <> ?", f) }
   scope :type, lambda {|t| where(type_name: t) }
+  scope :no_type, lambda {|t| where("type_name <> ?", t) }
   scope :category, lambda {|c| where(category_name: c) }
+  scope :no_category, lambda {|c| where("category_name <> ?", c) }
 
-  scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
-  scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
-  scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-
+  # Time/date 
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
+
+  # Thread belonging
   scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)") }
   scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from entities)") }
+
+  # Parent/child
   scope :only_parents, lambda { where("id IN (SELECT parent_id from entities WHERE parent_id IS NOT NULL)") }
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
-  scope :not_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
-  scope :not_children, lambda { where("parent_id IS NULL") }
-  scope :no_irc_nor_digest, lambda { where("feed_name <> 'irc' AND category_name <> 'digest'") }
-
+  scope :no_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
+  scope :no_children, lambda { where("parent_id IS NULL") }
+  
+  # Issues
+  scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
+  scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
+  scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
+  
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_create :adopt_references_from_children

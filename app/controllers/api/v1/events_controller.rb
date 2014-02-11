@@ -101,9 +101,13 @@ class Api::V1::EventsController < Api::V1::BaseController
 
   def build_scope(muster_query, params)
     scope = Entity.scoped_with_includes
-    scope = scope.not_children if !counting?
-    scope = scope.no_irc_nor_digest if on_greatest?
+    scope = scope.no_children if !counting?
+    scope = scope.no_feed('irc').no_category('digest') if on_greatest?
     scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
+
+    scope = scope.no_type(params[:no_feed]) if params[:no_feed].present?
+    scope = scope.no_type(params[:no_type]) if params[:no_type].present?
+    scope = scope.no_type(params[:no_category]) if params[:no_category].present?
 
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope
