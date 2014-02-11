@@ -89,6 +89,8 @@ disqus:
 bithub:
   display_name: "Bithub"
   group_list: "feeds, projects"
+  props:
+    levenshtein_treshold: "0"
 
 meetup:
   display_name: "Meetup"
