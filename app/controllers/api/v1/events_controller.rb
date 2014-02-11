@@ -74,7 +74,7 @@ class Api::V1::EventsController < Api::V1::BaseController
       memo.merge(model.errors)
     }
 
-    errors.delete(:base) if errors[:base].empty?
+    errors.delete(:base) if errors[:base].blank?
 
     if errors.blank?
       @event = EntityDecorator.decorate(entity)
