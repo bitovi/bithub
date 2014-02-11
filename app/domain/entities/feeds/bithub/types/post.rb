@@ -59,7 +59,8 @@ module Entities
       end
 
       def determine_author
-        unless @payload.local_author_id.nil?
+        # only set user automatically to the current user if this is a new record
+        if @instance.new_record? && !@payload.local_author_id.nil?
           @instance.author = User.find(@payload.local_author_id)
         else
           ident = Identity.find_or_create_with_provider_and_uid(
