@@ -52,11 +52,11 @@ module Events
     
     def decorate
       @decorated ||= result.map do |event_hash|
-        Events::Dispatcher.dispatch(event_hash, @config.feed)
+        event_instance(event_hash)
       end.reject do |event|
         tweet_from_user_stream?(event)
       end.map do |event|
-        event.to_json.deep_merge(subprocessor.decorate)
+        event.to_hash.deep_merge(subprocessor.decorate)
       end
       self
     end
@@ -70,16 +70,16 @@ module Events
     def tweet_from_user_stream?(event)
       event.nice_name =~ /Tweet/ && @config.user_stream?
     end
-    
+
+    def event_instance(event_hash)
+      Events::Dispatcher.dispatch(event_hash, @config.feed)
+    end
+
     def subprocessor
-      feed = Events::Dispatcher.new(@response).feed(@config.feed)
-      @subprocessor ||= feed::Processor.new(@response) do |config|
+      @subprocessor ||= Events::Dispatcher.feed(@response, @config.feed)::Processor.new(@response) do |config|
         config.term = @config.term if config.respond_to? :term=
         config.user_stream = @config.user_stream? if config.respond_to? :user_stream=
       end
-    rescue Events::DispatchingError => err
-      @logger.error "#{err.message} | #{err.context}"
-      raise err
     end
   end
 

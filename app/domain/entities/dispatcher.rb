@@ -3,6 +3,7 @@ require 'entities/protocol'
 module Entities
 
   class Dispatcher
+
     Mappings = {
       :Forums => :Forum,
     }
@@ -10,39 +11,48 @@ module Entities
     def self.dispatch(event)
       new(event).dispatch
     end
+    
+    def self.feed(event)
+      self.new(event).feed
+    end
+    
+    def self.type(event)
+      self.new(event).type
+    end
 
     def initialize(event)
       if not(event.kind_of? Events::Protocol)
-        fail Entities::MappingError.new('Dispatcher requires an Event instance to dispatch propertly', event)
+        fail DispatchError.new('Dispatcher requires an Event instance to dispatch propertly')
       end
+
       @event = event
-      @mappings = Hash.new(@event.feed_name)
+      @mappings = Hash.new(@event.feed_name.camel_case.to_sym)
       @mappings.merge(Mappings)
     end
 
-    def remapped_feed
-      @mappings[@event.feed_name]
-    end
-
     def feed
-      if (@feed = Entities.constants.include?(remapped_feed))
-        @feed = Entities.const_get(remapped_feed)
-      else
-        fail MappingError.new("Couldn't find valid feed")
-      end
+      @feed ||= if Entities.constants.include?(remapped_feed_name)
+                  Entities.const_get(remapped_feed_name)
+                else
+                  fail DispatchError.new("Failed to dispatch to a feed in Entities", remapped_feed_name)
+                end
     end
 
     def type
-      if (d = @feed::Dispatcher.new(@event)) && (@type = d.type)
-        @type
-      else
-        fail MappingError.new("Couldn't find valid type", @feed)
-      end
+      @type ||= if (type = feed()::Dispatcher.new(@event).type)
+                  type
+                else
+                  fail DispatchError.new("Failed to dispatch to a type in Entities", @event)
+                end
     end
 
     def dispatch
-      feed
       type.new(@event)
+    end
+
+    private
+    def remapped_feed_name
+      @mappings[@event.feed_name.camel_case.to_sym]
     end
   end
 

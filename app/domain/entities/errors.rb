@@ -7,7 +7,7 @@ module Entities
     end
   end
 
-  class MappingError < BaseError; end
+  class DispatchError < BaseError; end
   class UpdatingError < BaseError; end
   class NormalizationError < BaseError; end
 end
