@@ -60,9 +60,7 @@ class Api::V1::EventsController < Api::V1::BaseController
 
   def pagination
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
-
     @dates = Pagination.grouped(params)
-    
     render :pagination_index
   end
 
@@ -73,10 +71,6 @@ class Api::V1::EventsController < Api::V1::BaseController
     event, entity = Entities::Bithub::Post.forge(params, current_user)
 
     errors = [event, entity].compact.reduce({}){|memo, model|
-      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++"
-      Rails.logger.info model.errors.inspect
-      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++"
-
       memo.merge(model.errors)
     }
 
@@ -86,9 +80,9 @@ class Api::V1::EventsController < Api::V1::BaseController
       @event = EntityDecorator.decorate(entity)
       @ev_relations = EntityRelations.new(@event.id)
 
-      #   if author = @event.author
-      #     Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      #   end
+      # if author = @event.author
+      #   Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
+      # end
 
       render :show
     else
@@ -108,6 +102,8 @@ class Api::V1::EventsController < Api::V1::BaseController
     scope = scope.no_type(params[:no_feed]) if params[:no_feed].present?
     scope = scope.no_type(params[:no_type]) if params[:no_type].present?
     scope = scope.no_type(params[:no_category]) if params[:no_category].present?
+
+    scope = scope.without_future if param[:without_future].present
 
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope
