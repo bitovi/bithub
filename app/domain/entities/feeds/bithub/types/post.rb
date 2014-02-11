@@ -26,7 +26,7 @@ module Entities
           source_data: source_data,
           meta: {
             feed_name: 'bithub',
-            type_name: 'post'
+            type_name: 'post',
             type: 'post'
           }
         }
