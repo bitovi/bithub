@@ -1,5 +1,9 @@
 module CoreHelpers
   def symbolize_keys(x)
+    CoreHelpers.symbolize_keys(x)
+  end
+  
+  def self.symbolize_keys(x)
     if x.is_a? Hash
       x.inject({}) do |acc, (key, value)|
         new_key = case key

@@ -1,20 +1,18 @@
+require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/comparable'
 require_relative 'traits/digestable'
 require_relative 'traits/jsonable'
 
 module Events
-
-  class EventError < Exception
-    attr_accessor :context
-    def initialize(message = nil, context = nil)
-      super(message)
-      self.context = context
-    end
-  end
-
-  class BuildingError < EventError; end
-  class MappingError < EventError; end
+  module Github; end
+  module Twitter; end
+  module Forum; end
+  module Blog; end
+  module Disqus; end
+  module Bithub; end
+  module Meetup; end
+  module Irc; end
 
   class Protocol
     include CoreHelpers
