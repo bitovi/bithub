@@ -1,7 +1,6 @@
 module Events
-  module JSONable
-
-    def to_json
+  module Serializable
+    def to_hash
       {
         meta: {
           feed_name: feed_name,
@@ -12,5 +11,8 @@ module Events
       }
     end
 
+    def to_json
+      ActiveSupport::JSON.encode(to_hash)
+    end
   end
 end

@@ -3,47 +3,76 @@ require 'events/protocol'
 module Events
 
   class BasicTypeDispatcher
-    def initialize(response)
-      @response = response
+    def initialize(source_data)
     end
   end
 
   class Dispatcher
+    include CoreHelpers
     include Loggable
+    
+    Mappings = {
+      :Forums => :Forum,
+    }
 
     def self.dispatch(sd, hint = nil)
-      self.new(sd).dispatch(hint)
+      self.new(sd, hint).dispatch
     end
 
-    def initialize(sd)
-      @source_data = CoreHelpers.symbolize_keys(sd)
+    def self.feed(sd, hint = nil)
+      self.new(sd, hint).feed
+    end
+    
+    def self.type(sd, hint = nil)
+      self.new(sd, hint).type
     end
 
-    def feed(hint)
-      feed_name = hint.andand.camel_case.andand.to_sym || meta_feed_name
-      if (feed_name && Events.constants.include?(feed_name))
-        @feed = Events.const_get(feed_name)
-      else
-        fail DispatchingError.new("Couldn't find valid feed", (feed_name.nil? ? "feed_name is nil" : feed_name))
+    def initialize(sd, hint=nil)
+      @_raw = sd
+
+      if (@feed_name = (hint || maybe_meta_feed_name).andand.camel_case.andand.to_sym).nil?
+        fail DispatchError.new('Dispatcher requires a feed name dispatch propertly')
       end
+
+      @mappings = Hash.new(@feed_name)
+      @mappings.merge(Mappings)
+    end
+
+    def feed
+      @feed ||= if Events.constants.include?(remapped_feed_name)
+                  Events.const_get(remapped_feed_name)
+                else
+                  fail DispatchError.new("Failed to dispatch to a feed in Events", remapped_feed_name)
+                end
     end
 
     def type
-      if (d = @feed::Dispatcher.new(@source_data)) && (@type = d.type)
-        @type
-      else
-        fail MappingError.new("Couldn't find valid type", @feed)
-      end
+      @type ||= if (t = feed::Dispatcher.new(source_data).type)
+                  t
+                else
+                  fail DispatchError.new("Failed to dispatch to a type in Events", source_data)
+                end
     end
-    
-    def dispatch(hint)
-      feed(hint)
-      type.new(@source_data)
+
+    def dispatch
+      type.new(source_data)
+    end
+
+    def source_data
+      @source_data ||= extracted_source_data(symbolize_keys(@_raw))
     end
 
     private
-    def meta_feed_name
-      @source_data.andand[:meta].andand[:feed_name] || @source_data.andand[:meta].andand[:feed]
+    def maybe_meta_feed_name
+      @_raw[:meta].andand[:feed_name] || @_raw['meta'].andand['feed_name']
+    end
+
+    def remapped_feed_name
+      @mappings[@feed_name]
+    end
+
+    def extracted_source_data(sd)
+      sd[:source_data].nil? ? sd : sd[:source_data]
     end
   end
 
@@ -68,7 +97,7 @@ module Events
     class Dispatcher
       attr_accessor :source_data
 
-      Mapping = {
+      Mappings = {
         :Issues => :Issue,
       }
 
