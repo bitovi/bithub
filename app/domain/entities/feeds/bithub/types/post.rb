@@ -26,6 +26,7 @@ module Entities
           source_data: source_data,
           meta: {
             feed_name: 'bithub',
+            type_name: 'post',
             type: 'post'
           }
         }
@@ -55,8 +56,6 @@ module Entities
           }
         })
 
-        
-
         entity
       end
 
@@ -77,12 +76,6 @@ module Entities
       end
 
       def update
-        Rails.logger.info "----------------------------------"
-        Rails.logger.info @payload.inspect
-        Rails.logger.info "----------------------------------"
-
-
-
         @instance.title = @payload.title
         @instance.body = @payload.body
         @instance.url = @payload.url
