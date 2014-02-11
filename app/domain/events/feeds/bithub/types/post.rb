@@ -13,7 +13,6 @@ module Events
           url.to_s +
           origin_author_id.to_s +
           tags.sort.join(',') +
-          scheduled_for.to_s +
           origin_author_id.to_s
         )
       end
