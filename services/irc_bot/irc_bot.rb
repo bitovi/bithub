@@ -44,8 +44,8 @@ def make_payload(msg)
   {
     source_data: sd,
     meta: {
-      feed: 'irc',
-      type: 'message'
+      feed_name: 'irc',
+      type_name: 'message'
     }
   }
 end
@@ -57,11 +57,11 @@ def publish(msg)
   payload = make_payload(msg)
 
   $logger.info "New message: \"#{payload[:source_data][:message]}\" from #{payload[:source_data][:nickname]}"
-  
+
   # for every message new connection to AMQP is opened and immediately
   # closed after publishing b/c thread vs. EM issues, read -->
   # http://rubyamqp.info/articles/working_with_exchanges/#toc_35
-  
+
   EventMachine.run do
     connection = AMQP.connect($mq_cs)
     channel    = AMQP::Channel.new(connection)
@@ -70,7 +70,7 @@ def publish(msg)
     exchange.publish(Yajl::Encoder.encode(payload)) do
       connection.close { EventMachine.stop }
     end
-    
+
   end
 end
 
@@ -91,5 +91,3 @@ end
 
 $logger.info "Starting IRC bot"
 bot.start
-
-
