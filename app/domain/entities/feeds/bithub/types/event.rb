@@ -1,6 +1,6 @@
 module Entities
   module Bithub
-    class Post < Protocol
+    class Event < Protocol
 
       def self.forge(params, current_user)
         source_data = params.clone['event'].symbolize_keys
@@ -26,8 +26,8 @@ module Entities
           source_data: source_data,
           meta: {
             feed_name: 'bithub',
-            type_name: 'post'
-            type: 'post'
+            type_name: 'event'
+            type: 'event'
           }
         }
 
