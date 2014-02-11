@@ -30,9 +30,12 @@ module Events
         source_data.andand[:category]
       end
 
-      def scheduled_for
-        source_data.andand[:datetime]
+      def scheduled_at
       end
+
+      def location
+      end
+
 
       def origin_ts
         if source_data.andand[:origin_ts].is_a? String
