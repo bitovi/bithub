@@ -107,6 +107,10 @@ class Api::V1::EventsController < Api::V1::BaseController
       scope = scope.without_future(params[:clientTz] || 'UTC')
     end
 
+    if params[:in_future].present?
+      scope = scope.in_future(params[:clientTz] || 'UTC')
+    end
+
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)

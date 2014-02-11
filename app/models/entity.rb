@@ -64,6 +64,11 @@ class Entity < ActiveRecord::Base
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
   }
 
+  scope :in_future, lambda { |clientTz|
+    start_of_today = Time.now.change(hour: 0, min: 0, sec: 0)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > ?", clientTz, start_of_today)
+  }
+
   # Thread belonging
   scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)") }
   scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from entities)") }
