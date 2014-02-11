@@ -1,3 +1,4 @@
+require_relative 'errors'
 require_relative 'traits/determinable'
 require_relative 'traits/groupable'
 require_relative 'traits/normalizable'
@@ -5,18 +6,14 @@ require_relative 'traits/persistable'
 require_relative 'traits/referencable'
 
 module Entities
-
-  class EntityError < Exception
-    attr_accessor :context
-    def initialize(message = nil, context = nil)
-      super(message)
-      self.context = context
-    end
-  end
-
-  class MappingError < EntityError; end
-  class UpdatingError < EntityError; end
-  class NormalizationError < EntityError; end
+  module Bithub; end
+  module Blog; end
+  module Disqus; end
+  module Forum; end
+  module Github; end
+  module Irc; end
+  module Meetup; end
+  module Twitter; end
 
   class Protocol
     include Determinable

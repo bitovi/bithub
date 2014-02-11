@@ -25,10 +25,10 @@ class Dispatcher
     end
 
     [event.instance, entity.instance]
-  rescue Events::MappingError => err
+  rescue Events::DispatchError => err
     @logger.error "#{err.message} | #{err.context}"
     nil
-  rescue Entities::MappingError => err
+  rescue Entities::DispatchError => err
     @logger.error "#{err.message} | #{err.context}"
     nil
   rescue Events::BuildingError => err
