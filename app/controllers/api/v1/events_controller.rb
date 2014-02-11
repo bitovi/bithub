@@ -103,7 +103,9 @@ class Api::V1::EventsController < Api::V1::BaseController
     scope = scope.no_type(params[:no_type]) if params[:no_type].present?
     scope = scope.no_type(params[:no_category]) if params[:no_category].present?
 
-    scope = scope.without_future if param[:without_future].present
+    if params[:without_future].present?
+      scope = scope.without_future(params[:clientTz] || 'UTC')
+    end
 
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope

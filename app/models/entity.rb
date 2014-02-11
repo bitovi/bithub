@@ -58,7 +58,11 @@ class Entity < ActiveRecord::Base
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
-  scope :without_future lambda { where this should not work }
+
+  scope :without_future, lambda { |clientTz|
+    end_of_today = Time.now.change(hour: 23, min: 59, sec: 59)
+    where("thread_updated_ts AT TIME ZONE ? AT TIME ZONE ? < ?", clientTz, clientTz, end_of_today)
+  }
 
   # Thread belonging
   scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)") }
