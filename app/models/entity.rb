@@ -61,7 +61,7 @@ class Entity < ActiveRecord::Base
 
   scope :without_future, lambda { |clientTz|
     end_of_today = Time.now.change(hour: 23, min: 59, sec: 59)
-    where("thread_updated_ts AT TIME ZONE ? AT TIME ZONE ? < ?", clientTz, clientTz, end_of_today)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
   }
 
   # Thread belonging
