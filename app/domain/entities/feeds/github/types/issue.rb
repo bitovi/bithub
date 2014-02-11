@@ -68,8 +68,8 @@ module Entities
         data = most_recent_child.last_modified_by.source_data
         event = Events::Dispatcher.dispatch(data, 'github')
 
-        @instance.title = event.title if event.respond_to? :title
-        @instance.body = event.body if event.respond_to? :body
+        @instance.title = (t = event.issue.andand[:title]) ? t : @instance.title
+        @instance.body = (b = event.issue.andand[:body]) ? b: @instance.body
         @instance.props[:state] = event.state
         @instance.props[:label_names] = event.label_names
       end
