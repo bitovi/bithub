@@ -11,6 +11,7 @@ module Events
           body.to_s +
           image.to_s +
           location.to_s +
+          scheduled_at.to_s +
           url.to_s +
           origin_author_id.to_s +
           tags.sort.join(',') +
@@ -21,6 +22,10 @@ module Events
 
       def location
         source_data.andand[:location]
+      end
+
+      def scheduled_at
+        DateTime.parse(source_data.andand[:scheduled_at])
       end
 
     end
