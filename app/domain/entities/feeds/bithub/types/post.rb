@@ -46,7 +46,6 @@ module Entities
           origin_ts: @payload.origin_ts,
           image: @payload.image,
           props: {
-            scheduled_for: @payload.scheduled_for,
             location: @payload.location,
             project: @payload.project,
             tags: @payload.category,
@@ -77,12 +76,14 @@ module Entities
 
       def update
         @instance.title = @payload.title
-        @instance.body = @payload.body
-        @instance.url = @payload.url
+        @instance.body  = @payload.body
+        @instance.url   = @payload.url
         @instance.image = @payload.image
-        @instance.props[:scheduled_for] = @payload.scheduled_for
-        @instance.props[:location] = @payload.location
+
         @instance.props[:tags] = @payload.tags
+
+        @instance.props[:scheduled_at] = @payload.scheduled_at if @payload.scheduled_at
+        @instance.props[:location]     = @payload.location if @payload.location
 
         @instance.props[:origin_author_feed] = @payload.origin_author_feed if @payload.origin_author_feed
         @instance.props[:origin_author_id]   = @payload.origin_author_id if @payload.origin_author_id

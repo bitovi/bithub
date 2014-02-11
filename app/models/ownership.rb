@@ -20,9 +20,9 @@ class Ownership < ActiveRecord::Base
     if self.is_authorship?
       self.value = self.entity.scoring_rule.authorship_value
     elsif self.is_hostship?
-      self.value = 10
+      self.value = 5
     elsif self.is_organizership?
-      self.value = 15
+      self.value = 5
     end
     self
   end
