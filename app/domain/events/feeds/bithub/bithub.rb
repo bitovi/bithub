@@ -5,18 +5,12 @@ module Events
     class Event < Protocol; end
 
     def self.type(source_data)
-      type_name = extract_type_name(source_data)
-
-      if self.constants.include?(type_name)
-        self.const_get(type_name)
+      if source_data[:scheduled_at]
+        type = Events::Bithub::Event
       else
-        fail MappingError.new("Couldn't find valid type for Bithub", type_name)
+        type = Events::Bithub::Post
       end
-    end
-
-    def self.extract_type_name(source_data)
-      (source_data.symbolize_keys.andand[:meta].symbolize_keys.andand[:type] ||
-       source_data.symbolize_keys.andand[:meta].symbolize_keys.andand[:type_name])
+      type
     end
 
   end
