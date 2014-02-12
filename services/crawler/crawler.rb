@@ -32,7 +32,7 @@ logger.add(Log4r::StdoutOutputter.new('console', {
 
 $logger = logger
 
-# Load config 
+# Load config
 logger.info "Loading feeds for #{ENV['ENV']}"
 config = YAML::load_file(config_path)
 feeds = config[:feeds]
@@ -113,11 +113,11 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
             c.http_head = transform_head(feeds[:github][:head])
             c.http_query = { state: state, per_page: 100 }
             c.digest_queue_config = { backlog_size: 1000 }
-          end.extend(Pageable).handler)
+          end.extend(Pageable::Github).handler)
         end
       end
     end
-    
+
 
     # --- Meetup open events
     feed_config = feeds[:meetup][:open_events][:polling]
@@ -126,7 +126,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     EM.add_periodic_timer(intervals[:meetup][:events], Poller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
     end.handler)
-    
+
     # --- Meetup rsvps
     feed_config = feeds[:meetup][:rsvps]
     log_registering(feed_config[:url])
@@ -134,14 +134,14 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     EM.add_periodic_timer(intervals[:meetup][:rsvps], RsvpPoller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
       c.boot_data_url = feed_config[:boot_data_url]
-      c.reboot_delay = 10 
+      c.reboot_delay = 10
     end.boot.handler)
 
 
     # --- Forums general feed
     log_registering(feeds[:forum][:general][:url])
     EM.add_periodic_timer(intervals[:forum], Poller.new(ex, feeds[:forum][:general][:url]).handler)
-    
+
 
     # --- Forums questions feed
     log_registering(feeds[:forum][:questions][:url])
@@ -155,7 +155,8 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     log_registering(feed_config[:url])
     EM.add_periodic_timer(intervals[:disqus], Poller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
-    end.handler)
+      c.http_query[:limit] = 100
+    end.extend(Pageable::Disqus).handler)
 
 
     # --- Blog

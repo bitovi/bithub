@@ -40,7 +40,7 @@ class Poller
       lambda { fetch }
     end
   end
-    
+
   def fetch(link = nil)
     link = link || @endpoint
 
@@ -64,7 +64,7 @@ class Poller
       handle_errors(http_req)
     end
   end
-  
+
   def errback(http_req)
     log_http_status(http_req, :error)
   end
@@ -77,7 +77,7 @@ class Poller
   rescue Events::BuildingError=> err
     @logger.error "Feed #{@feed} | #{err} | #{err.context}"
   end
-  
+
   def handle_errors(http_req)
     if client_error?(http_req)
       log_http_status(http_req, :error)
@@ -87,14 +87,14 @@ class Poller
       log_http_status(http_req, :error)
     end
   end
-  
+
   def processor(response)
     Events::Processor.new(response) do |config|
       config.feed = @feed
       config.term = @config.processor_config[:term] if @config.processor_config
     end
   end
-  
+
   def reject_old(events)
     @digest_queue.reject_old(events)
   end
@@ -130,7 +130,7 @@ class Poller
   # --- Roles
 
   def pageable?
-    self.is_a? Pageable
+    self.respond_to? 'next_page'
   end
 
   def bootable?
@@ -138,7 +138,7 @@ class Poller
   end
 
   # --- /Roles
-  
+
 
   def determine_feed(uri)
     f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
