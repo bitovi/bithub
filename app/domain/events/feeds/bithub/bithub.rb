@@ -2,7 +2,7 @@ module Events
   module Bithub
     module Postlike; end
     class Post < Protocol; end
-    class Event < Post; end
+    class Event < Protocol; end
   end
 end
 

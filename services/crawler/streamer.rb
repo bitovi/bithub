@@ -55,7 +55,7 @@ class Streamer
   def handle_event(event_json)
     event = processor(event_json).parse.extract.decorate.result
     publish(event)
-  rescue Events::MappingError => err
+  rescue Events::DispatchError => err
     @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
   rescue Events::BuildingError=> err
     @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"

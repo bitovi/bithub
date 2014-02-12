@@ -27,7 +27,7 @@ module Entities
 
       @event = event
       @mappings = Hash.new(@event.feed_name.camel_case.to_sym)
-      @mappings.merge(Mappings)
+      @mappings.merge!(Mappings)
     end
 
     def feed
@@ -63,8 +63,8 @@ module Entities
       end
 
       def type
-        if Bithub.constants.include?(@event.type_name)
-          Bithub.const_get(@event.type_name)
+        if Bithub.constants.include?(@event.type_name_sym)
+          Bithub.const_get(@event.type_name_sym)
         end
       end
     end
@@ -76,42 +76,46 @@ module Entities
       Mappings = {
         :CustomIssue => :Issue,
         :CustomWatch => :Watch,
+        :CustomIssueComment => :IssueComment,
       }
 
       def initialize(event)
         @event = event
-        @mappings = Hash.new(@event.type_name)
-        @mappings.merge(Mappings)
+        @mappings = Hash.new(@event.type_name_sym)
+        @mappings.merge!(Mappings)
       end
 
       def remapped_type
-        @mappings[@event.type_name]
+        @mappings[@event.type_name_sym]
       end
 
       def type
-        if issue_action? || pull_request_action?
+        if issue_action?
           Github::IssueAction
         elsif Github.constants.include?(remapped_type)
           Github.const_get(remapped_type)
+        else
+          raise @mappings.inspect
+          raise "jebate #{Github.const_get(remapped_type)}"
         end
       end
 
       def issue_action?
-        (@event.nice_name =~ /Issue/) &&
-          (not(@event.nice_name =~ /IssueComment/)) &&
-          (not(just_opened?))
+        ((@event.class.name =~ /Issue/) || (@event.class.name =~ /PullRequest/)) &&
+         (not(@event.class.name =~ /IssueComment/)) &&
+          has_state? && has_action? && not(just_opened?)
       end
 
-      def pull_request_action?
-        (@event.nice_name =~ /PullRequest/) &&
-          (not(@event.nice_name =~ /IssueComment/)) &&
-          (not(just_opened?))
+      def has_state?
+        @event.respond_to?(:state)
+      end
+
+      def has_action?
+        @event.respond_to?(:action)
       end
 
       def just_opened?
-        @event.respond_to?(:state) &&
-          @event.respond_to?(:action) &&
-          @event.action == 'opened'
+         @event.action == 'opened'
       end
 
     end
@@ -136,7 +140,7 @@ module Entities
       end
 
       def type
-        Meetup.const_get(@event.type_name) if Meetup.constants.include?(@event.type_name)
+        Meetup.const_get(@event.type_name_sym) if Meetup.constants.include?(@event.type_name_sym)
       end
     end
   end
@@ -150,12 +154,12 @@ module Entities
 
       def initialize(event)
         @event = event
-        @mappings = Hash.new(@event.type_name)
-        @mappings.merge(Mappings)
+        @mappings = Hash.new(@event.type_name_sym)
+        @mappings.merge!(Mappings)
       end
 
       def remapped_type
-        @mappings[@event.type_name]
+        @mappings[@event.type_name_sym]
       end
 
       def type
