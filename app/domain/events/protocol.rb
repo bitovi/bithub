@@ -18,12 +18,12 @@ module Events
     include Serializable
     include Loggable
 
-    attr_reader :instance
+    attr_reader :instance, :source_data, :meta
 
     def initialize(payload)
-      initialize_logger("DEBUG")
-      raw_data = symbolize_keys(payload)
-      @data = (sd = raw_data[:source_data]) ? sd : raw_data;
+      _raw = symbolize_keys(payload)
+      @source_data = _raw[:source_data] || _raw
+      @meta = _raw[:meta] || nil
     end
 
     def content_digest
@@ -38,10 +38,6 @@ module Events
 
     def calc_digest(seed)
       @digest ||= (seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
-    end
-
-    def source_data
-      @data
     end
 
     def feed_name
