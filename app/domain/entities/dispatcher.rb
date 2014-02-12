@@ -94,9 +94,6 @@ module Entities
           Github::IssueAction
         elsif Github.constants.include?(remapped_type)
           Github.const_get(remapped_type)
-        else
-          raise @mappings.inspect
-          raise "jebate #{Github.const_get(remapped_type)}"
         end
       end
 
