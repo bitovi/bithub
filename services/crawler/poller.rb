@@ -41,15 +41,15 @@ class Poller
     end
   end
 
-  def fetch(link = nil)
+  def fetch(link = nil, opts={})
     link = link || @endpoint
 
     http_req = EM::HttpRequest.new(link).get({
-      query: http_query,
-      head: http_head
+      query: http_query.merge(opts[:http_query] || {}),
+      head: http_head.merge(opts[:http_head] || {})
     })
 
-    log_fetching(link)
+    log_fetching(link) # "=== #{http_req.req.query}"
 
     http_req.callback { callback(http_req) }
     http_req.errback { errback(http_req) }
