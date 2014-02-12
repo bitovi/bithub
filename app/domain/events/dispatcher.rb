@@ -10,7 +10,7 @@ module Events
   class Dispatcher
     include CoreHelpers
     include Loggable
-    
+
     Mappings = {
       :Forums => :Forum,
     }
@@ -22,7 +22,7 @@ module Events
     def self.feed(data, hint = nil)
       self.new(data, hint).feed
     end
-    
+
     def self.type(data, hint = nil)
       self.new(data, hint).type
     end
@@ -171,7 +171,7 @@ module Events
       def initialize(source_data)
         @source_data = source_data
       end
-      
+
       def type
         if Twitter.constants.include?(type_name)
           Twitter.const_get(type_name)
@@ -226,7 +226,7 @@ module Events
   module Irc
     class Dispatcher < BasicTypeDispatcher
       def type
-        Event::Irc::Message
+        Events::Irc::Message
       end
     end
   end
