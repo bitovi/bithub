@@ -35,7 +35,7 @@ module Events
       end
 
       @mappings = Hash.new(@feed_name)
-      @mappings.merge(Mappings)
+      @mappings.merge!(Mappings)
     end
 
     def feed
@@ -113,7 +113,7 @@ module Events
 
       def remapped_type_name
         @mappings ||= Hash.new(type_name)
-        @mappings.merge(Mappings)
+        @mappings.merge!(Mappings)
         @mappings[type_name]
       end
 

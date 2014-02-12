@@ -51,6 +51,10 @@ module Events
     def type_name
       @type_name ||= module_and_class_names[1]
     end
+
+    def type_name_sym
+      type_name.to_sym
+    end
     
     def ==(other)
       @data == other
