@@ -15,20 +15,20 @@ module Events
       :Forums => :Forum,
     }
 
-    def self.dispatch(sd, hint = nil)
-      self.new(sd, hint).dispatch
+    def self.dispatch(data, hint = nil)
+      self.new(data, hint).dispatch
     end
 
-    def self.feed(sd, hint = nil)
-      self.new(sd, hint).feed
+    def self.feed(data, hint = nil)
+      self.new(data, hint).feed
     end
     
-    def self.type(sd, hint = nil)
-      self.new(sd, hint).type
+    def self.type(data, hint = nil)
+      self.new(data, hint).type
     end
 
-    def initialize(sd, hint=nil)
-      @_raw = sd
+    def initialize(data, hint=nil)
+      @_raw = symbolize_keys(data)
 
       if (@feed_name = (hint || maybe_meta_feed_name).andand.camel_case.andand.to_sym).nil?
         fail DispatchError.new('Dispatcher requires a feed name dispatch propertly')
@@ -39,19 +39,11 @@ module Events
     end
 
     def feed
-      @feed ||= if Events.constants.include?(remapped_feed_name)
-                  Events.const_get(remapped_feed_name)
-                else
-                  fail DispatchError.new("Failed to dispatch to a feed in Events", remapped_feed_name)
-                end
+      @feed ||= dispatch_to_feed
     end
 
     def type
-      @type ||= if (t = feed::Dispatcher.new(source_data).type)
-                  t
-                else
-                  fail DispatchError.new("Failed to dispatch to a type in Events", source_data)
-                end
+      @type ||= dispatch_to_type
     end
 
     def dispatch
@@ -59,7 +51,7 @@ module Events
     end
 
     def source_data
-      @source_data ||= extracted_source_data(symbolize_keys(@_raw))
+      @source_data ||= extracted_source_data(@_raw)
     end
 
     private
@@ -69,6 +61,22 @@ module Events
 
     def remapped_feed_name
       @mappings[@feed_name]
+    end
+
+    def dispatch_to_feed
+      if Events.constants.include?(remapped_feed_name)
+        Events.const_get(remapped_feed_name)
+      else
+        fail DispatchError.new("Failed to dispatch to a feed in Events", remapped_feed_name)
+      end
+    end
+
+    def dispatch_to_type
+      if (t = feed::Dispatcher.new(source_data).type)
+        t
+      else
+        fail DispatchError.new("Failed to dispatch to a type in Events", source_data)
+      end
     end
 
     def extracted_source_data(sd)
@@ -142,8 +150,8 @@ module Events
   module Meetup
     class Dispatcher
 
-      def initialize(sd)
-        @source_data = sd
+      def initialize(source_data)
+        @source_data = source_data
       end
 
       def type
@@ -160,8 +168,8 @@ module Events
     class Dispatcher
       attr_reader :source_data
 
-      def initialize(sd)
-        @source_data = sd
+      def initialize(source_data)
+        @source_data = source_data
       end
       
       def type

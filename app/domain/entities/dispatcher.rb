@@ -2,6 +2,12 @@ require 'entities/protocol'
 
 module Entities
 
+  class BasicTypeDispatcher
+    def initialize(event)
+      @event = event
+    end
+  end
+
   class Dispatcher
 
     Mappings = {
@@ -31,19 +37,11 @@ module Entities
     end
 
     def feed
-      @feed ||= if Entities.constants.include?(remapped_feed_name)
-                  Entities.const_get(remapped_feed_name)
-                else
-                  fail DispatchError.new("Failed to dispatch to a feed in Entities", remapped_feed_name)
-                end
+      @feed ||= dispatch_to_feed
     end
 
     def type
-      @type ||= if (type = feed()::Dispatcher.new(@event).type)
-                  type
-                else
-                  fail DispatchError.new("Failed to dispatch to a type in Entities", @event)
-                end
+      @type ||= dispatch_to_type
     end
 
     def dispatch
@@ -54,18 +52,20 @@ module Entities
     def remapped_feed_name
       @mappings[@event.feed_name.camel_case.to_sym]
     end
-  end
 
-  module Bithub
-    class Dispatcher
-      def initialize(event)
-        @event = event
+    def dispatch_to_feed
+      if Entities.constants.include?(remapped_feed_name)
+        Entities.const_get(remapped_feed_name)
+      else
+        fail DispatchError.new("Failed to dispatch to a feed in Entities", remapped_feed_name)
       end
+    end
 
-      def type
-        if Bithub.constants.include?(@event.type_name_sym)
-          Bithub.const_get(@event.type_name_sym)
-        end
+    def dispatch_to_type
+      if (type = feed()::Dispatcher.new(@event).type)
+        type
+      else
+        fail DispatchError.new("Failed to dispatch to a type in Entities", @event)
       end
     end
   end
@@ -114,31 +114,6 @@ module Entities
       def just_opened?
          @event.action == 'opened'
       end
-
-    end
-  end
-
-  module Irc
-    class Dispatcher
-      def initialize(event)
-        @event = event
-      end
-
-      def type
-        Entities::Irc::Message
-      end
-    end
-  end
-
-  module Meetup
-    class Dispatcher
-      def initialize(event)
-        @event = event
-      end
-
-      def type
-        Meetup.const_get(@event.type_name_sym) if Meetup.constants.include?(@event.type_name_sym)
-      end
     end
   end
 
@@ -161,6 +136,54 @@ module Entities
 
       def type
         Twitter.const_get(remapped_type) if Twitter.constants.include?(remapped_type)
+      end
+    end
+  end
+
+  module Bithub
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Bithub.const_get(@event.type_name_sym) if Bithub.constants.include?(@event.type_name_sym)
+      end
+    end
+  end
+
+  module Meetup
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Meetup.const_get(@event.type_name_sym) if Meetup.constants.include?(@event.type_name_sym)
+      end
+    end
+  end
+  
+  module Forum
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Forum::Post
+      end
+    end
+  end
+  
+  module Blog
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Blog::Post
+      end
+    end
+  end
+
+  module Irc
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Irc::Message
+      end
+    end
+  end
+  
+  module Disqus
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Disqus::Post
       end
     end
   end

@@ -25,7 +25,6 @@ module Entities
     attr_reader :instance
 
     def initialize(payload)
-      initialize_logger("DEBUG")
       @payload = payload
     end
 
