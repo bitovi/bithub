@@ -10,7 +10,7 @@ class Tagger
   include Loggable
   DEFAULT_DELIMITERS = /[ ,.!?;\/]/
   DEFAULT_THRESHOLD = 1
-  
+
   class NoTagsProvided < Exception; end
   class Tag
     attr_reader :name, :threshold
@@ -18,9 +18,9 @@ class Tagger
     def initialize(t, opts={})
       @name = t[:name]
       @aliases = t[:aliases] || []
-      @threshold = t.andand[:props].andand[:levenshtein_treshold].andand.to_i || opts.andand[:threshold].andand
+      @threshold = t.props.andand['levenshtein_treshold'].andand.to_i || opts.andand[:threshold].andand
     end
-    
+
     def names
       [@name] + @aliases
     end

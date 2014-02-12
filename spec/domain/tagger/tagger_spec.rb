@@ -83,10 +83,9 @@ describe Tagger do
       expect(tagger.find_tags(text)).to match_array %w(canjs javascriptmvc)
     end
 
-    ### FIX custom levenstein treshold per tag
-    # it "handles levenstein treshold by tag" do
-    #   text = "word tested shouldn't be matched, but @canjs should be"
-    #   expect(tagger.find_tags(text)).to match_array %w(canjs)
-    # end
+    it "handles levenstein treshold by tag" do
+      text = "word tested shouldn't be matched, but @canjs should be"
+      expect(tagger.find_tags(text)).to match_array %w(canjs)
+    end
   end
 end
