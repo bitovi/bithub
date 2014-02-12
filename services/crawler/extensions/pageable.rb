@@ -29,8 +29,7 @@ module Pageable
     def next_page(http_req)
       if cursor = extract_cursor(http_req.response)
         if cursor['hasNext'] == true
-          next_page_url = @endpoint + "?cursor=" + cursor['next']
-          fetch(next_page_url)
+          fetch(@endpoint, {http_query: {cursor: cursor['next']}})
         end
       end
     end
