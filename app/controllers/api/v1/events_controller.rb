@@ -15,7 +15,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
-    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+    set_params
 
     muster_query = request.env['muster.query']
     scope = build_scope(muster_query, params)
@@ -65,6 +65,12 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
 
   private # SCOPE BUILDING
+
+  def set_params
+    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
+    params[:order] = "thread_updated_ts:asc"  if params[:order] == "thread_updated_at:asc"
+    params[:order] = "thread_updated_ts:desc" if params[:order] == "thread_updated_at:desc"
+  end
 
   def create_or_update
     method        = params[:id].nil?? 'create' : 'update'
@@ -131,7 +137,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   def date_filtered_summary(tag, params)
     scope = Entity.scoped.tagged_with(tag)
 
-    scope_applier(scope, params)
+    scope_applier(params, scope)
     .apply_tag_based_params_to_scope
     .apply_regular_params_to_scope
     .result.count
