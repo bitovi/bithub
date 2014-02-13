@@ -1,6 +1,33 @@
 class User < ActiveRecord::Base
   class OtherUserAlreadyLinked < Exception; end
 
+  class TotalScoreUpdater < Struct.new(:id)
+    def perform
+      user = User.find_by_id(id)
+      unless user.nil?
+        user.update_total_score
+      end
+    end
+  end
+
+  class EligibilityValidator < Struct.new(:id)
+    def perform
+      user = User.find_by_id(id)
+      unless user.nil?
+        user.validate_eligibility
+      end
+    end
+  end
+
+  class EligibilityRewarder < Struct.new(:id)
+    def perform
+      user = User.find_by_id(id)
+      unless user.nil?
+        user.reward_if_eligible
+      end
+    end
+  end
+
   rolify
   devise :rememberable, :trackable, :omniauthable
 
@@ -132,6 +159,11 @@ class User < ActiveRecord::Base
     self.update_attribute(:total_score, self.score)
   end
 
+  def async_update_total_score
+    Delayed::Job.enqueue TotalScoreUpdater.new(self.id)
+  end
+
+
   def link_ident!(identity)
     other_user = identity.user
     if identity.already_linked_to_other_user?
@@ -206,10 +238,18 @@ class User < ActiveRecord::Base
     end
   end
 
+  def async_reward_if_eligible
+    Delayed::Job.enqueue EligibilityRewarder.new(self.id)
+  end
+
   def validate_eligibility
     if rs = Reward.find_all_qualified_for(self)
-      delete_uneligible_achievements if self.rewards.length > rs
+      delete_uneligible_achievements if self.rewards.size > rs.size
     end
+  end
+
+  def async_validate_eligibility
+    Delayed::Job.enqueue EligibilityValidator.new(self.id)
   end
 
   def already_linked_to_current_user?(identity)

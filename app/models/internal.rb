@@ -9,8 +9,7 @@ class Internal < ActiveRecord::Base
   after_destroy :update_total_score_in_receiver
   
   def update_total_score_in_receiver
-    self.receiver.update_total_score
+    self.receiver.async_update_total_score
   end
 
-  handle_asynchronously :update_total_score_in_receiver
 end

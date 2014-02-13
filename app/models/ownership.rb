@@ -40,9 +40,7 @@ class Ownership < ActiveRecord::Base
   end
 
   def update_total_score_in_owner
-    self.owner.update_total_score
+    self.owner.async_update_total_score
   end
-
-  handle_asynchronously :update_total_score_in_owner
 
 end
