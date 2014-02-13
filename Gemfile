@@ -64,7 +64,7 @@ end
 
 group :development do
   gem 'capistrano', '~> 3.1.0'
-  gem 'capistrano-ext'
+  gem 'capistrano-rails', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
