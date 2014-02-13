@@ -82,7 +82,9 @@ class DynamicResizer
   end
 
   def is_valid?(props)
-    is_filepath_valid?(props[:origin_filename]) && is_geometry_valid?(props[:width], props[:height])
+    props &&
+    is_filepath_valid?(props[:origin_filename]) &&
+    is_geometry_valid?(props[:width], props[:height])
   end
 
   def is_filepath_valid?(filename)
