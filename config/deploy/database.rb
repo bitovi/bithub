@@ -15,7 +15,8 @@ namespace :db do
     run("cat #{current_path}/config/database.yml") { |channel, stream, data| @environment_info = YAML.load(data)[rails_env] }
     dbuser = @environment_info['username']
     dbpass = @environment_info['password']
-    dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
+    #dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
+    dbname = @environment_info['database']
     dbhost = @environment_info['host']
 
     run "pg_dump --format=c --password --username=#{dbuser} #{dbname} > #{backup_file}" do |ch, stream, out|
@@ -29,7 +30,7 @@ namespace :db do
 
       data.split(/\r?\n/).each do |row|
         attrs = row.split()
-        next if attrs.length != 9 
+        next if attrs.length != 9
 
         name = File.basename(attrs[8], ".backup")
         puts "Version: #{name} [#{attrs[4]}] [#{attrs[5]} #{attrs[6]} #{attrs[7]}]"
@@ -54,7 +55,7 @@ namespace :db do
     if not exists? :version
       puts "Specify which version to restore. Hint: use \"cap db:download -s version=__version__\""
     else
-      src = File.join(db_backups_path, version + ".backup")      
+      src = File.join(db_backups_path, version + ".backup")
       dest = ((exists? :path) ? path : './') + version + ".backup"
       top.download(src, dest, :via => :scp, &block)
     end
@@ -91,8 +92,8 @@ namespace :db do
     backup
 
     # download backup to local /tmp/
-    src = File.join(db_backups_path, backup_time + ".backup")      
-    dest = File.join('/tmp/', backup_time + ".backup")      
+    src = File.join(db_backups_path, backup_time + ".backup")
+    dest = File.join('/tmp/', backup_time + ".backup")
     top.download(src, dest, :via => :scp, &block)
 
     db.recreate

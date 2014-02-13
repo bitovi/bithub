@@ -4,6 +4,7 @@ Bithub::Application.routes.draw do
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   as :user do
+    post 'api/auth/link_identity', :to => 'api/auth/omniauth_callbacks#link_identity'
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
@@ -21,6 +22,7 @@ Bithub::Application.routes.draw do
     end
 
     namespace :v1, :defaults => { :format => 'json', :handler => 'jpbuilder' } do
+
       resources :events, :except => [:new, :edit] do
         resources 'activities', :only => :index, :to => 'event_activities#index'
         resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'

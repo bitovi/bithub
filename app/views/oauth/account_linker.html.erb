@@ -22,16 +22,16 @@
 			<div id="oauth-wrap">
 				<% if @account_linker.not_merging? %>
 					<div class="alert alert-info">
-						This will create a new user account and link it with the <b><%= @sites[@identity.provider] %></b> account for <b><%= @identity.source_data['nickname'] %></b>.
+						This will link your current user account with the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>.
 					</div>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
 						<button class="btn-signup">Approve</button>
 						<a href="javascript://" class="btn btn-link" id="cancel-oauth">Cancel</a>
 					</form>
 				<% elsif @account_linker.valid_merge? %>
 					<div class="alert alert-info">
-						This will merge your current account with the user account linked to the <b><%= @sites[@identity.provider] %></b> account for <b><%= @identity.source_data['nickname'] %></b>.
+						This will merge your current user account with the user account linked to the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>.
 					</div>
 					<p>This account is linked to the following identities:</p>
 					<ul>
@@ -40,25 +40,25 @@
 						<% end %>
 					</ul>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
 						<button class="btn-signup">Approve</button>
 						<a href="javascript://" class="btn btn-link" id="`">Cancel</a>
 					</form>
 				<% else %>
 					<div class="alert alert-error">
-						Unable to merge your current account with the user account linked to the <b><%= @sites[@identity.provider] %></b> account for <b><%= @identity.source_data['nickname'] %></b>. 
+						Unable to merge your current account with the user account linked to the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>. 
 					</div>
-					<p>To be able to merge accounts login with any of the following identities:</p>
+					<p>To be able to merge these accounts, login with any of the following identities:</p>
 					<ul>
 						<% for identity in @account_linker.offending_identities %>
 							<li><%= @sites[identity.provider] %> - <%== identity.source_data.andand['nickname'] || "<i>unknown nickname</i>" %></li>
 						<% end %>
 					</ul>
-					<p>and unlink them from their current user account</p>
+					<p>and unlink them from their current user account.</p>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<div class="cannot-merge clearfix">
 						<a href="javascript://" class="btn btn-signup" id="cancel-oauth">Close</a>
-					</form>
+					</div>
 				<% end %>
 			</div>
 		

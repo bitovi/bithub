@@ -9,7 +9,7 @@ class Identity < ActiveRecord::Base
   end
 
   def already_linked_to_other_user?
-    has_assigned_user? && user.identities.count > 1
+    has_assigned_user? && user.identities.size > 1
   end
 
   def has_assigned_user?
@@ -28,5 +28,13 @@ class Identity < ActiveRecord::Base
 
   def self.find_or_create_with_oauth_data(oauth_data)
     self.find_or_create_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
+  end
+
+  def self.new_from_oauth(oauth_data)
+    self.new(
+      uid:         oauth_data['uid'],
+      provider:    oauth_data['provider'],
+      source_data: oauth_data['info']
+    )
   end
 end
