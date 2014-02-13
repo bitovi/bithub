@@ -126,6 +126,10 @@ class Entity < ActiveRecord::Base
     self.children.merge(Entity.scoped_with_includes)
   end
 
+  def references_with_includes()
+    self.referenced_from.merge(Entity.scoped_with_includes)
+  end
+
   def thread
     if self.parent_id # When an event is a child
       Entity.where("id = ? OR parent_id = ?", self.parent_id, self.parent_id)
