@@ -10,8 +10,7 @@ class Award < ActiveRecord::Base
   
   after_create :bust_event_cache
 
-  after_destroy :update_cached_score_in_associated_user
-  after_destroy :check_if_still_eligible_for_rewards
+  after_destroy :update_cached_score_in_user_and_check_award_eligibility
 
   def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
@@ -72,19 +71,22 @@ class Award < ActiveRecord::Base
   end
 
   def update_cached_score_in_associated_user
-    self.applies_to.author.update_total_score if self.applies_to.author
+    self.applies_to.author.async_update_total_score if self.applies_to.author
   end
 
   def reward_associated_user_if_eligible
-    self.applies_to.author.reward_if_eligible if self.applies_to.author
+    self.applies_to.author.async_reward_if_eligible if self.applies_to.author
   end
 
   def check_if_still_eligible_for_rewards
-    self.applies_to.author.validate_eligibility if self.applies_to.author
+    self.applies_to.author.async_validate_eligibility if self.applies_to.author
   end
 
-  handle_asynchronously :update_cached_score_in_associated_user
-  handle_asynchronously :reward_associated_user_if_eligible
-  handle_asynchronously :check_if_still_eligible_for_rewards
+  def update_cached_score_in_user_and_check_award_eligibility
+    update_cached_score_in_associated_user
+    check_if_still_eligible_for_rewards
+    reward_associated_user_if_eligible
+  end
+
 
 end
