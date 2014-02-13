@@ -225,8 +225,8 @@ class User < ActiveRecord::Base
   end
 
   def validate_eligibility
-    if rs = Reward.find_all_qualified_for(self)
-      delete_uneligible_achievements if self.rewards.size > rs.size
+    achievements.each do |a|
+      a.destroy if a.reward.point_minimum > total_score
     end
   end
 

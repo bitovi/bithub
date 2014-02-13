@@ -9,15 +9,14 @@ class Upvote < ActiveRecord::Base
   validates_uniqueness_of :actor_id, scope: :applies_to_id, message: "may only upvote once"
 
   after_create :bust_event_cache
-
-  after_destroy :update_events_and_user
+  after_destroy :update_entities_and_user
 
   def self.create_based_on_rule(actor, applies_to)
     upvote = nil
     ActiveRecord::Base.transaction do
       upvote = Upvote.create!({actor: actor, applies_to: applies_to, value: applies_to.scoring_rule.upvote_value})
-      upvote.update_cached_upvotes_in_associated_entity
-      upvote.update_cached_score_in_associated_user
+      upvote.update_total_upvotes_in_associated_entity
+      upvote.update_total_score_in_associated_user
       upvote.reward_associated_user_if_eligible
     end
     upvote
@@ -31,11 +30,11 @@ class Upvote < ActiveRecord::Base
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
 
-  def update_cached_upvotes_in_associated_entity
+  def update_total_upvotes_in_associated_entity
     self.applies_to.async_update_total_upvotes
   end
     
-  def update_cached_score_in_associated_user
+  def update_total_score_in_associated_user
     self.applies_to.author.async_update_total_score if self.applies_to.author
   end
 
@@ -43,13 +42,13 @@ class Upvote < ActiveRecord::Base
     self.applies_to.author.async_reward_if_eligible if self.applies_to.author
   end
 
-  def check_if_still_eligible_for_rewards
+  def validate_associated_users_reward_eligibility
     self.applies_to.author.async_validate_eligibility if self.applies_to.author
   end
 
-  def update_events_and_user
-    update_cached_upvotes_in_associated_entity
-    update_cached_score_in_associated_user
-    check_if_still_eligible_for_rewards
+  def update_entities_and_user
+    update_total_upvotes_in_associated_entity
+    update_total_score_in_associated_user
+    validate_associated_users_reward_eligibility
   end
 end

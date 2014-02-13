@@ -1,0 +1,2 @@
+class AccountLinker
+end
