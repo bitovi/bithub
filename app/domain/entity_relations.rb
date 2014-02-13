@@ -5,16 +5,27 @@ class EntityRelations
   end
 
   def children
-
     if @children_for.nil?
       @children_for = Entity.scoped_with_includes.where(parent_id: @ids)
     end
 
     @children_for || []
   end
+  
+  def references
+    if @references_for.nil?
+      @references_for = EntityRef.where(to_id: @ids)
+    end
+
+    @references_for || []
+  end
 
   def children_for_event(event)
     children.select{|c| c.parent_id == event.id}
+  end
+
+  def references_for_event(event)
+    Entity.where(:id => references.select{|r| r.to_id == event.id}.map{|r| r.from_id}).all
   end
 
   def awards_for
