@@ -20,7 +20,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     end
 
     def merging_state
-      :invalid_merge
+      :valid_merge
     end
   end
 
