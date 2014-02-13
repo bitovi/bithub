@@ -25,7 +25,7 @@
 						This will create a new user account and link it with the <b><%= @sites[@identity.provider] %></b> account for <b><%= @identity.source_data['nickname'] %></b>.
 					</div>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
 						<button class="btn-signup">Approve</button>
 						<a href="javascript://" class="btn btn-link" id="cancel-oauth">Cancel</a>
 					</form>
@@ -40,7 +40,7 @@
 						<% end %>
 					</ul>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
 						<button class="btn-signup">Approve</button>
 						<a href="javascript://" class="btn btn-link" id="`">Cancel</a>
 					</form>
@@ -56,9 +56,9 @@
 					</ul>
 					<p>and unlink them from their current user account</p>
 					<hr>
-					<form action="/oauth/link_account" type="post" class="clearfix">
+					<div class="cannot-merge clearfix">
 						<a href="javascript://" class="btn btn-signup" id="cancel-oauth">Close</a>
-					</form>
+					</div>
 				<% end %>
 			</div>
 		
