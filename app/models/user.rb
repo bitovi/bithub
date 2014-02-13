@@ -1,29 +1,11 @@
 class User < ActiveRecord::Base
   class OtherUserAlreadyLinked < Exception; end
 
-  class TotalScoreUpdater < Struct.new(:id)
+  class AsyncUserUpdater < Struct.new(:id, :method)
     def perform
       user = User.find_by_id(id)
       unless user.nil?
-        user.update_total_score
-      end
-    end
-  end
-
-  class EligibilityValidator < Struct.new(:id)
-    def perform
-      user = User.find_by_id(id)
-      unless user.nil?
-        user.validate_eligibility
-      end
-    end
-  end
-
-  class EligibilityRewarder < Struct.new(:id)
-    def perform
-      user = User.find_by_id(id)
-      unless user.nil?
-        user.reward_if_eligible
+        user.send(method)
       end
     end
   end
@@ -160,7 +142,7 @@ class User < ActiveRecord::Base
   end
 
   def async_update_total_score
-    Delayed::Job.enqueue TotalScoreUpdater.new(self.id)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :update_total_score)
   end
 
 
@@ -239,7 +221,7 @@ class User < ActiveRecord::Base
   end
 
   def async_reward_if_eligible
-    Delayed::Job.enqueue EligibilityRewarder.new(self.id)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :reward_if_eligible)
   end
 
   def validate_eligibility
@@ -249,7 +231,7 @@ class User < ActiveRecord::Base
   end
 
   def async_validate_eligibility
-    Delayed::Job.enqueue EligibilityValidator.new(self.id)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :validate_eligibility)
   end
 
   def already_linked_to_current_user?(identity)
