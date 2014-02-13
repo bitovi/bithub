@@ -9,8 +9,7 @@ class Award < ActiveRecord::Base
   validate :thread_not_already_awarded
   
   after_create :bust_event_cache
-
-  after_destroy :update_cached_score_in_user_and_check_award_eligibility
+  after_destroy :update_associated_users_total_score_and_check_eligibility
 
   def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
@@ -25,7 +24,7 @@ class Award < ActiveRecord::Base
       when :based_on_rule
         award = Award.create!({actor: actor, applies_to: applies_to, value: Award.rule_based_value(applies_to)})
       end
-      award.update_cached_score_in_associated_user
+      award.update_total_score_in_associated_user
       award.reward_associated_user_if_eligible
     end
     
@@ -65,28 +64,27 @@ class Award < ActiveRecord::Base
 
   # Methods for hooks
   def bust_event_cache
-    self.applies_to.touch
-    self.applies_to.parent.touch if self.applies_to.parent
-    self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
+    applies_to.touch
+    applies_to.parent.touch if self.applies_to.parent
+    applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
 
-  def update_cached_score_in_associated_user
-    self.applies_to.author.async_update_total_score if self.applies_to.author
+  def update_total_score_in_associated_user
+    applies_to.author.async_update_total_score if self.applies_to.author
   end
 
   def reward_associated_user_if_eligible
-    self.applies_to.author.async_reward_if_eligible if self.applies_to.author
+    applies_to.author.async_reward_if_eligible if self.applies_to.author
   end
 
-  def check_if_still_eligible_for_rewards
-    self.applies_to.author.async_validate_eligibility if self.applies_to.author
+  def validate_associated_users_reward_eligibility
+    applies_to.author.async_validate_eligibility if self.applies_to.author
   end
 
-  def update_cached_score_in_user_and_check_award_eligibility
-    update_cached_score_in_associated_user
-    check_if_still_eligible_for_rewards
+  def update_associated_users_total_score_and_check_eligibility
+    update_total_score_in_associated_user
+    validate_associated_users_reward_eligibility
     reward_associated_user_if_eligible
   end
-
 
 end

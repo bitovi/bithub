@@ -9,8 +9,6 @@ class Entity < ActiveRecord::Base
     end
   end
 
-
-
   attr_accessible :id,
     :body, :title, :url, :origin_id,
     :tag_list, :owners, :ownerships,
