@@ -1,108 +1,58 @@
-require 'capistrano/ext/multistage'
-require 'bundler/capistrano'
-require 'travis/pro'
+# config valid only for Capistrano 3.1
+lock '3.1.0'
 
+set :application, 'my_app_name'
+set :repo_url, 'git@example.com:me/my_repo.git'
 
-set(:use_sudo, false)
-set(:ssh_options, { :forward_agent => true })
-set(:bundle_flags, "--deployment --quiet --binstubs")
+# Default branch is :master
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
-set(:user, "bithub")
-set(:application, "web")
-set(:repository, "git@github.com:bitovi/bithub.git")
+# Default deploy_to directory is /var/www/my_app
+# set :deploy_to, '/var/www/my_app'
 
-set(:branch, "master")
-set(:deploy_via, :remote_cache)
-set(:deploy_to) { "/home/#{user}/#{application}" }
+# Default value for :scm is :git
+# set :scm, :git
 
-set(:normalize_asset_timestamps, false)
-set(:default_environment, {
-  'PATH' => "/opt/rbenv/shims/:/opt/rbenv/bin:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
-})
+# Default value for :format is :pretty
+# set :format, :pretty
 
-set(:stages, ['testing', 'staging', 'prod'])
-set(:default_stage, 'testing')
+# Default value for :log_level is :debug
+# set :log_level, :debug
 
-set(:shared_children, shared_children + %w{public/uploads})
+# Default value for :pty is false
+# set :pty, true
 
-set :ci_access_token, "DTaq7IXrUgbhNeaBVtTdcA"
-set :ci_repository, "bitovi/bithub"
+# Default value for :linked_files is []
+# set :linked_files, %w{config/database.yml}
+
+# Default value for linked_dirs is []
+# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+
+# Default value for default_env is {}
+# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+
+# Default value for keep_releases is 5
+# set :keep_releases, 5
 
 namespace :deploy do
 
-  desc "Recreate Upstart configuration"
-  task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub --log /var/log/bithub/web --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
-  end
-
-  desc "Symling uploads from shared to public folder"
-  task :symlink_uploads do
-    run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
-  end
-
-  namespace :listener do
-    desc "Start listener"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-listener start"
-    end
-
-    desc "Stop listener"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-listener stop"
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      # Your restart mechanism here, for example:
+      # execute :touch, release_path.join('tmp/restart.txt')
     end
   end
 
-  namespace :crawler do
-    desc "Start crawler"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-crawler start"
-    end
+  after :publishing, :restart
 
-    desc "Stop crawler"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-crawler stop"
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      # Here we can do anything such as:
+      # within release_path do
+      #   execute :rake, 'cache:clear'
+      # end
     end
   end
 
-  namespace :web do
-    desc "Start unicorn"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-web start"
-    end
-
-    desc "Stop unicorn"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-web stop"
-    end
-  end
-
-  namespace :ircbot do
-    desc "Start IRC bot"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-irc_bot stop"
-    end
-
-    desc "Stop IRC bot"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-irc_bot stop"
-    end
-  end
-
-  namespace :liveservice do
-    desc "Start live service"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-liveservice stop"
-    end
-
-    desc "Stop live service"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-liveservice stop"
-    end
-  end
 end
-
-#before('deploy', 'travis:verify')
-before('deploy:restart', 'deploy:recreate_upstart_conf')
-before('deploy:restart', 'deploy:symlink_uploads')
-
-#after('deploy', 'db:backup')

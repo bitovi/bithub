@@ -63,7 +63,7 @@ group :test, :testing, :development do
 end
 
 group :development do
-  gem 'capistrano', '~> 2.14'
+  gem 'capistrano', '~> 3.1.0'
   gem 'capistrano-ext'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
