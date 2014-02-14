@@ -13,6 +13,7 @@ module Accounts
       })
 
       @user.identities << @identity
+      @user.save!
 
       @fdc.create_missing_repos_and_stars
 
@@ -21,7 +22,6 @@ module Accounts
 
       @user.async_collect_authored_entities
       @user.async_reward_if_eligible
-      @user.save!
       @user
     end
 
