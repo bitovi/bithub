@@ -225,3 +225,9 @@ staging:
   <<: *default_settings
   monitor_mode: true
   app_name: Bithub (Staging)
+
+testing:
+  <<: *default_settings
+  monitor_mode: true
+  app_name: Bithub (Testing)
+
