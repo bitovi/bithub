@@ -7,6 +7,7 @@ module Users
         other_user = User.find_by_id other_user_id
         if current_user && other_user
           ActivitiesAndEntitiesSnatcher.new(current_user, other_user).execute
+          DuplicateInternalsCleaner.new(current_user).execute
           other_user.update_total_score
         end
       end
