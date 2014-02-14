@@ -17,7 +17,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def link_identities
-    @identity = Identity.find_or_init_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data)
+    @identity = Identity.find_or_create_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data)
     AccountLinker.new(current_user, @identity).determine_state.link
   end
 
@@ -34,11 +34,13 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     @manager = Accounts::AccountManager.new(kind, @identity, current_user)
 
     if @manager.linking_or_merging?
+      Rails.logger.info "OVOJEZAGREP -> MERGAM" 
       session["devise.#{kind.downcase}_data"] = oauth_data
       session["current_oauth_data"] = oauth_data
       render :template => "oauth/account_linker.html.erb", :layout => false
 
     elsif @manager.only_logging_in?
+      Rails.logger.info "OVOJEZAGREP -> LOGIRAM SAMO" 
       if (user = @manager.procure)
         session["devise.#{kind.downcase}_data"] = oauth_data
         sign_in user, :event => :authentication
