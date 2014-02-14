@@ -1,6 +1,7 @@
 class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   rescue_from Exception, :with => :show_auth_error
+  rescue_from RuntimeError, :with => :show_auth_error
 
   def github
     oauthorize "github"
