@@ -23,7 +23,7 @@ module Users
     
     def reward_all_eligible_users
       if eligible_users.present?
-        reject_achievers(eligible_users) each do |u|
+        reject_achievers(eligible_users).each do |u|
           @reward.achievements.create(user: u)
         end
       end
