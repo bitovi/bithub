@@ -17,7 +17,7 @@ module Users
     
     def unreward_if_uneligible
       @user.achievements.each do |a|
-        a.destroy if a.reward.point_minimum > score
+        a.destroy if a.reward.point_minimum > @user.score
       end
     end
     
