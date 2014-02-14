@@ -31,7 +31,9 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     })
 
     @identity = Identity.find_or_init_with_provider_and_uid(kind, oauth_data['uid'], oauth_data)
-    @manager = Accounts::AccountManager.new(kind, @identity, current_user)
+    @manager = Accounts::AccountManager.new(kind, @identity, current_user).determine_state
+
+    Rails.logger.info "STATE -------> #{@manager.merging_state}"
 
     if @manager.linking_or_merging?
       Rails.logger.info "OVOJEZAGREP -> MERGAM" 
