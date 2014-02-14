@@ -36,6 +36,7 @@ gem 'andand'
 gem 'oj'
 gem 'yajl-ruby'
 gem 'awesome_print'
+gem 'twitter-text'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :git => "git://github.com/neektza/muster.git"
