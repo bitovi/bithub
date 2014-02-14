@@ -8,10 +8,6 @@ class Identity < ActiveRecord::Base
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
   end
 
-  def name
-    source_data['name']
-  end
-
   def nickname
     source_data['nickname']
   end
@@ -22,6 +18,10 @@ class Identity < ActiveRecord::Base
 
   def name
     source_data['name']
+  end
+
+  def identifier
+    nickname || name || email
   end
 
   def self.find_or_create_with_oauth_data(oauth_data)
