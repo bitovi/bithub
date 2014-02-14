@@ -19,7 +19,7 @@ class Internal < ActiveRecord::Base
   end
 
   def check_if_receiver_still_eligible
-    receiver.async_validate_eligibility
+    receiver.async_unreward_if_uneligible
   end
 
   def reward_receiver_if_eligible

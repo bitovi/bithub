@@ -4,7 +4,7 @@ Bithub::Application.routes.draw do
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   as :user do
-    post 'api/auth/link_identity', :to => 'api/auth/omniauth_callbacks#link_identity'
+    post 'api/auth/link_identity', :to => 'api/auth/omniauth_callbacks#link_identities'
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
