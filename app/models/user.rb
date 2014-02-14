@@ -122,11 +122,11 @@ class User < ActiveRecord::Base
   end
 
   def award_points_for_completing_profile
-    Users::PointAwarder.new(self).award_points_for_completing_profile.execute
+    Users::PointAwarder.new(self).award_points_for_completing_profile
   end
 
   def award_points_for_linking(provider)
-    Users::PointAwarder.new(self).award_points_for_linking(provider).execute
+    Users::PointAwarder.new(self).award_points_for_linking(provider)
   end
 
   def reward_if_eligible
