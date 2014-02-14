@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon-precomposed.png" />
+		<title>BitHub | activity on our open-source projects</title>
+		<link href="/bithub/production.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+
+		<div id="container">
+
+			<div id="navbar" class="navbar">
+				<div class="navbar-inner">
+					<div class="container inner-navbar-container">
+						<a class="brand" href="javascript://">BitHub</a>
+					</div>
+				</div>
+			</div>
+	
+			<div id="oauth-wrap">
+				<% if @account_linker.not_merging? %>
+					<div class="alert alert-info">
+						This will link your current user account with the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>.
+					</div>
+					<hr>
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
+						<button class="btn-signup">Approve</button>
+						<a href="javascript://" class="btn btn-link" id="cancel-oauth">Cancel</a>
+					</form>
+				<% elsif @account_linker.valid_merge? %>
+					<div class="alert alert-info">
+						This will merge your current user account with the user account linked to the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>.
+					</div>
+					<p>This account is linked to the following identities:</p>
+					<ul>
+						<% for identity in @account_linker.merging_user.identities %>
+							<li><%= @sites[identity.provider] %> - <%== identity.source_data.andand['nickname'] || "<i>unknown nickname</i>" %></li>
+						<% end %>
+					</ul>
+					<hr>
+					<form action="/api/auth/link_identity" method="post" class="clearfix">
+						<button class="btn-signup">Approve</button>
+						<a href="javascript://" class="btn btn-link" id="`">Cancel</a>
+					</form>
+				<% else %>
+					<div class="alert alert-error">
+						Unable to merge your current account with the user account linked to the <b><%= @sites[@identity.provider] %></b> identity for <b><%= @identity.source_data['nickname'] %></b>. 
+					</div>
+					<p>To be able to merge these accounts, login with any of the following identities:</p>
+					<ul>
+						<% for identity in @account_linker.offending_identities %>
+							<li><%= @sites[identity.provider] %> - <%== identity.source_data.andand['nickname'] || "<i>unknown nickname</i>" %></li>
+						<% end %>
+					</ul>
+					<p>and unlink them from their current user account.</p>
+					<hr>
+					<div class="cannot-merge clearfix">
+						<a href="javascript://" class="btn btn-signup" id="cancel-oauth">Close</a>
+					</div>
+				<% end %>
+			</div>
+		
+		</div>
+
+		
+		<script type="text/javascript">
+			WebFontConfig = {
+				google: { families: [ 'Open+Sans:400,700:latin', 'Just+Another+Hand::latin' ] }
+			};
+			(function() {
+				var wf = document.createElement('script');
+				wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+				wf.type = 'text/javascript';
+				wf.async = 'true';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(wf, s);
+			})();
+		</script>
+
+		<script type="text/javascript" src="/can/lib/jquery.2.0.3.js"></script>
+		<script type="text/javascript">
+			window.resizeTo($(window).width(), $('body').height() + 60);
+			$('#cancel-oauth').click(function(){
+				if (window.opener && !window.opener.closed) {
+					window.close();
+				}
+			})
+		</script>
+
+	</body>
+</html>

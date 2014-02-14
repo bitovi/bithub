@@ -127,16 +127,16 @@ class EntityDecorator < Draper::Decorator
   end
 
   def apply_hyperlinks(text, urls )
-
-    Rails.logger.info urls
     
     urls = ActiveSupport::JSON.decode(urls || '[]')
 
     urls.reduce(text) do |acc, url|
       range = url["indices"]
       link = text.slice(*range)
-      text.gsub(link, "<a href=#{url["url"]}>" + url["display_url"] + "</a>")
+      text.gsub(link, url["display_url"])
     end
+
+    Twitter::Autolink.auto_link(text)
   end
 
   # NOTE: this is a quick fix, would be better to add newlines only when they're missing
