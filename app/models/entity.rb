@@ -88,6 +88,9 @@ class Entity < ActiveRecord::Base
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
   scope :no_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :no_children, lambda { where("parent_id IS NULL") }
+
+  # Authorship
+  scope :origin_author, lambda {|uid| where("props -> 'origin_author_id' = :uid", uid: uid.to_s) }
   
   # Issues
   scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
