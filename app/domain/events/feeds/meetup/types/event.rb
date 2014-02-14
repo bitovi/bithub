@@ -3,6 +3,10 @@ module Events
 
     class Event < Protocol
 
+      def content_digest
+        calc_digest(url)
+      end
+
       def origin_id
         source_data.andand[:id]
       end
@@ -20,7 +24,7 @@ module Events
       end
 
       def url
-        source_data.andand[:event_url]
+        source_data.andand[:event_url].to_s
       end
 
       def status
