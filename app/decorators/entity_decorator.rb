@@ -115,6 +115,8 @@ class EntityDecorator < Draper::Decorator
       "http://bithub.com"
     when 'staging'
       "http://staging.bithub.com"
+    when 'testing'
+      "http://testing.bithub.com"
     when 'development'
       "http://bithub.dev"
     end
