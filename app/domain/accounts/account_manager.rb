@@ -12,7 +12,7 @@ module Accounts
     end
 
     def linking_or_merging?
-      @current_user.present? && not(@current_user.identities.include?(@identity)))j
+      @current_user.present? && not(@current_user.identities.include?(@identity))
     end
 
     def only_logging_in?
