@@ -27,7 +27,7 @@ module Accounts
             custom_follow: true,
           },
         }
-        Dispatcher.new.dispatch(data, hint)
+        Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
 
@@ -41,7 +41,7 @@ module Accounts
             custom_watch: true,
           }
         }
-        Dispatcher.new.dispatch(data, hint)
+        Dispatcher.new.dispatch(data, @identity.provider)
       end
     end
 
