@@ -38,7 +38,7 @@ class Api::V1::UsersController < Api::V1::BaseController
     filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
 
     if u.update_attributes(filtered_params)
-      @user.calculate_avatar_url; @user.save
+      u.calculate_avatar_url; u.save
       @user = UserDecorator.decorate(u)
       render :show
     else
