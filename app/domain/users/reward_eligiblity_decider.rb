@@ -9,7 +9,9 @@ module Users
  
     def reward_if_eligible
       if earned_rewards.present?
-        @user.rewards << reject_achieved(earned_rewards)
+        reject_achieved(earned_rewards).each do |r|
+          @user.achievements.create(reward: r)
+        end
       end
     end
     
@@ -21,7 +23,9 @@ module Users
     
     def reward_all_eligible_users
       if eligible_users.present?
-        @reward.rewardees << reject_achievers(eligible_users)
+        reject_achievers(eligible_users) each do |u|
+          @reward.achievements.create(user: u)
+        end
       end
     end
 
@@ -33,10 +37,6 @@ module Users
       Users.where("total_score >= ?", point_minimum).all
     end
     
-    def execute
-      (@user.present? && @user.save) || (@reward.present? && @reward.save)
-    end
-
     private
 
     def reject_achieved(rewards)

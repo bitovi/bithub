@@ -130,19 +130,19 @@ class User < ActiveRecord::Base
   end
 
   def reward_if_eligible
-    Users::RewardEligiblityDecider.new(user: self).reward_if_eligible.execute
+    Users::RewardEligiblityDecider.new(user: self).reward_if_eligible
   end
 
   def unreward_if_uneligible
-    Users::RewardEligiblityDecider.new(user: self).unreward_if_uneligible.execute
+    Users::RewardEligiblityDecider.new(user: self).unreward_if_uneligible
   end
   
   def calculate_avatar_url
-    props['avatar_url'] = '' #Users::AvatarDecider.new(self).avatar_url
+    props['avatar_url'] ||= Users::AvatarDecider.new(self).avatar_url
   end
 
   def async_collect_authored_entities
-    Delayed::Job.enqueue(:collect_authored_entities, self.id)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :collect_authored_entities)
   end
 
   def async_update_total_score
