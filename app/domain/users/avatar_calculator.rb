@@ -1,13 +1,13 @@
 module Users
-  class AvatarDecider
+  class AvatarCalculator
     DefaultUrl = '/assets/images/icon-user.png'
-    ImageAttributes = ['avatar_url', 'profile_image_url', 'image']
+    ImageAttributes = %w(image avatar_url profile_image_url)
 
     def initialize(user)
       @user = user
     end
 
-    def decide
+    def execute
       maybe_gravatar || maybe_source_data || DefaultUrl
     end
 
