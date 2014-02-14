@@ -23,10 +23,11 @@ module Accounts
     end
 
     def link
-      Rails.logger.info("====================== STATE #{@state}" )
+      Rails.logger.info"OVOJEZAGREP STATE #{@state}"
+
       return nil if (@state == :undecided) || (@state == :already_linked)
       if only_linking?
-        #@current_user.identities << @identity
+        @current_user.identities << @identity
         after_link_process
       elsif merging?
         @other_user = @identity.user
@@ -92,7 +93,7 @@ module Accounts
     end
 
     def commit
-      @current_user.save
+      @current_user.save!
     end
 
     def async_snatch

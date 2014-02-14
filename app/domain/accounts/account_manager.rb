@@ -20,7 +20,6 @@ module Accounts
     end
 
     def procure
-      Rails.logger.info "OVOJEZAGREP new_account #{new_account.inspect}"
       @current_user || @identity.user || new_account
     end
 

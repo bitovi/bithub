@@ -7,7 +7,6 @@ module Accounts
     end
 
     def create
-
       @user = User.new({
         name: @identity.name,
         email: @identity.email
