@@ -1,14 +1,15 @@
 module Users
   class RewardEligiblityDecider
+    attr_reader :user, :reward
 
-    def initialize(*kwargs)
-      @user = args[:user] if args[:user]
-      @reward = args[:reward] if args[:reward]
+    def initialize(kwargs)
+      @user = kwargs[:user] if kwargs[:user].present?
+      @reward = kwargs[:reward] if kwargs[:reward].present?
     end
  
     def reward_if_eligible
       if earned_rewards.present?
-        @user.rewards << reject_achieved(eligible_rewards)
+        @user.rewards << reject_achieved(earned_rewards)
       end
     end
     

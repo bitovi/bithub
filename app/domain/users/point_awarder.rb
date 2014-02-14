@@ -14,14 +14,16 @@ module Users
       if completed_profile? && not(already_awarded_for_profile_completion?)
         @user.internals.build({receiver: @user, value: 1, comment: "Completed profile."})
       end
+      self
     end
 
     def award_points_for_linking(provider)
       @user.internals.build({receiver: @user, value: 1, comment: "Logged in with #{provider.capitalize}."})
+      self
     end
 
     def already_awarded_for_profile_completion?
-      Internal.where(receiver: @user, comment: "Completed profile.").present?
+      Internal.where(receiver_id: @user, comment: "Completed profile.").present?
     end
 
     def completed_profile?

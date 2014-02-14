@@ -117,6 +117,10 @@ class User < ActiveRecord::Base
     update_attribute(:total_score, self.score)
   end
 
+  def comleted_profile?
+    Users::PointAwarder.new(self).completed_profile?
+  end
+
   def award_points_for_completing_profile
     Users::PointAwarder.new(self).award_points_for_completing_profile.execute
   end
@@ -126,15 +130,15 @@ class User < ActiveRecord::Base
   end
 
   def reward_if_eligible
-    RewardEligiblityDecider.new(self).reward_if_eligible.execute
+    Users::RewardEligiblityDecider.new(user: self).reward_if_eligible.execute
   end
 
   def unreward_if_uneligible
-    RewardEligiblityDecider.new(self).unreward_if_uneligible.execute
+    Users::RewardEligiblityDecider.new(user: self).unreward_if_uneligible.execute
   end
   
-  def avatar_url
-    props['avatar_url'] ||= AvatarDecider.new(self).avatar_url
+  def calculate_avatar_url
+    props['avatar_url'] = '' #Users::AvatarDecider.new(self).avatar_url
   end
 
   def async_collect_authored_entities
@@ -150,7 +154,7 @@ class User < ActiveRecord::Base
   end
 
   def async_unreward_if_uneligible
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :validate_eligibility)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :unreward_if_uneligible)
   end
 
   # Helpers

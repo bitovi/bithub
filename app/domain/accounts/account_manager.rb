@@ -1,58 +1,31 @@
 module Accounts
   class AccountManager
-    UserData = Struct.new(:uid, :name, :email, :nickname)
+    extend Forwardable
 
-    def initialize(provider, oauth_data, current_user = nil)
+    def_delegators :@account_linker, :not_merging?, :valid_merge?, :merging_state, :merging_user, :offending_identities
+
+    def initialize(provider, identity, current_user = nil)
       @provider = provider
-      @oauth_data = oauth_data
+      @identity = identity
       @current_user = current_user
+      @account_linker = AccountLinker.new(@identity, @current_user)
     end
 
-    def find_or_create_user
-      @identity = Identity.find_or_create_with_oauth_data(@oauth_data)
-      user = nil
-
-      begin
-        if current_user_exists?
-          user = AccountLinker.new(@current_user, @identity, user_data).link
-        elsif @identity.has_assigned_user?
-          user = @identity.user
-        else
-          user = AccountCreator.new(@identity, user_data).create
-        end
-      rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error e.message
-      end
-      user
+    def linking_or_merging?
+      @current_user.present? && not(@current_user.identities.include?(@identity)))j
     end
 
-    def current_user_exists?
-      @current_user != nil
+    def only_logging_in?
+      @current_user.nil? || @current_user.identities.include?(@identity)
     end
 
-    private 
-    def user_data
-      if %w(meetup twitter github).include? @provider
-        UserData.new(oauth_uid, oauth_name, oauth_email, oauth_nickname)
-      else
-        raise "Provider #{provider} not handled"
-      end
+    def procure
+      @current_user || @identity.user || AccountCreator.new(@identity, user_data).create_account
     end
 
-    def oauth_uid
-      oauth_data['uid']
+    def link_and_merge
+      (@account_linker || AccountLinker.new(@identity, @current_user)).determine_state.link
     end
 
-    def oauth_nickname
-      oauth_data['info']['nickname']
-    end
-
-    def oauth_name
-      oauth_data['info']['name']
-    end
-
-    def oauth_email
-      oauth_data['info']['email']
-    end
   end
 end
