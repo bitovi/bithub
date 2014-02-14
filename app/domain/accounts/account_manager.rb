@@ -8,7 +8,7 @@ module Accounts
       @provider = provider
       @identity = identity
       @current_user = current_user
-      @account_linker = AccountLinker.new(@identity, @current_user)
+      @account_linker = AccountLinker.new(@current_user, @identity)
     end
 
     def linking_or_merging?
@@ -24,7 +24,7 @@ module Accounts
     end
 
     def link_and_merge
-      (@account_linker || AccountLinker.new(@identity, @current_user)).determine_state.link
+      (@account_linker || AccountLinker.new(@current_user, @identity)).determine_state.link
     end
 
   end
