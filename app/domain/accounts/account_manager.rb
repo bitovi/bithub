@@ -1,8 +1,8 @@
 module Accounts
   class AccountManager
+    extend Forwardable
 
-    def_delegators :@account_linker, :not_merging?, :valid_merge?, :merging_state, :merging_user, :offending_identities
-    attr_reader :account_linker
+    def_delegators :@account_linker, :not_merging?, :valid_merge?, :merging_state, :merging_user, :offending_identities, :determine_state
 
     def initialize(provider, identity, current_user = nil)
       @provider = provider
@@ -20,15 +20,20 @@ module Accounts
     end
 
     def procure
-      @current_user || @identity.user || create_account
+      Rails.logger.info "OVOJEZAGREP new_account #{new_account.inspect}"
+      @current_user || @identity.user || new_account
     end
 
     def link_and_merge
       account_linker.determine_state.link
     end
 
+    def linker
+      @account_linker
+    end
+
     private
-    def create_account
+    def new_account
       (@account_creator ||= AccountCreator.new(@identity)).create
     end
 

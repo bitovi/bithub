@@ -10,7 +10,7 @@ module Accounts
     # --- State checking
     
     def determine_state
-      if @current_user.identities.include?(@identity)
+      if @current_user.andand.identities.andand.include?(@identity)
         @state = :already_linked
       elsif identity_free?
         @state = :only_linking
