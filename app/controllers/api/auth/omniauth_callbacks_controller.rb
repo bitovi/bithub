@@ -1,5 +1,7 @@
 class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
+  rescue_from Exception, :with => :show_auth_error
+
   class AccountLinker
     def initialize(current_user, identity)
     end
@@ -40,6 +42,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   def link_identity
     # do the linking magic
     render :template => 'special/close_oauth_popup.html'
+  end
+
+  def show_auth_error
+    render :template => 'oauth/auth_error.html.erb'
   end
 
   def passthru
