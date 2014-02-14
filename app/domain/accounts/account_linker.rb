@@ -5,6 +5,7 @@ module Accounts
       @current_user = user
       @identity = ident
       @state = :undecided
+      @offending_identities = []
     end
 
     # --- State checking
@@ -70,11 +71,11 @@ module Accounts
     end
 
     def providers_of_same_type
-      @identity.user.identities.reduce(false) { |acc, i| acc && current_user_has_provider?(i.provider) }
+      @identity.user.identities.reduce(false) { |acc, i| acc || current_user_has_provider?(i.provider) }
     end
 
     def current_user_has_provider?(provider)
-      @current_user.identities.andand.map {|i| i.provider}.include?(provider)
+      @current_user.andand.identities.andand.map {|i| i.provider}.andand.include?(provider)
     end
 
     # --- Actions
@@ -129,7 +130,9 @@ module Accounts
     end
 
     def offending_identities
-      @identity.user.identities.select { |acc, i| acc && (i.provider == @identity.provider) }
+      if @identity.andand.user.andand.identities.present?
+        @identity.user.identities.select { |i| current_users_identity_providers.include?(i.provider) }
+      end
     end
 
     alias_method :only_linking?, :not_merging?
@@ -142,6 +145,12 @@ module Accounts
 
     def user_has_more_than_one?
       @current_user.identities.andand.size > 1
+    end
+
+    def current_users_identity_providers
+      @current_user.andand.identities.andand.map do |i|
+        i.provider
+      end || []
     end
 
   end

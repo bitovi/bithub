@@ -2,7 +2,7 @@ module Accounts
   class AccountManager
     extend Forwardable
 
-    def_delegators :@account_linker, :not_merging?, :valid_merge?, :merging_state, :merging_user, :offending_identities, :determine_state
+    def_delegators :@account_linker, :not_merging?, :invalid_merge?, :valid_merge?, :merging_state, :merging_user, :offending_identities, :determine_state
 
     def initialize(provider, identity, current_user = nil)
       @provider = provider
