@@ -91,7 +91,7 @@ module Events
       end
 
       def type
-        if not(@source_data[:scheduled_at].nil?)
+        unless @source_data[:scheduled_at].blank?
           Events::Bithub::Event
         else
           Events::Bithub::Post

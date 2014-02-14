@@ -117,6 +117,11 @@ class Api::V1::EventsController < Api::V1::BaseController
       scope = scope.in_future(params[:clientTz] || 'UTC')
     end
 
+    if params[:author_id].present?
+      scope = scope.joins(:ownerships)
+           .where("ownerships.ownership_type = 'author' AND ownerships.owner_id = ?", params[:author_id])
+    end
+
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)
