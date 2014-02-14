@@ -30,11 +30,11 @@ module Users
     end
 
     def earned_rewards
-      Reward.where("point_minimum <= ?", score).all
+      Reward.where("point_minimum <= ?", @user.score).all
     end
     
     def eligible_users
-      Users.where("total_score >= ?", point_minimum).all
+      Users.where("total_score >= ?", @reward.point_minimum).all
     end
     
     private
@@ -45,14 +45,6 @@ module Users
 
     def reject_achievers(users)
       users.reject { |r| @reward.rewardees.include? u  }
-    end
-
-    def point_minimum
-      @reward.point_minimum
-    end
-
-    def score
-      @cached_score ? @user.total_score : @user.score
     end
   end
 end
