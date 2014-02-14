@@ -40,6 +40,7 @@ module Accounts
 
     def after_link_process
       # Sync
+      calculate_avatar_url
       award_points_for_linking
       update_blank_attrs
       create_custom_digests
@@ -77,6 +78,9 @@ module Accounts
     end
 
     # --- Actions
+    def calculate_avatar_url
+      @current_user.calculate_avatar_url
+    end
     
     def award_points_for_linking
       @current_user.award_points_for_linking(@identity.provider)

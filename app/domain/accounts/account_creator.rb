@@ -15,6 +15,8 @@ module Accounts
       @user.identities << @identity
 
       @fdc.create_missing_repos_and_stars
+
+      @user.calculate_avatar_url
       @user.award_points_for_linking(@identity.provider)
 
       @user.async_collect_authored_entities

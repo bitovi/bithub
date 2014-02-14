@@ -40,7 +40,8 @@ class User < ActiveRecord::Base
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
-  after_update :award_points_for_completing_profile
+  # before_save :calculate_avatar_url
+  after_save :award_points_for_completing_profile
 
   def activities
     activities = []
@@ -138,7 +139,7 @@ class User < ActiveRecord::Base
   end
   
   def calculate_avatar_url
-    props['avatar_url'] ||= Users::AvatarDecider.new(self).avatar_url
+    props['avatar_url'] = Users::AvatarCalculator.new(self).execute
   end
 
   def async_collect_authored_entities
