@@ -9,7 +9,7 @@ class Award < ActiveRecord::Base
   validate :thread_not_already_awarded
   
   after_create :bust_event_cache
-  after_destroy :update_associated_users_total_score_and_check_eligibility
+  after_destroy :update_user_and_entity
 
   def self.create_based_on_strategy(actor, applies_to, opts = {})
     opts = { :strategy => :double_the_upvotes } if opts.empty?
@@ -77,14 +77,13 @@ class Award < ActiveRecord::Base
     applies_to.author.async_reward_if_eligible if self.applies_to.author
   end
 
-  def validate_associated_users_reward_eligibility
-    applies_to.author.async_validate_eligibility if self.applies_to.author
+  def unreward_associated_user_if_uneligible
+    applies_to.author.async_unreward_if_uneligible if self.applies_to.author
   end
 
-  def update_associated_users_total_score_and_check_eligibility
+  def update_user_and_entity
     update_total_score_in_associated_user
-    validate_associated_users_reward_eligibility
-    reward_associated_user_if_eligible
+    unreward_associated_user_if_uneligible
   end
 
 end

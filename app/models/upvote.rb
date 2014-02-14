@@ -42,13 +42,13 @@ class Upvote < ActiveRecord::Base
     self.applies_to.author.async_reward_if_eligible if self.applies_to.author
   end
 
-  def validate_associated_users_reward_eligibility
-    self.applies_to.author.async_validate_eligibility if self.applies_to.author
+  def unreward_associated_user_if_uneligible
+    self.applies_to.author.async_unreward_if_uneligible if self.applies_to.author
   end
 
   def update_entities_and_user
     update_total_upvotes_in_associated_entity
     update_total_score_in_associated_user
-    validate_associated_users_reward_eligibility
+    unreward_associated_user_if_uneligible
   end
 end

@@ -8,12 +8,20 @@ class Identity < ActiveRecord::Base
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
   end
 
-  def already_linked_to_other_user?
-    has_assigned_user? && user.identities.size > 1
+  def name
+    source_data['name']
   end
 
-  def has_assigned_user?
-    !!self.user
+  def nickname
+    source_data['nickname']
+  end
+
+  def email
+    source_data['email']
+  end
+
+  def name
+    source_data['name']
   end
 
   def self.find_or_create_with_provider_and_uid(provider, uid, source_info=nil)
@@ -22,6 +30,16 @@ class Identity < ActiveRecord::Base
       identity.update_source_data_if_blank(source_info)
     elsif !identity
       identity = self.create(uid: uid, provider: provider, source_data: source_info)
+    end
+    identity
+  end
+  
+  def self.find_or_init_with_provider_and_uid(provider, uid, source_info=nil)
+    identity = self.find_by_provider_and_uid(provider, uid)
+    if identity
+      identity.update_source_data_if_blank(source_info) if source_info
+    else
+      identity = self.new(uid: uid, provider: provider, source_data: source_info)
     end
     identity
   end

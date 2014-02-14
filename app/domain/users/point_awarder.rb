@@ -1,0 +1,37 @@
+module Users
+  class PointAwarder
+    attr_reader :user
+
+    def initialize(user)
+      @user = user
+    end
+
+    def execute
+      @user.save
+    end
+
+    def award_points_for_completing_profile
+      if completed_profile? && not(already_awarded_for_profile_completion?)
+        @user.internals.build({receiver: @user, value: 1, comment: "Completed profile."})
+      end
+    end
+
+    def award_points_for_linking(provider)
+      @user.internals.build({receiver: @user, value: 1, comment: "Logged in with #{provider.capitalize}."})
+    end
+
+    def already_awarded_for_profile_completion?
+      Internal.where(receiver: @user, comment: "Completed profile.").present?
+    end
+
+    def completed_profile?
+      @user.name.present? &&
+      @user.email.present? &&
+      @user.address.present? &&
+      @user.city.present? &&
+      @user.postal.present? &&
+      @user.country.present?
+    end
+
+  end
+end
