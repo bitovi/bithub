@@ -223,9 +223,11 @@ class User < ActiveRecord::Base
   def calculate_avatar_url
     url = '/assets/images/icon-user.png'
 
-    image_attrs = ['avatar_url', 'profile_image_url']
+    image_attrs = ['image', 'avatar_url', 'profile_image_url']
     self.identities.each do |ident|
-      image_attrs.each {|attr| url = ident['source_data'][attr] if ident['source_data'] && ident['source_data'][attr] }
+      image_attrs.each {|attr|
+        url = ident['source_data'][attr] if ident['source_data'] && ident['source_data'][attr]
+      }
     end
 
     gravatar_url = does_gravatar_exists?
@@ -233,6 +235,7 @@ class User < ActiveRecord::Base
 
     self.props['avatar_url'] = url
   end
+  
   private
 
   def does_gravatar_exists?
