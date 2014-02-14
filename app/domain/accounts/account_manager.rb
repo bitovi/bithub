@@ -20,7 +20,7 @@ module Accounts
     end
 
     def procure
-      @current_user || @identity.user || AccountCreator.new(@identity, user_data).create_account
+      @current_user || @identity.user || AccountCreator.new(@identity).create
     end
 
     def link_and_merge
