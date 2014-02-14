@@ -1,5 +1,8 @@
 module Users
   class PointAwarder
+
+    COMPLETED_PROFILE_COMMENT = "Completed profile."
+
     attr_reader :user
 
     def initialize(user)
@@ -12,7 +15,11 @@ module Users
 
     def award_points_for_completing_profile
       if completed_profile? && not(already_awarded_for_profile_completion?)
-        @user.internals.build({receiver: @user, value: 1, comment: "Completed profile."})
+        Internal.create({
+          receiver: @user,
+          value: 1,
+          comment: COMPLETED_PROFILE_COMMENT
+        })
       end
       self
     end
@@ -23,7 +30,7 @@ module Users
     end
 
     def already_awarded_for_profile_completion?
-      Internal.where(receiver_id: @user, comment: "Completed profile.").present?
+      Internal.where(receiver_id: @user.id, comment: COMPLETED_PROFILE_COMMENT).present?
     end
 
     def completed_profile?
