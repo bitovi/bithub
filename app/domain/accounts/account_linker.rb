@@ -23,6 +23,7 @@ module Accounts
     end
 
     def link
+      Rails.logger.info("====================== STATE #{@state}" )
       return nil if (@state == :undecided) || (@state == :already_linked)
       if only_linking?
         #@current_user.identities << @identity
@@ -112,6 +113,10 @@ module Accounts
 
     def valid_merge?
       @state == :valid_merge
+    end
+
+    def invalid_merge?
+      @state == :invalid_merge
     end
     
     def merging_state
