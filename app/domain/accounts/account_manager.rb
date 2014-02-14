@@ -19,11 +19,16 @@ module Accounts
     end
 
     def procure
-      @current_user || @identity.user || AccountCreator.new(@identity).create
+      @current_user || @identity.user || create_account
     end
 
     def link_and_merge
       (@account_linker ||= AccountLinker.new(@current_user, @identity)).determine_state.link
+    end
+
+    private
+    def create_account
+      (@account_creator ||= AccountCreator.new(@identity)).create
     end
 
   end
