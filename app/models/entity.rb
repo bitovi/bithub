@@ -1,4 +1,16 @@
 class Entity < ActiveRecord::Base
+
+  class TotalVotesUpdater < Struct.new(:id)
+    def perform
+      entity = Entity.find_by_id(id)
+      unless entity.nil?
+        entity.update_total_upvotes
+      end
+    end
+  end
+
+
+
   attr_accessible :id,
     :body, :title, :url, :origin_id,
     :tag_list, :owners, :ownerships,
@@ -168,6 +180,10 @@ class Entity < ActiveRecord::Base
 
   def update_total_upvotes
     self.update_attribute(:total_upvotes, sum_upvotes)
+  end
+
+  def async_update_total_upvotes
+    Delayed::Job.enqueue TotalVotesUpdater.new(self.id)
   end
 
   def increase_score_in_author
