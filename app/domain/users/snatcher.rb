@@ -1,5 +1,5 @@
 module Users
-  class ActivitiesAndEntitiesSnatcher
+  class Snatcher
 
     class SnatchingJob < Struct.new(:current_user_id, :other_user_id)
       def perform

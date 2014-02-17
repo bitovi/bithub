@@ -1,6 +1,6 @@
-require_relative 'support/spec_helper'
+require 'domain/spec_helper'
 
-describe ScoringRule do
+describe Determinators::ScoringRuleDeterminator do
 
   describe "#best_match" do
 

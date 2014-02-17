@@ -1,3 +1,0 @@
-describe RewardEligibilityDecider do
-  
-end
