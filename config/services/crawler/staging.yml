@@ -9,6 +9,7 @@
   :meetup:
     :rsvps: 120
     :events: 300
+    :all_events: 600
   :blog: 600
   :twitter: 900
 
