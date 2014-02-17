@@ -43,7 +43,6 @@ describe Entity do
       end
     end
 
-
     describe "#thread" do
       it "fetches the entity itself wrapped in an array if there is no thread" do
         e = create(:github_issue, title: "Why is this happening?")

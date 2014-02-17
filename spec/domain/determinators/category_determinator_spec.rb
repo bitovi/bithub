@@ -1,8 +1,9 @@
-require_relative 'support/spec_helper'
+require 'domain/spec_helper'
 
-describe CategoryDeterminationRule do
+describe Determinators::CategoryDeterminator do
   
   context "upon determination" do
+
     before(:all) { 
       @rule1 = build(:category_determination_rule, name: "foo", scorings: {"foo" => 1})
       @rule2 = build(:category_determination_rule, name: "foobarbaz", scorings: {"foo" => 1, "bar" =>1, "baz" =>1})

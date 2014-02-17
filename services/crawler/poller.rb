@@ -14,6 +14,7 @@ require_relative 'extensions/pageable'
 
 class Poller
   include Loggable
+  include Fakeable
 
   class Configuration
     attr_accessor :http_query, :http_head,

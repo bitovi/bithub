@@ -1,6 +1,6 @@
-require_relative 'support/spec_helper'
+require_relative 'domain/spec_helper'
 
-describe Award do
+describe Activities::Awarder do
 
   describe ".create_based_on_strategy" do
     it "should award the user with the appropriate number of points" do
