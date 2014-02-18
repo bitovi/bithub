@@ -46,6 +46,17 @@ class Api::V1::UsersController < Api::V1::BaseController
     end
   end
 
+  def destroy
+    user = User.find(params[:id])
+    authorize! :destroy_user, user, :message => "No rights to destroy user."
+    if user && user.destroy
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'destroy'), :status => 406
+    end
+  end
+
   def from_github
     res = user_apis.from_github(params[:user])
     render :json => res
