@@ -896,7 +896,7 @@ UNION
             upvotes.id,
             upvotes.actor_id AS user_id,
             entities.title,
-            upvotes.value,
+            0 AS value,
             upvotes.created_at AS ts,
             ''::character varying AS tags
            FROM (upvotes
