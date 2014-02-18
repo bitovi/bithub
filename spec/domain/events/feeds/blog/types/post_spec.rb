@@ -3,7 +3,7 @@ require 'domain/events/spec_helper'
 describe Events::Blog::Post do
 
   let(:raw_blog_post) do
-    raw_data('blog', 'posts')['rss']['channel']['item'].first
+    raw_data(response_path: 'blog/posts.rss')['rss']['channel']['item'].first
   end
 
   subject(:blog_post) do

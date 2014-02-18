@@ -3,7 +3,7 @@ require 'domain/events/spec_helper'
 describe Events::Forum::Post do
     
   let(:raw_forum_post) do
-    raw_data('forum','post')
+    raw_data(response_path: 'forum/posts.rss')['rss']['channel']['item'].first
   end
 
   subject(:forum_post) do
@@ -12,55 +12,69 @@ describe Events::Forum::Post do
 
   describe "#content_digest" do
     it "should calculate the digest using 'link' and class name" do
-      digest = Digest::MD5.hexdigest(raw_forum_post['link'] + raw_forum_post.class.name)
+      digest = Digest::MD5.hexdigest(raw_forum_post['link'] + forum_post.class.name)
       expect(forum_post.content_digest).to eq digest
     end
   end
 
   describe "#title" do
-    it "should equal NEKO POLJE from raw post"
+    it "should respond with 'title' from raw response" do
+      expect(forum_post.title).to eq raw_forum_post['title']
+    end
   end
   
   describe "#description" do
-    it "should equal NEKO POLJE from raw post"
+    it "should respond with 'description' from raw response" do
+      expect(forum_post.description).to eq raw_forum_post['description']
+    end
   end
   
   describe "#sanitized_description" do
-    it "should equal NEKO POLJE from raw post"
+    it "should sanitize the 'description' (clean HTML)"
   end
 
   describe "#url" do
-    it "should delegate to #link"
+    it "should delegate to #link" do
+      expect(forum_post.url).to eq forum_post.link
+    end
   end
 
   describe "#link" do
-    it "should equal NEKO POLJE from raw post"
+    it "shoul respond with 'link' from raw response" do
+      expect(forum_post.link).to eq raw_forum_post['link']
+    end
   end
   
   describe "#origin_author_name" do
-    it "should equal NEKO POLJE from raw post"
+    it "should respond with 'dc:creator' from raw response" do
+      expect(forum_post.origin_author_name).to eq raw_forum_post['dc:creator']
+    end
   end
   
   describe "#subforum" do
-    it "should equal NEKO POLJE from raw post"
+    it "should delegate to #category" do
+      expect(forum_post.subforum).to eq forum_post.category
+    end
+  end
+
+  describe "#category" do
+    it "should respond with 'category' field from raw response"
   end
   
   describe "#term" do
-    it "should equal NEKO POLJE from meta"
+    it "should respond with 'term' from meta data (set by crawler)" do
+      expect(forum_post.term).to be
+    end
   end
 
-  describe "#origin_author_name" do
-    it "should be in UTC"
+  describe "#origin_ts" do
+    it "should respond with time-parsed 'pubDate' from raw response" do
+      parsed_time = Time.parse(raw_forum_post.andand['pubDate']).utc
+      expect(forum_post.origin_ts).to eq parsed_time
+    end
+
+    it "should be in UTC" do
+      expect(forum_post.origin_ts.zone).to eq "UTC"
+    end
   end
-
-
-  # it "creates Event object with mapping methods" do
-  #   expect(event.title).to be_a(String)
-  #   expect(event.body).to be_a(String)
-  #   expect(event.link).to be_a(String)
-  #   expect(event.subforum).to be_a(String)
-  #   expect(event.origin_author_name).to be_a(String)
-  #   expect(event.origin_timestamp).to be_a(Date)
-  # end    
-
 end
