@@ -12,7 +12,7 @@ class Api::Auth::IdentitiesController < Api::V1::BaseController
   def unlink
     @identity = Identity.find_by_uid(params[:uid])
     Accounts::AccountLinker.new(current_user, @identity).unlink
-    # TODO render something?
+    render :json => @identity.to_json
   end
 
   def oauth_data

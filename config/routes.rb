@@ -5,7 +5,7 @@ Bithub::Application.routes.draw do
 
   as :user do
     post 'api/auth/link_identity', :to => 'api/auth/identities#link'
-    post 'api/auth/unlink_identity', :to => 'api/auth/identities#unlink'
+    delete 'api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
