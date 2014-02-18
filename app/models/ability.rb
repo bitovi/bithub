@@ -15,5 +15,10 @@ class Ability
       cannot :create_award, Award
       cannot :read, Achievement
     end
+
+    can :destroy_user, User do |subject_user|
+      user.has_role?(:admin) || user.id == subject_user.id 
+    end 
+
   end
 end
