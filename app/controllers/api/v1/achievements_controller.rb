@@ -49,11 +49,11 @@ class Api::V1::AchievementsController < Api::V1::BaseController
   # --------------
 
   def logic_analyzer
-    @logic_analyzer ||= QueryLogicAnalyzer.new(Achievement)
+    @logic_analyzer ||= QueryLogic::Query.new(Achievement, params)
   end
 
-  def scope_applier
-    @scope_applier ||= ScopeApplier.new(logic_analyzer) 
+  def scope_applier(current_scope = nil)
+    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer) 
   end
 
   def build_scope(muster_query)
