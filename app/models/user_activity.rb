@@ -5,5 +5,4 @@ class UserActivity < ActiveRecord::Base
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW \"#{self.table_name}\";")
   end
 
-
 end
