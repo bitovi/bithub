@@ -37,6 +37,7 @@ gem 'oj'
 gem 'yajl-ruby'
 gem 'awesome_print'
 gem 'twitter-text'
+gem 'dotenv-rails'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :git => "git://github.com/neektza/muster.git"
@@ -49,7 +50,6 @@ gem 'github_api'
 gem 'octokit', '~> 2.0'
 
 group :test, :testing, :development do
-  gem 'dotenv-rails'
   gem 'factory_girl_rails'
   gem 'rspec', '~> 2.14'
   gem 'rspec-rails'
