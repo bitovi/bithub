@@ -189,6 +189,17 @@ ALTER SEQUENCE awards_id_seq OWNED BY awards.id;
 
 
 --
+-- Name: bithub_images; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bithub_images (
+    title character varying(255),
+    url character varying(255),
+    image character varying(255)
+);
+
+
+--
 -- Name: category_determination_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -845,6 +856,52 @@ CREATE SEQUENCE upvotes_id_seq
 --
 
 ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
+
+
+--
+-- Name: user_activities; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE MATERIALIZED VIEW user_activities AS
+        (        (         SELECT 'Entity'::text AS model,
+                            entities.id,
+                            ownerships.owner_id AS user_id,
+                            entities.title,
+                            (entities.total_upvotes + scoring_rules.authorship_value) AS value,
+                            entities.origin_ts AS ts,
+                            entities.cached_tag_list AS tags
+                           FROM ((entities
+                      JOIN ownerships ON ((ownerships.entity_id = entities.id)))
+                 JOIN scoring_rules ON ((scoring_rules.id = entities.scoring_rule_id)))
+                UNION
+                         SELECT 'Internal'::text AS model,
+                            internals.id,
+                            internals.receiver_id AS user_id,
+                            internals.comment AS title,
+                            internals.value,
+                            internals.created_at AS ts,
+                            ''::character varying AS tags
+                           FROM internals)
+        UNION
+                 SELECT 'Anteup'::text AS model,
+                    anteups.id,
+                    anteups.actor_id AS user_id,
+                    ''::text AS title,
+                    anteups.value,
+                    anteups.created_at AS ts,
+                    ''::character varying AS tags
+                   FROM anteups)
+UNION
+         SELECT 'Upvote'::text AS model,
+            upvotes.id,
+            upvotes.actor_id AS user_id,
+            entities.title,
+            upvotes.value,
+            upvotes.created_at AS ts,
+            ''::character varying AS tags
+           FROM (upvotes
+      JOIN entities ON ((upvotes.applies_to_id = entities.id)))
+  WITH NO DATA;
 
 
 --
@@ -1589,3 +1646,5 @@ INSERT INTO schema_migrations (version) VALUES ('20151212162523');
 INSERT INTO schema_migrations (version) VALUES ('20151212162524');
 
 INSERT INTO schema_migrations (version) VALUES ('20151212162525');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162526');
