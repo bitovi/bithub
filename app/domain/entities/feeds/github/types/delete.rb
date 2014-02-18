@@ -1,7 +1,7 @@
 module Entities
   module Github
 
-    class Create < Protocol
+    class Delete < Protocol
       include Events::Github::Accessors::Standard
 
       def find
@@ -24,9 +24,9 @@ module Entities
       private
 
       def title
-        "created a new #{@payload.ref_type} on #{@payload.repo_name}: #{@payload.ref}"
+        "deleted a #{@payload.ref_type} on #{@payload.repo_name}: #{@payload.ref}"
       end
-    end
 
+    end
   end
 end

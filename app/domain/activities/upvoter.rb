@@ -1,4 +1,4 @@
-module Actions
+module Activities
   class Upvoter
 
     def initialize(actor, applies_to)

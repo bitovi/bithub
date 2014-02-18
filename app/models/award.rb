@@ -12,12 +12,12 @@ class Award < ActiveRecord::Base
 
   # Validator
   def thread_not_already_awarded
-    already_awarded? = applies_to.thread
+    already_awarded = applies_to.thread
     .select{|e| e.awarded?}
     .map{|e| !e.awards.include?(self)}
     .reduce(false) {|acc, v| acc && v}
       
-    if already_awarded?
+    if already_awarded
       errors.add(:applies_to, "can't already be in an awarded thread")
     end
   end

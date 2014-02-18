@@ -1,4 +1,4 @@
-require_relative 'domain/spec_helper'
+require 'domain/spec_helper'
 
 describe Activities::Awarder do
 

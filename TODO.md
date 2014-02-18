@@ -1,5 +1,5 @@
 TODO
 ====
-* referenced issues
-* meetup calc digest, ukljucit vrijeme (scheduled_at) meeupa
-* delayed job neki errori
+* referenced issues - prikazati
+* review comment i commit comment prodiskutirati
+* delete event - napraviti entity
