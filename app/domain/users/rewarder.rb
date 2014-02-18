@@ -1,5 +1,5 @@
 module Users
-  class RewardEligiblityDecider
+  class Rewarder
     attr_reader :user, :reward
 
     def initialize(kwargs)

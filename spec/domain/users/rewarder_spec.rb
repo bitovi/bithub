@@ -1,3 +1,5 @@
+require 'domain/spec_helper'
+
 describe Users::Rewarder do
 
   describe "#reward_if_eligible" do
@@ -62,5 +64,4 @@ describe Users::Rewarder do
       expect(rs).to eql []
     end
   end
-
 end

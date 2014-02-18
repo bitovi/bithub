@@ -4,11 +4,14 @@ ENV["RAILS_ENV"] ||= 'test'
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $:.unshift PROJECT_ROOT
+require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
+
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
 
 require 'rspec/mocks'
-require 'codeclimate-test-reporter'
+require 'rspec/rails'
 
-CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
 
 TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
 CATEGORY_RULES = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
@@ -43,8 +46,8 @@ def import_category_rules
 end
 
 def import_scoring_rules
-    rules = YAML::load_file(SCORING_RULES)
-    rules.each do |rule_config|
-      ScoringRule.create(rule_config)
-    end
+  rules = YAML::load_file(SCORING_RULES)
+  rules.each do |rule_config|
+    ScoringRule.create(rule_config)
+  end
 end

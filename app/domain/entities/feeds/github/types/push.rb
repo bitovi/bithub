@@ -6,7 +6,7 @@ module Entities
 
       Relationships = {
         upstream: [],
-        downstream: [Entities::Github::CommitComment, Entities::Github::Commit],
+        downstream: [Entities::Github::Commit],
         references: [Entities::Github::Issue, Entities::Github::PullRequest],
       }
 

@@ -1,3 +1,5 @@
+require 'domain/spec_helper'
+
 describe Users::Snatcher do
 
   before(:all) do

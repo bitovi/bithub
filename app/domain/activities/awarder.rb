@@ -1,4 +1,4 @@
-module Actions
+module Activities
   class Awarder
     PossibleStrategies = [:double_upvote_value, :double_parents_upvote_value, :rule_based_value]
 
@@ -50,7 +50,7 @@ module Actions
     end
 
     def double_parents_upvote_value(event)
-      @applies_to.top_level_parent.upvotes.sum(:value) * 2) if @applies_to.parent
+      @applies_to.top_level_parent.upvotes.sum(:value) * 2 if @applies_to.parent
     end
 
     def rule_based_value

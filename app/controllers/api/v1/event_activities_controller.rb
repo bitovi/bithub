@@ -14,7 +14,7 @@ class Api::V1::EventActivitiesController < Api::V1::BaseController
 
   def create_award
     authorize! :create_award, Award, :message => "No right to create an award!"
-    if (award = Actions::Awarder.new(current_user, Entity.find(params[:event_id])).award 
+    if (award = Actions::Awarder.new(current_user, Entity.find(params[:event_id]))).award
       render :json => award
     else
       render :json => { message: "Error of some kind." }, :status => 404
