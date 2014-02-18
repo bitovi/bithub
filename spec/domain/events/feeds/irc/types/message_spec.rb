@@ -19,7 +19,7 @@ describe Events::Irc::Message do
 
   describe "#content_digest" do
     it "should calculate the digest using 'channel', 'nickname' and 'origin_ts'" do
-      seed = raw_message[:channel] + raw_message[:nickname] + raw_message[:ts].to_s
+      seed = raw_message[:channel] + raw_message[:nickname]  + raw_message[:message] + raw_message[:ts].to_s + message.class.name
       digest = Digest::MD5.hexdigest(seed)
       expect(message.content_digest).to eq digest
     end
