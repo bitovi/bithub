@@ -3,20 +3,15 @@ module Events
     class Post < Protocol
 
       def origin_id
-        # puts "Disqus::Post#origin_id #{source_data}"
-        source_data.andand[:id]
+        post_id
       end
 
       def post_id
-        origin_id
+        source_data.andand[:id]
       end
 
-      def thread
-        source_data.andand[:thread]
-      end
-
-      def title
-        thread.andand[:title]
+      def thread_title
+        source_data.andand[:thread].andand[:title]
       end
 
       def message
@@ -27,14 +22,19 @@ module Events
         source_data.andand[:url]
       end
 
-      def origin_author_name
+      def author_name
         source_data.andand[:author].andand[:name]
       end
 
+      # Disqus provides date in format: "2013-02-14T22:47:29",
+      # we append 'Z' to designate that the date is in UTC.
+      # (Disqus API docs say so)
       def origin_ts
-        # Disqus provides date in format: "2013-02-14T22:47:29" !!! we append 'Z'
         Time.parse(source_data.andand[:createdAt]+'Z').utc
       end
+      
+      alias_method :title, :thread_title
+      alias_method :origin_author_name, :author_name
     end
   end
 end
