@@ -21,8 +21,6 @@ module Events
         seed = "#{actor_login}#{repo_name}#{commit_id}#{comment_id}"
         calc_digest(seed)
       end
-
     end
-
   end
 end

@@ -27,11 +27,11 @@ module Events
         source_data.andand[:user]
       end
 
-      def origin_author_id
+      def user_id
         user.andand[:id]
       end
 
-      def origin_author_name
+      def user_screen_name
         user.andand[:screen_name]
       end
 
@@ -39,7 +39,7 @@ module Events
         user.andand[:profile_image_url]
       end
 
-      def origin_ts
+      def origin_timestamp
         Time.parse(source_data.andand[:created_at]).utc
       end
 
@@ -51,11 +51,11 @@ module Events
         source_data.andand[:retweeted_status]
       end
 
-      def original_tweet_id
+      def retweeted_status_id
         retweeted_status.andand[:id]
       end
 
-      def original_tweet_id_str
+      def retweeted_status_id_str
         retweeted_status.andand[:id_str]
       end
 
@@ -70,6 +70,12 @@ module Events
       def retweet?
         !!retweeted_status
       end
+
+      alias_method :origin_author_id, :user_id
+      alias_method :origin_author_name, :user_screen_name
+      alias_method :origin_author_avatar_url, :user_profile_image_url
+      alias_method :original_tweet_id, :retweeted_status_id
+      alias_method :original_tweet_id_str, :retweeted_status_id_str
     end
 
   end

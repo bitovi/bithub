@@ -6,10 +6,10 @@ module Events
       include Events::Github::Accessors::Refs
 
       def content_digest
-        seed = actor_login + repo_name + ref_type + ref.to_s
+        seed = actor_login + repo_name + ref_type + ref.to_s + self.class.name
         calc_digest(seed)
       end
-    end
 
+    end
   end
 end

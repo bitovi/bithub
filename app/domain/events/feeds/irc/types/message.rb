@@ -1,9 +1,9 @@
 module Events
   module Irc
     class Message < Protocol
-
-      def title
-        message
+      
+      def content_digest
+        calc_digest(channel + nickname +  message + origin_ts.to_s + self.class.name)
       end
 
       def message
@@ -12,10 +12,6 @@ module Events
 
       def url
         "http://webchat.freenode.net/?channels=#{channel}"
-      end
-
-      def origin_author_name
-        nickname
       end
 
       def nickname
@@ -33,11 +29,9 @@ module Events
       def origin_id
         origin_ts.to_i
       end
-
-      def content_digest
-        calc_digest(channel + origin_author_name + origin_ts.to_s)
-      end
       
+      alias_method :title, :message
+      alias_method :origin_author_name, :nickname
     end
   end
 end

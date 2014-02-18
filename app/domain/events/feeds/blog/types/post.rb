@@ -3,7 +3,7 @@ module Events
     class Post < Protocol
 
       def content_digest
-        @digest ||= Digest::MD5.hexdigest(link + self.class.name)
+        calc_digest(link + self.class.name)
       end
       
       def link

@@ -3,12 +3,16 @@ module Events
 
     class Rsvp < Protocol
 
+      def calculate_digest
+        calc_digest(rsvp_id.to_s + self.class.name)
+      end
+
       def origin_id
-        source_data.andand[:rsvp_id]
+        rsvp_id
       end
 
       def rsvp_id
-        origin_id.to_s
+        source_data.andand[:rsvp_id]
       end
 
       def comment
@@ -19,16 +23,20 @@ module Events
         source_data.andand[:member]
       end
 
-      def origin_author_id
+      def member_id
         member.andand[:member_id]
+      end
+      
+      def member_name
+        member.andand[:name]
+      end
+
+      def member_photo_thumb_link
+        source_data.andand[:member_photo].andand[:thumb_link]
       end
 
       def response
         source_data.andand[:response]
-      end
-
-      def origin_author_name
-        member.andand[:name]
       end
 
       def parent_event
@@ -43,11 +51,10 @@ module Events
         unix_epoch = source_data.andand[:created].to_i / 1000
         Time.at(unix_epoch).utc
       end
-
-      def origin_author_avatar_url
-        source_data.andand[:member_photo].andand[:thumb_link]
-      end
       
+      alias_method :origin_author_id, :member_id
+      alias_method :origin_author_name, :member_name
+      alias_method :origin_author_avatar_url, :member_photo_thumb_link
     end
   end
 end
