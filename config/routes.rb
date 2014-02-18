@@ -36,6 +36,7 @@ Bithub::Application.routes.draw do
 
       resources :users, :except => [:new] do
         resources 'activities', :only => :index, :to => 'user_activities#index'
+        resources 'accomplishments', :only => :index, :to => 'user_activities#accomplishments'
         resources 'events', :only => :index, :to => 'user_events#index'
         member do
           put 'addrole', :to => 'users#add_role'
