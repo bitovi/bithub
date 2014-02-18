@@ -3,7 +3,7 @@ require 'domain/events/spec_helper'
 describe Events::Disqus::Post do
   
   let(:raw_disqus_post) do
-    raw_data('disqus', 'post', response_path: 'disqus/comment_list.json')['response'].first
+    raw_data(response_path: 'disqus/comment_list.json')['response'].first
   end
 
   subject(:disqus_post) do
@@ -65,14 +65,14 @@ describe Events::Disqus::Post do
     end
   end
 
-  describe "#origin_ts" do
+  describe "#origin_timestamp" do
     it "should be in UTC" do
-      expect(disqus_post.origin_ts.zone).to eq "UTC"
+      expect(disqus_post.origin_timestamp.zone).to eq "UTC"
     end
 
     it "should respond with time-parsed 'createdAt' from raw response" do
       parsed_time = Time.parse(raw_disqus_post.andand['createdAt']+'Z').utc
-      expect(disqus_post.origin_ts).to eq parsed_time
+      expect(disqus_post.origin_timestamp).to eq parsed_time
     end
   end
 
