@@ -13,7 +13,7 @@ UNION
 SELECT 'Anteup' AS model, anteups.id AS id, anteups.actor_id AS user_id, '' AS title, anteups.value AS value, anteups.created_at AS ts, '' AS tags
 	FROM anteups
 UNION
-SELECT 'Upvote' AS model, upvotes.id AS id, upvotes.actor_id AS user_id, entities.title AS title, upvotes.value AS value, upvotes.created_at AS ts, '' AS tags
+SELECT 'Upvote' AS model, upvotes.id AS id, upvotes.actor_id AS user_id, entities.title AS title, 0 AS value, upvotes.created_at AS ts, '' AS tags
 	FROM upvotes
 		JOIN entities ON upvotes.applies_to_id = entities.id
 SQL
