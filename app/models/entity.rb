@@ -1,4 +1,14 @@
 class Entity < ActiveRecord::Base
+
+  class TotalVotesUpdater < Struct.new(:id)
+    def perform
+      entity = Entity.find_by_id(id)
+      unless entity.nil?
+        entity.update_total_upvotes
+      end
+    end
+  end
+
   attr_accessible :id,
     :body, :title, :url, :origin_id,
     :tag_list, :owners, :ownerships,
@@ -78,6 +88,10 @@ class Entity < ActiveRecord::Base
   scope :only_children, lambda { where("parent_id IS NOT NULL") }
   scope :no_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
   scope :no_children, lambda { where("parent_id IS NULL") }
+
+  # Authorship
+  scope :origin_author, lambda {|uid| where("props -> 'origin_author_id' = :uid", uid: uid.to_s) }
+  scope :origin_host, lambda {|uid| where("string_to_array(props -> 'event_host_ids_csv', ',') @> string_to_array(:uid, ',')", uid: uid.to_s) }
   
   # Issues
   scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
@@ -105,9 +119,20 @@ class Entity < ActiveRecord::Base
     self.remove_author
     self.ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
   end
-
+  
+  def event_hosts=(users)
+    self.remove_hosts
+    users.each do |u|
+      self.ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host).determine_value
+    end
+  end
+  
   def remove_author
     self.ownerships.where(ownership_type: :author).destroy_all
+  end
+
+  def remove_hosts
+    self.ownerships.where(ownership_type: :host).destroy_all
   end
 
   def author
@@ -168,6 +193,10 @@ class Entity < ActiveRecord::Base
 
   def update_total_upvotes
     self.update_attribute(:total_upvotes, sum_upvotes)
+  end
+
+  def async_update_total_upvotes
+    Delayed::Job.enqueue TotalVotesUpdater.new(self.id)
   end
 
   def increase_score_in_author

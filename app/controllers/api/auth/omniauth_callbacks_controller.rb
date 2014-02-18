@@ -1,31 +1,7 @@
 class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   rescue_from Exception, :with => :show_auth_error
-
-  class AccountLinker
-    def initialize(current_user, identity)
-    end
-    def not_merging?
-      merging_state == :not_merge
-    end
-
-    def valid_merge?
-      merging_state == :valid_merge
-    end
-
-    def merging_user
-      User.where('name ILIKE ?', '%brian%').first
-    end
-
-    def offending_identities
-      User.where('name ILIKE ?', '%brian%').first.identities
-    end
-
-    def merging_state
-      :valid_merge
-    end
-  end
-
+  rescue_from RuntimeError, :with => :show_auth_error
 
   def github
     oauthorize "github"
@@ -39,17 +15,18 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     oauthorize "meetup"
   end
 
-  def link_identity
-    # do the linking magic
-    render :template => 'special/close_oauth_popup.html'
-  end
-
   def show_auth_error
     render :template => 'oauth/auth_error.html.erb'
   end
 
   def passthru
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
+  end
+
+  def link_identities
+    @identity = Identity.find_or_create_with_oauth_data(oauth_data)
+    Accounts::AccountLinker.new(current_user, @identity).determine_state.link
+    render :template => 'special/close_oauth_popup.html'
   end
 
   private
@@ -61,31 +38,31 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       meetup: 'Meetup'
     })
 
-    session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]
-    session["current_oauth_data"] = env["omniauth.auth"]
+    @identity = Identity.find_or_create_with_oauth_data(oauth_data)
+    @manager = Accounts::AccountManager.new(kind, @identity, current_user)
+    @manager.linker.determine_state
 
-    @identity       = Identity.new_from_oauth(env['omniauth.auth'])
-    @account_linker = AccountLinker.new(current_user, @identity)
+    @manager.linker.determine_state.merging_state
 
-    render :template => "oauth/account_linker.html.erb", :layout => false
+    Rails.logger.info "OAUTH #{oauth_data.inspect}"
 
+    if @manager.linking_or_merging?
+      session["devise.#{kind.downcase}_data"] = oauth_data
+      session["current_oauth_data"] = oauth_data
+      render :template => "oauth/account_linker.html.erb", :layout => false
 
+    elsif @manager.only_logging_in?
+      if (user = @manager.procure)
+        session["devise.#{kind.downcase}_data"] = oauth_data
+        sign_in user, :event => :authentication
+        render :template => 'special/close_oauth_popup.html'
+      else
+        render :json => { message: 'error' }, :status => 500
+      end
+    end
+  end
 
-
-
-
-
-    #begin
-    #  if (@user = Accounts::AccountManager.new(current_user).find_or_create_user(kind, env["omniauth.auth"]))
-    #    flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => kind
-    #    session["devise.#{kind.downcase}_data"] = env["omniauth.auth"]
-    #    sign_in @user, :event => :authentication
-    #    render :template => 'special/close_oauth_popup.html'
-    #  else
-    #    render :json => { message: 'error' }, :status => 500
-    #  end
-    #rescue User::OtherUserAlreadyLinked => e
-    #  render :template => 'special/identity_linking_error.html', :status => 406
-    #end
+  def oauth_data
+    env["omniauth.auth"] || session["current_oauth_data"]
   end
 end

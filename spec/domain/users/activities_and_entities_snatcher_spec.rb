@@ -1,0 +1,2 @@
+describe ActivitiesAndEntitiesSnatcher do
+end
