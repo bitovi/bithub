@@ -50,7 +50,7 @@ module Accounts
       commit
     end
 
-    def unlink_ident!
+    def unlink
       if user_is_owner? && user_has_more_than_one?
         Users::EntitiesUnlinker.new(@identity).async_unlink
         @identity.destroy

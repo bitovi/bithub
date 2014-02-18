@@ -1,0 +1,2 @@
+describe AvatarCalculator do
+end

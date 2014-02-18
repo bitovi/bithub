@@ -35,8 +35,8 @@ module Entities
       end
       
       def find_parent
-        if @payload.parent_event_id
-          Entities::Meetup::Event.find_by_event_id(@payload.parent_event_id).first
+        if @payload.parent_event_url
+          Entities::Meetup::Event.find_by_origin_id(@payload.parent_event_url).first
         end
       end
 

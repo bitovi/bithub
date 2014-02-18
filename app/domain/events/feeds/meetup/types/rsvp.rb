@@ -38,6 +38,10 @@ module Events
       def parent_event_id
         parent_event.andand[:id]
       end
+      
+      def parent_event_url
+        parent_event.andand[:url]
+      end
 
       def origin_timestamp
         unix_epoch = source_data.andand[:created].to_i / 1000
