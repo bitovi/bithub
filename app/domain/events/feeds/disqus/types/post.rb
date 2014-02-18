@@ -29,7 +29,7 @@ module Events
       # Disqus provides date in format: "2013-02-14T22:47:29",
       # we append 'Z' to designate that the date is in UTC.
       # (Disqus API docs say so)
-      def origin_ts
+      def origin_timestamp
         Time.parse(source_data.andand[:createdAt]+'Z').utc
       end
       

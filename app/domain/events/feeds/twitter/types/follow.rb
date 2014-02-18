@@ -7,20 +7,20 @@ module Events
         Digest::MD5.hexdigest(source_id.to_s + target_id.to_s + self.class.name)
       end
 
-      def source
-        source_data.andand[:source]
-      end
-
-      def target
-        source_data.andand[:target]
-      end
-
       def source_id
         source.andand[:id]
       end
 
       def target_id
         target.andand[:id]
+      end
+      
+      def source_id_str
+        source.andand[:id_str]
+      end
+
+      def target_id_str
+        target.andand[:id_str]
       end
 
       def target_screen_name
@@ -31,7 +31,7 @@ module Events
         source.andand[:screen_name]
       end
 
-      def origin_ts
+      def origin_timestamp
         Time.parse(source_data.andand[:created_at]).utc
       end
 
@@ -39,6 +39,14 @@ module Events
       alias_method :origin_author_name, :source_screen_name
 
       private
+      
+      def source
+        source_data.andand[:source]
+      end
+
+      def target
+        source_data.andand[:target]
+      end
 
       def we_are_target?(source_data)
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name

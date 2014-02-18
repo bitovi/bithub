@@ -8,11 +8,11 @@ module Events
       end
 
       def origin_id
-        source_data.andand[:id]
+        event_id
       end
       
       def event_id
-        origin_id.to_s
+        source_data.andand[:id]
       end
 
       def name
@@ -31,9 +31,13 @@ module Events
         source_data.andand[:status]
       end
       
-      def scheduled_at
+      def time
         unix_epoch = source_data.andand[:time].to_i / 1000
-        Time.at(unix_epoch).utc.iso8601
+        Time.at(unix_epoch).utc
+      end
+
+      def scheduled_at
+        time.iso8601
       end
       
       def event_hosts
