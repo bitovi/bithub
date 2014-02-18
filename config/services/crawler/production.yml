@@ -8,6 +8,7 @@
   :forum: 120
   :meetup:
     :rsvps: 120
+    :all_events: 600
     :events: 300
   :blog: 600
   :twitter: 900
@@ -42,14 +43,23 @@
           :sign: "true"
           :key: "663a24605a37767831495d6332546b4a"
           :text: "canjs"
+          :fields: "event_hosts"
       :streaming:
         :url: "http://stream.meetup.com/2/open_events"
+    :all_events:
+      :url: "https://api.meetup.com/2/rsvps"
+      :query:
+        :sign: "true"
+        :key: "663a24605a37767831495d6332546b4a"
+        :fields: "event_hosts"
+        :status: "past"
+      :boot_data_url: "http://bithub.com/api/v2/crawler/event_ids"
     :rsvps:
       :url: "https://api.meetup.com/2/rsvps"
       :query:
         :sign: "true"
         :key: "663a24605a37767831495d6332546b4a"
-      :boot_data_url: "http://staging.bithub.com/api/v2/crawler/event_ids"
+      :boot_data_url: "http://bithub.com/api/v2/crawler/event_ids"
 
   :twitter:
     :public:

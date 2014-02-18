@@ -1,0 +1,2 @@
+describe PointAwarder do
+end
