@@ -4,26 +4,58 @@ class Identity < ActiveRecord::Base
   serialize :source_data, JSON
   validates_uniqueness_of :uid, scope: :provider
 
+  class Processor
+    def twitter(sd)
+      {
+        'nickname'    => sd[:screen_name],
+        'name'        => sd[:name],
+        'location'    => sd[:location],
+        'image'       => sd[:profile_image_url],
+        'description' => sd[:description],
+        'urls'        => {
+          'Twitter'   => "http://twitter.com/#{sd[:screen_name]}",
+          #'Website'   => "",
+        }
+      }
+    end
+
+    def github(sd)
+      {
+        'nickname' => sd[:login],
+        'email'    => sd[:email],
+        'name'     => sd[:name],
+        'image'    => sd[:avatar_url],
+        'urls'     => {
+          'Github' => sd[:html_url],
+          'Blog'   => sd[:blog]
+        }
+      }
+    end
+  end
+
   def update_source_data_if_blank(data)
     self.update_attribute(:source_data, data) if self.source_data.blank? && !data.blank?
   end
 
-  def already_linked_to_other_user?
-    has_assigned_user? && user.identities.size > 1
+  def nickname
+    source_data['nickname']
   end
 
-  def has_assigned_user?
-    !!self.user
+  def email
+    source_data['email']
   end
 
-  def self.find_or_create_with_provider_and_uid(provider, uid, source_info=nil)
-    identity = self.find_by_provider_and_uid(provider, uid)
-    if identity && source_info
-      identity.update_source_data_if_blank(source_info)
-    elsif !identity
-      identity = self.create(uid: uid, provider: provider, source_data: source_info)
-    end
-    identity
+  def name
+    source_data['name']
+  end
+
+  def identifier
+    nickname || name || email
+  end
+
+  def update_source_data(sd)
+    processed = Processor.new().send provider.to_sym, sd
+    self.update_attribute(:source_data, processed)
   end
 
   def self.find_or_create_with_oauth_data(oauth_data)
@@ -37,4 +69,25 @@ class Identity < ActiveRecord::Base
       source_data: oauth_data['info']
     )
   end
+
+  def self.find_or_create_with_provider_and_uid(provider, uid, source_info=nil)
+    identity = self.find_by_provider_and_uid(provider, uid)
+    if identity && source_info
+      identity.update_source_data_if_blank(source_info)
+    elsif !identity
+      identity = self.create(uid: uid, provider: provider, source_data: source_info)
+    end
+    identity
+  end
+
+  def self.find_or_init_with_provider_and_uid(provider, uid, source_info=nil)
+    identity = self.find_by_provider_and_uid(provider, uid)
+    if identity
+      identity.update_source_data_if_blank(source_info) if source_info
+    else
+      identity = self.new(uid: uid, provider: provider, source_data: source_info)
+    end
+    identity
+  end
+
 end

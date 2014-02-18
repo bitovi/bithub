@@ -1,0 +1,3 @@
+describe RewardEligibilityDecider do
+  
+end

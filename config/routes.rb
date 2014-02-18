@@ -4,7 +4,8 @@ Bithub::Application.routes.draw do
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   as :user do
-    post 'api/auth/link_identity', :to => 'api/auth/omniauth_callbacks#link_identity'
+    post 'api/auth/link_identity', :to => 'api/auth/identities#link'
+    delete 'api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
     get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
@@ -35,6 +36,7 @@ Bithub::Application.routes.draw do
 
       resources :users, :except => [:new] do
         resources 'activities', :only => :index, :to => 'user_activities#index'
+        resources 'accomplishments', :only => :index, :to => 'user_activities#accomplishments'
         resources 'events', :only => :index, :to => 'user_events#index'
         member do
           put 'addrole', :to => 'users#add_role'
