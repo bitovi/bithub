@@ -863,7 +863,7 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE MATERIALIZED VIEW user_activities AS
-        (        (         SELECT 'Entity'::text AS model,
+        (        (         SELECT 'Entity'::text AS model_name,
                             entities.id,
                             ownerships.owner_id AS user_id,
                             entities.title,
@@ -874,7 +874,7 @@ CREATE MATERIALIZED VIEW user_activities AS
                       JOIN ownerships ON ((ownerships.entity_id = entities.id)))
                  JOIN scoring_rules ON ((scoring_rules.id = entities.scoring_rule_id)))
                 UNION
-                         SELECT 'Internal'::text AS model,
+                         SELECT 'Internal'::text AS model_name,
                             internals.id,
                             internals.receiver_id AS user_id,
                             internals.comment AS title,
@@ -883,7 +883,7 @@ CREATE MATERIALIZED VIEW user_activities AS
                             ''::character varying AS tags
                            FROM internals)
         UNION
-                 SELECT 'Anteup'::text AS model,
+                 SELECT 'Anteup'::text AS model_name,
                     anteups.id,
                     anteups.actor_id AS user_id,
                     ''::text AS title,
@@ -892,7 +892,7 @@ CREATE MATERIALIZED VIEW user_activities AS
                     ''::character varying AS tags
                    FROM anteups)
 UNION
-         SELECT 'Upvote'::text AS model,
+         SELECT 'Upvote'::text AS model_name,
             upvotes.id,
             upvotes.actor_id AS user_id,
             entities.title,
