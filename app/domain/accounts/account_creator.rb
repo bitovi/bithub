@@ -7,22 +7,25 @@ module Accounts
     end
 
     def create
-      @user = User.new({
+      @current_user = User.new({
         name: @identity.name,
         email: @identity.email
       })
 
-      @user.identities << @identity
-      @user.save!
+      @current_user.identities << @identity
+      return unless @current_user.save && @identity.save
 
       @fdc.create_missing_repos_and_stars
+      @current_user.calculate_avatar_url
+      @current_user.award_points_for_linking(@identity)
+      @current_user.save
 
-      @user.calculate_avatar_url
-      @user.award_points_for_linking(@identity.provider)
+      Accounts::Actions
+      .new(@current_user, @identity)
+      .async_create_fake_digests
+      .async_collect_and_reward
 
-      @user.async_collect_authored_entities
-      @user.async_reward_if_eligible
-      @user
+      @current_user
     end
 
   end
