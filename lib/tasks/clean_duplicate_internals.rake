@@ -1,9 +1,11 @@
 namespace :data do
-  desc "Fills API cache with followers/stargazers of importat accounts/repos."
 
+  desc "Clean up duplicate internals."
   task :clean_duplicate_internals => :environment do
-    User.all do |user|
-      DuplicateInternalsCleaner.new(user).execute
+    puts "Cleaning duplicate internals"
+    User.all.each do |user|
+      Users::DuplicateInternalsCleaner.new(user).execute
+      puts "Cleaned data for #{user.name}"
     end
   end
 end
