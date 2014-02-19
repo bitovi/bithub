@@ -47,7 +47,7 @@
       :streaming:
         :url: "http://stream.meetup.com/2/open_events"
     :all_events:
-      :url: "https://api.meetup.com/2/rsvps"
+      :url: "https://api.meetup.com/2/events"
       :query:
         :sign: "true"
         :key: "663a24605a37767831495d6332546b4a"
