@@ -90,6 +90,11 @@ class User < ActiveRecord::Base
     update_attribute(:total_score, self.score)
   end
 
+  def update_blank_attrs(ident)
+    self.name = ident.name if self.name.blank? && ident.name.present?
+    self.email = ident.email if self.email.blank? && ident.email.present?
+  end
+
   def comleted_profile?
     Users::PointAwarder.new(self).completed_profile?
   end
@@ -98,8 +103,8 @@ class User < ActiveRecord::Base
     Users::PointAwarder.new(self).award_points_for_completing_profile
   end
 
-  def award_points_for_linking(provider)
-    Users::PointAwarder.new(self).award_points_for_linking(provider)
+  def award_points_for_linking(ident)
+    Users::PointAwarder.new(self).award_points_for_linking(ident.provider)
   end
 
   def reward_if_eligible
