@@ -39,15 +39,14 @@ module Accounts
     end
 
     def after_link_process
-      # Sync
-      calculate_avatar_url
-      award_points_for_linking
-      update_blank_attrs
-      create_custom_digests
+      @current_user.calculate_avatar_url
+      @current_user.award_points_for_linking(@identity)
+      @current_user.update_blank_attrs(@identity)
+      @fdc = Accounts::FakeDigestsCreator.new(@identity).execute
 
-      # Async
       async_collect_and_reward
-      commit
+
+      @current_user.save
     end
 
     def unlink
@@ -77,28 +76,8 @@ module Accounts
       @current_user.andand.identities.andand.map {|i| i.provider}.andand.include?(provider)
     end
 
-    # --- Actions
-    def calculate_avatar_url
-      @current_user.calculate_avatar_url
-    end
+    # --- Async actions
     
-    def award_points_for_linking
-      @current_user.award_points_for_linking(@identity.provider)
-    end
-    
-    def update_blank_attrs
-      @current_user.name = @identity.name if @current_user.name.blank? && @identity.name.present?
-      @current_user.email = @identity.email if @current_user.email.blank? && @identity.email.present?
-    end
-
-    def create_custom_digests
-      @fdc = Accounts::FakeDigestsCreator.new(@identity).execute
-    end
-
-    def commit
-      @current_user.save!
-    end
-
     def async_snatch
       Users::ActivitiesAndEntitiesSnatcher.new(@current_user, @other_user).async_execute
     end

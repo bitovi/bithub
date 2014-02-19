@@ -42,10 +42,6 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     @manager = Accounts::AccountManager.new(kind, @identity, current_user)
     @manager.linker.determine_state
 
-    @manager.linker.determine_state.merging_state
-
-    Rails.logger.info "OAUTH #{oauth_data.inspect}"
-
     if @manager.linking_or_merging?
       session["devise.#{kind.downcase}_data"] = oauth_data
       session["current_oauth_data"] = oauth_data
