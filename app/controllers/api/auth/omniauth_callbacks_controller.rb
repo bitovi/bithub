@@ -38,7 +38,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       meetup: 'Meetup'
     })
 
-    @identity = Identity.find_or_create_with_oauth_data(oauth_data)
+    @identity = Identity.find_or_init_with_oauth_data(oauth_data)
     @manager = Accounts::AccountManager.new(kind, @identity, current_user)
     @manager.linker.determine_state
 

@@ -1,9 +1,9 @@
 module Accounts
   class FakeDigestsCreator
 
-    class CreateFakeDigestsJob < Struct.new(:ident_id)
+    class CreateFakeDigestsJob < Struct.new(:ident_uid)
       def perform
-        if (ident = Identity.find_by_id(ident_id))
+        if (ident = Identity.find_by_uid(ident_uid))
           FakeDigestsCreator.new(ident).execute
         end
       end
@@ -18,10 +18,11 @@ module Accounts
     end
 
     def async_execute
-      Delayed::Job.enqueue CreateFakeDigestsJob.new(@identity.id)
+      Delayed::Job.enqueue CreateFakeDigestsJob.new(@identity.uid)
     end
 
     def create_missing_repos_and_stars
+      Rails.logger.info "KURAC #{@identity.inspect}"
       if @identity.provider == 'twitter'
         create_custom_follows
       elsif @identity.provider == 'github'
