@@ -54,7 +54,8 @@ module Accounts
 
     def unlink
       if user_is_owner? && user_has_more_than_one?
-        Users::EntitiesUnlinker.new(@identity).async_unlink
+        Users::EntitiesUnlinker.new(@identity.uid, @identity.user_id, @identity.provider).async_unlink
+        @identity.destroy
       else
         nil
       end
