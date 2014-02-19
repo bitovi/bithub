@@ -1,9 +1,9 @@
 module Users
   class EntitiesUnlinker
 
-    class UnlinkingJob < Struct.new(:uid, :user_id, :provider)
+    class UnlinkingJob < Struct.new(:user_id)
       def perform
-        EntitiesUnlinker.new(uid, user_id, provider).unlink
+        EntitiesUnlinker.new(user_id).unlink
       end
     end
 
@@ -14,13 +14,12 @@ module Users
     end
 
     def unlink
-      unlink_internals
       unlink_entities
       UserActivity.refresh
     end
     
     def async_unlink
-      Delayed::Job.enqueue UnlinkingJob.new(@uid, @user_id, @provider)
+      Delayed::Job.enqueue UnlinkingJob.new(@user_id)
     end
 
     def unlink_entities
@@ -32,10 +31,5 @@ module Users
       end
     end
 
-    def unlink_internals
-      if (user = User.find_by_id(@user_id))
-        user.internals.where(variant: "linked_#{@provider}").destroy_all
-      end
-    end
   end
 end
