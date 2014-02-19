@@ -31,7 +31,6 @@ module Accounts
       elsif merging?
         @other_user = @identity.user
         @current_user.identities += @identity.user.identities
-        async_snatch
         after_link_process
       else
         nil
@@ -39,15 +38,18 @@ module Accounts
     end
 
     def after_link_process
-      # Sync
-      calculate_avatar_url
-      award_points_for_linking
-      update_blank_attrs
-      create_custom_digests
+      @current_user.calculate_avatar_url
+      @current_user.award_points_for_linking(@identity)
+      @current_user.update_blank_attrs(@identity)
+      return unless @current_user.save && @identity.save
 
-      # Async
-      async_collect_and_reward
-      commit
+      Accounts::Actions
+      .new(@current_user, @identity, @other_user)
+      .async_create_fake_digests
+      .async_snatch
+      .async_collect_and_reward
+
+      @current_user
     end
 
     def unlink
@@ -76,39 +78,7 @@ module Accounts
     def current_user_has_provider?(provider)
       @current_user.andand.identities.andand.map {|i| i.provider}.andand.include?(provider)
     end
-
-    # --- Actions
-    def calculate_avatar_url
-      @current_user.calculate_avatar_url
-    end
     
-    def award_points_for_linking
-      @current_user.award_points_for_linking(@identity.provider)
-    end
-    
-    def update_blank_attrs
-      @current_user.name = @identity.name if @current_user.name.blank? && @identity.name.present?
-      @current_user.email = @identity.email if @current_user.email.blank? && @identity.email.present?
-    end
-
-    def create_custom_digests
-      @fdc = Accounts::FakeDigestsCreator.new(@identity).execute
-    end
-
-    def commit
-      @current_user.save!
-    end
-
-    def async_snatch
-      Users::ActivitiesAndEntitiesSnatcher.new(@current_user, @other_user).async_execute
-    end
-
-    def async_collect_and_reward
-      @current_user.async_collect_authored_entities
-      @current_user.async_update_total_score
-      @current_user.async_reward_if_eligible
-    end
-
     # --- Public API
 
     def not_merging?
