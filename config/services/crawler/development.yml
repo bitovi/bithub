@@ -1,17 +1,17 @@
 :intervals:
     :github:
-        :events: 1500
+        :events: 15
         :issues:
-            :open: 3000
-            :closed: 1200
-    :disqus: 2500
-    :forum: 2500
+            :open: 5000
+            :closed: 5000
+    :disqus: 5000
+    :forum: 5000
     :meetup:
-        :rsvps: 10
-        :all_events: 10
-        :events: 10
-    :blog: 2000
-    :twitter: 1500
+        :rsvps: 5000
+        :all_events: 5000
+        :events: 5000
+    :blog: 5000
+    :twitter: 5000
 
 :feeds:
     :blog:
@@ -67,33 +67,10 @@
             :authorization: "token c27ac77b9951537a008b1ab2ef8dfe0035fac8c8"
             :accept: "application/vnd.github.v3+json"
         :repos:
-            :canjs:
-                :events: 'https://api.github.com/repos/bitovi/canjs/events'
-                :issues: 'https://api.github.com/repos/bitovi/canjs/issues'
-            :steal:
-                :events: 'https://api.github.com/repos/bitovi/steal/events'
-                :issues: 'https://api.github.com/repos/bitovi/steal/issues'
-            :documentjs:
-                :events: 'https://api.github.com/repos/bitovi/documentjs/events'
-                :issues: 'https://api.github.com/repos/bitovi/documentjs/issues'
-            :jquerypp:
-                :events: 'https://api.github.com/repos/bitovi/jquerypp/events'
-                :issues: 'https://api.github.com/repos/bitovi/jquerypp/issues'
-            :canui:
-                :events: 'https://api.github.com/repos/bitovi/canui/events'
-                :issues: 'https://api.github.com/repos/bitovi/canui/issues'
-            :funcunit:
-                :events: 'https://api.github.com/repos/bitovi/funcunit/events'
-                :issues: 'https://api.github.com/repos/bitovi/funcunit/issues'
-            :donejs:
-                :events: 'https://api.github.com/repos/bitovi/donejs/events'
-                :issues: 'https://api.github.com/repos/bitovi/donejs/issues'
-            :javascriptmvc:
-                :events: 'https://api.github.com/repos/bitovi/javascriptmvc/events'
-                :issues: 'https://api.github.com/repos/bitovi/javascriptmvc/issues'
-            :testee:
-                :events: 'https://api.github.com/repos/bitovi/testee.js/events'
-                :issues: 'https://api.github.com/repos/bitovi/testee.js/issues'
+            :testy:
+                :events: 'https://api.github.com/repos/bithub-test/testy/events'
+                :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
+
 
     :twitter:
         :public:

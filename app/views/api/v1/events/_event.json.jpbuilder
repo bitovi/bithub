@@ -21,5 +21,9 @@ json.cache! ("v1" + custom_cache_key(event)) do
 		json.partial! "api/v1/events/event", event: EntityDecorator.decorate(c)
 	end
 
+	json.references @ev_relations.references_for_event(event) do |r|
+		json.partial! "api/v1/events/event", event: EntityDecorator.decorate(r)
+	end
+
 	#json.source_data event.source_data
 end
