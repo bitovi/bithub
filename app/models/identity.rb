@@ -61,13 +61,9 @@ class Identity < ActiveRecord::Base
   def self.find_or_create_with_oauth_data(oauth_data)
     self.find_or_create_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
   end
-
-  def self.new_from_oauth(oauth_data)
-    self.new(
-      uid:         oauth_data['uid'],
-      provider:    oauth_data['provider'],
-      source_data: oauth_data['info']
-    )
+  
+  def self.find_or_init_with_oauth_data(oauth_data)
+    self.find_or_init_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
   end
 
   def self.find_or_create_with_provider_and_uid(provider, uid, source_info=nil)
@@ -90,4 +86,11 @@ class Identity < ActiveRecord::Base
     identity
   end
 
+  def self.new_from_oauth(oauth_data)
+    self.new(
+      uid:         oauth_data['uid'],
+      provider:    oauth_data['provider'],
+      source_data: oauth_data['info']
+    )
+  end
 end

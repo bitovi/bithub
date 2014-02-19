@@ -14,11 +14,22 @@ module Users
     end
 
     def unlink
+      unlink_internals
+      unlink_entities
+    end
+
+    def unlink_entities
       Entity.origin_author(@ident.uid).find_each do |e|
         e.ownerships
         .where(ownership_type: 'author')
         .where(owner: @ident.user)
         .destroy_all
+      end
+    end
+
+    def unlink_internals
+      if @ident.user && @ident.user.internals
+        @ident.user.internals.where(variant: "linked_#{@ident.provider}").destroy_all
       end
     end
 

@@ -23,6 +23,7 @@ module Users
       snatch_actions
       snatch_internals
       destroy_other
+      update_total_score
     end
 
     def async_execute
@@ -48,6 +49,10 @@ module Users
 
     def destroy_other
       @other_user.destroy
+    end
+
+    def update_total_score
+      @current_user.update_total_score
     end
 
   end
