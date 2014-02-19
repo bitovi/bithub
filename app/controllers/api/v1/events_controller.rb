@@ -122,6 +122,11 @@ class Api::V1::EventsController < Api::V1::BaseController
            .where("ownerships.ownership_type = 'author' AND ownerships.owner_id = ?", params[:author_id])
     end
 
+    if params[:host_id].present?
+      scope = scope.joins(:ownerships)
+           .where("ownerships.ownership_type = 'host' AND ownerships.owner_id = ?", params[:host_id])
+    end
+
     scope_applier(params, scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)
