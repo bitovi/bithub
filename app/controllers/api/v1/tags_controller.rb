@@ -14,7 +14,7 @@ class Api::V1::TagsController < Api::V1::BaseController
     mq = request.env['muster.query']
 
     # overridedefault limit (50)
-    mq['limit'] = 1000 if mq['limit'] < 1000
+    mq['limit'] = 1000 if mq['limit'].to_i < 1000
 
     scope = build_scope(mq, params)
     scope = scope.tagged_with(params[:type].pluralize) if params[:type]

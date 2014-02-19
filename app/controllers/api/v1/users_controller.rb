@@ -38,10 +38,22 @@ class Api::V1::UsersController < Api::V1::BaseController
     filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
 
     if u.update_attributes(filtered_params)
+      u.calculate_avatar_url; u.save
       @user = UserDecorator.decorate(u)
       render :show
     else
       render :json => msg_hash(u, 'update'), :status => 406
+    end
+  end
+
+  def destroy
+    user = User.find(params[:id])
+    authorize! :destroy_user, user, :message => "No rights to destroy user."
+    if user && user.destroy
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'destroy'), :status => 406
     end
   end
 

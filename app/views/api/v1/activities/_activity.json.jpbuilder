@@ -1,5 +1,5 @@
-json.(activity, :id, :value, :type, :title)
+json.(activity, :id, :title, :value)
 
-json.created_at activity.created_at
-
-json.upvotes activity.upvotes
+# kept for backward compability
+json.type activity.model_name == 'Entity' ? 'author' : activity.model_name.downcase
+json.created_at activity.ts

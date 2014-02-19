@@ -4,8 +4,24 @@ class Api::V1::UserActivitiesController < Api::V1::BaseController
   def index
     offset = (params[:offset] || 0).to_i
     limit  = (params[:limit] || 200).to_i
-    activities = User.find(params[:user_id]).activities.reverse.slice(offset, limit)
-    @activities = ActivityDecorator.decorate_collection(activities || [])
+
+    @activities = User
+      .find(params[:user_id])
+      .activities
+      .where('value <> 0')
+      .order('ts DESC')
+      .slice(offset, limit)
+
+    render 'api/v1/activities/index'
+  end
+
+
+  def accomplishments
+    @activities = User
+      .find(params[:user_id])
+      .activities
+      .where("(model_name='Internal' or (string_to_array(tags, ', ') && '{watch,follow}'))")
+
     render 'api/v1/activities/index'
   end
 

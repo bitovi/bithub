@@ -1,5 +1,6 @@
 class Achievement < ActiveRecord::Base
-  attr_accessible :note, :achieved_at, :shipped_at
+
+  attr_accessible :note, :achieved_at, :shipped_at, :reward, :user
 
   belongs_to :user
   belongs_to :reward
@@ -9,9 +10,5 @@ class Achievement < ActiveRecord::Base
 
   def set_timestamp
     self.update_attribute(:achieved_at, Time.now)
-  end
-
-  def self.reject_achieved_rewards(user, rewards)
-    rewards.reject {|r| user.rewards.include?(r)}
   end
 end

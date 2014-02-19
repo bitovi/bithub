@@ -12,7 +12,14 @@ module QueryLogic
     }
 
     def initialize(model, params)
-      @qis = params.map {|kv| QueryItem.new(model, kv)}
+      @qis = params.map do |kv| 
+        key, value = kv
+        if value.is_a? Array
+          value.map{|v| QueryItem.new(model, [key, v]) }
+        else
+          QueryItem.new(model, kv)
+        end
+      end.flatten
       @raw = params
     end
 
