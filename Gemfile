@@ -36,6 +36,8 @@ gem 'andand'
 gem 'oj'
 gem 'yajl-ruby'
 gem 'awesome_print'
+gem 'twitter-text'
+gem 'dotenv-rails'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :git => "git://github.com/neektza/muster.git"
@@ -55,7 +57,6 @@ group :test, :testing, :development do
   gem 'database_cleaner'
   gem 'pry-rails'
   gem 'better_errors'
-  gem 'dotenv-rails'
   gem 'evented-spec'
   gem 'git'
   gem 'database_cleaner'

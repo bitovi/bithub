@@ -3,12 +3,21 @@ module Events
 
     class Event < Protocol
 
+      def content_digest
+        seed = event_id + url + name + description + status + composite_location + latitude + longitude + event_host_ids_csv
+        calc_digest(seed)
+      end
+
       def origin_id
-        source_data.andand[:id]
+        url
       end
       
       def event_id
-        origin_id.to_s
+        source_data.andand[:id].to_s
+      end
+      
+      def url
+        source_data.andand[:event_url].to_s
       end
 
       def name
@@ -17,10 +26,6 @@ module Events
 
       def description
         source_data.andand[:description]
-      end
-
-      def url
-        source_data.andand[:event_url]
       end
 
       def status
@@ -75,6 +80,8 @@ module Events
         v = venue
         (v.andand[:lon] || "").to_s
       end
+
+      alias_method :event_url, :url
     end
   end
 end

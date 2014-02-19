@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon-precomposed.png" />
+		<title>BitHub | activity on our open-source projects</title>
+		<link href="/bithub/production.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+
+		<div id="container">
+
+			<div id="navbar" class="navbar">
+				<div class="navbar-inner">
+					<div class="container inner-navbar-container">
+						<a class="brand" href="javascript://">BitHub</a>
+					</div>
+				</div>
+			</div>
+	
+			<div id="oauth-wrap">
+				<div class="alert alert-error">
+					There was an error with the authentication. Please try again. 
+				</div>
+				<hr>
+				<div class="cannot-merge clearfix">
+					<a href="javascript://" class="btn btn-signup" id="cancel-oauth">Close</a>
+				</div>
+			</div>
+		
+		</div>
+
+		
+		<script type="text/javascript">
+			WebFontConfig = {
+				google: { families: [ 'Open+Sans:400,700:latin', 'Just+Another+Hand::latin' ] }
+			};
+			(function() {
+				var wf = document.createElement('script');
+				wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+				wf.type = 'text/javascript';
+				wf.async = 'true';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(wf, s);
+			})();
+		</script>
+
+		<script type="text/javascript" src="/can/lib/jquery.2.0.3.js"></script>
+		<script type="text/javascript">
+			window.resizeTo($(window).width(), $('body').height() + 60);
+			$('#cancel-oauth').click(function(){
+				if (window.opener && !window.opener.closed) {
+					window.close();
+				}
+			})
+		</script>
+
+	</body>
+</html>
