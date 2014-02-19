@@ -7,6 +7,7 @@ namespace :data do
       Users::DuplicateInternalsCleaner.new(user).execute
       puts "Cleaned data for #{user.name}"
     end
+    UserActivity.refresh
   end
 end
 
