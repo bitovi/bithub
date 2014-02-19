@@ -1,9 +1,9 @@
 module Accounts
   class Actions
 
-    def initialize(user, ident, other_user = nil)
-      @user = user
-      @ident = ident
+    def initialize(user, identity, other_user = nil)
+      @current_user = user
+      @identity = identity
       @other_user = other_user
     end
 
@@ -16,7 +16,7 @@ module Accounts
 
     def async_snatch
       if @other_user
-        Users::ActivitiesAndEntitiesSnatcher.new(@user, @other_user).async_execute
+        Users::ActivitiesAndEntitiesSnatcher.new(@current_user, @other_user).async_execute
       end
       self
     end

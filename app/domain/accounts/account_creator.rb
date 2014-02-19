@@ -13,7 +13,7 @@ module Accounts
       })
 
       @current_user.identities << @identity
-      return unless @current_user.save
+      return unless @current_user.save && @identity.save
 
       @fdc.create_missing_repos_and_stars
       @current_user.calculate_avatar_url

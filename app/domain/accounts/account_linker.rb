@@ -41,7 +41,7 @@ module Accounts
       @current_user.calculate_avatar_url
       @current_user.award_points_for_linking(@identity)
       @current_user.update_blank_attrs(@identity)
-      return unless @current_user.save
+      return unless @current_user.save && @identity.save
 
       Accounts::Actions
       .new(@current_user, @identity, @other_user)
