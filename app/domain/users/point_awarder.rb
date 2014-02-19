@@ -3,7 +3,6 @@ module Users
 
     CompletedProfileComment = "Completed profile."
 
-
     attr_reader :user
 
     def initialize(user)
