@@ -29,7 +29,7 @@ module Accounts
     end
 
     def determine_state
-      (@account_linker || AccountLinker.new(@current_user, @identity)).determine_state
+      linker.determine_state
     end
 
     def linker
