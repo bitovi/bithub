@@ -22,7 +22,6 @@ module Accounts
     end
 
     def create_missing_repos_and_stars
-      Rails.logger.info "KURAC #{@identity.inspect}"
       if @identity.provider == 'twitter'
         create_custom_follows
       elsif @identity.provider == 'github'
