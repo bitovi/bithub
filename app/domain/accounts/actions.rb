@@ -11,6 +11,7 @@ module Accounts
       @current_user.async_collect_authored_entities
       @current_user.async_update_total_score
       @current_user.async_reward_if_eligible
+      UserActivity.refresh
       self
     end
 
