@@ -16,6 +16,11 @@ module Users
     def unlink
       unlink_internals
       unlink_entities
+      @ident.destroy
+    end
+    
+    def async_unlink
+      Delayed::Job.enqueue UnlinkingJob.new(@ident.uid)
     end
 
     def unlink_entities
@@ -32,10 +37,5 @@ module Users
         @ident.user.internals.where(variant: "linked_#{@ident.provider}").destroy_all
       end
     end
-
-    def async_unlink
-      Delayed::Job.enqueue UnlinkingJob.new(@ident.uid)
-    end
-
   end
 end
