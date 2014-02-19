@@ -4,6 +4,8 @@ class Identity < ActiveRecord::Base
   serialize :source_data, JSON
   validates_uniqueness_of :uid, scope: :provider
 
+  after_destroy :remove_internal
+
   class Processor
     def twitter(sd)
       {
@@ -56,6 +58,11 @@ class Identity < ActiveRecord::Base
   def update_source_data(sd)
     processed = Processor.new().send provider.to_sym, sd
     self.update_attribute(:source_data, processed)
+  end
+
+  def remove_internal
+    user.internals.where(variant: "linked_#{self.provider}").destroy_all
+    UserActivity.refresh
   end
 
   def self.find_or_create_with_oauth_data(oauth_data)
