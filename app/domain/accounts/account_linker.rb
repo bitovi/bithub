@@ -31,7 +31,6 @@ module Accounts
       elsif merging?
         @other_user = @identity.user
         @current_user.identities += @identity.user.identities
-        async_snatch
         after_link_process
       else
         nil
@@ -42,11 +41,15 @@ module Accounts
       @current_user.calculate_avatar_url
       @current_user.award_points_for_linking(@identity)
       @current_user.update_blank_attrs(@identity)
-      @fdc = Accounts::FakeDigestsCreator.new(@identity).execute
+      return unless @current_user.save
 
-      async_collect_and_reward
+      Accounts::Actions
+      .new(@current_user, @identity, @other_user)
+      .async_create_fake_digests
+      .async_snatch
+      .async_collect_and_reward
 
-      @current_user.save
+      @current_user
     end
 
     def unlink
@@ -75,19 +78,7 @@ module Accounts
     def current_user_has_provider?(provider)
       @current_user.andand.identities.andand.map {|i| i.provider}.andand.include?(provider)
     end
-
-    # --- Async actions
     
-    def async_snatch
-      Users::ActivitiesAndEntitiesSnatcher.new(@current_user, @other_user).async_execute
-    end
-
-    def async_collect_and_reward
-      @current_user.async_collect_authored_entities
-      @current_user.async_update_total_score
-      @current_user.async_reward_if_eligible
-    end
-
     # --- Public API
 
     def not_merging?

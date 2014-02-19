@@ -1,12 +1,24 @@
 module Accounts
   class FakeDigestsCreator
 
+    class CreateFakeDigestsJob < Struct.new(:ident_id)
+      def perform
+        if (ident = Identity.find_by_id(ident_id))
+          FakeDigestsCreator.new(ident).execute
+        end
+      end
+    end
+
     def initialize(ident)
       @identity = ident
     end
 
     def execute
       create_missing_repos_and_stars
+    end
+
+    def async_execute
+      Delayed::Job.enqueue CreateFakeDigestsJob.new(@identity.id)
     end
 
     def create_missing_repos_and_stars
