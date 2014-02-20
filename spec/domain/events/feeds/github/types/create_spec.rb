@@ -10,8 +10,16 @@ describe Events::Github::Create do
     Events::Github::Create.new(raw_create)
   end
   
-  describe "#content_digest" do
-    it "should calculate the content_diget by using actor_login, repo_name, ref_type, ref and class name"
+  describe "#digest_seed" do
+    it "should respond with seed contained of actor_login, repo_name, ref_type, ref and class name" do
+      seed =  raw_create['actor']['login']
+      seed += raw_create['repo']['name']
+      seed += raw_create['payload']['ref_type']
+      seed += raw_create['payload']['ref']
+      seed += "Events::Github::Create"
+
+      expect(create.digest_seed).to eq seed
+    end
   end
 
 end
