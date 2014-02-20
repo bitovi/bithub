@@ -10,9 +10,10 @@ describe Events::Blog::Post do
     Events::Blog::Post.new(raw_blog_post)
   end
 
-  describe "#content_digest" do
+  describe "#digest_seed" do
     it "should calculate the digest using 'link' and class name" do
-      expect(blog_post.content_digest).to eq Digest::MD5.hexdigest(blog_post.link + blog_post.class.name)
+      seed = raw_blog_post['link'] + "Events::Blog::Post"
+      expect(blog_post.digest_seed).to eq seed
     end
   end
 

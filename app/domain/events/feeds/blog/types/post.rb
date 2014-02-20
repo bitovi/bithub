@@ -2,10 +2,10 @@ module Events
   module Blog
     class Post < Protocol
 
-      def content_digest
-        calc_digest(link + self.class.name)
+      def digest_seed
+       link + self.class.name
       end
-      
+
       def link
         source_data.andand[:link]
       end

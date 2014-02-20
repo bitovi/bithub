@@ -27,12 +27,10 @@ module Events
     end
 
     def content_digest
-      if respond_to?(:event_id)
-        calc_digest(event_id.to_s)
-      elsif respond_to?(:origin_id)
-        calc_digest(origin_id.to_s)
+      if respond_to?(:digest_seed)
+        calc_digest(digest_seed)
       else
-        fail BuildingError.new("Couldn't calculate digest. Probably missing a seed.", nice_name)
+        fail BuildingError.new("Don't know how to build a digest seed.", nice_name)
       end
     end
 

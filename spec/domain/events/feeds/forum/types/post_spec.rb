@@ -12,8 +12,8 @@ describe Events::Forum::Post do
 
   describe "#content_digest" do
     it "should calculate the digest using 'link' and class name" do
-      digest = Digest::MD5.hexdigest(raw_forum_post['link'] + forum_post.class.name)
-      expect(forum_post.content_digest).to eq digest
+      seed = raw_forum_post['link'] + "Events::Forum::Post"
+      expect(forum_post.digest_seed).to eq seed
     end
   end
 
@@ -62,9 +62,7 @@ describe Events::Forum::Post do
   end
   
   describe "#term" do
-    it "should respond with 'term' from meta data (set by crawler)" do
-      expect(forum_post.term).to be
-    end
+    it "should respond with 'term' from meta data (set by crawler)"
   end
 
   describe "#origin_ts" do

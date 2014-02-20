@@ -12,8 +12,8 @@ describe Events::Disqus::Post do
   
   describe "#content_digest" do
     it "should calculate the digest using 'post_id' and class name" do
-      digest = Digest::MD5.hexdigest(raw_disqus_post['id'] + disqus_post.class.name)
-      expect(disqus_post.content_digest).to eq digest
+      seed = raw_disqus_post['id'] + "Events::Disqus::Post"
+      expect(disqus_post.digest_seed).to eq seed
     end
   end
 

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '1.9.3'
+ruby '2.1.0'
 
 gem 'rails', '3.2.14'
 gem 'rolify', '~> 3.2'
@@ -38,6 +38,9 @@ gem 'yajl-ruby'
 gem 'awesome_print'
 gem 'twitter-text'
 
+gem 'spring', group: %i(development test)
+gem 'spring-commands-rspec'
+
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :git => "git://github.com/neektza/muster.git"
 
@@ -48,19 +51,17 @@ gem 'twitter'
 gem 'github_api'
 gem 'octokit', '~> 2.0'
 
-group :test, :testing, :development do
+group :test do
+  gem "codeclimate-test-reporter", require: false
   gem 'factory_girl_rails'
   gem 'rspec', '~> 2.14'
   gem 'rspec-rails'
   gem 'guard-rspec', '~> 4.0', require: false
   gem 'database_cleaner'
-  gem 'pry-rails'
   gem 'better_errors'
-  gem 'dotenv-rails'
   gem 'evented-spec'
-  gem 'git'
-  gem 'database_cleaner'
   gem 'travis', require: false
+  gem 'git'
 end
 
 group :development do
@@ -69,31 +70,18 @@ group :development do
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
+  gem 'pry-rails'
+  gem 'dotenv-rails'
 end
 
-# ----------------
-# services/crawler
-# ----------------
+
+# --------
+# services
+# --------
 gem 'em-http-request'
 gem 'em-twitter'
 gem 'nokogiri'
 gem 'nori', '~>2.3.0'
-gem 'sanitize'
-gem 'htmlentities'
-
-# ----------------
-# services/irc-bot
-# ----------------
 gem 'cinch'
-
-# -----------------
-# services/xmpp-bot
-# -----------------
 gem 'blather'
-
-# ------------------
-# 3rd party services
-# ------------------
-
-gem "codeclimate-test-reporter", require: false
 gem 'newrelic_rpm'

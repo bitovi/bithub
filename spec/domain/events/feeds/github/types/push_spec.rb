@@ -10,4 +10,6 @@ describe Events::Github::Push do
     Events::Github::Push.new(raw_push)
   end
 
+  pending "add some tests"
+
 end

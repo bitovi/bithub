@@ -9,5 +9,7 @@ describe Events::Github::Watch do
   subject(:watch) do
     Events::Github::Watch.new(raw_watch)
   end
+  
+  pending "add some tests"
 
 end

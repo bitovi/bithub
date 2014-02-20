@@ -2,6 +2,10 @@ module Events
   module Disqus
     class Post < Protocol
 
+      def digest_seed
+        post_id + self.class.name
+      end
+
       def origin_id
         post_id
       end

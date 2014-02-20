@@ -10,4 +10,6 @@ describe Events::Github::PullRequest do
     Events::Github::PullRequest.new(raw_pull_request)
   end
 
+  pending "add some tests"
+
 end

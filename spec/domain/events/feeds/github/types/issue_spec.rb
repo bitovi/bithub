@@ -10,4 +10,6 @@ describe Events::Github::Issue do
     Events::Github::Issue.new(raw_issue)
   end
 
+  pending "add some tests"
+
 end

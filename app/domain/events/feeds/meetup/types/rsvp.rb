@@ -3,8 +3,8 @@ module Events
 
     class Rsvp < Protocol
 
-      def calculate_digest
-        calc_digest(rsvp_id.to_s + self.class.name)
+      def digest_seed
+        rsvp_id.to_s + self.class.name
       end
 
       def origin_id

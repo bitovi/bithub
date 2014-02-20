@@ -5,8 +5,8 @@ module Events
 
     class Post < Protocol
 
-      def content_digest
-        calc_digest(link + self.class.name)
+      def digest_seed
+        link + self.class.name
       end
 
       def title

@@ -59,7 +59,7 @@ describe Events::Meetup::Event do
     end
 
     it "should parse the 'time' unix timestamp from raw response" do
-      parsed = Time.at(raw_event.andand[:time].to_i / 1000).utc
+      parsed = Time.at(raw_event.andand['time'].to_i / 1000).utc
       expect(event.time).to eq parsed
     end
   end
@@ -76,7 +76,7 @@ describe Events::Meetup::Event do
     end
 
     it "should parse the 'created' unix timestamp from raw response" do
-      parsed = Time.at(raw_event.andand[:created].to_i / 1000).utc
+      parsed = Time.at(raw_event.andand['created'].to_i / 1000).utc
       expect(event.origin_timestamp).to eq parsed
     end
   end
