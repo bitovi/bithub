@@ -13,8 +13,9 @@ class EntityRelations
   end
   
   def references
+    return
     if @references_for.nil?
-      @references_for = EntityRef.where(to_id: @ids)
+      @references_for = Entity.select("entities.*, entity_refs.to_id").joins(:references_to).where("entity_refs.to_id" => @ids).uniq.all
     end
 
     @references_for || []
@@ -25,7 +26,7 @@ class EntityRelations
   end
 
   def references_for_event(event)
-    Entity.where(:id => references.select{|r| r.to_id == event.id}.map{|r| r.from_id}).all
+    #references.select{|r| r.to_id.to_i == event.id}
   end
 
   def awards_for
