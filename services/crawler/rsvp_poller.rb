@@ -25,7 +25,15 @@ class RsvpPoller < Poller
   end
 
   def handler
-    lambda { booted? ? fetch : delay(1, lambda {boot}) }
+    lambda { 
+      if booted?
+        @logger.info "BOOTED"
+        fetch
+      else
+        @logger.info "NOT BOOTED"
+        delay(1, lambda {boot})
+      end
+    }
   end
     
   def boot
@@ -50,6 +58,7 @@ class RsvpPoller < Poller
   def set_query(response)
     begin
       event_ids = Yajl::Parser.parse(response.response)
+      @logger.info "IDS: #{event_ids}"
       @config.http_query.merge!({event_id: event_ids.join(',')})
       @booted = true
       delay(@config.reboot_delay, lambda { reboot })
