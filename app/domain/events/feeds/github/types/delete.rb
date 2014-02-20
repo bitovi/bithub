@@ -5,9 +5,8 @@ module Events
       include Events::Github::Accessors::Standard
       include Events::Github::Accessors::Refs
 
-      def content_digest
-        seed = actor_login + repo_name + ref_type + ref.to_s + self.class.name
-        calc_digest(seed)
+      def digest_seed
+        actor_login + repo_name + ref_type + ref.to_s + self.class.name
       end
 
     end

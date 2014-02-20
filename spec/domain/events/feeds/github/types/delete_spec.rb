@@ -10,8 +10,16 @@ describe Events::Github::Delete do
     Events::Github::Delete.new(raw_delete)
   end
   
-  describe "#content_digest" do
-    it "should calculate the content_diget by using actor_login, repo_name, ref_type, ref and class name"
+  describe "#digest_seed" do
+    it "should respond with seed contained of actor_login, repo_name, ref_type, ref and class name" do
+      seed =  raw_delete['actor']['login']
+      seed += raw_delete['repo']['name']
+      seed += raw_delete['payload']['ref_type']
+      seed += raw_delete['payload']['ref'].to_s
+      seed += "Events::Github::Delete"
+
+      expect(delete.digest_seed).to eq seed
+    end
   end
 
 end
