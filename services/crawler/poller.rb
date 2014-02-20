@@ -18,7 +18,8 @@ class Poller
   class Configuration
     attr_accessor :http_query, :http_head,
       :digest_queue_config,
-      :processor_config
+      :processor_config,
+      :feed_name
   end
 
   def initialize(exchange, endpoint, &blk)
@@ -30,7 +31,7 @@ class Poller
     @endpoint = endpoint
 
     @digest_queue = DigestQueue.new([], @config.digest_queue_config || {})
-    @feed ||= determine_feed(endpoint)
+    @feed ||= @config.feed_name || determine_feed(endpoint)
   end
 
   def handler
@@ -49,11 +50,8 @@ class Poller
       head: http_head.merge(opts[:http_head] || {})
     })
 
-    log_fetching(link) # "=== #{http_req.req.query}"
-
     http_req.callback { callback(http_req) }
     http_req.errback { errback(http_req) }
-
   end
 
   def callback(http_req)
@@ -138,7 +136,6 @@ class Poller
   end
 
   # --- /Roles
-
 
   def determine_feed(uri)
     f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
