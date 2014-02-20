@@ -2,8 +2,8 @@ module Events
   module Irc
     class Message < Protocol
       
-      def content_digest
-        calc_digest(channel + nickname +  message + origin_ts.to_s + self.class.name)
+      def digest_seed
+        channel + nickname +  message + origin_ts.to_s + self.class.name
       end
 
       def message

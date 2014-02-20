@@ -1,4 +1,4 @@
-require 'domain/spec_helper'
+# require 'domain/spec_helper'
 
-describe Accounts::AccountCreator do
-end
+# describe Accounts::AccountCreator do
+# end

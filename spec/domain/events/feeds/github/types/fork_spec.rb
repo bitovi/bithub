@@ -10,4 +10,6 @@ describe Events::Github::Fork do
     Events::Github::Fork.new(raw_fork)
   end
 
+  pending "add some tests for Events::Github::Fork"
+
 end

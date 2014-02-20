@@ -4,21 +4,24 @@ ENV["RAILS_ENV"] ||= 'test'
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $:.unshift PROJECT_ROOT
+
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
 
+DatabaseCleaner.strategy = :truncation, {
+  except: %w(tags scoring_rules category_determination_rules entity_aggregated_tag_list user_total_score entity_total_upvotes)
+}
+
 require 'rspec/mocks'
 require 'rspec/rails'
-
 
 TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
 CATEGORY_RULES = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
 SCORING_RULES = File.join(PROJECT_ROOT, 'config', 'scoring_rules.yml')
 
-def import_needed_shit
-  #ActiveRecord::Base.connection.execute("delete from tags; delete from scoring_rules; delete from category_determination_rules;")
+def import_all
   import_tags
   import_category_rules
   import_scoring_rules

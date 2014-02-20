@@ -10,10 +10,10 @@ describe Events::Meetup::Rsvp do
     Events::Meetup::Rsvp.new(raw_rsvp)
   end
 
-  describe "#content_digest" do
+  describe "#digest_seed" do
     it "should calculate the digest using 'post_id' and class name" do
-      digest = Digest::MD5.hexdigest(raw_rsvp['rsvp_id'].to_s + rsvp.class.name)
-      expect(rsvp.content_digest).to eq digest
+      seed = raw_rsvp['rsvp_id'].to_s + rsvp.class.name
+      expect(rsvp.digest_seed).to eq seed
     end
   end
 

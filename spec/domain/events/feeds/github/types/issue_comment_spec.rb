@@ -9,5 +9,7 @@ describe Events::Github::IssueComment do
   subject(:issue_comment) do
     Events::Github::IssueComment.new(raw_issue_comment)
   end
+  
+  pending "add some tests"
 
 end

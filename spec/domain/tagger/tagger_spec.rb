@@ -3,9 +3,7 @@ require_relative 'spec_helper'
 describe Tagger do
 
   before :all do
-    Rake::Task["data:import_or_update_tags"].invoke
-    puts "======================================"
-    Tag.projects.all
+    import_tags
   end
 
   after :all do
