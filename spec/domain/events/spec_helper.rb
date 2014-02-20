@@ -15,6 +15,5 @@ def load_and_parse(path)
 end
 
 def raw_data(opts = {})
-  puts opts
   load_and_parse File.join('spec/support/responses', opts[:response_path])
 end
