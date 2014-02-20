@@ -3,11 +3,14 @@ module Events
 
     class CustomIssue < Protocol
 
-      DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
+      DigestAttrs = [:issue_id, :title, :body, :label_names, :state, :updated_at]
       
-      def content_digest
-        seed = DIGEST_ATTRS.reduce("") {|accumul, attr| accumul += self.send(attr).to_s}
-        Digest::MD5.hexdigest(seed)
+      def digest_seed
+        DigestAttrs.reduce("") {|accumul, attr| accumul + self.send(attr).to_s}
+      end
+
+      def origin_id
+        issue_id
       end
 
       def issue_id
@@ -46,15 +49,15 @@ module Events
         source_data.andand[:user]
       end
 
-      def origin_author_id
+      def user_id
         user.andand[:id]
       end
 
-      def origin_author_avatar_url
+      def user_avatar_url
         user.andand[:avatar_url]
       end
 
-      def origin_author_name
+      def user_login
         user.andand[:login]
       end
 
@@ -81,9 +84,14 @@ module Events
 
       alias_method :origin_id, :issue_id
       alias_method :actor, :user
-      alias_method :actor_id, :origin_author_id
-      alias_method :actor_login, :origin_author_name
-      alias_method :actor_avatar_url, :origin_author_avatar_url
+
+      alias_method :actor_id, :user_id
+      alias_method :actor_login, :user_login
+      alias_method :actor_avatar_url, :user_avatar_url
+
+      alias_method :origin_author_id, :user_id
+      alias_method :origin_author_name, :user_login
+      alias_method :origin_author_avatar_url, :user_avatar_url
     end
 
   end
