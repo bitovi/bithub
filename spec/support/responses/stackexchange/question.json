@@ -1,0 +1,75 @@
+{
+	"items": [
+		{
+			"tags": ["javascript","canjs"],
+			"answers":[
+				{
+					"comments":[
+						{
+							"owner": {
+								"reputation":13,
+								"user_id":3187466,
+								"user_type":"registered",
+								"profile_image":
+								"http://i.stack.imgur.com/NdKuT.jpg?s=128&g=1",
+								"display_name":"Phane",
+								"link":"http://stackoverflow.com/users/3187466/phane"
+							},
+							"edited":false,
+							"score":0,
+							"creation_date":1389674794,
+							"post_id":21083225,
+							"comment_id":31753781,
+							"link":"http://stackoverflow.com/questions/21076028/javascript-framework-canjs-control-route/21083225#comment31753781_21083225"
+						}
+					],
+					"owner":{
+						"reputation":20519,
+						"user_id":120513,
+						"user_type":"registered",
+						"accept_rate":100,
+						"profile_image":
+						"https://www.gravatar.com/avatar/a14850281f19396480bdba4aab2d52ef?s=128&d=identicon&r=PG",
+						"display_name":"Daff",
+						"link":"http://stackoverflow.com/users/120513/daff"
+					},
+					"comment_count":1,
+					"is_accepted":true,
+					"score":2,
+					"last_activity_date":1389582367,
+					"creation_date":1389582367,
+					"answer_id":21083225,
+					"question_id":21076028,
+					"title":"javascript framework canJs control.route"
+				}
+			],
+			"owner":{
+				"reputation":13,
+				"user_id":3187466,
+				"user_type":"registered",
+				"profile_image":"http://i.stack.imgur.com/NdKuT.jpg?s=128&g=1",
+				"display_name":"Phane",
+				"link":"http://stackoverflow.com/users/3187466/phane"
+			},
+			"comment_count":0,
+			"is_answered":true,
+			"up_vote_count":1,
+			"accepted_answer_id":21083225,
+			"answer_count":1,
+			"score":1,
+			"last_activity_date":1392835676,
+			"creation_date":1389538280,
+			"last_edit_date":1392835676,
+			"question_id":21076028,
+			"body_markdown":"i would like use this tuto http://bitovi.com/blog/2012/05/hashchange-routing-can-route-1.html, but doesn&#39;t work for me \r\n\r\n&lt;pre&gt;\r\n    $(function() {\r\n    \r\n    Router = can.Control({\r\n    \r\n      &quot;completed route&quot; : function(){\r\n        console.log(&quot;the hash is #!completed&quot;)\r\n      },\r\n      &quot;active route&quot; : function(){\r\n        console.log(&quot;the hash is #!active&quot;)\r\n      },\r\n      &quot;project/create&quot; : function(){\r\n        console.log(&quot;the hash is #!project/create&quot;)\r\n      },\r\n      &quot;route&quot; : function(){\r\n        console.log(&quot;empty hash&quot;)\r\n      }\r\n    });\r\n\r\n    // make sure to initialize the Control\r\n    new Router(document);\r\n\r\n    });\r\n\r\n&lt;/pre&gt;\r\n\r\ni use window.location.hash = &quot;!#completed&quot; or &lt;a href=&quot;#!active&quot;&gt;Show Active&lt;/a&gt;\r\nno message is displayed in console.\r\n\r\nI use canjs 2.0.4 with JQuery\r\n\r\nThank for help \r\n","link":"http://stackoverflow.com/questions/21076028/javascript-framework-canjs-control-route",
+			"title":
+			"javascript framework canJs control.route"
+		}
+	],
+	"has_more":true,
+	"quota_max":10000,
+	"quota_remaining":9989,
+	"page":1,
+	"page_size":1,
+	"total":90
+}
