@@ -1,13 +1,13 @@
-require 'domain/events/spec_helper'
+require 'domain/spec_helper'
 
-describe Events::Github::Accessors::Commit do
+describe Wrappers::Github::Commit do
 
   let(:raw_commit) do
     raw_data(response_path: 'github/events/push_event.json')['payload']['commits'].first
   end
 
   subject(:commit) do
-    Events::Github::Accessors::Commit.new(raw_commit)
+    Wrappers::Github::Commit.new(raw_commit)
   end
   
   # describe "#raw" do

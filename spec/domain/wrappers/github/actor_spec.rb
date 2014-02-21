@@ -1,13 +1,13 @@
-require 'domain/events/spec_helper'
+require 'domain/wrappers/spec_helper'
 
-describe Events::Github::Accessors::Actor do
+describe Wrappers::Github::Actor do
 
   let(:raw_actor) do
     raw_data(response_path: 'github/events/create_event.json')['actor']
   end
 
   subject(:actor) do
-    Events::Github::Accessors::Actor.new(raw_actor)
+    Wrappers::Github::Actor.new(raw_actor)
   end
   
   # describe "#raw" do

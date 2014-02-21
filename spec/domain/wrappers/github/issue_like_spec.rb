@@ -1,7 +1,7 @@
-require 'domain/events/spec_helper'
+require 'domain/spec_helper'
 
 class IssueLikeClass
-  include Events::Github::Accessors::IssueLike
+  include Wrappers::Github::IssueLike
   include CoreHelpers
 
   def initialize(data)
@@ -9,7 +9,7 @@ class IssueLikeClass
   end
 end
 
-describe Events::Github::Accessors::IssueLike do
+describe Wrappers::Github::IssueLike do
 
   let(:raw_issue) do
     raw_data(response_path: 'github/events/issues_event.json')['payload']['issue']

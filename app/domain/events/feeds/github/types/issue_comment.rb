@@ -2,55 +2,40 @@ module Events
   module Github
 
     class IssueComment < Protocol
-      include Events::Github::Accessors::Standard
-      include Events::Github::Accessors::Labels
-      include Events::Github::Accessors::Comments
+      extend Forwardable
+      include Events::Github::Accessors
+
+      def_delegator :@ipr, :id, :issue_or_pull_req_id
+      def_delegator :@ipr, :title, :issue_or_pull_req_title
+      def_delegator :@ipr, :body, :issue_or_pull_req_body
+      def_delegator :@ipr, :number, :issue_or_pull_req_number
+      def_delegator :@ipr, :state, :issue_or_pull_req_state
+      def_delegator :@ipr, :label_names_csv, :issue_or_pull_req_label_names
       
-      def origin_id
-        comment_id
+      def digest_seed
+        event_id
       end
 
-      def issue
-        payload.andand[:issue]
+      def origin_id
+        comment.id
       end
-      
-      def pull_request
-        payload.andand[:pull_request]
+
+      def comment
+        @comment ||= Wrappers::Github::Comment.new(payload[:comment])
       end
 
       def issue_or_pull_req
-        issue || pull_request
+        @ipr || i_or_pr
       end
 
-      def issue_or_pull_req_id
-        issue_or_pull_req.andand[:id]
+      private
+      def i_or_pr
+        if payload[:pull_request]
+          @ipr ||= Wrappers::Github::Issue.new(payload.andand[:issue])
+        elsif payload[:issue]
+          @ipr ||= Wrappers::Github::PullRequest.new(payload.andand[:pull_request])
+        end
       end
-
-      def issue_or_pull_req_state
-        issue_or_pull_req.andand[:state]
-      end
-      
-      def issue_or_pull_req_title
-        issue_or_pull_req.andand[:title]
-      end
-      
-      def issue_or_pull_req_body
-        issue_or_pull_req.andand[:body]
-      end
-
-      def issue_or_pull_req_label_names
-        issue_or_pull_req.andand[:labels]
-        .map{|l| l[:name]}.join(',')
-      end
-        
-      def issue_or_pull_req_number
-        issue_or_pull_req.andand[:number]
-      end
-
-      alias_method :title, :issue_or_pull_req_title
-      alias_method :number, :issue_or_pull_req_number
-      alias_method :state, :issue_or_pull_req_state
-      alias_method :label_names, :issue_or_pull_req_label_names
     end
 
   end

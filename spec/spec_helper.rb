@@ -54,3 +54,18 @@ def import_scoring_rules
     ScoringRule.create(rule_config)
   end
 end
+
+def load_and_parse(path)
+  ext_name = File.extname(path).gsub('.','').to_sym
+
+  loaders = {
+    json: lambda {|p| ActiveSupport::JSON.decode(File.read(path)) },
+    rss: lambda {|p| Nori.new(:parser => :nokogiri).parse(File.read(path)) }
+  }
+
+  loaders[ext_name].(path)
+end
+
+def raw_data(opts = {})
+  load_and_parse File.join('spec/support/responses', opts[:response_path])
+end

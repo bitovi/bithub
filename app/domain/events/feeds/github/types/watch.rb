@@ -2,15 +2,19 @@ module Events
   module Github
 
     class Watch < Protocol
-      include Events::Github::Accessors::Standard
+      extend Forwardable
+      include Events::Github::Accessors
+      
+      def_delegator :@actor, :id, :origin_author_id
+      def_delegator :@actor, :login, :origin_author_name
+      def_delegator :@actor, :avatar_url, :origin_author_avatar_url
+      def_delegator :@actor, :id, :actor_id
+      def_delegator :@actor, :login, :actor_login
+      
+      def_delegator :@repo, :name, :repo_name
 
-      def watch_id
-        event_id
-      end
-
-      def content_digest
-        seed = actor_id.to_s + repo_name.to_s
-        calc_digest(seed)
+      def digest_seed
+        actor_id.to_s + repo_name.to_s
       end
 
     end

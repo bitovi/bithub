@@ -2,11 +2,11 @@ module Events
   module Github
 
     class Create < Protocol
-      include Events::Github::Accessors::Standard
+      include Events::Github::Accessors
       include Events::Github::Accessors::Refs
 
       def digest_seed
-        actor_login + repo_name + ref_type + ref.to_s + self.class.name
+        actor.login + repo.name + ref_type + ref + self.class.name
       end
 
     end

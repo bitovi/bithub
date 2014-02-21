@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Watch < Protocol
-      include Events::Github::Accessors::Standard
 
       Relationships = {
         upstream: [],
