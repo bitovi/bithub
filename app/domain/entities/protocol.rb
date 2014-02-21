@@ -14,6 +14,7 @@ module Entities
   module Irc; end
   module Meetup; end
   module Twitter; end
+  module StackExchange; end
 
   class Protocol
     include Determinable
@@ -70,3 +71,4 @@ require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
+require_relative 'feeds/stack_exchange/stack_exchange'
