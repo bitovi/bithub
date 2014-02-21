@@ -126,6 +126,20 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     EM.add_periodic_timer(intervals[:meetup][:events], Poller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
     end.handler)
+    
+
+
+
+
+    # --- Meetup events by event ids
+    feed_config = feeds[:meetup][:all_events]
+    log_registering(feed_config[:url])
+
+    EM.add_periodic_timer(intervals[:meetup][:all_events], RsvpPoller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+      c.boot_data_url = feed_config[:boot_data_url]
+      c.reboot_delay = 10 * 60
+    end.boot.handler)
 
     # --- Meetup rsvps
     feed_config = feeds[:meetup][:rsvps]
@@ -134,8 +148,12 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     EM.add_periodic_timer(intervals[:meetup][:rsvps], RsvpPoller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
       c.boot_data_url = feed_config[:boot_data_url]
-      c.reboot_delay = 10
+      c.reboot_delay = 10 * 60
     end.boot.handler)
+
+
+
+
 
 
     # --- Forums general feed

@@ -1,29 +1,34 @@
 module Users
   class EntitiesUnlinker
 
-    class UnlinkingJob < Struct.new(:uid)
+    class UnlinkingJob < Struct.new(:user_id)
       def perform
-        if (ident = Identity.find_by_uid(uid))
-          EntitiesUnlinker.new(ident).unlink
-        end
+        EntitiesUnlinker.new(user_id).unlink
       end
     end
 
-    def initialize(ident)
-      @ident = ident
+    def initialize(uid, user_id, provider)
+      @uid = uid
+      @user_id = user_id
+      @provider = provider
     end
 
     def unlink
-      Entity.origin_author(@ident.uid).find_each do |e|
-        e.ownerships
-        .where(ownership_type: 'author')
-        .where(owner: @ident.user)
-        .destroy_all
-      end
+      unlink_entities
+      UserActivity.refresh
+    end
+    
+    def async_unlink
+      Delayed::Job.enqueue UnlinkingJob.new(@user_id)
     end
 
-    def async_unlink
-      Delayed::Job.enqueue UnlinkingJob.new(@ident.uid)
+    def unlink_entities
+      Entity.origin_author(@uid).find_each do |e|
+        e.ownerships
+        .where(ownership_type: 'author')
+        .where(owner_id: @user_id)
+        .destroy_all
+      end
     end
 
   end

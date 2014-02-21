@@ -89,7 +89,7 @@ module QueryLogic
     end
 
     def native?
-      @model.has_an_attribute?(@name)
+      @model.respond_to?(:has_an_attribute) && @model.has_an_attribute?(@name)
     end
   end
 end
