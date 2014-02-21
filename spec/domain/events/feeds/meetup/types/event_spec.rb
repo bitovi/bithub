@@ -10,16 +10,25 @@ describe Events::Meetup::Event do
     Events::Meetup::Event.new(raw_event)
   end
 
-  describe "#content_digest" do
-    it "should calculate the digest using 'event_url' and class name" do
-      digest = Digest::MD5.hexdigest(raw_event['event_url'] + event.class.name)
-      expect(event.content_digest).to eq digest
+  describe "#digest_seed" do
+    it "should construct the seed using (event_id, url, name, description, status, composite_location, latitude, longitude, event_host_ids_csv)" do
+      seed =  raw_event['id']
+      seed += raw_event['event_url']
+      seed += raw_event['name']
+      seed += raw_event['description']
+      seed += raw_event['status']
+      # seed += raw_event['venue']
+      seed += raw_event['venue']['lat'].to_s
+      seed += raw_event['venue']['lon'].to_s
+      seed += "Event::Meetup::Event"
+
+      expect(event.digest_seed).to eq seed
     end
   end
   
   describe "#origin_id" do
-    it "should delegate to #event_id" do
-      expect(event.origin_id).to eq event.event_id
+    it "should delegate to #url" do
+      expect(event.origin_id).to eq event.url
     end
   end
 
@@ -81,25 +90,7 @@ describe Events::Meetup::Event do
     end
   end
 
-  describe "#venue" do
-    it "should respond with 'venue' from raw response" do
-      expect(event.venue).to eq raw_event['venue'].symbolize_keys
-    end
-  end
-
   describe "#event_host_ids_csv" do
-    pending "add some tests"
-  end
-    
-  describe "#composite_location" do
-    pending "add some tests"
-  end
-  
-  describe "#latitude" do
-    pending "add some tests"
-  end
-
-  describe "#longitude" do
     pending "add some tests"
   end
 

@@ -3,9 +3,8 @@ module Events
 
     class Event < Protocol
 
-      def content_digest
-        seed = event_id + url + name + description + status + composite_location + latitude + longitude + event_host_ids_csv
-        calc_digest(seed)
+      def digest_seed
+        event_id + url + name + description + status + composite_location + latitude + longitude + event_host_ids_csv
       end
 
       def origin_id
@@ -55,37 +54,23 @@ module Events
       end
 
       def venue
-        source_data.andand[:venue] || {}
+        @venue ||= Accessors::Venue.new(source_data.andand[:venue])
       end
 
       def composite_location
-        v = venue
-
-        country = v[:country] || ""
-
-        if country == 'us'
-          country = country.upcase
-        else
-          country = country.capitalize
-        end
-
-        address = [v[:address_1], v[:address_2], v[:address_3]].compact.join(' ')
-        city    = [v[:city], v[:state], v[:zip]].compact.join(' ')
-        
-        "#{v[:name]}, #{address}, #{city}, #{country}"
+        "#{venue.name}, #{venue.address}, #{venue.city}, #{venue.country}"
       end
 
       def latitude
-        v = venue
-        (v.andand[:lat] || "").to_s
+        venue.lat
       end
 
       def longitude
-        v = venue
-        (v.andand[:lon] || "").to_s
+        venue.lon
       end
 
       alias_method :event_url, :url
+
     end
   end
 end
