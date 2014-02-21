@@ -58,6 +58,12 @@ module Entities
     def type_name
       self.class.name.match(/::.*::(.+)$/).to_a[1]
     end
+    
+    def collect_methods(regexp)
+      (self.private_methods + self.methods + self.class.instance_methods(false))
+        .select {|m| m.match(regexp)}
+        .uniq
+    end
 
   end
 end
