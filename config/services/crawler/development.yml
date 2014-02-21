@@ -12,7 +12,7 @@
         :events: 1000
     :blog: 2000
     :twitter: 1500
-    :stackexchange: 30
+    :stackexchange: 15
 
 :feeds:
     :blog:
@@ -129,6 +129,6 @@
         :query:
             :site: "stackoverflow"
             :tagged: "canjs"
-            :filter: "*uAzJAPVtSPEU_KuiWo*9C2qdjdnwTWs_JBXl2WQnCoUQYY0HHVE7h*Us"
+            :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rmWL6vl0QKZdoLHpiYvL41w"
             :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
             :key: "8EAiwRhHlupc0Z1aV3SCVg(("
