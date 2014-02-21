@@ -11,6 +11,7 @@ module Events
   module Bithub; end
   module Meetup; end
   module Irc; end
+  module StackExchange; end
 
   class Protocol
     include CoreHelpers
@@ -51,7 +52,7 @@ module Events
     def type_name_sym
       type_name.to_sym
     end
-    
+
     def ==(other)
       @data == other
     end
@@ -59,15 +60,15 @@ module Events
     def origin_ts
       origin_timestamp
     end
-    
+
     def origin_timestamp_iso
       origin_timestamp.iso8601
     end
 
-    def referenced_issue_numbers 
+    def referenced_issue_numbers
       []
     end
-    
+
     def nice_name
       self.class.name.gsub(/^Events::.*::/, '')
     end
@@ -87,3 +88,4 @@ require 'events/feeds/forum/forum'
 require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
+require 'events/feeds/stack_exchange/stack_exchange'
