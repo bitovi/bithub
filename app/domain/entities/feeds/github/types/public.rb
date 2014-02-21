@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Public < Protocol
-      include Events::Github::Accessors::Standard
 
       def find
         nil

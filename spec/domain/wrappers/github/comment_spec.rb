@@ -1,13 +1,13 @@
-require 'domain/events/spec_helper'
+require 'domain/wrappers/spec_helper'
 
-describe Events::Github::Accessors::Comment do
+describe Wrappers::Github::Comment do
 
   let(:raw_comment) do
     raw_data(response_path: 'github/events/issue_comment_event.json')['payload']['comment']
   end
 
   subject(:comment) do
-    Events::Github::Accessors::Comment.new(raw_comment)
+    Wrappers::Github::Comment.new(raw_comment)
   end
   
   # describe "#raw" do

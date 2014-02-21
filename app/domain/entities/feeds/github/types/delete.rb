@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Delete < Protocol
-      include Events::Github::Accessors::Standard
 
       def find
         nil

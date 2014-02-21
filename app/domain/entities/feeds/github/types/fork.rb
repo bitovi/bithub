@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Fork < Protocol
-      include Events::Github::Accessors::Standard
 
       def find
         @payload.event_id && find_by_actor_and_repo_name.first

@@ -2,6 +2,16 @@ module Events
   module Github
 
     class CustomIssue < Protocol
+      extend Forwardable
+
+      def_delegator :@issue, :id, :issue_id
+      def_delegator :@issue, :title, :title
+      def_delegator :@issue, :body, :body
+      def_delegator :@issue, :html_url, :html_url
+      def_delegator :@issue, :labels, :labels
+      def_delegator :@issue, :labels_names_csv, :labels_names
+      def_delegator :@issue, :number, :number
+      def_delegator :@issue, :state, :state
 
       DigestAttrs = [:issue_id, :title, :body, :label_names, :state, :updated_at]
       
@@ -13,12 +23,16 @@ module Events
         issue_id
       end
 
+      def issue
+        @issue ||= Wrappers::Github::Issue.new(payload)
+      end
+
       def issue_id
-        source_data.andand[:id]
+        issue.id
       end
       
       def title
-        source_data.andand[:title]
+        @issue.title
       end
 
       def body

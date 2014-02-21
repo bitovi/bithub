@@ -2,26 +2,26 @@ module Events
   module Github
 
     class Push < Protocol
-      include Events::Github::Accessors::Standard
-
-      def push_id
-        payload.andand[:push_id]
-      end
+      include Events::Github::Accessors
 
       def origin_id
         push_id
       end
 
+      def push_id
+        payload.andand[:push_id]
+      end
+
       def commits
-        payload.andand[:commits]
+        @cs = payload.andand[:commits].map{|c| Wrappers::Github::Commit.new(c)}
       end
 
       def commit_shas
-        commits.map {|c| c.andand[:sha]}.compact
+        @cs.map(&:sha).compact
       end
 
       def commit_messages
-        commits.map {|c| c.andand[:message]}.compact
+        commits.map(&:message).compact
       end
 
       def commit_shas_csv
@@ -29,6 +29,7 @@ module Events
       end
 
       def referenced_issue_numbers
+        commits.map(&:referenced_issue_numbers).flatten
         commit_messages.join(' ').scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
       end
 
