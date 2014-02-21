@@ -1,7 +1,7 @@
 module Events
   module StackExchange
 
-    class Question < Protocol
+    class Answer < Protocol
       include Events::StackExchange::Accessors::Standard
 
       def content_digest
@@ -9,7 +9,11 @@ module Events
       end
 
       def origin_id
-        question_id
+        answer_id
+      end
+
+      def answer_id
+        source_data.andand[:answer_id]
       end
 
       def question_id
@@ -20,29 +24,21 @@ module Events
         source_data.andand[:title]
       end
 
-      def answered?
-        source_data.andand[:is_answered]
-      end
-
-      def accepted_answer_id
-        source_data.andand[:accepted_answer_id]
+      def accepted?
+        source_data.andand[:is_accepted]
       end
 
       def score
         source_data.andand[:score]
       end
 
-      def upvote_count
-        source_data.andand[:up_vote_count]
-      end
-
       def comments
         @comments ||= source_data[:comments].map {|c| Events::StackExchange::Comment.new(c)}
       end
 
-      def answers
-        @answers ||= source_data[:answers].map {|a| Events::StackExchange::Answe.new(a)}
-      end
+      # def comment_messages
+      #   comments.map(&:message)
+      # end
 
     end
 
