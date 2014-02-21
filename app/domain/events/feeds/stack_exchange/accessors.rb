@@ -16,7 +16,7 @@ module Events
         end
 
         def owner
-          source_data.andand[:body_markdown]
+          source_data.andand[:owner]
         end
 
         def origin_author_id
@@ -48,7 +48,7 @@ module Events
         # end
 
         def creation_date
-          unix_ts_to_time source_dataa.andand[:creation_date]
+          unix_ts_to_time source_data.andand[:creation_date]
         end
 
         private
