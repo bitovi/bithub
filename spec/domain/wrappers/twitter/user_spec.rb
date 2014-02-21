@@ -1,0 +1,37 @@
+require 'domain/wrappers/spec_helper'
+
+describe Wrappers::Twitter::User do
+
+  let(:raw_user) do
+    raw_data(response_path: 'twitter/status_event.json')['user']
+  end
+
+  subject(:user) do
+    Wrappers::Twitter::User.new(raw_user)
+  end
+  
+  # describe "#raw" do
+  #   it "it should respond with raw data it was constructed with" do
+  #     expect(user.raw).to eq raw_user.symbolize_keys
+  #   end
+  # end
+
+  describe "#id" do
+    it "should respond with 'id' from raw data" do
+      expect(user.id).to eq raw_user['id']
+    end
+  end
+  
+  describe "#screen_name" do
+    it "should respond with 'screen_name' from raw data" do
+      expect(user.screen_name).to eq raw_user['screen_name']
+    end
+  end
+  
+  describe "#profile_image_url" do
+    it "should respond with 'profile_image_url' from raw data" do
+      expect(user.profile_image_url).to eq raw_user['profile_image_url']
+    end
+  end
+
+end

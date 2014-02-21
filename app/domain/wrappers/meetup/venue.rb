@@ -8,8 +8,20 @@ module Wrappers
         @v = symbolize_keys(venue)
       end
 
+      def raw
+        @v
+      end
+
       def name
         @v[:name]
+      end
+      
+      def lat
+        @v[:lat].to_s
+      end
+
+      def lon
+        @v[:lon].to_s
       end
 
       def country
@@ -24,13 +36,6 @@ module Wrappers
         [@v[:city], @v[:state], @v[:zip]].compact.join(' ')
       end
 
-      def lat
-        (@v[:lat] || "").to_s
-      end
-
-      def lon
-        (@v[:lon] || "").to_s
-      end
     end
 
   end
