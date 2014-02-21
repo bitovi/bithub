@@ -1,17 +1,17 @@
 :intervals:
     :github:
-        :events: 5000
+        :events: 15
         :issues:
-            :open: 5000
-            :closed: 5000
-    :disqus: 5000
-    :forum: 5000
+            :open: 30
+            :closed: 600
+    :disqus: 45
+    :forum: 60
     :meetup:
-        :rsvps: 5000
-        :all_events: 30
-        :events: 5000
-    :blog: 5000
-    :twitter: 5000
+        :rsvps: 45
+        :all_events: 120
+        :events: 60
+    :blog: 240
+    :twitter: 480
 
 :feeds:
     :blog:

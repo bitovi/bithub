@@ -5,13 +5,13 @@ module Entities
     PROPS_TO_TAGS = [:project, :tags, :state]
 
     def determine
-      methods = collect_methods(/determine_.*/)
+      determination_methods = collect_methods(/determine_.*/)
 
       # we need to execute :determine_tags before the others
-      methods.unshift(:determine_rule) if methods.delete(:determine_rule)
-      methods.unshift(:determine_tags) if methods.delete(:determine_tags)
+      determination_methods.unshift(:determine_rule) if methods.delete(:determine_rule)
+      determination_methods.unshift(:determine_tags) if methods.delete(:determine_tags)
 
-      methods.each {|m| self.send(m)}
+      determination_methods.each {|m| self.send(m)}
       self
     end
 
@@ -49,12 +49,6 @@ module Entities
     end
 
     private
-
-    def collect_methods(regexp)
-      (self.private_methods + self.methods + self.class.instance_methods(false))
-        .select {|m| m.match(regexp)}
-        .uniq
-    end
 
     def taggify_feed_and_type_name
       [feed_name.snake_case, type_name.snake_case]
