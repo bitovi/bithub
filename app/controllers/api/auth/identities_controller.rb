@@ -12,10 +12,14 @@ class Api::Auth::IdentitiesController < Api::V1::BaseController
   def unlink
     @identity = Identity.find_by_uid(params[:uid])
     Accounts::AccountLinker.new(current_user, @identity).unlink
-    # TODO render something?
+    render :json => @identity.to_json
   end
 
   def oauth_data
     env["omniauth.auth"] || session["current_oauth_data"]
+  end
+  
+  def show_auth_error
+    render :template => 'oauth/auth_error.html.erb'
   end
 end

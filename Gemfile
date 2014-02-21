@@ -37,6 +37,7 @@ gem 'oj'
 gem 'yajl-ruby'
 gem 'awesome_print'
 gem 'twitter-text'
+gem 'dotenv-rails'
 
 gem 'spring', group: %i(development test)
 gem 'spring-commands-rspec'

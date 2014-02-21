@@ -18,7 +18,7 @@ class Dispatcher
     entity = Entities::Dispatcher.dispatch(event)
 
     ActiveRecord::Base.transaction do
-      event.build.persist!
+      event.build.validate.persist!
       entity.procure.update_if_found.determine.group.normalize.persist!
     end
 
@@ -27,6 +27,9 @@ class Dispatcher
     @logger.error "#{err.message} | #{err.context}"
     nil
   rescue Entities::DispatchError => err
+    @logger.error "#{err.message} | #{err.context}"
+    nil
+  rescue Events::ValidationError => err
     @logger.error "#{err.message} | #{err.context}"
     nil
   rescue Events::BuildingError => err

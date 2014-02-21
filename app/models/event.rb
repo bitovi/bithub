@@ -12,5 +12,4 @@ class Event < ActiveRecord::Base
 
   serialize :source_data, JSON
   serialize :props, ActiveRecord::Coders::Hstore
-
 end

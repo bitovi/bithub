@@ -35,6 +35,13 @@ module Events
         Time.parse(source_data.andand[:created_at]).utc
       end
 
+      def validate_source_and_target
+        if we_are_source? and not(we_are_target?)
+          context = { source_screen_name: source_screen_name, target_screen_name: target_screen_name }
+          raise ValidationError.new("we should't be the ones that follow", context)
+        end
+      end
+
       alias_method :origin_author_id, :source_id
       alias_method :origin_author_name, :source_screen_name
 
@@ -48,11 +55,11 @@ module Events
         source_data.andand[:target]
       end
 
-      def we_are_target?(source_data)
+      def we_are_target?
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
       end
 
-      def we_are_source?(event_hash)
+      def we_are_source?
         %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? source_screen_name
       end
     end
