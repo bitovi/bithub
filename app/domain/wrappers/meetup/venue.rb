@@ -35,6 +35,10 @@ module Wrappers
       def city
         [@v[:city], @v[:state], @v[:zip]].compact.join(' ')
       end
+        
+      def composite_location
+        "#{name}, #{address}, #{city}, #{country}"
+      end
 
     end
 
