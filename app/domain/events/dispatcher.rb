@@ -199,6 +199,14 @@ module Events
     end
   end
 
+  module StackExchange
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::StackExchange::Question
+      end
+    end
+  end
+
   module Blog
     class Dispatcher < BasicTypeDispatcher
       def type
