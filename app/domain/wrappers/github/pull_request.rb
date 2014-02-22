@@ -7,8 +7,11 @@ module Wrappers
       include CoreHelpers
       include IssueLike
 
+      attr_reader :user
+
       def initialize(pull_req)
         @pr = symbolize_keys(pull_req)
+        @user = Wrappers::Github::User.new(pull_req.andand[:user])
       end
 
       def raw
