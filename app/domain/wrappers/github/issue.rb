@@ -15,10 +15,6 @@ module Wrappers
         @labels = Wrappers::Github::Labels(issue.andand[:labels])
       end
 
-      def raw
-        @i
-      end
-
       def references_to
         Reference.scan_for_refs(body)
       end

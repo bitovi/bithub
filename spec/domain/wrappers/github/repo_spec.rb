@@ -21,6 +21,12 @@ describe Wrappers::Github::Issue do
       expect(repo.name).to eq raw_repo['name']
     end
   end
+  
+  describe "#url" do
+    it "should respond with 'url' from raw data" do
+      expect(repo.url).to eq raw_repo['url']
+    end
+  end
 
 end
 

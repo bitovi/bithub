@@ -2,32 +2,18 @@ module Wrappers
   module Twitter
 
     class Tweet
+      extend DataAccessible
       include CoreHelpers
 
       attr_reader :retweet, :entities
+      data_accessors :id, :id_str, :text
 
       def initialize(tweet)
-        @t = symbolize_keys(tweet)
+        @data = symbolize_keys(tweet)
         @entities = Wrappers::Twitter::Entities.new(tweet.andand[:entities])
-        if @t[:retweeted_status]
-          @retweet = Wrappers::Twitter::Tweet.new(@t[:retweeted_status])
+        if @data[:retweeted_status]
+          @retweet = Wrappers::Twitter::Tweet.new(@data[:retweeted_status])
         end
-      end
-
-      def raw
-        @t
-      end
-
-      def id
-        @t.andand[:id]
-      end
-      
-      def id_str
-        @t.andand[:id_str]
-      end
-
-      def text
-        @t.andand[:text]
       end
 
       def retweet?
@@ -35,7 +21,7 @@ module Wrappers
       end
 
       def created_at
-        Time.parse(@t.andand[:created_at])
+        Time.parse(@data.andand[:created_at])
       end
 
     end

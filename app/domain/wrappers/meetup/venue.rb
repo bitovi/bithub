@@ -2,38 +2,25 @@ module Wrappers
   module Meetup
 
     class Venue
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :name, :lat, :lon
+
       def initialize(venue)
-        @v = symbolize_keys(venue)
-      end
-
-      def raw
-        @v
-      end
-
-      def name
-        @v[:name]
-      end
-      
-      def lat
-        @v[:lat].to_s
-      end
-
-      def lon
-        @v[:lon].to_s
+        @data = symbolize_keys(venue)
       end
 
       def country
-        ((country = (@v[:country] || '')) == 'us') ? country.upcase : country.capitalize
+        ((country = (@data[:country] || '')) == 'us') ? country.upcase : country.capitalize
       end
 
       def address
-        [@v[:address_1], @v[:address_2], @v[:address_3]].compact.join(' ')
+        [@data[:address_1], @data[:address_2], @data[:address_3]].compact.join(' ')
       end
 
       def city
-        [@v[:city], @v[:state], @v[:zip]].compact.join(' ')
+        [@data[:city], @data[:state], @data[:zip]].compact.join(' ')
       end
         
       def composite_location

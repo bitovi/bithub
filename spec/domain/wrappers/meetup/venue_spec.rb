@@ -36,13 +36,13 @@ describe Wrappers::Meetup::Venue do
 
   describe "#lat" do
     it "should get 'lat' from raw response" do
-      expect(venue.lat).to eq raw_venue['lat'].to_s
+      expect(venue.lat).to eq raw_venue['lat']
     end
   end
 
   describe "#lon" do
     it "should get 'lon' from raw response" do
-      expect(venue.lon).to eq raw_venue['lon'].to_s
+      expect(venue.lon).to eq raw_venue['lon']
     end
   end
 

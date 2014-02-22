@@ -8,10 +8,6 @@ module Wrappers
         @ls = symbolize_keys(labels)
       end
 
-      def raw
-        @ls
-      end
-
       def label_names
         @ls.map {|l| l[:name]}
       end

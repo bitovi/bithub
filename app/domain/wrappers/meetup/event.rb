@@ -2,41 +2,25 @@ module Wrappers
   module Meetup
 
     class Event
+      extend DataAccessible
       include CoreHelpers
+
       attr_reader :hosts
+      data_accessors :id, :event_url, :name, :description, :status
+      alias_method :url, :event_url
 
       def initialize(event)
-        @e = symbolize_keys(event)
+        @data = symbolize_keys(event)
         @venue = Wrappers::Meetup::Venue.new(event.andand[:venue])
         @hosts = event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
 
-      def id
-        @e.andand[:id]
-      end
-      
-      def url
-        @e.andand[:event_url]
-      end
-
-      def name
-        @e.andand[:name]
-      end
-
-      def description
-        @e.andand[:description]
-      end
-
-      def status
-        @e.andand[:status]
-      end
-
       def created
-        @created_at ||= Time.at(@e.andand[:created] / 1000)
+        @created_at ||= Time.at(@data.andand[:created] / 1000)
       end
 
       def time
-        @scheduled_at ||= Time.at(@e.andand[:time] / 1000)
+        @scheduled_at ||= Time.at(@data.andand[:time] / 1000)
       end
 
     end

@@ -2,20 +2,14 @@ module Wrappers
   module Github
 
     class Repo
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :name, :url
+
       def initialize(repo)
-        @r = symbolize_keys(repo)
+        @data = symbolize_keys(repo)
       end
-
-      def to_hash
-        @r
-      end
-
-      def name
-        @r.andand[:name]
-      end
-
     end
 
   end

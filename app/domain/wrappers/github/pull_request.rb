@@ -14,10 +14,6 @@ module Wrappers
         @user = Wrappers::Github::User.new(pull_req.andand[:user])
       end
 
-      def raw
-        @pr
-      end
-
       def references_to
         Reference.scan_for_refs(body)
       end

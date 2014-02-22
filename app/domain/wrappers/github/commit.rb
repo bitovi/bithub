@@ -2,30 +2,21 @@ module Wrappers
   module Github
 
     class Commit
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :sha, :message, :url
+
       def initialize(commit)
-        @c = symbolize_keys(commit)
-      end
-
-      def sha
-        @c[:sha]
-      end
-
-      def message
-        @c[:message]
-      end
-
-      def url
-        @c[:url]
+        @data = symbolize_keys(commit)
       end
 
       def author_name
-        @c[:author].andand[:name]
+        @data[:author].andand[:name]
       end
 
       def author_email
-        @c[:author].andand[:email]
+        @data[:author].andand[:email]
       end
 
       def references_to
