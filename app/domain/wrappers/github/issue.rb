@@ -12,6 +12,7 @@ module Wrappers
       def initialize(issue)
         @i = symbolize_keys(issue)
         @user = Wrappers::Github::Actor.new(issue.andand[:user])
+        @labels = Wrappers::Github::Labels(issue.andand[:labels])
       end
 
       def raw
