@@ -2,6 +2,7 @@ module Events
   module Github
 
     class Delete < Protocol
+      extend Forwardable
       include Events::Github::Accessors
       include Events::Github::Accessors::Refs
 
