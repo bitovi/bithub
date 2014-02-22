@@ -8,7 +8,7 @@ module Wrappers
       def initialize(rsvp)
         @r = symbolize_keys(rsvp)
         @parent_event = Wrappers::Meetup::Event.new(rsvp.andand[:event])
-        @member = Wrappers::Meetup::Member.new(rsvp.andand[:member])
+        @member = Wrappers::Meetup::Member.new(rsvp.andand[:member], rsvp.andand[:member_photo])
       end
 
       def id
@@ -16,7 +16,7 @@ module Wrappers
       end
 
       def comment
-        @cs.andand[:comments]
+        @cs.andand[:comment]
       end
       
       def response

@@ -4,7 +4,7 @@ module Wrappers
     class Member
       include CoreHelpers
 
-      def initialize(member, member_photo)
+      def initialize(member, member_photo = nil)
         @m = symbolize_keys(member)
         @mp = symbolize_keys(member_photo)
       end
