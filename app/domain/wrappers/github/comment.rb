@@ -4,8 +4,11 @@ module Wrappers
     class Comment
       include CoreHelpers
 
+      attr_reader :user
+
       def initialize(comment)
         @c = symbolize_keys(comment)
+        @user = Wrappers::Github::User.new(comment.andand[:user])
       end
 
       def raw

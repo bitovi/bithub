@@ -3,9 +3,12 @@ module Wrappers
 
     class Event
       include CoreHelpers
+      attr_reader :hosts
 
       def initialize(event)
         @e = symbolize_keys(event)
+        @hosts = event.andand[:event_hosts]
+                      .andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
 
       def id
@@ -26,10 +29,6 @@ module Wrappers
 
       def status
         @e.andand[:status]
-      end
-      
-      def hosts
-        @e.andand[:event_hosts]
       end
 
       def created

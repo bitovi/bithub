@@ -1,19 +1,19 @@
 module Wrappers
   module Github
 
-    class Actor
+    class User
       include CoreHelpers
 
       def initialize(actor)
-        @a = symbolize_keys(actor)
+        @u = symbolize_keys(actor)
       end
 
       def raw
-        @a
+        @u
       end
 
       def id
-        @a.andand[:id]
+        @u.andand[:id]
       end
 
       def id_str
@@ -21,15 +21,15 @@ module Wrappers
       end
 
       def login
-        @a.andand[:login]
+        @u.andand[:login]
       end
 
       def gravatar_id
-        @a.andand[:gravatar_id]
+        @u.andand[:gravatar_id]
       end
 
       def avatar_url
-        @a.andand[:avatar_url]
+        @u.andand[:avatar_url]
       end
 
     end
