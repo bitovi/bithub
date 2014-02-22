@@ -5,37 +5,35 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
-      def_delegator :@ipr, :id, :issue_or_pull_req_id
-      def_delegator :@ipr, :title, :issue_or_pull_req_title
-      def_delegator :@ipr, :body, :issue_or_pull_req_body
-      def_delegator :@ipr, :number, :issue_or_pull_req_number
-      def_delegator :@ipr, :state, :issue_or_pull_req_state
-      def_delegator :@ipr, :label_names_csv, :issue_or_pull_req_label_names
+      attr_reader :ipr
+
+      def_delegator :@actor, :id, :origin_author_id
+      def_delegator :@actor, :login, :origin_author_name
+      def_delegator :@actor, :avatar_url, :origin_author_avatar_url
+      def_delegator :@repo, :name, :repo_name
       
       def digest_seed
-        event_id
+        event_id + self.class.name
       end
 
       def origin_id
         comment.id
       end
 
-      def comment
-        @comment ||= Wrappers::Github::Comment.new(payload[:comment])
-      end
-
-      def issue_or_pull_req
-        @ipr || i_or_pr
-      end
-
       private
-      def i_or_pr
-        if payload[:pull_request]
-          @ipr ||= Wrappers::Github::Issue.new(payload.andand[:issue])
-        elsif payload[:issue]
-          @ipr ||= Wrappers::Github::PullRequest.new(payload.andand[:pull_request])
-        end
+
+      def wrap_reponse_parts
+        @actor ||= Wrappers::Github::User.new(source_data[:actor])
+        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        @comment ||= Wrappers::Github::Comment.new(payload[:comment])
+        @ipr ||= case payload
+                 when payload.andand[:issue]
+                   Wrappers::Github::Issue.new(payload.andand[:issue])
+                 when payload.andand[:pull_request]
+                   Wrappers::Github::PullRequest.new(payload.andand[:pull_request])
+                 end
       end
+
     end
 
   end

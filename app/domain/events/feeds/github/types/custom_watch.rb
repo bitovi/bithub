@@ -4,7 +4,7 @@ module Events
     class CustomWatch < Protocol
 
       def content_digest
-        seed = identity_uid.to_s + repo_name
+        identity_uid.to_s + repo_name
         calc_digest(seed)
       end
       
