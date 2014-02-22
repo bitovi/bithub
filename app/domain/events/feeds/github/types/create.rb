@@ -2,6 +2,7 @@ module Events
   module Github
 
     class Create < Protocol
+      extend Forwardable
       include Events::Github::Accessors
       include Events::Github::Accessors::Refs
 
