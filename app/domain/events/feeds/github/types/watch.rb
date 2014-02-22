@@ -8,9 +8,6 @@ module Events
       def_delegator :@actor, :id, :origin_author_id
       def_delegator :@actor, :login, :origin_author_name
       def_delegator :@actor, :avatar_url, :origin_author_avatar_url
-      def_delegator :@actor, :id, :actor_id
-      def_delegator :@actor, :login, :actor_login
-      
       def_delegator :@repo, :name, :repo_name
 
       def digest_seed
