@@ -10,7 +10,7 @@ module Wrappers
         @t = symbolize_keys(tweet)
         @entities = Wrappers::Twitter::Entities.new(tweet.andand[:entities])
         if @t[:retweeted_status]
-          @retweet = Wrappers::Twitter::Tweet.new(source_data[:retweeted_status])
+          @retweet = Wrappers::Twitter::Tweet.new(@t[:retweeted_status])
         end
       end
 
