@@ -2,26 +2,13 @@ module Wrappers
   module Twitter
 
     class User
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :id, :screen_name, :profile_image_url
+
       def initialize(user)
-        @u = symbolize_keys(user)
-      end
-
-      def raw
-        @u
-      end
-
-      def id
-        @u.andand[:id]
-      end
-
-      def screen_name
-        @u.andand[:screen_name]
-      end
-
-      def profile_image_url
-        @u.andand[:profile_image_url]
+        @data = symbolize_keys(user)
       end
 
     end

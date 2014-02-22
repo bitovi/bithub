@@ -2,24 +2,15 @@ module Wrappers
   module Disqus
 
     class Forum
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :id, :name, :url
+
       def initialize(forum)
-        @f = symbolize_keys(forum)
+        @data = symbolize_keys(forum)
       end
 
-      def id
-        @f.andand[:id]
-      end
-
-      def name
-        @f.andand[:name]
-      end
-
-      def url
-        @f.andand[:url]
-      end
-      
     end
   end
 end

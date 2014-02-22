@@ -2,27 +2,19 @@ module Wrappers
   module Meetup
 
     class Member
+      extend DataAccessible
       include CoreHelpers
 
+      data_accessors :member_id, :name
+      alias_method :id, :member_id
+
       def initialize(member, member_photo = nil)
-        @m = symbolize_keys(member)
+        @data = symbolize_keys(member)
         @mp = symbolize_keys(member_photo)
       end
 
-      def raw
-        @m
-      end
-
-      def id
-        @m.andand[:member_id]
-      end
-
-      def name
-        @m.andand[:name]
-      end
-
       def thumb_link
-        @mp.andand[:thump_link]
+        @mp.andand[:thumb_link]
       end
 
     end
