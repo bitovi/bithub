@@ -7,8 +7,8 @@ module Wrappers
 
       def initialize(event)
         @e = symbolize_keys(event)
-        @hosts = event.andand[:event_hosts]
-                      .andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
+        @venue = Wrappers::Meetup::Venue.new(event.andand[:venue])
+        @hosts = event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
 
       def id

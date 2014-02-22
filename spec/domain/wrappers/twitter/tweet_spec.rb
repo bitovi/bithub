@@ -33,5 +33,11 @@ describe Wrappers::Twitter::Tweet do
       expect(tweet.text).to eq raw_tweet['text']
     end
   end
+  
+  describe "#created_at" do
+    it "should respond with time-parsed 'created_at' from raw data" do
+      expect(tweet.created_at).to eq Time.parse(raw_tweet['created_at'])
+    end
+  end
 
 end
