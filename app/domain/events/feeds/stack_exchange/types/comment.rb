@@ -13,11 +13,15 @@ module Events
       end
 
       def post_id
-        source_data.andand[:post_id]
+        source_data.andand[:post_id].to_s
+      end
+
+      def post_type
+        source_data.andand[:post_type]
       end
 
       def comment_id
-        source_data.andand[:comment_id]
+        source_data.andand[:comment_id].to_s
       end
 
     end
