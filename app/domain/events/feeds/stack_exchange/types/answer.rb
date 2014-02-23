@@ -5,7 +5,7 @@ module Events
       include Events::StackExchange::Accessors::Standard
 
       def content_digest
-        Digest::MD5.hexdigest(self.class.name)
+        Digest::MD5.hexdigest(origin_id.to_s + (last_edit_date || origin_ts).to_s + self.class.name)
       end
 
       def origin_id
@@ -26,10 +26,6 @@ module Events
 
       def accepted?
         source_data.andand[:is_accepted]
-      end
-
-      def score
-        source_data.andand[:score]
       end
 
       def comments

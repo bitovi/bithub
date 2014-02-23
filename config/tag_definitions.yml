@@ -96,6 +96,9 @@ meetup:
   display_name: "Meetup"
   group_list: "feeds"
 
+stack_exchange:
+  display_name: "StackExchange"
+  group_list: "feeds"
 
 # ----------
 # Categories

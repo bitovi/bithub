@@ -19,6 +19,10 @@ module Events
           source_data.andand[:owner]
         end
 
+        def score
+          source_data.andand[:score]
+        end
+
         def origin_author_id
           owner.andand[:user_id]
         end
@@ -39,13 +43,13 @@ module Events
           creation_date
         end
 
-        # def last_activity_date
-        #   unix_ts_to_time source_dataa.andand[:last_activity_date]
-        # end
+        def last_activity_date
+          unix_ts_to_time source_data.andand[:last_activity_date]
+        end
 
-        # def last_edit_date
-        #   unix_ts_to_time source_dataa.andand[:last_edit_date]
-        # end
+        def last_edit_date
+          unix_ts_to_time source_data.andand[:last_edit_date]
+        end
 
         def creation_date
           unix_ts_to_time source_data.andand[:creation_date]
