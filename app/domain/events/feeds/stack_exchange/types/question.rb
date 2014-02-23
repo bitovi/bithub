@@ -13,7 +13,7 @@ module Events
       end
 
       def question_id
-        source_data.andand[:question_id]
+        source_data.andand[:question_id].to_s
       end
 
       def title
@@ -25,7 +25,7 @@ module Events
       end
 
       def accepted_answer_id
-        source_data.andand[:accepted_answer_id]
+        source_data.andand[:accepted_answer_id].to_s
       end
 
       def upvote_count
@@ -33,11 +33,11 @@ module Events
       end
 
       def comments
-        @comments ||= source_data[:comments].map {|c| Events::StackExchange::Comment.new(c)}
+        @comments ||= source_data[:comments].to_a.map {|c| Events::StackExchange::Comment.new(c)}
       end
 
       def answers
-        @answers ||= source_data[:answers].map {|a| Events::StackExchange::Answe.new(a)}
+        @answers ||= source_data[:answers].to_a.map {|a| Events::StackExchange::Answer.new(a)}
       end
 
     end

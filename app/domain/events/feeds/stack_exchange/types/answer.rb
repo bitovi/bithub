@@ -13,11 +13,11 @@ module Events
       end
 
       def answer_id
-        source_data.andand[:answer_id]
+        source_data.andand[:answer_id].to_s
       end
 
       def question_id
-        source_data.andand[:question_id]
+        source_data.andand[:question_id].to_s
       end
 
       def title
@@ -28,8 +28,12 @@ module Events
         source_data.andand[:is_accepted]
       end
 
+      def upvote_count
+        source_data.andand[:up_vote_count]
+      end
+
       def comments
-        @comments ||= source_data[:comments].map {|c| Events::StackExchange::Comment.new(c)}
+        @comments ||= source_data[:comments].to_a.map {|c| Events::StackExchange::Comment.new(c)}
       end
 
       # def comment_messages
