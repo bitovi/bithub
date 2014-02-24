@@ -4,12 +4,12 @@ module Entities
     class Answer < Protocol
 
       def find
-        nil
+        @payload.origin_id && find_by_origin_id
       end
 
       def build
         Entity.new({
-          title: @payload.title,
+          title: "answered ##{@payload.question_id}", # @payload.title
           body: @payload.body_markdown || @payload.body,
           url: @payload.link,
           origin_ts: @payload.origin_ts,
@@ -28,11 +28,36 @@ module Entities
       end
 
       def build_children
-
+        build_comments
       end
 
       def build_comments
+        @payload.comments.map do |c|
+          Entities::StackExchange::Comment.new(c)
+            .procure
+            .determine
+            .group
+            .normalize
+            .instance
+        end
+      end
 
+      def update
+        @instance.body = @payload.body_markdown || @payload.body
+        @instance.props[:origin_score] = @payload.score
+        @instance.props[:is_accepted] = @payload.accepted?
+        @instance.props[:upvotes] = @payload.upvote_count
+        self
+      end
+
+      private
+
+      def find_by_origin_id
+        Entity
+          .feed('stack_exchange')
+          .type('answer')
+          .where(origin_id: @payload.origin_id)
+          .first
       end
 
     end
