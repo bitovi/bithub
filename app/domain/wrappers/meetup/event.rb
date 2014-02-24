@@ -5,14 +5,16 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      attr_reader :hosts
       data_accessors :id, :event_url, :name, :description, :status
+
+      attr_reader :hosts, :venue
       alias_method :url, :event_url
 
       def initialize(event)
-        @data = symbolize_keys(event)
-        @venue = Wrappers::Meetup::Venue.new(event.andand[:venue])
-        @hosts = event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
+        _event = symbolize_keys(event)
+        @data = _event
+        @venue = Wrappers::Meetup::Venue.new(_event.andand[:venue])
+        @hosts = _event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
 
       def created
@@ -21,6 +23,22 @@ module Wrappers
 
       def time
         @scheduled_at ||= Time.at(@data.andand[:time] / 1000)
+      end
+      
+      def host_ids
+        @hosts.andand.map(&:id)
+      end
+
+      def host_names
+        @hosts.andand.map(&:name)
+      end
+
+      def host_ids_csv
+        host_ids.andand.join(',')
+      end
+
+      def host_names_csv
+        host_names.andand.join(',')
       end
 
     end

@@ -5,13 +5,14 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      attr_reader :member, :parent_event
       data_accessors :rsvp_id, :comment, :response
+
+      attr_reader :member, :event
       alias_method :id, :rsvp_id
 
       def initialize(rsvp)
         @data = symbolize_keys(rsvp)
-        @parent_event = Wrappers::Meetup::Event.new(rsvp.andand[:event])
+        @event = Wrappers::Meetup::Event.new(rsvp.andand[:event])
         @member = Wrappers::Meetup::Member.new(rsvp.andand[:member], rsvp.andand[:member_photo])
       end
 

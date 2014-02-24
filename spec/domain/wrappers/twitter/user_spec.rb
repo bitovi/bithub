@@ -10,12 +10,6 @@ describe Wrappers::Twitter::User do
     Wrappers::Twitter::User.new(raw_user)
   end
   
-  # describe "#raw" do
-  #   it "it should respond with raw data it was constructed with" do
-  #     expect(user.raw).to eq raw_user.symbolize_keys
-  #   end
-  # end
-
   describe "#id" do
     it "should respond with 'id' from raw data" do
       expect(user.id).to eq raw_user['id']

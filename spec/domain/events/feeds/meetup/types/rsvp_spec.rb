@@ -6,91 +6,52 @@ describe Events::Meetup::Rsvp do
     raw_data(response_path: 'meetup/2_rsvps.json')['results'].first
   end
   
-  subject(:rsvp) do
+  subject(:rsvp_event) do
     Events::Meetup::Rsvp.new(raw_rsvp)
   end
 
   describe "#digest_seed" do
     it "should calculate the digest using 'post_id' and class name" do
-      seed = raw_rsvp['rsvp_id'].to_s + rsvp.class.name
-      expect(rsvp.digest_seed).to eq seed
+      seed = raw_rsvp['rsvp_id'].to_s + "Events::Meetup::Rsvp"
+      expect(rsvp_event.digest_seed).to eq seed
     end
   end
 
   describe "#origin_id" do
-    it "should delegate to #rsvp_id" do
-      expect(rsvp.origin_id).to eq rsvp.rsvp_id
+    it "should delegate to @rsvp->#id" do
+      expect(rsvp_event.origin_id).to eq rsvp_wrapper.id
     end
   end
 
-  describe "#rsvp_id" do
-    it "should respond with 'rsvp_id' from raw response" do
-      expect(rsvp.rsvp_id).to eq raw_rsvp['rsvp_id']
+  describe "#event_id" do
+    it "should delegate to@event->#id" do
+      expect(rsvp_event.event_id).to eq event_wrapper.id
     end
   end
-
-  describe "#comment" do
-    it "should respond with 'comment' from raw response" do
-      expect(rsvp.comment).to eq raw_rsvp['comment']
-    end
-  end
-
-  describe "#response" do
-    it "should respond with 'response' from raw response" do
-      expect(rsvp.response).to eq raw_rsvp['response']
-    end
-  end
-
+  
   describe "#origin_author_id" do
-    it "should delegate to #member_id" do
-      expect(rsvp.origin_author_id).to eq rsvp.member_id
-    end
-  end
-
-  describe "#member_id" do
-    it "should respond with 'member_id' from raw response" do
-      expect(rsvp.member_id).to eq raw_rsvp['member']['member_id']
-    end
-  end
-
-  describe "#origin_author_name" do
-    it "should delegate to #member_name" do
-      expect(rsvp.origin_author_name).to eq rsvp.member_name
-    end
-  end
-
-  describe "#member_name" do
-    it "should respond with 'member'->'name'" do
-      expect(rsvp.member_name).to eq raw_rsvp['member']['name']
-    end
-  end
-
-  describe "#origin_author_avatar_url" do
-    it "should delegate to member_photo_thumb_link" do
-      expect(rsvp.origin_author_avatar_url).to eq rsvp.member_photo_thumb_link
-    end
-  end
-
-  describe "#member_photo_thumb_link" do
-    it "should respond with 'member_photo'->'thumb_link' from raw response" do
-      expect(rsvp.member_photo_thumb_link).to eq raw_rsvp['member_photo']['thumb_link']
-    end
-  end
-
-  describe "#parent_event_id" do
-    it "should respond with 'event'->'id' from raw response" do
-      expect(rsvp.parent_event_id).to eq raw_rsvp['event']['id']
+    it "should be alias to a delegate method @member->#id" do
+      expect(rsvp_event.origin_author_id).to eq member_wrapper.id
     end
   end
 
   describe "#origin_timestamp" do
     it "should be in UTC" do
-      expect(rsvp.origin_timestamp.zone).to eq "UTC"
-    end
-
-    it "should parse the 'created' unix timestamp from raw response and return it" do
-      parsed_date = Time.at(raw_rsvp['created'].to_i / 1000)
-      expect(rsvp.origin_timestamp).to eq parsed_date
+      expect(rsvp_event.origin_timestamp.zone).to eq "UTC"
     end
   end
+  
+  # --- Delegates
+  subject(:rsvp_wrapper) do
+    Events::Meetup::Rsvp.new(raw_rsvp)
+  end
+  
+  subject(:event_wrapper) do
+    Wrappers::Meetup::Event.new(raw_rsvp['event'])
+  end
+  
+  subject(:member_wrapper) do
+    Wrappers::Meetup::Member.new(raw_rsvp['member'], raw_rsvp['member_photo'])
+  end
+
 end

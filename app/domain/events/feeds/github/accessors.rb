@@ -15,17 +15,8 @@ module Events
         payload.andand[:action]
       end
 
-      def actor
-        @actor ||= Wrappers::Actor.new(source_data.andand[:actor])
-      end
-
-      def repo
-        @repo ||= Wrappers::Repo.new(source_data.andand[:repo])
-      end
-
-      def origin_ts
-        ts_str = source_data.andand[:created_at]
-        Time.parse(ts_str).utc
+      def origin_timestamp
+        Time.parse(source_data.andand[:created_at]).utc
       end
 
       module Refs

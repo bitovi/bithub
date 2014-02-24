@@ -5,18 +5,22 @@ module Events
       extend Forwardable
 
       def_delegators :@venue, :composite_location, :lat, :lon
-      def_delegators :@event, :id, :url, :status, :description, :created, :time, :hosts
+
+      def_delegators :@event, :id, :name, :url, :status,
+        :description, :created, :time, :hosts,
+        :host_ids, :host_ids_csv,
+        :host_names, :host_names_csv
 
       def digest_seed
-        id + url + name + description + status + composite_location + lat + lon + host_ids_csv
+        id + url + name +
+        description + status +
+        composite_location +
+        host_ids_csv +
+        self.class.name
       end
 
       def origin_id
         url
-      end
-
-      def host_ids_csv
-        @event.hosts.map(&:id).map(&:to_s).compact.join(',')
       end
 
       def scheduled_at

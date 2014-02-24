@@ -10,11 +10,11 @@ module Events
       def_delegator :@author, :name, :origin_author_name
 
       def digest_seed
-        post.id + self.class.name
+        @post.id + self.class.name
       end
 
       def origin_id
-        post.id
+        @post.id
       end
 
       def origin_timestamp

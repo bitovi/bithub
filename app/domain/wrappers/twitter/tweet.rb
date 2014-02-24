@@ -16,6 +16,10 @@ module Wrappers
         end
       end
 
+      def retweeted_status
+        @retweet
+      end
+
       def retweet?
         not(@retweet.nil?)
       end

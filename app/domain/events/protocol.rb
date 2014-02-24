@@ -26,7 +26,7 @@ module Events
       _raw = symbolize_keys(payload)
       @source_data = _raw[:source_data] || _raw
       @meta = _raw[:meta] || nil
-      wrap_reponse_parts
+      wrap_reponse_parts if self.respond_to? :wrap_reponse_parts
     end
 
     def content_digest

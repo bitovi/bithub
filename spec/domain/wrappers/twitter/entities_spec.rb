@@ -10,12 +10,6 @@ describe Wrappers::Twitter::Entities do
     Wrappers::Twitter::Entities.new(raw_entities)
   end
   
-  # describe "#raw" do
-  #   it "it should respond with raw data it was constructed with" do
-  #     expect(entities.raw).to eq raw_entities.symbolize_keys
-  #   end
-  # end
-
   describe "#urls" do
     it "should respond with 'urls' from raw data" do
       urls = raw_entities['urls'].andand.map {|url| url.andand.symbolize_keys!}
@@ -42,11 +36,6 @@ describe Wrappers::Twitter::Entities do
       user_mentions = raw_entities['user_mentions'].andand.map {|um| um.andand.symbolize_keys!}
       expect(entities.user_mentions).to eq user_mentions
     end
-  end
-
-  describe "#retweet?" do
-    it "should determine if the tweet is a retweet"
-    it "should be able to access the original tweet's data"
   end
 
 end

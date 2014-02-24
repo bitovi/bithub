@@ -3,6 +3,10 @@ module Wrappers
 
     module IssueLike
 
+      def id
+        (@i || @pr).andand[:id]
+      end
+
       def title
         (@i || @pr).andand[:title]
       end

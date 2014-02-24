@@ -16,8 +16,8 @@ module Events
       end
 
       def wrap_reponse_parts
-        @actor ||= Wrappers::Github::User.new(source_data[:actor])
-        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        @actor = Wrappers::Github::User.new(source_data[:actor])
+        @repo = Wrappers::Github::Repo.new(source_data[:repo])
       end
 
     end
