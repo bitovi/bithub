@@ -10,6 +10,13 @@ describe Events::Github::Fork do
     Events::Github::Fork.new(raw_fork)
   end
 
-  pending "add some tests for Events::Github::Fork"
+  describe "#digest_seed" do
+    it "should respond with seed constructed from @actor->#login, @repo->#name and class name" do
+      seed =  raw_fork['actor']['login']
+      seed += raw_fork['repo']['name']
+      seed += "Events::Github::Fork"
+      expect(fork.digest_seed).to eq seed
+    end
+  end
 
 end

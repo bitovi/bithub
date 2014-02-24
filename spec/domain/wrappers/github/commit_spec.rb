@@ -9,12 +9,6 @@ describe Wrappers::Github::Commit do
   subject(:commit) do
     Wrappers::Github::Commit.new(raw_commit)
   end
-  
-  # describe "#raw" do
-  #   it "it should respond with raw data it was constructed with" do
-  #     expect(commit.raw).to eq raw_commit.symbolize_keys
-  #   end
-  # end
 
   describe "#sha" do
     it "should respond with 'sha' from raw data" do

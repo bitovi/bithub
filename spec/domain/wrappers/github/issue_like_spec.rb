@@ -18,12 +18,6 @@ describe Wrappers::Github::IssueLike do
   subject(:issue_like_object) do
     IssueLikeClass.new(raw_issue)
   end
-  
-  # describe "#raw" do
-  #   it "it should respond with raw data it was constructed with" do
-  #     expect(commit.raw).to eq raw_commit.symbolize_keys
-  #   end
-  # end
 
   describe "#title" do
     it "should respond with 'title' from raw data" do

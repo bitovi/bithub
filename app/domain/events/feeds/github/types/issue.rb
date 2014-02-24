@@ -5,6 +5,8 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
+      attr_reader :issue
+
       def_delegator :@actor, :id, :origin_author_id
       def_delegator :@actor, :login, :origin_author_name
       def_delegator :@actor, :avatar_url, :origin_author_avatar_url
@@ -16,10 +18,6 @@ module Events
         event_id + self.class.name
       end
 
-      def issue
-        @issue ||= Wrappers::Github::Issue.new(payload[:issue])
-      end
-      
       def issue_or_pull_req
         issue
       end

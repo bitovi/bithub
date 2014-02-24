@@ -11,9 +11,13 @@ module Events
       def_delegator :@repo, :name, :repo_name
 
       def digest_seed
-        actor_id.to_s + repo_name.to_s
+        @actor.id.to_s + @repo.name + self.class.name
       end
 
+      def wrap_reponse_parts
+        @actor ||= Wrappers::Github::User.new(source_data[:actor])
+        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+      end
     end
   end
 end
