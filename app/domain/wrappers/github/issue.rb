@@ -7,12 +7,12 @@ module Wrappers
       include CoreHelpers
       include IssueLike
 
-      attr_reader :user
+      attr_reader :user, :labels
 
       def initialize(issue)
         @i = symbolize_keys(issue)
-        @user = Wrappers::Github::Actor.new(issue.andand[:user])
-        @labels = Wrappers::Github::Labels(issue.andand[:labels])
+        @user = Wrappers::Github::User.new(issue.andand[:user])
+        @labels = Wrappers::Github::Labels.new(issue.andand[:labels])
       end
 
       def references_to

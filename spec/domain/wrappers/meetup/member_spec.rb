@@ -18,7 +18,7 @@ describe Wrappers::Meetup::Member do
   
   describe "#name" do
     it "should respond with 'name' from raw data" do
-      expect(member.name).to eq raw_rsvp['member']['name']
+      expect(member.name).to eq raw_rsvp['member']['member_name']
     end
   end
 

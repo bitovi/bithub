@@ -5,8 +5,12 @@ describe Events::Github::CustomIssue do
   let(:raw_custom_issue) do
     raw_data(response_path: 'github/issues/issues.json').first
   end
+  
+  subject(:custom_issue_wrapper) do
+    Wrappers::Github::Issue.new(raw_custom_issue)
+  end
 
-  subject(:custom_issue) do
+  subject(:custom_issue_event) do
     Events::Github::CustomIssue.new(raw_custom_issue)
   end
 
@@ -18,65 +22,22 @@ describe Events::Github::CustomIssue do
       seed += raw_custom_issue['labels'].map{|l| l['name']}.join(',')
       seed += raw_custom_issue['state']
       seed += raw_custom_issue['updated_at']
+      seed += "Events::Github::CustomIssue"
 
-      expect(custom_issue.digest_seed).to eq seed
+      expect(custom_issue_event.digest_seed).to eq seed
     end
   end
 
-  describe "#title" do
-    it "should respond with 'title' from raw_response"
-  end
-
-  describe "#body" do
-    it "should respond with 'body' from raw_response"
-  end
-
-  describe "#html_url" do
-    it "should respond with 'html_url' from raw_response"
-  end
-
-  describe "#labels" do
-    it "should respond with 'labels' array from raw_response"
-  end
-
-  describe "#label_names" do
-    it "should get only labels names as CSV"
-  end
-
-  describe "#state" do
-    it "should respond with 'state' from raw_response"
-  end
-
-  describe "#number" do
-    it "should respond with 'number' from raw_response"
-  end
-
-  describe "#user" do
-    it "should respond with 'user' object from raw_response"
-  end
-
-  describe "#user_id" do
-    it "should respond with 'user'->'id' from raw_response"
-  end
-
-  describe "#user_login" do
-    it "should respond with 'user'->'login' from raw_response"
-  end
-
-  describe "#user_avatar_url" do
-    it "should respond with 'user'->'avatar_url' from raw_response"
+  describe "#origin_id" do
+    it "should delegate to @post->#id" do
+      expect(custom_issue_event.origin_id).to eq custom_issue_wrapper.id
+    end
   end
   
   describe "#repo_name" do
-    it "should find the repo_name in url and pluck it out"
+    it "should find the repo_name in url and pluck it out" do
+      expect(custom_issue_event.repo_name).to eq raw_custom_issue['url'].match(/repos\/(.*)\/issues/).andand[1]
+    end
   end
   
-  describe "#referenced_issue_numbers" do
-    it "should find the referenced issues in body"
-  end
-  
-  describe "#referenced_issue_numbers_csv" do
-    it "should respond with referenced issues as CSV"
-  end
-
 end

@@ -9,12 +9,6 @@ describe Wrappers::Twitter::Tweet do
   subject(:tweet) do
     Wrappers::Twitter::Tweet.new(raw_tweet)
   end
-  
-  # describe "#raw" do
-  #   it "it should respond with raw data it was constructed with" do
-  #     expect(tweet.raw).to eq raw_tweet.symbolize_keys
-  #   end
-  # end
 
   describe "#id" do
     it "should respond with 'id' from raw data" do
@@ -39,5 +33,19 @@ describe Wrappers::Twitter::Tweet do
       expect(tweet.created_at).to eq Time.parse(raw_tweet['created_at'])
     end
   end
+  
+  describe "retweet?" do
+    it "should respond positively if the tweet is a retweet" do
+      expect(tweet.retweet?).to eq not(raw_tweet['retweeted_status'].nil?)
+    end
+  end
+  
+  describe "retweeted_status" do
+    it "should be access the retweeted status data" do
+      retweet = Wrappers::Twitter::Tweet.new(raw_tweet['retweeted_status'])
+      expect(tweet.retweeted_status.text).to eq retweet.text
+    end
+  end
+
 
 end

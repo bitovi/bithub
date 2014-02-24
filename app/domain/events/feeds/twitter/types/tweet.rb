@@ -4,11 +4,13 @@ module Events
     class Tweet < Protocol
       extend Forwardable
 
-      def_delegator :@user, :id, :origin_author_id
-      def_delegator :@user, :screen_name, :origin_author_name
-      def_delegator :@user, :profile_image_url, :origin_author_avatar_url
+      def_delegator :@user, :id, :user_id
+      def_delegator :@user, :screen_name, :user_screen_name
+      def_delegator :@user, :profile_image_url, :user_profile_image_url
 
       def_delegators :@tweet, :id, :id_str, :text, :entities, :retweet?
+
+      attr_accessor :retweet
 
       def digest_seed
         id_str + self.class.name
@@ -27,10 +29,14 @@ module Events
       end
       
       def wrap_reponse_parts
-        @user ||= Wrappers::Tweet::User.new(source_data.andand[:user])
+        @user ||= Wrappers::Twitter::User.new(source_data.andand[:user])
         @tweet ||= Wrappers::Twitter::Tweet.new(source_data)
+        @retweet ||= @tweet.retweeted_status
       end
 
+      alias_method :origin_author_id, :user_id
+      alias_method :origin_author_name, :user_screen_name
+      alias_method :origin_author_avatar_url, :user_profile_image_url
     end
 
   end

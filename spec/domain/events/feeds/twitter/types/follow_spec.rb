@@ -12,32 +12,10 @@ describe Events::Twitter::Follow do
 
   describe "#content_digest" do
     it "should calculate the content_digest based on source_id, target_id and class name" do
-      digest = Digest::MD5.hexdigest(raw_follow['source']['id_str'] + raw_follow['target']['id_str'] + follow.class.name)
-      expect(follow.content_digest).to eq digest
-    end
-  end
-
-  describe "#source_id" do
-    it "should respond_with 'source'->'id' from raw response" do
-      expect(follow.source_id).to eq raw_follow['source']['id']
-    end
-  end
-
-  describe "#source_screen_name" do
-    it "should respond_with 'source'->'name' from raw response" do
-      expect(follow.source_screen_name).to eq raw_follow['source']['screen_name']
-    end
-  end
-
-  describe "#target_id" do
-    it "should respond_with 'target'->'id' from raw response" do
-      expect(follow.target_id).to eq raw_follow['target']['id']
-    end
-  end
-
-  describe "#target_screen_name" do
-    it "should respond_with 'target'->'name' from raw response" do
-      expect(follow.target_screen_name).to eq raw_follow['target']['screen_name']
+      seed =  raw_follow['source']['id'].to_s
+      seed += raw_follow['target']['id'].to_s
+      seed += "Events::Twitter::Follow"
+      expect(follow.digest_seed).to eq seed
     end
   end
 
@@ -51,5 +29,4 @@ describe Events::Twitter::Follow do
       expect(follow.origin_timestamp).to eq parsed_time
     end
   end
-    
 end

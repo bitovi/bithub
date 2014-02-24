@@ -53,5 +53,17 @@ describe Wrappers::Meetup::Event do
       expect(event.created).to eq parsed
     end
   end
+  
+  describe "#host_ids" do
+    it "should respond with an array of ids of hosts" do
+      expect(event.host_ids).to eq raw_event['event_hosts'].map{|h| h['member_id']}
+    end
+  end
 
+  describe "#host_names" do
+    it "should respond with an array of names of hosts" do
+      expect(event.host_names).to eq raw_event['event_hosts'].map{|h| h['member_name']}
+    end
+  end
+    
 end

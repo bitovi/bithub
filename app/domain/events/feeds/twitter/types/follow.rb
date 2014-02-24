@@ -5,18 +5,16 @@ module Events
       extend Forwardable
 
       def_delegator :@source, :id, :source_id
-      def_delegator :@source, :id_str, :source_id_str
       def_delegator :@source, :screen_name, :source_screen_name
 
       def_delegator :@target, :id, :target_id
-      def_delegator :@target, :id_str, :target_id_str
       def_delegator :@target, :screen_name, :target_screen_name
       
       alias_method :origin_author_id, :source_id
       alias_method :origin_author_name, :source_screen_name
 
       def digest_seed
-        source_id_str + target_id_str + self.class.name
+        source_id.to_s + target_id.to_s + self.class.name
       end
 
       def origin_timestamp
