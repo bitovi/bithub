@@ -4,12 +4,12 @@ module Entities
     class Comment < Protocol
 
       def find
-        nil
+        @payload.origin_id && find_by_origin_id
       end
 
       def build
         Entity.new({
-          title: @payload.title,
+          title: "commented #{@payload.post_type} ##{@payload.post_id}",
           body: @payload.body_markdown || @payload.body,
           url: @payload.link,
           origin_ts: @payload.origin_ts,
@@ -25,6 +25,21 @@ module Entities
           }
         })
       end
+
+      def update
+        @instance
+      end
+
+      private
+
+      def find_by_origin_id
+        Entity
+          .feed('stack_exchange')
+          .type('comment')
+          .where(origin_id: @payload.origin_id)
+          .first
+      end
+
 
     end
 

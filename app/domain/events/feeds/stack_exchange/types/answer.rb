@@ -5,7 +5,7 @@ module Events
       include Events::StackExchange::Accessors::Standard
 
       def content_digest
-        Digest::MD5.hexdigest(origin_id.to_s + (last_edit_date || origin_ts).to_s + self.class.name)
+        Digest::MD5.hexdigest(origin_id.to_s + (last_activity_date || origin_ts).to_s + self.class.name)
       end
 
       def origin_id
