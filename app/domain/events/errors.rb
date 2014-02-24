@@ -11,4 +11,5 @@ module Events
   class BuildingError < BaseError; end
   class MappingError < BaseError; end
   class DispatchError < BaseError; end
+  class ValidationError < BaseError; end
 end
