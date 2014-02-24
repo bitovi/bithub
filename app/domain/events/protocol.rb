@@ -1,6 +1,7 @@
 require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
+require_relative 'traits/validatable'
 
 module Events
   module Github; end
@@ -16,6 +17,7 @@ module Events
     include CoreHelpers
     include Persistable
     include Serializable
+    include Validatable
     include Loggable
 
     attr_reader :instance, :source_data, :meta
@@ -70,6 +72,12 @@ module Events
     
     def nice_name
       self.class.name.gsub(/^Events::.*::/, '')
+    end
+    
+    def collect_methods(regexp)
+      (self.private_methods + self.methods + self.class.instance_methods(false))
+        .select {|m| m.match(regexp)}
+        .uniq
     end
 
     def module_and_class_names

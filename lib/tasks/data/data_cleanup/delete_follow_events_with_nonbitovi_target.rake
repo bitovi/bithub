@@ -1,17 +1,18 @@
 namespace :data do
   task :delete_follow_events_with_nonbitovi_target => :environment do
 
-    VALID_TARGETS = ['canjs', 'javascriptmvc', 'bitovi', 'jquerypp', 'funcunit']
+    ValidTargets = ['canjs', 'javascriptmvc', 'bitovi', 'jquerypp', 'funcunit']
     
     puts "---"
     puts "Deleting follow events with non-bitovi target"
 
-    events = Event.tagged_with('follow_event')
+    entity = Entity.feed('twitter').type('follow')
     counter = []
     
-    events.each do |e|
-      screen_name = e.source_data.andand['target'].andand['screen_name']
-      if screen_name && !VALID_TARGETS.include?(screen_name)
+    entity.find_each do |e|
+      screen_name = e.props.andand['target']
+
+      if screen_name && not(ValidTargets.include?(screen_name))
         e.destroy
         counter.push screen_name
       end
