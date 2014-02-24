@@ -36,7 +36,7 @@ module Events
 
       @response = response
     end
-    
+
     def parse
       @parsed ||= subprocessor.parse
       self
@@ -49,7 +49,7 @@ module Events
       @extracted ||= subprocessor.extract
       self
     end
-    
+
     def decorate
       @decorated ||= result.map do |event_hash|
         event_instance(event_hash)
@@ -109,7 +109,7 @@ module Events
       end
     end
   end
-  
+
   module Twitter
     class Processor
       attr_reader :parsed, :extracted
@@ -142,14 +142,14 @@ module Events
       def user_stream?
         @config.user_stream?
       end
-      
+
       def public_stream?
         not(user_stream?)
       end
     end
   end
 
-  
+
   module Github
     class Processor < BasicTypeProcessor
       def parse
@@ -161,7 +161,7 @@ module Events
       end
     end
   end
-  
+
   module Meetup
     class Processor < BasicTypeProcessor
       def parse
@@ -173,7 +173,19 @@ module Events
       end
     end
   end
-  
+
+  module StackExchange
+    class Processor < BasicTypeProcessor
+      def parse
+        @parsed ||= Yajl::Parser.parse(@response)
+      end
+
+      def extract
+        @extracted = parse['items']
+      end
+    end
+  end
+
   module Disqus
     class Processor < BasicTypeProcessor
       def parse
@@ -185,7 +197,7 @@ module Events
       end
     end
   end
-  
+
   module Blog
     class Processor < BasicTypeProcessor
       def parse
@@ -197,5 +209,5 @@ module Events
       end
     end
   end
-  
+
 end

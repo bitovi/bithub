@@ -96,6 +96,9 @@ meetup:
   display_name: "Meetup"
   group_list: "feeds"
 
+stack_exchange:
+  display_name: "StackExchange"
+  group_list: "feeds"
 
 # ----------
 # Categories
@@ -138,10 +141,6 @@ comment:
   group_list: "categories"
   props:
     order_on_page: "04"
-
-github_comment:
-  display_name: "Github Comment"
-  group_list: "categories"
 
 github_comment:
   display_name: "Github Comment"
@@ -237,6 +236,14 @@ post: {}
 ### Meetup specific
 
 rsvp: {}
+
+### StackExchange specific
+
+#question: {} # defined above
+
+answer: {}
+
+#comment: {} # defined above
 
 ### IRC specific
 
