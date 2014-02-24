@@ -70,12 +70,12 @@ class Entity < ActiveRecord::Base
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
   scope :without_future, lambda { |clientTz|
-    end_of_today = Time.now.change(hour: 23, min: 59, sec: 59)
+    end_of_today = Time.now.utc.change(hour: 23, min: 59, sec: 59)
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
   }
 
   scope :in_future, lambda { |clientTz|
-    start_of_today = Time.now.change(hour: 0, min: 0, sec: 0)
+    start_of_today = Time.now.utc.change(hour: 0, min: 0, sec: 0)
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > ?", clientTz, start_of_today)
   }
 
