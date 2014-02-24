@@ -11,6 +11,10 @@ module Wrappers
         @data = symbolize_keys(commit)
       end
 
+      def ==(other)
+        sha == other.sha
+      end
+
       def author_name
         @data[:author].andand[:name]
       end

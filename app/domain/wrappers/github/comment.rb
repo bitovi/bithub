@@ -5,8 +5,8 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      attr_reader :user
       data_accessors :id, :body, :html_url, :commit_id
+      attr_reader :user
 
       def initialize(comment)
         @data = symbolize_keys(comment)

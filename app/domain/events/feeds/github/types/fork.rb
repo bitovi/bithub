@@ -11,7 +11,7 @@ module Events
       def_delegator :@repo, :name, :repo_name
 
       def digest_seed
-        actor.login + repo.name + self.class.name
+        @actor.login + @repo.name + self.class.name
       end
 
       def wrap_reponse_parts
