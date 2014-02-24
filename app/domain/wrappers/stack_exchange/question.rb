@@ -1,0 +1,36 @@
+module Wrappers
+  module StackExchange
+
+    class Question
+      extend DataAccessible
+      include CoreHelpers
+
+      data_accessors :question_id, :accepted_answer_id,
+        :title, :body, :score, :link,
+        :is_answered, :up_vote_count
+
+      alias_method :is_answered, :answered?
+      alias_method :up_vote_count, :upvote_count
+
+      def initialize(question)
+        @data = symbolize_keys(question)
+        @answers = @data[:answers].andand.map{|a| Wrappers::StackExchange::Answer.new(a)}
+        @comments = @data[:comments].andand.map{|c| Wrappers::StackExchange::Comment.new(c)}
+        @owner = Wrappers::StackExchange::User.new(@data[:owner])
+      end
+      
+      def creation_date
+        Time.at(@data[:creation_date])
+      end
+
+      def last_activity_date
+        Time.at(@data[:last_activity_date])
+      end
+
+      def last_edit_date
+        Time.at(@data[:last_edit_date])
+      end
+
+    end
+  end
+end
