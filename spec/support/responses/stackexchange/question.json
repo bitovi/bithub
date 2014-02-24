@@ -1,75 +1,88 @@
 {
-	"items": [
-		{
-			"tags": ["javascript","canjs"],
-			"answers":[
-				{
-					"comments":[
-						{
-							"owner": {
-								"reputation":13,
-								"user_id":3187466,
-								"user_type":"registered",
-								"profile_image":
-								"http://i.stack.imgur.com/NdKuT.jpg?s=128&g=1",
-								"display_name":"Phane",
-								"link":"http://stackoverflow.com/users/3187466/phane"
-							},
-							"edited":false,
-							"score":0,
-							"creation_date":1389674794,
-							"post_id":21083225,
-							"comment_id":31753781,
-							"link":"http://stackoverflow.com/questions/21076028/javascript-framework-canjs-control-route/21083225#comment31753781_21083225"
-						}
-					],
-					"owner":{
-						"reputation":20519,
-						"user_id":120513,
-						"user_type":"registered",
-						"accept_rate":100,
-						"profile_image":
-						"https://www.gravatar.com/avatar/a14850281f19396480bdba4aab2d52ef?s=128&d=identicon&r=PG",
-						"display_name":"Daff",
-						"link":"http://stackoverflow.com/users/120513/daff"
-					},
-					"comment_count":1,
-					"is_accepted":true,
-					"score":2,
-					"last_activity_date":1389582367,
-					"creation_date":1389582367,
-					"answer_id":21083225,
-					"question_id":21076028,
-					"title":"javascript framework canJs control.route"
-				}
-			],
+	"tags":["javascript","url-routing","canjs"],
+	"comments":[{
+		"owner":{
+			"reputation":20539,
+			"user_id":120513,
+			"user_type":"registered",
+			"accept_rate":100,
+			"profile_image":"https://www.gravatar.com/avatar/a14850281f19396480bdba4aab2d52ef?s=128&d=identicon&r=PG",
+			"display_name":"Daff",
+			"link":"http://stackoverflow.com/users/120513/daff"
+		},
+		"edited":false,
+		"score":0,
+		"post_type":
+		"question",
+		"creation_date":1391655400,
+		"post_id":21582891,
+		"comment_id":32621616,
+		"body_markdown":"To add to @air_hadoken's correct answer, this should be the only major breaking change when upgrading form 1.1.x to 2.0.x: http://canjs.com/guides/migrating.html",
+		"link":"http://stackoverflow.com/questions/21582891/canjs-not-routing#comment32621616_21582891",
+		"body":"To add to @air_hadoken&#39;s correct answer, this should be the only major breaking change when upgrading form 1.1.x to 2.0.x: <a href=\"http://canjs.com/guides/migrating.html\" rel=\"nofollow\">canjs.com/guides/migrating.html</a>"
+	}],
+	"answers":[{
+		"comments":[{
 			"owner":{
-				"reputation":13,
-				"user_id":3187466,
+				"reputation":130,
+				"user_id":1190789,
 				"user_type":"registered",
-				"profile_image":"http://i.stack.imgur.com/NdKuT.jpg?s=128&g=1",
-				"display_name":"Phane",
-				"link":"http://stackoverflow.com/users/3187466/phane"
+				"accept_rate":60,
+				"profile_image":"https://www.gravatar.com/avatar/3b7577d65a3b8d227e3c0b5cd58b5ede?s=128&d=identicon&r=PG",
+				"display_name":"rdk1992",
+				"link":"http://stackoverflow.com/users/1190789/rdk1992"
 			},
-			"comment_count":0,
-			"is_answered":true,
-			"up_vote_count":1,
-			"accepted_answer_id":21083225,
-			"answer_count":1,
-			"score":1,
-			"last_activity_date":1392835676,
-			"creation_date":1389538280,
-			"last_edit_date":1392835676,
-			"question_id":21076028,
-			"body_markdown":"i would like use this tuto http://bitovi.com/blog/2012/05/hashchange-routing-can-route-1.html, but doesn&#39;t work for me \r\n\r\n&lt;pre&gt;\r\n    $(function() {\r\n    \r\n    Router = can.Control({\r\n    \r\n      &quot;completed route&quot; : function(){\r\n        console.log(&quot;the hash is #!completed&quot;)\r\n      },\r\n      &quot;active route&quot; : function(){\r\n        console.log(&quot;the hash is #!active&quot;)\r\n      },\r\n      &quot;project/create&quot; : function(){\r\n        console.log(&quot;the hash is #!project/create&quot;)\r\n      },\r\n      &quot;route&quot; : function(){\r\n        console.log(&quot;empty hash&quot;)\r\n      }\r\n    });\r\n\r\n    // make sure to initialize the Control\r\n    new Router(document);\r\n\r\n    });\r\n\r\n&lt;/pre&gt;\r\n\r\ni use window.location.hash = &quot;!#completed&quot; or &lt;a href=&quot;#!active&quot;&gt;Show Active&lt;/a&gt;\r\nno message is displayed in console.\r\n\r\nI use canjs 2.0.4 with JQuery\r\n\r\nThank for help \r\n","link":"http://stackoverflow.com/questions/21076028/javascript-framework-canjs-control-route",
-			"title":
-			"javascript framework canJs control.route"
-		}
-	],
-	"has_more":true,
-	"quota_max":10000,
-	"quota_remaining":9989,
-	"page":1,
-	"page_size":1,
-	"total":90
+			"edited":false,
+			"score":0,
+			"post_type":"answer",
+			"creation_date":1391729003,
+			"post_id":21589588,
+			"comment_id":32662223,
+			"body_markdown":"thanks it worked. Now what I did was to download the latest version from their website and it still didnt worked, I download the one in your fiddle and it worked!. Thanks a lot, I needed to upgrade since the two way binding is a feature I must use now :D.",
+			"link":"http://stackoverflow.com/questions/21582891/canjs-not-routing/21589588#comment32662223_21589588",
+			"body":"thanks it worked. Now what I did was to download the latest version from their website and it still didnt worked, I download the one in your fiddle and it worked!. Thanks a lot, I needed to upgrade since the two way binding is a feature I must use now :D."
+		}],
+		"owner":{
+			"reputation":96,
+			"user_id":3089006,
+			"user_type":"registered",
+			"profile_image":"https://www.gravatar.com/avatar/c56baa1b4f39839c018180bf63226f7d?s=128&d=identicon&r=PG",
+			"display_name":"air_hadoken",
+			"link":"http://stackoverflow.com/users/3089006/air-hadoken"
+		},
+		"comment_count":1,
+		"up_vote_count":2,
+		"is_accepted":true,
+		"score":2,
+		"last_activity_date":1391638099,
+		"creation_date":1391638099,
+		"answer_id":21589588,
+		"question_id":21582891,
+		"link":"http://stackoverflow.com/questions/21582891/canjs-not-routing/21589588#21589588",
+		"title":"Canjs Not Routing",
+		"body":"<p>FYI, the latest CanJS is 2.0.5, released yesterday.</p>\n\n<p><code>can.route.ready()</code> doesn't work like it used to.  <code>can.route.ready(true)</code> in fact does nothing, in order to prevent multiple route setups in legacy code.  This explains somewhat why your code isn't initializing that first jump to #!dashboard, since you would need to init the Router controller before the call to <code>ready</code>.  </p>\n\n<p>Better to remove the first call to <code>ready</code> and take out the argument from the second. I have a demo of this at <a href=\"http://jsfiddle.net/air_hadoken/5maLu/1/\" rel=\"nofollow\">http://jsfiddle.net/air_hadoken/5maLu/1/</a> -- click Run and you will see evidence of each route listener in your controller firing.</p>\n"
+	}],
+	"owner":{
+		"reputation":130,
+		"user_id":1190789,
+		"user_type":"registered",
+		"accept_rate":60,
+		"profile_image":"https://www.gravatar.com/avatar/3b7577d65a3b8d227e3c0b5cd58b5ede?s=128&d=identicon&r=PG",
+		"display_name":"rdk1992",
+		"link":"http://stackoverflow.com/users/1190789/rdk1992"
+	},
+	"comment_count":1,
+	"is_answered":true,
+	"up_vote_count":2,
+	"accepted_answer_id":21589588,
+	"answer_count":1,
+	"score":2,
+	"last_activity_date":1391638099,
+	"creation_date":1391617882,
+	"last_edit_date":1391618487,
+	"question_id":21582891,
+	"body_markdown":"so this bug is killing me as I have no clue what's going on, I updated my canjs version to the latest which is currently 2.0.4 with jquery, and the router stopped working. Is not routing anything, I try with window.location.hash and can.route.attr and is not routing. The thing that bugs me is that with the old version I had was working perfectly. Here is the code\r\n\r\n    var Router = can.Control({\r\n        'init': function() {\r\n        },\r\n        'route' : function(){\r\n            window.location.hash = '#!dashboard';\r\n        },\r\n        'dashboard route': function() {\r\n            console.log('dashboard')\r\n        }\r\n    });\r\n\r\n    $(document).ready(function() {\r\n        can.route.ready(false);\r\n        new Router($('body'));\r\n        can.route.ready(true);\r\n    });\r\n",
+	"link":"http://stackoverflow.com/questions/21582891/canjs-not-routing",
+	"title":"Canjs Not Routing",
+	"body":"<p>so this bug is killing me as I have no clue what's going on, I updated my canjs version to the latest which is currently 2.0.4 with jquery, and the router stopped working. Is not routing anything, I try with window.location.hash and can.route.attr and is not routing. The thing that bugs me is that with the old version I had was working perfectly. Here is the code</p>\n\n<pre><code>var Router = can.Control({\n    'init': function() {\n    },\n    'route' : function(){\n        window.location.hash = '#!dashboard';\n    },\n    'dashboard route': function() {\n        console.log('dashboard')\n    }\n});\n\n$(document).ready(function() {\n    can.route.ready(false);\n    new Router($('body'));\n    can.route.ready(true);\n});\n</code></pre>\n"
 }
