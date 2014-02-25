@@ -1,18 +1,6 @@
 module Users
   class ActivitiesAndEntitiesSnatcher
 
-    class SnatchingJob < Struct.new(:current_user_id, :other_user_id)
-      def perform
-        current_user = User.find_by_id current_user_id
-        other_user = User.find_by_id other_user_id
-        if current_user && other_user
-          ActivitiesAndEntitiesSnatcher.new(current_user, other_user).execute
-          DuplicateInternalsCleaner.new(current_user).execute
-          current_user.update_total_score
-        end
-      end
-    end
-
     def initialize(current, other)
       @current_user = current
       @other_user = other
@@ -27,7 +15,7 @@ module Users
     end
 
     def async_execute
-      Delayed::Job.enqueue SnatchingJob.new(@current_user.id, @other_user.id)
+      Delayed::Job.enqueue Jobs::SnatchingJob.new(@current_user.id, @other_user.id)
     end
 
     def snatch_entities
