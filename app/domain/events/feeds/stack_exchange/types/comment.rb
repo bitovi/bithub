@@ -2,26 +2,26 @@ module Events
   module StackExchange
 
     class Comment < Protocol
-      include Events::StackExchange::Accessors::Standard
+      extend Forwardable
+      
+      def_delegators :@comment, :comment_id, :post_id, :post_type,
+        :body, :link, :score, :edited?,
+        :creation_date
 
-      def content_digest
-        Digest::MD5.hexdigest(origin_id.to_s + origin_ts.to_s + self.class.name)
+      def digest_seed
+        comment_id.to_s + creation_date.to_s + self.class.name
       end
 
       def origin_id
         comment_id
       end
 
-      def post_id
-        source_data.andand[:post_id].to_s
+      def origin_timestamp
+        creation_date.utc
       end
 
-      def post_type
-        source_data.andand[:post_type]
-      end
-
-      def comment_id
-        source_data.andand[:comment_id].to_s
+      def wrap_reponse_parts
+        @comment = Wrappers::StackExchange::Comment.new(source_data)
       end
 
     end

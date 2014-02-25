@@ -5,18 +5,19 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :answer_id, :question_id,
-        :title, :body, :score, :link,
-        :is_accepted, :up_vote_count,
-        :body_markdown
+      has_fields :answer_id, :question_id,
+        :title, :body, :link, :score, :is_accepted,
+        :up_vote_count, :body_markdown
 
       alias_method :accepted?, :is_accepted
       alias_method :upvote_count, :up_vote_count
 
+      attr_reader :comments, :owner
+
       def initialize(answer)
         @data = symbolize_keys(answer)
         @comments = @data[:comments].andand.map{|c| Wrappers::StackExchange::Comment.new(c)}
-        @owner = Wrappers::StackExchange::User.new(@data.andand[:answer])
+        @owner = Wrappers::StackExchange::User.new(@data[:owner])
       end
 
       def creation_date

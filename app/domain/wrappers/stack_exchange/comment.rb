@@ -5,11 +5,12 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :edited, :score,
-        :post_id,
-        :comment_id,
-        :link, :body,
+      has_fields :comment_id, :post_id, :post_type,
+        :body, :link, :score,
+        :edited,
         :body_markdown
+
+      alias_method :edited?, :edited
 
       attr_reader :user
 
