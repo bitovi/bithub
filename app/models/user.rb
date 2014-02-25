@@ -89,7 +89,8 @@ class User < ActiveRecord::Base
   def collect_hosted_entities
     if (ident = identities.where(provider: 'meetup').first)
       Entity.feed('meetup').type('event').origin_host(ident.uid).find_each do |entity|
-        entity.event_hosts = self
+        entity.ownerships << Ownership.new(owner: self, entity: entity, ownership_type: :host).determine_value
+        entity.save
       end
     end
   end
