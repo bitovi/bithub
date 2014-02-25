@@ -5,7 +5,8 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :rsvp_id, :comment, :response
+      has :rsvp_id, :response
+      maybe_has :comment
 
       attr_reader :member, :event
       alias_method :id, :rsvp_id

@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      has_fields :question_id, :accepted_answer_id,
+      has :question_id, :accepted_answer_id,
         :title, :body, :link, :score, :is_answered,
         :up_vote_count, :body_markdown
 

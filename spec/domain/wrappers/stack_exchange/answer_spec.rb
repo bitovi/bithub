@@ -22,15 +22,15 @@ describe Wrappers::StackExchange::Answer do
     end
   end
 
-  describe "#score" do
-    it "should respond with 'score' from raw response" do
-      expect(answer.score).to eq raw_answer['score']
-    end
-  end
-
   describe "#title" do
     it "should respond with 'event_title' from raw response" do
       expect(answer.title).to eq raw_answer['title']
+    end
+  end
+  
+  describe "#body" do
+    it "should respond with 'body' from raw response" do
+      expect(answer.body).to eq raw_answer['body']
     end
   end
 
@@ -39,10 +39,10 @@ describe Wrappers::StackExchange::Answer do
       expect(answer.link).to eq raw_answer['link']
     end
   end
-  
-  describe "#body" do
-    it "should respond with 'body' from raw response" do
-      expect(answer.body).to eq raw_answer['body']
+
+  describe "#score" do
+    it "should respond with 'score' from raw response" do
+      expect(answer.score).to eq raw_answer['score']
     end
   end
   

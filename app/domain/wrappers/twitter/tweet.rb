@@ -6,7 +6,7 @@ module Wrappers
       include CoreHelpers
 
       attr_reader :retweet, :entities
-      data_accessors :id, :id_str, :text
+      has :id, :id_str, :text
 
       def initialize(tweet)
         @data = symbolize_keys(tweet)

@@ -12,13 +12,15 @@ describe Wrappers::Meetup::Member do
 
   describe "#id" do
     it "should respond with 'id' from raw data" do
-      expect(member.id).to eq raw_rsvp['member']['member_id']
+      m = raw_rsvp['member']
+      expect(member.id).to eq m['member_id'] || m['id']
     end
   end
   
   describe "#name" do
     it "should respond with 'name' from raw data" do
-      expect(member.name).to eq raw_rsvp['member']['member_name']
+      m = raw_rsvp['member']
+      expect(member.name).to eq m['member_name'] || m['name']
     end
   end
 

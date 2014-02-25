@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :id, :event_url, :name, :description, :status
+      has :id, :event_url, :name, :description, :status
 
       attr_reader :hosts, :venue
       alias_method :url, :event_url

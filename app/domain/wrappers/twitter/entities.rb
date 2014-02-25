@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :urls, :symbols, :hashtags, :user_mentions
+      maybe_has :urls, :symbols, :hashtags, :user_mentions
 
       def initialize(entities)
         @data = symbolize_keys(entities)
