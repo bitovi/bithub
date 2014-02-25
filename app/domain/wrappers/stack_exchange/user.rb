@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :user_id,
+      has :user_id,
         :reputation,
         :profile_image,
         :link,

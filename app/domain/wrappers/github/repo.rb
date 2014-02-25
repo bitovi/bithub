@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :name, :url
+      has :name, :url
 
       def initialize(repo)
         @data = symbolize_keys(repo)

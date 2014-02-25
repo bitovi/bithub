@@ -6,7 +6,7 @@ module Wrappers
       include CoreHelpers
 
       attr_reader :author, :forum, :thread
-      data_accessors :id, :url, :message
+      has :id, :url, :message
 
       def initialize(post)
         @data = symbolize_keys(post)

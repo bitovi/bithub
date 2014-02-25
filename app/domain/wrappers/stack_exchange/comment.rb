@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      has_fields :comment_id, :post_id, :post_type,
+      has :comment_id, :post_id, :post_type,
         :body, :link, :score,
         :edited,
         :body_markdown

@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :name, :lat, :lon
+      has :name, :lat, :lon
 
       def initialize(venue)
         @data = symbolize_keys(venue)

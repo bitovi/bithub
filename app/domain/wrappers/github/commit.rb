@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :sha, :message, :url
+      has :sha, :message, :url
 
       def initialize(commit)
         @data = symbolize_keys(commit)

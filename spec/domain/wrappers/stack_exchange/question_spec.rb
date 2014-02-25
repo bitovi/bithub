@@ -9,10 +9,34 @@ describe Wrappers::StackExchange::Question do
   subject(:question) do
     Wrappers::StackExchange::Question.new(raw_question)
   end
+  
+  describe "#question_id" do
+    it "should respond with 'question_id' from raw response" do
+      expect(question.question_id).to eq raw_question['question_id']
+    end
+  end
 
   describe "#accepted_answer_id" do
     it "should respond with 'accepted_answer_id' from raw response" do
       expect(question.accepted_answer_id).to eq raw_question['accepted_answer_id']
+    end
+  end
+
+  describe "#title" do
+    it "should respond with 'title' from raw response" do
+      expect(question.title).to eq raw_question['title']
+    end
+  end
+  
+  describe "#body" do
+    it "should respond with 'body' from raw response" do
+      expect(question.body).to eq raw_question['body']
+    end
+  end
+  
+  describe "#link" do
+    it "should respond with 'link' from raw response" do
+      expect(question.link).to eq raw_question['link']
     end
   end
 
@@ -21,10 +45,10 @@ describe Wrappers::StackExchange::Question do
       expect(question.score).to eq raw_question['score']
     end
   end
-
-  describe "#body_markdown" do
-    it "should respond with 'body_markdown' from raw response" do
-      expect(question.body_markdown).to eq raw_question['body_markdown']
+    
+  describe "#answered?" do
+    it "should respond with 'is_answered' from raw response" do
+      expect(question.answered?).to eq raw_question['is_answered']
     end
   end
 
@@ -34,21 +58,9 @@ describe Wrappers::StackExchange::Question do
     end
   end
 
-  describe "#link" do
-    it "should respond with 'link' from raw response" do
-      expect(question.link).to eq raw_question['link']
-    end
-  end
-  
-  describe "#body" do
-    it "should respond with 'body' from raw response" do
-      expect(question.body).to eq raw_question['body']
-    end
-  end
-    
-  describe "#answered?" do
-    it "should respond with 'is_answered' from raw response" do
-      expect(question.answered?).to eq raw_question['is_answered']
+  describe "#body_markdown" do
+    it "should respond with 'body_markdown' from raw response" do
+      expect(question.body_markdown).to eq raw_question['body_markdown']
     end
   end
   

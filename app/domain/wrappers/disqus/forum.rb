@@ -5,7 +5,7 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :id, :name, :url
+      has :id, :name, :url
 
       def initialize(forum)
         @data = symbolize_keys(forum)
