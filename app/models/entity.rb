@@ -70,12 +70,12 @@ class Entity < ActiveRecord::Base
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
   scope :without_future, lambda { |clientTz|
-    end_of_today = Time.now.change(hour: 23, min: 59, sec: 59)
+    end_of_today = Time.now.in_time_zone(clientTz).change(hour: 23, min: 59, sec: 59)
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
   }
 
   scope :in_future, lambda { |clientTz|
-    start_of_today = Time.now.change(hour: 0, min: 0, sec: 0)
+    start_of_today = Time.now.in_time_zone(clientTz).change(hour: 0, min: 0, sec: 0)
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > ?", clientTz, start_of_today)
   }
 
@@ -91,7 +91,7 @@ class Entity < ActiveRecord::Base
 
   # Authorship
   scope :origin_author, lambda {|uid| where("props -> 'origin_author_id' = :uid", uid: uid.to_s) }
-  scope :origin_host, lambda {|uid| where("string_to_array(props -> 'event_host_ids_csv', ',') @> string_to_array(:uid, ',')", uid: uid.to_s) }
+  scope :origin_host, lambda {|uid| where("string_to_array(props -> 'event_host_ids_csv', ',') @> string_to_array(:uid, ',') OR string_to_array(props -> 'event_host_ids', ',') @> string_to_array(:uid, ',')", uid: uid.to_s) }
   
   # Issues
   scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
