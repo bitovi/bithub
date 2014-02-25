@@ -7,10 +7,11 @@ module Wrappers
 
       data_accessors :question_id, :accepted_answer_id,
         :title, :body, :score, :link,
-        :is_answered, :up_vote_count
+        :is_answered, :up_vote_count,
+        :body_markdown
 
-      alias_method :is_answered, :answered?
-      alias_method :up_vote_count, :upvote_count
+      alias_method :answered?, :is_answered
+      alias_method :upvote_count, :up_vote_count
 
       def initialize(question)
         @data = symbolize_keys(question)

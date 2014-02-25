@@ -6,12 +6,12 @@ module Wrappers
       include CoreHelpers
 
       data_accessors :answer_id, :question_id,
-        :title, :body, :score, :link
+        :title, :body, :score, :link,
         :is_accepted, :up_vote_count,
         :body_markdown
 
-      alias_method :is_accepted, :accepted?
-      alias_method :up_vote_count, :upvote_count
+      alias_method :accepted?, :is_accepted
+      alias_method :upvote_count, :up_vote_count
 
       def initialize(answer)
         @data = symbolize_keys(answer)
