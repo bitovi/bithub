@@ -1,12 +1,6 @@
 module Users
   class EntitiesUnlinker
 
-    class UnlinkingJob < Struct.new(:user_id)
-      def perform
-        EntitiesUnlinker.new(user_id).unlink
-      end
-    end
-
     def initialize(uid, user_id, provider)
       @uid = uid
       @user_id = user_id
@@ -14,18 +8,26 @@ module Users
     end
 
     def unlink
-      unlink_entities
+      unlink_authored_entities
+      unlink_hosted_entities
       UserActivity.refresh
     end
     
     def async_unlink
-      Delayed::Job.enqueue UnlinkingJob.new(@user_id)
+      Delayed::Job.enqueue Jobs::UnlinkingJob.new(@uid, @user_id, @provider)
     end
 
-    def unlink_entities
+    def unlink_authored_entities
       Entity.origin_author(@uid).find_each do |e|
-        e.ownerships
-        .where(ownership_type: 'author')
+        e.ownerships.where(ownership_type: 'author')
+        .where(owner_id: @user_id)
+        .destroy_all
+      end
+    end
+    
+    def unlink_hosted_entities
+      Entity.origin_host(@uid).find_each do |e|
+        e.ownerships.where(ownership_type: 'host')
         .where(owner_id: @user_id)
         .destroy_all
       end
