@@ -43,17 +43,6 @@ module Events
           creation_date
         end
 
-        def last_activity_date
-          unix_ts_to_time source_data.andand[:last_activity_date]
-        end
-
-        def last_edit_date
-          unix_ts_to_time source_data.andand[:last_edit_date]
-        end
-
-        def creation_date
-          unix_ts_to_time source_data.andand[:creation_date]
-        end
 
         private
 

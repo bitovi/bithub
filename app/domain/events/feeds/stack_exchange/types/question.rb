@@ -2,42 +2,31 @@ module Events
   module StackExchange
 
     class Question < Protocol
-      include Events::StackExchange::Accessors::Standard
+      extend Forwardable
 
-      def content_digest
-        Digest::MD5.hexdigest(origin_id.to_s + (last_activity_date || origin_ts).to_s  + self.class.name)
+      def_delegators :@question, :question_id, :accepted_answer_id,
+        :title, :body, :link, :score, :answered?,
+        :upvote_count, :last_activity_date, :creation_date
+
+      def digest_seed
+        question_id.to_s +
+          (last_activity_date || creation_date).to_s +
+          self.class.name
       end
 
       def origin_id
         question_id
       end
 
-      def question_id
-        source_data.andand[:question_id].to_s
+      def origin_timestamp
+        creation_date.utc
       end
 
-      def title
-        source_data.andand[:title]
-      end
-
-      def answered?
-        source_data.andand[:is_answered]
-      end
-
-      def accepted_answer_id
-        source_data.andand[:accepted_answer_id].to_s
-      end
-
-      def upvote_count
-        source_data.andand[:up_vote_count]
-      end
-
-      def comments
-        @comments ||= source_data[:comments].to_a.map {|c| Events::StackExchange::Comment.new(c)}
-      end
-
-      def answers
-        @answers ||= source_data[:answers].to_a.map {|a| Events::StackExchange::Answer.new(a)}
+      def wrap_reponse_parts
+        @question = Wrappers::StackExchange::Question.new(source_data)
+        @answers = @question.answers
+        @comments = @question.comments
+        @owner = @question.owner
       end
 
     end
