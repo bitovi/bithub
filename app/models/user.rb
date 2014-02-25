@@ -89,8 +89,7 @@ class User < ActiveRecord::Base
   def collect_hosted_entities
     if (ident = identities.where(provider: 'meetup').first)
       Entity.feed('meetup').type('event').origin_host(ident.uid).find_each do |entity|
-        hosts = entity.hosts
-        entity.event_hosts = (hosts << self)
+        entity.event_hosts = self
       end
     end
   end
