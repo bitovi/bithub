@@ -28,6 +28,14 @@ class Api::V1::AchievementsController < Api::V1::BaseController
     @achievement = Achievement.find(params[:id])
     filtered_params = params.select {|param| Achievement.accessible_attributes.include?(param)}
 
+    unless filtered_params["user"].nil?
+      filtered_params["user"] = User.find(filtered_params["user"]["id"])
+    end
+
+    unless filtered_params["reward"].nil?
+      filtered_params["reward"] = Reward.find(filtered_params["reward"]["id"])
+    end
+
     if @achievement.update_attributes(filtered_params)
       render :show
     else

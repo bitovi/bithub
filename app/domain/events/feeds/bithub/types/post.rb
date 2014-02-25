@@ -17,6 +17,10 @@ module Events
         )
       end
 
+      def validate
+        self
+      end
+
     end
   end
 end

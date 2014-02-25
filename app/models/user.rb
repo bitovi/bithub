@@ -86,6 +86,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  def collect_hosted_entities
+    if (ident = identities.where(provider: 'meetup').first)
+      Entity.feed('meetup').type('event').origin_host(ident.uid).find_each do |entity|
+        entity.ownerships << Ownership.new(owner: self, entity: entity, ownership_type: :host).determine_value
+        entity.save
+      end
+    end
+  end
+
   def update_total_score
     update_attribute(:total_score, self.score)
   end
@@ -121,6 +130,7 @@ class User < ActiveRecord::Base
 
   def async_collect_authored_entities
     Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :collect_authored_entities)
+    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :collect_hosted_entities)
   end
 
   def async_update_total_score
