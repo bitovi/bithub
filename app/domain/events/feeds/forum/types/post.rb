@@ -1,53 +1,41 @@
-require 'sanitizer'
-
 module Events
   module Forum
 
     class Post < Protocol
+      extend Forwardable
+
+      def_delegators :@item,
+        :title, :link, :pub_date,
+        :category
 
       def digest_seed
         link + self.class.name
-      end
-
-      def title
-        source_data.andand[:title]
-      end
-
-      def description
-        source_data.andand[:description]
-      end
-
-      def link
-        source_data.andand[:link]
       end
 
       def origin_author_name
         source_data.andand[:'dc:creator']
       end
 
-      def category
-        source_data.andand[:category]
-      end
-
       def term
         meta.andand[:term]
       end
 
+      def description
+        Sanitizer.sanitize_forum_post(@item.description)
+      end
+
       def origin_timestamp
-        Time.parse(source_data.andand[:pubDate]).utc
+        pub_date.utc
       end
-
-      def sanitized_body
-        sanitize(description)
+      
+      def wrap_reponse_parts
+        @item = Wrappers::Rss::Item.new(source_data)
       end
-
-      def sanitize(input)
-        (@sanitizer ||= Sanitizer.new).sanitize_forum_post(input)
-      end
-
+      
       alias_method :body, :description
       alias_method :url, :link
       alias_method :subforum, :category
+      alias_method :origin_id, :link
     end
 
   end
