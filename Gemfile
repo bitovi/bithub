@@ -40,7 +40,7 @@ gem 'awesome_print'
 gem 'twitter-text'
 gem 'dotenv-rails'
 
-gem 'spring', group: %i(development test)
+gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
