@@ -27,6 +27,10 @@ def import_all
   import_scoring_rules
 end
 
+def make_dummy_event(i)
+  Hash.new({content_digest: Digest::MD5.hexdigest(i.to_s), data: {title: "Event #{i}"}})
+end
+
 def import_tags
   tags = YAML::load_file(TAG_DEFINITIONS_PATH)
   tags.each do |tag_name, opts|

@@ -1,12 +1,14 @@
-require 'digest/md5'
 require 'domain/spec_helper'
 require 'app/domain/digest_queue'
+
+def make_dummy_event(i)
+  Hash.new({content_digest: Digest::MD5.hexdigest(i.to_s), data: {title: "Event #{i}"}})
+end
 
 describe DigestQueue do
   subject(:digest_queue) { DigestQueue.new }
 
   describe "#reject_old" do
-
     it "should have a backlog of 10 items at most" do
       items = (1..13).map {|i| make_dummy_event(i)}
       digest_queue.reject_old(items)
