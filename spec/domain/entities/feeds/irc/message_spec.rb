@@ -1,4 +1,4 @@
 require 'domain/entities/spec_helper'
 
-describe Entities::Determinable do
+describe Entities::Irc::Message do
 end
