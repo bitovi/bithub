@@ -17,24 +17,6 @@ describe Events::Blog::Post do
     end
   end
 
-  describe "#link" do
-    it "should respond with 'link' from raw response" do
-      expect(blog_post.link).to eq raw_blog_post['link']
-    end
-  end
-
-  describe "#title" do
-    it "should respond with 'title' from raw response" do
-      expect(blog_post.title).to eq raw_blog_post['title']
-    end
-  end
-
-  describe "#description" do
-    it "should respond with 'description' from raw response" do
-      expect(blog_post.description).to eq raw_blog_post['description']
-    end
-  end
-
   describe "#origin_timestamp" do
     it "should respond with time-parsed 'published' from raw response" do
       parsed_date = Time.strptime(raw_blog_post['published'], "%e %b %Y")
