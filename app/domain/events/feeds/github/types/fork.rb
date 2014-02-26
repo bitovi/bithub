@@ -11,15 +11,11 @@ module Events
         @actor.login + @repo.name + self.class.name
       end
 
-      def origin_id
-        fork_id
-      end
-
       def fork_id
         payload[:fork_id]
       end
 
-      def wrap_reponse
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
         self

@@ -55,7 +55,7 @@ describe Wrappers::Github::IssueLike do
     end
 
     it "pharses the 'created_at' unix ts from raw response" do
-      parsed = Time.parse(raw_issue['created_at']).utc
+      parsed = Time.parse(raw_issue['created_at'])
       expect(issue_like_object.created_at).to eq parsed
     end
   end
@@ -66,7 +66,7 @@ describe Wrappers::Github::IssueLike do
     end
 
     it "parses the 'updated_at' unix ts from raw response" do
-      parsed = Time.parse(raw_issue['updated_at']).utc
+      parsed = Time.parse(raw_issue['updated_at'])
       expect(issue_like_object.updated_at).to eq parsed
     end
   end

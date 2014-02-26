@@ -19,15 +19,15 @@ module Wrappers
       end
       
       def creation_date
-        Time.at @data[:creation_date]
+        Time.at(@data.fetch(:creation_date)).utc
       end
 
       def last_activity_date
-        Time.at @data[:last_activity_date]
+        Time.at(@data.fetch(:last_activity_date)).utc
       end
 
       def last_edit_date
-        Time.at @data[:last_edit_date]
+        Time.at(@data.fetch(:last_edit_date)).utc
       end
 
     end

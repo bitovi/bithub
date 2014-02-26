@@ -7,7 +7,7 @@ describe Events::Github::Create do
   end
 
   subject(:create) do
-    Events::Github::Create.new(raw_create)
+    Events::Github::Create.new(raw_create).wrap_response
   end
   
   describe "#digest_seed" do

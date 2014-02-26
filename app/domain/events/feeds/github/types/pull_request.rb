@@ -5,7 +5,7 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
-      def_delegators :@pull_request, :state
+      def_delegators :@pull_request, :state, :title, :body
       attr_reader :pull_request, :repo, :actor
 
       def digest_seed
@@ -20,7 +20,7 @@ module Events
         payload.fetch(:action)
       end
 
-      def wrap_reponse
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
         @pull_request ||= Wrappers::Github::PullRequest.new(payload[:pull_request])

@@ -5,24 +5,16 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
-      def_delegator :@actor, :id, :origin_author_id
-      def_delegator :@actor, :login, :origin_author_name
-      def_delegator :@actor, :avatar_url, :origin_author_avatar_url
-      def_delegator :@repo, :name, :repo_name
+      def_delegators :@comment, :id, :body, :title,
+        :commit_id, :references_to
 
-      def_delegator :@comment, :id, :origin_id
-      def_delegator :@comment, :id, :comment_id
-      def_delegators :@comment,
-        :body,
-        :title,
-        :commit_id,
-        :references_to
+      attr_reader :comment, :actor, :repo
       
       def digest_seed
         event_id + self.class.name
       end
       
-      def wrap_reponse_parts
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
         @comment ||= Wrappers::Github::Comment.new(payload[:comment])

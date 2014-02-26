@@ -4,19 +4,17 @@ module Events
     class Watch < Protocol
       extend Forwardable
       include Events::Github::Accessors
-      
-      def_delegator :@actor, :id, :origin_author_id
-      def_delegator :@actor, :login, :origin_author_name
-      def_delegator :@actor, :avatar_url, :origin_author_avatar_url
-      def_delegator :@repo, :name, :repo_name
 
+      attr_reader :actor, :repo
+      
       def digest_seed
         @actor.id.to_s + @repo.name + self.class.name
       end
 
-      def wrap_reponse_parts
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        self
       end
     end
   end

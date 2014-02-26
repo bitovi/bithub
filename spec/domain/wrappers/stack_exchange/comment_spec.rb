@@ -46,9 +46,9 @@ describe Wrappers::StackExchange::Comment do
     end
   end
 
-  describe "#edited" do
+  describe "#edited?" do
     it "should respond with 'edited' from raw response" do
-      expect(comment.edited).to eq raw_comment['edited']
+      expect(comment.edited?).to eq raw_comment['edited']
     end
   end
   
@@ -59,6 +59,9 @@ describe Wrappers::StackExchange::Comment do
   end
 
   describe "#creation_date" do
+    it "should be in UTC" do
+      expect(comment.creation_date.zone).to eq "UTC"
+    end
     it "should respond with parsed 'creation_date' from raw response" do
       expect(comment.creation_date).to eq Time.at(raw_comment['creation_date'])
     end

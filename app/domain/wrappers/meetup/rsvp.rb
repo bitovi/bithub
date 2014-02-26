@@ -8,16 +8,16 @@ module Wrappers
       has :rsvp_id, :response
       maybe_has :comment
 
-      attr_reader :member, :event
-      alias_method :id, :rsvp_id
-
       def initialize(rsvp)
         @data = symbolize_keys(rsvp)
       end
 
       def created
-        @created_at ||= Time.at(@data.andand[:created] / 1000)
+        @created ||= Time.at(@data.andand[:created] / 1000).utc
       end
+
+      alias_method :id, :rsvp_id
+      alias_method :created_at, :created
     end
 
   end

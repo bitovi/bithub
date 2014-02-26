@@ -53,12 +53,18 @@ describe Wrappers::StackExchange::Answer do
   end
   
   describe "#creation_date" do
+    it "should be in UTC" do
+      expect(answer.creation_date.zone).to eq "UTC"
+    end
     it "should respond with parsed 'creation_date' from raw response" do
       expect(answer.creation_date).to eq Time.at(raw_answer['creation_date'])
     end
   end
   
   describe "#last_activity_date" do
+    it "should be in UTC" do
+      expect(answer.last_activity_date.zone).to eq "UTC"
+    end
     it "should respond with parsed 'last_activity_date' from raw response" do
       expect(answer.last_activity_date).to eq Time.at(raw_answer['last_activity_date'])
     end

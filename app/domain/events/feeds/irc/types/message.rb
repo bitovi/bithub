@@ -29,9 +29,6 @@ module Events
       def origin_id
         origin_ts.to_i
       end
-      
-      alias_method :title, :message
-      alias_method :origin_author_name, :nickname
     end
   end
 end

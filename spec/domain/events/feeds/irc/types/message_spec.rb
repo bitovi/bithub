@@ -36,12 +36,6 @@ describe Events::Irc::Message do
     end
   end
 
-  describe "#origin_author_name" do
-    it "should delegate to #nickname" do
-      expect(message.origin_author_name).to eq message.nickname
-    end
-  end
-
   describe "#nickname" do
     it "should respond with 'nickname' from raw data" do
       expect(message.nickname).to eq raw_message[:nickname]
