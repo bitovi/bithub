@@ -2,8 +2,7 @@ language: ruby
 script:
   - "bundle exec rake db:migrate"
   - "bundle exec rake db:test:prepare"
-  - "bundle exec rspec spec/domain/wrappers"
-  - "bundle exec rspec spec/domain/events"
+  - "bundle exec rspec spec/domain"
 notifications:
   recipients:
     - veljko@kset.org
