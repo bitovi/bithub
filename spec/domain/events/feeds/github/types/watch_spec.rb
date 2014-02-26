@@ -7,7 +7,7 @@ describe Events::Github::Watch do
   end
 
   subject(:watch) do
-    Events::Github::Watch.new(raw_watch)
+    Events::Github::Watch.new(raw_watch).wrap_response
   end
   
   describe "#digest_seed" do

@@ -4,11 +4,7 @@ module Events
     class Post < Protocol
       extend Forwardable
 
-      def_delegators :@item,
-        :title,
-        :link,
-        :category
-
+      def_delegators :@item, :title, :link, :category
       attr_reader :item
 
       def digest_seed
@@ -19,7 +15,7 @@ module Events
         Sanitizer.sanitize(@item.description)
       end
 
-      def origin_timestamp
+      def pub_date
         Time.strptime(source_data.andand[:published], "%e %b %Y").utc
       end
 

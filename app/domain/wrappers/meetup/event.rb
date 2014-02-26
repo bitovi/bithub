@@ -8,7 +8,6 @@ module Wrappers
       has :id, :event_url, :name, :description, :status
 
       attr_reader :hosts, :venue
-      alias_method :url, :event_url
 
       def initialize(event)
         _event = symbolize_keys(event)
@@ -17,11 +16,11 @@ module Wrappers
       end
 
       def created
-        @created_at ||= Time.at(@data.andand[:created] / 1000)
+        @created_at ||= Time.at(@data.andand[:created] / 1000).utc
       end
 
       def time
-        @scheduled_at ||= Time.at(@data.andand[:time] / 1000)
+        @scheduled_at ||= Time.at(@data.andand[:time] / 1000).utc
       end
       
       def host_ids
@@ -40,6 +39,9 @@ module Wrappers
         host_names.andand.join(',')
       end
 
+      alias_method :url, :event_url
+      alias_method :scheduled_at, :time
+      alias_method :created_at, :created
     end
 
   end

@@ -7,7 +7,7 @@ describe Events::Github::Fork do
   end
 
   subject(:fork) do
-    Events::Github::Fork.new(raw_fork)
+    Events::Github::Fork.new(raw_fork).wrap_response
   end
 
   describe "#digest_seed" do

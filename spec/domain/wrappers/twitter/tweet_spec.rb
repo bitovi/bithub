@@ -29,6 +29,9 @@ describe Wrappers::Twitter::Tweet do
   end
   
   describe "#created_at" do
+    it "should be in UTC" do
+      expect(tweet.created_at.zone).to eq "UTC"
+    end
     it "should respond with time-parsed 'created_at' from raw data" do
       expect(tweet.created_at).to eq Time.parse(raw_tweet['created_at'])
     end

@@ -5,24 +5,16 @@ module Events
       extend Forwardable
       
       def_delegators :@comment, :comment_id, :post_id, :post_type,
-        :body, :link, :score, :edited?,
-        :creation_date
+        :body, :link, :score, :edited?, :creation_date
 
       def digest_seed
-        comment_id.to_s + creation_date.to_s + self.class.name
-      end
-
-      def origin_id
-        comment_id
-      end
-
-      def origin_timestamp
-        creation_date.utc
+        @comment.comment_id.to_s + creation_date.to_s + self.class.name
       end
 
       def wrap_reponse
         @comment = Wrappers::StackExchange::Comment.new(source_data)
         @owner = Wrappers::StackExchange::User.new(source_data[:owner])
+        self
       end
 
     end

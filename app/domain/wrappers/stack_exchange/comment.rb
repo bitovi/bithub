@@ -7,8 +7,7 @@ module Wrappers
 
       has :comment_id, :post_id, :post_type,
         :body, :link, :score,
-        :edited,
-        :body_markdown
+        :edited, :body_markdown
 
       alias_method :edited?, :edited
 
@@ -19,7 +18,7 @@ module Wrappers
       end
 
       def creation_date
-        Time.at(@data[:creation_date])
+        Time.at(@data.fetch(:creation_date)).utc
       end
 
     end

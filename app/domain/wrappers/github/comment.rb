@@ -12,7 +12,7 @@ module Wrappers
 
       def initialize(comment)
         @data = symbolize_keys(comment)
-        @user = Wrappers::Github::User.new(comment.andand[:user])
+        @user = Wrappers::Github::User.new(comment[:user])
       end
       
       def created_at

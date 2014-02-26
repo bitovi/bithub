@@ -21,21 +21,15 @@ describe Events::Forum::Post do
     end
   end
 
-  describe "#url" do
-    it "should delegate to #link" do
-      expect(post_event.url).to eq item_wrapper.link
-    end
-  end
-  
   describe "#subforum" do
     it "should delegate to #category" do
       expect(post_event.subforum).to eq item_wrapper.category
     end
   end
 
-  describe "#origin_author_name" do
+  describe "#creator" do
     it "should respond with 'dc:creator' from raw response" do
-      expect(post_event.origin_author_name).to eq raw_rss_item['dc:creator']
+      expect(post_event.creator).to eq raw_rss_item['dc:creator']
     end
   end
   
@@ -47,9 +41,4 @@ describe Events::Forum::Post do
     it "should sanitize the 'description' (clean HTML)"
   end
 
-  describe "#origin_ts" do
-    it "should be in UTC" do
-      expect(post_event.origin_timestamp.zone).to eq "UTC"
-    end
-  end
 end

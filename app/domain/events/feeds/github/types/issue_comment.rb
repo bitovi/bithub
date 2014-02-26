@@ -5,14 +5,14 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
-      def_delegators :@comment, :id, :origin_id
+      def_delegators :@comment, :id, :body, :html_url
       attr_reader :ipr, :comment, :repo, :actor
       
       def digest_seed
         event_id + self.class.name
       end
       
-      def wrap_reponse
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
         @comment ||= Wrappers::Github::Comment.new(payload[:comment])

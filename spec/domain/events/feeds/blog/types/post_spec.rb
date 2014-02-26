@@ -17,14 +17,14 @@ describe Events::Blog::Post do
     end
   end
 
-  describe "#origin_timestamp" do
+  describe "#pub_date" do
     it "should respond with time-parsed 'published' from raw response" do
-      parsed_date = Time.strptime(raw_blog_post['published'], "%e %b %Y")
-      expect(blog_post.origin_timestamp).to eq(parsed_date)
+      parsed_date = Time.strptime(raw_blog_post['published'], "%e %b %Y").utc
+      expect(blog_post.pub_date).to eq(parsed_date)
     end
 
     it "should resopnd with a datetime in UTC" do
-      expect(blog_post.origin_timestamp.zone).to eq "UTC"
+      expect(blog_post.pub_date.zone).to eq "UTC"
     end
   end
 end

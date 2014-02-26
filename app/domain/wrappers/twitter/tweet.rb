@@ -16,17 +16,15 @@ module Wrappers
         end
       end
 
-      def retweeted_status
-        @retweet
-      end
-
       def retweet?
         not(@retweet.nil?)
       end
 
       def created_at
-        Time.parse(@data.andand[:created_at])
+        Time.parse(@data.andand[:created_at]).utc
       end
+
+      alias_method :retweeted_status, :retweet
 
     end
   end

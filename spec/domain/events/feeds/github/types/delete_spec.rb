@@ -7,7 +7,7 @@ describe Events::Github::Delete do
   end
 
   subject(:delete) do
-    Events::Github::Delete.new(raw_delete)
+    Events::Github::Delete.new(raw_delete).wrap_response
   end
   
   describe "#digest_seed" do

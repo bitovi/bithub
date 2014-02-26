@@ -4,14 +4,11 @@ module Events
     class Post < Protocol
       extend Forwardable
 
-      attr_reader :post, :thread, :author
+      def_delegators :@post, :id, :url, :message
+      attr_reader :post, :thread, :forum, :author
 
       def digest_seed
         @post.id + self.class.name
-      end
-
-      def origin_timestamp
-        @post.created_at.utc
       end
 
       def wrap_reponse
@@ -22,9 +19,6 @@ module Events
         self
       end
 
-      def_delegator :@post, :id, :origin_id
-      def_delegator :@author, :id, :origin_author_id
-      def_delegator :@author, :name, :origin_author_name
     end
   end
 end

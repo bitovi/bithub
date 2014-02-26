@@ -40,7 +40,7 @@ describe Wrappers::Github::Comment do
     end
 
     it "pharses the 'created_at' unix ts from raw response" do
-      parsed = Time.parse(raw_comment['created_at']).utc
+      parsed = Time.parse(raw_comment['created_at'])
       expect(comment.created_at).to eq parsed
     end
   end
@@ -51,7 +51,7 @@ describe Wrappers::Github::Comment do
     end
 
     it "parses the 'updated_at' unix ts from raw response" do
-      parsed = Time.parse(raw_comment['updated_at']).utc
+      parsed = Time.parse(raw_comment['updated_at'])
       expect(comment.updated_at).to eq parsed
     end
   end

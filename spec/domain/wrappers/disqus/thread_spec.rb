@@ -34,7 +34,7 @@ describe Wrappers::Disqus::Thread do
     end
 
     it "parses the 'created_at' unix ts from raw response" do
-      parsed = Time.parse(raw_thread.andand['createdAt']+'Z').utc
+      parsed = Time.parse(raw_thread.andand['createdAt']+'Z')
       expect(thread.created_at).to eq parsed
     end
   end

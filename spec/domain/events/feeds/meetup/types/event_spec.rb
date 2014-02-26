@@ -26,29 +26,11 @@ describe Events::Meetup::Event do
       expect(event_event.digest_seed).to eq seed
     end
   end
-  
-  describe "#origin_id" do
-    it "should delegate to @event->#url" do
-      expect(event_event.origin_id).to eq event_wrapper.url
-    end
-  end
 
   describe "#scheduled_at" do
-    it "should delegate parsing to @event->#created" do
-      expect(event_event.scheduled_at).to eq event_wrapper.time.utc.iso8601
+    it "should format the scheduled_at date in iso8601" do
+      event_wrapper = Wrappers::Meetup::Event.new(raw_event)
+      expect(event_event.scheduled_at).to eq event_wrapper.scheduled_at.iso8601
     end
   end
-
-  describe "#origin_timestamp" do
-    it "should be in UTC" do
-      expect(event_event.origin_timestamp.zone).to eq "UTC"
-    end
-  end
-
-  # Delegates
-  
-  subject(:event_wrapper) do
-    Wrappers::Meetup::Event.new(raw_event)
-  end
-
 end

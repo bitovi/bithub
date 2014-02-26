@@ -34,7 +34,7 @@ describe Wrappers::Disqus::Post do
     end
 
     it "should parse the 'created_at' unix created_atstamp from raw response" do
-      parsed = Time.parse(raw_post.andand['createdAt']+'Z').utc
+      parsed = Time.parse(raw_post.andand['createdAt']+'Z')
       expect(post.created_at).to eq parsed
     end
   end

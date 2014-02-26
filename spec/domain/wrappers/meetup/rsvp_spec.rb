@@ -11,27 +11,31 @@ describe Wrappers::Meetup::Rsvp do
   end
 
   describe "#id" do
-    it "should respond with 'id' from raw response" do
+    it "responds with 'id' from raw response" do
       expect(rsvp.id).to eq raw_rsvp['rsvp_id']
     end
   end
 
   describe "#comment" do
-    it "should respond with 'comment' from raw response" do
+    it "responds with 'comment' from raw response" do
       expect(rsvp.comment).to eq raw_rsvp['comment']
     end
   end
 
   describe "#response" do
-    it "should respond with 'response' from raw response" do
+    it "responds with 'response' from raw response" do
       expect(rsvp.response).to eq raw_rsvp['response']
     end
   end
 
-  describe "#created" do
-    it "should parse the 'created' unix createdstamp from raw response" do
+  describe "#created_at" do
+    it "parse the 'created' unix ts from raw response" do
       parsed = Time.at(raw_rsvp.andand['created'].to_i / 1000)
-      expect(rsvp.created).to eq parsed
+      expect(rsvp.created_at).to eq parsed
+    end
+
+    it "is in UTC" do
+      expect(rsvp.created_at.zone).to eq "UTC"
     end
   end
 

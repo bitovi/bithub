@@ -11,11 +11,11 @@ module Events
       end
 
       def push_id
-        payload.fetch[:push_id]
+        payload.fetch(:push_id)
       end
 
       def head
-        payload.fetch[:head]
+        payload.fetch(:head)
       end
 
       def commit_messages
@@ -34,14 +34,13 @@ module Events
         @commits.select{|c| c.sha == sha}.andand.first
       end
 
-      def wrap_reponse
+      def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data.fetch(:actor))
         @repo ||= Wrappers::Github::Repo.new(source_data.fetch(:repo))
         @commits = payload.fetch(:commits).map{|c| Wrappers::Github::Commit.new(c)}
         self
       end
 
-      alias_method :origin_id, :push_id
     end
 
   end

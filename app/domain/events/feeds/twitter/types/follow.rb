@@ -9,16 +9,9 @@ module Events
 
       def_delegator :@target, :id, :target_id
       def_delegator :@target, :screen_name, :target_screen_name
-      
-      alias_method :origin_author_id, :source_id
-      alias_method :origin_author_name, :source_screen_name
 
       def digest_seed
         source_id.to_s + target_id.to_s + self.class.name
-      end
-
-      def origin_timestamp
-        Time.parse(source_data.andand[:created_at]).utc
       end
 
       def validate_source_and_target
@@ -29,9 +22,10 @@ module Events
         end
       end
 
-      def wrap_reponse_parts
+      def wrap_reponse
         @source ||= Wrappers::Twitter::User.new(source_data.andand[:source])
         @target ||= Wrappers::Twitter::User.new(source_data.andand[:target])
+        self
       end
 
       private

@@ -40,7 +40,7 @@ describe Wrappers::Rss::Item do
     end
 
     it "should time-parse the 'pubDate' from raw response" do
-      parsed = Time.parse(raw_item['pubDate']).utc
+      parsed = Time.parse(raw_item['pubDate'])
       expect(item.pub_date).to eq parsed
     end
   end

@@ -7,18 +7,12 @@ describe Events::Github::Push do
   end
 
   subject(:push) do
-    Events::Github::Push.new(raw_push)
+    Events::Github::Push.new(raw_push).wrap_response
   end
 
   describe "#digest_seed" do
     it "should respond with digest seed constructed of event_id" do
       expect(push.digest_seed).to eq raw_push['id'] + "Events::Github::Push"
-    end
-  end
-
-  describe "#origin_id" do
-    it "should delegate to @comment->#id" do
-      expect(push.origin_id).to eq push.push_id
     end
   end
 

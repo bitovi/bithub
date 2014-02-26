@@ -18,15 +18,4 @@ describe Events::Twitter::Follow do
       expect(follow.digest_seed).to eq seed
     end
   end
-
-  describe "#origin_timestamp" do
-    it "should be in UTC" do
-      expect(follow.origin_timestamp.zone).to eq "UTC"
-    end
-
-    it "should respond with time-parsed 'created_at' from raw response" do
-      parsed_time = Time.parse(raw_follow.andand['created_at']).utc
-      expect(follow.origin_timestamp).to eq parsed_time
-    end
-  end
 end
