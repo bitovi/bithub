@@ -5,7 +5,8 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      data_accessors :id, :name, :username
+      has :name
+      maybe_has :id, :username
 
       def initialize(author)
         @data = symbolize_keys(author)

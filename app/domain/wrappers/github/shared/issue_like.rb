@@ -4,31 +4,27 @@ module Wrappers
     module IssueLike
 
       def id
-        (@i || @pr).andand[:id]
+        (@i || @pr).fetch(:id)
       end
 
       def title
-        (@i || @pr).andand[:title]
+        (@i || @pr).fetch(:title)
       end
 
       def body
-        (@i || @pr).andand[:body]
+        (@i || @pr).fetch(:body)
       end
 
       def html_url
-        (@i || @pr).andand[:html_url]
+        (@i || @pr).fetch(:html_url)
       end
 
       def number
-        (@i || @pr).andand[:number]
+        (@i || @pr).fetch(:number)
       end
 
       def state
-        (@i || @pr).andand[:state]
-      end
-
-      def action
-        (@i || @pr).andand[:action]
+        (@i || @pr).fetch(:state)
       end
 
     end

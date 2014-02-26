@@ -6,10 +6,12 @@ module Wrappers
       include CoreHelpers
 
       has :user_id,
-        :reputation,
-        :profile_image,
+        :display_name,
         :link,
-        :display_name
+        :reputation,
+        :profile_image
+
+      alias_method :name, :display_name
 
       def initialize(user)
         @data = symbolize_keys(user)

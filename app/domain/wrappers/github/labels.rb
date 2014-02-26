@@ -8,12 +8,12 @@ module Wrappers
         @ls = symbolize_keys(labels)
       end
 
-      def label_names
-        @ls.map {|l| l[:name]}
+      def names
+        @ls.map {|l| l.fetch(:name)}
       end
 
-      def label_names_csv
-        label_names.join(',')
+      def names_csv
+        names.join(',')
       end
     end
 
