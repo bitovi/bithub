@@ -99,7 +99,7 @@ module Entities
 
       def issue_action?
         ((@event.class.name =~ /Issue/) || (@event.class.name =~ /PullRequest/)) &&
-         (not(@event.class.name =~ /IssueComment/)) &&
+         not(@event.class.name =~ /IssueComment/) &&
           has_state? && has_action? && not(just_opened?)
       end
 
@@ -112,7 +112,7 @@ module Entities
       end
 
       def just_opened?
-         @event.action == 'opened'
+        @event.action == 'opened'
       end
     end
   end
