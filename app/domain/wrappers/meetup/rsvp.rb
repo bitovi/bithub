@@ -13,8 +13,6 @@ module Wrappers
 
       def initialize(rsvp)
         @data = symbolize_keys(rsvp)
-        @event = Wrappers::Meetup::Event.new(rsvp.andand[:event])
-        @member = Wrappers::Meetup::Member.new(rsvp.andand[:member], rsvp.andand[:member_photo])
       end
 
       def created

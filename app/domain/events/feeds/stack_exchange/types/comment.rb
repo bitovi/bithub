@@ -20,8 +20,9 @@ module Events
         creation_date.utc
       end
 
-      def wrap_reponse_parts
+      def wrap_reponse
         @comment = Wrappers::StackExchange::Comment.new(source_data)
+        @owner = Wrappers::StackExchange::User.new(source_data[:owner])
       end
 
     end

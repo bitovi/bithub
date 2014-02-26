@@ -13,7 +13,6 @@ module Wrappers
       def initialize(event)
         _event = symbolize_keys(event)
         @data = _event
-        @venue = Wrappers::Meetup::Venue.new(_event.andand[:venue])
         @hosts = _event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
 

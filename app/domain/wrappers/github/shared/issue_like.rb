@@ -27,6 +27,14 @@ module Wrappers
         (@i || @pr).fetch(:state)
       end
 
+      def created_at
+        Time.parse((@i || @pr).fetch(:created_at)).utc
+      end
+
+      def updated_at
+        Time.parse((@i || @pr).fetch(:updated_at)).utc
+      end
+
     end
 
   end

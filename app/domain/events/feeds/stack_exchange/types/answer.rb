@@ -8,6 +8,8 @@ module Events
         :title, :body, :link, :score, :accepted?,
         :upvote_count, :last_activity_date, :creation_date
 
+      def_delegator :@owner, :id, :origin_author_id
+
       attr_reader :comments, :owner
 
       def digest_seed
@@ -26,8 +28,8 @@ module Events
 
       def wrap_reponse_parts
         @answer = Wrappers::StackExchange::Answer.new(source_data)
-        @owner = @answer.owner
-        @comments = @answer.comments
+        @comments = source_data[:comments].map{|c| Wrappers::StackExchange::Comment.new(c)}
+        @owner = Wrappers::StackExchange::User.new(source_data[:owner])
       end
     end
   end

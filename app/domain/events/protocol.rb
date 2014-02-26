@@ -27,7 +27,7 @@ module Events
       _raw = symbolize_keys(payload)
       @source_data = _raw[:source_data] || _raw
       @meta = _raw[:meta] || nil
-      wrap_reponse_parts if self.respond_to? :wrap_reponse_parts
+      wrap_reponse if self.respond_to? :wrap_reponse
     end
 
     def content_digest
@@ -56,10 +56,6 @@ module Events
 
     def ==(other)
       @data == other
-    end
-
-    def origin_ts
-      origin_timestamp
     end
 
     def origin_timestamp_iso

@@ -28,10 +28,4 @@ describe Wrappers::Rss::Channel do
     end
   end
 
-  describe "#items" do
-    it "should have length equal to number of items in the feed" do
-      expect(channel.items.length).to eq raw_channel['item'].length
-    end
-  end
-
 end

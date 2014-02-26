@@ -16,15 +16,15 @@ describe Wrappers::Github::Labels do
   #   end
   # end
 
-  describe "#label_names" do
-    it "should respond with 'label_names' from raw data" do
-      expect(labels.label_names).to eq raw_labels.map{|l| l['name']}
+  describe "#names" do
+    it "should respond with 'names' from raw data" do
+      expect(labels.names).to eq raw_labels.map{|l| l['name']}
     end
   end
   
-  describe "#label_names_csv" do
-    it "should respond with 'label_names_csv' from raw data" do
-      expect(labels.label_names_csv).to eq raw_labels.map{|l| l['name']}.join(',')
+  describe "#names_csv" do
+    it "should respond with 'names_csv' from raw data" do
+      expect(labels.names_csv).to eq raw_labels.map{|l| l['name']}.join(',')
     end
   end
   

@@ -13,7 +13,7 @@ module Wrappers
       end
 
       def pub_date
-        Time.parse(@data.fetch(:pubDate))
+        Time.parse(@data.fetch(:pubDate)).utc
       end
 
     end

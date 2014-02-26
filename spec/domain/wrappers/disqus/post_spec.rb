@@ -29,11 +29,14 @@ describe Wrappers::Disqus::Post do
   end
 
   describe "#created_at" do
+    it "should be in UTC" do
+      expect(post.created_at.zone).to eq "UTC"
+    end
+
     it "should parse the 'created_at' unix created_atstamp from raw response" do
-      parsed = Time.parse(raw_post.andand['createdAt']+'Z')
+      parsed = Time.parse(raw_post.andand['createdAt']+'Z').utc
       expect(post.created_at).to eq parsed
     end
   end
 
 end
-

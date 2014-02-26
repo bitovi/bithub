@@ -10,7 +10,6 @@ module Wrappers
 
       def initialize(item)
         @data = symbolize_keys(item)
-        @items = @data[:item].map{|i| Wrappers::Rss::Item.new(i)}
       end
 
     end

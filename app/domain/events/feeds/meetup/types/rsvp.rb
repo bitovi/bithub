@@ -25,10 +25,10 @@ module Events
         @rsvp.created.utc
       end
       
-      def wrap_reponse_parts
+      def wrap_reponse
         @rsvp = Wrappers::Meetup::Rsvp.new(source_data)
-        @member = @rsvp.member
-        @event = @rsvp.event
+        @event = Wrappers::Meetup::Event.new(source_data[:event])
+        @member = Wrappers::Meetup::Member.new(source_data[:member], source_data[:member_photo])
       end
 
       alias_method :origin_author_id, :member_id

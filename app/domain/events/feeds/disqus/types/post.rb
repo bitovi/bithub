@@ -4,29 +4,27 @@ module Events
     class Post < Protocol
       extend Forwardable
 
-      def_delegators :@post, :id, :message, :url
-      def_delegators :@thread, :title
-      def_delegator :@author, :id, :origin_author_id
-      def_delegator :@author, :name, :origin_author_name
+      attr_reader :post, :thread, :author
 
       def digest_seed
         @post.id + self.class.name
-      end
-
-      def origin_id
-        @post.id
       end
 
       def origin_timestamp
         @post.created_at.utc
       end
 
-      def wrap_reponse_parts
+      def wrap_reponse
         @post = Wrappers::Disqus::Post.new(source_data)
-        @thread = @post.thread
-        @author = @post.author
+        @author = Wrappers::Disqus::Author.new(source_data[:author]) if source_data[:author]
+        @thread = Wrappers::Disqus::Thread.new(source_data[:thread]) if source_data[:thread]
+        @forum = Wrappers::Disqus::Forum.new(source_data[:forum]) if source_data[:forum]
+        self
       end
 
+      def_delegator :@post, :id, :origin_id
+      def_delegator :@author, :id, :origin_author_id
+      def_delegator :@author, :name, :origin_author_name
     end
   end
 end
