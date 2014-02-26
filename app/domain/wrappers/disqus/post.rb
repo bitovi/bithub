@@ -5,8 +5,8 @@ module Wrappers
       extend DataAccessible
       include CoreHelpers
 
-      attr_reader :author, :forum, :thread
       has :id, :url, :message
+      attr_reader :author, :forum, :thread
 
       def initialize(post)
         @data = symbolize_keys(post)
@@ -19,7 +19,11 @@ module Wrappers
       # we append 'Z' to designate that the date is in UTC.
       # (Disqus API docs say so)
       def created_at
-        @created_at ||= Time.parse(@data.andand[:createdAt]+'Z')
+        @created_at ||= Time.parse(@data.fetch(:createdAt)+'Z')
+      end
+
+      def created_at_utc
+        created_at.utc
       end
 
     end
