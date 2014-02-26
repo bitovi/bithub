@@ -4,28 +4,24 @@ module Events
     module Accessors
 
       def event_id
-        source_data.andand[:id]
+        source_data.fetch(:id)
       end
 
       def payload
-        source_data.andand[:payload]
-      end
-
-      def action
-        payload.andand[:action]
+        source_data.fetch(:payload)
       end
 
       def origin_timestamp
-        Time.parse(source_data.andand[:created_at]).utc
+        Time.parse(source_data.fetch(:created_at)).utc
       end
 
       module Refs
         def ref_type
-          payload.andand[:ref_type]
+          payload.fetch(:ref_type)
         end
 
         def ref
-          payload.andand[:ref].to_s
+          payload.fetch(:ref).to_s
         end
       end
 

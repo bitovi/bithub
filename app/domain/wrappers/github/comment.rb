@@ -14,6 +14,14 @@ module Wrappers
         @data = symbolize_keys(comment)
         @user = Wrappers::Github::User.new(comment.andand[:user])
       end
+      
+      def created_at
+        Time.parse(@data.fetch(:created_at)).utc
+      end
+
+      def updated_at
+        Time.parse(@data.fetch(:updated_at)).utc
+      end
 
       def references_to
         Reference.scan_for_refs(body)

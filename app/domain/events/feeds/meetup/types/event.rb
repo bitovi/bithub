@@ -31,9 +31,10 @@ module Events
         created.utc
       end 
 
-      def wrap_reponse_parts
+      def wrap_reponse
         @event = Wrappers::Meetup::Event.new(source_data)
-        @venue = @event.venue
+        @venue = Wrappers::Meetup::Venue.new(source_data[:venue])
+        @hosts = source_data.fetch(:event_hosts).map{|eh| Wrappers::Meetup::Member.new(eh)}
       end
     end
   end

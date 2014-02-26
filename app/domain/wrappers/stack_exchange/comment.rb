@@ -16,7 +16,6 @@ module Wrappers
 
       def initialize(comment)
         @data = symbolize_keys(comment)
-        @owner = Wrappers::StackExchange::User.new(@data.andand[:owner])
       end
 
       def creation_date

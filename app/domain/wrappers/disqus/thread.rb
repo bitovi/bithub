@@ -15,7 +15,7 @@ module Wrappers
       # we append 'Z' to designate that the date is in UTC.
       # (Disqus API docs say so)
       def created_at
-        @created_at ||= Time.parse(@data.andand[:createdAt]+'Z')
+        @created_at ||= Time.parse(@data.andand[:createdAt]+'Z').utc
       end
 
     end
