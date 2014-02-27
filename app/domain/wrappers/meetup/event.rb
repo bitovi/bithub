@@ -6,7 +6,6 @@ module Wrappers
       include CoreHelpers
 
       has :id, :event_url, :name, :description, :status
-
       attr_reader :hosts, :venue
 
       def initialize(event)
