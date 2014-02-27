@@ -29,14 +29,14 @@ module Entities
 
 
     def determine_category
-      if (category = CategoryDeterminationRule.best_match(@instance.tag_list))
+      if (category = Determinators::CategoryDeterminator.best_match @instance)
         @instance.tag_list.add category.snake_case
         @instance.category_name = category.snake_case
       end
     end
 
     def determine_rule
-      @instance.scoring_rule = ScoringRule.best_match(@instance.tag_list)
+      @instance.scoring_rule = Determinators::ScoringRuleDeterminator.best_match @instance
     end
 
     def determine_author
