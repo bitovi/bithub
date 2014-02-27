@@ -2,7 +2,7 @@ module Wrappers
   module Disqus
 
     class Thread
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :title, :link

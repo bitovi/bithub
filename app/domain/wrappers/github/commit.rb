@@ -2,7 +2,7 @@ module Wrappers
   module Github
 
     class Commit
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :sha, :message, :url

@@ -2,7 +2,7 @@ module Wrappers
   module Rss
 
     class Channel
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :title, :link, :description

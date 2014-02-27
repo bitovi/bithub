@@ -2,7 +2,7 @@ module Wrappers
   module Disqus
 
     class Post
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :url, :message

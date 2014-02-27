@@ -2,7 +2,7 @@ module Wrappers
   module Meetup
 
     class Event
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :event_url, :name, :description, :status

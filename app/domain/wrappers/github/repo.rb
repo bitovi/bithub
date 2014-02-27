@@ -2,7 +2,7 @@ module Wrappers
   module Github
 
     class Repo
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :name, :url

@@ -2,7 +2,7 @@ module Wrappers
   module Twitter
 
     class Entities
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       maybe_has :urls, :symbols, :hashtags, :user_mentions

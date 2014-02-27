@@ -2,7 +2,7 @@ module Wrappers
   module Disqus
 
     class Forum
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :name, :url

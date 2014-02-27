@@ -2,7 +2,7 @@ module Wrappers
   module Twitter
 
     class Tweet
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       attr_reader :retweet, :entities

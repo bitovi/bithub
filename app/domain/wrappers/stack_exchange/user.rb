@@ -2,7 +2,7 @@ module Wrappers
   module StackExchange
 
     class User
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :user_id,

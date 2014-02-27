@@ -2,7 +2,7 @@ module Wrappers
   module Disqus
 
     class Author
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :name
