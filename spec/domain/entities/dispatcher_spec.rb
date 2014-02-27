@@ -23,7 +23,7 @@ describe Entities::Dispatcher do
     context "dispatching PullRequest event" do
       it "responds with PullRequest" do
         raw = raw_data(response_path: 'github/events/issues_event.json')
-        event = Events::Github::PullRequest.new(raw).wrap_reponse
+        event = Events::Github::PullRequest.new(raw)
         expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::PullRequest
       end
 
@@ -31,7 +31,7 @@ describe Entities::Dispatcher do
         it "responds with IssueAction if action != opened" do
           raw = raw_data(response_path: 'github/events/issues_event.json')
           raw['payload']['action'] = 'reopened'
-          event = Events::Github::PullRequest.new(raw).wrap_reponse
+          event = Events::Github::PullRequest.new(raw)
           expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::IssueAction
         end
       end
@@ -40,7 +40,7 @@ describe Entities::Dispatcher do
     context "dispatching Issue" do
       it "responds with Issue" do
         raw = raw_data(response_path: 'github/events/pull_request_event.json')
-        event = Events::Github::Issue.new(raw).wrap_reponse
+        event = Events::Github::Issue.new(raw)
         expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::Issue
       end
 
@@ -48,7 +48,7 @@ describe Entities::Dispatcher do
         it "responds with IssueAction if action != opened" do
           raw = raw_data(response_path: 'github/events/pull_request_event.json')
           raw['payload']['action'] = 'closed'
-          event = Events::Github::Issue.new(raw).wrap_reponse
+          event = Events::Github::Issue.new(raw)
           expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::IssueAction
         end
       end

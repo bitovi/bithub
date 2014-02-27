@@ -19,7 +19,7 @@ class Dispatcher
 
     ActiveRecord::Base.transaction do
       event.build.validate.persist!
-      entity.procure.update_if_found.determine.group.normalize.persist!
+      entity.procure.update_if_found.validate.determine.group.normalize.persist!
     end
 
     [event.instance, entity.instance]
