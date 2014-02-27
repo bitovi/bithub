@@ -1,45 +1,50 @@
-# require 'domain/spec_helper'
+require 'domain/spec_helper'
 
-# describe Determinators::ScoringRuleDeterminator do
+describe Determinators::ScoringRuleDeterminator do
 
-#   describe "#best_match" do
+  let (:default_rule) { FactoryGirl.build(:scoring_rule)}
+  let (:rule1) { FactoryGirl.build(:scoring_rule, required_tags: %w(a_tag another_tag)) }
+  let (:rule2) { FactoryGirl.build(:scoring_rule, required_tags: %w(a_tag another_tag not_another_tag)) }
+  let (:rule3) { FactoryGirl.build(:scoring_rule, required_tags: %w(a_tag another_tag not_another_tag the_fourth_one)) }
+  
+  let(:rules) {[ default_rule, rule1, rule2, rule3 ]}
 
-#     context "when given no tags" do
-#       it "matches the default rule" do
-#         default_rule = create(:scoring_rule)
-#         expect(ScoringRule.best_match).to eq(default_rule)
-#       end
-#     end
+  describe "#best_match" do
 
-#     context "when given tags" do
-#       context "and there is an exact match" do
-#         it "finds the exact match" do
-#           rule_of_two = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag']) 
-#           expect(ScoringRule.best_match(['a_tag', 'another_tag'])).to eq(rule_of_two)
-#         end
+    context "when given no tags" do
+      it "responds with the default rule" do
+        d = Determinators::ScoringRuleDeterminator.new(nil, rules)
+        expect(d.best_match).to eq(default_rule)
+      end
+    end
+
+    context "when given tags" do
+      context "and there is an exact match" do
+        it "finds the exact match" do
+          d = Determinators::ScoringRuleDeterminator.new(%w(a_tag another_tag), [default_rule, rule2])
+          expect(d.best_match).to eq(rule2)
+        end
       
-#         it "chooses the rule with the exact match over the rule with a non-exact match" do
-#           rule_of_two = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag']) 
-#           rule_of_three = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag', 'not_another_tag'])
-#           expect(ScoringRule.best_match(['a_tag', 'another_tag'])).to eq(rule_of_two)
-#         end
+        it "chooses the rule with the exact match over the rule with a non-exact match" do
+          d = Determinators::ScoringRuleDeterminator.new(%w(a_tag another_tag), [default_rule, rule2, rule3])
+          expect(d.best_match).to eq(rule2)
+        end
 
-#       end
+      end
 
-#       context "there is no exact match" do
-#         it "tries to get a partial match" do
-#           rule_of_two = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag']) 
-#           expect(ScoringRule.best_match(['a_tag', 'another_tag', 'not_another_tag', 'the_fourth_one'])).to eq(rule_of_two)
-#         end
+      context "there is no exact match" do
+        it "tries to get a partial match" do
+          d = Determinators::ScoringRuleDeterminator.new(%w(a_tag another_tag quazi bazi ha), rules)
+          expect(d.best_match).to eq(rule1)
+        end
       
-#         it "chooses a better matching rule (with higher nmb of matches" do
-#           rule_of_two = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag']) 
-#           rule_of_three = create(:scoring_rule, :required_tags => ['a_tag', 'another_tag', 'not_another_tag'])
-#           expect(ScoringRule.best_match(['a_tag', 'another_tag', 'not_another_tag', 'the_fourth_one'])).to eq(rule_of_three)
-#         end
-#       end
-#     end
+        it "chooses a better matching rule (with higher nmb of matches)" do
+          d = Determinators::ScoringRuleDeterminator.new(%w(a_tag another_tag not_another_tag the_fourth_one), [rule2, rule3])
+          expect(d.best_match).to eq(rule3)
+        end
+      end
+    end
 
-#   end
+  end
 
-# end
+end
