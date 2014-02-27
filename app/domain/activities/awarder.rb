@@ -8,7 +8,7 @@ module Activities
     end
 
     def award(opts)
-      if (valid?(provided_strategy(opts)) && (@award = Award.create(actor: actor, applies_to: applies_to, value: self.send(@strategy))))
+      if (valid_strategy?(provided_strategy(opts)) && (@award = Award.create(actor: actor, applies_to: applies_to, value: self.send(@strategy))))
         async_exec_post_award_actions
         @award
       end
@@ -33,15 +33,15 @@ module Activities
 
     # Strategies
     
-    def valid?(strategy)
-      if PossibleStrategies.reduce(false) {|s| acc || (s == strategy)}
+    def valid_strategy?(strategy)
+      if PossibleStrategies.reduce(false) {|acc, s| acc || (s == strategy)}
         strategy
       else
         nil
       end
     end
     
-    def provided_strategy(opts)
+    def provided_strategy(opts = {})
       @strategy = (s = opts[:strategy]) ? s : :double_upvote_value
     end
 
