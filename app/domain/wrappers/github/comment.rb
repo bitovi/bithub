@@ -2,7 +2,7 @@ module Wrappers
   module Github
 
     class Comment
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :body, :html_url

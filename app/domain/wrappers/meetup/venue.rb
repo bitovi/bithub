@@ -2,7 +2,7 @@ module Wrappers
   module Meetup
 
     class Venue
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :name, :lat, :lon

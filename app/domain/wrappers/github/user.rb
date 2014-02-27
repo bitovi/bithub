@@ -2,7 +2,7 @@ module Wrappers
   module Github
 
     class User
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :id, :login, :gravatar_id, :avatar_url

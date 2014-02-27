@@ -2,7 +2,7 @@ module Wrappers
   module StackExchange
 
     class Comment
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :comment_id, :post_id, :post_type,

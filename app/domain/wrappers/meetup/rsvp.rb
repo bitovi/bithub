@@ -2,7 +2,7 @@ module Wrappers
   module Meetup
 
     class Rsvp
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :rsvp_id, :response

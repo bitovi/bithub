@@ -2,7 +2,7 @@ module Wrappers
   module StackExchange
 
     class Answer
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :answer_id, :question_id,

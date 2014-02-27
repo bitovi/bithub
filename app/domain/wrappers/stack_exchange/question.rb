@@ -2,12 +2,12 @@ module Wrappers
   module StackExchange
 
     class Question
-      extend DataAccessible
+      include DataAccessible
       include CoreHelpers
 
       has :question_id, :accepted_answer_id,
-        :title, :body, :link, :score, :is_answered,
-        :up_vote_count, :body_markdown
+        :title, :body, :body_markdown, :link, :score,
+        :is_answered, :up_vote_count
 
       alias_method :answered?, :is_answered
       alias_method :upvote_count, :up_vote_count
