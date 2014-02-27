@@ -4,6 +4,7 @@ require_relative 'traits/groupable'
 require_relative 'traits/normalizable'
 require_relative 'traits/persistable'
 require_relative 'traits/referencable'
+require_relative 'traits/validatable'
 
 module Entities
   module Bithub; end
@@ -17,6 +18,7 @@ module Entities
   module StackExchange; end
 
   class Protocol
+    include Validatable
     include Determinable
     include Groupable
     include Normalizable
@@ -27,6 +29,7 @@ module Entities
 
     def initialize(payload)
       @payload = payload
+      @event = @payload
     end
 
     def procure

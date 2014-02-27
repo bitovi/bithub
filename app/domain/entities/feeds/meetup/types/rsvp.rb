@@ -1,12 +1,6 @@
 module Entities
   module Meetup
     class Rsvp < Protocol
-      
-      Relationships = {
-        upstream: [Entities::Meetup::Event],
-        downstream: [],
-        references: [],
-      }
 
       ResponseMapping = {
         'yes' => 'confirmed',
@@ -15,37 +9,37 @@ module Entities
       }
 
       def find
-        @payload.rsvp_id && find_by_rsvp_id.first
+        @event.rsvp_id && find_by_rsvp_id.first
       end
       
       def build
         Entity.new({
-          title: "#{@payload.origin_author_name} RSVPd: #{@payload.response}",
-          body: @payload.comment,
-          origin_ts: @payload.origin_timestamp,
-          origin_id: @payload.rsvp_id,
+          title: "#{@event.member.name} RSVPd: #{@event.response}",
+          body: @event.comment,
+          origin_ts: @event.created_at,
+          origin_id: @event.rsvp_id,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            origin_author_avatar_url: @payload.origin_author_avatar_url,
-            event_id: @payload.parent_event_id,
-            response: @payload.response,
+            origin_author_id: @event.member.id,
+            origin_author_name: @event.member.name,
+            origin_author_avatar_url: @event.member.thumb_link,
+            event_id: @event.event.id,
+            response: @event.response,
           }
         })
       end
       
       def find_parent
-        if @payload.parent_event_url
-          Entities::Meetup::Event.find_by_origin_id(@payload.parent_event_url).first
+        if @event.event.url
+          Entities::Meetup::Event.find_by_origin_id(@event.event.url).first
         end
       end
 
       def taggify_state
-        [ResponseMapping[@payload.response]]
+        [ResponseMapping[@event.response]]
       end
 
       def find_by_rsvp_id
-        Entities::Meetup::Rsvp.find_by_rsvp_id(@payload.rsvp_id)
+        Entities::Meetup::Rsvp.find_by_rsvp_id(@event.rsvp_id)
       end
 
       # Finders

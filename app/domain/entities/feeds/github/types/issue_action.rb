@@ -3,20 +3,15 @@ module Entities
 
     class IssueAction < Protocol
 
-      Relationships = {
-        upstream: [Entities::Github::Issue],
-        downstream: [],
-        references: [],
-      }
-
       def find
         nil
       end
       
       def find_parent
-        if @payload.repo_name && @payload.number
+        upstream = [Entities::Github::Issue]
+        if @event.repo_name && @event.number
           matches = relationships[:upstream].reduce([]) do |acc, rl|
-            acc << rl.new(@payload).find_by_repo_name_and_number.first
+            acc << rl.new(@event).find_by_repo_name_and_number.first
           end
           parent = matches.compact.first
         end
@@ -25,47 +20,43 @@ module Entities
       # Builder
       def build
         built = Entity.new({
-          title: "#{@payload.nice_name} ##{@payload.number} #{@payload.action}",
-          origin_ts: @payload.origin_ts,
-          origin_id: @payload.origin_id.to_s,
+          title: "#{@event.nice_name} ##{@event.number} #{@event.action}",
+          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @payload.actor_id,
-            origin_author_name: @payload.actor_login,
-            origin_author_avatar_url: @payload.actor_avatar_url,
-            repo_name: @payload.repo_name,
-            number: @payload.number,
-            state: @payload.state,
-            action: @payload.action,
+            origin_author_id: @event.actor.id,
+            origin_author_name: @event.actor.login,
+            origin_author_avatar_url: @event.actor.avatar_url,
+            repo_name: @event.repo.name,
+            number: @event.number,
+            state: @event.state,
+            action: @event.action,
           }
         })
-        if @payload.respond_to? :label_names
-          built.props[:label_names] = @payload.label_names
-        end
+
+        built.props[:label_names] = @event.lables.andand.names_csv
         built
       end
 
       def update_parent
-        @instance.parent.title = @payload.title
-        @instance.parent.body = @payload.body
-        @instance.parent.props[:state] = @payload.state
-        if @payload.respond_to? :label_names
-          @instance.parent.props[:label_names] = @payload.label_names
-        end
+        @instance.parent.title = @event.title
+        @instance.parent.body = @event.body
+        @instance.parent.props[:state] = @event.state
+        @instance.parent.props[:label_names] = @event.lables.andand.names_csv
       end
 
       # Finders
       def find_by_origin_id
         scope = Entity.feed('github')
         .type(my_type_tag)
-        .where(origin_id: @payload.origin_id.to_s)
+        .where(origin_id: @event.id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
         .feed('github')
         .type(my_type_tag)
-        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-        .where("props -> 'number' = '#{@payload.number}'")
+        .where("props -> 'repo_name' = '#{@event.repo.name}'")
+        .where("props -> 'number' = '#{@event.number}'")
 
       end
 
@@ -75,12 +66,6 @@ module Entities
         end
       end
 
-      def relationships
-        Entities::Github::IssueAction::Relationships
-      end
-      
     end
-
-    PullRequestAction = IssueAction
   end
 end

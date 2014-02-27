@@ -3,34 +3,24 @@ module Entities
 
     class Post < Protocol
 
-      Relationships = {
-        upstream: [],
-        downstream: [],
-        references: [],
-      }
-
       def find
-        @payload.link && find_by_url.first
+        @event.link && find_by_link.first
       end
 
       def build
         Entity.new({
-          title: @payload.title,
-          url: @payload.link,
-          body: Sanitize.clean(@payload.body, Sanitize::Config::RELAXED),
-          origin_ts: @payload.origin_timestamp,
+          title: @event.title,
+          body: @event.description,
+          url: @event.link,
+          origin_ts: @event.origin_timestamp,
         })
       end
 
       # Finders
-      def find_by_url
-        Entity.tagged_with(%w(blog post))
-        .where(url: @payload.link)
+      def find_by_link
+        Entity.feed('blog').type('post').where(url: @event.link)
       end
 
-      def relationships
-        Entity::Blog::Post::Relationships
-      end
     end
 
   end

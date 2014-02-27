@@ -4,43 +4,41 @@ module Entities
     class Question < Protocol
 
       def find
-        @payload.origin_id && find_by_origin_id
+        @event.question_id && find_by_question_id
       end
 
       def build
         Entity.new({
-          title: @payload.title,
-          body: @payload.body_markdown || @payload.body,
-          url: @payload.link,
-          origin_ts: @payload.origin_ts,
-          origin_id: @payload.origin_id,
+          title: @event.title,
+          body: @event.body_markdown || @event.body,
+          url: @event.link,
+          origin_ts: @event.creation_date,
+          origin_id: @event.question_id.to_s,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            origin_author_avatar_url: @payload.origin_author_avatar_url,
-            origin_author_url: @payload.origin_author_url,
-            origin_score: @payload.score,
-            origin_accepted_answer_id: @payload.accepted_answer_id,
-            origin_upvotes: @payload.upvote_count
+            origin_author_id: @event.owner.id,
+            origin_author_name: @event.owner.name,
+            origin_author_avatar_url: @event.owner.profile_image,
+            score: @event.score,
+            accepted_answer_id: @event.accepted_answer_id,
+            upvote_count: @event.upvote_count,
           }
         })
       end
-
-      def build_children
-        # return both arrays
-        build_comments + build_answers
-      end
-
+      
       def update
-        @instance.title = @payload.title
-        @instance.body = @payload.body_markdown || @payload.body
-        @instance.props[:origin_score] = @payload.score
-        @instance.props[:accepted_answer_id] = @payload.accepted_answer_id
-        @instance.props[:upvotes] = @payload.upvote_count
+        @instance.title = @event.title
+        @instance.body = @event.body_markdown || @event.body
+        @instance.props[:score] = @event.score
+        @instance.props[:upvote_count] = @event.upvote_count
+        @instance.props[:accepted_answer_id] = @event.accepted_answer_id
 
         # ?!?!
         update_children
         self
+      end
+
+      def build_children
+        build_comments + build_answers
       end
 
       def update_children
@@ -49,16 +47,9 @@ module Entities
 
       private
 
-      def find_by_origin_id
-        Entity
-          .feed('stack_exchange')
-          .type('question')
-          .where(origin_id: @payload.origin_id)
-          .first
-      end
-
       def build_answers
-        @payload.answers.map do |a|
+        @event.answers.map do |a|
+          event = Events::StackExchange::Answer.new(a.raw)
           Entities::StackExchange::Answer.new(a)
             .procure
             .determine
@@ -69,8 +60,9 @@ module Entities
       end
 
       def build_comments
-        @payload.comments.map do |c|
-          Entities::StackExchange::Comment.new(c)
+        @event.comments.map do |c|
+          c_e = Events::StackExchange::Answer.new(c.raw)
+          Entities::StackExchange::Comment.new(c_e)
             .procure
             .determine
             .group
@@ -80,8 +72,9 @@ module Entities
       end
 
       def update_answers
-        @payload.answers.map do |a|
-          Entities::StackExchange::Answer.new(a)
+        @event.answers.map do |a|
+          a_e = Events::StackExchange::Answer.new(a.raw)
+          Entities::StackExchange::Answer.new(a_e)
             .procure
             .update
             .determine
@@ -91,6 +84,13 @@ module Entities
         end
       end
 
+      def find_by_question_id
+        Entity
+          .feed('stack_exchange')
+          .type('question')
+          .where(origin_id: @event.question_id.to_s)
+          .first
+      end
 
     end
   end

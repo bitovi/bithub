@@ -3,57 +3,46 @@ module Entities
 
     class Post < Protocol
 
-      Relationships = {
-        upstream: [],
-        downstream: [],
-        references: [],
-      }
-
       def find
-        @payload.link && find_by_url.first
+        @event.link && find_by_url.first
       end
 
       def build
         Entity.new({
-          title: @payload.title,
-          body: @payload.sanitized_body,
-          url: @payload.link,
-          origin_ts: @payload.origin_ts,
+          title: @event.title,
+          body: @event.description,
+          url: @event.link,
+          origin_ts: @event.origin_timestamp,
           props: {
-            tags: [@payload.subforum, @payload.term],
-            origin_author_name: @payload.origin_author_name,
+            tags: [@event.subforum, @event.term],
+            origin_author_name: @event.origin_author_name,
           }
         })
       end
 
       def find_parent
-        if @payload.link
-          find_by_thread_prefix.where("origin_ts < ?", @payload.origin_ts).order("origin_ts ASC").first
+        if @event.link
+          find_by_thread_prefix.where("origin_ts < ?", @event.origin_timestamp).order("origin_ts ASC").first
         end
       end
 
       def find_children
-        if @payload.link
-          find_by_thread_prefix.where("origin_ts > ?", @payload.origin_ts).all
+        if @event.link
+          find_by_thread_prefix.where("origin_ts > ?", @event.origin_timestamp).all
         end
       end
 
-      # Finders
       def find_by_url
-        Entity.tagged_with(%w(forum post))
-          .where(:url => @payload.link)
+        Entity.feed('forum').type('post').where(:url => @event.link)
       end
 
+      private
       def find_by_thread_prefix
-        thread_url, _ = @payload.link.split('#')
+        thread_url, _ = @event.link.split('#')
 
         scope = Entity.feed('forum').where("url LIKE '#{thread_url}%'")
         scope = scope.where("#{Entity.table_name}.id <> #{@instance.id}") if @instance.id
         scope
-      end
-
-      def relationships
-        Entities::Forum::Post::Relationships
       end
     end
 
