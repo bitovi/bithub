@@ -4,6 +4,7 @@ module Wrappers
   module Github
 
     class Issue
+      include DataAccessible
       include CoreHelpers
       include IssueLike
 

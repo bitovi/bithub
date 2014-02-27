@@ -17,7 +17,7 @@ module Entities
           origin_id: @event.event_url,
           props: {
             location: @event.venue.composite_location,
-            status: @event.status
+            status: @event.status,
             venue: @event.venue,
             scheduled_at: @event.scheduled_at,
             latitude: @event.venue.latitude,
