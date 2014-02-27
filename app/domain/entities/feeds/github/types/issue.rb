@@ -4,56 +4,51 @@ module Entities
     class Issue < Protocol
       include Entities::Github::Referencable
 
-      Relationships = {
-        upstream: [],
-        downstream: [Entities::Github::IssueAction, Entities::Github::IssueComment],
-        references: []
-      }
-
       def find
-        @payload.issue_id && find_by_origin_id.first
+        @event.issue.id && find_by_issue_id.first
       end
 
       def build
         built = Entity.new({
-          title: @payload.title,
-          body: @payload.body,
-          url: @payload.html_url,
-          origin_ts: @payload.origin_ts,
-          origin_id: @payload.issue_id.to_s,
+          title: @event.issue.title,
+          body: @event.issue.body,
+          url: @event.issue.html_url,
+          origin_id: @event.issue.id.to_s,
+          origin_ts: @event.origin_timestamp,
           props: {
-            repo_name: @payload.repo_name,
-            number: @payload.number,
-            label_names: @payload.label_names,
-            state: @payload.state,
+            repo_name: @event.repo.name,
+            number: @event.issue.number,
+            label_names: @event.issue.labels.names_csv,
+            state: @event.issue.state,
           }
         })
 
-        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
+        built.props[:references_to] = ""
 
-        if @payload.actor
-          built.props[:origin_author_id] = @payload.actor_id
-          built.props[:origin_author_name] = @payload.actor_login
-          built.props[:origin_author_avatar_url] = @payload.actor_avatar_url
+        if @event.actor
+          built.props[:origin_author_id] = @event.actor.id
+          built.props[:origin_author_name] = @event.actor.login
+          built.props[:origin_author_avatar_url] = @event.actor.avatar_url
         end
 
         built
       end
 
       def find_children
-        if @payload.repo_name && @payload.number
-          relationships[:downstream].reduce([]) do |acc, rl|
-            acc += rl.new(@payload).find_by_repo_name_and_number.all
+        downstream = [Entities::Github::IssueAction, Entities::Github::IssueComment]
+        if @event.repo_name && @event.number
+          downstream.reduce([]) do |acc, rl|
+            acc += rl.new(@event).find_by_repo_name_and_number.all
           end
         end
       end
 
       def update
-        @instance.title = @payload.title
-        @instance.body = @payload.body
-        @instance.props[:label_names] = @payload.label_names
-        @instance.props[:state] = @payload.state
-        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
+        @instance.title = @event.title
+        @instance.body = @event.body
+        @instance.props[:label_names] = @event.label_names
+        @instance.props[:state] = @event.state
+        @instance.props[:references_to] = ""
         super
       end
 
@@ -71,27 +66,23 @@ module Entities
         @instance.title = (t = event.issue.andand[:title]) ? t : @instance.title
         @instance.body = (b = event.issue.andand[:body]) ? b: @instance.body
         @instance.props[:state] = event.state
-        @instance.props[:label_names] = event.label_names
+        @instance.props[:label_names] = event.labels.names_csv if event.labels
       end
 
       # Finders
-      def find_by_origin_id
+      def find_by_issue_id
         Entity
         .feed('github')
         .type('issue')
-        .where(origin_id: @payload.issue_id.to_s)
+        .where(origin_id: @event.issue.id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
         .feed('github')
         .type('issue')
-        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-        .where("props -> 'number' = '#{@payload.number}'")
-      end
-
-      def relationships
-        Entities::Github::Issue::Relationships
+        .where("props -> 'repo_name' = '#{@event.repo_name}'")
+        .where("props -> 'number' = '#{@event.number}'")
       end
 
       private

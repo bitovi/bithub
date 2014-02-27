@@ -13,7 +13,7 @@ module Entities
           url: @payload.url,
           origin_ts: @payload.origin_ts,
           props: {
-            origin_author_name: @payload.origin_author_name
+            origin_author_name: @payload.nickname,
           }
         })
       end

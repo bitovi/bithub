@@ -10,12 +10,12 @@ module Entities
       def build
         Entity.new({
           title: title,
-          origin_ts: @payload.origin_ts,
+          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @payload.actor_id,
-            origin_author_name: @payload.actor_login,
-            origin_author_avatar_url: @payload.actor_avatar_url,
-            repo_name: @payload.repo_name,
+            origin_author_id: @event.actor.id,
+            origin_author_name: @event.actor.login,
+            origin_author_avatar_url: @event.actor.avatar_url,
+            repo_name: @event.repo.name,
           }
         })
       end
@@ -23,7 +23,7 @@ module Entities
       private
 
       def title
-        "created a new #{@payload.ref_type} on #{@payload.repo_name}: #{@payload.ref}"
+        "created a new #{@event.ref_type} on #{@event.repo.name}: #{@event.ref}"
       end
     end
 

@@ -3,78 +3,73 @@ module Entities
 
     class Event < Protocol
       
-      Relationships = {
-        upstream: [],
-        downstream: [Entities::Meetup::Rsvp],
-        references: [],
-      }
-
       def find
-        @payload.event_id && 
+        @event.event_id && 
           (find_by_event_url.first || find_by_event_id.first)
       end
       
       def build
         Entity.new({
-          title: @payload.name,
-          body: @payload.description,
-          url: @payload.url,
-          origin_ts: @payload.origin_timestamp,
-          origin_id: @payload.event_url,
+          title: @event.name,
+          body: @event.description,
+          url: @event.url,
+          origin_ts: @event.created_at,
+          origin_id: @event.event_url,
           props: {
-            location: @payload.composite_location,
-            venue: @payload.venue,
-            scheduled_at: @payload.scheduled_at,
-            latitude: @payload.latitude,
-            longitude: @payload.longitude,
-            event_hosts: ActiveSupport::JSON.encode(@payload.event_hosts),
-            event_host_ids: @payload.event_host_ids_csv,
+            location: @event.venue.composite_location,
+            status: @event.status
+            venue: @event.venue,
+            scheduled_at: @event.scheduled_at,
+            latitude: @event.venue.latitude,
+            longitude: @event.venue.longitude,
+            event_hosts: ActiveSupport::JSON.encode(@event.event_hosts),
+            event_host_ids: @event.event_host_ids_csv,
           }
         })
       end
 
       def update
-        @instance.title = @payload.name
-        @instance.body = @payload.description
-        @instance.props[:status] = @payload.status
-        @instance.props[:location] = @payload.composite_location
-        @instance.props[:scheduled_at] = @payload.scheduled_at
-        @instance.props[:latitude] = @payload.latitude
-        @instance.props[:longitude] = @payload.longitude
-        @instance.props[:event_host_ids_csv] = @payload.event_host_ids_csv
-        @instance.props[:event_hosts] = ActiveSupport::JSON.encode(@payload.event_hosts)
+        @instance.title = @event.name
+        @instance.body = @event.description
+        @instance.props[:status] = @event.status
+        @instance.props[:location] = @event.composite_location
+        @instance.props[:scheduled_at] = @event.scheduled_at
+        @instance.props[:latitude] = @event.latitude
+        @instance.props[:longitude] = @event.longitude
+        @instance.props[:event_host_ids] = @event.event_host_ids_csv
+        @instance.props[:event_hosts] = ActiveSupport::JSON.encode(@event.event_hosts)
       end
 
       def determine_hosts
-        @instance.event_hosts = @payload.event_hosts.map do |host|
+        @instance.event_hosts = @event.event_hosts.map do |host|
           Identity.find_by_provider_and_uid('meetup', host.andand[:member_id]).andand.user
         end.compact
       end
 
       def set_thread_ts
-        @instance.thread_updated_ts = @instance.props[:scheduled_at]
+        @instance.thread_updated_ts = Time.parse(@instance.props[:scheduled_at])
       end
 
       def find_children
-        if @payload.event_id
-          Entities::Meetup::Rsvp.find_by_event_id(@payload.event_id).all
+        if @event.id
+          Entities::Meetup::Rsvp.find_by_event_id(@event.id).all
         end
       end
       
       def find_by_event_id
-        self.class.find_by_origin_id(@payload.event_id)
+        self.class.find_by_origin_id(@event.id)
       end
 
       def find_by_event_url
-        self.class.find_by_origin_id(@payload.event_url)
+        self.class.find_by_origin_id(@event.event_url)
       end
 
       # Finders
-      def self.find_by_origin_id(origin_id)
+      def self.find_by_origin_id(id)
         Entity
         .feed('meetup')
         .type('event')
-        .where(origin_id: origin_id)
+        .where(origin_id: id)
       end
     end
 

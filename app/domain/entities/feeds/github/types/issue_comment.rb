@@ -4,61 +4,51 @@ module Entities
     class IssueComment < Protocol
       include Entities::Github::Referencable
 
-      Relationships = {
-        upstream: [Entities::Github::Issue, Entities::Github::PullRequest],
-        downstream: [],
-        references: [],
-      }
-
       def find
-        @payload.comment_id && find_by_comment_id.first
+        @event.comment_id && find_by_comment_id.first
       end
 
       def find_parent
-        if @payload.repo_name && @payload.issue_or_pull_req_number
-          matches = relationships[:upstream].inject([]) do |acc, rl|
-            acc << rl.new(@payload).find_by_repo_name_and_number.first
-          end
-          parent = matches.compact.first
-          # parent.update_from_child(@payload.issue)
-          parent
+        upstream =[Entities::Github::Issue, Entities::Github::PullRequest]
+        if @event.repo_name && @event.ipr.number
+          upstream.reduce([]) do |acc, rl|
+            acc << rl.new(@event).find_by_repo_name_and_number.first
+          end.compact.first
         end
       end
 
       # Builder
       def build
         built = Entity.new({
-          title: "Comment on issue ##{@payload.issue_or_pull_req_number}",
-          body: @payload.body,
-          url: @payload.html_url,
-          origin_ts: @payload.origin_ts,
-          origin_id: @payload.comment_id.to_s,
+          title: "Comment on issue ##{@event.ipr.number}",
+          body: @event.comment.body,
+          url: @event.comment.html_url,
+          origin_ts: @event.comment.created_at,
+          origin_id: @event.comment.id.to_s,
           props: {
-            origin_author_id: @payload.actor_id,
-            origin_author_name: @payload.actor_login,
-            origin_author_avatar_url: @payload.actor_avatar_url,
-            repo_name: @payload.repo_name,
-            number: @payload.issue_or_pull_req_number,
+            origin_author_id: @event.actor.id,
+            origin_author_name: @event.actor.login,
+            origin_author_avatar_url: @event.actor.avatar_url,
+            repo_name: @event.repo.name,
+            number: @event.ipr.number,
           }
         })
 
-        built.props[:references_to] = @payload.referenced_issue_numbers_csv unless @payload.referenced_issue_numbers_csv.blank?
-
+        built.props[:references_to] = ""
         built
       end
 
       def update
-        @instance.title = @payload.title
-        @instance.body = @payload.body
-        @instance.props[:references_to] = @payload.referenced_issue_numbers_csv
+        @instance.body = @event.comment.body
+        @instance.props[:references_to] = ""
         super
       end
 
       def update_parent
-        @instance.parent.title = @payload.issue_or_pull_req_title
-        @instance.parent.body = @payload.issue_or_pull_req_body
-        @instance.parent.props[:state] = @payload.issue_or_pull_req_state
-        @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
+        @instance.parent.title = @event.ipr.title
+        @instance.parent.body = @event.ipr.body
+        @instance.parent.props[:state] = @event.ipr.state
+        @instance.parent.props[:labels_names] = @event.ipr.lables.andand.names_csv
       end
 
       # Finders
@@ -67,23 +57,18 @@ module Entities
         Entity
         .feed('github')
         .type('issue_comment')
-        .where(origin_id: @payload.comment_id.to_s)
+        .where(origin_id: @event.comment.id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
         .feed('github')
         .type('issue_comment')
-        .where("props -> 'repo_name' = '#{@payload.repo_name}'")
-        .where("props -> 'number' = '#{@payload.number}'")
+        .where("props -> 'repo_name' = '#{@event.repo.name}'")
+        .where("props -> 'number' = '#{@event.ipr.number}'")
       end
 
-      def relationships
-        Entities::Github::IssueComment::Relationships
-      end
     end
-
-    PullRequestComment = IssueComment
 
   end
 end
