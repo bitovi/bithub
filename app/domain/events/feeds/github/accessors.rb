@@ -14,6 +14,10 @@ module Events
       def origin_timestamp
         Time.parse(source_data.fetch(:created_at)).utc
       end
+      
+      def created_at
+        origin_timestamp
+      end
 
       module Refs
         def ref_type
