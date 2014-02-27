@@ -5,7 +5,7 @@ module Events
       extend Forwardable
       include Events::Github::Accessors
 
-      def_delegators :@pull_request, :state, :title, :body
+      def_delegators :@pull_request, :id, :state, :title, :body, :number
       attr_reader :pull_request, :repo, :actor
 
       def digest_seed

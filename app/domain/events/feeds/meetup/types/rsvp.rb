@@ -4,8 +4,8 @@ module Events
     class Rsvp < Protocol
       extend Forwardable
 
-      def_delegators :@rsvp, :id, :comment,
-        :response, :created_at
+      def_delegators :@rsvp, :id, :rsvp_id,
+        :comment, :response, :created_at
 
       def digest_seed
         @rsvp.id.to_s + self.class.name

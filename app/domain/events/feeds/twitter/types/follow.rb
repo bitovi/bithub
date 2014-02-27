@@ -14,6 +14,10 @@ module Events
         source_id.to_s + target_id.to_s + self.class.name
       end
 
+      def created_at
+        Time.parse(@data.andand[:created_at]).utc
+      end
+
       def validate_source_and_target
         if we_are_source? and not(we_are_target?)
           @errors += "Follow event - we should be the target, not the source"
