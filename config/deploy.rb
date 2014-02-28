@@ -11,7 +11,6 @@ set(:ssh_options, {
       forward_agent: true
     })
 
-
 # Default value for :format is :pretty
 set :format, :pretty
 
@@ -28,10 +27,29 @@ set :pty, true
 # set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 # Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+set :default_env, {
+  path: "/home/bithub/.rbenv/shims:/opt/rbenv/shims:$PATH",
+  env: fetch(:stage),
+  rails_env: fetch(:stage)
+}
 
 # Default value for keep_releases is 5
 set :keep_releases, 10
+
+# Custom variables
+set :backup_path, "/backups/dbsnapshots/"
+set :backup_ext, ".backup"
+
+# Bundler config
+# set :bundle_roles, :all
+# set :bundle_servers, -> { release_roles(fetch(:bundle_roles)) }
+# set :bundle_binstubs, -> { shared_path.join('bin') }
+# #set :bundle_gemfile, -> { release_path.join('MyGemfile') }
+# set :bundle_path, -> { shared_path.join('bundle') }
+# set :bundle_without, %w{development test}.join(' ')
+# set :bundle_flags, '--deployment --quiet'
+# set :bundle_env_variables, {}
+
 
 namespace :deploy do
 
