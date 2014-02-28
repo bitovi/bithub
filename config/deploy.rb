@@ -39,6 +39,9 @@ set :keep_releases, 10
 # Custom variables
 set :backup_path, "/backups/dbsnapshots/"
 set :backup_ext, ".backup"
+set :log_path, "/var/log/bithub/web/"
+set :unicorn_log_path, "/home/bithub/web/shared/log"
+
 
 # Bundler config
 # set :bundle_roles, :all
