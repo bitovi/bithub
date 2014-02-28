@@ -1,54 +1,33 @@
-# describe Users::PointAwarder do
+require 'domain/spec_helper'
 
-#   describe "#already_awarded_for_profile_completion" do
-#     it "should return true if the user has already been awarded" do
-#       @user = create(:user)
-#       expect(@user.already_awarded_for_profile_completion?).to eql false
-#     end
-    
-#     it "should return false if the user hasn't already been awarded" do
-#       @user = create(:user)
-#       Internal.create!({receiver: @user, value: 1, comment: "Completed profile."})
-#       expect(@user.already_awarded_for_profile_completion?).to eql true
-#     end
-#   end
+describe Users::PointAwarder do
 
-#   describe "#check_and_award_points_for_completing_profile" do
-#     it "should award +1 point for competing profile" do
-#       @user = create(:user)
-#       @user.stub(:completed_profile?).and_return(true)
-#       @user.check_and_award_points_for_completing_profile
-#       expect(@user.score).to eq 1
-#     end
-#   end
+  describe "#completed_profile?" do
+    it "responds with false if all profile fields have not been filled" do
+      user = FactoryGirl.build(:user)
+      expect(Users::PointAwarder.new(user).completed_profile?).to be_false
+    end
+
+    it "responds with true if all profile fields have been filled" do
+      user = FactoryGirl.build(:user, :with_completed_profile)
+      expect(Users::PointAwarder.new(user).completed_profile?).to be_true
+    end
+  end
   
-#   describe "#award_points_for_linking" do
-#     it "should award +1 point for singning in with twitter/github for the first time" do
-#       @user = create(:user)
-#       @user.award_points_for_linking('twitter').save!
-#       expect(@user.reload.score).to eq 1
-#     end
-#   end
+  describe "#award_points_for_linking" do
+    it "awards 1 point for singning in with OAuth for the first time" do
+      user = FactoryGirl.create(:user)
+      Users::PointAwarder.new(user).award_points_for_linking('twitter')
+      expect(user.score).to eq 1
+    end
+  end
   
-#   describe "#completed_profile?" do
-#     it "should return false if user's profile has not been completed" do
-#       user = build(:user, name: "Mali")
-#       expect(user.completed_profile?).to eq false
-#     end
-    
-#     it "should return true if user's profile has been completed" do
-#       user = build(:user,
-#         name: "Mali",
-#         email: "mali@mail.com",
-#         address: "Ajme",
-#         city: "Moram",
-#         postal: "Pisat",
-#         country: Country.new(name: "Ove gluposti")
-#       )
+  describe "#award_points_for_completing_profile" do
+    it "awards 1 point for completing profile" do
+      user = FactoryGirl.create(:user, :with_completed_profile)
+      Users::PointAwarder.new(user).award_points_for_completing_profile
+      expect(user.score).to eq 1
+    end
+  end
 
-#       expect(user.completed_profile?).to eq true
-#     end
-#   end
-
-
-# end
+end
