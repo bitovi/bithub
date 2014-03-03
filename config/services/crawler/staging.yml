@@ -12,6 +12,7 @@
     :events: 300
   :blog: 600
   :twitter: 900
+  :stackexchange: 600
 
 :feeds:
   :blog:
@@ -190,3 +191,12 @@
       :testee:
         :events: 'https://api.github.com/repos/bitovi/testee.js/events'
         :issues: 'https://api.github.com/repos/bitovi/testee.js/issues'
+
+  :stackexchange:
+    :url: "https://api.stackexchange.com/2.2/questions"
+    :query:
+      :site: "stackoverflow"
+      :tagged: "canjs"
+      :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+      :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+      :key: "CgjAklGaewQFFxix067ItQ(("
