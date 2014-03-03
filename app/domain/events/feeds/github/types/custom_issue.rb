@@ -12,7 +12,7 @@ module Events
         :id, :title, :body, :html_url,
         :labels, :number, :state
 
-      attr_reader :user, :issue
+      attr_reader :user, :issue, :repo
 
       def digest_seed
         DigestAttrs.reduce("") do |accumul, attr|
