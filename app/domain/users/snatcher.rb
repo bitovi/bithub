@@ -15,7 +15,7 @@ module Users
     end
 
     def async_execute
-      Delayed::Job.enqueue SnatchingJob.new(@current_user.id, @other_user.id)
+      Delayed::Job.enqueue Jobs::SnatchingJob.new(@current_user.id, @other_user.id)
     end
 
     def snatch_entities

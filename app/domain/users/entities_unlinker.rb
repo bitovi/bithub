@@ -4,14 +4,14 @@ module Users
 
   class EntitiesUnlinker
 
-    class UnlinkingJob < Struct.new(:user_id)
+    class UnlinkingJob < Struct.new(:ident_data, :user_id)
       def perform
-        EntitiesUnlinker.new(user_id).unlink
+        EntitiesUnlinker.new(ident_data, user_id).unlink
       end
     end
     
     def async_unlink
-      Delayed::Job.enqueue UnlinkingJob.new(@user_id)
+      Delayed::Job.enqueue Jobs::UnlinkingJob.new(IdentData.new(@uid, @provider), @user_id)
     end
 
     def initialize(ident_data, user_id)
@@ -20,15 +20,26 @@ module Users
     end
 
     def unlink
-      unlink_entities
+      unlink_authored_entities
+      unlink_hosted_entities
       UserActivity.refresh
     end
     
-    def unlink_entities
+    def unlink_authored_entities
       return if not(user_owns_identity?)
 
-      entities_to_unlink.reduce(true) do |acc, e|
+      authored_entities_to_unlink.reduce(true) do |acc, e|
         acc && ownerships_to_destroy(e).reduce(true) do |acc, o|
+          acc && o.destroy
+        end
+      end
+    end
+
+    def unlink_hosted_entities
+      return if not(user_owns_identity?)
+
+      hosted_entities_to_unlink.reduce(true) do |acc, e|
+        acc && ownerships_to_destroy(e, :host).reduce(true) do |acc, o|
           acc && o.destroy
         end
       end
@@ -36,11 +47,15 @@ module Users
 
     private
 
-    def entities_to_unlink
+    def authored_entities_to_unlink
       Entity.origin_author(@uid).all
     end
 
-    def ownerships_to_destroy(entity)
+    def hosted_entities_to_unlink
+      Entity.origin_host(@uid).all
+    end
+
+    def ownerships_to_destroy(entity, type=:author)
       entity
       .ownerships
       .where(ownership_type: 'author')
