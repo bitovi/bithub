@@ -26,7 +26,7 @@ module Events
         end
       end
 
-      def wrap_reponse
+      def wrap_response
         @source ||= Wrappers::Twitter::User.new(source_data.andand[:source])
         @target ||= Wrappers::Twitter::User.new(source_data.andand[:target])
         self

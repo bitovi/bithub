@@ -12,11 +12,11 @@ module Entities
           title: @event.thread.title,
           body: @event.post.message,
           url: @event.post.url,
-          origin_id: @event.origin_id,
-          origin_ts: @event.origin_timestamp,
+          origin_id: @event.post.id,
+          origin_ts: @event.post.created_at,
           props: {
-            origin_author_id: @event.origin_author_id,
-            origin_author_name: @event.origin_author_name,
+            origin_author_id: @event.author.id,
+            origin_author_name: @event.author.name,
           }
         })
       end

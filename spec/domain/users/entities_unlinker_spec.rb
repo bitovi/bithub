@@ -17,23 +17,23 @@ describe Users::EntitiesUnlinker do
   describe "#unlink_entities" do
 
     it "removes ownerships for events that have a provided UID in props" do
-      Users::EntitiesUnlinker.new(@gh_id, @user.id).unlink_entities
+      Users::EntitiesUnlinker.new(@gh_id, @user.id).unlink_authored_entities
       expect{@o1.reload}.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it "doesn't touch user's other ownerships" do
-      Users::EntitiesUnlinker.new(@gh_id, @user.id).unlink_entities
+      Users::EntitiesUnlinker.new(@gh_id, @user.id).unlink_authored_entities
       expect(@o2.reload).to be
     end
 
     it "returns a falsy val if the user doesn't have the ident that's being unlinked" do
       unlinker = Users::EntitiesUnlinker.new(Users::IdentData.new(42, 'not'), @user.id)
-      expect(unlinker.unlink_entities).to be_nil
+      expect(unlinker.unlink_authored_entities).to be_nil
     end
 
     it "returns a truthy val if unlinking was successful" do
       unlinker = Users::EntitiesUnlinker.new(@gh_id, @user.id)
-      expect(unlinker.unlink_entities).to be
+      expect(unlinker.unlink_authored_entities).to be
     end
   end
 

@@ -23,7 +23,7 @@ module Events
         @event.scheduled_at.utc.iso8601
       end
 
-      def wrap_reponse
+      def wrap_response
         @event = Wrappers::Meetup::Event.new(source_data)
         @venue = Wrappers::Meetup::Venue.new(source_data[:venue])
         self

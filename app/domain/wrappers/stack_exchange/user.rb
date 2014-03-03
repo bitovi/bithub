@@ -12,6 +12,7 @@ module Wrappers
         :profile_image
 
       alias_method :name, :display_name
+      alias_method :id, :user_id
 
       def initialize(user)
         @data = symbolize_keys(user)

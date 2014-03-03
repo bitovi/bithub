@@ -3,6 +3,10 @@ require_relative 'traits/persistable'
 require_relative 'traits/serializable'
 require_relative 'traits/validatable'
 
+Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
+  require f.gsub('app/domain/', '')
+end
+
 module Events
   module Github; end
   module Twitter; end
@@ -27,7 +31,7 @@ module Events
       _raw = symbolize_keys(payload)
       @source_data = _raw[:source_data] || _raw
       @meta = _raw[:meta] || nil
-      wrap_reponse if self.respond_to? :wrap_reponse
+      wrap_response if self.respond_to? :wrap_response
     end
 
     def content_digest

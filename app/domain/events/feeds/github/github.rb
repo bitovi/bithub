@@ -2,6 +2,7 @@
 
 require_relative 'accessors'
 require_relative 'reference'
+require 'wrappers/data_accessible'
 
 Dir[File.join('app', 'domain', 'wrappers', 'github', '**', '*.rb')].each do |f|
   require f.gsub('app/domain/', '')

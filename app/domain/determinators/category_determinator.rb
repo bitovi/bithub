@@ -1,7 +1,7 @@
 module Determinators
   class CategoryDeterminator
 
-    def best_match(entity, rules=nil)
+    def self.best_match(entity, rules=nil)
       tags = entity.tag_list
       rules = rules || CategoryDeterminationRule.all
       self.new(tags, rules).best_match

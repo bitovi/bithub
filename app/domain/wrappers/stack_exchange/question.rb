@@ -5,9 +5,11 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      has :question_id, :accepted_answer_id,
+      has :question_id,
         :title, :body, :body_markdown, :link, :score,
         :is_answered, :up_vote_count
+
+      maybe_has :accepted_answer_id
 
       alias_method :answered?, :is_answered
       alias_method :upvote_count, :up_vote_count

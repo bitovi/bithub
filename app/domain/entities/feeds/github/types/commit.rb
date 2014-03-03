@@ -44,7 +44,7 @@ module Entities
         Entity
         .feed('github')
         .type('commit')
-        .where(origin_id: @commit[:sha])
+        .where(origin_id: @commit.sha)
       end
     end
 
