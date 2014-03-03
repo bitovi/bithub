@@ -8,7 +8,7 @@ class Api::V1::AchievementsController < Api::V1::BaseController
 
   def index
     authorize! :read, Achievement, :message => "No rights to read achievements."
-    @achievements = build_scope(request.env['muster.query']).all
+    @achievements = build_scope(request.env['muster.query']).result.all
     render :index
   end
 
@@ -27,6 +27,14 @@ class Api::V1::AchievementsController < Api::V1::BaseController
 
     @achievement = Achievement.find(params[:id])
     filtered_params = params.select {|param| Achievement.accessible_attributes.include?(param)}
+
+    unless filtered_params["user"].nil?
+      filtered_params["user"] = User.find(filtered_params["user"]["id"])
+    end
+
+    unless filtered_params["reward"].nil?
+      filtered_params["reward"] = Reward.find(filtered_params["reward"]["id"])
+    end
 
     if @achievement.update_attributes(filtered_params)
       render :show
@@ -58,6 +66,6 @@ class Api::V1::AchievementsController < Api::V1::BaseController
 
   def build_scope(muster_query)
     scope = Achievement.scoped
-    scope = scope_applier.apply_muster_query_to_scope(scope, muster_query)
+    scope = scope_applier.apply_muster_query_to_scope(muster_query)
   end
 end

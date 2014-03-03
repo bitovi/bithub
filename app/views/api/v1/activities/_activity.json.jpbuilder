@@ -1,4 +1,4 @@
-json.(activity, :id, :title, :value)
+json.(activity, :id, :ownership_type, :title, :value)
 
 # kept for backward compability
 json.type activity.model_name == 'Entity' ? 'author' : activity.model_name.downcase

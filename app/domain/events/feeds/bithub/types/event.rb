@@ -27,6 +27,10 @@ module Events
         source_data.andand[:location]
       end
 
+      def validate
+        self
+      end
+
     end
   end
 end
