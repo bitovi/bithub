@@ -51,37 +51,24 @@ module Entities
         @event.answers.map do |a|
           event = Events::StackExchange::Answer.new(a.raw)
           Entities::StackExchange::Answer.new(a)
-            .procure
-            .determine
-            .group
-            .normalize
-            .instance
-        end
+            .procure.determine.group.normalize.instance
+        end if @event.answers
       end
 
       def build_comments
         @event.comments.map do |c|
           c_e = Events::StackExchange::Answer.new(c.raw)
           Entities::StackExchange::Comment.new(c_e)
-            .procure
-            .determine
-            .group
-            .normalize
-            .instance
-        end
+            .procure.determine.group.normalize.instance
+        end if @event.comments
       end
 
       def update_answers
         @event.answers.map do |a|
           a_e = Events::StackExchange::Answer.new(a.raw)
           Entities::StackExchange::Answer.new(a_e)
-            .procure
-            .update
-            .determine
-            .group
-            .normalize
-            .persist
-        end
+            .procure.update.determine.group.normalize.persist
+        end if @event.answers
       end
 
       def find_by_question_id

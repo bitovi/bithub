@@ -19,7 +19,7 @@ module Events
         Time.strptime(source_data.andand[:published], "%e %b %Y").utc
       end
 
-      def wrap_reponse
+      def wrap_response
         @item = Wrappers::Rss::Item.new(source_data)
         self
       end

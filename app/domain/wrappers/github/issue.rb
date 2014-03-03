@@ -12,8 +12,8 @@ module Wrappers
 
       def initialize(issue)
         @i = symbolize_keys(issue)
-        @user = Wrappers::Github::User.new(issue[:user])
-        @labels = Wrappers::Github::Labels.new(issue[:labels])
+        @user = Wrappers::Github::User.new(@i.andand[:user])
+        @labels = Wrappers::Github::Labels.new(@i.andand[:labels])
       end
 
       def references_to

@@ -1,17 +1,18 @@
 :intervals:
     :github:
-        :events: 15
+        :events: 5
         :issues:
             :open: 30
-            :closed: 600
-    :disqus: 45
-    :forum: 60
+            :closed: 60
+    :disqus: 4
+    :forum: 6
     :meetup:
-        :rsvps: 45
-        :all_events: 120
-        :events: 60
-    :blog: 240
-    :twitter: 480
+        :rsvps: 4
+        :all_events: 12
+        :events: 6
+    :blog: 12
+    :twitter: 8
+    :stack_exchange: 5
 
 :feeds:
     :blog:
@@ -71,6 +72,14 @@
                 :events: 'https://api.github.com/repos/bithub-test/testy/events'
                 :issues: 'https://api.github.com/repos/bithub-test/testy/issues'
 
+    :stackexchange:
+        :url: "https://api.stackexchange.com/2.2/questions"
+        :query:
+            :site: "stackoverflow"
+            :tagged: "canjs"
+            :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+            :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+            :key: "8EAiwRhHlupc0Z1aV3SCVg(("
 
     :twitter:
         :public:

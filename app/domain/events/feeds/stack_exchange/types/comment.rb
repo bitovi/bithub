@@ -11,7 +11,7 @@ module Events
         @comment.comment_id.to_s + creation_date.to_s + self.class.name
       end
 
-      def wrap_reponse
+      def wrap_response
         @comment = Wrappers::StackExchange::Comment.new(source_data)
         @owner = Wrappers::StackExchange::User.new(source_data[:owner])
         self

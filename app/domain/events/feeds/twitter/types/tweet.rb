@@ -18,7 +18,7 @@ module Events
         "https://twitter.com/#{@user.screen_name}/status/#{@tweet.id_str}"
       end
       
-      def wrap_reponse
+      def wrap_response
         @tweet ||= Wrappers::Twitter::Tweet.new(source_data)
         @user ||= Wrappers::Twitter::User.new(source_data[:user])
         self

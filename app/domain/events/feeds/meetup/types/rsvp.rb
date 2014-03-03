@@ -11,7 +11,7 @@ module Events
         @rsvp.id.to_s + self.class.name
       end
 
-      def wrap_reponse
+      def wrap_response
         @rsvp = Wrappers::Meetup::Rsvp.new(source_data)
         @event = Wrappers::Meetup::Event.new(source_data[:event])
         @member = Wrappers::Meetup::Member.new(source_data[:member], source_data[:member_photo])

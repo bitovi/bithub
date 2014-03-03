@@ -6,6 +6,10 @@ require_relative 'traits/persistable'
 require_relative 'traits/referencable'
 require_relative 'traits/validatable'
 
+Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
+  require f.gsub('app/domain/', '')
+end
+
 module Entities
   module Bithub; end
   module Blog; end
@@ -81,3 +85,4 @@ require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
 require_relative 'feeds/stack_exchange/stack_exchange'
+

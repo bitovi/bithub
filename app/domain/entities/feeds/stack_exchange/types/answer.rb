@@ -4,7 +4,7 @@ module Entities
     class Answer < Protocol
 
       def find
-        @event.origin_id && find_by_origin_id
+        @event.answer_id && find_by_origin_id
       end
 
       def build
@@ -40,8 +40,9 @@ module Entities
       end
 
       def build_comments
-        @event.comments.map do |c|
-          c_e = Events::StackExchange::Comment.new(c.raw)
+        @event.comments.map do |c| # Wrapper -> Event
+          Events::StackExchange::Comment.new(c.raw)
+        end.map do |c_e| # Event -> Entity
           Entities::StackExchange::Comment.new(c_e)
             .procure
             .determine

@@ -8,27 +8,19 @@ $:.unshift PROJECT_ROOT
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 
 require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'testing'
-
-DatabaseCleaner.strategy = :truncation, {
-  except: %w(tags scoring_rules category_determination_rules entity_aggregated_tag_list user_total_score entity_total_upvotes)
-}
+CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
 
 require 'rspec/mocks'
 require 'rspec/rails'
 
 TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
-CATEGORY_RULES = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
-SCORING_RULES = File.join(PROJECT_ROOT, 'config', 'scoring_rules.yml')
+CATEGORY_RULES_PATH = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
+SCORING_RULES_PATH = File.join(PROJECT_ROOT, 'config', 'scoring_rules.yml')
 
 def import_all
   import_tags
   import_category_rules
   import_scoring_rules
-end
-
-def make_dummy_event(i)
-  Hash.new({content_digest: Digest::MD5.hexdigest(i.to_s), data: {title: "Event #{i}"}})
 end
 
 def import_tags
@@ -46,14 +38,14 @@ def import_tags
 end
 
 def import_category_rules
-  rules = YAML::load_file(CATEGORY_RULES)
+  rules = YAML::load_file(CATEGORY_RULES_PATH)
   rules.each do |category, scorings|
     CategoryDeterminationRule.create({:name => category, :scorings => scorings})
   end
 end
 
 def import_scoring_rules
-  rules = YAML::load_file(SCORING_RULES)
+  rules = YAML::load_file(SCORING_RULES_PATH)
   rules.each do |rule_config|
     ScoringRule.create(rule_config)
   end

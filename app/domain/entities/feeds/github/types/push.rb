@@ -23,7 +23,7 @@ module Entities
           }
         })
 
-        built.props[:references_to] = @event.referenced_issue_numbers_csv unless @event.referenced_issue_numbers_csv.blank?
+        built.props[:references_to] = ""
 
         built 
       end

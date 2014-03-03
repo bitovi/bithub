@@ -11,7 +11,7 @@ module Events
         @post.id + self.class.name
       end
 
-      def wrap_reponse
+      def wrap_response
         @post = Wrappers::Disqus::Post.new(source_data)
         @author = Wrappers::Disqus::Author.new(source_data[:author]) if source_data[:author]
         @thread = Wrappers::Disqus::Thread.new(source_data[:thread]) if source_data[:thread]

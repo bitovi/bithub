@@ -12,7 +12,7 @@ module Wrappers
 
       def initialize(pull_req)
         @pr = symbolize_keys(pull_req)
-        @user = Wrappers::Github::User.new(pull_req[:user])
+        @user = Wrappers::Github::User.new(@pr.andand[:user])
       end
 
       def labels

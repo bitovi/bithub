@@ -153,7 +153,7 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     # --- StackExchange
     feed_config = feeds[:stackexchange]
     log_registering(feed_config[:url])
-    EM.add_periodic_timer(intervals[:stackexchange], Poller.new(ex, feed_config[:url]) do |c|
+    EM.add_periodic_timer(intervals[:stack_exchange], Poller.new(ex, feed_config[:url]) do |c|
       c.feed_name = "stack_exchange"
       params = feed_config[:query].merge({
          pagesize: 100,

@@ -18,7 +18,14 @@ describe Entities::Dispatcher do
 
     context "dispatching a CustomFollow event" do
     end
-
+    
+    context "dispatching Issue from Issues API endpoint" do
+      it "responds with PullRequest" do
+        raw = raw_data(response_path: 'github/issues/issues.json').first
+        event = Events::Github::CustomIssue.new(raw)
+        expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::Issue
+      end
+    end
 
     context "dispatching PullRequest event" do
       it "responds with PullRequest" do
@@ -31,6 +38,7 @@ describe Entities::Dispatcher do
         it "responds with IssueAction if action != opened" do
           raw = raw_data(response_path: 'github/events/issues_event.json')
           raw['payload']['action'] = 'reopened'
+          puts "======> #{raw.inspect}"
           event = Events::Github::PullRequest.new(raw)
           expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::IssueAction
         end
