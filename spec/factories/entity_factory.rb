@@ -1,66 +1,3 @@
-push_event_source_data = {
-  id: "1822604055",
-  type: "PushEvent",
-  actor: {
-    id: 252054,
-    login: "imjoshdean",
-    gravatar_id: "3282bba910cbf2936251e351f1405c26",
-    url: "https://api.github.com/users/imjoshdean",
-    avatar_url: "https://1.gravatar.com/avatar/3282bba910cbf2936251e351f1405c26?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"
-  },
-  repo: {
-    id: 3228363,
-    name: "bitovi/canjs",
-    url: "https://api.github.com/repos/bitovi/canjs"
-  },
-  payload: {
-    push_id: 224663608,
-    size: 2,
-    distinct_size: 2,
-    ref: "refs/heads/master",
-    head: "1107f77cc5074b7ad9b7f628afb43bc703325111",
-    before: "d567f296b998eddedde0f709e58790e646d194c9",
-    commits: [{
-      sha: "7d7a87304943e1de9d019bf07d33dc9413a13181",
-      author: {
-        email: "imjoshdean@me.com",
-        name: "Josh Dean"
-      },
-      message: "Update EJS documentation. Clean up some issues and wording.",
-      distinct: true,
-      url: "https://api.github.com/repos/bitovi/canjs/commits/7d7a87304943e1de9d019bf07d33dc9413a13181"
-    }, {
-      sha: "1107f77cc5074b7ad9b7f628afb43bc703325111",
-      author: {
-        email: "imjoshdean@me.com",
-        name: "Josh Dean"
-      },
-      message: "Update can.Model documentation. Clean up some issues and wording.",
-      distinct: true,
-      url: "https://api.github.com/repos/bitovi/canjs/commits/1107f77cc5074b7ad9b7f628afb43bc703325111"
-    }]
-  },
-  public: true,
-  created_at: "2013-09-05T14:43:05Z",
-  org: {
-    id: 2782656,
-    login: "bitovi",
-    gravatar_id: "89162cee14c11672d134cfafed24d1be",
-    url: "https://api.github.com/orgs/bitovi",
-    avatar_url: "https://2.gravatar.com/avatar/89162cee14c11672d134cfafed24d1be?d=https%3A%2F%2Fa248.e.akamai.net%2Fassets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png"
-  }
-}
-issue_source_data = {
-  payload: {
-    issue: {
-      title: "Someone found a bug!",
-      body: "The description",
-      state: "closed",
-      labels: [{name: "bug"}, {name: "question"}]
-    }
-  }
-}
-
 FactoryGirl.define do
 
   factory :props, class:Hash do
@@ -106,16 +43,17 @@ FactoryGirl.define do
     trait :with_determined_author do
       association :author, factory: :user
     end
-    
+
     factory :entity_wo_type     , traits: [:with_determined_tags, :with_determined_feed, :with_determined_category, :with_determined_rule    , :with_determined_author]
     factory :entity_wo_feed     , traits: [:with_determined_type, :with_determined_tags, :with_determined_category, :with_determined_rule    , :with_determined_author]
     factory :entity_wo_tags     , traits: [:with_determined_type, :with_determined_feed, :with_determined_category, :with_determined_rule    , :with_determined_author]
     factory :entity_wo_category , traits: [:with_determined_type, :with_determined_tags, :with_determined_feed    , :with_determined_rule    , :with_determined_author]
     factory :entity_wo_rule     , traits: [:with_determined_type, :with_determined_tags, :with_determined_feed    , :with_determined_category, :with_determined_author]
     factory :entity_wo_author   , traits: [:with_determined_type, :with_determined_tags, :with_determined_feed    , :with_determined_category, :with_determined_rule]
-    factory :entity_determined  , traits: [:with_determined_type, :with_determined_tags, :with_determined_feed    , :with_determined_category, :with_determined_rule, :with_determined_author]
 
-    ### Forum entity
+    factory :determined_entity  , traits: [:with_determined_type, :with_determined_tags, :with_determined_feed    , :with_determined_category, :with_determined_rule, :with_determined_author]
+
+    # Forum entity
 
     factory :forum_entity do
       feed_name 'forums'
@@ -142,7 +80,7 @@ FactoryGirl.define do
       factory :forum_child, traits: [:forum_reply, :with_determined_rule]
     end
 
-    ### Twitter entity
+    # Twitter entity
 
     factory :twitter_entity do
       feed_name 'twitter'
@@ -186,7 +124,7 @@ FactoryGirl.define do
       factory :twitter_follow, traits: [:with_determined_rule, :follow]
     end
 
-    ### Github event
+    # Github event
 
     factory :github_entity do
       feed_name 'github'
