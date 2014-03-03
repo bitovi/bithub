@@ -12,7 +12,7 @@ module Entities
           title: @event.pull_request.title,
           body: @event.pull_request.body,
           url: @event.pull_request.html_url,
-          origin_ts: @event.origin_ts,
+          origin_ts: @event.pull_request.created_at,
           origin_id: @event.pull_request.id.to_s,
           props: {
             repo_name: @event.repo.name,

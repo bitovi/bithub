@@ -57,7 +57,8 @@ module Entities
 
       def build_comments
         @event.comments.map do |c|
-          c_e = Events::StackExchange::Answer.new(c.raw)
+          Events::StackExchange::Comment.new(c.raw)
+        end.map do |c_e|
           Entities::StackExchange::Comment.new(c_e)
             .procure.determine.group.normalize.instance
         end if @event.comments

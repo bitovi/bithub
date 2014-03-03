@@ -9,11 +9,11 @@ module Entities
       
       def build
         Entity.new({
-          title: @payload.title,
-          url: @payload.url,
-          origin_ts: @payload.origin_ts,
+          title: @event.title,
+          url: @event.url,
+          origin_ts: @event.origin_ts,
           props: {
-            origin_author_name: @payload.nickname,
+            origin_author_name: @event.nickname,
           }
         })
       end

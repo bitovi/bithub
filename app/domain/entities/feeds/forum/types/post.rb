@@ -12,10 +12,10 @@ module Entities
           title: @event.title,
           body: @event.description,
           url: @event.link,
-          origin_ts: @event.origin_timestamp,
+          origin_ts: @event.pub_date,
           props: {
             tags: [@event.subforum, @event.term],
-            origin_author_name: @event.origin_author_name,
+            origin_author_name: @event.creator,
           }
         })
       end

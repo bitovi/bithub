@@ -1,6 +1,9 @@
 module Events
   module Github
 
+    class FakeRepo < Struct.new(:name)
+    end
+
     class CustomIssue < Protocol
       extend Forwardable
       DigestAttrs = [:id, :title, :body, :label_names_csv, :state, :updated_at]
@@ -41,6 +44,7 @@ module Events
       def wrap_response
         @issue = Wrappers::Github::Issue.new(source_data)
         @user = Wrappers::Github::User.new(source_data[:user])
+        @repo = FakeRepo.new(repo_name)
         self
       end
     end

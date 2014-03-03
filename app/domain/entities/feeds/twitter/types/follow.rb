@@ -9,12 +9,12 @@ module Entities
 
       def build
         Entity.new({
-          title: "followed @#{@payload.target.screen_name}",
-          origin_ts: @payload.created_at,
+          title: "followed @#{@event.target.screen_name}",
+          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @payload.source.id.to_s,
-            origin_author_name: @payload.source.screen_name,
-            target: @payload.target.screen_name,
+            origin_author_id: @event.source.id.to_s,
+            origin_author_name: @event.source.screen_name,
+            target: @event.target.screen_name,
           }
         })
       end

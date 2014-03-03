@@ -9,12 +9,12 @@ module Entities
 
       def build
         Entity.new({
-          title: "started watching #{@payload.repo_name}",
-          origin_ts: @payload.created_at,
+          title: "started watching #{@event.repo_name}",
+          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @payload.actor.id,
-            origin_author_name: @payload.actor.login,
-            repo_name: @payload.repo.name,
+            origin_author_id: @event.actor.id,
+            origin_author_name: @event.actor.login,
+            repo_name: @event.repo.name,
           }
         })
       end

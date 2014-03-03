@@ -26,23 +26,23 @@ module Entities
       end
 
       def find
-        Entity.where(id: @payload.id).first
+        Entity.where(id: @event.id).first
       end
 
       def build
         entity = Entity.new({
-          title: @payload.title,
-          body: @payload.body,
-          url: @payload.url,
-          origin_ts: @payload.origin_ts,
-          image: @payload.image,
+          title: @event.title,
+          body: @event.body,
+          url: @event.url,
+          origin_ts: @event.origin_ts,
+          image: @event.image,
           props: {
-            location: @payload.location,
-            project: @payload.project,
-            tags: @payload.category,
-            origin_author_id: @payload.origin_author_id,
-            origin_author_feed: @payload.origin_author_feed,
-            origin_author_name: @payload.origin_author_name
+            location: @event.location,
+            project: @event.project,
+            tags: @event.category,
+            origin_author_id: @event.origin_author_id,
+            origin_author_feed: @event.origin_author_feed,
+            origin_author_name: @event.origin_author_name
           }
         })
 
@@ -51,8 +51,8 @@ module Entities
 
       def determine_author
         # only set user automatically to the current user if this is a new record
-        if @instance.new_record? && !@payload.local_author_id.nil?
-          @instance.author = User.find(@payload.local_author_id)
+        if @instance.new_record? && !@event.local_author_id.nil?
+          @instance.author = User.find(@event.local_author_id)
         else
           ident = Identity.find_or_create_with_provider_and_uid(
             @instance.props[:origin_author_feed],
@@ -67,19 +67,19 @@ module Entities
       end
 
       def update
-        @instance.title = @payload.title
-        @instance.body  = @payload.body
-        @instance.url   = @payload.url
-        @instance.image = @payload.image
+        @instance.title = @event.title
+        @instance.body  = @event.body
+        @instance.url   = @event.url
+        @instance.image = @event.image
 
-        @instance.props[:tags] = @payload.tags
+        @instance.props[:tags] = @event.tags
 
-        @instance.props[:scheduled_at] = @payload.scheduled_at if @payload.scheduled_at
-        @instance.props[:location]     = @payload.location if @payload.location
+        @instance.props[:scheduled_at] = @event.scheduled_at if @event.scheduled_at
+        @instance.props[:location]     = @event.location if @event.location
 
-        @instance.props[:origin_author_feed] = @payload.origin_author_feed if @payload.origin_author_feed
-        @instance.props[:origin_author_id]   = @payload.origin_author_id if @payload.origin_author_id
-        @instance.props[:origin_author_name] = @payload.origin_author_name if @payload.origin_author_name
+        @instance.props[:origin_author_feed] = @event.origin_author_feed if @event.origin_author_feed
+        @instance.props[:origin_author_id]   = @event.origin_author_id if @event.origin_author_id
+        @instance.props[:origin_author_name] = @event.origin_author_name if @event.origin_author_name
 
         super
       end
