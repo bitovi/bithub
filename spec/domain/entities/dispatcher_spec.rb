@@ -38,7 +38,6 @@ describe Entities::Dispatcher do
         it "responds with IssueAction if action != opened" do
           raw = raw_data(response_path: 'github/events/issues_event.json')
           raw['payload']['action'] = 'reopened'
-          puts "======> #{raw.inspect}"
           event = Events::Github::PullRequest.new(raw)
           expect(Entities::Dispatcher.new(event).type).to eq Entities::Github::IssueAction
         end
