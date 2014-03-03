@@ -7,6 +7,7 @@
   :disqus: 30
   :forums: 120
   :blog: 600
+  :stackexchange: 600
 
 :feeds:
   :blog: 'http://www.bitovi.com/blog.rss'
@@ -26,7 +27,7 @@
         - 'thread'
         - 'forum'
       :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
-  
+
   :github:
     :token: c27ac77b9951537a008b1ab2ef8dfe0035fac8c8
     :repos:
@@ -45,7 +46,7 @@
           :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
           :token: "55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw"
           :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
-  
+
       :user_feeds:
         :bitovi:
           :host: userstream.twitter.com
@@ -86,3 +87,12 @@
             :consumer_secret: "onuJXBvTq4uNbUA0WF09edo6sXGgfBHbMvcx5jv8s"
             :token: "56956664-UHcaq3W6O3ocUU6k5gOkvT6IMsYcLpxG9extWIQTY"
             :token_secret: "CRsa23cttiFITHIEuAx0EcDps0A7r4n30qHquigzHTO6E"
+
+  :stackexchange:
+    :url: "https://api.stackexchange.com/2.2/questions"
+    :query:
+      :site: "stackoverflow"
+      :tagged: "canjs"
+      :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+      :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+      :key: "W0GMqL)kmXmV3qFeqB*IaQ(("
