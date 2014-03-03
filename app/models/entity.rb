@@ -192,7 +192,7 @@ class Entity < ActiveRecord::Base
   end
 
   def sum_upvotes
-    self.upvotes.sum('value')
+    self.upvotes.sum(:value)
   end
 
   def update_total_upvotes
@@ -294,6 +294,8 @@ class Entity < ActiveRecord::Base
 
     end
   end
+
+  alias_method :upvotes_sum, :sum_upvotes
 
   private
 

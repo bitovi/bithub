@@ -108,11 +108,11 @@ class User < ActiveRecord::Base
   end
 
   def reward_if_eligible
-    Users::RewardEligiblityDecider.new(user: self).reward_if_eligible
+    Users::Rewarder.new(user: self).reward_if_eligible
   end
 
   def unreward_if_uneligible
-    Users::RewardEligiblityDecider.new(user: self).unreward_if_uneligible
+    Users::Rewarder.new(user: self).unreward_if_uneligible
   end
 
   def calculate_avatar_url

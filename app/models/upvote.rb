@@ -15,4 +15,5 @@ class Upvote < ActiveRecord::Base
     self.applies_to.parent.touch if self.applies_to.parent
     self.applies_to.parent.parent.touch if self.applies_to.parent && self.applies_to.parent.parent
   end
+
 end
