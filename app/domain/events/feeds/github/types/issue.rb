@@ -16,6 +16,10 @@ module Events
         payload.fetch(:action)
       end
 
+      def ipr
+        @issue
+      end
+
       def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data[:actor])
         @repo ||= Wrappers::Github::Repo.new(source_data[:repo])

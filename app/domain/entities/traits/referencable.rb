@@ -6,7 +6,7 @@ module Entities
         if references_in_content && !references_in_content_csv.blank?
           Entity
           .feed('github')
-          .repo_name(@payload.repo_name)
+          .repo_name(@event.repo_name)
           .where("props ? 'number'")
           .where("string_to_array(props -> 'number', ',') @> string_to_array('#{references_in_content_csv}', ',')")
           .all
@@ -14,22 +14,22 @@ module Entities
       end
 
       def find_references_to_self
-        if @payload.respond_to? :number
+        if @event.respond_to? :number
           Entity
           .feed('github')
-          .repo_name(@payload.repo_name)
+          .repo_name(@event.repo_name)
           .where("props ? 'references_to'")
-          .where("string_to_array('#{@payload.number}', ',') @> string_to_array(props -> 'references_to', ',')")
+          .where("string_to_array('#{@event.number}', ',') @> string_to_array(props -> 'references_to', ',')")
           .all
         end
       end
 
       def referenced_repo_name
-        @payload.referenced_repo_name || @payload.repo_name
+        @event.referenced_repo_name || @event.repo_name
       end
 
       def references_in_content
-        @payload.referenced_issue_numbers
+        nil
       end
 
       def references_in_content_csv

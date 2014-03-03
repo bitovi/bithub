@@ -1,18 +1,18 @@
 :intervals:
     :github:
-        :events: 5
+        :events: 10
         :issues:
             :open: 30
             :closed: 60
-    :disqus: 4
-    :forum: 6
+    :disqus: 10
+    :forum: 10
     :meetup:
-        :rsvps: 4
-        :all_events: 12
-        :events: 6
-    :blog: 12
-    :twitter: 8
-    :stack_exchange: 5
+        :rsvps: 10
+        :all_events: 10
+        :events: 10
+    :blog: 10
+    :twitter: 10
+    :stack_exchange: 10
 
 :feeds:
     :blog:

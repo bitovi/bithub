@@ -16,7 +16,7 @@ module Wrappers
       end
 
       def labels
-        nil
+        @labels ||= Wrappers::Github::Labels.new([])
       end
 
       def references_to
