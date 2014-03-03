@@ -2,8 +2,8 @@ require 'domain/spec_helper'
 
 describe Activities::Awarder do
 
-  let(:actor) { FactoryGirl.build(:user) }
-  let(:entity) { FactoryGirl.build(:entity) }
+  let(:actor) { FactoryGirl.create(:user) }
+  let(:entity) { FactoryGirl.create(:determined_entity) }
   subject(:awarder) { Activities::Awarder.new(actor, entity) }
 
   describe "#provided_strategy" do
@@ -36,11 +36,24 @@ describe Activities::Awarder do
   end
 
   describe "#double_upvote_value" do
-    it "responds with an award value that is equal to doubled total upvotes"
+    it "responds with an award value that is equal to doubled total upvotes" do
+      e = FactoryGirl.create(:determined_entity)
+      FactoryGirl.create(:upvote, actor: actor, value: 7, applies_to: e)
+
+      expect(Activities::Awarder.new(actor, e).double_upvote_value).to eq 14
+    end
   end
 
   describe "#double_parents_upvote_value" do
-    it "responds with an award value that is equal to doubled total upvotes of entity's parent entity"
+    it "responds with an award value that is equal to doubled total upvotes of entity's parent entity" do
+      p = FactoryGirl.create(:determined_entity)
+      FactoryGirl.create(:upvote, actor: actor, value: 7, applies_to: p)
+
+      e = FactoryGirl.create(:determined_entity, parent: p)
+      FactoryGirl.create(:upvote, actor: actor, value: 3, applies_to: e)
+
+      expect(Activities::Awarder.new(actor, e).double_parents_upvote_value).to eq 14
+    end
   end
 
   describe "#rule_based_value" do

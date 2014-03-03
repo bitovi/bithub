@@ -46,11 +46,11 @@ module Activities
     end
 
     def double_upvote_value
-      @applies_to.upvotes.sum(:value) * 2
+      @applies_to.upvotes_sum * 2
     end
 
-    def double_parents_upvote_value(event)
-      @applies_to.top_level_parent.upvotes.sum(:value) * 2 if @applies_to.parent
+    def double_parents_upvote_value
+      (@applies_to.top_level_parent.upvotes_sum * 2) if @applies_to.parent
     end
 
     def rule_based_value
