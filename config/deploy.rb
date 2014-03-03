@@ -41,7 +41,7 @@ set :backup_path, "/backups/dbsnapshots/"
 set :backup_ext, ".backup"
 set :log_path, "/var/log/bithub/web/"
 set :unicorn_log_path, "/home/bithub/web/shared/log"
-
+set :user, "bithub"
 
 # Bundler config
 # set :bundle_roles, :all
