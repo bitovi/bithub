@@ -830,6 +830,45 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 
 --
+-- Name: tenants; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tenants (
+    id integer NOT NULL,
+    login character varying(255),
+    name character varying(255),
+    email character varying(255),
+    address character varying(255),
+    city character varying(255),
+    postal character varying(255),
+    state character varying(255),
+    country_id integer,
+    props hstore,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: tenants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tenants_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tenants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tenants_id_seq OWNED BY tenants.id;
+
+
+--
 -- Name: upvotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1070,6 +1109,13 @@ ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclas
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY tenants ALTER COLUMN id SET DEFAULT nextval('tenants_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY upvotes ALTER COLUMN id SET DEFAULT nextval('upvotes_id_seq'::regclass);
 
 
@@ -1249,6 +1295,14 @@ ALTER TABLE ONLY tags
 
 
 --
+-- Name: tenants_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY tenants
+    ADD CONSTRAINT tenants_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1340,6 +1394,13 @@ CREATE INDEX index_taggings_on_tag_id ON taggings USING btree (tag_id);
 --
 
 CREATE INDEX index_taggings_on_taggable_id_and_taggable_type_and_context ON taggings USING btree (taggable_id, taggable_type, context);
+
+
+--
+-- Name: index_tenants_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tenants_on_email ON tenants USING btree (email);
 
 
 --
@@ -1517,7 +1578,7 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "public";
 
 INSERT INTO schema_migrations (version) VALUES ('20130126192030');
 
@@ -1646,3 +1707,5 @@ INSERT INTO schema_migrations (version) VALUES ('20151212162526');
 INSERT INTO schema_migrations (version) VALUES ('20151212162527');
 
 INSERT INTO schema_migrations (version) VALUES ('20151212162528');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162529');
