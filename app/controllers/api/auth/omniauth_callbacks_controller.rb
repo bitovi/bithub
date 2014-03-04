@@ -19,6 +19,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     oauthorize "stackexchange"
   end
 
+  def facebook
+    oauthorize "facebook"
+  end
+
   def show_auth_error
     render :template => 'oauth/auth_error.html.erb'
   end
@@ -40,7 +44,8 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       github: 'GitHub',
       twitter: 'Twitter',
       meetup: 'Meetup',
-      stackexchange: 'StackExchange'
+      stackexchange: 'StackExchange',
+      facebook: 'Facebook'
     })
 
     @identity = Identity.find_or_init_with_oauth_data(oauth_data)

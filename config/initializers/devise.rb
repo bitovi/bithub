@@ -3,6 +3,7 @@ require 'omniauth-twitter'
 require 'omniauth-github'
 require 'omniauth-meetup'
 require 'omniauth-stackexchange'
+require 'omniauth-facebook'
 
 Devise.setup do |config|
   config.omniauth_path_prefix = '/api/auth'
@@ -11,6 +12,7 @@ Devise.setup do |config|
   config.omniauth :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
   config.omniauth :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
   config.omniauth :stackexchange, ENV['STACKEXCHANGE_CLIENT_ID'], ENV['STACKEXCHANGE_CLIENT_SECRET'], public_key: ENV['STACKEXCHANGE_KEY'], site: 'stackoverflow'
+  config.omniauth :facebook, ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET']
 
   config.sign_out_via = :delete
 end
