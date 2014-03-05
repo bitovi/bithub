@@ -6,6 +6,8 @@ class Identity < ActiveRecord::Base
 
   after_destroy :remove_internal
 
+  scope :provider, lambda {|p_name| where(provider: p_name)}
+
   class Processor
     def twitter(sd)
       {
