@@ -7,12 +7,16 @@ $:.unshift(DOMAIN_DIR)
 $:.unshift(LIB_DIR)
 $:.unshift(SERVICES_DIR)
 
-# Theirs
 require 'bundler/setup'
 require 'rubygems'
-require 'log4r'
 require 'amqp'
 require 'yaml'
+
+# Logger
+require 'log4r'
+require 'log4r/yamlconfigurator'
+require 'log4r/outputter/datefileoutputter'
+include Log4r
 
 # Ours
 require 'core_ext'
@@ -23,6 +27,13 @@ require 'crawler/streamer'
 
 # paths to config files based on env
 config_path = File.join(ROOT_DIR, 'config', 'services', 'crawler', "#{ENV['ENV']}.yml")
+
+config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
+log_cfg = YamlConfigurator
+log_cfg["ENV"] = ENV['ENV']
+log_cfg["MACHINE_NAME"] = ENV["MACHINE_NAME"].nil? ? `hostname`.to_s.gsub(/\n$/, "") : ENV["MACHINE_NAME"] 
+log_cfg["COMPONENT_NAME"] = "crawler"
+log_cfg.decode_yaml(config_data['log4r_config'])
 
 # Logging
 logger = Log4r::Logger.new('Crawler')

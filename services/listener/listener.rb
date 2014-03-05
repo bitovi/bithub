@@ -11,10 +11,13 @@ require 'log4r'
 require_relative 'helpers'
 require 'dispatcher'
 
-logger = Log4r::Logger.new('listener')
-logger.add(Log4r::StdoutOutputter.new('console', {
-  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-}))
+config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
+log_cfg = YamlConfigurator
+log_cfg["ENV"] = Rails.env 
+log_cfg["MACHINE_NAME"] = ENV["MACHINE_NAME"].nil? ? `hostname`.to_s.gsub(/\n$/, "") : ENV["MACHINE_NAME"] 
+log_cfg["COMPONENT_NAME"] = "listener"
+log_cfg.decode_yaml(config_data['log4r_config'])
+
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|

@@ -1,14 +1,14 @@
 require File.expand_path('../boot', __FILE__)
 
+require 'log4r'
+require 'log4r/yamlconfigurator'
+require 'log4r/outputter/datefileoutputter'
+require 'log4r/outputter/rollingfileoutputter'
+include Log4r
+
 require 'rails/all'
 
 if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
-
-  # for Muster to be available at the time of loading
   Bundler.setup
 end
 
@@ -32,5 +32,20 @@ module Bithub
 
     # The query parsing middleware
     config.middleware.use Muster::Rack, Muster::Strategies::ActiveRecord
+
+    # Log4r config
+    # ------------
+    config_data = YAML.load_file(File.join(Rails.root, 'config', 'log4r.yml'))
+    log_cfg = YamlConfigurator
+    log_cfg["ENV"] = Rails.env 
+    log_cfg["MACHINE_NAME"] = ENV["MACHINE_NAME"].nil? ? `hostname`.to_s.gsub(/\n$/, "") : ENV["MACHINE_NAME"] 
+    log_cfg["COMPONENT_NAME"] = 'service'
+    log_cfg.decode_yaml( config_data['log4r_config'] )
+
+    config.log_level = :unknown # Disable default Rails logger
+
+    config.logger = Log4r::Logger['rails']
+    config.active_record.logger = Log4r::Logger['active_record']
+    config.action_controller.logger = Log4r::Logger['action_controller']
   end
 end
