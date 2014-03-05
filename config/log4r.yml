@@ -3,9 +3,42 @@ log4r_config:
   loggers:
     - name          : rails
       level         : DEBUG
-      trace         : 'true'
+      trace         : 'false'
       outputters    : 
       - console
+      - logfile
+    - name          : active_record
+      level         : DEBUG
+      trace         : 'false'
+      outputters    : 
+      - console
+      - logfile
+    - name          : action_controller
+      level         : DEBUG
+      trace         : 'false'
+      outputters    : 
+      - console
+      - logfile
+    - name          : crawler
+      level         : DEBUG
+      trace         : 'false'
+      outputters    : 
+      - console
+      - logfile
+    - name          : listener
+      level         : DEBUG
+      trace         : 'false'
+      outputters    : 
+      - console
+      - logfile
+    - name          : irc_bot
+      level         : DEBUG
+      trace         : 'false'
+      outputters    : 
+      - console
+      - logfile
+
+
  
   # define all outputters (incl. formatters)
   outputters:
@@ -15,3 +48,12 @@ log4r_config:
       date_pattern: '%H:%M:%S'
       pattern     : '%d %l: %m'
       type        : PatternFormatter
+  - type: RollingFileOutputter
+    name: logfile
+    filename: "/var/log/bithub/#{COMPONENT_NAME}.log"
+    trunc: false
+    maxsize: 104857600
+    formatter:
+      pattern     : '[#{MACHINE_NAME}][%p][#{COMPONENT_NAME}]|[RAILS][%d][%l]: %m '
+      type        : PatternFormatter
+
