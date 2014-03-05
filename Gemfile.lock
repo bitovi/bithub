@@ -441,7 +441,7 @@ DEPENDENCIES
   jpbuilder (= 0.2.2)
   jquery-rails
   levenshtein-ffi
-  log4r
+  log4r (= 1.1.10)
   muster!
   newrelic_rpm
   nokogiri
