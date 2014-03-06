@@ -15,8 +15,8 @@ require 'yaml'
 # Logger
 require 'log4r'
 require 'log4r/yamlconfigurator'
+require 'log4r/outputter/rollingfileoutputter'
 require 'log4r/outputter/datefileoutputter'
-include Log4r
 
 # Ours
 require 'core_ext'
@@ -28,19 +28,17 @@ require 'crawler/streamer'
 # paths to config files based on env
 config_path = File.join(ROOT_DIR, 'config', 'services', 'crawler', "#{ENV['ENV']}.yml")
 
-config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
-log_cfg = YamlConfigurator
+if ENV['ENV'] == 'development'
+  logger_config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r_dev.yml'))
+else
+  logger_config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
+end
+log_cfg = Log4r::YamlConfigurator
 log_cfg["ENV"] = ENV['ENV']
 log_cfg["MACHINE_NAME"] = ENV["MACHINE_NAME"].nil? ? `hostname`.to_s.gsub(/\n$/, "") : ENV["MACHINE_NAME"] 
 log_cfg["COMPONENT_NAME"] = "crawler"
-log_cfg.decode_yaml(config_data['log4r_config'])
-
-# Logging
-logger = Log4r::Logger.new('Crawler')
-logger.add(Log4r::StdoutOutputter.new('console', {
-  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-}))
-
+log_cfg.decode_yaml(logger_config_data['log4r_config'])
+logger = Log4r::Logger['component']
 $logger = logger
 
 # Load config
@@ -63,11 +61,7 @@ end
 
 # Event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
-  puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
-
-  stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
-  Signal.trap("INT",  &stop)
-  Signal.trap("TERM", &stop)
+  logger.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
 
   channel = AMQP::Channel.new(connection)
 

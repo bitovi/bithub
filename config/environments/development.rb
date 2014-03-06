@@ -37,9 +37,8 @@ Bithub::Application.configure do
   config.assets.compile = false
   config.assets.debug = false
 
-  config.after_initialize do
-    Bullet.enable = false
-    Bullet.rails_logger = true
-  end
-
+  # config.after_initialize do
+  #   Bullet.enable = false
+  #   Bullet.rails_logger = true
+  # end
 end

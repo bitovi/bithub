@@ -25,7 +25,6 @@ class Streamer
   end
 
   def initialize(exchange, stream_config, &blk)
-    initialize_logger("INFO")
     @exchange = exchange
 
     @config = Configuration.new
@@ -41,13 +40,13 @@ class Streamer
     end
 
     @stream.on_error do |message|
-      @logger.error "#{base_log_format} | error: #{message}"
+      $logger.error "#{base_log_format} | error: #{message}"
     end
 
     # dynamically assign the rest of the errbacks
     ERRBACKS.each do |errback|
       @stream.send(errback.to_sym) do
-        @logger.warn "#{base_log_format} | #{errback}"
+        $logger.warn "#{base_log_format} | #{errback}"
       end
     end
   end
@@ -56,9 +55,9 @@ class Streamer
     event = processor(event_json).parse.extract.decorate.result
     publish(event)
   rescue Events::DispatchError => err
-    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
+    $logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
   rescue Events::BuildingError=> err
-    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
+    $logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
   end
 
   def processor(response)
@@ -79,8 +78,8 @@ class Streamer
   end
 
   def log_publishing(event)
-    @logger.info "#{base_log_format} | Publishing #{event.size} tweets"
-    @logger.debug event.inspect
+    $logger.info "#{base_log_format} | Publishing #{event.size} tweets"
+    $logger.debug event.inspect
   end
 
   private

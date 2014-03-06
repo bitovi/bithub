@@ -7,7 +7,7 @@ module Bootable
   module RSVPs
 
     def boot
-      @logger.info "{BOOTING} #{@feed}."
+      $logger.info "{BOOTING} #{@feed}."
 
       http_req = EM::HttpRequest.new(@config.boot_data_url).get({
         query: http_query,
@@ -20,7 +20,7 @@ module Bootable
     end
 
     def reboot
-      @logger.info "{REBOOTING} #{@feed}"
+      $logger.info "{REBOOTING} #{@feed}"
       @booted = false
       @config.http_query[:event_id] = ""
     end
@@ -32,7 +32,7 @@ module Bootable
         @booted = true
         delay(@config.reboot_delay, lambda { reboot })
       rescue Yajl::ParseError => err
-        @logger.info "{BOOTING} #{@feed} : Response parse error, web component probably not booted yet."
+        $logger.info "{BOOTING} #{@feed} : Response parse error, web component probably not booted yet."
       end
     end
   end
