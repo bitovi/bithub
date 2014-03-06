@@ -8,25 +8,10 @@ $:.unshift(DOMAIN_DIR)
 require 'config/environment'
 require_relative 'helpers'
 require 'dispatcher'
+require 'logger_factory'
 
-# Logger
-require 'log4r'
-require 'log4r/yamlconfigurator'
-require 'log4r/outputter/rollingfileoutputter'
-require 'log4r/outputter/datefileoutputter'
-
-if ENV['ENV'] == 'development'
-  logger_config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r_dev.yml'))
-else
-  logger_config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
-end
-
-log_cfg = Log4r::YamlConfigurator
-log_cfg["ENV"] = ENV['ENV']
-log_cfg["MACHINE_NAME"] = ENV["MACHINE_NAME"].nil? ? `hostname`.to_s.gsub(/\n$/, "") : ENV["MACHINE_NAME"] 
-log_cfg["COMPONENT_NAME"] = "listener"
-log_cfg.decode_yaml(logger_config_data['log4r_config'])
-logger = Log4r::Logger['component']
+logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
+$logger = logger
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
