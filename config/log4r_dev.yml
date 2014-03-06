@@ -24,7 +24,7 @@ log4r_config:
       type      : StdoutOutputter
       formatter :
         type: PatternFormatter
-        pattern: '[#{COMPONENT_NAME}]|[%d][%l]: %m '
+        pattern: '[%d][%l]: %m '
 
     - name     : component_logfile
       type     : RollingFileOutputter
@@ -33,7 +33,7 @@ log4r_config:
       maxsize  : 104857600
       formatter:
         type: PatternFormatter
-        pattern: '[#{ENV}][%d][%l]: %m '
+        pattern: '[%d][%l]: %m '
 
     - name     : active_record_logfile
       type     : DateFileOutputter
