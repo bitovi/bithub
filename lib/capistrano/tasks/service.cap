@@ -1,0 +1,161 @@
+### Web API
+
+namespace :web do
+  desc "Stop web"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-web stop")
+    end
+  end
+
+  desc "Start web"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-web start")
+    end
+  end
+
+  desc "Restart web"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-web restart")
+    end
+  end
+
+  # desc "Tail logs"
+  # task :log do
+  #   on roles(:all) do |host|
+  #     execute "tail -f /var/log/bithub/web/listener-1.log"
+  #   end
+  # end
+end
+
+
+### Crawler
+
+namespace :crawler do
+  desc "Stop crawler"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-crawler stop")
+    end
+  end
+
+  desc "Start crawler"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-crawler start")
+    end
+  end
+
+  desc "Restart crawler"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-crawler restart")
+    end
+  end
+end
+
+
+### Listener
+
+namespace :listener do
+  desc "Stop listener"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-listener stop")
+    end
+  end
+
+  desc "Start listener"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-listener start")
+    end
+  end
+
+  desc "Restart listener"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-listener restart")
+    end
+  end
+end
+
+
+### Delayed job worker
+
+namespace :worker do
+  desc "Stop delayed job worker"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-worker stop")
+    end
+  end
+
+  desc "Start delayed job worker"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-worker start")
+    end
+  end
+
+  desc "Restart delayed job worker"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-worker restart")
+    end
+  end
+end
+
+
+### IRC bot
+
+namespace :ircbot do
+  desc "Stop IRC bot"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-irc_bot stop")
+    end
+  end
+
+  desc "Start IRC bot"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-irc_bot start")
+    end
+  end
+
+  desc "Restart IRC bot"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-irc_bot restart")
+    end
+  end
+end
+
+
+### Live service
+
+namespace :liveservice do
+  desc "Stop live service"
+  task :stop do
+    on roles(:all) do |host|
+      capture("sudo service bithub-liveservice stop")
+    end
+  end
+
+  desc "Start live service"
+  task :start do
+    on roles(:all) do |host|
+      capture("sudo service bithub-liveservice start")
+    end
+  end
+
+  desc "Restart live service"
+  task :restart do
+    on roles(:all) do |host|
+      capture("sudo service bithub-liveservice restart")
+    end
+  end
+end

@@ -1,3 +1,1 @@
-server "173.230.136.135", :app, :web, :db, :primary => true
-set :app_env, 'staging'
-set :branch, 'staging'
+server 'staging.bithub.com', user: fetch(:user), roles: %w{app db}
