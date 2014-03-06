@@ -1,108 +1,54 @@
-require 'capistrano/ext/multistage'
-require 'bundler/capistrano'
-require 'travis/pro'
+# config valid only for Capistrano 3.1
+lock '3.1.0'
 
+set :application, 'web'
 
-set(:use_sudo, false)
-set(:ssh_options, { :forward_agent => true })
-set(:bundle_flags, "--deployment --quiet --binstubs")
+set :scm, :git
+set :repo_url, 'git@github.com:bitovi/bithub.git'
+ask :branch, 'master'
+set :deploy_to, '/home/bithub/web'
+set(:ssh_options, {
+      forward_agent: true
+    })
 
-set(:user, "bithub")
-set(:application, "web")
-set(:repository, "git@github.com:bitovi/bithub.git")
+# Default value for :format is :pretty
+set :format, :pretty
 
-set(:branch, "master")
-set(:deploy_via, :remote_cache)
-set(:deploy_to) { "/home/#{user}/#{application}" }
+# Default value for :log_level is :debug
+set :log_level, :debug
 
-set(:normalize_asset_timestamps, false)
-set(:default_environment, {
-  'PATH' => "/opt/rbenv/shims/:/opt/rbenv/bin:/home/#{user}/.rbenv/shims:/home/#{user}/.rbenv/bin:$PATH"
-})
+# Default value for :pty is false
+set :pty, true
 
-set(:stages, ['testing', 'staging', 'prod'])
-set(:default_stage, 'testing')
+# Default value for :linked_files is []
+#set :linked_files, %w{config/database.yml}
 
-set(:shared_children, shared_children + %w{public/uploads})
+# Default value for linked_dirs is []
+# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
-set :ci_access_token, "DTaq7IXrUgbhNeaBVtTdcA"
-set :ci_repository, "bitovi/bithub"
+# Default value for default_env is {}
+set :default_env, {
+  path: "/home/bithub/.rbenv/shims:/opt/rbenv/shims:$PATH",
+  env: fetch(:stage),
+  rails_env: fetch(:stage)
+}
 
-namespace :deploy do
+# Default value for keep_releases is 5
+set :keep_releases, 10
 
-  desc "Recreate Upstart configuration"
-  task(:recreate_upstart_conf) do
-    run "#{current_path}/bin/foreman export --app bithub --log /var/log/bithub/web --user #{user} --env #{current_path}/.env_#{app_env} --procfile #{current_path}/Procfile.#{app_env} upstart /etc/init"
-  end
+# Custom variables
+set :backup_path, "/backups/dbsnapshots/"
+set :backup_ext, ".backup"
+set :log_path, "/var/log/bithub/web/"
+set :unicorn_log_path, "/home/bithub/web/shared/log"
+set :user, "bithub"
 
-  desc "Symling uploads from shared to public folder"
-  task :symlink_uploads do
-    run "ln -nfs #{shared_path}/uploads  #{current_path}/public/uploads"
-  end
-
-  namespace :listener do
-    desc "Start listener"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-listener start"
-    end
-
-    desc "Stop listener"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-listener stop"
-    end
-  end
-
-  namespace :crawler do
-    desc "Start crawler"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-crawler start"
-    end
-
-    desc "Stop crawler"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-crawler stop"
-    end
-  end
-
-  namespace :web do
-    desc "Start unicorn"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-web start"
-    end
-
-    desc "Stop unicorn"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-web stop"
-    end
-  end
-
-  namespace :ircbot do
-    desc "Start IRC bot"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-irc_bot stop"
-    end
-
-    desc "Stop IRC bot"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-irc_bot stop"
-    end
-  end
-
-  namespace :liveservice do
-    desc "Start live service"
-    task :start, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-liveservice stop"
-    end
-
-    desc "Stop live service"
-    task :stop, :except => { :no_release => true } do
-      run "sudo /usr/bin/service bithub-liveservice stop"
-    end
-  end
-end
-
-#before('deploy', 'travis:verify')
-before('deploy:restart', 'deploy:recreate_upstart_conf')
-before('deploy:restart', 'deploy:symlink_uploads')
-
-#after('deploy', 'db:backup')
+# bundler config --> https://github.com/capistrano/bundler
+# set :bundle_roles, :all
+# set :bundle_servers, -> { release_roles(fetch(:bundle_roles)) }
+# set :bundle_binstubs, -> { shared_path.join('bin') }
+# #set :bundle_gemfile, -> { release_path.join('MyGemfile') }
+# set :bundle_path, -> { shared_path.join('bundle') }
+# set :bundle_without, %w{development test}.join(' ')
+# set :bundle_flags, '--deployment --quiet'
+# set :bundle_env_variables, {}
