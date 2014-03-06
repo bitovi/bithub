@@ -1,6 +1,13 @@
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
+  # Loggers
+  lf = LoggerFactory.new('rails', Rails.env)
+  config.logger = lf.component_logger
+  config.action_controller.logger = lf.ac_logger
+  config.active_record.logger = lf.ar_logger
+  config.log_level = :unknown
+
   # Code is not reloaded between requests
   config.cache_classes = true
 
@@ -22,6 +29,9 @@ Bithub::Application.configure do
   config.cache_store = :dalli_store
   config.session_store :dalli_store
 
+  # User different log location for Dalli
+  Dalli.logger = LoggerFactory.new('dalli', 'testing').component_logger
+
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
 
@@ -31,9 +41,6 @@ Bithub::Application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
-
-  # See everything in the log (default is :info)
-  # config.log_level = :debug
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]

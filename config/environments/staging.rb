@@ -22,6 +22,9 @@ Bithub::Application.configure do
   config.cache_store = :dalli_store
   config.session_store :dalli_store
 
+  # User different log location for Dalli
+  Dalli.logger = LoggerFactory.new('dalli', 'staging').component_logger
+
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
 
