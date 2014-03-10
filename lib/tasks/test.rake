@@ -1,5 +1,3 @@
-require 'rspec/core/rake_task'
-
 # Run these tasks in test environment
 ENV['RAILS_ENV'] = "test"
 
