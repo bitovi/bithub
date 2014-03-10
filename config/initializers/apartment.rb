@@ -1,5 +1,7 @@
 # require rake manually, otherwise migrations will fail :/
 require 'rake'
+require './lib/apartment_ext'
+
 
 # Require whichever elevator you're using below here...
 #
@@ -18,6 +20,8 @@ Apartment.configure do |config|
 
   config.excluded_models = %w{Tenant}
   config.use_schemas = true
+
+  config.use_structure_sql = true
 
   #config.persistent_schemas = %w{public}
 
