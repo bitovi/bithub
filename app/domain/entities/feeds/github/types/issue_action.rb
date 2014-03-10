@@ -8,7 +8,7 @@ module Entities
       end
       
       def find_parent
-        upstream = [Entities::Github::Issue]
+        upstream = [Entities::Github::Issue, Entities::Github::PullRequest]
         if @event.repo.name && @event.number
           matches = upstream.reduce([]) do |acc, rl|
             acc << rl.new(@event).find_by_repo_name_and_number.first

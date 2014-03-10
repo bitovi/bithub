@@ -12,11 +12,11 @@ module Events
       end
 
       def creator
-        source_data[:'dc:creator']
+        source_data.andand[:'dc:creator']
       end
 
       def term
-        meta[:term]
+        meta.andand[:term]
       end
 
       def description

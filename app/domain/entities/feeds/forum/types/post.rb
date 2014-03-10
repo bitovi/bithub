@@ -22,13 +22,13 @@ module Entities
 
       def find_parent
         if @event.link
-          find_by_thread_prefix.where("origin_ts < ?", @event.origin_timestamp).order("origin_ts ASC").first
+          find_by_thread_prefix.where("origin_ts < ?", @event.pub_date).order("origin_ts ASC").first
         end
       end
 
       def find_children
         if @event.link
-          find_by_thread_prefix.where("origin_ts > ?", @event.origin_timestamp).all
+          find_by_thread_prefix.where("origin_ts > ?", @event.pub_date).all
         end
       end
 
