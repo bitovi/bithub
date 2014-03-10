@@ -52,17 +52,25 @@ module Entities
       end
 
       def update_from_children
-        if most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
-          most_recent_child.props.symbolize_keys!
-          most_recent_child.source_data.symbolize_keys!
+        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+        return if most_recent_child.nil?
 
-          data = most_recent_child.last_modified_by.source_data
-          event = Events::Dispatcher.dispatch(data, 'github')
+        most_recent_child.props.symbolize_keys!
+        most_recent_child.source_data.symbolize_keys!
 
-          @instance.title = event.title if event.respond_to? :title
-          @instance.body = event.body if event.respond_to? :body
+        data = most_recent_child.last_modified_by.source_data
+        event = Events::Dispatcher.dispatch(data, 'github')
+
+        if event.respond_to? :ipr # IssueComment
+          @instance.title = event.ipr.title
+          @instance.body = event.ipr.body
+          @instance.props[:state] = event.ipr.state
+          @instance.props[:label_names] = event.ipr.labels.names_csv
+        else # PullRequest
+          @instance.title = event.title
+          @instance.body = event.body
           @instance.props[:state] = event.state
-          @instance.props[:label_names] = event.labels.names_csv if event.labels
+          @instance.props[:label_names] = event.labels.names_csv
         end
       end
 
@@ -75,11 +83,16 @@ module Entities
       end
 
       def find_by_repo_name_and_number
+        number = if @event.respond_to? :issue
+                   @event.issue.number
+                 elsif @event.respond_to? :pull_request
+                   @event.pull_request.number
+                 end
         Entity
         .feed('github')
         .type('pull_request')
         .where("props -> 'repo_name' = '#{@event.repo.name}'")
-        .where("props -> 'number' = '#{@event.pull_request.number}'")
+        .where("props -> 'number' = '#{number}'")
       end
 
     end
