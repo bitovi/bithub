@@ -7,7 +7,9 @@ module Wrappers
 
       has :answer_id, :question_id,
         :title, :body, :link, :score, :is_accepted,
-        :up_vote_count, :body_markdown
+        :up_vote_count
+      
+      maybe_has :rsvp_count, :body_markdown
 
       alias_method :accepted?, :is_accepted
       alias_method :upvote_count, :up_vote_count

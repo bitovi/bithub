@@ -36,7 +36,7 @@ module Entities
 
       def find_children
         downstream = [Entities::Github::IssueAction, Entities::Github::IssueComment]
-        if @event.repo_name && @event.number
+        if @event.repo.name && @event.number
           downstream.reduce([]) do |acc, rl|
             acc += rl.new(@event).find_by_repo_name_and_number.all
           end
@@ -81,7 +81,7 @@ module Entities
         Entity
         .feed('github')
         .type('issue')
-        .where("props -> 'repo_name' = '#{@event.repo_name}'")
+        .where("props -> 'repo_name' = '#{@event.repo.name}'")
         .where("props -> 'number' = '#{@event.number}'")
       end
 

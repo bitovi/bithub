@@ -9,8 +9,8 @@ module Entities
       
       def find_parent
         upstream = [Entities::Github::Issue]
-        if @event.repo_name && @event.number
-          matches = relationships[:upstream].reduce([]) do |acc, rl|
+        if @event.repo.name && @event.number
+          matches = upstream.reduce([]) do |acc, rl|
             acc << rl.new(@event).find_by_repo_name_and_number.first
           end
           parent = matches.compact.first
@@ -33,7 +33,7 @@ module Entities
           }
         })
 
-        built.props[:label_names] = @event.lables.andand.names_csv
+        built.props[:label_names] = @event.labels.andand.names_csv
         built
       end
 
