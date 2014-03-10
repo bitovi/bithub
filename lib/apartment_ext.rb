@@ -41,7 +41,7 @@ module Apartment
       end
 
       def process_structure_sql(structure)
-        search_path = "SET search_path = foobar, pg_catalog;"
+        search_path = "SET search_path = #{self.current_tenant}, pg_catalog;"
 
         structure
           .split("\n")
