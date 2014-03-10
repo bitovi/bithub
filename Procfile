@@ -1,4 +1,4 @@
-web: ./bin/unicorn_rails -c ./config/unicorn_dev.rb
+web: ./bin/unicorn_rails -c ./config/unicorn_local.rb
 worker: ./script/delayed_job run
 listener: ruby ./services/listener/listener.rb
 crawler: ruby ./services/crawler/crawler.rb

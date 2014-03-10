@@ -8,7 +8,7 @@ class LoggerFactory
 
   def initialize(name, env = 'development')
     @name = name; @env = env
-    filename = (env == 'development' || env == 'test') ? 'log4r_dev.yml' : 'log4r.yml'
+    filename = (env == 'development' || env == 'test') ? 'log4r_local.yml' : 'log4r.yml'
     @config_path = File.join(ROOT_DIR, 'config', filename)
 
     logger_config_data = YAML.load_file(@config_path)

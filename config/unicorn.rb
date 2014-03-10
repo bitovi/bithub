@@ -1,4 +1,5 @@
 ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+require File.join(ROOT_DIR, 'lib', 'logger_factory')
 
 worker_processes 3
 timeout 30
@@ -10,20 +11,7 @@ listen "/home/bithub/web/shared/sockets/unicorn.sock", :backlog => 64
 # PID
 pid "/home/bithub/web/shared/pids/unicorn.pid"
 
-# Logging
-require 'log4r'
-require 'log4r/yamlconfigurator'
-require 'log4r/outputter/rollingfileoutputter'
-require 'log4r/outputter/datefileoutputter'
-
-logger_config_data = YAML.load_file(File.join(ROOT_DIR, 'config', 'log4r.yml'))
-log_cfg = Log4r::YamlConfigurator
-log_cfg["ENV"] = ENV['ENV']
-log_cfg["COMPONENT_NAME"] = "unicorn"
-log_cfg.decode_yaml(logger_config_data['log4r_config'])
-
-# Set the logger
-logger(Log4r::Logger['component'])
+logger(LoggerFactory.new('unicorn', ENV['ENV']).component_logger)
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)

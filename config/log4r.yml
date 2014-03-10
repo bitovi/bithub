@@ -4,7 +4,6 @@ log4r_config:
       level         : INFO
       trace         : 'true'
       outputters    : 
-        - console
         - component_logfile
 
     - name          : active_record
@@ -20,12 +19,6 @@ log4r_config:
         - action_controller_logfile
 
   outputters:
-    - name      : console
-      type      : StdoutOutputter
-      formatter :
-        type: PatternFormatter
-        pattern: '[#{COMPONENT_NAME}]|[%d][%l]: %m '
-
     - name     : component_logfile
       type     : RollingFileOutputter
       filename : "/var/log/bithub/#{COMPONENT_NAME}.log"
