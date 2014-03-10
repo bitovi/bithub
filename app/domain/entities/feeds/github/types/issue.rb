@@ -46,7 +46,7 @@ module Entities
       def update
         @instance.title = @event.title
         @instance.body = @event.body
-        @instance.props[:label_names] = @event.labes.names_csv
+        @instance.props[:label_names] = @event.labels.names_csv
         @instance.props[:state] = @event.state
         @instance.props[:references_to] = ""
         super
