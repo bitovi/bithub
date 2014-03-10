@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
-ruby '2.1.0'
+ruby '2.1.1'
 
-gem 'rails', '3.2.14'
+gem 'rails', '3.2.17'
 gem 'rolify', '~> 3.2'
 gem 'devise', '~> 2.2'
 gem 'amqp'
