@@ -14,6 +14,9 @@ module Events
 
       attr_reader :user, :issue, :repo
 
+      alias_method :actor, :user
+      alias_method :ipr, :issue
+
       def digest_seed
         DigestAttrs.reduce("") do |accumul, attr|
           accumul + self.send(attr).to_s

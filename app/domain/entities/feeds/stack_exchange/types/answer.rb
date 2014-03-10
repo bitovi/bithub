@@ -36,20 +36,20 @@ module Entities
 
 
       def build_children
-        build_comments
+        build_comments.to_a
       end
 
       def build_comments
-        @event.comments.map do |c| # Wrapper -> Event
+        @event.comments.map do |c| # Wrappers
           Events::StackExchange::Comment.new(c.raw)
-        end.map do |c_e| # Event -> Entity
+        end.map do |c_e| # Events
           Entities::StackExchange::Comment.new(c_e)
             .procure
             .determine
             .group
             .normalize
             .instance
-        end
+        end if @event.comments
       end
 
       private

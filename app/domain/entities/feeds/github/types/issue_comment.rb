@@ -5,12 +5,12 @@ module Entities
       include Entities::Github::Referencable
 
       def find
-        @event.comment_id && find_by_comment_id.first
+        @event.comment.id && find_by_comment_id.first
       end
 
       def find_parent
         upstream =[Entities::Github::Issue, Entities::Github::PullRequest]
-        if @event.repo_name && @event.ipr.number
+        if @event.repo.name && @event.ipr.number
           upstream.reduce([]) do |acc, rl|
             acc << rl.new(@event).find_by_repo_name_and_number.first
           end.compact.first
