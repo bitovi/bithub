@@ -2,17 +2,17 @@
     :github:
         :events: 10
         :issues:
-            :open: 30
-            :closed: 60
+            :open: 30000
+            :closed: 60000
     :disqus: 10
     :forum: 10
     :meetup:
-        :rsvps: 10
-        :all_events: 10
-        :events: 10
+        :rsvps: 10000
+        :all_events: 10000
+        :events: 10000
     :blog: 10
     :twitter: 10
-    :stack_exchange: 10
+    :stack_exchange: 100
 
 :feeds:
     :blog:
