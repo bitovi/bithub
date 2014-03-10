@@ -1,4 +1,3 @@
-
 def execute_interactively(*args)
   user = fetch(:user)
   port = fetch(:port) || 22
