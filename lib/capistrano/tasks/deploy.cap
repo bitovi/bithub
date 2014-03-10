@@ -22,3 +22,19 @@
 #   end
 
 # end
+
+namespace :deploy do
+  desc "Export upstart scripts"
+  task :export do
+    on roles(:all) do |host|
+      stage = fetch(:stage)
+      log_path = fetch(:log_path)
+      current_path = fetch(:current_path)
+      user = fetch(:user)
+
+      within fetch(:current_path) do
+        capture :foreman, "export --app bithub --log #{log_path} --user #{user} --env #{current_path}/.env_#{stage} --procfile #{current_path}/Procfile.#{stage} upstart /etc/init"
+      end
+    end
+  end
+end

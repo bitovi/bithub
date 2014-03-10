@@ -21,13 +21,6 @@ namespace :web do
       capture("sudo service bithub-web restart")
     end
   end
-
-  # desc "Tail logs"
-  # task :log do
-  #   on roles(:all) do |host|
-  #     execute "tail -f /var/log/bithub/web/listener-1.log"
-  #   end
-  # end
 end
 
 
