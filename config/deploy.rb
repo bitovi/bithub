@@ -32,5 +32,10 @@ set :keep_releases, 10
 set :backup_path, "/backups/dbsnapshots/"
 set :backup_ext, ".backup"
 set :log_path, "/var/log/bithub/web/"
+set :current_path, File.join([fetch(:deploy_to), 'current'])
+set :shared_path, File.join([fetch(:deploy_to), 'shared'])
 set :unicorn_log_path, "/home/bithub/web/shared/log"
 set :user, "bithub"
+
+
+SSHKit.config.command_map[:foreman] = "bundle exec foreman"
