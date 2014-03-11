@@ -20,7 +20,6 @@ set :pty, true
 
 # Default value for default_env is {}
 set :default_env, {
-  path: "/home/bithub/.rbenv/shims:/opt/rbenv/shims:$PATH",
   env: fetch(:stage),
   rails_env: fetch(:stage)
 }
@@ -32,5 +31,11 @@ set :keep_releases, 10
 set :backup_path, "/backups/dbsnapshots/"
 set :backup_ext, ".backup"
 set :log_path, "/var/log/bithub/web/"
+set :current_path, File.join([fetch(:deploy_to), 'current'])
+set :shared_path, File.join([fetch(:deploy_to), 'shared'])
 set :unicorn_log_path, "/home/bithub/web/shared/log"
 set :user, "bithub"
+
+# 'foreman' command should be prefixed with 'rbenv exec' and 'bundle exec'
+set :rbenv_map_bins, fetch(:rbenv_map_bins, []).push('foreman')
+set :bundle_bins, fetch(:bundle_bins, []).push('foreman')
