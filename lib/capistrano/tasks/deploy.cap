@@ -1,24 +1,22 @@
-# Example taken from /config/deploy.rb
+namespace :deploy do
 
-# namespace :deploy do
+  desc "Export upstart scripts"
+  task :export do
+    on roles(:all) do |host|
 
-#   desc 'Restart application'
-#   task :restart do
-#     on roles(:app), in: :sequence, wait: 5 do
-#       # Your restart mechanism here, for example:
-#       # execute :touch, release_path.join('tmp/restart.txt')
-#     end
-#   end
+      options = []
+      options << "--app bithub"
+      options << "--log #{fetch(:log_path)}"
+      options << "--user #{fetch(:user)}"
+      options << "--env #{fetch(:current_path)}/.env_#{fetch(:stage)}"
+      options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
+      dst = '/etc/init'
 
-#   after :publishing, :restart
+      within fetch(:current_path) do
+        capture :foreman, :export, options, :upstart, dst
+      end
+    end
+  end
 
-#   after :restart, :clear_cache do
-#     on roles(:web), in: :groups, limit: 3, wait: 10 do
-#       # Here we can do anything such as:
-#       # within release_path do
-#       #   execute :rake, 'cache:clear'
-#       # end
-#     end
-#   end
-
-# end
+  after 'deploy:updated', 'deploy:export'
+end
