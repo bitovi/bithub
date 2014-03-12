@@ -5,6 +5,8 @@ script:
   - "bundle exec rspec spec/domain"
 notifications:
   slack: floatingpoint:U0vBLGleeqmcaHVW4NO8IOLD#bithub
+  webhooks:
+    - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
     - veljko@kset.org
     - neektza@gmail.com
