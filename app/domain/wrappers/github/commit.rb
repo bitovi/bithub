@@ -1,3 +1,5 @@
+require 'wrappers/data_accessible'
+
 module Wrappers
   module Github
 
