@@ -4,6 +4,7 @@ script:
   - "bundle exec rake db:test:prepare"
   - "bundle exec rspec spec/domain"
 notifications:
+  slack: floatingpoint:U0vBLGleeqmcaHVW4NO8IOLD#bithub
   recipients:
     - veljko@kset.org
     - neektza@gmail.com
