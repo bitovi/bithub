@@ -3,13 +3,16 @@ require 'apartment/adapters/postgresql_adapter'
 module Apartment
 
   class << self
-    attr_accessor :use_structure_sql
+    attr_accessor :use_sql
   end
 
   module Database
     def self.postgresql_adapter(config)
-      # todo: correct mappings -> Apartment.use_schemas and Apartment.use_structure_sql ...
-      Adapters::PostgresqlSchemaFromSqlAdapter.new(config)
+      adapter = Adapters::PostgresqlAdapter
+      adapter = Adapters::PostgresqlSchemaAdapter if Apartment.use_schemas
+      adapter = Adapters::PostgresqlSchemaFromSqlAdapter if Apartment.use_sql && Apartment.use_schemas
+
+      adapter.new(config)
     end
   end
 
