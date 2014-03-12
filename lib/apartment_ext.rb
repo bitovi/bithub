@@ -18,32 +18,43 @@ module Apartment
     class PostgresqlSchemaFromSqlAdapter < PostgresqlSchemaAdapter
 
       def import_database_schema
-        import_structure_sql
+        clone_pg_schema
+        copy_schema_migrations
       end
 
       private
 
-      def import_structure_sql
-        structure = dump_structure_sql
-        processed_structure = process_structure_sql(structure)
-
-        Apartment.connection.execute(processed_structure)
+      def clone_pg_schema
+        pg_schema_sql = patch_search_path(pg_dump_schema)
+        Apartment.connection.execute(pg_schema_sql)
       end
 
-      def dump_structure_sql
+      def copy_schema_migrations
+        pg_migrations_data = patch_search_path(pg_dump_schema_migrations_data)
+        Apartment.connection.execute(pg_migrations_data)
+      end
+
+      def pg_dump_schema
         dbname = ActiveRecord::Base.connection_config[:database]
-        excluded_tables =
-          collect_table_names(Apartment.excluded_models)
-          .map! {|t| "-T #{t}"}
-          .join(' ')
 
-        `pg_dump -s -x -O -n public #{excluded_tables} #{dbname}`
+        # excluded_tables =
+        #   collect_table_names(Apartment.excluded_models)
+        #   .map! {|t| "-T #{t}"}
+        #   .join(' ')
+
+        # `pg_dump -s -x -O -n public #{excluded_tables} #{dbname}`
+
+        `pg_dump -s -x -O -n public #{dbname}`
       end
 
-      def process_structure_sql(structure)
+      def pg_dump_schema_migrations_data
+        `pg_dump -a --inserts -t schema_migrations -n public bithub_development`
+      end
+
+      def patch_search_path(sql)
         search_path = "SET search_path = #{self.current_tenant}, pg_catalog;"
 
-        structure
+        sql
           .split("\n")
           .reject {|line| line.starts_with? "SET search_path"}
           .prepend(search_path)
@@ -55,22 +66,8 @@ module Apartment
           m.constantize.table_name
         end
       end
+
     end
 
   end
 end
-
-# pg_dump -s -x -O -n public -T tenants -f schema.sql bithub_development
-# psql bithub_development -f schema.sql
-
-
-# /home/veljko/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/activerecord-3.2.14/lib/active_record/railties/databases.rake
-# 422       when /postgresql/
-# 423         set_psql_env(config)
-# 424         search_path = config['schema_search_path']
-# 425         unless search_path.blank?
-# 426           search_path = search_path.split(",").map{|search_path_part| "--schema=#{Shellwords.escape(search_path_part.strip)}" }.join(" ")
-# 427         end
-# 428         `pg_dump -i -s -x -O -f #{Shellwords.escape(filename)} #{search_path} #{Shellwords.escape(config['database'])}`
-# 429         raise 'Error dumping database' if $?.exitstatus == 1
-# 430         File.open(filename, "a") { |f| f << "SET search_path TO #{ActiveRecord::Base.connection.schema_search_path};\n\n" }
