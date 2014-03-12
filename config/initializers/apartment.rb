@@ -12,7 +12,7 @@ require 'apartment/elevators/subdomain'
 Apartment.configure do |config|
   config.excluded_models = %w{Tenant}
   config.use_schemas = true
-  config.use_structure_sql = true
+  config.use_sql = true
   config.tenant_names = lambda{ Tenant.pluck :login }
 
   # config.default_schema = "public"
