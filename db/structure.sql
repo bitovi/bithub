@@ -58,6 +58,41 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: accounts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE accounts (
+    id integer NOT NULL,
+    email character varying(255),
+    password character varying(255),
+    name character varying(255),
+    props hstore,
+    brand_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
+
+
+--
 -- Name: achievements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -88,40 +123,6 @@ CREATE SEQUENCE achievements_id_seq
 --
 
 ALTER SEQUENCE achievements_id_seq OWNED BY achievements.id;
-
-
---
--- Name: anteups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE anteups (
-    id integer NOT NULL,
-    applies_to_id integer NOT NULL,
-    actor_id integer NOT NULL,
-    value integer,
-    fullfilled boolean DEFAULT false,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: anteups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE anteups_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: anteups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE anteups_id_seq OWNED BY anteups.id;
 
 
 --
@@ -186,6 +187,40 @@ CREATE SEQUENCE awards_id_seq
 --
 
 ALTER SEQUENCE awards_id_seq OWNED BY awards.id;
+
+
+--
+-- Name: brands; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE brands (
+    id integer NOT NULL,
+    name character varying(255),
+    description character varying(255),
+    keywords character varying(255)[],
+    props hstore,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: brands_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE brands_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: brands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE brands_id_seq OWNED BY brands.id;
 
 
 --
@@ -298,8 +333,13 @@ CREATE TABLE entities (
     title text,
     url text,
     body text,
+    origin_id character varying(255),
+    feed_name character varying(255),
+    type_name character varying(255),
+    category_name character varying(255),
     scoring_rule_id integer NOT NULL,
     feed_id integer NOT NULL,
+    type_id integer NOT NULL,
     category_id integer NOT NULL,
     parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
@@ -309,12 +349,7 @@ CREATE TABLE entities (
     total_upvotes integer,
     props hstore,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    feed_name character varying(255),
-    type_name character varying(255),
-    category_name character varying(255),
-    type_id integer,
-    origin_id character varying(255)
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -443,14 +478,14 @@ CREATE VIEW entity_total_upvotes AS
 
 CREATE TABLE events (
     id integer NOT NULL,
-    content_digest character varying(255) NOT NULL,
-    props hstore,
-    source_data text NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
     type_name character varying(255),
     feed_name character varying(255),
-    entity_id integer
+    source_data text,
+    content_digest character varying(255),
+    props hstore,
+    entity_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -471,6 +506,38 @@ CREATE SEQUENCE events_id_seq
 --
 
 ALTER SEQUENCE events_id_seq OWNED BY events.id;
+
+
+--
+-- Name: feed_configs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE feed_configs (
+    id integer NOT NULL,
+    feed_name character varying(255),
+    config json,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: feed_configs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE feed_configs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: feed_configs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE feed_configs_id_seq OWNED BY feed_configs.id;
 
 
 --
@@ -514,11 +581,11 @@ CREATE TABLE internals (
     actor_id integer,
     receiver_id integer NOT NULL,
     applies_to_id integer,
+    variant character varying(255),
+    comment character varying(255),
     value integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    comment character varying(255),
-    variant character varying(255)
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -557,20 +624,6 @@ CREATE TABLE ownerships (
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles (
-    id integer NOT NULL,
-    name character varying(255),
-    resource_id integer,
-    resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
 -- Name: scoring_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -581,9 +634,9 @@ CREATE TABLE scoring_rules (
     award_value integer,
     upvote_value integer,
     priority integer,
+    valid_until timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    valid_until timestamp without time zone
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -596,10 +649,12 @@ CREATE TABLE users (
     name character varying(255),
     email character varying(255),
     address character varying(255),
+    address2 character varying(255),
     city character varying(255),
     postal character varying(255),
     state character varying(255),
     props hstore,
+    total_score integer DEFAULT 0,
     country_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -608,18 +663,7 @@ CREATE TABLE users (
     current_sign_in_at timestamp without time zone,
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255),
-    total_score integer DEFAULT 0
-);
-
-
---
--- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users_roles (
-    user_id integer,
-    role_id integer
+    last_sign_in_ip character varying(255)
 );
 
 
@@ -647,26 +691,23 @@ CREATE MATERIALIZED VIEW leaderboard AS
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
           WHERE (internals.receiver_id = users.id))) AS user_score
-   FROM (users
-   LEFT JOIN users_roles ON ((users.id = users_roles.user_id)))
-  WHERE ((users.name IS NOT NULL) AND ((users_roles.role_id IS NULL) OR (NOT (users_roles.role_id IN ( SELECT roles.id
-      FROM roles
-     WHERE (((roles.name)::text = 'bitovian'::text) OR ((roles.name)::text = 'admin'::text)))))))
+   FROM users
+  WHERE (users.name IS NOT NULL)
   ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       scoring_rules r
-     WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       upvotes u
-     WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       awards a
-     WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
-      FROM internals
-     WHERE (internals.receiver_id = users.id))) DESC
+           FROM entities e,
+            ownerships o,
+            scoring_rules r
+          WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            upvotes u
+          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            awards a
+          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+           FROM internals
+          WHERE (internals.receiver_id = users.id))) DESC
   WITH NO DATA;
 
 
@@ -717,11 +758,12 @@ CREATE TABLE rewards (
     title character varying(255),
     description text,
     point_minimum integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
     image character varying(255),
     display_point_minimum character varying(255) DEFAULT ''::character varying,
-    disabled_ts timestamp without time zone
+    disabled_ts timestamp without time zone,
+    props hstore,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -745,6 +787,20 @@ ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
 
 
 --
+-- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles (
+    id integer NOT NULL,
+    name character varying(255),
+    resource_id integer,
+    resource_type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -764,10 +820,19 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 
 
 --
--- Name: rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE SEQUENCE rules_id_seq
+CREATE TABLE schema_migrations (
+    version character varying(255) NOT NULL
+);
+
+
+--
+-- Name: scoring_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE scoring_rules_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -776,19 +841,10 @@ CREATE SEQUENCE rules_id_seq
 
 
 --
--- Name: rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: scoring_rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE rules_id_seq OWNED BY scoring_rules.id;
-
-
---
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE schema_migrations (
-    version character varying(255) NOT NULL
-);
+ALTER SEQUENCE scoring_rules_id_seq OWNED BY scoring_rules.id;
 
 
 --
@@ -830,45 +886,6 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 
 --
--- Name: tenants; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tenants (
-    id integer NOT NULL,
-    login character varying(255),
-    name character varying(255),
-    email character varying(255),
-    address character varying(255),
-    city character varying(255),
-    postal character varying(255),
-    state character varying(255),
-    country_id integer,
-    props hstore,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: tenants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE tenants_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: tenants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE tenants_id_seq OWNED BY tenants.id;
-
-
---
 -- Name: upvotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -892,37 +909,27 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE MATERIALIZED VIEW user_activities AS
-        (        (         SELECT 'Entity'::text AS model_name,
-                            entities.id,
-                            ownerships.owner_id AS user_id,
-                            ownerships.ownership_type,
-                            entities.title,
-                            (entities.total_upvotes + scoring_rules.authorship_value) AS value,
-                            entities.origin_ts AS ts,
-                            entities.cached_tag_list AS tags
-                           FROM ((entities
-                      JOIN ownerships ON ((ownerships.entity_id = entities.id)))
-                 JOIN scoring_rules ON ((scoring_rules.id = entities.scoring_rule_id)))
-                UNION
-                         SELECT 'Internal'::text AS model_name,
-                            internals.id,
-                            internals.receiver_id AS user_id,
-                            NULL::character varying AS ownership_type,
-                            internals.comment AS title,
-                            internals.value,
-                            internals.created_at AS ts,
-                            ''::character varying AS tags
-                           FROM internals)
+        (         SELECT 'Entity'::text AS model_name,
+                    entities.id,
+                    ownerships.owner_id AS user_id,
+                    ownerships.ownership_type,
+                    entities.title,
+                    (entities.total_upvotes + scoring_rules.authorship_value) AS value,
+                    entities.origin_ts AS ts,
+                    entities.cached_tag_list AS tags
+                   FROM ((entities
+              JOIN ownerships ON ((ownerships.entity_id = entities.id)))
+         JOIN scoring_rules ON ((scoring_rules.id = entities.scoring_rule_id)))
         UNION
-                 SELECT 'Anteup'::text AS model_name,
-                    anteups.id,
-                    anteups.actor_id AS user_id,
+                 SELECT 'Internal'::text AS model_name,
+                    internals.id,
+                    internals.receiver_id AS user_id,
                     NULL::character varying AS ownership_type,
-                    ''::text AS title,
-                    anteups.value,
-                    anteups.created_at AS ts,
+                    internals.comment AS title,
+                    internals.value,
+                    internals.created_at AS ts,
                     ''::character varying AS tags
-                   FROM anteups)
+                   FROM internals)
 UNION
          SELECT 'Upvote'::text AS model_name,
             upvotes.id,
@@ -980,17 +987,27 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
+-- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users_roles (
+    user_id integer,
+    role_id integer
+);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq'::regclass);
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY achievements ALTER COLUMN id SET DEFAULT nextval('achievements_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY anteups ALTER COLUMN id SET DEFAULT nextval('anteups_id_seq'::regclass);
 
 
 --
@@ -1005,6 +1022,13 @@ ALTER TABLE ONLY api_cache ALTER COLUMN id SET DEFAULT nextval('api_cache_id_seq
 --
 
 ALTER TABLE ONLY awards ALTER COLUMN id SET DEFAULT nextval('awards_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY brands ALTER COLUMN id SET DEFAULT nextval('brands_id_seq'::regclass);
 
 
 --
@@ -1053,6 +1077,13 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY feed_configs ALTER COLUMN id SET DEFAULT nextval('feed_configs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_seq'::regclass);
 
 
@@ -1088,7 +1119,7 @@ ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY scoring_rules ALTER COLUMN id SET DEFAULT nextval('rules_id_seq'::regclass);
+ALTER TABLE ONLY scoring_rules ALTER COLUMN id SET DEFAULT nextval('scoring_rules_id_seq'::regclass);
 
 
 --
@@ -1109,13 +1140,6 @@ ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclas
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY tenants ALTER COLUMN id SET DEFAULT nextval('tenants_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY upvotes ALTER COLUMN id SET DEFAULT nextval('upvotes_id_seq'::regclass);
 
 
@@ -1127,19 +1151,19 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
+-- Name: accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: achievements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY achievements
     ADD CONSTRAINT achievements_pkey PRIMARY KEY (id);
-
-
---
--- Name: anteups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY anteups
-    ADD CONSTRAINT anteups_pkey PRIMARY KEY (id);
 
 
 --
@@ -1156,6 +1180,14 @@ ALTER TABLE ONLY api_cache
 
 ALTER TABLE ONLY awards
     ADD CONSTRAINT awards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: brands_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY brands
+    ADD CONSTRAINT brands_pkey PRIMARY KEY (id);
 
 
 --
@@ -1215,11 +1247,11 @@ ALTER TABLE ONLY entity_refs
 
 
 --
--- Name: events_hash_key_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: events_content_digest_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY events
-    ADD CONSTRAINT events_hash_key_key UNIQUE (content_digest);
+    ADD CONSTRAINT events_content_digest_key UNIQUE (content_digest);
 
 
 --
@@ -1228,6 +1260,14 @@ ALTER TABLE ONLY events
 
 ALTER TABLE ONLY events
     ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feed_configs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY feed_configs
+    ADD CONSTRAINT feed_configs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1271,11 +1311,11 @@ ALTER TABLE ONLY roles
 
 
 --
--- Name: rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: scoring_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY scoring_rules
-    ADD CONSTRAINT rules_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT scoring_rules_pkey PRIMARY KEY (id);
 
 
 --
@@ -1292,14 +1332,6 @@ ALTER TABLE ONLY taggings
 
 ALTER TABLE ONLY tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
-
-
---
--- Name: tenants_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY tenants
-    ADD CONSTRAINT tenants_pkey PRIMARY KEY (id);
 
 
 --
@@ -1355,10 +1387,10 @@ CREATE INDEX index_api_cache_on_uid_and_provider ON api_cache USING btree (uid, 
 
 
 --
--- Name: index_events_on_props; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_events_on_content_digest; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_events_on_props ON events USING gist (props);
+CREATE INDEX index_events_on_content_digest ON events USING btree (content_digest);
 
 
 --
@@ -1397,13 +1429,6 @@ CREATE INDEX index_taggings_on_taggable_id_and_taggable_type_and_context ON tagg
 
 
 --
--- Name: index_tenants_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_tenants_on_email ON tenants USING btree (email);
-
-
---
 -- Name: index_upvotes_on_applies_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1425,13 +1450,6 @@ CREATE INDEX index_users_roles_on_user_id_and_role_id ON users_roles USING btree
 
 
 --
--- Name: unique_hash_key; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX unique_hash_key ON events USING btree (content_digest);
-
-
---
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1439,19 +1457,11 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: fk_anteups_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_accounts_brands; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY anteups
-    ADD CONSTRAINT fk_anteups_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
-
-
---
--- Name: fk_anteups_users; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY anteups
-    ADD CONSTRAINT fk_anteups_users FOREIGN KEY (actor_id) REFERENCES users(id);
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT fk_accounts_brands FOREIGN KEY (brand_id) REFERENCES brands(id);
 
 
 --
@@ -1578,134 +1588,68 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "public";
 
-INSERT INTO schema_migrations (version) VALUES ('20130126192030');
+INSERT INTO schema_migrations (version) VALUES ('0');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226163527');
+INSERT INTO schema_migrations (version) VALUES ('10');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226163634');
+INSERT INTO schema_migrations (version) VALUES ('1000');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226164246');
+INSERT INTO schema_migrations (version) VALUES ('1010');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226172229');
+INSERT INTO schema_migrations (version) VALUES ('1011');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226172258');
+INSERT INTO schema_migrations (version) VALUES ('1020');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226172558');
+INSERT INTO schema_migrations (version) VALUES ('1030');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226172658');
+INSERT INTO schema_migrations (version) VALUES ('1040');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226172928');
+INSERT INTO schema_migrations (version) VALUES ('1050');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226173857');
+INSERT INTO schema_migrations (version) VALUES ('1060');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226174642');
+INSERT INTO schema_migrations (version) VALUES ('1070');
 
-INSERT INTO schema_migrations (version) VALUES ('20130226200831');
+INSERT INTO schema_migrations (version) VALUES ('1080');
 
-INSERT INTO schema_migrations (version) VALUES ('20130304111726');
+INSERT INTO schema_migrations (version) VALUES ('1090');
 
-INSERT INTO schema_migrations (version) VALUES ('20130304122257');
+INSERT INTO schema_migrations (version) VALUES ('1100');
 
-INSERT INTO schema_migrations (version) VALUES ('20130305172111');
+INSERT INTO schema_migrations (version) VALUES ('1120');
 
-INSERT INTO schema_migrations (version) VALUES ('20130429181415');
+INSERT INTO schema_migrations (version) VALUES ('1130');
 
-INSERT INTO schema_migrations (version) VALUES ('20130429201314');
+INSERT INTO schema_migrations (version) VALUES ('1140');
 
-INSERT INTO schema_migrations (version) VALUES ('20130520040320');
+INSERT INTO schema_migrations (version) VALUES ('20');
 
-INSERT INTO schema_migrations (version) VALUES ('20130607045446');
+INSERT INTO schema_migrations (version) VALUES ('2000');
 
-INSERT INTO schema_migrations (version) VALUES ('20130617164515');
+INSERT INTO schema_migrations (version) VALUES ('2010');
 
-INSERT INTO schema_migrations (version) VALUES ('20130618110729');
+INSERT INTO schema_migrations (version) VALUES ('2020');
 
-INSERT INTO schema_migrations (version) VALUES ('20130716113111');
+INSERT INTO schema_migrations (version) VALUES ('2030');
 
-INSERT INTO schema_migrations (version) VALUES ('20130723090829');
+INSERT INTO schema_migrations (version) VALUES ('2040');
 
-INSERT INTO schema_migrations (version) VALUES ('20130726125946');
+INSERT INTO schema_migrations (version) VALUES ('2050');
 
-INSERT INTO schema_migrations (version) VALUES ('20130805155441');
+INSERT INTO schema_migrations (version) VALUES ('30');
 
-INSERT INTO schema_migrations (version) VALUES ('20130805160253');
+INSERT INTO schema_migrations (version) VALUES ('3000');
 
-INSERT INTO schema_migrations (version) VALUES ('20130905102324');
+INSERT INTO schema_migrations (version) VALUES ('3010');
 
-INSERT INTO schema_migrations (version) VALUES ('20130905102701');
+INSERT INTO schema_migrations (version) VALUES ('3020');
 
-INSERT INTO schema_migrations (version) VALUES ('20130905142638');
+INSERT INTO schema_migrations (version) VALUES ('3030');
 
-INSERT INTO schema_migrations (version) VALUES ('20130910111148');
+INSERT INTO schema_migrations (version) VALUES ('3040');
 
-INSERT INTO schema_migrations (version) VALUES ('20130916130332');
+INSERT INTO schema_migrations (version) VALUES ('3050');
 
-INSERT INTO schema_migrations (version) VALUES ('20130924211203');
-
-INSERT INTO schema_migrations (version) VALUES ('20130926121052');
-
-INSERT INTO schema_migrations (version) VALUES ('20131018093050');
-
-INSERT INTO schema_migrations (version) VALUES ('20131121163548');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126091928');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126103121');
-
-INSERT INTO schema_migrations (version) VALUES ('20131126103556');
-
-INSERT INTO schema_migrations (version) VALUES ('20131127171009');
-
-INSERT INTO schema_migrations (version) VALUES ('20131203191031');
-
-INSERT INTO schema_migrations (version) VALUES ('20131206133159');
-
-INSERT INTO schema_migrations (version) VALUES ('20131208111213');
-
-INSERT INTO schema_migrations (version) VALUES ('20131209113732');
-
-INSERT INTO schema_migrations (version) VALUES ('20131209113804');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212151917');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212151919');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212152143');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212152203');
-
-INSERT INTO schema_migrations (version) VALUES ('20131212152452');
-
-INSERT INTO schema_migrations (version) VALUES ('20140119061002');
-
-INSERT INTO schema_migrations (version) VALUES ('20140123003102');
-
-INSERT INTO schema_migrations (version) VALUES ('20140123003458');
-
-INSERT INTO schema_migrations (version) VALUES ('20140123005015');
-
-INSERT INTO schema_migrations (version) VALUES ('20140123185242');
-
-INSERT INTO schema_migrations (version) VALUES ('20140130154056');
-
-INSERT INTO schema_migrations (version) VALUES ('20140130162354');
-
-INSERT INTO schema_migrations (version) VALUES ('20140203135744');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162518');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162523');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162524');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162525');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162526');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162527');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162528');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162529');
+INSERT INTO schema_migrations (version) VALUES ('40');
