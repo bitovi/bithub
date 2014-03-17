@@ -44,14 +44,6 @@ def log_registering(endpoint, query = nil)
   $logger.info str
 end
 
-class Publisher
-  include Celluloid
-
-  def initialize
-    @conn = Bunny.new
-  end
-end
-
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   logger.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
 
