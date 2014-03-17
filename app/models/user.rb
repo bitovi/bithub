@@ -12,10 +12,9 @@ class User < ActiveRecord::Base
   rolify
   devise :rememberable, :trackable, :omniauthable
 
-  attr_accessible :address, :city,
-    :email, :name, :postal, :email,
-    :remember_me, :state, :country,
-    :entities, :total_score
+  attr_accessible :name, :email,
+    :address, :address2, :city, :postal, :state, :country,
+    :remember_me, :entities, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
