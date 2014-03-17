@@ -4,7 +4,8 @@ ruby '2.1.1'
 gem 'rails', '3.2.17'
 gem 'rolify', '~> 3.2'
 gem 'devise', '~> 2.2'
-gem 'amqp'
+gem 'amqp' # TODO remove this after crawler/listener refactoring.
+gem 'bunny'
 gem 'pg'
 gem 'dalli'
 gem 'unicorn'
@@ -83,6 +84,7 @@ end
 # --------
 gem 'em-http-request'
 gem 'em-twitter'
+gem 'celluloid'
 gem 'nokogiri'
 gem 'nori', '~>2.3.0'
 gem 'cinch'
