@@ -4,24 +4,48 @@ Bithub::Application.routes.draw do
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   as :user do
-    post 'api/auth/link_identity', :to => 'api/auth/identities#link'
-    delete 'api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
-    get '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+    post   '/api/auth/link_identity', :to => 'api/auth/identities#link'
+    delete '/api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
+    get    '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
+  # Dynamic image resizer
+  #
   match '/uploads/*other' => "uploads#index"
 
+  # SERVICE API Routes
+  #
   namespace :api, :defaults => { :format => 'json' } do
     match '/auth/session' => 'auth/session_info#current_session'
 
+    # API v2
+    #
     namespace :v2 do
-      namespace :crawler do
-        get :event_ids, to: 'boot#event_ids'
-      end
+
+      # Entities
+
+      # Users
+
+      # Rewards
+
+      # Achievements
+
+      # Countries
+      resources :countries, :only => :index
+
+      # Brands
+
+      # Accounts
+
+      # Non-matched redirect to root
       match '*path', :to => redirect("/api/v2")
+
+      # Homepage
       root :to => "base#home"
     end
 
+    # API v1
+    #
     namespace :v1, :defaults => { :format => 'json', :handler => 'jpbuilder' } do
 
       resources :events, :except => [:new, :edit] do
