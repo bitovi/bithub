@@ -1,6 +1,5 @@
 # require rake manually, otherwise migrations will fail :/
 require 'rake'
-require './lib/apartment_ext'
 
 # require 'apartment/elevators/generic'
 # require 'apartment/elevators/domain'
@@ -10,10 +9,10 @@ require 'apartment/elevators/subdomain'
 # Apartment Configuration
 #
 Apartment.configure do |config|
-  config.excluded_models = %w{Tenant}
+  config.excluded_models = %w{ Brand Account }
   config.use_schemas = true
   config.use_sql = true
-  config.tenant_names = lambda{ Tenant.pluck :login }
+  config.tenant_names = lambda{ Brand.pluck :name }
 
   # config.default_schema = "public"
   # config.persistent_schemas = %w{ hstore }
