@@ -5,4 +5,18 @@ class Brand < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
 
   has_many :accounts
+
+  after_create :create_tenant
+  after_destroy :destroy_tenant
+
+  private
+
+  def create_tenant
+    Apartment::Database.create(name)
+  end
+
+  def destroy_tenant
+    Apartment::Database.drop(name)
+  end
+
 end
