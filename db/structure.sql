@@ -63,13 +63,21 @@ SET default_with_oids = false;
 
 CREATE TABLE accounts (
     id integer NOT NULL,
-    email character varying(255),
-    password character varying(255),
     name character varying(255),
     props hstore,
     brand_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    email character varying(255) DEFAULT ''::character varying NOT NULL,
+    encrypted_password character varying(255) DEFAULT ''::character varying NOT NULL,
+    reset_password_token character varying(255),
+    reset_password_sent_at timestamp without time zone,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip character varying(255),
+    last_sign_in_ip character varying(255)
 );
 
 
@@ -1380,6 +1388,20 @@ CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
 
 
 --
+-- Name: index_accounts_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_accounts_on_email ON accounts USING btree (email);
+
+
+--
+-- Name: index_accounts_on_reset_password_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_accounts_on_reset_password_token ON accounts USING btree (reset_password_token);
+
+
+--
 -- Name: index_api_cache_on_uid_and_provider; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1588,7 +1610,7 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "public";
+SET search_path TO "$user",public;
 
 INSERT INTO schema_migrations (version) VALUES ('0');
 
@@ -1623,6 +1645,8 @@ INSERT INTO schema_migrations (version) VALUES ('1120');
 INSERT INTO schema_migrations (version) VALUES ('1130');
 
 INSERT INTO schema_migrations (version) VALUES ('1140');
+
+INSERT INTO schema_migrations (version) VALUES ('1150');
 
 INSERT INTO schema_migrations (version) VALUES ('20');
 
