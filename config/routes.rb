@@ -1,5 +1,7 @@
 Bithub::Application.routes.draw do
 
+  # Devise routes for User
+  #
   devise_for :users,
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
@@ -9,9 +11,18 @@ Bithub::Application.routes.draw do
     get    '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
   end
 
+
+  # Devise routes for Account
+  #
+  devise_for :accounts, path: 'api/admin'
+
+  # devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
+
+
   # Dynamic image resizer
   #
   match '/uploads/*other' => "uploads#index"
+
 
   # SERVICE API Routes
   #
@@ -30,12 +41,16 @@ Bithub::Application.routes.draw do
 
       # Achievements
 
+      # Tags
+
       # Countries
       resources :countries, :only => :index
 
       # Brands
 
       # Accounts
+
+      # Feed config
 
       # Non-matched redirect to root
       match '*path', :to => redirect("/api/v2")
@@ -90,6 +105,8 @@ Bithub::Application.routes.draw do
     end
   end
 
+  # Redirect to v1 endpoints
+  #
   match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
   match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
