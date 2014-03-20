@@ -49,6 +49,7 @@ Bithub::Application.routes.draw do
       # Brands
 
       # Accounts
+      resources :accounts, :only => [:index, :show]
 
       # Feed config
 

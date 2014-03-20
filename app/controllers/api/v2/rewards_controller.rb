@@ -1,4 +1,4 @@
-class Api::V1::RewardsController < Api::V2::BaseController
+class Api::V2::RewardsController < Api::V2::BaseController
   before_filter :authenticate_user!, except: [:index, :show]
   respond_to :json
 
