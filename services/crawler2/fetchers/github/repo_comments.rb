@@ -1,9 +1,9 @@
-require_relative 'shared/github_client'
+require_relative 'client'
 
 module Fetchers
   module Github
 
-    class RepoIssuesCommentsFetcher
+    class RepoComments
       include Client
 
       def fetch
