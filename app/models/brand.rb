@@ -27,7 +27,12 @@ class Brand < ActiveRecord::Base
     if name = self.changes["name"]
       old_name = name.first
       new_name = name.second
-      ActiveRecord::Base.connection.execute("ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\"")
+
+      # skip rest upon creating
+      return unless old_name
+
+      sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
+      ActiveRecord::Base.connection.execute(sql)
     end
   end
 
