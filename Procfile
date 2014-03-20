@@ -1,5 +1,5 @@
-web: ./bin/unicorn_rails -c ./config/unicorn_dev.rb
-worker: ./bin/rake jobs:work
+web: ./bin/unicorn_rails -c ./config/unicorn_local.rb
+worker: ./script/delayed_job run
 listener: ruby ./services/listener/listener.rb
 crawler: ruby ./services/crawler/crawler.rb
 # irc_bot: ruby ./services/irc_bot/irc_bot.rb

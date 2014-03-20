@@ -1,3 +1,4 @@
+# Custom reset task
 module Delayed
   def self.reset_all
     Delayed::Job.all.each do |d|

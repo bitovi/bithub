@@ -24,7 +24,6 @@ class Poller
   end
 
   def initialize(exchange, endpoint, &blk)
-    initialize_logger("INFO")
     @config = Configuration.new
     blk.(@config) if blk
 
@@ -72,9 +71,9 @@ class Poller
     processed = processor(http_resp).parse.extract.decorate.result
     publish(reject_old(processed))
   rescue Events::DispatchError => err
-    @logger.error "Feed #{@feed} | #{err} | #{err.context}"
+    $logger.error "Feed #{@feed} | #{err} | #{err.context}"
   rescue Events::BuildingError=> err
-    @logger.error "Feed #{@feed} | #{err} | #{err.context}"
+    $logger.error "Feed #{@feed} | #{err} | #{err.context}"
   end
 
   def handle_errors(http_req)
@@ -144,22 +143,22 @@ class Poller
   end
 
   def log_exception(e)
-    @logger.error "ENDPOINT: #{@endpoint} | MESSAGE: #{e.message}"
+    $logger.error "ENDPOINT: #{@endpoint} | MESSAGE: #{e.message}"
   end
 
   def log_http_status(resp, level)
-    @logger.send(level, "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}")
-    @logger.error "... MESSAGE: #{resp.error}" if resp.error
+    $logger.send(level, "ENDPOINT: #{@endpoint} | STATUS: #{resp.response_header.status}")
+    $logger.error "... MESSAGE: #{resp.error}" if resp.error
   end
 
   def log_publishing(es)
     str = "Publishing #{es.length} items from #{@endpoint}"
     str += " for #{http_query[:state]} issues" if in_github_issues?
-    @logger.info str if es.length > 0
+    $logger.info str if es.length > 0
   end
 
   def log_fetching(url)
-    @logger.info "Fetching from: #{url}"
+    $logger.info "Fetching from: #{url}"
   end
 
   def http_head

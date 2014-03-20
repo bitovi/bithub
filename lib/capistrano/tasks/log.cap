@@ -1,0 +1,60 @@
+namespace :log do
+
+  desc "Tail listener log"
+  task :listener do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:log_path), 'listener-1.log')
+    end
+  end
+
+  desc "Tail worker log"
+  task :worker do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:log_path), 'worker-1.log')
+    end
+  end
+
+  desc "Tail crawler log"
+  task :crawler do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:log_path), 'crawler-1.log')
+    end
+  end
+
+  desc "Tail IRC bot log"
+  task :ircbot do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:log_path), 'irc_bot-1.log')
+    end
+  end
+
+  desc "Tail liveservice log"
+  task :liveservice do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:log_path), 'liveservice-1.log')
+    end
+  end
+
+  desc "Tail web/unicorn log"
+  task :web do
+    on roles(:app) do |host|
+      execute :tail, '-f', File.join(fetch(:unicorn_log_path), fetch(:stage).to_s + '.log')
+    end
+  end
+
+  namespace :web do
+    desc "Tail web/unicorn stderr log"
+    task :stdout do
+      on roles(:app) do |host|
+        execute :tail, '-f', File.join(fetch(:unicorn_log_path), 'unicorn.stdout.log')
+      end
+    end
+    desc "Tail web/unicorn stderr log"
+    task :stderr do
+      on roles(:app) do |host|
+        execute :tail, '-f', File.join(fetch(:unicorn_log_path), 'unicorn.stderr.log')
+      end
+    end
+  end
+
+end

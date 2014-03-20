@@ -36,7 +36,7 @@ module Entities
 
       def find_children
         downstream = [Entities::Github::IssueAction, Entities::Github::IssueComment]
-        if @event.repo_name && @event.number
+        if @event.repo.name && @event.number
           downstream.reduce([]) do |acc, rl|
             acc += rl.new(@event).find_by_repo_name_and_number.all
           end
@@ -46,7 +46,7 @@ module Entities
       def update
         @instance.title = @event.title
         @instance.body = @event.body
-        @instance.props[:label_names] = @event.label_names
+        @instance.props[:label_names] = @event.labels.names_csv
         @instance.props[:state] = @event.state
         @instance.props[:references_to] = ""
         super
@@ -54,7 +54,6 @@ module Entities
 
       def update_from_children
         most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
-
         return if most_recent_child.nil?
 
         most_recent_child.props.symbolize_keys!
@@ -63,10 +62,17 @@ module Entities
         data = most_recent_child.last_modified_by.source_data
         event = Events::Dispatcher.dispatch(data, 'github')
 
-        @instance.title = (t = event.issue.andand[:title]) ? t : @instance.title
-        @instance.body = (b = event.issue.andand[:body]) ? b: @instance.body
-        @instance.props[:state] = event.state
-        @instance.props[:label_names] = event.labels.names_csv if event.labels
+        if event.respond_to? :ipr # IssueComment
+          @instance.title = event.ipr.title
+          @instance.body = event.ipr.body
+          @instance.props[:state] = event.ipr.state
+          @instance.props[:label_names] = event.ipr.labels.names_csv
+        else # Issue
+          @instance.title = event.title
+          @instance.body = event.body
+          @instance.props[:state] = event.state
+          @instance.props[:label_names] = event.labels.names_csv
+        end
       end
 
       # Finders
@@ -78,14 +84,18 @@ module Entities
       end
 
       def find_by_repo_name_and_number
+        number = if @event.respond_to? :issue
+                   @event.issue.number
+                 elsif @event.respond_to? :pull_request
+                   @event.pull_request.number
+                 end
+
         Entity
         .feed('github')
         .type('issue')
-        .where("props -> 'repo_name' = '#{@event.repo_name}'")
-        .where("props -> 'number' = '#{@event.number}'")
+        .where("props -> 'repo_name' = '#{@event.repo.name}'")
+        .where("props -> 'number' = '#{number}'")
       end
-
-      private
 
       def taggify_labels
         if @instance.props[:label_names]

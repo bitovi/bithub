@@ -1,45 +1,52 @@
 log4r_config:
   loggers:
     - name          : component
-      level         : INFO
+      level         : DEBUG
       trace         : 'true'
       outputters    : 
+        - console
         - component_logfile
 
     - name          : active_record
-      level         : INFO
+      level         : DEBUG
       trace         : 'false'
       outputters    : 
         - active_record_logfile
 
     - name          : action_controller
-      level         : INFO
+      level         : DEBUG
       trace         : 'false'
       outputters    : 
         - action_controller_logfile
 
   outputters:
+    - name      : console
+      type      : StdoutOutputter
+      formatter :
+        type: PatternFormatter
+        pattern: '[%l]: %m '
+
     - name     : component_logfile
       type     : RollingFileOutputter
-      filename : "/var/log/bithub/#{COMPONENT_NAME}.log"
+      filename : "log/#{COMPONENT_NAME}.log"
       trunc    : false
       maxsize  : 104857600
       formatter:
         type: PatternFormatter
-        pattern: '[#{ENV}][%d][%l]: %m '
+        pattern: '[#{ENV}][[%d][%l]: %m '
 
     - name     : active_record_logfile
       type     : DateFileOutputter
-      dirname  : "/var/log/bithub"
+      dirname  : "log"
       filename : "active_record.log"
       formatter:
         type: PatternFormatter
-        pattern: '[%d][%l]: %m '
+        pattern: '[#{ENV}][%d][%l]: %m '
 
     - name     : action_controller_logfile
       type     : DateFileOutputter
-      dirname  : "/var/log/bithub"
+      dirname  : "log"
       filename : "action_controller.log"
       formatter:
         type: PatternFormatter
-        pattern: '[%d][%l]: %m '
+        pattern: '[#{ENV}][%d][%l]: %m '

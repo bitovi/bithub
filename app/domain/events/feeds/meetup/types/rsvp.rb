@@ -7,6 +7,8 @@ module Events
       def_delegators :@rsvp, :id, :rsvp_id,
         :comment, :response, :created_at
 
+      attr_reader :member, :event
+
       def digest_seed
         @rsvp.id.to_s + self.class.name
       end

@@ -38,7 +38,7 @@ module Entities
       end
 
       def build_children
-        build_comments + build_answers
+        build_comments.to_a + build_answers.to_a
       end
 
       def update_children
@@ -48,27 +48,29 @@ module Entities
       private
 
       def build_answers
-        @event.answers.map do |a|
-          event = Events::StackExchange::Answer.new(a.raw)
-          Entities::StackExchange::Answer.new(a)
-            .procure.determine.group.normalize.instance
+        @event.answers.map do |a| # Wrappers
+          Events::StackExchange::Answer.new(a.raw)
+        end.map do |a_e| # Events
+          Entities::StackExchange::Answer.new(a_e)
+          .procure.determine.group.normalize.instance
         end if @event.answers
       end
 
       def build_comments
-        @event.comments.map do |c|
+        @event.comments.map do |c| # Wrappers
           Events::StackExchange::Comment.new(c.raw)
-        end.map do |c_e|
+        end.map do |c_e| # Events
           Entities::StackExchange::Comment.new(c_e)
-            .procure.determine.group.normalize.instance
+          .procure.determine.group.normalize.instance
         end if @event.comments
       end
 
       def update_answers
-        @event.answers.map do |a|
-          a_e = Events::StackExchange::Answer.new(a.raw)
+        @event.answers.map do |a| # Wrappers
+          Events::StackExchange::Answer.new(a.raw)
+        end.map do |a_e| # Events
           Entities::StackExchange::Answer.new(a_e)
-            .procure.update.determine.group.normalize.persist
+          .procure.update.determine.group.normalize.persist
         end if @event.answers
       end
 

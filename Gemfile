@@ -1,14 +1,13 @@
 source 'https://rubygems.org'
-ruby '2.1.0'
+ruby '2.1.1'
 
-gem 'rails', '3.2.14'
+gem 'rails', '3.2.17'
 gem 'rolify', '~> 3.2'
 gem 'devise', '~> 2.2'
 gem 'amqp'
 gem 'pg'
 gem 'dalli'
 gem 'unicorn'
-gem 'log4r'
 gem 'jquery-rails'
 gem 'cancan'
 gem 'rmagick'
@@ -40,6 +39,7 @@ gem 'yajl-ruby'
 gem 'awesome_print'
 gem 'twitter-text'
 gem 'dotenv-rails'
+gem 'log4r', '1.1.10'
 
 gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec'
@@ -68,8 +68,10 @@ group :test do
 end
 
 group :development do
-  gem 'capistrano', '~> 2.14'
-  gem 'capistrano-ext'
+  gem 'capistrano', '~> 3.1.0'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-rbenv', '~> 2.0'
+  gem 'capistrano-bundler', '~> 1.1.2'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
