@@ -1,6 +1,6 @@
 class Brand < ActiveRecord::Base
 
-  attr_accessible :name, :display_name, :description, :keywords, :props
+  attr_accessible :name, :description, :keywords, :props
 
   serialize :props, ActiveRecord::Coders::Hstore
 
