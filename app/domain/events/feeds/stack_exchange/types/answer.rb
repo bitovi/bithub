@@ -5,7 +5,7 @@ module Events
       extend Forwardable
 
       def_delegators :@answer, :answer_id, :question_id,
-        :title, :body, :link, :score, :accepted?,
+        :title, :body, :body_markdown, :link, :score, :accepted?,
         :upvote_count, :last_activity_date, :creation_date
 
       def_delegator :@owner, :id, :origin_author_id

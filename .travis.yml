@@ -4,6 +4,9 @@ script:
   - "bundle exec rake db:test:prepare"
   - "bundle exec rspec spec/domain"
 notifications:
+  slack: floatingpoint:U0vBLGleeqmcaHVW4NO8IOLD#bithub
+  webhooks:
+    - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
     - veljko@kset.org
     - neektza@gmail.com
@@ -13,7 +16,7 @@ addons:
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
 rvm:
-  - 2.1.0
+  - 2.1.1
 before_script:
   - psql -c 'create database bithub_test;' -U postgres
   - "cp ./.travis_database.yml ./config/database.yml"

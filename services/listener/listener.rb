@@ -6,23 +6,16 @@ $:.unshift(ROOT_DIR)
 $:.unshift(DOMAIN_DIR)
 
 require 'config/environment'
-require 'log4r'
-
 require_relative 'helpers'
 require 'dispatcher'
+require 'logger_factory'
 
-logger = Log4r::Logger.new('listener')
-logger.add(Log4r::StdoutOutputter.new('console', {
-  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-}))
+logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
+$logger = logger
 
 # Message queue (RabbitMQ) connection and event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
   logger.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
-
-  stop = proc { logger.info "Terminating the listener"; connection.close { EM.stop }}
-  Signal.trap("INT",  &stop)
-  Signal.trap("TERM", &stop)
 
   channel = AMQP::Channel.new(connection)
   channel.direct("e.events") do |input_exchange|

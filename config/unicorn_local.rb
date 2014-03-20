@@ -1,3 +1,6 @@
+ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+require File.join(ROOT_DIR, 'lib', 'logger_factory')
+
 worker_processes 3
 timeout 30
 preload_app true
@@ -8,9 +11,7 @@ listen "unix:./tmp/sockets/unicorn.sock", :backlog => 64
 # PID
 pid "./tmp/pids/unicorn.pid"
 
-# Logs
-stderr_path "./log/unicorn.stderr.log"
-stdout_path "./log/unicorn.stdout.log"
+logger(LoggerFactory.new('unicorn', ENV['ENV']).component_logger)
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
@@ -21,11 +22,10 @@ before_fork do |server, worker|
 end
 
 after_fork do |server, worker|
-  stop = proc { puts 'Terminating web service'; Process.kill 'QUIT', Process.pid }
+  stop = proc { Process.kill 'QUIT', Process.pid }
   Signal.trap('TERM', &stop)
   Signal.trap('INT', &stop)
 
-  # Replace with MongoDB or whatever
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.establish_connection
     Rails.logger.info('Connected to ActiveRecord')

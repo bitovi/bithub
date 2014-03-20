@@ -7,29 +7,23 @@ $:.unshift(DOMAIN_DIR)
 $:.unshift(LIB_DIR)
 $:.unshift(SERVICES_DIR)
 
-# Theirs
 require 'bundler/setup'
 require 'rubygems'
-require 'log4r'
 require 'amqp'
 require 'yaml'
 
 # Ours
 require 'core_ext'
-require 'loggable'
+require 'logger_factory'
 require 'crawler/poller'
 require 'crawler/rsvp_poller'
 require 'crawler/streamer'
 
+
 # paths to config files based on env
 config_path = File.join(ROOT_DIR, 'config', 'services', 'crawler', "#{ENV['ENV']}.yml")
 
-# Logging
-logger = Log4r::Logger.new('Crawler')
-logger.add(Log4r::StdoutOutputter.new('console', {
-  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-}))
-
+logger = LoggerFactory.new('crawler', ENV['ENV']).component_logger
 $logger = logger
 
 # Load config
@@ -52,11 +46,7 @@ end
 
 # Event loop
 AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
-  puts "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
-
-  stop = proc { puts "Terminating crawler"; connection.close { EM.stop } }
-  Signal.trap("INT",  &stop)
-  Signal.trap("TERM", &stop)
+  logger.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
 
   channel = AMQP::Channel.new(connection)
 
