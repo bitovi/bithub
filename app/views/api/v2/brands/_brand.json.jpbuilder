@@ -1,0 +1,3 @@
+json.cache! brand do
+	json.(brand, :id, :name, :description, :keywords)
+end
