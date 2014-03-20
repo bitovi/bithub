@@ -69,7 +69,6 @@ Bithub::Application.routes.draw do
         resources 'activities', :only => :index, :to => 'event_activities#index'
         resources 'upvote', :only => :create, :to => 'event_activities#create_upvote'
         resource 'award', :only => :create, :to => 'event_activities#create_award'
-        resource 'anteup', :only => :create, :to => 'event_activities#create_anteup'
         get :summary, :on => :collection
         get :pagination, :on => :collection
         delete :upvote, :to => 'event_activities#destroy_upvote'
