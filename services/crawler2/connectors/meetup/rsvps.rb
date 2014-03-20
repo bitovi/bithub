@@ -3,8 +3,12 @@ require_relative 'client'
 module Connectors
   module Meetup
 
-    class RsvpsConnector
+    class Rsvps
       include Client
+
+      def configure
+        self
+      end
 
       def listen
         @client.rsvps do |obj|

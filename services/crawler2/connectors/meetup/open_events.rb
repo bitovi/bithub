@@ -1,17 +1,17 @@
 require_relative 'client'
 
 module Connectors
-  module Twitter
+  module Meetup
 
-    class TwitterPublicStreamConnector
+    class OpenEvents
       include Client
-
+      
       def configure
-        @topics = @config.fetch(:params).fetch(:track)
+        self
       end
 
       def listen
-        @client.filter(:track => @topics.join(",")) do |obj|
+        @client.open_events do |obj|
           yield obj if block_given?
         end
       end

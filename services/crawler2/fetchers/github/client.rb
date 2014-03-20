@@ -4,7 +4,8 @@ module Fetchers
     module Client
       def initialize(cfg)
         @config = cfg
-        @client = Octokit::Client.new(access_token: @config.fetch(:data).fetch(:token))
+        @client = Octokit::Client.new(access_token: @config.fetch(:token))
+        @repo = @config.fetch(:repo)
       end
     end
 
