@@ -4,6 +4,7 @@ module Connectors
   module Twitter
 
     class Public
+      # include Celluloid::IO
       include Client
 
       def configure
@@ -13,7 +14,7 @@ module Connectors
 
       def listen
         @client.filter(:track => @topics.join(',')) do |object|
-          yield object if block_given?
+          yield(object)
         end
       end
     end

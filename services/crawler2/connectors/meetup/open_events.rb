@@ -4,6 +4,7 @@ module Connectors
   module Meetup
 
     class OpenEvents
+      # include Celluloid::IO
       include Client
       
       def configure
@@ -11,8 +12,8 @@ module Connectors
       end
 
       def listen
-        @client.open_events do |obj|
-          yield obj if block_given?
+        @client.open_events do |object|
+          yield(object)
         end
       end
     end
