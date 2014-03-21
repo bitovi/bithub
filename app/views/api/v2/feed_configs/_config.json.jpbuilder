@@ -1,0 +1,3 @@
+json.cache! config do
+	json.(config, :id, :feed_name, :config)
+end

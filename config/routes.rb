@@ -53,6 +53,7 @@ Bithub::Application.routes.draw do
       resources :accounts, :only => [:index, :show]
 
       # Feed config
+      resources :feed_configs
 
       # Non-matched redirect to root
       match '*path', :to => redirect("/api/v2")
