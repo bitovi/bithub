@@ -1,12 +1,15 @@
+require 'rmeetup'
+
 module Fetchers
   module Meetup
 
     module Client
 
       def initialize(cfg)
-        RMeetup::Client.api_key = cfg[:params][:key]
-        @client = RMeetup::Client
         @config = cfg
+
+        RMeetup::Client.api_key = @config[:params][:key]
+        @client = RMeetup::Client
       end
 
     end
