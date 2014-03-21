@@ -5,7 +5,7 @@ module Connectors
 
     module Client
       def initialize(cfg)
-        @client = ::Meetup::Streaming::Client.new
+        @client = ::Meetup::Streaming::Client.new(tcp_socket_klass: Celluloid::IO::TCPSocket)
       end
     end
 

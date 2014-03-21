@@ -4,6 +4,7 @@ module Connectors
   module Meetup
 
     class Rsvps
+     # include Celluloid::IO
       include Client
 
       def configure
@@ -11,8 +12,8 @@ module Connectors
       end
 
       def listen
-        @client.rsvps do |obj|
-          yield obj if block_given?
+        @client.rsvps do |object|
+          yield(object)
         end
       end
     end
