@@ -1,4 +1,9 @@
 class ScoringRule < ActiveRecord::Base
-  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value, :priority
+  include ActiveModel::ForbiddenAttributesProtection
+
+  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value, :priority, :valid_until
+
+  validates_presence_of :authorship_value
+
   has_many :entities
 end

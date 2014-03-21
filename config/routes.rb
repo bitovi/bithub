@@ -53,6 +53,9 @@ Bithub::Application.routes.draw do
       # Accounts
       resources :accounts, :only => [:index, :show]
 
+      # Scoring rules
+      resources :scoring_rules
+
       # Feed config
       resources :feed_configs
 
