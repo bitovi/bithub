@@ -1,4 +1,5 @@
 class Brand < ActiveRecord::Base
+  include ActiveModel::ForbiddenAttributesProtection
 
   attr_accessible :name, :description, :keywords, :props
 
