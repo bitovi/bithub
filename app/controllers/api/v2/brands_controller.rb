@@ -14,4 +14,19 @@ class Api::V2::BrandsController < Api::V2::BaseController
     render :show
   end
 
+  def update
+    @brand = Brand.find(params[:id])
+
+    if @brand.update_attributes(brand_params)
+      render :show
+    else
+      render :json => msg_hash(@brand, 'update'), :status => 406
+    end
+  end
+
+  private
+
+  def brand_params
+    params.require(:brand).permit(:name, :description, keywords: [])
+  end
 end

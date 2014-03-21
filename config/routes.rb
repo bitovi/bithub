@@ -47,7 +47,7 @@ Bithub::Application.routes.draw do
       resources :countries, :only => :index
 
       # Brands
-      resources :brands, :only => [:index, :show]
+      resources :brands, :only => [:index, :show, :update]
 
       # Accounts
       resources :accounts, :only => [:index, :show]
