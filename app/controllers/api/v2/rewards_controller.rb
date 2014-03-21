@@ -1,10 +1,10 @@
 class Api::V2::RewardsController < Api::V2::BaseController
-  before_filter :authenticate_user!, except: [:index, :show]
+  #before_filter :authenticate_user!, except: [:index, :show]
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
+  #rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
     scope = build_scope(request.env['muster.query'], params)
@@ -18,8 +18,9 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def create
-    authorize! :manage, Reward, :message => "No rights to manage rewards."
-    @reward = Reward.new(params[:reward])
+    #authorize! :manage, Reward, :message => "No rights to manage rewards."
+
+    @reward = Reward.new(reward_params)
     if @reward.save
       render :show
     else
@@ -28,9 +29,10 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def update
-    authorize! :manage, Reward, :message => "No rights to manage rewards."
+    #authorize! :manage, Reward, :message => "No rights to manage rewards."
+
     @reward = Reward.find(params[:id])
-    if @reward.update_attributes(params[:reward])
+    if @reward.update_attributes(reward_params)
       render :show
     else
       render :json => msg_hash(@reward, 'update'), :status => 406
@@ -38,7 +40,8 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def destroy
-    authorize! :manage, Reward, :message => "No rights to manage rewards."
+    #authorize! :manage, Reward, :message => "No rights to manage rewards."
+
     @reward = Reward.find(params[:id])
     if @reward.destroy
       render :json => msg_hash(@reward, 'destroy', 'success')
@@ -47,8 +50,11 @@ class Api::V2::RewardsController < Api::V2::BaseController
     end
   end
 
-  # SCOPE BUILDING
-  # --------------
+  private
+
+  def reward_params
+    params.require(:reward).permit(:title, :description, :point_minimum, :image, :disabled_ts)
+  end
 
   def query_logic(params)
     @logic_analyzer ||= QueryLogic::Query.new(Reward, params)

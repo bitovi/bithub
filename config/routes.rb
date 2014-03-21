@@ -38,6 +38,7 @@ Bithub::Application.routes.draw do
       # Users
 
       # Rewards
+      resources :rewards
 
       # Achievements
 
