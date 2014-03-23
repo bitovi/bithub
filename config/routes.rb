@@ -48,6 +48,21 @@ Bithub::Application.routes.draw do
       end
 
       # Users
+      resources :users, :except => [:new, :edit] do
+        get 'activities', :to => 'user_activities#index'
+        get 'accomplishments', :to => 'user_activities#accomplishments'
+        get 'events', :to => 'user_events#index'
+
+        member do
+          put 'addrole', :to => 'users#add_role'
+          put 'removerole', :to => 'users#remove_role'
+        end
+
+        collection do
+          get 'twitter', :to => 'users#from_twitter'
+          get 'github', :to => 'users#from_github'
+        end
+      end
 
       # Rewards
       resources :rewards
