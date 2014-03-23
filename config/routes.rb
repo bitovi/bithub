@@ -34,13 +34,23 @@ Bithub::Application.routes.draw do
     namespace :v2 do
 
       # Entities
+      resources :entities, :except => [:new, :edit] do
+        get :summary, :on => :collection
+        get :pagination, :on => :collection
+
+        get :activities, :to => 'event_activities#index'
+
+        post   :upvote, :to => 'event_activities#create_upvote'
+        delete :upvote, :to => 'event_activities#destroy_upvote'
+
+        post   :award, :to => 'event_activities#create_award'
+        delete :award, :to => 'event_activities#destory_award'
+      end
 
       # Users
 
       # Rewards
       resources :rewards
-
-      # Achievements
 
       # Tags
 
