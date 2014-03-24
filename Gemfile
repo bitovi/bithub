@@ -6,12 +6,18 @@ gem 'rolify', '~> 3.2'
 gem 'devise', '~> 2.2'
 gem 'amqp' # TODO remove this after crawler/listener refactoring.
 gem 'bunny'
+
 gem 'pg'
+# gem 'activerecord-jdbcpostgresql-adapter'
+
 gem 'dalli'
-gem 'unicorn'
+gem 'puma'
 gem 'jquery-rails'
 gem 'cancan'
+
+# gem 'rmagick4j'
 gem 'rmagick'
+
 gem 'carrierwave'
 gem 'omniauth'
 gem 'omniauth-twitter'
@@ -29,13 +35,15 @@ gem 'jbuilder', '1.3.0'
 gem 'jpbuilder', '0.2.2'
 gem 'draper'
 gem 'enumerize'
+
 gem 'redcarpet'
+# gem 'maruku'
+
 gem 'foreman'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
-gem 'oj'
-gem 'yajl-ruby'
+gem 'multi_json'
 gem 'awesome_print'
 gem 'twitter-text'
 gem 'dotenv-rails'
@@ -49,10 +57,10 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
-# Gems for ThirdPartyInformer
-gem 'twitter'
-gem 'github_api'
-gem 'octokit', '~> 2.0'
+# API client libs
+gem 'github_api', github: 'peter-murach/github', branch: 'master'
+gem 'twitter', github: 'sferik/twitter', branch: 'master'
+gem 'rmeetup', github: 'neektza/rmeetup', branch: 'master'
 
 group :test do
   gem "codeclimate-test-reporter", require: false
@@ -63,7 +71,6 @@ group :test do
   gem 'database_cleaner'
   gem 'better_errors'
   gem 'evented-spec'
-  gem 'travis', require: false
   gem 'git'
 end
 
@@ -78,15 +85,13 @@ group :development do
   gem 'pry-rails'
 end
 
-
 # --------
 # services
 # --------
-gem 'em-http-request'
-gem 'em-twitter'
 gem 'celluloid'
+gem 'celluloid-io'
 gem 'nokogiri'
-gem 'nori', '~>2.3.0'
+gem 'nori', '~> 2.3.0'
 gem 'cinch'
 gem 'blather'
 gem 'newrelic_rpm'

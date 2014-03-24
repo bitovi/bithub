@@ -6,6 +6,44 @@ GIT
       activesupport (~> 3.0)
       rack (~> 1.4)
 
+GIT
+  remote: git://github.com/neektza/rmeetup.git
+  revision: 44bf7c98aa59992171dccb09fe03c9e521093974
+  branch: master
+  specs:
+    rmeetup (1.1)
+
+GIT
+  remote: git://github.com/peter-murach/github.git
+  revision: c5ba8f436f3057530ff6f564f8e64b7e1d7fef07
+  branch: master
+  specs:
+    github_api (0.11.3)
+      addressable (~> 2.3)
+      descendants_tracker (~> 0.0.1)
+      faraday (~> 0.8, < 0.10)
+      hashie (>= 1.2)
+      multi_json (>= 1.7.5, < 2.0)
+      nokogiri (~> 1.6.0)
+      oauth2
+
+GIT
+  remote: git://github.com/sferik/twitter.git
+  revision: 7b401889eb79a0cf5f04a99aca087712eeaa2e5f
+  branch: master
+  specs:
+    twitter (5.8.0)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      equalizer (~> 0.0.9)
+      faraday (~> 0.9.0)
+      http (~> 0.5.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -53,10 +91,11 @@ GEM
       eventmachine
     andand (1.3.3)
     arel (3.0.3)
-    atomic (1.1.14)
+    atomic (1.1.16)
+    atomic (1.1.16-java)
     awesome_print (1.2.0)
-    backports (3.5.0)
     bcrypt-ruby (3.1.2)
+    bcrypt-ruby (3.1.2-java)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -93,12 +132,14 @@ GEM
       json (>= 1.7)
     celluloid (0.15.2)
       timers (~> 1.1.0)
+    celluloid-io (0.15.0)
+      celluloid (>= 0.15.0)
+      nio4r (>= 0.5.0)
     cinch (2.0.12)
     codeclimate-test-reporter (0.3.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
     connection_pool (1.2.0)
-    cookiejar (0.3.0)
     daemons (1.1.9)
     dalli (2.7.0)
     database_cleaner (1.2.0)
@@ -123,61 +164,33 @@ GEM
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       request_store (~> 1.0.3)
-    em-http-request (1.1.2)
-      addressable (>= 2.3.4)
-      cookiejar
-      em-socksify (>= 0.3)
-      eventmachine (>= 1.0.3)
-      http_parser.rb (>= 0.6.0)
-    em-socksify (0.3.0)
-      eventmachine (>= 1.0.0.beta.4)
-    em-twitter (0.3.3)
-      buftok (~> 0.2)
-      eventmachine (~> 1.0)
-      http_parser.rb (~> 0.6)
-      simple_oauth (~> 0.2)
     enumerize (0.7.0)
       activesupport (>= 3.2)
     equalizer (0.0.9)
     erubis (2.7.0)
-    ethon (0.5.6)
-      ffi (~> 1.1.5)
-      mime-types (~> 1.18)
     evented-spec (0.9.0)
     eventmachine (1.0.3)
+    eventmachine (1.0.3-java)
     factory_girl (4.3.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.3.0)
       factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
-    faraday (0.8.9)
-      multipart-post (~> 1.2.0)
-    faraday_middleware (0.9.0)
-      faraday (>= 0.7.4, < 0.9)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     ffi (1.1.5)
+    ffi (1.1.5-java)
     foreman (0.63.0)
       dotenv (>= 0.7)
       thor (>= 0.13.6)
+    foreman (0.63.0-java)
+      dotenv (>= 0.7)
+      thor (>= 0.13.6)
     formatador (0.2.4)
-    gh (0.13.2)
-      addressable
-      backports
-      faraday (~> 0.8)
-      multi_json (~> 1.0)
-      net-http-persistent (>= 2.7)
-      net-http-pipeline
     girl_friday (0.11.2)
       connection_pool (~> 1.0)
       rubinius-actor
     git (1.2.6)
-    github_api (0.11.2)
-      addressable (~> 2.3)
-      descendants_tracker (~> 0.0.1)
-      faraday (~> 0.8, < 0.10)
-      hashie (>= 1.2)
-      multi_json (>= 1.7.5, < 2.0)
-      nokogiri (~> 1.6.0)
-      oauth2
     guard (2.4.0)
       formatador (>= 0.2.4)
       listen (~> 2.1)
@@ -188,12 +201,12 @@ GEM
       guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
     hashie (2.0.5)
-    highline (1.6.20)
     hike (1.2.3)
     htmlentities (4.3.1)
     http (0.5.0)
       http_parser.rb
     http_parser.rb (0.6.0)
+    http_parser.rb (0.6.0-java)
     i18n (0.6.9)
     jbuilder (1.3.0)
       activesupport (>= 3.0.0)
@@ -205,11 +218,9 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
+    json (1.8.1-java)
     jwt (0.1.11)
       multi_json (>= 1.5)
-    kgio (2.9.1)
-    launchy (2.4.2)
-      addressable (~> 2.3)
     levenshtein-ffi (1.0.3)
       ffi
       ffi (~> 1.1.5)
@@ -222,24 +233,26 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    memoizable (0.4.0)
-      thread_safe (~> 0.1.3)
+    memoizable (0.4.1)
+      thread_safe (~> 0.2.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.5.2)
-    multi_json (1.9.0)
+    multi_json (1.9.2)
     multi_xml (0.5.5)
-    multipart-post (1.2.0)
-    net-http-persistent (2.9.3)
-    net-http-pipeline (1.0.1)
+    multipart-post (2.0.0)
+    naught (1.0.0)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.8.0)
-    netrc (0.7.7)
     newrelic_rpm (3.7.2.192)
     niceogiri (1.1.2)
       nokogiri (~> 1.5)
+    nio4r (1.0.0)
+    nio4r (1.0.0-java)
     nokogiri (1.6.1)
+      mini_portile (~> 0.5.0)
+    nokogiri (1.6.1-java)
       mini_portile (~> 0.5.0)
     nori (2.3.0)
     oauth (0.4.7)
@@ -249,9 +262,6 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (~> 1.2)
-    octokit (2.7.1)
-      sawyer (~> 0.5.2)
-    oj (2.5.4)
     omniauth (1.2.1)
       hashie (>= 1.2, < 3)
       rack (~> 1.0)
@@ -283,10 +293,17 @@ GEM
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
+    pry (0.9.12.6-java)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+      spoon (~> 0.0)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
-    pusher-client (0.4.0)
-      websocket (~> 1.0.0)
+    puma (2.8.1)
+      rack (>= 1.1, < 2.0)
+    puma (2.8.1-java)
+      rack (>= 1.1, < 2.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -309,14 +326,13 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    raindrops (0.12.0)
     rake (10.1.1)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.3)
       ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
-    redcarpet (3.0.0)
+    redcarpet (3.1.1)
     request_store (1.0.5)
     rmagick (2.13.2)
     rolify (3.4.0)
@@ -339,12 +355,10 @@ GEM
     rubinius-actor (0.0.2)
       rubinius-core-api
     rubinius-core-api (0.0.1)
+    rubinius-core-api (0.0.1-java)
     ruby_gntp (0.3.4)
     sanitize (2.1.0)
       nokogiri (>= 1.4.4)
-    sawyer (0.5.3)
-      addressable (~> 2.3.5)
-      faraday (~> 0.8, < 0.10)
     simple_oauth (0.2.0)
     simplecov (0.8.2)
       docile (~> 1.1.0)
@@ -352,6 +366,8 @@ GEM
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
     slop (3.4.7)
+    spoon (0.0.4)
+      ffi
     spring (1.1.1)
     spring-commands-rspec (1.0.1)
       spring (>= 0.9.1)
@@ -367,55 +383,29 @@ GEM
     term-ansicolor (1.3.0)
       tins (~> 1.0)
     thor (0.18.1)
-    thread_safe (0.1.3)
-      atomic
+    thread_safe (0.2.0)
+      atomic (>= 1.1.7, < 2)
+    thread_safe (0.2.0-java)
+      atomic (>= 1.1.7, < 2)
     tilt (1.4.1)
     timers (1.1.0)
     tins (1.0.0)
-    travis (1.5.3)
-      backports
-      faraday (~> 0.8.7)
-      faraday_middleware (~> 0.9)
-      gh
-      highline (~> 1.6)
-      launchy (~> 2.1)
-      netrc (~> 0.7)
-      pry (~> 0.9)
-      pusher-client (~> 0.3, >= 0.3.1)
-      typhoeus (~> 0.5)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twitter (5.5.1)
-      addressable (~> 2.3)
-      buftok (~> 0.2.0)
-      descendants_tracker (~> 0.0.3)
-      equalizer (~> 0.0.9)
-      faraday (>= 0.8, < 0.10)
-      http (~> 0.5.0)
-      http_parser.rb (~> 0.6.0)
-      json (~> 1.8)
-      memoizable (~> 0.4.0)
-      simple_oauth (~> 0.2.0)
     twitter-text (1.7.0)
       unf (~> 0.1.0)
-    typhoeus (0.5.3)
-      ethon (~> 0.5.3)
     tzinfo (0.3.39)
     unf (0.1.3)
       unf_ext
+    unf (0.1.3-java)
     unf_ext (0.0.6)
-    unicorn (4.8.2)
-      kgio (~> 2.6)
-      rack
-      raindrops (~> 0.7)
     uniform_notifier (1.4.0)
     warden (1.2.3)
       rack (>= 1.0)
-    websocket (1.0.7)
-    yajl-ruby (1.2.0)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
@@ -437,6 +427,7 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.0)
   carrierwave
   celluloid
+  celluloid-io
   cinch
   codeclimate-test-reporter
   daemons
@@ -447,14 +438,12 @@ DEPENDENCIES
   devise (~> 2.2)
   dotenv-rails
   draper
-  em-http-request
-  em-twitter
   enumerize
   evented-spec
   factory_girl_rails
   foreman
   git
-  github_api
+  github_api!
   guard-rspec (~> 4.0)
   htmlentities
   jbuilder (= 1.3.0)
@@ -462,12 +451,11 @@ DEPENDENCIES
   jquery-rails
   levenshtein-ffi
   log4r (= 1.1.10)
+  multi_json
   muster!
   newrelic_rpm
   nokogiri
   nori (~> 2.3.0)
-  octokit (~> 2.0)
-  oj
   omniauth
   omniauth-github
   omniauth-meetup
@@ -475,10 +463,12 @@ DEPENDENCIES
   omniauth-twitter
   pg
   pry-rails
+  puma
   rails (= 3.2.17)
   rb-fsevent (~> 0.9)
   redcarpet
   rmagick
+  rmeetup!
   rolify (~> 3.2)
   rspec (~> 2.14)
   rspec-rails
@@ -486,8 +476,5 @@ DEPENDENCIES
   sanitize
   spring
   spring-commands-rspec
-  travis
-  twitter
+  twitter!
   twitter-text
-  unicorn
-  yajl-ruby
