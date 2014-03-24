@@ -1,112 +1,121 @@
-:blog:
-    :polling:
-        :posts:
-            :url: 'http://www.bitovi.com/blog.rss'
-            :interval: 1
+# :blog:
+#     :polling:
+#         :posts:
+#             :url: 'http://www.bitovi.com/blog.rss'
+#             :interval: 1
 
-:forum:
-    :polling:
-        :general:
-            :url: 'https://forum.javascriptmvc.com/feed'
-            :interval: 1
-        :questions:
-            :url: 'https://forum.javascriptmvc.com/feed/filter/questions'
-            :interval: 1
+# :forum:
+#     :polling:
+#         :general:
+#             :url: 'https://forum.javascriptmvc.com/feed'
+#             :interval: 1
+#         :questions:
+#             :url: 'https://forum.javascriptmvc.com/feed/filter/questions'
+#             :interval: 1
 
-:disqus:
-    :data:
-        :auth: &disqus_auth
-            :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
-    :polling:
-        :posts:
-            :url: 'http://disqus.com/api/3.0/posts/list.json'
-            :interval: 1
-            :query:
-                <<: *disqus_auth
-                :forum:
-                    - 'jmvcs3'
-                    - 'bitovi'
-                :related:
-                    - 'thread'
-                    - 'forum'
+# :disqus:
+#     :data:
+#         :auth: &disqus_auth
+#             :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
+#     :polling:
+#         :posts:
+#             :url: 'http://disqus.com/api/3.0/posts/list.json'
+#             :interval: 1
+#             :params:
+#                 <<: *disqus_auth
+#                 :forum:
+#                     - 'jmvcs3'
+#                     - 'bitovi'
+#                 :related:
+#                     - 'thread'
+#                     - 'forum'
+
+# :stackexchange:
+#     :data:
+#         :auth: &stackexchange_auth
+#             :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+#             :key: "8EAiwRhHlupc0Z1aV3SCVg(("
+    
+#     :polling:
+#         :canjs_questions:
+#             :interval: 1
+#             :url: "https://api.stackexchange.com/2.2/questions"
+#             :params:
+#                 <<: &stackexchange_auth
+#                 :site: "stackoverflow"
+#                 :tagged: "canjs"
+#                 :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+#         :javascriptmvc_questions:
+#             :interval: 1
+#             :url: "https://api.stackexchange.com/2.2/questions"
+#             :params:
+#                 <<: &stackexchange_auth
+#                 :site: "stackoverflow"
+#                 :tagged: "javascriptmvc"
+#                 :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
 
 :meetup:
     :data:
         :auth: &meetup_auth
-            :key: "663a24605a37767831495d6332546b4a"
+            :key: &meetup_api_key "663a24605a37767831495d6332546b4a"
             :sign: "true"
     :polling:
         :open_events:
-            :interval: 1
-            :url: "https://api.meetup.com/2/open_events"
-            :query:
-                <<: *meetup_auth
+            :interval: 20
+            :api_key: *meetup_api_key
+            :params:
                 :text: "canjs"
                 :fields: "event_hosts"
-        :past_events:
-            :interval: 1
-            :url: "https://api.meetup.com/2/events"
-            :query:
-                <<: *meetup_auth
+        :events:
+            :interval: 10
+            :api_key: *meetup_api_key
+            :params:
                 :status: "past"
                 :fields: "event_hosts"
             :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
         :rsvps:
-            :interval: 1
-            :url: "https://api.meetup.com/2/rsvps"
-            :query:
-                <<: *meetup_auth
+            :interval: 5
+            :api_key: *meetup_api_key
             :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
     :streaming:
         :open_events:
             :url: "http://stream.meetup.com/2/open_events"
-
+        :rsvps:
+            :url: "http://stream.meetup.com/2/rsvps"
 
 :github:
-    data:
-        :auth: &github_auth
-            :authorization: "token c27ac77b9951537a008b1ab2ef8dfe0035fac8c8"
-            :accept: "application/vnd.github.v3+json"
-    :polling:
-        :testy_events:
-            interval: 1
-            :url: 'https://api.github.com/repos/bithub-test/testy/events'
-            :head:
-                <<: *github_auth
-        :testy_issues:
-            interval: 1
-            :url:  'https://api.github.com/repos/bithub-test/testy/issues'
-            :head:
-                <<: *github_auth
-        :testy_comments:
-            interval: 2
-            :url:  'https://api.github.com/repos/bithub-test/testy/comments'
-            :head:
-                <<: *github_auth
-
-:stackexchange:
     :data:
-        :auth: &stackexchange_auth
-            :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
-            :key: "8EAiwRhHlupc0Z1aV3SCVg(("
-    
+        :token: &token 'c27ac77b9951537a008b1ab2ef8dfe0035fac8c8'
     :polling:
-        :canjs_questions:
-            :interval: 1
-            :url: "https://api.stackexchange.com/2.2/questions"
-            :query:
-                <<: &stackexchange_auth
-                :site: "stackoverflow"
-                :tagged: "canjs"
-                :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
-        :javascriptmvc_questions:
-            :interval: 1
-            :url: "https://api.stackexchange.com/2.2/questions"
-            :query:
-                <<: &stackexchange_auth
-                :site: "stackoverflow"
-                :tagged: "javascriptmvc"
-                :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+      :activity:
+        :user: 'bithub-test'
+        :repo: 'testy'
+        :token: *token
+        :interval: 2
+
+      :issues:
+        :interval: 10
+        :user: 'bithub-test'
+        :repo: 'testy'
+        :token: *token
+
+      :issues_comments:
+        :interval: 5
+        :user: 'bithub-test'
+        :repo: 'testy'
+        :token: *token
+
+      :pull_requests:
+        :interval: 10
+        :user: 'bithub-test'
+        :repo: 'testy'
+        :token: *token
+
+      :pull_requests_comments:
+        :interval: 5
+        :user: 'bithub-test'
+        :repo: 'testy'
+        :token: *token
 
 :twitter:
     :data: 
@@ -115,19 +124,20 @@
             :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
             :token: "55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw"
             :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
-        :terms: &default_terms 'canjs,stealjs,javascriptmvc,jquerypp,documentjs,jquery++'
+        :terms: &default_terms
+            - 'canjs'
+            - 'stealjs'
+            - 'javascriptmvc'
+            - 'jquerypp'
+            - 'documentjs'
 
     :streaming:
         :public:
-            :path: '/1.1/statuses/filter.json'
             :params:
                 :track: *default_terms
             :oauth:
                 <<: *public_twitter_auth
-        :bitovi_bithub:
-            :host: 'userstream.twitter.com'
-            :path: '/1.1/user.json'
-            :method: 'GET'
+        :bitovi_bithub_user:
             :oauth:
                 :consumer_key: "O8LBlzL77IMhcUd58PaCA"
                 :consumer_secret: "GgBnHe2pyNbVQoBiZYMqeRM39juGphZ4tsCcpn79uTM"
@@ -135,7 +145,7 @@
                 :token_secret: "H4mVLnP21EUD2zkvfonQfIOMS0GVT585bXhRNMT9ZI"
     :polling:
         :tweet_search:
-            :interval: 1
-            :url: 'https://api.twitter.com/1.1/search/tweets.json'
-            :query:
-                q: *default_terms
+            :interval: 60
+            :terms: *default_terms
+            :oauth:
+                <<: *public_twitter_auth
