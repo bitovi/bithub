@@ -1,22 +1,13 @@
 Bithub::Application.routes.draw do
 
-  # Devise routes for User
+  # Devise
   #
   devise_for :users,
+    path: '/api/auth',
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
-  as :user do
-    post   '/api/auth/link_identity', :to => 'api/auth/identities#link'
-    delete '/api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
-    get    '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
-  end
-
-
-  # Devise routes for Account
-  #
-  devise_for :accounts, path: 'api/admin'
-
-  # devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
+  devise_for :accounts,
+    path: '/api/admin'
 
 
   # Dynamic image resizer
@@ -27,7 +18,15 @@ Bithub::Application.routes.draw do
   # SERVICE API Routes
   #
   namespace :api, :defaults => { :format => 'json' } do
-    match '/auth/session' => 'auth/session_info#current_session'
+
+    # Auth
+    #
+    namespace :auth do
+      get    :session, :to => 'sessions#current'
+      get    :logout, :to => 'sessions#destroy', :as => :destroy_user_session
+      post   :link_identity, :to => 'identities#link'
+      delete 'unlink_identity/:uid', :to => 'identities#unlink'
+    end
 
     # API v2
     #
@@ -51,7 +50,7 @@ Bithub::Application.routes.draw do
       resources :users, :except => [:new, :edit] do
         get 'activities', :to => 'user_activities#index'
         get 'accomplishments', :to => 'user_activities#accomplishments'
-        get 'events', :to => 'user_events#index'
+        get 'entities', :to => 'user_entities#index'
 
         member do
           put 'addrole', :to => 'users#add_role'
