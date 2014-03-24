@@ -1,13 +1,22 @@
 Bithub::Application.routes.draw do
 
-  # Devise
+  # Devise routes for User
   #
   devise_for :users,
-    path: '/api/v2',
-    controllers: { omniauth_callbacks: "api/v2/auth/omniauth_callbacks" }
+    controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
-  devise_for :accounts,
-    path: '/api/admin'
+  as :user do
+    post   '/api/auth/link_identity', :to => 'api/auth/identities#link'
+    delete '/api/auth/unlink_identity/:uid', :to => 'api/auth/identities#unlink'
+    get    '/api/auth/logout', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+  end
+
+
+  # Devise routes for Account
+  #
+  devise_for :accounts, path: 'api/admin'
+
+  # devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
 
 
   # Dynamic image resizer
@@ -18,18 +27,11 @@ Bithub::Application.routes.draw do
   # SERVICE API Routes
   #
   namespace :api, :defaults => { :format => 'json' } do
+    match '/auth/session' => 'auth/session_info#current_session'
 
     # API v2
     #
     namespace :v2 do
-
-      # Auth
-      namespace :auth do
-        get    :session, :to => 'sessions#current'
-        get    :logout, :to => 'sessions#destroy', :as => :destroy_user_session
-        post   :link_identity, :to => 'identities#link'
-        delete 'unlink_identity/:uid', :to => 'identities#unlink'
-      end
 
       # Entities
       resources :entities, :except => [:new, :edit] do
