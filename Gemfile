@@ -3,7 +3,7 @@ ruby '2.1.1'
 
 gem 'rails', '3.2.17'
 gem 'rolify', '~> 3.2'
-gem 'devise', '~> 2.2'
+gem 'devise', '~> 3.2.4'
 gem 'strong_parameters'
 gem 'amqp'
 gem 'pg'
