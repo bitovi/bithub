@@ -9,6 +9,8 @@ Bithub::Application.routes.draw do
   devise_for :accounts,
     path: '/api/admin'
 
+  # devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
+
 
   # Dynamic image resizer
   #
@@ -49,8 +51,8 @@ Bithub::Application.routes.draw do
       # Users
       resources :users, :except => [:new, :edit] do
         get 'activities', :to => 'user_activities#index'
-        get 'accomplishments', :to => 'user_activities#accomplishments'
-        get 'entities', :to => 'user_entities#index'
+        get 'achievements', :to => 'user_activities#achievements'
+        #get 'entities', :to => 'user_activities#entities'
 
         member do
           put 'addrole', :to => 'users#add_role'

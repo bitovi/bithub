@@ -64,18 +64,18 @@
 |             | update           | + | PUT      | /api/v2/scoring_rules/:id      |                                                           |
 |             | delete           | + | DELETE   | /api/v2/scoring_rules/:id      |                                                           |
 |-------------+------------------+---+----------+--------------------------------+-----------------------------------------------------------|
-| Entity      | create           |   | POST     | /api/v2/entities               |                                                           |
-|             | read             |   | GET      | /api/v2/entities/[:id]         |                                                           |
-|             | update           |   | PUT      | /api/v2/entities/:id           |                                                           |
-|             | delete           |   | DELETE   | /api/v2/entities/:id           |                                                           |
+| Entity      | create           | + | POST     | /api/v2/entities               |                                                           |
+|             | read             | + | GET      | /api/v2/entities/[:id]         |                                                           |
+|             | update           | + | PUT      | /api/v2/entities/:id           |                                                           |
+|             | delete           | + | DELETE   | /api/v2/entities/:id           |                                                           |
 |             | ---              |   |          |                                |                                                           |
 |             | upvote           |   | POST     | /api/v2/entities/:id/upvote    |                                                           |
 |             |                  |   | DELETE   | /api/v2/entities/:id/upvote    |                                                           |
 |             | award            |   | POST     | /api/v2/entities/:id/award     |                                                           |
 |             |                  |   | DELETE   | /api/v2/entities/:id/award     |                                                           |
 |             | ---              |   |          |                                |                                                           |
-|             | summary          |   | GET      | /api/v2/entities/summary       |                                                           |
-|             | pagination       |   | GET      | /api/v2/entities/pagination    |                                                           |
+|             | summary          | + | GET      | /api/v2/entities/summary       |                                                           |
+|             | pagination       | + | GET      | /api/v2/entities/pagination    |                                                           |
 |-------------+------------------+---+----------+--------------------------------+-----------------------------------------------------------|
 | User        | read             | + | GET      | /api/v2/users/[:id]            |                                                           |
 |             | update           | + | PUT      | /api/v2/users/:id              |                                                           |
@@ -88,8 +88,8 @@
 |             | link account     | + | POST     | /api/auth/link_identity        |                                                           |
 |             | unlink account   |   | DELETE   | /api/auth/unlink_identity      |                                                           |
 |             | ---              |   |          |                                |                                                           |
-|             | activities       |   | GET      | /api/v2/users/:id/activities   |                                                           |
-|             | achievements     |   | GET      | /api/v2/users/:id/achievements |                                                           |
+|             | activities       | + | GET      | /api/v2/users/:id/activities   |                                                           |
+|             | achievements     | + | GET      | /api/v2/users/:id/achievements |                                                           |
 |             | entities         |   | GET      | /api/v2/users/:id/entities     |                                                           |
 |-------------+------------------+---+----------+--------------------------------+-----------------------------------------------------------|
 | Tags?       |                  |   |          |                                |                                                           |
