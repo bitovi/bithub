@@ -7,8 +7,8 @@ module Fetchers
       include Client
       
       def fetch
-        @terms = @config.fetch(:terms).join(',')
-        @client.search(terms, :result_type => "recent").take(10).to_a
+        @terms = @config.fetch(:terms).join(' OR ')
+        @client.search(@terms, :count => 100).take(100)
       end
     end
 

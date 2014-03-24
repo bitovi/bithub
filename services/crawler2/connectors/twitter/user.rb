@@ -4,7 +4,6 @@ module Connectors
   module Twitter
 
     class User
-      # include Celluloid::IO
       include Client
 
       def configure
