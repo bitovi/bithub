@@ -5,14 +5,21 @@ module Meetup
   module Streaming
 
     class Connection
+
+      def initialize(options = {})
+        @tcp_socket_class = options[:tcp_socket_class] || TCPSocket
+      end
+
       def stream(request, response)
-        client = TCPSocket.new(Resolv.getaddress(request.uri.host), request.uri.port)
+        client = @tcp_socket_class.new(Resolv.getaddress(request.uri.host), request.uri.port)
 
         request.stream(client)
 
-        while body = client.readpartial(1024) # rubocop:disable AssignmentInCondition, WhileUntilModifier
-          response << body
+        client.each do |line|
+          response << line
         end
+      rescue EOFError
+        puts "Stream ended"
       end
     end
 
