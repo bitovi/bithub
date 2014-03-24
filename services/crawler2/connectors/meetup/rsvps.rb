@@ -4,7 +4,6 @@ module Connectors
   module Meetup
 
     class Rsvps
-     # include Celluloid::IO
       include Client
 
       def configure

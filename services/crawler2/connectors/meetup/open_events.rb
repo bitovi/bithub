@@ -4,9 +4,8 @@ module Connectors
   module Meetup
 
     class OpenEvents
-      # include Celluloid::IO
       include Client
-      
+
       def configure
         self
       end

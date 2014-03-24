@@ -7,7 +7,8 @@ module Fetchers
       include Client
 
       def fetch
-        @client.fetch(:open_events)
+        params = @config.fetch(:params) { Hash.new }
+        @client.fetch(:open_events, params)
       end
     end
 
