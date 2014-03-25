@@ -19,8 +19,8 @@ module Api::V2::BaseHelpers
       message: t("api.#{t_key}.#{t_action}.#{t_outcome}")
     };
 
-    if is_ar_object?(obj) && !ar_obj.errors.blank?
-      resp_hash[:errors] = ar_obj.errors.full_messages if !ar_obj.errors.blank?
+    if is_ar_object?(obj) && !obj.errors.blank?
+      resp_hash[:errors] = obj.errors.full_messages if !obj.errors.blank?
     end
 
     resp_hash

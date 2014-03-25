@@ -3,7 +3,7 @@ Bithub::Application.routes.draw do
   # Devise
   #
   devise_for :users,
-    path: '/api/auth',
+    path: '/api',
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   devise_for :accounts,
@@ -11,6 +11,10 @@ Bithub::Application.routes.draw do
     controllers: {
       sessions: 'api/v2/account_sessions',
       registrations: 'api/v2/account_registrations'
+    },
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout'
     }
 
   # Dynamic image resizer
@@ -78,7 +82,11 @@ Bithub::Application.routes.draw do
       resources :brands, :only => [:index, :show, :update]
 
       # Accounts
-      resources :accounts, :only => [:index, :show]
+      resources :accounts do
+        member do
+          put 'password', :to => 'accounts#update_password'
+        end
+      end
 
       # Scoring rules
       resources :scoring_rules
