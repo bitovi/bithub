@@ -3,14 +3,12 @@ class Api::V2::AccountsController < Api::V2::BaseController
   respond_to :json
 
   def index
-    @accounts = Account.all
-
+    @accounts = AccountDecorator.decorate_collection Account.all
     render :index
   end
 
   def show
-    @account = Account.find(params[:id])
-
+    @account = AccountDecorator.decorate Account.find(params[:id])
     render :show
   end
 
