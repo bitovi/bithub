@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  #include ActiveModel::ForbiddenAttributesProtection
+  include ActiveModel::ForbiddenAttributesProtection
 
   devise :database_authenticatable, :registerable,
          :rememberable, :trackable, :validatable
