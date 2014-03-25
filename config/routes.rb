@@ -7,10 +7,11 @@ Bithub::Application.routes.draw do
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
   devise_for :accounts,
-    path: '/api/admin'
-
-  # devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
-
+    path: '/api/admin',
+    controllers: {
+      sessions: 'api/v2/account_sessions',
+      registrations: 'api/v2/account_registrations'
+    }
 
   # Dynamic image resizer
   #
@@ -139,6 +140,6 @@ Bithub::Application.routes.draw do
 
   # Redirect to v1 endpoints
   #
-  match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
-  match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
+  # match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
+  # match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
