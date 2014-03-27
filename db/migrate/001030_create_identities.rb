@@ -11,7 +11,7 @@ class CreateIdentities < ActiveRecord::Migration
 
     execute <<-SQL
       ALTER TABLE identities
-        ADD CONSTRAINT unique_uid_provider_combination
+        ADD CONSTRAINT identities_unique_uid_provider_combination
         UNIQUE (provider, uid);
     SQL
   end
