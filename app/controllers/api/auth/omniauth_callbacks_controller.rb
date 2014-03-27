@@ -1,14 +1,14 @@
 class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  rescue_from Exception, :with => :show_auth_error
-  rescue_from RuntimeError, :with => :show_auth_error
+  # rescue_from Exception, :with => :show_auth_error
+  # rescue_from RuntimeError, :with => :show_auth_error
 
   def github
     oauthorize "github"
   end
 
   def github_brand
-    oauthorize "github"
+    oauthorize_brand "github"
   end
 
   def twitter
@@ -16,7 +16,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def twitter_brand
-    oauthorize "twitter"
+    oauthorize_brand "twitter"
   end
 
   def meetup
@@ -24,7 +24,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def meetup_brand
-    oauthorize "meetup"
+    oauthorize_brand "meetup"
   end
 
   def stackexchange
@@ -32,7 +32,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def stackexchange_brand
-    oauthorize "stackexchange"
+    oauthorize_brand "stackexchange"
   end
 
   def facebook
@@ -40,7 +40,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def facebook_brand
-    oauthorize "facebook"
+    oauthorize_brand "facebook"
   end
 
   def disqus
@@ -48,7 +48,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def disqus_brand
-    oauthorize "disqus"
+    oauthorize_brand "disqus"
   end
 
   def foursquare
@@ -56,7 +56,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def foursquare_brand
-    oauthorize "foursquare_brand"
+    oauthorize_brand "foursquare_brand"
   end
 
   ###
@@ -105,6 +105,19 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       else
         render :json => { message: 'error' }, :status => 500
       end
+    end
+  end
+
+  def oauthorize_brand(kind)
+    account = Account.find(current_account[:id])
+    brand = account.brand
+    identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: oauth_data})
+
+    if identity.save
+      render :json => identity
+    else
+      # return some reasonable error
+      render :json => { message: 'error'}, :status => 406
     end
   end
 

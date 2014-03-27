@@ -2,7 +2,7 @@ class Api::Auth::AccountRegistrationsController < Devise::RegistrationsControlle
   include Api::V2::BaseHelpers
 
   # source code:
-  # github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
+  # http://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
 
   def create
     super do |resource|

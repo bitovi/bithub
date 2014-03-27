@@ -14,7 +14,7 @@ module OmniAuth::Strategies
 
   class MeetupBrand < Meetup
     def name
-      :github_brand
+      :meetup_brand
     end
   end
 
