@@ -36,6 +36,12 @@ module OmniAuth::Strategies
     end
   end
 
+  class FoursquareBrand < Foursquare
+    def name
+      :foursquare_brand
+    end
+  end
+
 end
 
 OmniAuth.config.add_camelization 'github_brand', 'GitHubBrand'

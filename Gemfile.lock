@@ -282,6 +282,9 @@ GEM
       rack (~> 1.0)
     omniauth-facebook (1.6.0)
       omniauth-oauth2 (~> 1.1)
+    omniauth-foursquare (1.0.1)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
     omniauth-github (1.1.1)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.1)
@@ -502,6 +505,7 @@ DEPENDENCIES
   omniauth
   omniauth-disqus!
   omniauth-facebook
+  omniauth-foursquare
   omniauth-github
   omniauth-meetup
   omniauth-stackexchange
