@@ -1,0 +1,3 @@
+json.set! :data do
+  json.partial! "api/v2/brand_identities/brand_identity", brand_identity: @brand_identity
+end

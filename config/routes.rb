@@ -83,6 +83,9 @@ Bithub::Application.routes.draw do
       # Brands
       resources :brands, :only => [:index, :show, :update]
 
+      # Brand identities
+      resources :brand_identities, :only => [:index, :show]
+
       # Accounts
       resources :accounts do
         member do

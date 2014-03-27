@@ -1,0 +1,3 @@
+json.cache! brand_identity do
+	json.(brand_identity, :id, :provider, :uid, :brand, :source_data)
+end
