@@ -34,6 +34,8 @@ Devise.setup do |config|
   config.omniauth :facebook_brand, ENV['FACEBOOK_KEY'], ENV['FACEBOOK_SECRET'], :scope => 'email,manage_pages'
 
   # foursquare
+  config.omniauth :foursquare, ENV['FOURSQUARE_CLIENT_ID'], ENV['FOURSQUARE_SECRET']
+  config.omniauth :foursquare_brand, ENV['FOURSQUARE_CLIENT_ID'], ENV['FOURSQUARE_SECRET']
 
   # yelp
 
