@@ -1,4 +1,4 @@
-class Api::V2::AccountRegistrationsController < Devise::RegistrationsController
+class Api::Auth::AccountRegistrationsController < Devise::RegistrationsController
   include Api::V2::BaseHelpers
 
   # source code:
@@ -6,13 +6,18 @@ class Api::V2::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     super do |resource|
-      if resource.save
-        sign_up(resource_name, resource)
-        @account = AccountDecorator.decorate resource
+      account = resource
+
+      brand_name = account.email.split('@').first.gsub(/[^\w-]/,'-')
+      account.brand = Brand.new({name: brand_name})
+
+      if account.save
+        sign_up(resource_name, account)
+        @account = AccountDecorator.decorate account
         render 'api/v2/accounts/show', :formats => [:json]
       else
-        clean_up_passwords resource
-        render :json => msg_hash(resource, 'create'), :status => 406
+        clean_up_passwords account
+        render :json => msg_hash(account, 'create'), :status => 406
       end
 
       break

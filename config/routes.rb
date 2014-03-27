@@ -11,8 +11,8 @@ Bithub::Application.routes.draw do
   devise_for :accounts,
     path: '/api/admin',
     controllers: {
-      sessions: 'api/v2/account_sessions',
-      registrations: 'api/v2/account_registrations'
+      sessions: 'api/auth/account_sessions',
+      registrations: 'api/auth/account_registrations'
     },
     path_names: {
       sign_in: 'login',

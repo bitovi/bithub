@@ -1,4 +1,4 @@
-class Api::V2::AccountSessionsController < Devise::SessionsController
+class Api::Auth::AccountSessionsController < Devise::SessionsController
   include Api::V2::BaseHelpers
 
   def create
