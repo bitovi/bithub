@@ -14,8 +14,8 @@ Apartment.configure do |config|
   config.use_sql = true
   config.tenant_names = lambda{ Brand.pluck :name }
 
-  # config.default_schema = "public"
-  # config.persistent_schemas = %w{ hstore }
+  # functions created by extensions are in public schema so keep it in search path
+  config.persistent_schemas = %w{ public }
 end
 
 # Rails.application.config.middleware.use 'Apartment::Elevators::Generic', lambda { |request|
