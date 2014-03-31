@@ -3,10 +3,16 @@ class Configurator
 
   def initialize(env)
     @env = env
+    @config = YAML::load_file(File.join(RootDir, 'config', 'services', 'crawler', "#{@env}.yml"))
   end
+  attr_reader :config
 
-  def config(feed_name)
-    YAML::load_file(File.join(RootDir, 'config', 'services', 'crawler', "#{environment}.yml")).fetch(feed_name)
+  def brand_config(brand_name)
+    @config.fetch(brand_name)
+  end
+  
+  def feed_config(brand_name, feed_name)
+    @config.fetch(brand_name).fetch(feed_name)
   end
 
   private

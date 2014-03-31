@@ -4,13 +4,17 @@ module Fetchers
   module Github
 
     class RepoPullRequests
-      def initialize(cfg)
-        @config = cfg
-        @client = ::Github.new oauth_token: @config.fetch(:token)
+      def initialize(token, user_repo)
+        @user, @repo = user_repo.split('/')
+        @client = ::Github.new oauth_token: token
       end
 
       def fetch
-        @client.pull_requests.list user: @config.fetch(:user), repo: @config.fetch(:repo)
+        @client.activity.events.public user: @user, repo: @repo
+      end
+
+      def default_interval
+        500
       end
     end
 
