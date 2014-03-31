@@ -15,7 +15,7 @@ Devise.setup do |config|
 
   # github
   config.omniauth :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
-  config.omniauth :github_brand, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
+  config.omniauth :github_brand, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET'], scope: "user:email,read:org"
 
   # twitter
   config.omniauth :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
