@@ -19,7 +19,7 @@ class BrandSupervisor
 
   def restart_feed(feed_name)
     Celluloid::Actor[actor_name(feed_name)].terminate
-    @feeds.supervise_as(actor_name(feed_name), feed_supervisor(feed_name), *[@brand_name, @config.fetch(feed_name)])
+    @feeds.supervise_as(actor_name(feed_name), feed_supervisor(feed_name), *[@brand_name, feeds_config.fetch(feed_name)])
   end
 
 

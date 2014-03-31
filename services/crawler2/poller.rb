@@ -1,30 +1,29 @@
 class Poller
   include Celluloid
 
-  def initialize(token, fetcher_class, interval = nil)
-    @fetcher = fetcher_class.new(token, config)
-    @interval = interval
+  def initialize(opts, client, fetcher_class)
+    @fetcher = fetcher_class.new(client, opts)
+    @interval = 5
     poll
   end
 
   def poll
-    Celluloid.logger.info "Polling with #{fetcher_class}"
     @timer = every(x_seconds) { fetch }
   end
 
-  def interval(seconds)
+  def set_interval(seconds)
     @timer.cancel
     @timer = every(seconds) { fetch }
   end
 
   def fetch
-    resp = @fetcher.fetch
-    Celluloid.logger.info "POLLED with #{fetcher_class} ---> #{resp.length}"
-    resp
+    res = @fetcher.fetch
+    Celluloid.logger.info "Fetching from #{@fetcher.class.name}, fetched #{res.count}"
+    res
   end
 
   private
   def x_seconds
-    @interval || @fetcher.default_interval
+    @interval || @fetcher.interval
   end
 end

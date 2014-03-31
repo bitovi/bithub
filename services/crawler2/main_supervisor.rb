@@ -10,6 +10,7 @@ class MainSupervisor
     @components = SupervisionGroup.new
 
     brands_config.each do |brand_name, cfg|
+      Celluloid.logger.info "Booting #{brand_name}"
       @components.supervise_as(actor_name(brand_name), BrandSupervisor, *[brand_name, cfg])
     end
 

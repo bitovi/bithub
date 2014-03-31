@@ -4,17 +4,15 @@ module Fetchers
   module Github
 
     class RepoActivity
-      def initialize(client, user_repo)
+      def initialize(client, opts)
         @client = client
-        @user, @repo = user_repo.split('/')
+        @interval = opts.fetch(:interval) { 10 }
+        @user, @repo = opts.fetch(:user_repo).split('/')
       end
+      attr_reader :interval
 
       def fetch
         @client.activity.events.public user: @user, repo: @repo
-      end
-
-      def default_interval
-        10
       end
     end
 
