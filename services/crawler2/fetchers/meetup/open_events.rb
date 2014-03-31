@@ -1,10 +1,10 @@
-require_relative 'client'
-
 module Fetchers
   module Meetup
 
     class OpenEvents
-      include Client
+      def initialize(client)
+        @client = client
+      end
 
       def fetch
         params = @config.fetch(:params) { Hash.new }

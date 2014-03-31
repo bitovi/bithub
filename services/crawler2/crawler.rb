@@ -13,8 +13,13 @@ require 'bunny'
 require 'core_ext'
 require 'logger_factory'
 
+require_relative 'main_supervisor'
+require_relative 'brand_supervisor'
 require_relative 'publisher'
-require_relative 'feed_supervisor'
+require_relative 'configurator'
+require_relative 'poller'
+require_relative 'streamers/all'
+require_relative 'fetchers/all'
 
 # log4r logger
 logger = LoggerFactory.new('crawler', ENV['ENV']).component_logger
@@ -23,10 +28,7 @@ Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :Publisher
-  supervise FeedSupervisor, as: :MeetupSupervisor, args: [:meetup]
-  supervise FeedSupervisor, as: :TwitterSupervisor, args: [:twitter]
-  supervise FeedSupervisor, as: :GithubSupervisor, args: [:github]
-  # supervise FeedSupervisor, as: :FacebookSupervisor, args: [:facebook]
+  supervise MainSupervisor, as: :MainSupervisor
 end
 
 Crawler.run

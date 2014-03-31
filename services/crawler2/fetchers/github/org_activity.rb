@@ -3,18 +3,18 @@ require 'github_api'
 module Fetchers
   module Github
 
-    class RepoIssuesComments
-      def initialize(token, user_repo)
-        @user, @repo = user_repo.split('/')
+    class OrgActivity
+      def initialize(token, org)
+        @org = org
         @client = ::Github.new oauth_token: token
       end
 
       def fetch
-        @client.activity.events.public user: @user, repo: @repo
+        @client.activity.events.public org: @org
       end
 
       def default_interval
-        250
+        10
       end
     end
 

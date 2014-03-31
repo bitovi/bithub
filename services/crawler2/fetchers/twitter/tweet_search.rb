@@ -1,10 +1,10 @@
-require_relative 'client'
-
 module Fetchers
   module Twitter
 
     class TweetSearch
-      include Client
+      def initialize(client)
+        @client = client
+      end
       
       def fetch
         @terms = @config.fetch(:terms).join(' OR ')
