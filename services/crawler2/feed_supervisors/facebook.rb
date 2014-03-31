@@ -10,8 +10,9 @@ module FeedSupervisors
     end
 
     def boot
+      Celluloid.logger.info "Booting Facebook supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name('pages'), Poller, *[Fetchers::Facebook::PageFeed, @client, pages])
+      @endpoints.supervise_as(actor_name('pages'), Poller, *[{pages: pages}, @client, Fetchers::Facebook::PageFeed])
     end
 
     private

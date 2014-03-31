@@ -4,7 +4,7 @@ module Streamers
   module Twitter
 
     class Filter
-      DEFAULT_TRACK_TERMS = %w(twitter facebook github)
+      DEFAULT_TRACK_TERMS = %w(pizdamaterina)
       include Celluloid::IO
       include Registrable
 

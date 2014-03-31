@@ -9,6 +9,7 @@ require 'rubygems'
 require 'celluloid'
 require 'celluloid/io'
 require 'bunny'
+require 'redis'
 
 require 'core_ext'
 require 'logger_factory'
@@ -23,6 +24,16 @@ require_relative 'fetchers/all'
 
 # log4r logger
 logger = LoggerFactory.new('crawler', ENV['ENV']).component_logger
+
+$app_auth = {
+  twitter: {
+    api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+    api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+  },
+  meetup: {
+    api_key: '663a24605a37767831495d6332546b4a'
+  }
+}
 
 Celluloid.logger = logger
 

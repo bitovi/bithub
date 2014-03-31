@@ -1,3 +1,4 @@
+require_relative 'github/org_activity'
 require_relative 'github/repo_activity'
 require_relative 'github/repo_issues'
 require_relative 'github/repo_issues_comments'
