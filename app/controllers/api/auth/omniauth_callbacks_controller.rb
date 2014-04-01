@@ -111,7 +111,14 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   def oauthorize_brand(kind)
     account = Account.find(current_account[:id])
     brand = account.brand
-    identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: oauth_data})
+    uid = oauth_data[:uid]
+
+    # Find or update brand
+    if identity = BrandIdentity.where({brand_id: brand.id, provider: kind, uid: uid}).first
+      identity.source_data = oauth_data
+    else
+      identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: oauth_data})
+    end
 
     if identity.save
       render :json => identity
