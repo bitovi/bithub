@@ -6,13 +6,17 @@ module FeedSupervisors
 
     def initialize(brand_name, cfg)
       @brand_name = brand_name
-      @client = ::Koala::Facebook::API.new(cfg.fetch(:token))
+      @config = cfg
+      boot
     end
 
     def boot
       Celluloid.logger.info "Booting Facebook supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name('pages'), Poller, *[{pages: pages}, @client, Fetchers::Facebook::PageFeed])
+      @config.fetch(:pages).each do |page|
+        fetcher = Fetchers::Facebook::PageFeed.new(client = ::Koala::Facebook::API.new(page.fetch(:token)))
+        @endpoints.supervise_as(actor_name('pages', page.fetch(:id)), Poller, *[@brand_name, fetcher])
+      end
     end
 
     private
@@ -20,8 +24,8 @@ module FeedSupervisors
       @config.fetch(:pages)
     end
     
-    def actor_name(endpoint_type)
-      "#{@brand_name}_facebook_#{endpoint_type}".to_sym
+    def actor_name(endpoint_type, endpoint_id)
+      "#{@brand_name}_facebook_#{endpoint_type}_#{endpoint_id}".to_sym
     end
 
   end

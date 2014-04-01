@@ -15,9 +15,9 @@ module FeedSupervisors
       Celluloid.logger.info "Booting Meetup supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
 
-      @endpoints.supervise_as(actor_name('open_events') , Poller , *[{terms: @config.fetch(:terms)}, @client, Fetchers::Meetup::OpenEvents])
-      @endpoints.supervise_as(actor_name('events')      , Poller , *[{}, @client, Fetchers::Meetup::Events])
-      @endpoints.supervise_as(actor_name('rsvps')       , Poller , *[{}, @client, Fetchers::Meetup::Rsvps])
+      @endpoints.supervise_as(actor_name('open_events') , Poller , *[@brand_name, Fetchers::Meetup::OpenEvents.new(@client, {terms: @config.fetch(:terms)})])
+      @endpoints.supervise_as(actor_name('events')      , Poller , *[@brand_name, Fetchers::Meetup::Events.new(@client)])
+      @endpoints.supervise_as(actor_name('rsvps')       , Poller , *[@brand_name, Fetchers::Meetup::Rsvps.new(@client)])
     end
 
     private

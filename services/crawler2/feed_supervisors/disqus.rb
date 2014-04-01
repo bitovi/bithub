@@ -10,7 +10,8 @@ module FeedSupervisors
     def boot
       Celluloid.logger.info "Booting Disqus supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name('forums'), Poller , *[{forums: forums}, @client, Fetchers::Disqus::ForumsFeed])
+      fetcher = Object.new #Fetchers::Disqus::ForumsFeed.new(@client, {forums: forums})
+      @endpoints.supervise_as(actor_name('forums'), Poller , *[@brand_name, fetcher])
     end
 
     private
