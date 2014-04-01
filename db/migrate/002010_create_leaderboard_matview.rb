@@ -39,6 +39,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
       FROM internals
      WHERE internals.receiver_id = users.id)) DESC
     SQL
+
+    execute <<-SQL
+REFRESH MATERIALIZED VIEW leaderboard;
+    SQL
   end
 
   def down

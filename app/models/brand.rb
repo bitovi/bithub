@@ -18,6 +18,11 @@ class Brand < ActiveRecord::Base
 
   def create_tenant
     Apartment::Database.create(name)
+
+    # repopulate matviews upon creation
+    Pagination.refresh
+    Leaderboard.refresh
+    UserActivity.refresh
   end
 
   def destroy_tenant
