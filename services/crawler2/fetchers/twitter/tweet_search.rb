@@ -4,15 +4,17 @@ module Fetchers
     class TweetSearch
       include Protocol
 
-      def initialize(client, opts = {})
+      def initialize(client, opts)
         @client = client
-        @interval = opts.fetch(:interval) { 10 }
-        @terms = opts.fetch(:terms).join(' OR ')
+        @terms = opts.fetch(:terms)
       end
-      attr_reader :interval
+
+      def set_terms(new_terms)
+        @terms = new_terms
+      end
       
       def fetch
-        @client.search(@terms, :count => 100).take(100)
+        @client.search(@terms.join(' OR '), :count => 100).take(100)
       end
     end
   end

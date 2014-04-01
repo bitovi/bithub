@@ -16,15 +16,15 @@ module FeedSupervisors
       @endpoints = SupervisionGroup.new
 
       repos.each do |repo_name|
-        @endpoints.supervise_as(actor_name('repo_activity', repo_name)          , Poller , *[{user_repo: repo_name}, @client, Fetchers::Github::RepoActivity])
-        @endpoints.supervise_as(actor_name('issues', repo_name)                 , Poller , *[{user_repo: repo_name}, @client, Fetchers::Github::RepoIssues])
-        @endpoints.supervise_as(actor_name('issues_comments', repo_name)        , Poller , *[{user_repo: repo_name}, @client, Fetchers::Github::RepoPullRequests])
-        @endpoints.supervise_as(actor_name('pull_requests', repo_name)          , Poller , *[{user_repo: repo_name}, @client, Fetchers::Github::RepoIssuesComments])
-        @endpoints.supervise_as(actor_name('pull_requests_comments', repo_name) , Poller , *[{user_repo: repo_name}, @client, Fetchers::Github::RepoPullRequestsComments])
+        @endpoints.supervise_as(actor_name('repo_activity', repo_name)          , Poller , *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name})])
+        @endpoints.supervise_as(actor_name('issues', repo_name)                 , Poller , *[@brand_name, Fetchers::Github::RepoIssues.new(@client, {user_repo: repo_name})])
+        @endpoints.supervise_as(actor_name('issues_comments', repo_name)        , Poller , *[@brand_name, Fetchers::Github::RepoPullRequests.new(@client, {user_repo: repo_name})])
+        @endpoints.supervise_as(actor_name('pull_requests', repo_name)          , Poller , *[@brand_name, Fetchers::Github::RepoIssuesComments.new(@client, {user_repo: repo_name})])
+        @endpoints.supervise_as(actor_name('pull_requests_comments', repo_name) , Poller , *[@brand_name, Fetchers::Github::RepoPullRequestsComments.new(@client, {user_repo: repo_name})])
       end
 
       orgs.each do |org_name|
-        @endpoints.supervise_as(actor_name(org_name , 'org_activity') , Poller , *[{org_name: org_name}, @client, Fetchers::Github::OrgActivity])
+        @endpoints.supervise_as(actor_name(org_name , 'org_activity') , Poller , *[Fetchers::Github::OrgActivity.new(@client, {org_name: org_name})])
       end
     end
 
