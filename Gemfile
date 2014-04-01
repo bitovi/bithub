@@ -57,6 +57,7 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 gem 'twitter'
 gem 'github_api'
 gem 'octokit', '~> 2.0'
+gem 'koala'
 
 group :test do
   gem "codeclimate-test-reporter", require: false
