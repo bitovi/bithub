@@ -15,6 +15,10 @@ CREATE MATERIALIZED VIEW pagination AS
   ORDER BY e.thread_updated_ts DESC
 WITH DATA;
     SQL
+
+    execute <<-SQL
+REFRESH MATERIALIZED VIEW pagination;
+    SQL
   end
 
   def down

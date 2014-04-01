@@ -14,6 +14,10 @@ SELECT 'Upvote' AS model_name, upvotes.id AS id, upvotes.actor_id AS user_id, NU
 	FROM upvotes
 		JOIN entities ON upvotes.applies_to_id = entities.id
 SQL
+
+    execute <<-SQL
+REFRESH MATERIALIZED VIEW user_activities;
+    SQL
   end
 
   def down
