@@ -4,6 +4,8 @@ module Fetchers
   module Github
 
     class RepoIssues
+      include Protocol
+
       def initialize(client, opts)
         @client = client
         @interval = opts.fetch(:interval) { 10 }
@@ -15,6 +17,5 @@ module Fetchers
         @client.activity.events.public user: @user, repo: @repo
       end
     end
-
   end
 end

@@ -4,6 +4,8 @@ module Fetchers
   module Meetup
 
     class OpenEvents
+      include Protocol
+
       def initialize(client, opts = {})
         @client = client
         @interval = opts.fetch(:interval) { 10 }
@@ -15,6 +17,5 @@ module Fetchers
         @client.fetch(:open_events, {text: @text_search, sign: 'true'})
       end
     end
-
   end
 end
