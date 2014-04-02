@@ -11,6 +11,7 @@ gem 'pg'
 # gem 'activerecord-jdbcpostgresql-adapter'
 
 gem 'dalli'
+gem 'redis'
 gem 'puma'
 gem 'jquery-rails'
 gem 'cancan'
@@ -58,9 +59,11 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
 # API client libs
-gem 'github_api', github: 'peter-murach/github', branch: 'master'
-gem 'twitter', github: 'sferik/twitter', branch: 'master'
-gem 'rmeetup', github: 'neektza/rmeetup', branch: 'master'
+gem 'github_api' , github: 'peter-murach/github' , branch: 'master'
+gem 'twitter'    , github: 'sferik/twitter'      , branch: 'master'
+gem 'rmeetup'    , github: 'neektza/rmeetup'     , branch: 'master'
+gem 'disqus'     , github: 'hedgeyedev/disqus'   , branch: 'master'
+gem 'koala'
 
 group :test do
   gem "codeclimate-test-reporter", require: false
