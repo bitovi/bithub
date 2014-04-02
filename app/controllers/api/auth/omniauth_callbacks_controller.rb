@@ -113,11 +113,14 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     brand = account.brand
     uid = oauth_data[:uid]
 
+    # Build identity source_data
+    source_data = Identities::Builders.const_get(kind.camel_case).new({oauth: oauth_data}).build
+
     # Find or update brand
     if identity = BrandIdentity.where({brand_id: brand.id, provider: kind, uid: uid}).first
-      identity.source_data = oauth_data
+      identity.source_data = source_data
     else
-      identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: oauth_data})
+      identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: source_data})
     end
 
     if identity.save
