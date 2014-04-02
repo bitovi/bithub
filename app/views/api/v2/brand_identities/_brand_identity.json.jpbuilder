@@ -1,3 +1,9 @@
 json.cache! brand_identity do
-	json.(brand_identity, :id, :provider, :uid, :brand, :source_data)
+  json.(brand_identity, :id, :provider, :uid)
+  json.brand brand_identity.brand, :id, :name
+
+  # is there a better way for this?
+  brand_identity.data.each do |k,v|
+    json.set! k, v
+  end
 end

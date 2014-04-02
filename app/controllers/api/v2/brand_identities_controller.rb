@@ -3,12 +3,12 @@ class Api::V2::BrandIdentitiesController < Api::V2::BaseController
   respond_to :json
 
   def index
-    @brand_identities = BrandIdentity.all
+    @brand_identities = BrandIdentityDecorator.decorate_collection BrandIdentity.all
     render :index
   end
 
   def show
-    @brand_identity = BrandIdentity.find(params[:id])
+    @brand_identity = BrandIdentityDecorator.decorate BrandIdentity.find(params[:id])
     render :show
   end
 end
