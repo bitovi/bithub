@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/hedgeyedev/disqus.git
+  revision: 5746c2a915541b2903b26ce4934e2bb44ccc199c
+  branch: master
+  specs:
+    disqus (1.0.6)
+      json
+
+GIT
   remote: git://github.com/neektza/muster.git
   revision: 5faaaac3ff69c7f3dc89abfe6b5841782c18cb2f
   specs:
@@ -221,6 +229,10 @@ GEM
     json (1.8.1-java)
     jwt (0.1.11)
       multi_json (>= 1.5)
+    koala (1.9.0)
+      addressable
+      faraday
+      multi_json
     levenshtein-ffi (1.0.3)
       ffi
       ffi (~> 1.1.5)
@@ -333,6 +345,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (3.1.1)
+    redis (3.0.7)
     request_store (1.0.5)
     rmagick (2.13.2)
     rolify (3.4.0)
@@ -436,6 +449,7 @@ DEPENDENCIES
   delayed_job
   delayed_job_active_record
   devise (~> 2.2)
+  disqus!
   dotenv-rails
   draper
   enumerize
@@ -449,6 +463,7 @@ DEPENDENCIES
   jbuilder (= 1.3.0)
   jpbuilder (= 0.2.2)
   jquery-rails
+  koala
   levenshtein-ffi
   log4r (= 1.1.10)
   multi_json
@@ -467,6 +482,7 @@ DEPENDENCIES
   rails (= 3.2.17)
   rb-fsevent (~> 0.9)
   redcarpet
+  redis
   rmagick
   rmeetup!
   rolify (~> 3.2)
