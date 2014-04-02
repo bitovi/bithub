@@ -19,8 +19,11 @@ require_relative 'brand_supervisor'
 require_relative 'publisher'
 require_relative 'configurator'
 require_relative 'poller'
+require_relative 'channel'
 require_relative 'streamers/all'
 require_relative 'fetchers/all'
+require_relative 'digest_set'
+require_relative 'response_processor'
 
 # log4r logger
 logger = LoggerFactory.new('crawler', ENV['ENV']).component_logger
@@ -38,8 +41,8 @@ $app_auth = {
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
-  supervise Publisher, as: :Publisher
-  supervise MainSupervisor, as: :MainSupervisor
+  supervise Publisher, as: :publisher
+  supervise MainSupervisor, as: :main_supervisor
 end
 
 Crawler.run

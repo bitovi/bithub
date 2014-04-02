@@ -1,9 +1,10 @@
 class Poller
   include Celluloid
 
-  def initialize(opts, client, fetcher_class)
-    @fetcher = fetcher_class.new(client, opts)
-    @interval = 5
+  def initialize(brand_name, fetcher, opts = {})
+    @brand_name = brand_name
+    @fetcher = fetcher
+    @interval = opts.fetch(:interval) { 3600 }
     poll
   end
 
@@ -17,13 +18,17 @@ class Poller
   end
 
   def fetch
-    res = @fetcher.fetch
-    Celluloid.logger.info "Fetching from #{@fetcher.class.name}, fetched #{res.count}"
-    res
+    events = @fetcher.fetch
+    Celluloid.logger.info "Fetching from #{@fetcher.class.name}, fetched #{events.count}"
+    publish(@brand_name, events)
+  end
+
+  def publish(publish, data)
+    Celluloid::Actor[:publisher].publish(@brand_name, data)
   end
 
   private
   def x_seconds
-    @interval || @fetcher.interval
+    @interval
   end
 end
