@@ -19,7 +19,9 @@ module FeedSupervisors
     def boot
       Celluloid.logger.info "Booting Twitter supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: @config.fetch(:terms)})])
+      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: @config.fetch(:terms)}), {interval: 360}])
+
+      Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, @config.fetch(:terms)))
     end
 
     def actor_name
