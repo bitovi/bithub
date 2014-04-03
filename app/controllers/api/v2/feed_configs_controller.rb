@@ -48,7 +48,21 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   private
 
   def config_params
-    params.require(:feed_config).permit(:feed_name, :config)
+    params
+      .require(:feed_config)
+      .permit(:feed_name, :config)
+      .tap {|wl| wl[:config] = params[:feed_config][:config]}
   end
+
+  # def self.config_definitions
+  #   {
+  #     github:     [:token, :repos, :orgs],
+  #     meetup:     [:token, :terms, :groups],
+  #     facebook:   [:token, :pages => [:id, :token]],
+  #     twitter:    [:token, :token_secret, :terms],
+  #     disqus:     [:token, :forums],
+  #     foursquare: [:token, :venues]
+  #   }
+  # end
 
 end
