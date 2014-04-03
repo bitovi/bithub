@@ -88,6 +88,8 @@ GEM
     bullet (4.8.0)
       activesupport
       uniform_notifier (>= 1.4.0)
+    bunny (1.1.8)
+      amq-protocol (>= 1.9.2)
     cancan (1.6.10)
     capistrano (3.1.0)
       i18n
@@ -469,6 +471,7 @@ DEPENDENCIES
   better_errors
   blather
   bullet
+  bunny
   cancan
   capistrano (~> 3.1.0)
   capistrano-bundler (~> 1.1.2)
