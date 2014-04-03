@@ -16,10 +16,8 @@ module AmqpHelpers
     ch = conn.create_channel
 
     if ['fanout', 'direct'].include?(exchange_type) and exchange_name.length > 0
-      puts "here"
       x = ch.send(exchange_type, exchange_name)
     else
-      puts "there"
       x = ch.default_exchange
     end
 
