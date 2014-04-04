@@ -50,7 +50,7 @@ module Streamers
       private
       def listen
         @client = Client.new_link(auth: @auth, topics: topics) do |object|
-          route object
+          route object, %i(text)
         end
       end
       
