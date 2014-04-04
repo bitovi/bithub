@@ -5,8 +5,11 @@ class Channel
   end
   attr_reader :name, :topics
 
-  def match(object)
-    # todo test object against followed topics
-    true
+  def interested?(object, attrs)
+    @topics.reduce(false) { |mem, topic| mem || not(target_text(object, attrs).scan(topic).empty?) }
+  end
+
+  def target_text(object, attrs)
+    attrs.reduce("") {|acc, attr| acc + object.send(attr)}
   end
 end
