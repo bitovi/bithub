@@ -1,4 +1,15 @@
 GIT
+  remote: git://github.com/celluloid/reel.git
+  revision: dba5c521b8f4ad6509c3634d5aa1c4adc8c9ec4c
+  specs:
+    reel (0.5.0.pre)
+      celluloid (>= 0.15.1)
+      celluloid-io (>= 0.15.0)
+      http (>= 0.6.0.pre)
+      http_parser.rb (>= 0.6.0)
+      websocket_parser (>= 0.1.6)
+
+GIT
   remote: git://github.com/hedgeyedev/disqus.git
   revision: 5746c2a915541b2903b26ce4934e2bb44ccc199c
   branch: master
@@ -24,7 +35,7 @@ GIT
 
 GIT
   remote: git://github.com/neektza/rmeetup.git
-  revision: 1705347fd7867475b72bbac06d0f8be81294a44c
+  revision: 91df78533a48a64f88064135a948eeeb8f7f16b0
   branch: master
   specs:
     rmeetup (1.1.0)
@@ -352,12 +363,6 @@ GEM
       json (~> 1.4)
     redcarpet (3.1.1)
     redis (3.0.7)
-    reel (0.4.0)
-      celluloid (>= 0.15.1)
-      celluloid-io (>= 0.15.0)
-      http (>= 0.5.0)
-      http_parser.rb (>= 0.6.0.beta.2)
-      websocket_parser (>= 0.1.4)
     request_store (1.0.5)
     rmagick (2.13.2)
     rolify (3.4.0)
@@ -498,7 +503,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9)
   redcarpet
   redis
-  reel
+  reel!
   rmagick
   rmeetup!
   rolify (~> 3.2)
