@@ -15,7 +15,7 @@ gem 'draper'
 gem 'carrierwave'
 
 #gem 'apartment', :git => 'git@github.com:influitive/apartment.git', :branch => 'development'
-gem 'apartment', :git => 'git@github.com:veljkodragsic/apartment.git', :branch => 'development'
+gem 'apartment', :github => 'veljkodragsic/apartment', :branch => 'development'
 gem 'strong_parameters'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array', '0.0.9'
