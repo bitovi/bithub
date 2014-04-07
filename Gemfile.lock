@@ -7,8 +7,16 @@ GIT
       json
 
 GIT
+  remote: git://github.com/influitive/omniauth-disqus.git
+  revision: f26d69e690e51d4ccacc98a722490083e36c3989
+  specs:
+    omniauth-disqus (0.0.1)
+      httparty
+      omniauth-oauth2
+
+GIT
   remote: git://github.com/neektza/muster.git
-  revision: 5faaaac3ff69c7f3dc89abfe6b5841782c18cb2f
+  revision: 1b44d3027aa977a0de4a6d869c7e037d6c5f73bf
   specs:
     muster (0.0.9)
       activesupport (~> 3.0)
@@ -16,10 +24,11 @@ GIT
 
 GIT
   remote: git://github.com/neektza/rmeetup.git
-  revision: 44bf7c98aa59992171dccb09fe03c9e521093974
+  revision: 1705347fd7867475b72bbac06d0f8be81294a44c
   branch: master
   specs:
-    rmeetup (1.1)
+    rmeetup (1.1.0)
+      json
 
 GIT
   remote: git://github.com/peter-murach/github.git
@@ -37,7 +46,7 @@ GIT
 
 GIT
   remote: git://github.com/sferik/twitter.git
-  revision: 7b401889eb79a0cf5f04a99aca087712eeaa2e5f
+  revision: 2ab6c0d546b7c1d3635ac9c319fb5c2aa2514da0
   branch: master
   specs:
     twitter (5.8.0)
@@ -45,12 +54,21 @@ GIT
       buftok (~> 0.2.0)
       equalizer (~> 0.0.9)
       faraday (~> 0.9.0)
-      http (~> 0.5.0)
+      http (~> 0.6.0)
       http_parser.rb (~> 0.6.0)
       json (~> 1.8)
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.2.0)
+
+GIT
+  remote: git@github.com:veljkodragsic/apartment.git
+  revision: d7558ce631d38e73ed18acd5ab9e4050084c6acb
+  branch: development
+  specs:
+    apartment (0.24.3)
+      activerecord (>= 3.1.2)
+      rack (>= 1.3.6)
 
 GEM
   remote: https://rubygems.org/
@@ -90,24 +108,22 @@ GEM
     activesupport (3.2.17)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    acts-as-taggable-on (3.0.1)
-      rails (>= 3, < 5)
-    addressable (2.3.5)
+    acts-as-taggable-on (3.1.1)
+      actionpack (>= 3, < 5)
+      activerecord (>= 3, < 5)
+      activesupport (>= 3, < 5)
+    addressable (2.3.6)
     amq-protocol (1.9.2)
     amqp (1.3.0)
       amq-protocol (>= 1.9.2)
       eventmachine
     andand (1.3.3)
     arel (3.0.3)
-    atomic (1.1.16)
-    atomic (1.1.16-java)
     awesome_print (1.2.0)
-    bcrypt-ruby (3.1.2)
-    bcrypt-ruby (3.1.2-java)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
-    blather (0.8.8)
+    blather (1.0.0)
       activesupport (>= 2.3.11)
       eventmachine (>= 1.0.0)
       girl_friday
@@ -115,10 +131,10 @@ GEM
       nokogiri (~> 1.5, >= 1.5.6)
     buftok (0.2.0)
     builder (3.0.4)
-    bullet (4.7.1)
+    bullet (4.8.0)
       activesupport
       uniform_notifier (>= 1.4.0)
-    bunny (1.1.3)
+    bunny (1.1.8)
       amq-protocol (>= 1.9.2)
     cancan (1.6.10)
     capistrano (3.1.0)
@@ -134,16 +150,17 @@ GEM
     capistrano-rbenv (2.0.2)
       capistrano (~> 3.1)
       sshkit (~> 1.3)
-    carrierwave (0.9.0)
+    carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       json (>= 1.7)
+      mime-types (>= 1.16)
     celluloid (0.15.2)
       timers (~> 1.1.0)
     celluloid-io (0.15.0)
       celluloid (>= 0.15.0)
       nio4r (>= 0.5.0)
-    cinch (2.0.12)
+    cinch (2.1.0)
     codeclimate-test-reporter (0.3.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
@@ -156,42 +173,33 @@ GEM
     delayed_job_active_record (4.0.0)
       activerecord (>= 3.0, < 4.1)
       delayed_job (>= 3.0, < 4.1)
-    descendants_tracker (0.0.3)
-    devise (2.2.8)
-      bcrypt-ruby (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (~> 3.1)
-      warden (~> 1.2.1)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     docile (1.1.3)
-    dotenv (0.9.0)
-    dotenv-rails (0.9.0)
-      dotenv (= 0.9.0)
+    dotenv (0.10.0)
+    dotenv-rails (0.10.0)
+      dotenv (= 0.10.0)
     draper (1.3.0)
       actionpack (>= 3.0)
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       request_store (~> 1.0.3)
-    enumerize (0.7.0)
+    enumerize (0.8.0)
       activesupport (>= 3.2)
     equalizer (0.0.9)
     erubis (2.7.0)
     evented-spec (0.9.0)
     eventmachine (1.0.3)
-    eventmachine (1.0.3-java)
-    factory_girl (4.3.0)
+    factory_girl (4.4.0)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.3.0)
-      factory_girl (~> 4.3.0)
+    factory_girl_rails (4.4.1)
+      factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.1.5)
-    ffi (1.1.5-java)
     foreman (0.63.0)
-      dotenv (>= 0.7)
-      thor (>= 0.13.6)
-    foreman (0.63.0-java)
       dotenv (>= 0.7)
       thor (>= 0.13.6)
     formatador (0.2.4)
@@ -199,22 +207,24 @@ GEM
       connection_pool (~> 1.0)
       rubinius-actor
     git (1.2.6)
-    guard (2.4.0)
+    guard (2.6.0)
       formatador (>= 0.2.4)
-      listen (~> 2.1)
+      listen (~> 2.7)
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
-    guard-rspec (4.2.5)
+    guard-rspec (4.2.8)
       guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
-    hashie (2.0.5)
+    hashie (2.1.0)
     hike (1.2.3)
     htmlentities (4.3.1)
-    http (0.5.0)
-      http_parser.rb
+    http (0.6.0)
+      http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
-    http_parser.rb (0.6.0-java)
+    httparty (0.13.0)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.6.9)
     jbuilder (1.3.0)
       activesupport (>= 3.0.0)
@@ -226,7 +236,6 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
-    json (1.8.1-java)
     jwt (0.1.11)
       multi_json (>= 1.5)
     koala (1.9.0)
@@ -236,20 +245,21 @@ GEM
     levenshtein-ffi (1.0.3)
       ffi
       ffi (~> 1.1.5)
-    listen (2.4.1)
+    listen (2.7.1)
       celluloid (>= 0.15.2)
+      celluloid-io (>= 0.15.0)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     log4r (1.1.10)
-    lumberjack (1.0.4)
+    lumberjack (1.0.5)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    memoizable (0.4.1)
-      thread_safe (~> 0.2.0)
+    memoizable (0.4.2)
+      thread_safe (~> 0.3, >= 0.3.1)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mini_portile (0.5.2)
+    mini_portile (0.5.3)
     multi_json (1.9.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -257,14 +267,11 @@ GEM
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.8.0)
-    newrelic_rpm (3.7.2.192)
+    newrelic_rpm (3.7.3.204)
     niceogiri (1.1.2)
       nokogiri (~> 1.5)
     nio4r (1.0.0)
-    nio4r (1.0.0-java)
     nokogiri (1.6.1)
-      mini_portile (~> 0.5.0)
-    nokogiri (1.6.1-java)
       mini_portile (~> 0.5.0)
     nori (2.3.0)
     oauth (0.4.7)
@@ -274,9 +281,16 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (~> 1.2)
+    octokit (2.7.2)
+      sawyer (~> 0.5.2)
     omniauth (1.2.1)
       hashie (>= 1.2, < 3)
       rack (~> 1.0)
+    omniauth-facebook (1.6.0)
+      omniauth-oauth2 (~> 1.1)
+    omniauth-foursquare (1.0.1)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
     omniauth-github (1.1.1)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.1)
@@ -297,7 +311,6 @@ GEM
     omniauth-twitter (1.0.1)
       multi_json (~> 1.3)
       omniauth-oauth (~> 1.0)
-    orm_adapter (0.5.0)
     pg (0.17.1)
     pg-hstore (1.2.0)
     polyglot (0.3.4)
@@ -305,21 +318,14 @@ GEM
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
-    pry (0.9.12.6-java)
-      coderay (~> 1.0)
-      method_source (~> 0.8)
-      slop (~> 3.4)
-      spoon (~> 0.0)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
     puma (2.8.1)
       rack (>= 1.1, < 2.0)
-    puma (2.8.1-java)
-      rack (>= 1.1, < 2.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
-    rack-ssl (1.3.3)
+    rack-ssl (1.3.4)
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -338,7 +344,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (10.1.1)
+    rake (10.2.2)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.3)
       ffi (>= 0.5.0)
@@ -353,11 +359,11 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
-    rspec-core (2.14.7)
+    rspec-core (2.14.8)
     rspec-expectations (2.14.5)
       diff-lcs (>= 1.1.3, < 2.0)
-    rspec-mocks (2.14.5)
-    rspec-rails (2.14.1)
+    rspec-mocks (2.14.6)
+    rspec-rails (2.14.2)
       actionpack (>= 3.0)
       activemodel (>= 3.0)
       activesupport (>= 3.0)
@@ -368,20 +374,20 @@ GEM
     rubinius-actor (0.0.2)
       rubinius-core-api
     rubinius-core-api (0.0.1)
-    rubinius-core-api (0.0.1-java)
     ruby_gntp (0.3.4)
     sanitize (2.1.0)
       nokogiri (>= 1.4.4)
+    sawyer (0.5.4)
+      addressable (~> 2.3.5)
+      faraday (~> 0.8, < 0.10)
     simple_oauth (0.2.0)
     simplecov (0.8.2)
       docile (~> 1.1.0)
       multi_json
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
-    slop (3.4.7)
-    spoon (0.0.4)
-      ffi
-    spring (1.1.1)
+    slop (3.5.0)
+    spring (1.1.2)
     spring-commands-rspec (1.0.1)
       spring (>= 0.9.1)
     sprockets (2.2.2)
@@ -393,32 +399,30 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh
       term-ansicolor
+    strong_parameters (0.2.3)
+      actionpack (~> 3.0)
+      activemodel (~> 3.0)
+      activesupport (~> 3.0)
+      railties (~> 3.0)
     term-ansicolor (1.3.0)
       tins (~> 1.0)
-    thor (0.18.1)
-    thread_safe (0.2.0)
-      atomic (>= 1.1.7, < 2)
-    thread_safe (0.2.0-java)
-      atomic (>= 1.1.7, < 2)
+    thor (0.19.1)
+    thread_safe (0.3.3)
     tilt (1.4.1)
     timers (1.1.0)
-    tins (1.0.0)
+    tins (1.1.0)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-text (1.7.0)
+    twitter-text (1.9.0)
       unf (~> 0.1.0)
     tzinfo (0.3.39)
-    unf (0.1.3)
+    unf (0.1.4)
       unf_ext
-    unf (0.1.3-java)
     unf_ext (0.0.6)
     uniform_notifier (1.4.0)
-    warden (1.2.3)
-      rack (>= 1.0)
 
 PLATFORMS
-  java
   ruby
 
 DEPENDENCIES
@@ -428,6 +432,7 @@ DEPENDENCIES
   acts-as-taggable-on
   amqp
   andand
+  apartment!
   awesome_print
   better_errors
   blather
@@ -448,7 +453,6 @@ DEPENDENCIES
   database_cleaner
   delayed_job
   delayed_job_active_record
-  devise (~> 2.2)
   disqus!
   dotenv-rails
   draper
@@ -471,7 +475,11 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri
   nori (~> 2.3.0)
+  octokit (~> 2.0)
   omniauth
+  omniauth-disqus!
+  omniauth-facebook
+  omniauth-foursquare
   omniauth-github
   omniauth-meetup
   omniauth-stackexchange
@@ -479,7 +487,7 @@ DEPENDENCIES
   pg
   pry-rails
   puma
-  rails (= 3.2.17)
+  rails (~> 3.2)
   rb-fsevent (~> 0.9)
   redcarpet
   redis
@@ -492,5 +500,6 @@ DEPENDENCIES
   sanitize
   spring
   spring-commands-rspec
+  strong_parameters
   twitter!
   twitter-text

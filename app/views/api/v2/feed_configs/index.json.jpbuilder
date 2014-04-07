@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @configs do |c|
+    json.partial! "api/v2/feed_configs/config", config: c
+  end
+end

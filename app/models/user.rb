@@ -12,14 +12,12 @@ class User < ActiveRecord::Base
   rolify
   devise :rememberable, :trackable, :omniauthable
 
-  attr_accessible :address, :city,
-    :email, :name, :postal, :email,
-    :remember_me, :state, :country,
-    :entities, :total_score
+  attr_accessible :name, :email,
+    :address, :address2, :city, :postal, :state, :country,
+    :remember_me, :entities, :total_score
 
   serialize :props, ActiveRecord::Coders::Hstore
 
-  has_many :anteups_as_actor, :foreign_key => "actor_id", :class_name => "Anteup", :dependent => :destroy
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
@@ -30,7 +28,6 @@ class User < ActiveRecord::Base
   has_many :activities, :foreign_key => "user_id", :class_name => "UserActivity"
 
   has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
-  has_many :anteups, :through => :entities
   has_many :upvotes, :through => :entities
   has_many :awards, :through => :entities
 
@@ -49,13 +46,12 @@ class User < ActiveRecord::Base
     actions = []
     actions += self.awards_as_actor.all
     actions += self.upvotes_as_actor.all
-    actions += self.anteups_as_actor.all
     actions += self.internals_as_actor.all
     actions
   end
 
   def score
-    authored_entities_total + upvotes_total + awards_total + internals_total - fulfilled_anteups_total
+    authored_entities_total + upvotes_total + awards_total + internals_total
   end
 
   def authored_entities_total
@@ -72,10 +68,6 @@ class User < ActiveRecord::Base
 
   def internals_total
     internals.sum(:value)
-  end
-
-  def fulfilled_anteups_total
-    anteups_as_actor.fullfilled.sum('value')
   end
 
   def collect_authored_entities

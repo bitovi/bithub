@@ -1,14 +1,15 @@
 class Api::Auth::SessionsController < Api::V1::BaseController
+  before_filter :authenticate_user!
+  respond_to :json
 
-  def index
+  def current
+    @user = UserDecorator.decorate(current_user)
+    render 'api/auth/session'
   end
-  
-  def new
-  end
-  
+
   def destroy
     sign_out
-    redirect_to root_url
+    render :json => "{}"
   end
 
 end

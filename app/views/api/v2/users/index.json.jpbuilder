@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @users do |u|
+    json.partial! "api/v2/users/user", user: u, is_list: true
+  end
+end

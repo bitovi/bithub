@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @countries do |c|
+    json.partial! "api/v2/countries/country", country: c
+  end
+end
