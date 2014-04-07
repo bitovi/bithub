@@ -64,7 +64,7 @@ class Entity < ActiveRecord::Base
   scope :category, lambda {|c| where(category_name: c) }
   scope :no_category, lambda {|c| where("category_name <> ?", c) }
 
-  # Time/date 
+  # Time/date
   scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
   scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
@@ -92,12 +92,12 @@ class Entity < ActiveRecord::Base
   # Authorship
   scope :origin_author, lambda {|uid| where("props -> 'origin_author_id' = :uid", uid: uid.to_s) }
   scope :origin_host, lambda {|uid| where("string_to_array(props -> 'event_host_ids_csv', ',') @> string_to_array(:uid, ',') OR string_to_array(props -> 'event_host_ids', ',') @> string_to_array(:uid, ',')", uid: uid.to_s) }
-  
+
   # Issues
   scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
   scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
-  
+
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_create :adopt_references_from_children
@@ -119,14 +119,14 @@ class Entity < ActiveRecord::Base
     self.remove_author
     self.ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
   end
-  
+
   def event_hosts=(users)
     self.remove_hosts
     users.each do |u|
       self.ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host).determine_value
     end
   end
-  
+
   def remove_author
     self.ownerships.where(ownership_type: :author).destroy_all
   end

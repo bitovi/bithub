@@ -1,0 +1,7 @@
+json.cache! ("v2" + list_cache_key(@entities)) do
+  json.set! :data do
+    json.array! @entities do |e|
+      json.partial! "api/v2/entities/entity", entity: e, second_level: false
+    end
+  end
+end

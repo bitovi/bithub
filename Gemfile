@@ -1,14 +1,13 @@
 source 'https://rubygems.org'
 ruby '2.1.1'
 
-gem 'rails', '3.2.17'
+gem 'rails', '~> 3.2'
 gem 'rolify', '~> 3.2'
-gem 'devise', '~> 2.2'
+
 gem 'amqp' # TODO remove this after crawler/listener refactoring.
 gem 'bunny'
-
+gem 'strong_parameters'
 gem 'pg'
-# gem 'activerecord-jdbcpostgresql-adapter'
 
 gem 'dalli'
 gem 'redis'
@@ -16,15 +15,19 @@ gem 'puma'
 gem 'jquery-rails'
 gem 'cancan'
 
-# gem 'rmagick4j'
 gem 'rmagick'
 
 gem 'carrierwave'
+#gem 'apartment', :git => 'git@github.com:influitive/apartment.git', :branch => 'development'
+gem 'apartment', :git => 'git@github.com:veljkodragsic/apartment.git', :branch => 'development'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
 gem 'omniauth-meetup'
 gem 'omniauth-stackexchange'
+gem 'omniauth-facebook'
+gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
+gem 'omniauth-foursquare'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array', '0.0.9'
 gem 'activerecord-postgresql-extensions'
@@ -59,11 +62,13 @@ gem 'muster', :git => "git://github.com/neektza/muster.git"
 # gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
 
 # API client libs
+gem 'octokit', '~> 2.0'
+gem 'koala'
+
 gem 'github_api' , github: 'peter-murach/github' , branch: 'master'
 gem 'twitter'    , github: 'sferik/twitter'      , branch: 'master'
 gem 'rmeetup'    , github: 'neektza/rmeetup'     , branch: 'master'
 gem 'disqus'     , github: 'hedgeyedev/disqus'   , branch: 'master'
-gem 'koala'
 
 group :test do
   gem "codeclimate-test-reporter", require: false

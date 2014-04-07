@@ -1,14 +1,18 @@
 class Reward < ActiveRecord::Base
-  attr_accessible :description, :point_minimum, :title, :image, :display_point_minimum, :disabled_ts
+  include ActiveModel::ForbiddenAttributesProtection
+
+  attr_accessible :title, :description, :point_minimum, :image, :disabled_ts, :props
+
+  serialize :props, ActiveRecord::Coders::Hstore
 
   mount_uploader :image, RewardImageUploader
 
   has_many :achievements, :dependent => :destroy
-  has_many :rewardees, :through => :achievements, :source => :user
-  
+  has_many :rewards, :through => :achievements, :source => :user
+
   validates_presence_of :title, :point_minimum
 
-  after_create :reward_all_eligible_users
+  #after_create :reward_all_eligible_users
 
   def reward_all_eligible_users
     RewardEligiblityDecider.new(reward: self).reward_all_eligible_users

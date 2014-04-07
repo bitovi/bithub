@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @brand_identities do |b|
+    json.partial! "api/v2/brand_identities/brand_identity", brand_identity: b
+  end
+end
