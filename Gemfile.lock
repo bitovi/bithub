@@ -73,7 +73,7 @@ GIT
       simple_oauth (~> 0.2.0)
 
 GIT
-  remote: git@github.com:veljkodragsic/apartment.git
+  remote: git://github.com/veljkodragsic/apartment.git
   revision: d7558ce631d38e73ed18acd5ab9e4050084c6acb
   branch: development
   specs:
@@ -130,10 +130,6 @@ GEM
       eventmachine
     andand (1.3.3)
     arel (3.0.3)
-<<<<<<< HEAD
-=======
-    awesome_print (1.2.0)
->>>>>>> ff004d449bed19f0a73752d9102249dbe8841614
     bcrypt (3.1.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -245,11 +241,11 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.6.9)
-    jbuilder (1.3.0)
+    jbuilder (1.5.3)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     journey (1.0.4)
-    jpbuilder (0.2.2)
+    jpbuilder (0.2.4)
       jbuilder
     json (1.8.1)
     jwt (0.1.11)
@@ -465,11 +461,7 @@ DEPENDENCIES
   database_cleaner
   delayed_job
   delayed_job_active_record
-<<<<<<< HEAD
   devise (~> 3.2)
-=======
-  devise
->>>>>>> ff004d449bed19f0a73752d9102249dbe8841614
   disqus!
   dotenv-rails
   draper
