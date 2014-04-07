@@ -1,4 +1,15 @@
 GIT
+  remote: git://github.com/celluloid/reel.git
+  revision: dba5c521b8f4ad6509c3634d5aa1c4adc8c9ec4c
+  specs:
+    reel (0.5.0.pre)
+      celluloid (>= 0.15.1)
+      celluloid-io (>= 0.15.0)
+      http (>= 0.6.0.pre)
+      http_parser.rb (>= 0.6.0)
+      websocket_parser (>= 0.1.6)
+
+GIT
   remote: git://github.com/hedgeyedev/disqus.git
   revision: 5746c2a915541b2903b26ce4934e2bb44ccc199c
   branch: master
@@ -119,6 +130,10 @@ GEM
       eventmachine
     andand (1.3.3)
     arel (3.0.3)
+<<<<<<< HEAD
+=======
+    awesome_print (1.2.0)
+>>>>>>> ff004d449bed19f0a73752d9102249dbe8841614
     bcrypt (3.1.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -353,12 +368,6 @@ GEM
       json (~> 1.4)
     redcarpet (3.1.1)
     redis (3.0.7)
-    reel (0.4.0)
-      celluloid (>= 0.15.1)
-      celluloid-io (>= 0.15.0)
-      http (>= 0.5.0)
-      http_parser.rb (>= 0.6.0.beta.2)
-      websocket_parser (>= 0.1.4)
     request_store (1.0.5)
     rmagick (2.13.2)
     rolify (3.4.0)
@@ -456,7 +465,11 @@ DEPENDENCIES
   database_cleaner
   delayed_job
   delayed_job_active_record
+<<<<<<< HEAD
   devise (~> 3.2)
+=======
+  devise
+>>>>>>> ff004d449bed19f0a73752d9102249dbe8841614
   disqus!
   dotenv-rails
   draper
@@ -492,7 +505,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9)
   redcarpet
   redis
-  reel
+  reel!
   rmagick
   rmeetup!
   rolify (~> 3.2)
