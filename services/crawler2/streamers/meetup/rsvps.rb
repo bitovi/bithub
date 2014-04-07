@@ -13,7 +13,7 @@ module Streamers
 
       def connect
         @client.rsvps do |object|
-          puts "RSVP" # p object
+          route object, %i(title)
         end
 
         Celluloid.logger.info "Streaming meetup:rsvps"
