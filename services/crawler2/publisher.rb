@@ -17,11 +17,11 @@ class Publisher
   end
 
   def publish(brand, events)
-    Celluloid.logger.info "-----------> Publishing with routing_key:#{brand}"
+    Celluloid.logger.info "-----------> Publishing with routing_key: #{brand}"
     events.each do |e|
       Celluloid.logger.info e.text
     end
-    
+
     # reject_old(brand, process(events)).each do |e|
     #   @x.publish(e, routing_key: brand)
     # end
