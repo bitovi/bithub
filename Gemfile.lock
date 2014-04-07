@@ -15,8 +15,8 @@ GIT
       rack (~> 1.4)
 
 GIT
-  remote: git@github.com:influitive/apartment.git
-  revision: b74415202bfc15a17029c1d1bd0e5fc00b508c5f
+  remote: git@github.com:veljkodragsic/apartment.git
+  revision: d7558ce631d38e73ed18acd5ab9e4050084c6acb
   branch: development
   specs:
     apartment (0.24.3)
