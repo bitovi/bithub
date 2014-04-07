@@ -13,7 +13,7 @@ module Streamers
 
       def connect
         @client.open_events do |object|
-          puts "OPEN_EVENT" # p object
+          route object, %i(title)
         end
 
         Celluloid.logger.info "Streaming meetup:open_events"

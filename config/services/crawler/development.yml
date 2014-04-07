@@ -13,29 +13,12 @@
 #             :url: 'https://forum.javascriptmvc.com/feed/filter/questions'
 #             :interval: 1
 
-# :disqus:
-#     :data:
-#         :auth: &disqus_auth
-#             :api_key: 'NgGGShovTbuUwxX61HNZvHreDse9DXrW8zvqlJOUhn6BVKJFISuYACtjhZ17FFZB'
-#     :polling:
-#         :posts:
-#             :url: 'http://disqus.com/api/3.0/posts/list.json'
-#             :interval: 1
-#             :params:
-#                 <<: *disqus_auth
-#                 :forum:
-#                     - 'jmvcs3'
-#                     - 'bitovi'
-#                 :related:
-#                     - 'thread'
-#                     - 'forum'
-
 # :stackexchange:
 #     :data:
 #         :auth: &stackexchange_auth
 #             :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
 #             :key: "8EAiwRhHlupc0Z1aV3SCVg(("
-    
+
 #     :polling:
 #         :canjs_questions:
 #             :interval: 1
@@ -54,98 +37,75 @@
 #                 :tagged: "javascriptmvc"
 #                 :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
 
-:meetup:
-    :data:
-        :auth: &meetup_auth
-            :key: &meetup_api_key "663a24605a37767831495d6332546b4a"
-            :sign: "true"
-    :polling:
-        :open_events:
-            :interval: 20
-            :api_key: *meetup_api_key
-            :params:
-                :text: "canjs"
-                :fields: "event_hosts"
-        :events:
-            :interval: 10
-            :api_key: *meetup_api_key
-            :params:
-                :status: "past"
-                :fields: "event_hosts"
-            :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
-        :rsvps:
-            :interval: 5
-            :api_key: *meetup_api_key
-            :boot_data_url: "http://bithub.dev/api/v2/crawler/event_ids"
-    :streaming:
-        :open_events:
-            :url: "http://stream.meetup.com/2/open_events"
-        :rsvps:
-            :url: "http://stream.meetup.com/2/rsvps"
+:public_streams:
+    :twitter:
+        :auth:
+            :api_key: 'huCmG0TZ7vs6leLqLNlGQ'
+            :api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+            :access_token: '55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw'
+            :access_token_secret: 'XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE'
 
-:github:
-    :data:
-        :token: &token 'c27ac77b9951537a008b1ab2ef8dfe0035fac8c8'
-    :polling:
-      :activity:
-        :user: 'bithub-test'
-        :repo: 'testy'
-        :token: *token
-        :interval: 2
+:brands:
+    :veljko:
+        :facebook:
+            :token: 'CAAKROn3HV5UBAOIGG46iqorPS4Wy70DIcESQXZAsF9TkB2MRH2gWZAmNzOgGAXQAIpAwTMSQCCpXvBKwLdZAxUHKN0GZCFjXW3dIKm4XgQm12Yo7sfp9JZBSfvpLjdO32rCn7HjEHRT6pZBCzBG8AjwV6TGVgi36DEEnAAAMg5oTheNk66rZAka8GnIIyN3UzgZD'
+            :pages:
+                - :id: '192366630868826'
+                  :token: 'CAACEdEose0cBAEBVPyWZAliTBrPRFXPByF1fqnZBon4vB35HuZC7atCSGmhA3cuZAW0xiqBXMkzZC0wp1yIEaKMLXmZAzboGQo9ZAYBdiTfiQD7SbSJwSOM5sbgYSvGSI3hewDq5mcneewwt7meeDsrb35yFz9bV5crXr8xw9ZCZCRIoB0qKVUnZCNE2LnZB90eDPcZD'
 
-      :issues:
-        :interval: 10
-        :user: 'bithub-test'
-        :repo: 'testy'
-        :token: *token
+        :twitter:
+            :token: '857919337-0UubltaCQLVnjXmRfw0ci648Baw54XmN0UTocHpO'
+            :token_secret: 'JbRByo79ZFts44B7G54gLa4Czfd5VCkcMwyOocVwwA'
+            :terms:
+                - 'canjs'
+                - 'stealjs'
+                - 'jquery'
+                - 'javascript'
+        # :github:
+        #     :token: 'c27ac77b9951537a008b1ab2ef8dfe0035fac8c8'
+        #     :repos:
+        #         - 'veljkodragsic/mocker'
+        #         - 'veljkodragsic/apes'
+        #         - 'bithub-test/refy'
+        #     :orgs:
+        #         - 'floatingpointio'
 
-      :issues_comments:
-        :interval: 5
-        :user: 'bithub-test'
-        :repo: 'testy'
-        :token: *token
+        # :meetup:
+        #     :token: 'f66dad869e6bd4268258a5fe181068ad'
+        #     :terms:
+        #         - 'canjs'
+        #         - 'jquerypp'
+        #     :groups:
+        #         - '12asldkgn32'
+        #         - '23sdfkvl432'
+        #         - '234as23lvf4'
 
-      :pull_requests:
-        :interval: 10
-        :user: 'bithub-test'
-        :repo: 'testy'
-        :token: *token
-
-      :pull_requests_comments:
-        :interval: 5
-        :user: 'bithub-test'
-        :repo: 'testy'
-        :token: *token
-
-:twitter:
-    :data: 
-        :auth: &public_twitter_auth
-            :consumer_key: "huCmG0TZ7vs6leLqLNlGQ"
-            :consumer_secret: "X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ"
-            :token: "55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw"
-            :token_secret: "XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
-        :terms: &default_terms
-            - 'canjs'
-            - 'stealjs'
-            - 'javascriptmvc'
-            - 'jquerypp'
-            - 'documentjs'
-
-    :streaming:
-        :public:
-            :params:
-                :track: *default_terms
-            :oauth:
-                <<: *public_twitter_auth
-        :bitovi_bithub_user:
-            :oauth:
-                :consumer_key: "O8LBlzL77IMhcUd58PaCA"
-                :consumer_secret: "GgBnHe2pyNbVQoBiZYMqeRM39juGphZ4tsCcpn79uTM"
-                :token: "1911709506-lxbZcO7DbjeZ4D6HlfpHTmYaMgyNwKyD1x3OcZs"
-                :token_secret: "H4mVLnP21EUD2zkvfonQfIOMS0GVT585bXhRNMT9ZI"
-    :polling:
-        :tweet_search:
-            :interval: 60
-            :terms: *default_terms
-            :oauth:
-                <<: *public_twitter_auth
+    :nikica:
+        :twitter:
+            :token: '55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw'
+            :token_secret: 'XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE'
+            :terms:
+                - 'meetup'
+                - 'ruby'
+                - 'rails'
+        :facebook:
+            :token: 'CAACEdEose0cBANHA5ACsEMZAjdM3E08ap0qQ9MZCYVaqqdRpZBve5MSG7oUUo5ZBCX2x17ZCMs2Gg5KKqd7cGeyNdak45WTcyNuafJKhT3Xf9ADvmrRZAMVuT798BHqIuZCuBRU4Vn1YsOWnIpsrHHYNfkLfToRLP1ZABcxU85KkuVDqNPRsCbR7nOp9Kcnki9IZD'
+            :pages:
+                - :id: '487939194652299'
+                  :token: 'CAACEdEose0cBAPgl4wnuZBdBbT34dBZCKNrurbGdrQth8Oo7dgvzYOVQZBiobCHEUQW82dZAoJJ9ZC9QDtcabMHR34NHNh7DPP6ebVC0dOJpniNLYVbDZCXVk6b7se4VJ1a06CZC9IGw9ynpYPknblZA379kWzOLmB8J5INwTPkejMpKIXKFp46ixgIPWLMPRnFDMy7UudyGYwZDZD'
+        # :disqus:
+        #     :token: 'b08029df87f74c99afeba385e519e3e0'
+        #     :related:
+        #         - 'thread'
+        #         - 'forum'
+        #     :forums:
+        #         - 'jmvcs3'
+        #         - 'bitovi'
+        # :github:
+        #     :token: '2d0b3cfc15cf0b6d1cf21dd8004921535b76187e'
+        #     :repos:
+        #         - 'veljkodragsic/mocker'
+        #         - 'veljkodragsic/apes'
+        #         - 'bithub-test/refy'
+        #     :orgs:
+        #         - 'floatingpointio'
