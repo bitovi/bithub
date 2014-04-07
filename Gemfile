@@ -2,9 +2,6 @@ source 'https://rubygems.org'
 ruby '2.1.1'
 
 gem 'rails', '~> 3.2'
-gem 'devise', '~> 3.2'
-gem 'rolify', '~> 3.2'
-gem 'strong_parameters'
 
 gem 'amqp' # TODO remove this after crawler/listener refactoring.
 gem 'bunny'
@@ -19,7 +16,7 @@ gem 'carrierwave'
 
 #gem 'apartment', :git => 'git@github.com:influitive/apartment.git', :branch => 'development'
 gem 'apartment', :git => 'git@github.com:veljkodragsic/apartment.git', :branch => 'development'
-
+gem 'strong_parameters'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array', '0.0.9'
 gem 'activerecord-postgresql-extensions'
@@ -30,6 +27,8 @@ gem 'delayed_job_active_record'
 gem 'jbuilder', '~> 1.3'
 gem 'jpbuilder', '~> 0.2'
 
+gem 'devise', '~> 3.2'
+gem 'rolify', '~> 3.2'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
@@ -93,7 +92,7 @@ end
 # --------
 gem 'celluloid'
 gem 'celluloid-io'
-gem 'reel'
+gem 'reel', :github => 'celluloid/reel'
 gem 'nokogiri'
 gem 'nori', '~> 2.3.0'
 gem 'cinch'
