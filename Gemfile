@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 ruby '2.1.1'
 
 gem 'rails', '~> 3.2'
+gem 'devise', '~> 3.2'
 gem 'rolify', '~> 3.2'
 
 gem 'amqp' # TODO remove this after crawler/listener refactoring.
