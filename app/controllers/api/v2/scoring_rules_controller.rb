@@ -44,7 +44,7 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   private
 
   def rule_params
-    params.require(:rule).permit(:authorship_value, :upvote_value, :award_value, :priority, :valid_until, required_tags: [])
+    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value, :priority, :valid_until, required_tags: [])
   end
 
 end
