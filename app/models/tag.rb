@@ -52,7 +52,7 @@ class Tag < ActsAsTaggableOn::Tag
   end
 
   def self.categories_order
-    @categories_order ||= self.categories.order("props -> 'order_on_page'").pluck(:id)
+    #@categories_order ||= self.categories.order("props -> 'order_on_page'").pluck(:id)
   end
 
   ###

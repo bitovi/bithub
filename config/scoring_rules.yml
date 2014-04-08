@@ -3,6 +3,7 @@
   authorship_value: 0
   award_value: 0
   upvote_value: 1
+  name: 'Default'
 
 -
   required_tags:
@@ -10,6 +11,7 @@
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Submitting an article'
 
 -
   required_tags:
@@ -17,6 +19,7 @@
   authorship_value: 1
   award_value: 0
   upvote_value: 1
+  name: 'Tweeting'
 
 -
   required_tags:
@@ -24,6 +27,7 @@
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Submitting a plugin'
 
 -
   required_tags:
@@ -31,20 +35,25 @@
   authorship_value: 0
   award_value: 0
   upvote_value: 1
+  name: 'Submitting an example'
 
 -
   required_tags:
     - bug
+    - github
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Reporting a bug'
 
 -
   required_tags:
     - feature
+    - github
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Submitting a feature'
 
 -
   required_tags:
@@ -52,44 +61,55 @@
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Submitting an app'
 
 -
   required_tags:
     - code
+    - github
   authorship_value: 0
   award_value: 0
   upvote_value: 1
+  name: 'Pushing the code'
 
 -
   required_tags:
     - comment
+    - disqus
   authorship_value: 0
   award_value: 0
   upvote_value: 1
+  name: 'Commenting'
 
 -
   required_tags:
     - issue_comment
     - bug
+    - github
   authorship_value: 0
   award_value: 0
   upvote_value: 1
+  name: 'Submitting a bug'
 
 -
   required_tags:
     - fork
     - digest
+    - github
   authorship_value: 1
   award_value: 0
   upvote_value: 1
+  name: 'Forking a repo'
 
 -
   required_tags:
     - watch
     - digest
+    - github
   authorship_value: 1
   award_value: 0
   upvote_value: 1
+  name: 'Starring a repo'
 
 -
   required_tags:
@@ -98,6 +118,7 @@
   authorship_value: 1
   award_value: 0
   upvote_value: 1
+  name: 'Following'
 
 -
   required_tags:
@@ -105,17 +126,77 @@
   authorship_value: 2
   award_value: 0
   upvote_value: 1
+  name: 'Organizing an event'
 
-- required_tags:
+- 
+  required_tags:
     - rsvp
     - confirmed
+    - meetup
   authorship_value: 2
   award_value: 0
   upvote_value: 0
+  name: 'Going to the event'
 
-- required_tags:
+-
+  required_tags:
     - rsvp
     - waitlist
+    - meetup
   authorship_value: 1
   award_value: 0
   upvote_value: 0
+  name: 'RSVPing for an event'
+
+-
+  required_tags:
+    - stackexchange
+    - question
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Asking a question'
+
+-
+  required_tags:
+    - stackexchange
+    - comment
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Commenting a question or answer'
+
+-
+  required_tags:
+    - stackexchange
+    - answer
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Answering a question'
+
+-
+  required_tags:
+    - foursquare
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Checking in'
+
+-
+  required_tags:
+    - facebook
+    - like
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Liking a page'
+
+-
+  required_tags:
+    - facebook
+    - comment
+  authorship_value: 1
+  award_value: 0
+  upvote_value: 0
+  name: 'Commenting on a page'

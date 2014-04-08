@@ -1,3 +1,4 @@
 json.set! :data do
-  json.partial! "api/v2/scoring_rules/rule", rule: @rule
+  json.(@rule, :id, :required_tags, :authorship_value, :upvote_value, :award_value, :priority , :name)
+
 end
