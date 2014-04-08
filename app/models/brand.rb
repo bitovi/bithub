@@ -17,6 +17,7 @@ class Brand < ActiveRecord::Base
   private
 
   def create_tenant
+    Rails.logger.info "name================ #{name}"
     Apartment::Database.create(name)
 
     # repopulate matviews upon creation
