@@ -8,16 +8,18 @@ Bithub::Application.routes.draw do
 
   #get '/api/auth/:provider/callback', :to => 'api/auth/omniauth_callbacks#twitter'
 
-  devise_for :accounts,
-    path: '/api/admin',
-    controllers: {
-      sessions: 'api/auth/account_sessions',
-      registrations: 'api/auth/account_registrations'
-    },
-    path_names: {
-      sign_in: 'login',
-      sign_out: 'logout'
-    }
+  # devise_for :accounts,
+  #   path: '/api/admin',
+  #   controllers: {
+  #     sessions: 'api/auth/account_sessions',
+  #     registrations: 'api/auth/account_registrations'
+  #   },
+  #   path_names: {
+  #     sign_in: 'login',
+  #     sign_out: 'logout'
+  #   }
+
+  devise_for :accounts, path: '/api/admin'
 
   # Dynamic image resizer
   #
