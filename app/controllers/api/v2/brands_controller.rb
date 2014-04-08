@@ -9,13 +9,15 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def show
-    @brand = Brand.find(params[:id])
+    #@brand = Brand.find(params[:id])
+    @brand = Brand.first
 
     render :show
   end
 
   def update
-    @brand = Brand.find(params[:id])
+    #@brand = Brand.find(params[:id])
+    @brand = Brand.first
 
     if @brand.update_attributes(brand_params)
       render :show
