@@ -439,7 +439,8 @@ CREATE TABLE tags (
     name character varying(255) NOT NULL,
     display_name character varying(255),
     aliases character varying[],
-    props hstore
+    props hstore,
+    taggings_count integer DEFAULT 0
 );
 
 
@@ -671,6 +672,7 @@ CREATE TABLE ownerships (
 
 CREATE TABLE scoring_rules (
     id integer NOT NULL,
+    name character varying(255),
     required_tags character varying(255)[],
     authorship_value integer,
     award_value integer,
@@ -1493,17 +1495,10 @@ CREATE INDEX index_roles_on_name_and_resource_type_and_resource_id ON roles USIN
 
 
 --
--- Name: index_taggings_on_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_tags_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_taggings_on_tag_id ON taggings USING btree (tag_id);
-
-
---
--- Name: index_taggings_on_taggable_id_and_taggable_type_and_context; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_taggings_on_taggable_id_and_taggable_type_and_context ON taggings USING btree (taggable_id, taggable_type, context);
+CREATE UNIQUE INDEX index_tags_on_name ON tags USING btree (name);
 
 
 --
@@ -1525,6 +1520,13 @@ CREATE INDEX index_users_on_email ON users USING btree (email);
 --
 
 CREATE INDEX index_users_roles_on_user_id_and_role_id ON users_roles USING btree (user_id, role_id);
+
+
+--
+-- Name: taggings_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX taggings_idx ON taggings USING btree (tag_id, taggable_id, taggable_type, context, tagger_id, tagger_type);
 
 
 --
@@ -1666,8 +1668,6 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
-
 INSERT INTO schema_migrations (version) VALUES ('0');
 
 INSERT INTO schema_migrations (version) VALUES ('10');
@@ -1711,6 +1711,10 @@ INSERT INTO schema_migrations (version) VALUES ('20');
 INSERT INTO schema_migrations (version) VALUES ('2000');
 
 INSERT INTO schema_migrations (version) VALUES ('2010');
+
+INSERT INTO schema_migrations (version) VALUES ('20140407132411');
+
+INSERT INTO schema_migrations (version) VALUES ('20140407132412');
 
 INSERT INTO schema_migrations (version) VALUES ('2020');
 
