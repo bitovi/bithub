@@ -14,4 +14,14 @@ class Account < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore
 
   belongs_to :brand
+
+  before_create :create_brand
+
+  private
+
+  def create_brand
+    brand_name = self.email.split('@').first.gsub(/[^\w-]/,'-')
+    self.brand = Brand.new({name: brand_name})
+  end
+
 end
