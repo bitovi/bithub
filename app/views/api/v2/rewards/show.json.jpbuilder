@@ -1,3 +1,4 @@
 json.set! :data do
-  json.partial! "api/v2/rewards/reward", reward: @reward
+  json.(@reward, :id, :title, :description, :point_minimum, :disabled_ts)
+  json.original_image_url @reward.image.url
 end

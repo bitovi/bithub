@@ -1,5 +1,6 @@
 json.set! :data do
   json.array! @rewards do |r|
-    json.partial! "api/v2/rewards/reward", reward: r
+    json.(r, :id, :title, :description, :point_minimum, :disabled_ts)
+    json.original_image_url r.image.url
   end
 end
