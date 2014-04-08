@@ -73,7 +73,7 @@ GIT
       simple_oauth (~> 0.2.0)
 
 GIT
-  remote: git@github.com:veljkodragsic/apartment.git
+  remote: git://github.com/veljkodragsic/apartment.git
   revision: d7558ce631d38e73ed18acd5ab9e4050084c6acb
   branch: development
   specs:
@@ -84,25 +84,25 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (3.2.17)
-      actionpack (= 3.2.17)
-      mail (~> 2.5.4)
-    actionpack (3.2.17)
-      activemodel (= 3.2.17)
-      activesupport (= 3.2.17)
+    actionmailer (3.2.11)
+      actionpack (= 3.2.11)
+      mail (~> 2.4.4)
+    actionpack (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
-      rack (~> 1.4.5)
+      rack (~> 1.4.0)
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.17)
-      activesupport (= 3.2.17)
+    activemodel (3.2.11)
+      activesupport (= 3.2.11)
       builder (~> 3.0.0)
-    activerecord (3.2.17)
-      activemodel (= 3.2.17)
-      activesupport (= 3.2.17)
+    activerecord (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
     activerecord-postgres-array (0.0.9)
@@ -113,11 +113,11 @@ GEM
       rake
     activerecord-postgresql-extensions (0.7.0)
       activerecord (>= 2.3)
-    activeresource (3.2.17)
-      activemodel (= 3.2.17)
-      activesupport (= 3.2.17)
-    activesupport (3.2.17)
-      i18n (~> 0.6, >= 0.6.4)
+    activeresource (3.2.11)
+      activemodel (= 3.2.11)
+      activesupport (= 3.2.11)
+    activesupport (3.2.11)
+      i18n (~> 0.6)
       multi_json (~> 1.0)
     acts-as-taggable-on (3.1.1)
       actionpack (>= 3, < 5)
@@ -130,7 +130,6 @@ GEM
       eventmachine
     andand (1.3.3)
     arel (3.0.3)
-    awesome_print (1.2.0)
     bcrypt (3.1.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -203,8 +202,6 @@ GEM
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       request_store (~> 1.0.3)
-    enumerize (0.8.0)
-      activesupport (>= 3.2)
     equalizer (0.0.9)
     erubis (2.7.0)
     evented-spec (0.9.0)
@@ -244,18 +241,16 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.6.9)
-    jbuilder (1.3.0)
+    jbuilder (1.5.3)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     journey (1.0.4)
-    jpbuilder (0.2.2)
+    jpbuilder (0.2.4)
       jbuilder
-    jquery-rails (3.1.0)
-      railties (>= 3.0, < 5.0)
-      thor (>= 0.14, < 2.0)
     json (1.8.1)
     jwt (0.1.11)
       multi_json (>= 1.5)
+    kgio (2.9.2)
     koala (1.9.0)
       addressable
       faraday
@@ -270,7 +265,8 @@ GEM
       rb-inotify (>= 0.9)
     log4r (1.1.10)
     lumberjack (1.0.5)
-    mail (2.5.4)
+    mail (2.4.4)
+      i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     memoizable (0.4.2)
@@ -339,30 +335,29 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
-    puma (2.8.1)
-      rack (>= 1.1, < 2.0)
-    rack (1.4.5)
+    rack (1.4.0)
     rack-cache (1.2)
       rack (>= 0.4)
     rack-ssl (1.3.4)
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    rails (3.2.17)
-      actionmailer (= 3.2.17)
-      actionpack (= 3.2.17)
-      activerecord (= 3.2.17)
-      activeresource (= 3.2.17)
-      activesupport (= 3.2.17)
+    rails (3.2.11)
+      actionmailer (= 3.2.11)
+      actionpack (= 3.2.11)
+      activerecord (= 3.2.11)
+      activeresource (= 3.2.11)
+      activesupport (= 3.2.11)
       bundler (~> 1.0)
-      railties (= 3.2.17)
-    railties (3.2.17)
-      actionpack (= 3.2.17)
-      activesupport (= 3.2.17)
+      railties (= 3.2.11)
+    railties (3.2.11)
+      actionpack (= 3.2.11)
+      activesupport (= 3.2.11)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
+    raindrops (0.13.0)
     rake (10.2.2)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.3)
@@ -418,11 +413,10 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh
       term-ansicolor
-    strong_parameters (0.2.3)
-      actionpack (~> 3.0)
-      activemodel (~> 3.0)
-      activesupport (~> 3.0)
-      railties (~> 3.0)
+    strong_parameters (0.1.4)
+      actionpack (>= 3.2.0)
+      activemodel (>= 3.2.0)
+      railties (>= 3.2.0)
     term-ansicolor (1.3.0)
       tins (~> 1.0)
     thor (0.19.1)
@@ -433,12 +427,11 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-text (1.9.0)
-      unf (~> 0.1.0)
     tzinfo (0.3.39)
-    unf (0.1.4)
-      unf_ext
-    unf_ext (0.0.6)
+    unicorn (4.8.2)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
     uniform_notifier (1.4.0)
     warden (1.2.3)
       rack (>= 1.0)
@@ -455,14 +448,13 @@ DEPENDENCIES
   amqp
   andand
   apartment!
-  awesome_print
   better_errors
   blather
   bullet
   bunny
   cancan
-  capistrano (~> 3.1.0)
-  capistrano-bundler (~> 1.1.2)
+  capistrano (~> 3.1)
+  capistrano-bundler (~> 1.1)
   capistrano-rails (~> 1.1)
   capistrano-rbenv (~> 2.0)
   carrierwave
@@ -475,11 +467,10 @@ DEPENDENCIES
   database_cleaner
   delayed_job
   delayed_job_active_record
-  devise
+  devise (~> 3.2)
   disqus!
   dotenv-rails
   draper
-  enumerize
   evented-spec
   factory_girl_rails
   foreman
@@ -487,12 +478,11 @@ DEPENDENCIES
   github_api!
   guard-rspec (~> 4.0)
   htmlentities
-  jbuilder (= 1.3.0)
-  jpbuilder (= 0.2.2)
-  jquery-rails
+  jbuilder (~> 1.3)
+  jpbuilder (~> 0.2)
   koala
   levenshtein-ffi
-  log4r (= 1.1.10)
+  log4r (~> 1.1)
   multi_json
   muster!
   newrelic_rpm
@@ -509,7 +499,6 @@ DEPENDENCIES
   omniauth-twitter
   pg
   pry-rails
-  puma
   rails (~> 3.2)
   rb-fsevent (~> 0.9)
   redcarpet
@@ -526,4 +515,4 @@ DEPENDENCIES
   spring-commands-rspec
   strong_parameters
   twitter!
-  twitter-text
+  unicorn

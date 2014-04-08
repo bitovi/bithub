@@ -50,7 +50,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   def config_params
     params
       .require(:feed_config)
-      .permit(:feed_name, :config)
+      .permit(:brand_name, :feed_name, :config)
       .tap {|wl| wl[:config] = params[:feed_config][:config]}
   end
 

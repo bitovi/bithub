@@ -18,7 +18,8 @@ namespace :data do
         required_tags: rule['required_tags'],
         authorship_value: rule['authorship_value'],
         award_value: rule['award_value'],
-        upvote_value: rule['upvote_value']
+        upvote_value: rule['upvote_value'],
+		name: rule['name']
       }
 
       if existing = ScoringRule.all.select {|r| r.required_tags.sort == rule_tags.sort}.first

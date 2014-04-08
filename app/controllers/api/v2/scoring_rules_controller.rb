@@ -24,7 +24,22 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def update
-    @rule = ScoringRule.find(params[:id])
+    # @rule = ScoringRule.find(params[:id])
+
+    # if @rule.update_attributes(rule_params)
+    #   render :show
+    # else
+    #   render :json => msg_hash(@rule, 'update'), :status => 406
+    # end
+
+
+    @rule = ScoringRule
+      .where({:name => rule_params[:name]})
+      .where("required_tags = ?", rule_params[:required_tags].to_posgres_array(true))
+      .first
+
+    @rule ||= Rule.new
+
     if @rule.update_attributes(rule_params)
       render :show
     else
@@ -44,7 +59,7 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   private
 
   def rule_params
-    params.require(:rule).permit(:authorship_value, :upvote_value, :award_value, :priority, :valid_until, required_tags: [])
+    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value, :priority, :valid_until, required_tags: [])
   end
 
 end
