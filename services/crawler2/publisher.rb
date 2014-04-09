@@ -19,12 +19,21 @@ class Publisher
   def publish(brand, events)
     Celluloid.logger.info "-----------> Publishing with routing_key: #{brand}"
     events.each do |e|
-      Celluloid.logger.info e.text
+      #Celluloid.logger.info e.text
+      Celluloid.logger.info e.inspect
     end
 
     # reject_old(brand, process(events)).each do |e|
     #   @x.publish(e, routing_key: brand)
     # end
+
+    # {
+    #   feed_name: "",
+    #   type_name: "",
+    #   content_digest: "",
+    #   brand_name: "",
+    #   source_data: {}
+    # }
   end
 
   def process(events)

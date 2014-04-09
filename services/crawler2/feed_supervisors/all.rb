@@ -1,5 +1,6 @@
 require_relative 'disqus'
 require_relative 'facebook'
+require_relative 'foursquare'
 require_relative 'github'
 require_relative 'meetup'
 require_relative 'twitter'
