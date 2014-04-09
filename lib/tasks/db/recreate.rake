@@ -8,7 +8,6 @@ namespace :db do
     end
     Rake::Task["db:create"].execute
     Rake::Task["db:migrate"].execute
-    Rake::Task["db:seed"].execute
     Rake::Task["data:import"].execute
   end
 end
