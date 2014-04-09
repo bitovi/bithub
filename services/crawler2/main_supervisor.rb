@@ -1,25 +1,38 @@
 class MainSupervisor
   include Celluloid
+  include CoreHelpers
 
   def initialize
-    @config = Configurator.new(ENV['ENV']).config
+    @configurator = Configurator.new(ENV['ENV'])
     boot
   end
 
   def boot
     @components = SupervisionGroup.new
-    
-    @components.supervise_as(:twitter_public_stream     , Streamers::Twitter::Filter    , *[twitter_auth])
+    @components.supervise_as(
+      :twitter_public_stream,
+      Streamers::Twitter::Filter,
+      *[twitter_auth]
+    )
 
-    brands_config.each do |brand_name, cfg|
+    all_brand_configs.each do |brand_name, cfg|
       Celluloid.logger.info "Booting #{brand_name}"
-      @components.supervise_as(actor_name(brand_name), BrandSupervisor, *[brand_name, cfg])
+      @components.supervise_as(
+        actor_name(brand_name),
+        BrandSupervisor,
+        *[brand_name, cfg]
+      )
     end
   end
 
   def restart_brand(brand_name)
+    Celluloid.logger.info "Restarting brand: #{brand_name}"
     Celluloid::Actor[actor_name(brand_name)].terminate
-    @brands.supervise_as(actor_name(brand_name), Streamer, *[brand_name, @config.fetch(brand_name)])
+    @brands.supervise_as(
+      actor_name(brand_name),
+      Streamer,
+      *[brand_name, @configurator.brand_config(brand_name)]
+    )
   end
 
   private
@@ -28,11 +41,14 @@ class MainSupervisor
     "#{brand_name}_supervisor".to_sym
   end
 
-  def brands_config
-    @config.fetch(:brands)
+  def all_brand_configs
+    @configurator.whole_config
   end
 
   def twitter_auth
-    @config.fetch(:public_streams).fetch(:twitter).fetch(:auth)
+    @configurator.static_config
+    .fetch(:public_streams)
+    .fetch(:twitter)
+    .fetch(:auth)
   end
 end
