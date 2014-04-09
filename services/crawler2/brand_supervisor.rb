@@ -5,14 +5,14 @@ class BrandSupervisor
 
   def initialize(brand_name, cfg)
     @brand_name = brand_name
-    @config = cfg
+    @all_feed_configs = cfg
     boot
   end
 
   def boot
     @feeds = SupervisionGroup.new
 
-    feeds_config.each do |feed_name, cfg|
+    @all_feed_configs.each do |feed_name, cfg|
       @feeds.supervise_as(actor_name(feed_name), feed_supervisor(feed_name), *[@brand_name, cfg])
     end
   end
@@ -27,10 +27,6 @@ class BrandSupervisor
   
   def actor_name(feed_name)
     "#{@brand_name}_#{feed_name}_supervisor".to_sym
-  end
-
-  def feeds_config
-    @config
   end
 
   def feed_supervisor(feed_name)
