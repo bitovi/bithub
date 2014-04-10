@@ -8,8 +8,8 @@ class MainSupervisor
 
   def boot
     @components = SupervisionGroup.new
-    
-    @components.supervise_as(:twitter_public_stream     , Streamers::Twitter::Filter    , *[twitter_auth])
+
+    @components.supervise_as(:twitter_public_stream, Streamers::Twitter::Filter, *[twitter_auth])
 
     brands_config.each do |brand_name, cfg|
       Celluloid.logger.info "Booting #{brand_name}"

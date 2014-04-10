@@ -52,6 +52,11 @@
             :pages:
                 - :id: '192366630868826'
                   :token: 'CAACEdEose0cBAEBVPyWZAliTBrPRFXPByF1fqnZBon4vB35HuZC7atCSGmhA3cuZAW0xiqBXMkzZC0wp1yIEaKMLXmZAzboGQo9ZAYBdiTfiQD7SbSJwSOM5sbgYSvGSI3hewDq5mcneewwt7meeDsrb35yFz9bV5crXr8xw9ZCZCRIoB0qKVUnZCNE2LnZB90eDPcZD'
+        :foursquare:
+            :token: '_token_for_foursquare_'
+            :venues:
+                - :id: '12345'
+                - :id: '45657'
 
         :twitter:
             :token: '857919337-0UubltaCQLVnjXmRfw0ci648Baw54XmN0UTocHpO'
@@ -93,6 +98,11 @@
             :pages:
                 - :id: '487939194652299'
                   :token: 'CAACEdEose0cBAPgl4wnuZBdBbT34dBZCKNrurbGdrQth8Oo7dgvzYOVQZBiobCHEUQW82dZAoJJ9ZC9QDtcabMHR34NHNh7DPP6ebVC0dOJpniNLYVbDZCXVk6b7se4VJ1a06CZC9IGw9ynpYPknblZA379kWzOLmB8J5INwTPkejMpKIXKFp46ixgIPWLMPRnFDMy7UudyGYwZDZD'
+        :foursquare:
+            :token: '_token_for_foursquare_'
+            :venues:
+                - :id: '45657'
+                - :id: '67890'
         # :disqus:
         #     :token: 'b08029df87f74c99afeba385e519e3e0'
         #     :related:
