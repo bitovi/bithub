@@ -1,54 +1,65 @@
 class MainSupervisor
   include Celluloid
-  include CoreHelpers
 
   def initialize
-    @configurator = Configurator.new(ENV['ENV'])
     boot
   end
 
   def boot
-    @components = SupervisionGroup.new
-    @components.supervise_as(
+    @streams = SupervisionGroup.new
+    @streams.supervise_as(
       :twitter_public_stream,
       Streamers::Twitter::Filter,
       *[twitter_auth]
     )
 
+    @brands = SupervisionGroup.new
     all_brand_configs.each do |brand_name, cfg|
-      Celluloid.logger.info "Booting #{brand_name}"
-      @components.supervise_as(
-        actor_name(brand_name),
-        BrandSupervisor,
-        *[brand_name, cfg]
-      )
+      Celluloid.logger.info "Booting brand: #{brand_name}"
+      start_brand(brand_name)
     end
   end
 
-  def restart_brand(brand_name)
-    Celluloid.logger.info "Restarting brand: #{brand_name}"
-    Celluloid::Actor[actor_name(brand_name)].terminate
+  def reload_brand_feed(brand_name, feed_name)
+    if Celluloid::Actor[actor_name(brand_name)].respond_to? :reload_feed
+      Celluloid.logger.info "Reloading #{actor_name(brand_name)}"
+      Celluloid::Actor[actor_name(brand_name)].reload_feed(feed_name)
+    else
+      stop_brand(brand_name)
+      start_brand(brand_name)
+    end
+  end
+
+  def start_brand(brand_name)
+    Celluloid.logger.info "Starting #{actor_name(brand_name)}"
     @brands.supervise_as(
       actor_name(brand_name),
-      Streamer,
-      *[brand_name, @configurator.brand_config(brand_name)]
+      BrandSupervisor,
+      *[brand_name]
     )
   end
 
+  def stop_brand(brand_name)
+    Celluloid.logger.info "Stopping #{actor_name(brand_name)}"
+    Celluloid::Actor[actor_name(brand_name)].terminate
+  end
+
   private
+  
+  def all_brand_configs
+    Celluloid::Actor[:configurator].whole_config
+  end
 
   def actor_name(brand_name)
     "#{brand_name}_supervisor".to_sym
   end
 
-  def all_brand_configs
-    @configurator.whole_config
-  end
-
   def twitter_auth
-    @configurator.static_config
-    .fetch(:public_streams)
-    .fetch(:twitter)
-    .fetch(:auth)
+    config = Celluloid::Actor[:configurator].static_config
+    if config
+      config.fetch(:public_streams).fetch(:twitter).fetch(:auth)
+    else
+      [:error, "unable to provide local config"]
+    end
   end
 end
