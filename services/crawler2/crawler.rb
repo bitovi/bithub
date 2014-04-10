@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 RootDir = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
 
 $:.unshift(File.join(RootDir, 'app', 'domain'))
@@ -26,6 +27,7 @@ require_relative 'poller'
 require_relative 'channel'
 require_relative 'streamers/all'
 require_relative 'fetchers/all'
+require_relative 'http_server/listener'
 require_relative 'digest_set'
 require_relative 'response_processor'
 
@@ -48,6 +50,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
   supervise Commander, as: :commander
   supervise Configurator, as: :configurator, args: [{}] 
+  supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
 end
 

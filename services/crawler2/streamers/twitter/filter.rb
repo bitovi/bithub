@@ -53,12 +53,13 @@ module Streamers
       end
 
       private
+
       def listen
         @client = Client.supervise(auth: @auth, topics: topics) do |object|
           Celluloid.logger.info "new tweet #{object.text}"
         end
       end
-      
+
       def topics
         (t = @channels.map{|c| c.topics}.uniq.flatten).empty? ? DEFAULT_TRACK_TERMS : t
       end
