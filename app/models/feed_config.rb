@@ -1,29 +1,39 @@
 class FeedConfig < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
+  include AmqpHelpers
 
   attr_accessible :brand_name, :feed_name, :config
-
   serialize :config, JSON
-
   validates_presence_of :brand_name, :feed_name
-
   after_update :notify_crawler
-
-  private
+  after_create :notify_crawler
 
   def notify_crawler
-    # current_tenant = Apartment::Database.current_tenant
-    # return if current_tenant == Apartment::default_schema
-
     msg = {
-      brand: self.brand_name,
-      feed: self.feed_name,
-      action: "reload"
+      brand_name: self.brand_name,
+      feed_name: self.feed_name,
+      action: :restart
     }
 
-    AmqpHelpers.publish_to_mq \
-      :msg => msg,
-      :exchange_name => 'x.crawler',
-      :exchange_type => 'fanout'
+    Rails.logger.info "Publishing command #{msg}"
+    rabbit(exchange_name: 'x.crawler').publish(msg, :config)
+    [:ok, msg]
   end
+
+  def terms
+    if has_terms?
+      config['terms']
+    else
+      no_terms
+    end
+  end
+
+  def has_terms?
+    not(config['terms'].nil?)
+  end
+
+  def no_terms
+    [:error, "not a config with terms"]
+  end
+
 end

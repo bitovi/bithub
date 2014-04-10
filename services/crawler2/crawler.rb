@@ -11,13 +11,17 @@ require 'celluloid/io'
 require 'bunny'
 require 'redis'
 
+require 'pry'
 require 'core_ext'
+require 'core_helpers'
+require 'amqp_helpers'
 require 'logger_factory'
 
 require_relative 'main_supervisor'
 require_relative 'brand_supervisor'
 require_relative 'publisher'
 require_relative 'configurator'
+require_relative 'commander'
 require_relative 'poller'
 require_relative 'channel'
 require_relative 'streamers/all'
@@ -42,6 +46,8 @@ Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
+  supervise Commander, as: :commander
+  supervise Configurator, as: :configurator, args: [{}] 
   supervise MainSupervisor, as: :main_supervisor
 end
 
