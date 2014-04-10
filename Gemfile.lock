@@ -202,6 +202,8 @@ GEM
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       request_store (~> 1.0.3)
+    enumerize (0.8.0)
+      activesupport (>= 3.2)
     equalizer (0.0.9)
     erubis (2.7.0)
     evented-spec (0.9.0)
@@ -471,6 +473,7 @@ DEPENDENCIES
   disqus!
   dotenv-rails
   draper
+  enumerize
   evented-spec
   factory_girl_rails
   foreman
