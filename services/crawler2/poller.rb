@@ -28,6 +28,7 @@ class Poller
   end
 
   private
+
   def x_seconds
     @interval
   end
