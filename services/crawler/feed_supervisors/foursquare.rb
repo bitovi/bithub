@@ -2,9 +2,8 @@ module FeedSupervisors
   class Foursquare
     include Celluloid
 
-    def initialize(brand_name, cfg)
+    def initialize(brand_name)
       @brand_name = brand_name
-      @config = cfg
       boot
     end
 
@@ -17,7 +16,7 @@ module FeedSupervisors
     private
 
     def venues
-      @config.fetch(:venues)
+      Celluloid::Actor[:configurator].feed_config(@brand_name, :foursquare).fetch(:venues)
     end
 
     def venue_ids

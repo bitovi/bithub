@@ -3,9 +3,11 @@ require_relative 'digest_set'
 
 class Publisher
   include Celluloid
+  include AmqpHelpers
 
   def initialize
-    @rabbit = Bunny.new
+    Celluloid.logger.info "Initializing Publisher"
+    @rabbit = Bunny.new(rabbitmq_uri)
     @rabbit.start
     @chan = @rabbit.create_channel
 

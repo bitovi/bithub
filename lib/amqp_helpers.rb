@@ -1,29 +1,35 @@
-require 'yajl'
+require 'multi_json'
 
 module AmqpHelpers
 
-  class MissingMessageException < Exception; end
+  def rabbit(args = {})
+    @conn = Bunny.new(rabbitmq_uri).start
+    ch = @conn.create_channel
 
-  def self.publish_to_mq(args)
-    raise MissingMessageException unless msg = args[:msg]
+    exchange_type = args.fetch(:exchange_type) { 'direct' }
+    exchange_name = args.fetch(:exchange_name) { '' }
+    exchange_opts = args.fetch(:exchange_opts) { {:auto_delete => true, :durable => false} }
 
-    exchange_name = args[:exchange_name] || ''
-    exchange_type = args[:exchange_type]
-
-    conn = Bunny.new(ENV['RABBITMQ_URI'])
-    conn.start
-
-    ch = conn.create_channel
-
-    if ['fanout', 'direct'].include?(exchange_type) and exchange_name.length > 0
-      x = ch.send(exchange_type, exchange_name)
-    else
-      x = ch.default_exchange
-    end
-
-    x.publish(Yajl::Encoder.encode(msg))
-
-    conn.close
+    @x = ch.send(exchange_type, *[exchange_name, exchange_opts])
+    self
   end
 
+  def publish(msg, rk)
+    after @x.publish(MultiJson.dump(msg), :routing_key => rk) do
+      @conn.close
+    end
+  end
+
+  def exchange
+    @x
+  end
+
+  def rabbitmq_uri
+    ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/bithub" }
+  end
+
+  def after(exp)
+    yield
+    exp
+  end
 end
