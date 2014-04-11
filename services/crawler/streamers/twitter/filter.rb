@@ -41,17 +41,22 @@ module Streamers
         @channels = []
       end
 
+      def reconnect
+        Celluloid.logger.info "Reconnecting twitter:public_stream with topics: #{topics}"
+        @client.terminate if @client
+        listen
+      end
+
       def connect
         Celluloid.logger.info "Connecting twitter:public_stream with topics: #{topics}"
-        @client.terminate if @client
         listen if @channels.length > 0
       end
 
       private
 
       def listen
-        @client = Client.new_link(auth: @auth, topics: topics) do |object|
-          route object, %i(text)
+        @client = Client.supervise(auth: @auth, topics: topics) do |object|
+          Celluloid.logger.info "new tweet #{object.text}"
         end
       end
 
