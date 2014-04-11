@@ -20,20 +20,20 @@ Bithub::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
-  # Use a different cache store in production
-  config.cache_store = :dalli_store
 
-  # Set up Rack::Cache to use Memcached store
+  # Use a different cache store
+  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
+
+  # Set up Rack::Cache to use Redis store
+  #config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
   config.action_dispatch.rack_cache = {
-    :metastore    => Dalli::Client.new,
-    :entitystore  => 'file:/var/cache/rack/body',
-    :allow_reload => false
+    metastore:    "#{ENV['REDIS_URL']}/metastore",
+    entitystore:  "#{ENV['REDIS_URL']}/entitystore",
+    allow_reload: false
   }
 
   # Set the Cache-Control header
   config.static_cache_control = "public, max-age=2592000"
-
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH

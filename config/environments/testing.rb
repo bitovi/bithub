@@ -24,13 +24,10 @@ Bithub::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
-  # Use a different cache store in production
-  config.cache_store = :dalli_store
-  config.session_store :dalli_store
 
-  # User different log location for Dalli
-  Dalli.logger = LoggerFactory.new('dalli', 'testing').component_logger
+  # Use a different cache store
+  config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
+  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
