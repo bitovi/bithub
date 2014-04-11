@@ -177,7 +177,6 @@ GEM
     coderay (1.1.0)
     connection_pool (1.2.0)
     daemons (1.1.9)
-    dalli (2.7.0)
     database_cleaner (1.2.0)
     delayed_job (4.0.0)
       activesupport (>= 3.0, < 4.1)
@@ -366,6 +365,22 @@ GEM
       json (~> 1.4)
     redcarpet (3.1.1)
     redis (3.0.7)
+    redis-actionpack (3.2.4)
+      actionpack (~> 3.2.0)
+      redis-rack (~> 1.4.4)
+      redis-store (~> 1.1.4)
+    redis-activesupport (3.2.5)
+      activesupport (~> 3.2.0)
+      redis-store (~> 1.1.0)
+    redis-rack (1.4.4)
+      rack (~> 1.4.0)
+      redis-store (~> 1.1.4)
+    redis-rails (3.2.4)
+      redis-actionpack (~> 3.2.4)
+      redis-activesupport (~> 3.2.4)
+      redis-store (~> 1.1.4)
+    redis-store (1.1.4)
+      redis (>= 2.2)
     request_store (1.0.5)
     rmagick (2.13.2)
     rolify (3.4.0)
@@ -463,7 +478,6 @@ DEPENDENCIES
   cinch
   codeclimate-test-reporter
   daemons
-  dalli
   database_cleaner
   delayed_job
   delayed_job_active_record
@@ -503,6 +517,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9)
   redcarpet
   redis
+  redis-rails
   reel!
   rmagick
   rmeetup!

@@ -8,8 +8,8 @@ gem 'amqp' # TODO remove this after crawler/listener refactoring.
 gem 'bunny'
 gem 'pg'
 
-gem 'dalli'
 gem 'redis'
+gem 'redis-rails'
 gem 'cancan'
 gem 'rmagick'
 gem 'draper'
