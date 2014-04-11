@@ -1,4 +1,13 @@
 GIT
+  remote: git://github.com/RKushnir/foursquare2.git
+  revision: eeeb63b84611b1c4294cabf66209f9caae9a8cbd
+  branch: master
+  specs:
+    foursquare2 (1.9.8)
+      faraday (~> 0.9)
+      hashie (>= 1.0, < 3.0.0)
+
+GIT
   remote: git://github.com/celluloid/reel.git
   revision: dba5c521b8f4ad6509c3634d5aa1c4adc8c9ec4c
   specs:
@@ -491,6 +500,7 @@ DEPENDENCIES
   evented-spec
   factory_girl_rails
   foreman
+  foursquare2!
   git
   github_api!
   guard-rspec (~> 4.0)
