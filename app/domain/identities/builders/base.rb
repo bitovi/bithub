@@ -6,10 +6,9 @@ module Identities
       attr_accessor :data
 
       def initialize(args)
-        args = HashWithIndifferentAccess.new args
         raise InvalidArguments unless args.include? :oauth
 
-        @data = args
+        @data = HashWithIndifferentAccess.new({custom: {}}.merge args)
         self
       end
 
@@ -21,7 +20,10 @@ module Identities
         @data[:oauth]
       end
 
-    end
+      def custom
+        @data[:custom]
+      end
 
+    end
   end
 end
