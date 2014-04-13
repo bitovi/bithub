@@ -9,12 +9,12 @@ module FeedSupervisors
 
     def boot
       Celluloid.logger.info "Booting Twitter supervisor for #{@brand_name}"
-      @client = init_client
+      # @client = init_client
 
-      @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: terms}), {interval: 360}])
+      # @endpoints = SupervisionGroup.new
+      # @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: terms}), {interval: 360}])
 
-      Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
+      # Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
     end
 
     def reload
