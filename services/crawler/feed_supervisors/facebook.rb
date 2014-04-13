@@ -14,7 +14,7 @@ module FeedSupervisors
       @endpoints = SupervisionGroup.new
       pages.each do |page|
         fetcher = Fetchers::Facebook::PageFeed.new(client = ::Koala::Facebook::API.new(page.fetch(:token)))
-        @endpoints.supervise_as(actor_name('pages', page.fetch(:id)), Poller, *[@brand_name, fetcher])
+        @endpoints.supervise_as(actor_name('pages', page.fetch(:id)), Poller, *[@brand_name, fetcher, {interval: 5}])
       end
     end
 
