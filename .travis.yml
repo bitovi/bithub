@@ -2,7 +2,7 @@ language: ruby
 script:
   - "bundle exec rake db:migrate"
   - "bundle exec rake db:test:prepare"
-  - "bundle exec rspec spec/domain"
+  - "bundle exec rake test"
 notifications:
   slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4
   webhooks:
