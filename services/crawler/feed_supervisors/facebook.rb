@@ -12,9 +12,10 @@ module FeedSupervisors
     def boot
       Celluloid.logger.info "Booting Facebook supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
+
       pages.each do |page|
         fetcher = Fetchers::Facebook::PageFeed.new(client = ::Koala::Facebook::API.new(page.fetch(:token)))
-        @endpoints.supervise_as(actor_name('pages', page.fetch(:id)), Poller, *[@brand_name, fetcher, {interval: 5}])
+        @endpoints.supervise_as(actor_name('pages', page.fetch(:id)), Poller, *[@brand_name, fetcher, {interval: 10}])
       end
     end
 

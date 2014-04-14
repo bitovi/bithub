@@ -18,8 +18,6 @@ class ResponseProcessor
 
   class Configuration
     attr_accessor :term, :feed
-    attr_writer :user_stream
-    def user_stream?; @user_stream; end
   end
 
   def initialize(response, &blk)
@@ -45,8 +43,6 @@ class ResponseProcessor
   def decorate
     @decorated ||= result.map do |event_hash|
       event_instance(event_hash)
-    end.reject do |event|
-      tweet_from_user_stream?(event)
     end.map do |event|
       event.to_hash.deep_merge(subprocessor.decorate)
     end

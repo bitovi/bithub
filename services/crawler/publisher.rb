@@ -18,28 +18,40 @@ class Publisher
     @filter = DigestSet.new
   end
 
-  def publish(brand, events)
+  def publish(brand, events) # pass in feed?
     Celluloid.logger.info "-----------> Publishing with routing_key: #{brand}"
+
     events.each do |e|
-      #Celluloid.logger.info e.text
-      Celluloid.logger.info e.inspect
+      # STEPS
+      # ------
+      # process
+      # filter (reject_old)
+      # publish
     end
+  end
 
-    # reject_old(brand, process(events)).each do |e|
-    #   @x.publish(e, routing_key: brand)
-    # end
-
+  def process(events)
+    # process with ResponseProcessor.new(events, feed).process
+    # should return something like
+    #
     # {
     #   feed_name: "",
     #   type_name: "",
-    #   content_digest: "",
     #   brand_name: "",
+    #   content_digest: "",
     #   source_data: {}
     # }
   end
 
-  def process(events)
-    events.map{|e| ResponseProcessor.new(e).extract_raw}
+  def reject_old
+    # filter old stuff with DigestSet.reject_old(events)
+    # should return only new events
+  end
+
+  def publish(events, brand)
+    events.each do |e|
+      @x.publish(e, routing_key: brand)
+    end
   end
 
   def reject_old(brand, events)
