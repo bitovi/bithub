@@ -56,7 +56,7 @@ module Streamers
 
       def listen
         @client = Client.supervise(auth: @auth, topics: topics) do |object|
-          Celluloid.logger.info "new tweet #{object.text}"
+          route object, %i(text)
         end
       end
 
