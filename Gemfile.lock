@@ -43,14 +43,6 @@ GIT
       rack (~> 1.4)
 
 GIT
-  remote: git://github.com/neektza/rmeetup.git
-  revision: 91df78533a48a64f88064135a948eeeb8f7f16b0
-  branch: master
-  specs:
-    rmeetup (1.1.0)
-      json
-
-GIT
   remote: git://github.com/peter-murach/github.git
   revision: c5ba8f436f3057530ff6f564f8e64b7e1d7fef07
   branch: master
@@ -514,7 +506,6 @@ DEPENDENCIES
   redis-rails
   reel!
   rmagick
-  rmeetup!
   rolify (~> 3.2)
   rspec (~> 2.14)
   rspec-rails
