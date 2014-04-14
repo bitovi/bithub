@@ -23,14 +23,14 @@ Bithub::Application.configure do
 
   # Use a different cache store
   config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
+  config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
 
   # Set up Rack::Cache to use Redis store
-  #config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
-  config.action_dispatch.rack_cache = {
-    metastore:    "#{ENV['REDIS_URL']}/metastore",
-    entitystore:  "#{ENV['REDIS_URL']}/entitystore",
-    allow_reload: false
-  }
+  # config.action_dispatch.rack_cache = {
+  #   metastore:    "#{ENV['REDIS_URL']}/metastore",
+  #   entitystore:  "#{ENV['REDIS_URL']}/entitystore",
+  #   allow_reload: false
+  # }
 
   # Set the Cache-Control header
   config.static_cache_control = "public, max-age=2592000"

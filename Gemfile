@@ -15,7 +15,6 @@ gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
 
-#gem 'apartment', :git => 'git@github.com:influitive/apartment.git', :branch => 'development'
 gem 'apartment', :github => 'veljkodragsic/apartment', :branch => 'development'
 gem 'enumerize'
 gem 'strong_parameters'
@@ -41,7 +40,6 @@ gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
 
 gem 'redcarpet'
-# gem 'maruku'
 
 gem 'foreman'
 gem 'sanitize'
@@ -55,7 +53,7 @@ gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec', group: [:development, :test]
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
-gem 'muster', :git => "git://github.com/neektza/muster.git"
+gem 'muster', :github => "neektza/muster"
 
 # API client libs
 gem 'octokit', '~> 2.0'
@@ -63,9 +61,7 @@ gem 'koala'
 
 gem 'github_api'  , github: 'peter-murach/github'    , branch: 'master'
 gem 'twitter'     , github: 'sferik/twitter'         , branch: 'master'
-gem 'rmeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
 gem 'disqus'      , github: 'hedgeyedev/disqus'      , branch: 'master'
-#gem 'foursquare2' , github: 'mattmueller/foursquare2', branch: 'master'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
 
 group :test do
@@ -73,7 +69,6 @@ group :test do
   gem 'factory_girl_rails'
   gem 'rspec', '~> 2.14'
   gem 'rspec-rails'
-  gem 'guard-rspec', '~> 4.0', require: false
   gem 'database_cleaner'
   gem 'better_errors'
   gem 'evented-spec'

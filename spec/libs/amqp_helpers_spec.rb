@@ -27,11 +27,4 @@ describe AmqpHelpers do
       expect(@publisher.exchange.auto_delete?).to be_true
     end
   end
-
-  describe "#publish" do
-    it "publishes the message to the previosly defined exchange" do
-      expect(@publisher.rabbit.publish("vila jadrana")).to eq "str"
-    end
-  end
-
 end

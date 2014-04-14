@@ -48,7 +48,7 @@ class Publisher
     # should return only new events
   end
 
-  def publish(events, brand)
+  def send(events, brand)
     events.each do |e|
       @x.publish(e, routing_key: brand)
     end
