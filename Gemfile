@@ -73,7 +73,6 @@ group :test do
   gem 'factory_girl_rails'
   gem 'rspec', '~> 2.14'
   gem 'rspec-rails'
-  gem 'guard-rspec', '~> 4.0', require: false
   gem 'database_cleaner'
   gem 'better_errors'
   gem 'evented-spec'
