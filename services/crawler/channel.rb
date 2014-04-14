@@ -10,6 +10,12 @@ class Channel
   end
 
   def target_text(object, attrs)
-    attrs.reduce("") {|acc, attr| acc + object.send(attr)}
+    attrs.reduce("") do |acc, attr|
+      if object.respond_to? attr
+        acc + object.send(attr)
+      else
+        acc + object.fetch(attr)
+      end
+    end
   end
 end
