@@ -7,6 +7,7 @@ class Publisher
 
   def initialize
     Celluloid.logger.info "Initializing Publisher"
+
     @rabbit = Bunny.new(rabbitmq_uri)
     @rabbit.start
     @chan = @rabbit.create_channel
@@ -18,19 +19,23 @@ class Publisher
     @filter = DigestSet.new
   end
 
-  def publish(brand, events) # pass in feed?
-    Celluloid.logger.info "-----------> Publishing with routing_key: #{brand}"
+  def publish(brand, feed, events)
+    Celluloid.logger.info "-----------> Publishing from #{feed} with routing_key: #{brand}"
 
-    events.each do |e|
-      # STEPS
-      # ------
-      # process
-      # filter (reject_old)
-      # publish
-    end
+    # events.each do |e|
+    #   # STEPS
+    #   # ------
+    #   # process
+    #   # filter (reject_old)
+    #   # publish
+    # end
+
+    processed_events = events.map {|e| process e, brand, feed}
+    filtered_events  = reject_old processed_events, brand
+    publish_many filtered_events, brand
   end
 
-  def process(events)
+  def process(event, brand, feed)
     # process with ResponseProcessor.new(events, feed).process
     # should return something like
     #
@@ -41,20 +46,28 @@ class Publisher
     #   content_digest: "",
     #   source_data: {}
     # }
-  end
 
-  def reject_old
-    # filter old stuff with DigestSet.reject_old(events)
-    # should return only new events
-  end
-
-  def publish(events, brand)
-    events.each do |e|
-      @x.publish(e, routing_key: brand)
+    if dispatched = Events::Dispatcher.dispatch(event, feed)
+      {
+        feed_name: feed, #dispatched.feed_name.snake_case,
+        type_name: dispatched.type_name.snake_case,
+        brand_name: brand,
+        content_digest: dispatched.content_digest,
+        source_data: event
+      }
     end
   end
 
-  def reject_old(brand, events)
-    @filter.reject_old(brand, events)
+  def reject_old(events, brand)
+    @filter.reject_old events, brand
   end
+
+  def publish_many(events, brand)
+    events.each {|e| publish e, brand}
+  end
+
+  def publish(event, brand)
+    @x.publish(e, routing_key: brand)
+  end
+
 end
