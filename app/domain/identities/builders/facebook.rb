@@ -1,3 +1,5 @@
+require 'andand'
+
 module Identities
   module Builders
     class Facebook < Base
@@ -13,11 +15,14 @@ module Identities
       end
 
       def build
-        if long_lived_token = fetch_long_lived_token
-          @data[:custom][:long_lived_token] = long_lived_token
-          @conn_rest = create_facebook_client
+        if long_lived_token = fetch_long_lived_access_token
+          @data[:long_lived_access_token] = long_lived_token
+
+          # create new connector with long lived token
+          @conn_rest = create_facebook_client long_lived_token
         end
 
+        # page objects should now contain no-expiry tokens
         sync_pages
         @data
       end
@@ -29,7 +34,7 @@ module Identities
       # Accessors
 
       def access_token
-        long_lived_token || oauth.fetch(:credentials).fetch(:token)
+        long_lived_access_token || oauth.fetch(:credentials).fetch(:token)
       end
 
       def page_ids
@@ -46,11 +51,11 @@ module Identities
       end
 
       def pages
-        @data.fetch(:pages)
+        @data[:pages] || []
       end
 
-      def long_lived_token
-        @data.fetch(:custom)[:long_lived_token]
+      def long_lived_access_token
+        @data[:long_lived_access_token]
       end
 
       private
@@ -59,18 +64,18 @@ module Identities
         @conn_rest.get_connections('me','accounts')
       end
 
+      def fetch_long_lived_access_token(token = access_token)
+        if response = @conn_oauth.exchange_access_token_info(token)
+          response['access_token']
+        end
+      end
+
       def create_facebook_client(token = access_token)
         Koala::Facebook::API.new token
       end
 
       def create_facebook_oauth_client(key, secret)
         Koala::Facebook::OAuth.new key, secret
-      end
-
-      def fetch_long_lived_token(token = access_token)
-        if result = @conn_oauth.exchange_access_token_info(token)
-          result['access_token']
-        end
       end
 
     end
