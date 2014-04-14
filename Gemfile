@@ -53,7 +53,7 @@ gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec', group: [:development, :test]
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
-gem 'muster', :git => "git://github.com/neektza/muster.git"
+gem 'muster', :github => "neektza/muster"
 
 # API client libs
 gem 'octokit', '~> 2.0'
