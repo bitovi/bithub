@@ -62,11 +62,11 @@ class Publisher
     @filter.reject_old events, brand
   end
 
-  def publish_many(events, brand)
-    events.each {|e| publish e, brand}
+  def send(events, brand)
+    events.each {|e| send_one e,brand}
   end
 
-  def publish(event, brand)
+  def send_one(event, brand)
     @x.publish(e, routing_key: brand)
   end
 
