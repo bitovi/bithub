@@ -1,4 +1,4 @@
-require_relative 'support/spec_helper'
+require 'spec_helper'
 
 describe Entity do
 
@@ -11,12 +11,10 @@ describe Entity do
   end
 
   context "upon creation" do
-    before(:all) { @default_rule = create(:scoring_rule) }
-    after(:all) { @default_rule.destroy }
 
     describe "#save" do
       it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
-        generic_entity = build(:entity)
+        generic_entity = FactoryGirl.build(:entity)
         expect{generic_entity.save!}.to raise_error
       end
     end
@@ -45,14 +43,14 @@ describe Entity do
 
     describe "#thread" do
       it "fetches the entity itself wrapped in an array if there is no thread" do
-        e = create(:github_issue, title: "Why is this happening?")
+        e = FactoryGirl.create(:github_issue, title: "Why is this happening?")
         e.thread.should =~ [e]
       end
 
       it "fetches the whole thread" do
-        pe = create(:github_issue, title: "Why is this happening?")
-        ce1 = create(:github_issue_comment, title: "I don't care.", parent: pe)
-        ce2 = create(:github_issue_comment, title: "Wat? Qua?", parent: pe)
+        pe = FactoryGirl.create(:github_issue, title: "Why is this happening?")
+        ce1 = FactoryGirl.create(:github_issue_comment, title: "I don't care.", parent: pe)
+        ce2 = FactoryGirl.create(:github_issue_comment, title: "Wat? Qua?", parent: pe)
         pe.thread.should =~ ce1.thread
         expect(pe.thread.length).to eql(3)
       end
@@ -60,9 +58,9 @@ describe Entity do
 
     describe "#bump_thread" do
       it "updates the thread_updated_ts attribute for all entities in a thread" do
-        pe = create(:github_issue, title: "Why is this happening?", origin_ts: Time.now+5)
-        ce1 = create(:github_issue_comment, title: "I don't care.", parent: pe, origin_ts: Time.now+10)
-        ce2 = create(:github_issue_comment, title: "Wat? Qua?", parent: pe, origin_ts: Time.now+15)
+        pe = FactoryGirl.create(:github_issue, title: "Why is this happening?", origin_ts: Time.now+5)
+        ce1 = FactoryGirl.create(:github_issue_comment, title: "I don't care.", parent: pe, origin_ts: Time.now+10)
+        ce2 = FactoryGirl.create(:github_issue_comment, title: "Wat? Qua?", parent: pe, origin_ts: Time.now+15)
 
         ce2.bump_thread
         pe.reload.thread_updated_ts.should > pe.origin_ts
@@ -72,7 +70,7 @@ describe Entity do
     end
 
     describe "#cache_key" do
-      before(:each) { @entity = create(:entity_determined, title: "Entity in entity_spec, testing #cache_key") }
+      before(:each) { @entity = FactoryGirl.create(:determined_entity, title: "Entity in entity_spec, testing #cache_key") }
 
       it "uses the id, updated_at and thread_updated_ts timestamps when they are present" do
         expect(@entity.reload.cache_key).to eq "entities/#{@entity.id}-#{@entity.updated_at.utc.to_s(:number)}-#{@entity.thread_updated_ts.utc.to_s(:number)}"
