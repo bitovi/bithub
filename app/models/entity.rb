@@ -301,10 +301,11 @@ class Entity < ActiveRecord::Base
 
   # Helper methods
   def self.has_an_attribute?(attr)
-    Event.reflections.include?(attr.to_sym) ||
-    Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    Event.attribute_names.include?(attr.to_s) ||
-    Event.attribute_names.include?(attr.to_s.pluralize)
+    self.attribute_method? attr.to_sym ||
+    self.reflections.include?(attr.to_sym) ||
+    self.reflections.include?(attr.to_s.pluralize.to_sym) ||
+    self.attribute_names.include?(attr.to_s) ||
+    self.attribute_names.include?(attr.to_s.pluralize)
   end
 
   def reformat_uniqueness_validation
