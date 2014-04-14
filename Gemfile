@@ -15,7 +15,6 @@ gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
 
-#gem 'apartment', :git => 'git@github.com:influitive/apartment.git', :branch => 'development'
 gem 'apartment', :github => 'veljkodragsic/apartment', :branch => 'development'
 gem 'enumerize'
 gem 'strong_parameters'
@@ -41,7 +40,6 @@ gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
 
 gem 'redcarpet'
-# gem 'maruku'
 
 gem 'foreman'
 gem 'sanitize'
@@ -65,7 +63,6 @@ gem 'github_api'  , github: 'peter-murach/github'    , branch: 'master'
 gem 'twitter'     , github: 'sferik/twitter'         , branch: 'master'
 gem 'rmeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
 gem 'disqus'      , github: 'hedgeyedev/disqus'      , branch: 'master'
-#gem 'foursquare2' , github: 'mattmueller/foursquare2', branch: 'master'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
 
 group :test do
