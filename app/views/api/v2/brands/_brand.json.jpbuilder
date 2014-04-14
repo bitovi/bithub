@@ -1,3 +1,8 @@
 json.cache! brand do
-	json.(brand, :id, :name, :description, :keywords, :identities)
+	json.(brand, :id, :name, :description, :keywords)
+  json.set! :identities do
+    json.array! BrandIdentityDecorator.decorate_collection(brand.identities) do |identity|
+      json.partial! "api/v2/brand_identities/brand_identity", brand_identity: identity
+    end
+  end
 end
