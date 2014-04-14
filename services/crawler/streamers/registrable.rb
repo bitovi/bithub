@@ -30,8 +30,8 @@ module Streamers
       end
     end
 
-    def publish(brand, object)
-      Celluloid::Actor[:publisher].publish(brand, [object])
+    def publish(brand, feed, object)
+      Celluloid::Actor[:publisher].publish brand, feed, [object]
     end
   end
 end
