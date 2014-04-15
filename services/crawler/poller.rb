@@ -24,13 +24,17 @@ class Poller
   end
 
   def publish(publish, data)
-    Celluloid::Actor[:publisher].publish @brand_name, fetcher_name, data
+    Celluloid::Actor[:publisher].publish @brand_name, feed_name, data
   end
 
   private
 
   def fetcher_name
-    @fetcher.class.name.to_sym # camelcase?
+    @fetcher.class.name # camelcase?
+  end
+
+  def feed_name
+    fetcher_name.split('::').second.snake_case
   end
 
   def x_seconds

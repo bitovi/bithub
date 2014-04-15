@@ -21,33 +21,18 @@ class Publisher
 
   def publish(brand, feed, events)
     Celluloid.logger.info "-----------> Publishing from #{feed} with routing_key: #{brand}"
-
-    # events.each do |e|
-    #   # STEPS
-    #   # ------
-    #   # process
-    #   # filter (reject_old)
-    #   # publish
-    # end
-
-    processed_events = events.map {|e| process e, brand, feed}
-    filtered_events  = reject_old processed_events, brand
-    publish_many filtered_events, brand
+    processed_events = events.map {|e| process e, brand, feed}.compact
+    new_events  = reject_old processed_events, brand
+    send new_events, brand
   end
 
   def process(event, brand, feed)
-    # process with ResponseProcessor.new(events, feed).process
-    # should return something like
-    #
-    # {
-    #   feed_name: "",
-    #   type_name: "",
-    #   brand_name: "",
-    #   content_digest: "",
-    #   source_data: {}
-    # }
+    event = event.to_hash
+    feed  = feed.to_s
+    brand = brand.to_s
 
-    if dispatched = Events::Dispatcher.dispatch(event, feed)
+    begin
+      dispatched = Events::Dispatcher.dispatch(event, feed)
       {
         feed_name: feed, #dispatched.feed_name.snake_case,
         type_name: dispatched.type_name.snake_case,
@@ -55,6 +40,9 @@ class Publisher
         content_digest: dispatched.content_digest,
         source_data: event
       }
+    rescue Events::DispatchError => e
+      Celluloid.logger.info "Failed to dispatch event from #{feed}"
+      nil
     end
   end
 
@@ -67,7 +55,8 @@ class Publisher
   end
 
   def send_one(event, brand)
-    @x.publish(e, routing_key: brand)
+    #@x.publish(MultiJson.dump(event), routing_key: brand)
+    @x.publish MultiJson.dump(event)
   end
 
 end
