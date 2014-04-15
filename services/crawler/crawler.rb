@@ -18,6 +18,8 @@ require 'core_helpers'
 require 'amqp_helpers'
 require 'logger_factory'
 
+require 'events/dispatcher'
+
 require_relative 'main_supervisor'
 require_relative 'brand_supervisor'
 require_relative 'publisher'
@@ -49,7 +51,7 @@ Celluloid.logger = logger
 class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
   supervise Commander, as: :commander
-  supervise Configurator, as: :configurator, args: [{}] 
+  supervise Configurator, as: :configurator, args: [{}]
   supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
 end

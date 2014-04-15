@@ -1,3 +1,4 @@
+require 'loggable'
 require 'events/protocol'
 
 module Events
@@ -235,6 +236,14 @@ module Events
     class Dispatcher < BasicTypeDispatcher
       def type
         Events::Irc::Message
+      end
+    end
+  end
+
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Facebook::Status
       end
     end
   end

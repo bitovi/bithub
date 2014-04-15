@@ -19,15 +19,23 @@ class Poller
 
   def fetch
     events = @fetcher.fetch
-    Celluloid.logger.info "Fetching from #{@fetcher.class.name}, fetched #{events.count}"
+    Celluloid.logger.info "Fetching from #{fetcher_name}, fetched #{events.count}"
     publish(@brand_name, events)
   end
 
   def publish(publish, data)
-    Celluloid::Actor[:publisher].publish(@brand_name, data)
+    Celluloid::Actor[:publisher].publish @brand_name, feed_name, data
   end
 
   private
+
+  def fetcher_name
+    @fetcher.class.name # camelcase?
+  end
+
+  def feed_name
+    fetcher_name.split('::').second.snake_case
+  end
 
   def x_seconds
     @interval

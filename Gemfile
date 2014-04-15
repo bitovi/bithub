@@ -4,7 +4,6 @@ ruby '2.1.1'
 gem 'unicorn'
 gem 'rails', '~> 3.2'
 
-gem 'amqp' # TODO remove this after crawler/listener refactoring.
 gem 'bunny'
 gem 'pg'
 

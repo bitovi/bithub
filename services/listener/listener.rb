@@ -5,6 +5,8 @@ DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
 $:.unshift(ROOT_DIR)
 $:.unshift(DOMAIN_DIR)
 
+require 'bunny'
+
 require 'config/environment'
 require_relative 'helpers'
 require 'dispatcher'
@@ -13,19 +15,30 @@ require 'logger_factory'
 logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
 $logger = logger
 
-# Message queue (RabbitMQ) connection and event loop
-AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
-  logger.info "Connected to AMQP broker on #{connection.settings[:host]}:#{connection.settings[:port]}"
+class Listener
 
-  channel = AMQP::Channel.new(connection)
-  channel.direct("e.events") do |input_exchange|
+  def initialize(uri, args={})
+    @conn = Bunny.new(uri).start
+    @chan = @conn.create_channel
+    self
+  end
 
-    channel.fanout("e.events.liveservice") do |liveservice_exchange|
-      queue = channel.queue("q.events").bind(input_exchange)
-      queue.subscribe do |metadata, payload|
-        response = ActiveSupport::JSON.decode(payload)
-        Dispatcher.new.dispatch(response)
-      end
+  def listen(queue_name, args)
+    @chan
+      .queue(queue_name, args)
+      .subscribe(:block => true) do |delivery_info, properties, payload|
+        yield ActiveSupport::JSON.decode(payload) if block_given?
     end
   end
+
 end
+
+Listener
+  .new(ENV['RABBITMQ_URI'])
+  .listen('q.events', auto_delete: true) do |payload|
+    brand_name = payload.fetch('meta').fetch('brand_name')
+
+    Apartment::Database.switch brand_name
+    Dispatcher.new.dispatch payload
+    Apartment::Database.switch
+  end
