@@ -1,58 +1,56 @@
-digest:
-    follow: 10
-    fork: 10
-    watch: 10
+# digest:
+#   follow: 10
+#   fork: 10
+#   watch: 10
+#   like: 10
 
-twitter:
-    tweet: 10
+# twitter:
+#   tweet: 10
 
-comment:
-    disqus: 10
+# comment:
+#   disqus: 10
 
-github_comment:
-    commit_comment: 10
-    issue_comment: 10
-    pull_request_review_comment: 10
+# github_comment:
+#   github: 5
+#   commit_comment: 10
+#   issue_comment: 10
+#   pull_request_review_comment: 10
 
-code:
-    commit: 10
-    push: 10
-    pull_request: 10
-    create: 10
-    public: 10
+# code:
+#   commit: 10
+#   push: 10
+#   pull_request: 10
+#   create: 10
+#   public: 10
 
-question:
-    forum: 10
-    question: 10
-    stack_exchange: 10
+# question:
+#   forum: 10
+#   question: 10
+#   stack_exchange: 10
 
-chat:
-    irc: 10
+# chat:
+#   irc: 10
 
-article:
-    blog: 10
-    article: 10
+# article:
+#   blog: 10
+#   article: 10
 
-app:
-    app: 10
+# issue:
+#   issue: 10
+#   issue_action: 15
 
-plugin:
-    plugin: 10
+# bug:
+#   issue: 10
+#   bug: 5
 
-issue:
-    issue: 10
-    issue_action: 15
+# feature:
+#   issue: 10
+#   feature: 5
+#   feature_request: 5
+#   enhancement: 5
 
-bug:
-    issue: 10
-    bug: 5
+# event:
+#   meetup: 20
+#   event: 10
 
-feature:
-    issue: 10
-    feature: 5
-    feature_request: 5
-    enhancement: 5
-
-event:
-    meetup: 20
-    event: 10
+uncategorized:
