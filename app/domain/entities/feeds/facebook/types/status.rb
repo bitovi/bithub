@@ -6,8 +6,8 @@ module Entities
       def find
         @event.status.id && find_by_status_id.first
       end
-      
-      def find_by_issue_id
+
+      def find_by_status_id
         Entity
         .feed('facebook')
         .type('status')

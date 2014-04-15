@@ -196,4 +196,12 @@ module Entities
     end
   end
 
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Facebook::Status
+      end
+    end
+  end
+
 end

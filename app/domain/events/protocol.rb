@@ -19,6 +19,7 @@ module Events
   module Meetup; end
   module Irc; end
   module StackExchange; end
+  module Facebook; end
 
   class Protocol
     include CoreHelpers
@@ -98,3 +99,4 @@ require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
 require 'events/feeds/stack_exchange/stack_exchange'
+require 'events/feeds/facebook/facebook'
