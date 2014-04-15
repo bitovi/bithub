@@ -13,7 +13,7 @@ class Publisher
     @chan = @rabbit.create_channel
 
     # Exchange and queue
-    @x = @chan.topic("x.events", :auto_delete => true)
+    @x = @chan.direct("x.events", :auto_delete => true)
     @q = @chan.queue("q.events", :auto_delete => true).bind(@x)
 
     @filter = DigestSet.new
@@ -34,9 +34,11 @@ class Publisher
     begin
       dispatched = Events::Dispatcher.dispatch(event, feed)
       {
-        feed_name: feed, #dispatched.feed_name.snake_case,
-        type_name: dispatched.type_name.snake_case,
-        brand_name: brand,
+        meta: {
+          feed_name: feed, #dispatched.feed_name.snake_case,
+          type_name: dispatched.type_name.snake_case,
+          brand_name: brand,
+        },
         content_digest: dispatched.content_digest,
         source_data: event
       }
