@@ -20,10 +20,11 @@ module FeedSupervisors
     end
 
     private
+
     def pages
       Celluloid::Actor[:configurator].feed_config(@brand_name, :facebook).fetch(:pages)
     end
-    
+
     def actor_name(endpoint_type, endpoint_id)
       "#{@brand_name}_facebook_#{endpoint_type}_#{endpoint_id}".to_sym
     end

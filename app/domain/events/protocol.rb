@@ -1,3 +1,5 @@
+require 'loggable'
+
 require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
@@ -17,6 +19,7 @@ module Events
   module Meetup; end
   module Irc; end
   module StackExchange; end
+  module Facebook; end
 
   class Protocol
     include CoreHelpers
@@ -73,7 +76,7 @@ module Events
     def nice_name
       self.class.name.gsub(/^Events::.*::/, '')
     end
-    
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
@@ -96,3 +99,4 @@ require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
 require 'events/feeds/stack_exchange/stack_exchange'
+require 'events/feeds/facebook/facebook'

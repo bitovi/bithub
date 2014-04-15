@@ -30,7 +30,7 @@ module HttpServer
       private
 
       def publish(brand, body)
-        Celluloid::Actor[:publisher].publish brand, [body]
+        Celluloid::Actor[:publisher].publish brand, :foursquare, [body]
       end
 
       def venue_id(body)

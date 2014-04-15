@@ -28,8 +28,8 @@ module FeedSupervisors
       "#{@brand_name}_twitter_search".to_sym
     end
 
-
     private
+
     def init_client
       token, token_secret = user_tokens
       ::Twitter::REST::Client.new do |config|
@@ -39,16 +39,15 @@ module FeedSupervisors
         config.access_token_secret = token_secret
       end
     end
-    
+
     def user_tokens
       wc = Celluloid::Actor[:configurator].feed_config(@brand_name, :twitter)
       [wc.fetch(:token), wc.fetch(:token_secret)]
     end
-    
+
     def terms
       Celluloid::Actor[:configurator].feed_config(@brand_name, :twitter).fetch(:terms)
     end
 
   end
 end
-

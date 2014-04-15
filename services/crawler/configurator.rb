@@ -66,6 +66,8 @@ class Configurator
   def fetch_grouped
     FeedConfig
     .select(%i(brand_name feed_name config))
+    .all
+    .select(&:'valid_config?')
     .map(&:attributes)
     .group_by{|el| el['brand_name']}
   end
