@@ -29,6 +29,6 @@ class Api::V2::BrandsController < Api::V2::BaseController
   private
 
   def brand_params
-    params.require(:brand).permit(:name, :description, keywords: [])
+    params.require(:brand).permit(:name, :description, :keywords)
   end
 end
