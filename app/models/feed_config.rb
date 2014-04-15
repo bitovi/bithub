@@ -8,8 +8,6 @@ class FeedConfig < ActiveRecord::Base
   after_update :notify_crawler
   after_create :notify_crawler
 
-  validate :'valid_config?'
-
   def notify_crawler
     msg = {
       brand_name: self.brand_name,
@@ -63,7 +61,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def has?(key)
-    returning(config.has_key? key) do |indeed|
+    returning(config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end
   end
