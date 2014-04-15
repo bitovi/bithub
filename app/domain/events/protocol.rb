@@ -1,3 +1,5 @@
+require 'loggable'
+
 require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
@@ -73,7 +75,7 @@ module Events
     def nice_name
       self.class.name.gsub(/^Events::.*::/, '')
     end
-    
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}

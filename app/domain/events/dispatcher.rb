@@ -1,3 +1,4 @@
+require 'loggable'
 require 'events/protocol'
 
 module Events
