@@ -124,7 +124,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     end
 
     if identity.save
-      render :json => identity
+      render :template => 'special/close_oauth_popup.html'
     else
       # return some reasonable error
       render :json => { message: 'error'}, :status => 406
