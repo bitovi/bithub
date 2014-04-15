@@ -496,6 +496,7 @@ DEPENDENCIES
   pg
   pry-rails
   rails (~> 3.2)
+  rake
   rb-fsevent (~> 0.9)
   redcarpet
   redis
