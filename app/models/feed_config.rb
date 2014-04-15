@@ -8,6 +8,8 @@ class FeedConfig < ActiveRecord::Base
   after_update :notify_crawler
   after_create :notify_crawler
 
+  validate :'valid_config?'
+
   def notify_crawler
     msg = {
       brand_name: self.brand_name,
@@ -34,6 +36,48 @@ class FeedConfig < ActiveRecord::Base
 
   def no_terms
     [:error, "not a config with terms"]
+  end
+
+  def valid_config?
+    send("valid_#{feed_name}?")
+  end
+
+  def valid_github?
+    has?('token') && has?('orgs') && has?('repos')
+  end
+
+  def valid_facebook?
+    has?('pages') && pages_have_token?
+  end
+
+  def valid_twitter?
+    has?('token') && has?('token_secret') && has?('terms')
+  end
+
+  def valid_meetup?
+    has?('token') && has?('groups') && has?('terms')
+  end
+  
+  def valid_foursquare?
+    has?('token') && has?('venues')
+  end
+
+  def has?(key)
+    returning(config.has_key? key) do |indeed|
+      errors.add :config, "must have #{key}" unless indeed
+    end
+  end
+
+  # TODO has_nested?
+
+  private
+  def returning(exp)
+    yield exp
+    exp
+  end
+
+  def pages_have_token?
+    config.fetch('pages').has_key?('token')
   end
 
 end
