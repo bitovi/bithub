@@ -7,7 +7,6 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      attr_reader :retweet, :entities
       has :id, :type, :message, :link
 
       def initialize(status)
