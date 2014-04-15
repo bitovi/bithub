@@ -3,6 +3,7 @@ ruby '2.1.1'
 
 gem 'unicorn'
 gem 'rails', '~> 3.2'
+gem 'rake'
 
 gem 'bunny'
 gem 'pg'
