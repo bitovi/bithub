@@ -19,11 +19,19 @@ class Brand < ActiveRecord::Base
   def create_tenant
     Rails.logger.info "name================ #{name}"
     Apartment::Database.create(name)
+    Apartment::Database.switch name
+
+    # run seed tasks
+    Bithub::Application.load_tasks
+    Rake::Task['data:import_or_update_tags'].invoke
+    Rake::Task['data:import_scoring_rules'].invoke
 
     # repopulate matviews upon creation
     Pagination.refresh
     Leaderboard.refresh
     UserActivity.refresh
+
+    Apartment::Database.switch
   end
 
   def destroy_tenant
