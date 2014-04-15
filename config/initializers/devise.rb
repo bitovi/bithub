@@ -39,5 +39,5 @@ Devise.setup do |config|
 
   # yelp
 
-  config.sign_out_via = :delete
+  config.sign_out_via = [:delete, :get]
 end
