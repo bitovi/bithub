@@ -1,7 +1,8 @@
-require 'wrappers/meetup/like'
-require 'wrappers/meetup/comment'
-require 'wrappers/meetup/status'
+# require 'wrappers/facebook/like'
+# require 'wrappers/facebook/comment'
+require 'wrappers/facebook/status'
+require 'wrappers/facebook/poster'
 
-require_relative 'types/like'
-require_relative 'types/comment'
+# require_relative 'types/like'
+# require_relative 'types/comment'
 require_relative 'types/status'
