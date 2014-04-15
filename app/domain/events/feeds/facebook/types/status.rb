@@ -4,7 +4,7 @@ module Events
     class Status < Protocol
       extend Forwardable
 
-      def_delegators :@status, :id, :type, :link
+      def_delegators :@status, :id, :type, :link, :message, :created_time, :updated_time
 
       attr_accessor :status, :poster
 
@@ -14,7 +14,7 @@ module Events
 
       def wrap_response
         @status ||= Wrappers::Facebook::Status.new(source_data)
-        @poster ||= Wrappers::Facebook::Poster.new(source_data[:poster])
+        @poster ||= Wrappers::Facebook::Poster.new(source_data.fetch(:from))
         self
       end
     end

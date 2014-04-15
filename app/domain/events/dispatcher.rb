@@ -239,4 +239,12 @@ module Events
       end
     end
   end
+
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Facebook::Status
+      end
+    end
+  end
 end

@@ -20,6 +20,7 @@ module Entities
   module Meetup; end
   module Twitter; end
   module StackExchange; end
+  module Facebook; end
 
   class Protocol
     include Validatable
@@ -66,7 +67,7 @@ module Entities
     def type_name
       self.class.name.match(/::.*::(.+)$/).to_a[1]
     end
-    
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
@@ -85,4 +86,4 @@ require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
 require_relative 'feeds/stack_exchange/stack_exchange'
-
+require_relative 'feeds/facebook/facebook'
