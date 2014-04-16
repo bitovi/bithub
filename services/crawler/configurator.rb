@@ -1,15 +1,14 @@
+require 'strong_parameters'
+require 'active_model'
 require 'active_record'
-
-class FeedConfig < ActiveRecord::Base
-  serialize :config, JSON
-end
+require 'models/feed_config'
 
 class Configurator
   include Celluloid
   include CoreHelpers
 
   def initialize(opts)
-    @env = opts.fetch(:environment) { 'development'  }
+    @env = opts.fetch(:environment)
     connect
   end
   attr_reader :config
@@ -19,7 +18,21 @@ class Configurator
   end
 
   def static_config
-    @config ||= YAML.load_file(File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml")))
+    @config ||= inline_config
+  end
+
+  def inline_config
+    {
+      public_streams: {
+        twitter: {
+          api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+          api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+        },
+        meetup: {
+          api_key: '663a24605a37767831495d6332546b4a'
+        }
+      }
+    }
   end
 
   def whole_config
@@ -67,13 +80,25 @@ class Configurator
     FeedConfig
     .select(%i(brand_name feed_name config))
     .all
-    .select(&:'valid_config?')
-    .map(&:attributes)
+    .select{|fc| fc.valid_config?}
+    .map{|fc| fc.attributes}
     .group_by{|el| el['brand_name']}
   end
 
   def db_config
     @dbconfig ||= YAML.load_file(File.expand_path(File.join('config', 'database.yml')))
     @dbconfig.fetch(@env)
+  end
+
+  def app_auth
+    {
+      twitter: {
+        api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+        api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+      },
+      meetup: {
+        api_key: '663a24605a37767831495d6332546b4a'
+      }
+    }
   end
 end
