@@ -8,7 +8,11 @@ class Api::V2::BrandIdentitiesController < Api::V2::BaseController
   end
 
   def show
-    @brand_identity = BrandIdentityDecorator.decorate BrandIdentity.find(params[:id])
-    render :show
+    if (bi = current_account.brand.identities.find_by_id(params[:id]))
+      @brand_identity = BrandIdentityDecorator.decorate bi
+      render :show
+    else
+      render :json => msg_hash(@brand_identity, 'show'), :status => 406
+    end
   end
 end
