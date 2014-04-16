@@ -72,13 +72,13 @@ class FeedConfig < ActiveRecord::Base
   def valid_meetup?
     has?('token') && has?('groups') && has?('terms')
   end
-  
+
   def valid_foursquare?
     has?('token') && has?('venues')
   end
 
   def has?(key)
-    returning(config.has_key?(key) && config[key].present?) do |indeed|
+    returning(config && config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end
   end
