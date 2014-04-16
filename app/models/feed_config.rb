@@ -10,6 +10,8 @@ class FeedConfig < ActiveRecord::Base
   before_save :clean_config
   before_save :set_keywords
 
+  before_save :set_tokens
+
   def notify_crawler
     msg = {
       brand_name: self.brand_name,
@@ -50,13 +52,25 @@ class FeedConfig < ActiveRecord::Base
     end
   end
 
-  def set_keywords(brand = nil)
+  def brand
+    @_brand ||= Brand.find_by_name(brand_name)
+  end
+
+  def set_keywords
     if is_twitter?
-      @_brand ||= brand || Brand.find_by_name(brand_name)
-      unless @_brand.nil?
+      unless brand.nil?
         self.config ||= {}
-        config['terms'] = @_brand.keywords || []
+        config['terms'] = brand.keywords || []
       end
+    end
+  end
+
+  def set_tokens
+    identity = brand.identities.where(provider: feed_name).first
+    unless identity.nil?
+      decorated = BrandIdentityDecorator.new(identity)
+      config['access_token'] = decorated.data[:access_token]
+      config['access_secret'] = decorated.data[:access_secret] if is_twitter?
     end
   end
 
