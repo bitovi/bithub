@@ -10,7 +10,7 @@ class BrandIdentity < ActiveRecord::Base
     if self.brand && self.provider
       FeedConfig.create({
         brand_name: self.brand.name,
-        feed_name: self.provider,
+        feed_name: self.provider.gsub('_brand',''),
         config: {}
       })
     end
