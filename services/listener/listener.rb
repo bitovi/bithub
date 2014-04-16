@@ -5,6 +5,9 @@ DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
 $:.unshift(ROOT_DIR)
 $:.unshift(DOMAIN_DIR)
 
+require 'bundler/setup'
+require 'rubygems'
+
 require 'bunny'
 
 require 'config/environment'

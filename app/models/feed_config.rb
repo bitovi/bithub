@@ -10,6 +10,8 @@ class FeedConfig < ActiveRecord::Base
   before_save :clean_config
   before_save :set_keywords
 
+  before_save :set_tokens
+
   def notify_crawler
     msg = {
       brand_name: self.brand_name,
@@ -50,13 +52,25 @@ class FeedConfig < ActiveRecord::Base
     end
   end
 
-  def set_keywords(brand = nil)
+  def brand
+    @_brand ||= Brand.find_by_name(brand_name)
+  end
+
+  def set_keywords
     if is_twitter?
-      @_brand ||= brand || Brand.find_by_name(brand_name)
-      unless @_brand.nil?
+      unless brand.nil?
         self.config ||= {}
-        config['keywords'] = @_brand.keywords || []
+        config['terms'] = brand.keywords || []
       end
+    end
+  end
+
+  def set_tokens
+    identity = brand.identities.where(provider: feed_name).first
+    unless identity.nil?
+      decorated = BrandIdentityDecorator.new(identity)
+      config['access_token'] = decorated.data[:access_token]
+      config['access_secret'] = decorated.data[:access_secret] if is_twitter?
     end
   end
 
@@ -73,7 +87,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_github?
-    has?('token') && has?('orgs') && has?('repos')
+    has?('access_token') && has?('orgs') && has?('repos')
   end
 
   def valid_facebook?
@@ -81,7 +95,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_twitter?
-    has?('token') && has?('token_secret') && has?('terms')
+    has?('access_token') && has?('access_secret') && has?('terms')
   end
 
   def valid_meetup?
@@ -101,13 +115,14 @@ class FeedConfig < ActiveRecord::Base
   # TODO has_nested?
 
   private
+
   def returning(exp)
     yield exp
     exp
   end
 
   def pages_have_token?
-    config.fetch('pages').all?{|el| el.has_key?('token')}
+    config.fetch('pages').all?{|el| el.has_key?('access_token')}
   end
 
 end
