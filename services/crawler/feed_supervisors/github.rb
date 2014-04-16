@@ -6,7 +6,7 @@ module FeedSupervisors
 
     def initialize(brand_name)
       @brand_name = brand_name
-      @client = ::Github.new(oauth_token: config.fetch(:token))
+      @client = ::Github.new(oauth_token: token)
       boot
     end
 
