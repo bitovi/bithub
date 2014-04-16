@@ -11,7 +11,7 @@ namespace :test do
   RSpec::Core::RakeTask.new(:models) do |t|
     t.pattern = FileList["spec/models"]
   end
-  
+
   RSpec::Core::RakeTask.new(:libs) do |t|
     t.pattern = FileList["spec/libs"]
   end
