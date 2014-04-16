@@ -41,11 +41,13 @@ class MainSupervisor
 
   def stop_brand(brand_name)
     Celluloid.logger.info "Stopping #{actor_name(brand_name)}"
-    Celluloid::Actor[actor_name(brand_name)].terminate
+    if (a = Celluloid::Actor[actor_name(brand_name)])
+      a.terminate
+    end
   end
 
   private
-  
+
   def all_brand_configs
     Celluloid::Actor[:configurator].whole_config
   end

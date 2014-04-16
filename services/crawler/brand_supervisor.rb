@@ -36,16 +36,17 @@ class BrandSupervisor
 
   def stop_feed(feed_name)
     Celluloid.logger.info "Stopping #{actor_name(feed_name)}"
-    Celluloid::Actor[actor_name(feed_name)].terminate
+    if (a = Celluloid::Actor[actor_name(feed_name)])
+      a.terminate
+    end
   end
-
 
   private
 
   def all_feed_configs
     Celluloid::Actor[:configurator].brand_config(@brand_name)
   end
-  
+
   def actor_name(feed_name)
     "#{@brand_name}_#{feed_name}_supervisor".to_sym
   end
@@ -54,5 +55,5 @@ class BrandSupervisor
     const_name = feed_name.to_s.camel_case.to_sym
     FeedSupervisors.const_get(const_name)
   end
-  
+
 end
