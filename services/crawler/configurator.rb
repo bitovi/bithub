@@ -8,7 +8,7 @@ class Configurator
   include CoreHelpers
 
   def initialize(opts)
-    @env = opts.fetch(:environment) { 'development'  }
+    @env = opts.fetch(:environment)
     connect
   end
   attr_reader :config
@@ -18,7 +18,24 @@ class Configurator
   end
 
   def static_config
-    @config ||= YAML.load_file(File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml")))
+    path = File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
+    @config ||= if File.exist? path
+                  YAML.load_file path
+                else
+                  inline_config
+                end
+  end
+
+  def inline_config
+    {
+      twitter: {
+        api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+        api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+      },
+      meetup: {
+        api_key: '663a24605a37767831495d6332546b4a'
+      }
+    }
   end
 
   def whole_config
@@ -74,5 +91,17 @@ class Configurator
   def db_config
     @dbconfig ||= YAML.load_file(File.expand_path(File.join('config', 'database.yml')))
     @dbconfig.fetch(@env)
+  end
+
+  def app_auth
+    {
+      twitter: {
+        api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+        api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+      },
+      meetup: {
+        api_key: '663a24605a37767831495d6332546b4a'
+      }
+    }
   end
 end
