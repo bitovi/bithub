@@ -33,8 +33,8 @@ module FeedSupervisors
     def init_client
       token, token_secret = user_tokens
       ::Twitter::REST::Client.new do |config|
-        config.consumer_key        = $app_auth.fetch(:twitter).fetch(:api_key)
-        config.consumer_secret     = $app_auth.fetch(:twitter).fetch(:api_secret)
+        config.consumer_key        = static_config.fetch(:api_key)
+        config.consumer_secret     = static_config.fetch(:api_secret)
         config.access_token        = token
         config.access_token_secret = token_secret
       end
@@ -47,6 +47,10 @@ module FeedSupervisors
 
     def terms
       Celluloid::Actor[:configurator].feed_config(@brand_name, :twitter).fetch(:terms)
+    end
+
+    def static_config
+      Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:twitter)
     end
 
   end
