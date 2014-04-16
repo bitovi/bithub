@@ -42,7 +42,7 @@ module FeedSupervisors
 
     def user_tokens
       wc = Celluloid::Actor[:configurator].feed_config(@brand_name, :twitter)
-      [wc.fetch(:token), wc.fetch(:token_secret)]
+      [wc.fetch(:access_token), wc.fetch(:access_secret)]
     end
 
     def terms
