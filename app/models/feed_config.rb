@@ -55,7 +55,7 @@ class FeedConfig < ActiveRecord::Base
       @_brand ||= brand || Brand.find_by_name(brand_name)
       unless @_brand.nil?
         self.config ||= {}
-        config['keywords'] = @_brand.keywords || []
+        config['terms'] = @_brand.keywords || []
       end
     end
   end
