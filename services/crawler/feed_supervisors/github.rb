@@ -6,7 +6,7 @@ module FeedSupervisors
 
     def initialize(brand_name)
       @brand_name = brand_name
-      @client = ::Github.new(oauth_token: config.fetch(:token))
+      @client = ::Github.new(oauth_token: token)
       boot
     end
 
@@ -18,34 +18,34 @@ module FeedSupervisors
         @endpoints.supervise_as \
           actor_name('repo_activity', repo_name),
           Poller,
-          *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name})]
+          *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name}), {interval: 15}]
 
         @endpoints.supervise_as \
           actor_name('issues', repo_name),
           Poller,
-          *[@brand_name, Fetchers::Github::RepoIssues.new(@client, {user_repo: repo_name})]
+          *[@brand_name, Fetchers::Github::RepoIssues.new(@client, {user_repo: repo_name}), {interval: 600}]
 
         @endpoints.supervise_as \
           actor_name('issues_comments', repo_name),
           Poller,
-          *[@brand_name, Fetchers::Github::RepoPullRequests.new(@client, {user_repo: repo_name})]
+          *[@brand_name, Fetchers::Github::RepoPullRequests.new(@client, {user_repo: repo_name}), {interval: 600}]
 
         @endpoints.supervise_as \
           actor_name('pull_requests', repo_name),
           Poller ,
-          *[@brand_name, Fetchers::Github::RepoIssuesComments.new(@client, {user_repo: repo_name})]
+          *[@brand_name, Fetchers::Github::RepoIssuesComments.new(@client, {user_repo: repo_name}), {interval: 300}]
 
         @endpoints.supervise_as \
           actor_name('pull_requests_comments', repo_name),
           Poller,
-          *[@brand_name, Fetchers::Github::RepoPullRequestsComments.new(@client, {user_repo: repo_name})]
+          *[@brand_name, Fetchers::Github::RepoPullRequestsComments.new(@client, {user_repo: repo_name}), {interval: 300}]
       end
 
       orgs.each do |org_name|
         @endpoints.supervise_as \
           actor_name(org_name , 'org_activity'),
           Poller,
-          *[@brand_name, Fetchers::Github::OrgActivity.new(@client, {org_name: org_name})]
+          *[@brand_name, Fetchers::Github::OrgActivity.new(@client, {org_name: org_name}), {interval: 30}]
       end
     end
 
@@ -56,7 +56,7 @@ module FeedSupervisors
     end
 
     def token
-      config.fetch(:token)
+      config.fetch(:access_token)
     end
 
     def repos

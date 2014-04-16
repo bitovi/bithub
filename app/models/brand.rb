@@ -26,6 +26,7 @@ class Brand < ActiveRecord::Base
     # run seed tasks
     Bithub::Application.load_tasks
     Rake::Task['data:import_or_update_tags'].invoke
+    Rake::Task['data:import_category_determination_rules'].invoke
     Rake::Task['data:import_scoring_rules'].invoke
 
     # repopulate matviews upon creation
@@ -57,7 +58,7 @@ class Brand < ActiveRecord::Base
   def update_twitter_config
     twitter_config = FeedConfig.where({brand_name: name, feed_name: 'twitter'}).first
     unless twitter_config.nil?
-      twitter_config.set_keywords(self)
+      twitter_config.set_keywords
       twitter_config.save
     end
   end
