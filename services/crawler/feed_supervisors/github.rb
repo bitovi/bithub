@@ -56,7 +56,7 @@ module FeedSupervisors
     end
 
     def token
-      config.fetch(:token)
+      config.fetch(:access_token)
     end
 
     def repos

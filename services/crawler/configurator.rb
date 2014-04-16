@@ -34,7 +34,7 @@ class Configurator
     all_brand_configs.fetch(brand_name.to_sym).fetch(feed_name.to_sym)
   end
 
-  private 
+  private
 
   # Converts relational result to a tree-like one, Dragons be here!
   def all_brand_configs
@@ -65,7 +65,9 @@ class Configurator
 
   def fetch_grouped
     configs = FeedConfig .select(%i(brand_name feed_name config)).all.select{|fc| fc.valid_config?}
-    Celluloid.logger.info "Found #{config.count} valid config entries"
+
+    Celluloid.logger.info "Found #{configs.count} valid config entries"
+    Celluloid.logger.debug "Valid: #{configs}"
     configs.map{|fc| fc.attributes}.group_by{|el| el['brand_name']}
   end
 

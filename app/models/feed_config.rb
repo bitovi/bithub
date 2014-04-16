@@ -73,7 +73,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_github?
-    has?('token') && has?('orgs') && has?('repos')
+    has?('access_token') && has?('orgs') && has?('repos')
   end
 
   def valid_facebook?
@@ -81,7 +81,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_twitter?
-    has?('token') && has?('token_secret') && has?('terms')
+    has?('access_token') && has?('access_secret') && has?('terms')
   end
 
   def valid_meetup?
@@ -101,13 +101,14 @@ class FeedConfig < ActiveRecord::Base
   # TODO has_nested?
 
   private
+
   def returning(exp)
     yield exp
     exp
   end
 
   def pages_have_token?
-    config.fetch('pages').all?{|el| el.has_key?('token')}
+    config.fetch('pages').all?{|el| el.has_key?('access_token')}
   end
 
 end
