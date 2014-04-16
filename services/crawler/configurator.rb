@@ -18,22 +18,19 @@ class Configurator
   end
 
   def static_config
-    path = File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
-    @config ||= if File.exist? path
-                  YAML.load_file path
-                else
-                  inline_config
-                end
+    @config ||= inline_config
   end
 
   def inline_config
     {
-      twitter: {
-        api_key: 'huCmG0TZ7vs6leLqLNlGQ',
-        api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
-      },
-      meetup: {
-        api_key: '663a24605a37767831495d6332546b4a'
+      public_streams: {
+        twitter: {
+          api_key: 'huCmG0TZ7vs6leLqLNlGQ',
+          api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+        },
+        meetup: {
+          api_key: '663a24605a37767831495d6332546b4a'
+        }
       }
     }
   end
