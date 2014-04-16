@@ -35,24 +35,15 @@ require_relative 'digest_set'
 require_relative 'response_processor'
 
 # log4r logger
-logger = LoggerFactory.new('crawler', ENV['ENV']).component_logger
-
-$app_auth = {
-  twitter: {
-    api_key: 'huCmG0TZ7vs6leLqLNlGQ',
-    api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
-  },
-  meetup: {
-    api_key: '663a24605a37767831495d6332546b4a'
-  }
-}
+$env = ENV.fetch('ENV')
+logger = LoggerFactory.new('crawler', $env).component_logger
 
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
   supervise Commander, as: :commander
-  supervise Configurator, as: :configurator, args: [{}]
+  supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
 end
