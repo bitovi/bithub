@@ -26,6 +26,7 @@ class Brand < ActiveRecord::Base
     # run seed tasks
     Bithub::Application.load_tasks
     Rake::Task['data:import_or_update_tags'].invoke
+    Rake::Task['data:import_category_determination_rules'].invoke
     Rake::Task['data:import_scoring_rules'].invoke
 
     # repopulate matviews upon creation
