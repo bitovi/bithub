@@ -19,7 +19,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
     @config = FeedConfig.new(config_params)
 
     if @config.save
-      render show
+      render :show
     else
       render :json => msg_hash(@config, 'create'), :status => 406
     end
