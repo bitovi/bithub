@@ -1,25 +1,22 @@
 class Api::V2::BrandsController < Api::V2::BaseController
-  #before_filter :authenticate_user!, except: [:index, :show]
+  #before_filter :authenticate_account!, except: [:index, :show]
   respond_to :json
 
   def index
     @brands = Brand.all
-
     render :index
   end
 
   def show
-    #@brand = Brand.find(params[:id])
-    @brand = Brand.first
-
-    render :show
+    if (@brand = Brand.find_by_id(current_account.brand_id))
+      render :show
+    else
+      render :json => msg_hash(@brand, 'update'), :status => 406
+    end
   end
 
   def update
-    #@brand = Brand.find(params[:id])
-    @brand = Brand.first
-
-    if @brand.update_attributes(brand_params)
+    if (@brand = Brand.find_by_id(current_account.id) && @brand.update_attributes(brand_params))
       render :show
     else
       render :json => msg_hash(@brand, 'update'), :status => 406
