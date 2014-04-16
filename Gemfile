@@ -7,6 +7,8 @@ gem 'rails', '~> 3.2'
 gem 'rake'
 gem 'rspec', '~> 2.14'
 gem 'rspec-rails'
+gem 'pry'
+gem 'pry-rails'
 
 gem 'bunny'
 gem 'pg'
@@ -84,7 +86,6 @@ group :development do
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
-  gem 'pry-rails'
 end
 
 # --------
