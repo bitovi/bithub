@@ -57,7 +57,7 @@ class Brand < ActiveRecord::Base
   def update_twitter_config
     twitter_config = FeedConfig.where({brand_name: name, feed_name: 'twitter'}).first
     unless twitter_config.nil?
-      twitter_config.set_keywords(self)
+      twitter_config.set_keywords
       twitter_config.save
     end
   end
