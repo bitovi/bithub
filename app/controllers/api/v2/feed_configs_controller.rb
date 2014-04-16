@@ -6,7 +6,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @configs = FeedConfig.all
+    @configs = FeedConfig.where(brand_name: current_account.brand.name).all
     render :index
   end
 
@@ -26,9 +26,8 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = FeedConfig.find(params[:id])
-
-    if @config.update_attributes(config_params)
+    @config = FeedConfig.where(brand_name: current_account.brand.name, id: params[:id]).first
+    if @config && @config.update_attributes(config_params)
       render :show
     else
       render :json => msg_hash(@config, 'update'), :status => 406
