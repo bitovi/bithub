@@ -39,11 +39,10 @@
 
 :public_streams:
     :twitter:
-        :auth:
-            :api_key: 'huCmG0TZ7vs6leLqLNlGQ'
-            :api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
-            :access_token: '55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw'
-            :access_token_secret: 'XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE'
+        :api_key: 'huCmG0TZ7vs6leLqLNlGQ'
+        :api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
+    :meetup:
+        :api_key: '663a24605a37767831495d6332546b4a'
 
 :brands:
     :veljko:

@@ -57,7 +57,7 @@ class MainSupervisor
   def twitter_auth
     config = Celluloid::Actor[:configurator].static_config
     if config
-      config.fetch(:public_streams).fetch(:twitter).fetch(:auth)
+      config.fetch(:public_streams).fetch(:twitter)
     else
       [:error, "unable to provide local config"]
     end
