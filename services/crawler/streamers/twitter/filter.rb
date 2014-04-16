@@ -16,10 +16,14 @@ module Streamers
           tcp_socket_class: Celluloid::IO::TCPSocket,
           ssl_socket_class: Celluloid::IO::SSLSocket
         }) do |config|
-          config.consumer_key        = @auth.fetch(:api_key)
-          config.consumer_secret     = @auth.fetch(:api_secret)
-          config.access_token        = @auth.fetch(:access_token)
-          config.access_token_secret = @auth.fetch(:access_token_secret)
+          # config.consumer_key        = @auth.fetch(:api_key)
+          # config.consumer_secret     = @auth.fetch(:api_secret)
+          # config.access_token        = @auth.fetch(:access_token)
+          # config.access_token_secret = @auth.fetch(:access_token_secret)
+          config.consumer_key        = 'L9KJpnqaL0phM3u3NBYf3A'
+          config.consumer_secret     = 'HHMyYzHRoj9qrHw6gmobQWBpTnLOgxBWBMRA0ICk4U'
+          config.access_token        = '55592490-BY9N7LVYvPvEXd1K4oIGwQtlALzt2Yohl6soLfyOf'
+          config.access_token_secret = '9pc9YaI4UPJ7kSuvayKWC1QtSTfiiNoEX17lnAraKLtUK'
         end
 
         async.connect
