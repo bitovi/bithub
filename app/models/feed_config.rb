@@ -7,6 +7,7 @@ class FeedConfig < ActiveRecord::Base
   validates_presence_of :brand_name, :feed_name
   after_update :notify_crawler
   after_create :notify_crawler
+  before_save :clean_config
 
   def notify_crawler
     msg = {
@@ -38,6 +39,22 @@ class FeedConfig < ActiveRecord::Base
 
   def valid_config?
     send("valid_#{feed_name}?")
+  end
+
+  def clean_config
+    if is_facebook?
+      if has?('pages')
+        config['pages'] = config['pages'].map{|k,v| v}
+      end
+    end
+  end
+
+  def is_github?
+    feed_name == 'github'
+  end
+
+  def is_facebook?
+    feed_name == 'facebook'
   end
 
   def valid_github?
