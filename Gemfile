@@ -4,6 +4,12 @@ ruby '2.1.1'
 gem 'unicorn'
 gem 'rails', '~> 3.2'
 
+gem 'rake'
+gem 'rspec', '~> 2.14'
+gem 'rspec-rails'
+gem 'pry'
+gem 'pry-rails'
+
 gem 'bunny'
 gem 'pg'
 
@@ -66,8 +72,6 @@ gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
 group :test do
   gem "codeclimate-test-reporter", require: false
   gem 'factory_girl_rails'
-  gem 'rspec', '~> 2.14'
-  gem 'rspec-rails'
   gem 'database_cleaner'
   gem 'better_errors'
   gem 'evented-spec'
@@ -82,7 +86,6 @@ group :development do
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
-  gem 'pry-rails'
 end
 
 # --------

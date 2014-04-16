@@ -12,6 +12,7 @@ class Tagger
   DEFAULT_THRESHOLD = 1
 
   class NoTagsProvided < Exception; end
+
   class Tag
     attr_reader :name, :threshold
 
@@ -27,7 +28,7 @@ class Tagger
   end
 
   def initialize(tags, opts={})
-    fail NoTagsProvided, "tagger must have tags to search for" if (tags.nil? || tags.empty?)
+    #fail NoTagsProvided, "tagger must have tags to search for" if (tags.nil? || tags.empty?)
 
     @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
     @threshold = opts[:threshold] || DEFAULT_THRESHOLD
