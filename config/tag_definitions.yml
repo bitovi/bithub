@@ -49,6 +49,10 @@ question:
   group_list: "categories"
   display_name: "Question"
 
+uncategorized:
+  group_list: "categories"
+  display_name: "Uncategorized"
+
 # --------
 # Feeds
 # --------
@@ -186,7 +190,3 @@ checkin: {}
 ### IRC
 
 message: {}
-
-### Other
-
-uncategorized: {}
