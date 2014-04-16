@@ -75,7 +75,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def pages_have_token?
-    config.fetch('pages').has_key?('token')
+    config.fetch('pages').all?{|el| el.has_key?('token')}
   end
 
 end

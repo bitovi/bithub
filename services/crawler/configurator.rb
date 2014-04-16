@@ -1,8 +1,7 @@
+require 'strong_parameters'
+require 'active_model'
 require 'active_record'
-
-class FeedConfig < ActiveRecord::Base
-  serialize :config, JSON
-end
+require 'models/feed_config'
 
 class Configurator
   include Celluloid
@@ -67,8 +66,8 @@ class Configurator
     FeedConfig
     .select(%i(brand_name feed_name config))
     .all
-    .select(&:'valid_config?')
-    .map(&:attributes)
+    .select{|fc| fc.valid_config?}
+    .map{|fc| fc.attributes}
     .group_by{|el| el['brand_name']}
   end
 

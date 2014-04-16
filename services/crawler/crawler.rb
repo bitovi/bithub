@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 RootDir = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
 
+$:.unshift(File.join(RootDir, 'app'))
 $:.unshift(File.join(RootDir, 'app', 'domain'))
 $:.unshift(File.join(RootDir, 'lib'))
 $:.unshift(File.join(RootDir, 'services'))
