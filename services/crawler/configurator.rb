@@ -64,12 +64,9 @@ class Configurator
   end
 
   def fetch_grouped
-    FeedConfig
-    .select(%i(brand_name feed_name config))
-    .all
-    .select{|fc| fc.valid_config?}
-    .map{|fc| fc.attributes}
-    .group_by{|el| el['brand_name']}
+    config = FeedConfig .select(%i(brand_name feed_name config)).all.select{|fc| fc.valid_config?}
+    Celluloid.logger.info "Found #{config.count} valid config entries"
+    configs.map{|fc| fc.attributes}.group_by{|el| el['brand_name']}
   end
 
   def db_config
