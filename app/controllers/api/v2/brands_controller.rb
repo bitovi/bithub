@@ -16,7 +16,8 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def update
-    if (@brand = Brand.find_by_id(current_account.id) && @brand.update_attributes(brand_params))
+    if (@brand = Brand.find_by_id(current_account.id))
+      @brand.update_attributes(brand_params)
       render :show
     else
       render :json => msg_hash(@brand, 'update'), :status => 406
