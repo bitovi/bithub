@@ -60,7 +60,7 @@ module Streamers
 
       def listen
         @client = Client.supervise(auth: @auth, topics: topics) do |object|
-          route object, %i(text)
+          route object, :twitter, %i(text)
         end
       end
 

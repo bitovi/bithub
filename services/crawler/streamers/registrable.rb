@@ -24,9 +24,9 @@ module Streamers
       end
     end
 
-    def route(object, attrs)
+    def route(object, feed, attrs)
       @channels.each do |c|
-        publish(c.name, object) if c.interested?(object, attrs)
+        publish(c.name, feed, object) if c.interested?(object, attrs)
       end
     end
 
