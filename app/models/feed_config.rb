@@ -8,6 +8,7 @@ class FeedConfig < ActiveRecord::Base
   after_update :notify_crawler
   after_create :notify_crawler
   before_save :clean_config
+  before_save :set_keywords
 
   def notify_crawler
     msg = {
@@ -49,12 +50,26 @@ class FeedConfig < ActiveRecord::Base
     end
   end
 
+  def set_keywords(brand = nil)
+    if is_twitter?
+      @_brand ||= brand || Brand.find_by_name(brand_name)
+      unless @_brand.nil?
+        self.config ||= {}
+        config['keywords'] = @_brand.keywords || []
+      end
+    end
+  end
+
   def is_github?
     feed_name == 'github'
   end
 
   def is_facebook?
     feed_name == 'facebook'
+  end
+
+  def is_twitter?
+    feed_name == 'twitter'
   end
 
   def valid_github?
