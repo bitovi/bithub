@@ -15,14 +15,16 @@ require_relative 'helpers'
 require 'dispatcher'
 require 'logger_factory'
 
-logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
-$logger = logger
+$logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
 
 class Listener
 
-  def initialize(uri, args={})
+  def initialize(uri=ENV['RABBITMQ_URI'])
     @conn = Bunny.new(uri).start
     @chan = @conn.create_channel
+
+    $logger.info "Listener connected to AMQP"
+
     self
   end
 
@@ -39,7 +41,12 @@ end
 Listener
   .new(ENV['RABBITMQ_URI'])
   .listen('q.events', auto_delete: true) do |payload|
-    brand_name = payload.fetch('meta').fetch('brand_name')
+    meta       = payload.fetch('meta')
+    brand_name = meta.fetch('brand_name')
+    feed_name  = meta.fetch('type_name')
+    type_name  = meta.fetch('feed_name')
+
+    $logger.info "--> New message from MQ! Brand: #{brand_name}; Feed: #{feed_name}; Type: #{type_name}"
 
     Apartment::Database.switch brand_name
     Dispatcher.new.dispatch payload
