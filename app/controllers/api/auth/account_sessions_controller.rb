@@ -1,27 +1,10 @@
 class Api::Auth::AccountSessionsController < Devise::SessionsController
-  include Api::V2::BaseHelpers
 
-  def create
-    super do |resource|
-      @account = AccountDecorator.decorate resource
-      render 'api/v2/accounts/show.json.jpbuilder'
-      break
-    end
+  def after_sign_in_path_for(resource)
+    '/admin'
   end
 
-  def destroy
-    super do
-      render :json => msg_hash(:account, 'destroy', 'success')
-      break
-    end
+  def after_sign_out_path_for(resource_or_scope)
+    '/login'
   end
-
-  def failure
-    render :json => msg_hash(:account, 'create'), :status => 401
-  end
-
-  def auth_options
-    super.merge({recall: "#{controller_path}#failure"})
-  end
-
 end
