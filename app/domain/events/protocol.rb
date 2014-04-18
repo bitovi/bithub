@@ -1,5 +1,3 @@
-require 'loggable'
-
 require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
@@ -26,7 +24,6 @@ module Events
     include Persistable
     include Serializable
     include Validatable
-    include Loggable
 
     attr_reader :instance, :source_data, :meta
 

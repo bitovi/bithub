@@ -1,16 +1,15 @@
 require 'andand'
 require 'core_ext'
 require 'core_helpers'
-require 'loggable'
+require 'logger_factory'
 
 require_relative 'events/dispatcher'
 require_relative 'entities/dispatcher'
 
 class Dispatcher
-  include Loggable
 
   def initialize
-    initialize_logger("DEBUG")
+    @logger = LoggerFactory.new('dispatcher', ENV['ENV']).component_logger
   end
 
   def dispatch(response, hint=nil)

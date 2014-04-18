@@ -1,4 +1,3 @@
-require 'loggable'
 require 'events/protocol'
 
 module Events
@@ -10,7 +9,6 @@ module Events
 
   class Dispatcher
     include CoreHelpers
-    include Loggable
 
     Mappings = {
       :Forums => :Forum,
