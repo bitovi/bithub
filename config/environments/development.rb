@@ -1,13 +1,6 @@
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  # Loggers
-  lf = LoggerFactory.new('rails', Rails.env)
-  config.logger = lf.component_logger
-  config.action_controller.logger = lf.ac_logger
-  config.active_record.logger = lf.ar_logger
-  config.log_level = :unknown
-
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
@@ -42,10 +35,4 @@ Bithub::Application.configure do
   config.assets.compress = true
   config.assets.compile = false
   config.assets.debug = false
-
-  # config.after_initialize do
-  #   Bullet.enable = false
-  #   Bullet.rails_logger = true
-  # end
-
 end

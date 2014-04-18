@@ -9,11 +9,8 @@ class LoggerFactory
 
   def initialize(name, env = 'development')
     @name = name; @env = env
-    filename = (env == 'development' || env == 'test') ? 'log4r_local.yml' : 'log4r.yml'
 
-    @config_path = File.join($root_dir, 'config', filename)
-
-    logger_config_data = YAML.load_file(@config_path)
+    logger_config_data = YAML.load_file config_path
     log_cfg = Log4r::YamlConfigurator
     log_cfg["ENV"] = @env
     log_cfg["COMPONENT_NAME"] = @name
@@ -32,6 +29,20 @@ class LoggerFactory
 
   def ac_logger
     @loggers['action_controller']
+  end
+
+  private
+
+  def config_path
+    path = config_path_builder(@env)
+
+    # return path for current environmet or default one
+    return File.exists?(path) ? path : config_path_builder
+  end
+
+  def config_path_builder(env = nil)
+    filename = env ? 'log4r.yml' : "log4r_#{evn}.yml"
+    File.join($root_dir, 'config', filename)
   end
 
 end
