@@ -28,7 +28,6 @@ module Entities
     include Groupable
     include Normalizable
     include Persistable
-    include Loggable
 
     attr_reader :instance
 

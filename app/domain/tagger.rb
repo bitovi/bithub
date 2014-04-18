@@ -3,11 +3,10 @@ require 'levenshtein'
 
 require 'core_ext'
 require 'core_helpers'
-require 'loggable'
 
 class Tagger
   include CoreHelpers
-  include Loggable
+
   DEFAULT_DELIMITERS = /[ ,.!?;\/]/
   DEFAULT_THRESHOLD = 1
 
