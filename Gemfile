@@ -58,7 +58,7 @@ gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec', group: [:development, :test]
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
-gem 'muster', :github => "neektza/muster"
+gem 'muster', :github => 'neektza/muster'
 
 # API client libs
 gem 'octokit', '~> 2.0'
@@ -70,7 +70,7 @@ gem 'disqus'      , github: 'hedgeyedev/disqus'      , branch: 'master'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
 
 group :test do
-  gem "codeclimate-test-reporter", require: false
+  gem 'codeclimate-test-reporter', require: false
   gem 'factory_girl_rails'
   gem 'database_cleaner'
   gem 'better_errors'

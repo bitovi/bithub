@@ -15,15 +15,16 @@ require_relative 'helpers'
 require 'dispatcher'
 require 'logger_factory'
 
-$logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
-
 class Listener
 
   def initialize(uri=ENV['RABBITMQ_URI'])
+    @logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
+    @logger.info 'Starting listener'
+
     @conn = Bunny.new(uri).start
     @chan = @conn.create_channel
 
-    $logger.info "Listener connected to AMQP"
+    @logger.info 'Listener connected to AMQP'
 
     self
   end
@@ -41,14 +42,19 @@ end
 Listener
   .new(ENV['RABBITMQ_URI'])
   .listen('q.events', auto_delete: true) do |payload|
-    meta       = payload.fetch('meta')
-    brand_name = meta.fetch('brand_name')
-    feed_name  = meta.fetch('type_name')
-    type_name  = meta.fetch('feed_name')
+    meta           = payload.fetch('meta')
+    brand_name     = meta.fetch('brand_name')
+    feed_name      = meta.fetch('type_name')
+    type_name      = meta.fetch('feed_name')
+    content_digest = payload.fetch('content_digest')
 
-    $logger.info "--> New message from MQ! Brand: #{brand_name}; Feed: #{feed_name}; Type: #{type_name}"
+    @logger.info "--> Received new message '#{content_digest}', brand: '#{brand_name}', feed: '#{feed_name}', type: '#{type_name}'"
 
     Apartment::Database.switch brand_name
+    @logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Database.current_tenant}"
+
     Dispatcher.new.dispatch payload
+
     Apartment::Database.switch
+    @logger.debug "(#{content_digest}) Current tenant switched back to #{Apartment::Database.current_tenant}"
   end

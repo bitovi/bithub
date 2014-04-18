@@ -1,13 +1,6 @@
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  # Loggers
-  lf = LoggerFactory.new('rails', Rails.env)
-  config.logger = lf.component_logger
-  config.action_controller.logger = lf.ac_logger
-  config.active_record.logger = lf.ar_logger
-  config.log_level = :unknown
-
   # Code is not reloaded between requests
   config.cache_classes = true
 
