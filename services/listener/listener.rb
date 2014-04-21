@@ -28,7 +28,7 @@ class Listener
     self
   end
 
-  def listen(queue_name, args)
+  def listen(queue_name, args={})
     @chan
       .queue(queue_name, args)
       .subscribe(:block => true) do |delivery_info, properties, payload|
@@ -40,7 +40,7 @@ end
 
 Listener
   .new(ENV['RABBITMQ_URI'])
-  .listen('q.events', auto_delete: false) do |payload, logger|
+  .listen('q.events') do |payload, logger|
     meta           = payload.fetch('meta')
     brand_name     = meta.fetch('brand_name').to_s
     feed_name      = meta.fetch('type_name')
