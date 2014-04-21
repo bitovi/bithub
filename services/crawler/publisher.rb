@@ -13,8 +13,8 @@ class Publisher
     @chan = @rabbit.create_channel
 
     # Exchange and queue
-    @x = @chan.direct("x.events", :auto_delete => true)
-    @q = @chan.queue("q.events", :auto_delete => true).bind(@x)
+    @x = @chan.direct("x.events")
+    @q = @chan.queue("q.events").bind(@x)
 
     @filter = DigestSet.new
   end
