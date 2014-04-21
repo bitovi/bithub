@@ -19,7 +19,6 @@ class Brand < ActiveRecord::Base
   private
 
   def create_tenant
-    Rails.logger.info "name================ #{name}"
     Apartment::Database.create(name)
     Apartment::Database.switch name
 
