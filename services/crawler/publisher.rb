@@ -27,7 +27,7 @@ class Publisher
   end
 
   def process(event, brand, feed)
-    event = event.to_hash
+    event = event.to_h
     feed  = feed.to_s
     brand = brand.to_s
 
