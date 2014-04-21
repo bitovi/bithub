@@ -8,8 +8,8 @@ require_relative 'entities/dispatcher'
 
 class Dispatcher
 
-  def initialize
-    @logger = LoggerFactory.new('dispatcher', ENV['ENV']).component_logger
+  def initialize(args={})
+    @logger = args[:logger] || LoggerFactory.new('dispatcher', ENV['ENV']).component_logger
   end
 
   def dispatch(response, hint=nil)
