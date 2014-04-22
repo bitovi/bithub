@@ -6,8 +6,18 @@ module Identities
 
       def initialize(args)
         super
-        @conn = create_https_client
+        boot
+        @http = create_https_client
         self
+      end
+
+      def boot
+        oauth_credentials = oauth.fetch(:credentials)
+        @data[:credentials] = {
+            access_token: oauth_credentials.fetch(:token),
+            refresh_token: oauth_credentials.fetch(:refresh_token),
+            expires_at: oauth_credentials.fetch(:expires_at)
+        }
       end
 
       def build
@@ -22,11 +32,11 @@ module Identities
       end
 
       def refresh_credentials
-        if new_credentials = fetch_access_token
-          @data[:refreshed_credentials] = {
+        if new_credentials = fetch_credentials
+          @data[:credentials] = {
             access_token: new_credentials[:access_token],
             refresh_token: new_credentials[:refresh_token],
-            expires_at: new_credentials['expires_in'] + expires_at
+            expires_at: Time.now.to_i + new_credentials['expires_in']
           }
         end
       end
@@ -34,27 +44,28 @@ module Identities
       # Accessors
 
       def access_token
-        credentials.fetch(:token)
+        credentials.fetch(:access_token)
       end
 
       def refresh_token
         credentials.fetch(:refresh_token)
       end
 
-      def expires_at
-        credentials.fetch(:expires_at)
-      end
-
       def credentials
-        @data[:refreshed_credentials] || oauth.fetch(:credentials)
+        @data.fetch(:credentials)
       end
 
       def forums
         @data[:forums] || []
       end
 
-      def forum_ids
-        forums.map {|f| f['id']}
+      def forum_names_and_ids
+        forums.map do |f|
+          {
+            id: f['id'],
+            name: f['name']
+          }
+        end
       end
 
       private
@@ -67,7 +78,7 @@ module Identities
         }
         path = "/api/3.0/users/listForums.json?" + URI.encode_www_form(params)
 
-        response = @conn.get path
+        response = @http.get path
 
         if response.code == "200"
           JSON.parse(response.body)['response']
@@ -77,7 +88,7 @@ module Identities
         end
       end
 
-      def fetch_access_token
+      def fetch_credentials
         params = {
           grant_type: 'refresh_token',
           client_id: ENV['DISQUS_KEY'],
@@ -85,7 +96,7 @@ module Identities
           refresh_token: refresh_token
         }
 
-        response = @conn.post "/api/oauth/2.0/access_token/", URI.encode_www_form(params)
+        response = @http.post "/api/oauth/2.0/access_token/", URI.encode_www_form(params)
 
         if response.code == "200"
           HashWithIndifferentAccess.new(JSON.parse(response.body))
