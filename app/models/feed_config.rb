@@ -49,15 +49,33 @@ module ConfigBuilders
   end
 
   class Stackexchange < Generic
-
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        tags: brand_identity.andand.brand.andand.keywords
+      }
+    end
   end
 
-  class Disqus < Generic
-
+  class Disqu < Generic
+    def config
+      forums = feed_config.andand.config['forums'] || []
+      {
+        token: brand_identity.andand.data[:access_token],
+        forums: forums.map{|p| p['id']}
+      }
+    end
   end
 
   class Meetup < Generic
-
+    def config
+      groups = feed_config.andand.config['groups'] || []
+      pp groups
+      {
+        token: brand_identity.andand.data[:access_token],
+        groups: groups.map{|g| g['id']}
+      }
+    end
   end
 
   class Rss < Generic
@@ -118,6 +136,16 @@ class FeedConfig < ActiveRecord::Base
         config['pages'] = config['pages'].map{|k,v| v}
       end
     end
+    if is_meetup?
+      if has?('groups')
+        config['groups'] = config['groups'].map{|k,v| v}
+      end
+    end
+    if is_disqus?
+      if has?('forums')
+        config['forums'] = config['forums'].map{|k,v| v}
+      end
+    end
   end
 
   def brand
@@ -152,6 +180,14 @@ class FeedConfig < ActiveRecord::Base
 
   def is_twitter?
     feed_name == 'twitter'
+  end
+
+  def is_disqus?
+    feed_name == 'disqus'
+  end
+
+  def is_meetup?
+    feed_name == 'meetup'
   end
 
   def valid_github?
