@@ -6,8 +6,6 @@ Bithub::Application.routes.draw do
     path: '/api',
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
 
-  #get '/api/auth/:provider/callback', :to => 'api/auth/omniauth_callbacks#twitter'
-
   devise_for :accounts,
     path: '/',
     controllers: {

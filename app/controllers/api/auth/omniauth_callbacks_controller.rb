@@ -111,7 +111,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   def oauthorize_brand(kind)
     account = Account.find(current_account[:id])
     brand = account.brand
-    uid = oauth_data[:uid]
+    uid = oauth_data[:uid].to_s
 
     # Build identity source_data
     source_data = Identities::Builders.const_get(kind.camel_case).new({oauth: oauth_data}).build
