@@ -4,7 +4,7 @@ module FeedSupervisors
 
     def initialize(brand_name, cfg)
       @brand_name = brand_name
-      @client = RMeetup::Client.new access_token: token
+      @client = RMeetup::Client.new api_key: api_key
       boot
     end
 
@@ -29,13 +29,17 @@ module FeedSupervisors
     def config
       Celluloid::Actor[:configurator].feed_config(@brand_name, :meetup)
     end
+    
+    def group_ids
+      config.fetch(:groups)
+    end
 
     def token
       config.fetch(:access_token)
     end
 
-    def group_ids
-      config.fetch(:groups)
+    def api_key
+      Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:meetup).fetch(:api_key)
     end
     
     def actor_name(endpoint_type)
