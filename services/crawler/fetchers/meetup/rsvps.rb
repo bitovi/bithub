@@ -1,5 +1,3 @@
-require 'rmeetup'
-
 module Fetchers
   module Meetup
 
