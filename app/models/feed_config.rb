@@ -66,11 +66,13 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def set_tokens
-    identity = brand.identities.where(provider: feed_name).first
-    unless identity.nil?
-      decorated = BrandIdentityDecorator.new(identity)
-      config['access_token'] = decorated.data[:access_token]
-      config['access_secret'] = decorated.data[:access_secret] if is_twitter?
+    if brand
+      identity = brand.identities.where(provider: feed_name).first
+      unless identity.nil?
+        decorated = BrandIdentityDecorator.new(identity)
+        config['access_token'] = decorated.data[:access_token]
+        config['access_secret'] = decorated.data[:access_secret] if is_twitter?
+      end
     end
   end
 
@@ -106,7 +108,20 @@ class FeedConfig < ActiveRecord::Base
     has?('token') && has?('venues')
   end
 
+  def valid_rss?
+    has?('urls')
+  end
+
+  def valid_disqus?
+    has?('forums')
+  end
+
+  def valid_stackexchange
+    has?('terms')
+  end
+
   def has?(key)
+    p config
     returning(config && config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end

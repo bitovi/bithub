@@ -1,5 +1,3 @@
-require 'rmeetup'
-
 module Fetchers
   module Meetup
 
@@ -11,17 +9,15 @@ module Fetchers
         @group_ids = opts.fetch(:group_ids)
       end
 
-      def set_tracked_events(event_ids)
-        @event_ids = event_ids
-      end
-
       def fetch
         @client.fetch :events, group_id: group_ids
       end
 
+      # todo events that can be looked up in redis
+
       private
       def group_ids
-        @group_ids.join(',')
+        @group_ids.join ','
       end
     end
   end
