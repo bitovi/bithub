@@ -19,14 +19,6 @@ GIT
       websocket_parser (>= 0.1.6)
 
 GIT
-  remote: git://github.com/hedgeyedev/disqus.git
-  revision: 5746c2a915541b2903b26ce4934e2bb44ccc199c
-  branch: master
-  specs:
-    disqus (1.0.6)
-      json
-
-GIT
   remote: git://github.com/influitive/omniauth-disqus.git
   revision: f26d69e690e51d4ccacc98a722490083e36c3989
   specs:
@@ -483,7 +475,6 @@ DEPENDENCIES
   delayed_job
   delayed_job_active_record
   devise (~> 3.2)
-  disqus!
   dotenv-rails
   draper
   enumerize
