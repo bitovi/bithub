@@ -31,7 +31,7 @@ module Identities
           {
             id: g.id,
             link: g.link,
-            urname: g.urlname,
+            urlname: g.urlname,
             timezone: g.timezone
           }
         end
@@ -51,6 +51,15 @@ module Identities
 
       def groups
         @data[:groups]
+      end
+
+      def group_names_and_ids
+        groups.map do |g|
+          {
+            id: g['id'],
+            name: g['urlname']
+          }
+        end
       end
 
       def uid
