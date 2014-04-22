@@ -13,7 +13,7 @@ module FeedSupervisors
       @endpoints.supervise_as(
         actor_name('forums'),
         Poller,
-        *[@brand_name, Fetchers::Disqus::Comments.new(token: token, api_key: api_key, forums: forums)]
+        *[@brand_name, Fetchers::Disqus::Comments.new(api_key: api_key, forums: forums)]
       )
     end
 

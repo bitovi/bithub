@@ -8,13 +8,12 @@ module Fetchers
 
       def initialize(opts)
         @forums = opts.fetch(:forums)
-        @token = opts.fetch(:token)
-        @api_key = opts.fetch(:api_key) { |key|  }
+        @api_key = opts.fetch(:api_key)
       end
       attr_readed :token
 
       def fetch
-        HTTParty.get url, :query => related.merge(forums)
+        HTTParty.get url, :query => related.merge(forums).merge(auth)
       end
 
       private
@@ -24,17 +23,15 @@ module Fetchers
       end
 
       def related
-        @related ||= { :related: %w(thread forum) }
+        { :related: %w(thread forum) }
       end
 
       def url
-        @url ||= 'http://disqus.com/api/3.0/posts/list.json'
+        'http://disqus.com/api/3.0/posts/list.json'
       end
 
       def auth
-        @auth ||= {
-          :access_token => 'dskfjs',
-          :api_key => 
+        { :api_key => @api_key }
       end
 
     end
