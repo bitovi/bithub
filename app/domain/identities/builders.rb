@@ -6,3 +6,4 @@ Identities::Builders::Disqus
 Identities::Builders::Foursquare
 Identities::Builders::Facebook
 Identities::Builders::Meetup
+Identities::Builders::Stackexchange
