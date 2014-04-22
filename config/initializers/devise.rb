@@ -22,8 +22,8 @@ Devise.setup do |config|
   config.omniauth :twitter_brand, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
 
   # stackexchange
-  config.omniauth :stackexchange, ENV['STACKEXCHANGE_CLIENT_ID'], ENV['STACKEXCHANGE_CLIENT_SECRET'], public_key: ENV['STACKEXCHANGE_KEY'], site: 'stackoverflow'
-  config.omniauth :stackexchange_brand, ENV['STACKEXCHANGE_CLIENT_ID'], ENV['STACKEXCHANGE_CLIENT_SECRET'], public_key: ENV['STACKEXCHANGE_KEY'], site: 'stackoverflow'
+  config.omniauth :stackexchange, ENV['STACKEXCHANGE_CLIENT_ID'], ENV['STACKEXCHANGE_CLIENT_SECRET'], public_key: ENV['STACKEXCHANGE_CLIENT_KEY'], site: 'stackoverflow'
+  config.omniauth :stackexchange_brand, ENV['STACKEXCHANGE_CLIENT_ID'], ENV['STACKEXCHANGE_CLIENT_SECRET'], public_key: ENV['STACKEXCHANGE_CLIENT_KEY'], site: 'stackoverflow'
 
   # disqus
   config.omniauth :disqus, ENV['DISQUS_KEY'], ENV['DISQUS_SECRET']
