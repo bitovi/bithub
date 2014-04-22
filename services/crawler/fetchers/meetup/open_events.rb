@@ -1,5 +1,3 @@
-require 'rmeetup'
-
 module Fetchers
   module Meetup
 
@@ -8,11 +6,15 @@ module Fetchers
 
       def initialize(client, opts = {})
         @client = client
-        @text_search = opts.fetch(:terms).join(',')
+        @terms = opts.fetch(:terms)
       end
 
       def fetch
-        @client.fetch(:open_events, {text: @text_search, sign: 'true'})
+        @client.fetch :open_events, text: @text_search
+      end
+
+      def search_params
+        @terms.join ','
       end
     end
   end
