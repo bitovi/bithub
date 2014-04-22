@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/neektza/rmeetup.git
-  revision: 8e64e0d9600cc40ea885905c627b7a71312bec00
+  revision: 22247d77e9b2440f9d6673f5adc86312cde89c71
   branch: master
   specs:
     rmeetup (2.0.0)
