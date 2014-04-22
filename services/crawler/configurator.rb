@@ -67,7 +67,8 @@ class Configurator
     configs = FeedConfig .select(%i(brand_name feed_name config)).all.select{|fc| fc.valid_config?}
 
     Celluloid.logger.info "Found #{configs.count} valid config entries"
-    Celluloid.logger.debug "Valid: #{configs}"
+    configs.each {|c| Celluloid.logger.debug "#{c.inspect}"}
+
     configs.map{|fc| fc.attributes}.group_by{|el| el['brand_name']}
   end
 
