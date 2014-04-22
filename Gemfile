@@ -68,6 +68,10 @@ gem 'github_api'  , github: 'peter-murach/github'    , branch: 'master'
 gem 'twitter'     , github: 'sferik/twitter'         , branch: 'master'
 gem 'disqus'      , github: 'hedgeyedev/disqus'      , branch: 'master'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
+gem 'rmeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
+gem 'httparty'
+gem 'feedjira'
+
 
 group :test do
   gem 'codeclimate-test-reporter', require: false
