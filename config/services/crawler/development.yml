@@ -65,9 +65,6 @@
 #                 - :id: '67890'
 #         :disqus:
 #             :token: 'b08029df87f74c99afeba385e519e3e0'
-#             :related:
-#                 - 'thread'
-#                 - 'forum'
 #             :forums:
 #                 - 'jmvcs3'
 #                 - 'bitovi'

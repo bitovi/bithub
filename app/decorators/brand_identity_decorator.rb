@@ -60,4 +60,10 @@ class BrandIdentityDecorator < Draper::Decorator
       access_token: data.access_token
     }
   end
+
+  def provider_stackexchange(data)
+    {
+      access_token: 
+    }
+  end
 end

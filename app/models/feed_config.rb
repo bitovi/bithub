@@ -1,3 +1,71 @@
+module ConfigBuilders
+  
+  class Generic
+
+    attr_reader :feed_config, :brand_identity
+
+    def initialize(feed_config, brand_identity)
+      @feed_config    = feed_config
+      @brand_identity = BrandIdentityDecorator.new(brand_identity)
+    end
+
+    def config
+      {}
+    end
+
+    def is_valid?
+      feed_config.valid_config?
+    end
+
+  end
+
+  class Github < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        repos: feed_config.andand.config['repos'],
+        orgs: feed_config.andand.config['orgs']
+      }
+    end
+  end
+
+  class Twitter < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        secret: brand_identity.andand.data[:access_secret],
+        terms: brand_identity.andand.brand.andand.keywords
+      }
+    end
+  end
+
+  class Facebook < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        pages: feed_config.andand.config['pages']
+      }
+    end
+  end
+
+  class Stackexchange < Generic
+
+  end
+
+  class Disqus < Generic
+
+  end
+
+  class Meetup < Generic
+
+  end
+
+  class Rss < Generic
+
+  end
+
+end
+
 class FeedConfig < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
   include AmqpHelpers
@@ -110,6 +178,10 @@ class FeedConfig < ActiveRecord::Base
     returning(config && config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end
+  end
+
+  def builder
+    "ConfigBuilders::#{feed_name.classify}".constantize.new(self, brand.identities.where(provider: feed_name).first)
   end
 
   # TODO has_nested?
