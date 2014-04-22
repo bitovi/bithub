@@ -47,7 +47,6 @@ class Entity < ActiveRecord::Base
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
   has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
-  has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of  :title,
@@ -171,7 +170,6 @@ class Entity < ActiveRecord::Base
     activities = []
     activities.concat(self.awards)
     activities.concat(self.upvotes)
-    activities.concat(self.anteups)
   end
 
   def bump_thread

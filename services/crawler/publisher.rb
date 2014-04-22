@@ -12,44 +12,21 @@ class Publisher
     @rabbit.start
     @chan = @rabbit.create_channel
 
-    # Exchange and queue
-    @x = @chan.direct("x.events", :auto_delete => true)
-    @q = @chan.queue("q.events", :auto_delete => true).bind(@x)
+    @x = @chan.direct("x.events")
+    @q = @chan.queue("q.events").bind(@x)
 
     @filter = DigestSet.new
   end
 
   def publish(brand, feed, events)
-    Celluloid.logger.info "-----------> Publishing from #{feed} with routing_key: #{brand}"
-    processed_events = events.map {|e| process e, brand, feed}.compact
-    new_events  = reject_old processed_events, brand
+    # process events, build event hashes for sending
+    processed_events = process(events, brand, feed).compact
+
+    # reject previously sent events
+    new_events  = reject_old processed_events
+
+    # finally send events to MQ
     send new_events, brand
-  end
-
-  def process(event, brand, feed)
-    event = event.to_h
-    feed  = feed.to_s
-    brand = brand.to_s
-
-    begin
-      dispatched = Events::Dispatcher.dispatch(event, feed)
-      {
-        meta: {
-          feed_name: feed, #dispatched.feed_name.snake_case,
-          type_name: dispatched.type_name.snake_case,
-          brand_name: brand,
-        },
-        content_digest: dispatched.content_digest,
-        source_data: event
-      }
-    rescue Events::DispatchError => e
-      Celluloid.logger.info "Failed to dispatch event from #{feed}"
-      nil
-    end
-  end
-
-  def reject_old(events, brand)
-    @filter.reject_old events, brand
   end
 
   def send(events, brand)
@@ -57,8 +34,47 @@ class Publisher
   end
 
   def send_one(event, brand)
-    #@x.publish(MultiJson.dump(event), routing_key: brand)
+    Celluloid.logger.info "(#{event[:content_digest]}) Publishing message!"
     @x.publish MultiJson.dump(event)
+  end
+
+  private
+
+  def reject_old(events)
+    @filter.reject_old events
+  end
+
+  def process(events, brand, feed)
+    events.map do |e|
+      process_one e, brand, feed
+    end
+  end
+
+  def process_one(event, brand, feed)
+    event     = event.to_h
+    feed      = feed.to_s
+    brand     = brand.to_s
+    processed = nil
+
+    begin
+      dispatched = Events::Dispatcher.dispatch(event, feed)
+      processed = {
+        meta: {
+          feed_name: feed,
+          type_name: dispatched.type_name.snake_case,
+          brand_name: brand,
+        },
+        content_digest: dispatched.content_digest,
+        source_data: event
+      }
+      Celluloid.logger.debug "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
+
+    rescue Events::DispatchError => e
+      Celluloid.logger.info "Failed to dispatch event from feed #{feed} for brand #{brand}"
+      Celluloid.logger.debug "Failed to dispatch event #{event.inspect}"
+    end
+
+    processed
   end
 
 end

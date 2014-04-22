@@ -5,31 +5,55 @@ require 'andand'
 class DigestSet
   def initialize(initial_world = {})
     @redis = Redis.new(:url => ENV['REDIS_URL'])
+
     unless initial_world.empty?
-      initial_world.each {|brand, digests| add_many brand, digests}
+      initial_world.each {|event| add_many event}
     end
   end
 
-  def reject_old(events, brand)
-    new_events = events.reject {|e| seen? brand, e.fetch(:content_digest) }
-    new_events.each {|e| add brand, e.fetch(:content_digest) }
+  def reject_old(events)
+    new_events = events.reject do |e|
+      if seen? e
+        Celluloid.logger.debug "(#{digest(e)}) SEEN"
+        true
+      else
+        Celluloid.logger.debug "(#{digest(e)}) ADDED"
+        false
+      end
+    end
+    new_events.each {|e| add e}
     new_events
   end
 
-  def add_many(brand, digests)
-    digests.map{|d| add(brand, d)}.reduce{|acc, x| acc && x}
+  private
+
+  def add_many(events)
+    events.map {|e| add(e)}.reduce{|acc, x| acc && x}
   end
 
-  def test(brand, digest)
-    @redis.sismember("digests:#{brand}", digest)
+  def test(event)
+    @redis.sismember key(event), digest(event)
   end
 
-  def seen(brand)
-    @redis.smembers("digests:#{brand}")
+  def seen(event)
+    @redis.smembers key(event)
   end
 
-  def add(brand, digest)
-    @redis.sadd("digests:#{brand}", digest)
+  def add(event)
+    @redis.sadd key(event), digest(event)
+  end
+
+  def key(event)
+    meta  = event.fetch(:meta)
+    brand = meta.fetch(:brand_name)
+    feed  = meta.fetch(:feed_name)
+    type  = meta.fetch(:type_name)
+
+    "digests:#{brand}:#{feed}:#{type}"
+  end
+
+  def digest(event)
+    event.fetch(:content_digest)
   end
 
   alias_method :seen?, :test
