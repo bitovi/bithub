@@ -59,8 +59,13 @@ module Identities
         @data[:forums] || []
       end
 
-      def forum_ids
-        forums.map {|f| f['id']}
+      def forum_names_and_ids
+        forums.map do |f|
+          {
+            id: f['id'],
+            name: f['name']
+          }
+        end
       end
 
       private
