@@ -6,7 +6,7 @@ module Events
 
       def_delegators :@tweet, :id, :id_str,
         :text, :retweet, :retweeted_status,
-        :entities, :retweet?
+        :entities, :retweet?, :created_at
 
       attr_accessor :tweet, :user
 
