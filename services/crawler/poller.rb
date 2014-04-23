@@ -19,8 +19,9 @@ class Poller
 
   def fetch
     events = @fetcher.fetch
-    Celluloid.logger.info "Fetching from #{fetcher_name}, fetched #{events.count}"
-    publish(@brand_name, events)
+    Celluloid.logger.info "Fetching from #{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
+
+    publish @brand_name, events
   end
 
   def publish(publish, data)
@@ -30,7 +31,7 @@ class Poller
   private
 
   def fetcher_name
-    @fetcher.class.name # camelcase?
+    @fetcher.class.name
   end
 
   def feed_name

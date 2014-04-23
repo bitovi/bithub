@@ -116,7 +116,7 @@ class FeedConfig < ActiveRecord::Base
     has?('forums')
   end
 
-  def valid_stackexchange
+  def valid_stackexchange?
     has?('terms')
   end
 
