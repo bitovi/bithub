@@ -58,6 +58,7 @@ Listener
       Dispatcher.new(logger: logger).dispatch payload
     rescue Exception => err
       logger.error "(#{content_digest}) Dispatching failed: #{err.message}"
+      logger.error err.backtrace.join("\n")
     else
       logger.info "(#{content_digest}) Dispatching successful"
     end
