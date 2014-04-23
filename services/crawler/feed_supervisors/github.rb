@@ -20,25 +20,26 @@ module FeedSupervisors
           Poller,
           *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name}), {interval: 60}]
 
-        @endpoints.supervise_as \
-          actor_name('issues', repo_name),
-          Poller,
-          *[@brand_name, Fetchers::Github::RepoIssues.new(@client, {user_repo: repo_name}), {interval: 600}]
+      #   @endpoints.supervise_as \
+      #     actor_name('issues', repo_name),
+      #     Poller,
+      #     *[@brand_name, Fetchers::Github::RepoIssues.new(@client, {user_repo: repo_name}), {interval: 600}]
 
-        @endpoints.supervise_as \
-          actor_name('issues_comments', repo_name),
-          Poller,
-          *[@brand_name, Fetchers::Github::RepoPullRequests.new(@client, {user_repo: repo_name}), {interval: 600}]
+      #   @endpoints.supervise_as \
+      #     actor_name('issues_comments', repo_name),
+      #     Poller,
+      #     *[@brand_name, Fetchers::Github::RepoPullRequests.new(@client, {user_repo: repo_name}), {interval: 600}]
 
-        @endpoints.supervise_as \
-          actor_name('pull_requests', repo_name),
-          Poller ,
-          *[@brand_name, Fetchers::Github::RepoIssuesComments.new(@client, {user_repo: repo_name}), {interval: 300}]
+      #   @endpoints.supervise_as \
+      #     actor_name('pull_requests', repo_name),
+      #     Poller ,
+      #     *[@brand_name, Fetchers::Github::RepoIssuesComments.new(@client, {user_repo: repo_name}), {interval: 300}]
 
-        @endpoints.supervise_as \
-          actor_name('pull_requests_comments', repo_name),
-          Poller,
-          *[@brand_name, Fetchers::Github::RepoPullRequestsComments.new(@client, {user_repo: repo_name}), {interval: 300}]
+      #   @endpoints.supervise_as \
+      #     actor_name('pull_requests_comments', repo_name),
+      #     Poller,
+      #     *[@brand_name, Fetchers::Github::RepoPullRequestsComments.new(@client, {user_repo: repo_name}), {interval: 300}]
+
       end
 
       orgs.each do |org_name|

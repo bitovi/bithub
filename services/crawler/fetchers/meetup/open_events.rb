@@ -10,7 +10,8 @@ module Fetchers
       end
 
       def fetch
-        @client.fetch :open_events, text: @text_search
+        events = @client.fetch :open_events, text: search_params
+        events.map {|e| e.to_h}
       end
 
       def search_params
