@@ -45,7 +45,8 @@ class BrandIdentityDecorator < Draper::Decorator
 
   def provider_disqus(data)
     {
-      access_token: data.access_token
+      access_token: data.access_token,
+      forums: data.forum_names_and_ids
     }
   end
 
@@ -56,6 +57,13 @@ class BrandIdentityDecorator < Draper::Decorator
   end
 
   def provider_meetup(data)
+    {
+      access_token: data.access_token,
+      groups: data.group_names_and_ids
+    }
+  end
+
+  def provider_stackexchange(data)
     {
       access_token: data.access_token
     }
