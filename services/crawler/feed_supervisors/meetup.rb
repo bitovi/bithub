@@ -1,10 +1,12 @@
+require 'rmeetup'
+
 module FeedSupervisors
   class Meetup
     include Celluloid
 
-    def initialize(brand_name, cfg)
+    def initialize(brand_name)
       @brand_name = brand_name
-      @client = RMeetup::Client.new api_key: api_key
+      @client = ::RMeetup::Client.new api_key: api_key
       boot
     end
 

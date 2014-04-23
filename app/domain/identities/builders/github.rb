@@ -1,3 +1,5 @@
+require 'octokit'
+
 module Identities
   module Builders
     class Github < Base
@@ -56,7 +58,7 @@ module Identities
       end
 
       def create_github_client
-        Octokit::Client.new \
+        ::Octokit::Client.new \
         :access_token => access_token,
         :auto_paginate => true
       end

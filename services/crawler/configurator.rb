@@ -1,7 +1,12 @@
 require 'strong_parameters'
 require 'active_model'
 require 'active_record'
+require 'draper'
+require 'activerecord-postgres-hstore'
 require 'models/feed_config'
+require 'models/brand'
+require 'models/brand_identity'
+require 'decorators/brand_identity_decorator'
 
 class Configurator
   include Celluloid
@@ -64,10 +69,10 @@ class Configurator
   end
 
   def fetch_grouped
-    configs = FeedConfig .select(%i(brand_name feed_name config)).all.select{|fc| fc.valid_config?}
+    configs = FeedConfig.all.each{|fc| fc.config = fc.builder.config}
 
     Celluloid.logger.info "Found #{configs.count} valid config entries"
-    configs.each {|c| Celluloid.logger.debug "#{c.inspect}"}
+    Celluloid.logger.debug configs
 
     configs.map{|fc| fc.attributes}.group_by{|el| el['brand_name']}
   end
