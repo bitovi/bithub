@@ -214,6 +214,14 @@ module Events
     end
   end
 
+  module Rss
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Rss::Post
+      end
+    end
+  end
+
   module Disqus
     class Dispatcher < BasicTypeDispatcher
       def type
