@@ -13,9 +13,10 @@ module Fetchers
         @client.fetch :events, group_id: group_ids
       end
 
-      # todo events that can be looked up in redis
+      # todo events that can be looked up in redis <3
 
       private
+
       def group_ids
         @group_ids.join ','
       end

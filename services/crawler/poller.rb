@@ -21,11 +21,13 @@ class Poller
   def fetch
     events = @fetcher.fetch
     Celluloid.logger.info "Fetching from #{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
-    publish @brand_name, events
+
+    publish events if events.count > 0
   end
 
-  def publish(publish, data)
+  def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
+
     Celluloid::Actor[:publisher].publish @brand_name, feed_name, data
   end
 

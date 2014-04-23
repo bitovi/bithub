@@ -31,9 +31,13 @@ module FeedSupervisors
     def config
       Celluloid::Actor[:configurator].feed_config(@brand_name, :meetup)
     end
-    
+
     def group_ids
       config.fetch(:groups)
+    end
+
+    def terms
+      config.fetch(:terms)
     end
 
     def token
@@ -43,7 +47,7 @@ module FeedSupervisors
     def api_key
       Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:meetup).fetch(:api_key)
     end
-    
+
     def actor_name(endpoint_type)
       "#{@brand_name}_meetup_#{endpoint_type}".to_sym
     end
