@@ -24,6 +24,7 @@ class Poller
   end
 
   def publish(publish, data)
+    Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
     Celluloid::Actor[:publisher].publish @brand_name, feed_name, data
   end
 
