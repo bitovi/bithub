@@ -4,7 +4,7 @@ module Entities
     class Tweet < Protocol
       
       def find
-        @event.tweet_id && find_by_tweet_id.first
+        @event.id && find_by_tweet_id.first
       end
 
       def build
