@@ -9,6 +9,12 @@ module ConfigBuilders
       @brand_identity = BrandIdentityDecorator.new(brand_identity)
     end
 
+    def terms
+      terms = ([] << brand_identity.andand.brand.andand.name)
+      terms += (kws = brand_identity.andand.brand.andand.keywords) if kws
+      terms
+    end
+
     def config
       {}
     end
@@ -34,7 +40,7 @@ module ConfigBuilders
       {
         token: brand_identity.andand.data[:access_token],
         secret: brand_identity.andand.data[:access_secret],
-        terms: brand_identity.andand.brand.andand.keywords
+        terms: terms
       }
     end
   end
@@ -73,7 +79,8 @@ module ConfigBuilders
       pp groups
       {
         token: brand_identity.andand.data[:access_token],
-        groups: groups.map{|g| g['id']}
+        groups: groups.map{|g| g['id']},
+        terms: terms
       }
     end
   end
