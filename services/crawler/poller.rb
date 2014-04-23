@@ -9,6 +9,7 @@ class Poller
   end
 
   def poll
+    fetch
     @timer = every(x_seconds) { fetch }
   end
 
@@ -20,7 +21,6 @@ class Poller
   def fetch
     events = @fetcher.fetch
     Celluloid.logger.info "Fetching from #{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
-
     publish @brand_name, events
   end
 
