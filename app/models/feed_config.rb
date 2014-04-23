@@ -1,3 +1,89 @@
+module ConfigBuilders
+  
+  class Generic
+
+    attr_reader :feed_config, :brand_identity
+
+    def initialize(feed_config, brand_identity)
+      @feed_config    = feed_config
+      @brand_identity = BrandIdentityDecorator.new(brand_identity)
+    end
+
+    def config
+      {}
+    end
+
+    def is_valid?
+      feed_config.valid_config?
+    end
+
+  end
+
+  class Github < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        repos: feed_config.andand.config['repos'],
+        orgs: feed_config.andand.config['orgs']
+      }
+    end
+  end
+
+  class Twitter < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        secret: brand_identity.andand.data[:access_secret],
+        terms: brand_identity.andand.brand.andand.keywords
+      }
+    end
+  end
+
+  class Facebook < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        pages: feed_config.andand.config['pages']
+      }
+    end
+  end
+
+  class Stackexchange < Generic
+    def config
+      {
+        token: brand_identity.andand.data[:access_token],
+        tags: brand_identity.andand.brand.andand.keywords
+      }
+    end
+  end
+
+  class Disqu < Generic
+    def config
+      forums = feed_config.andand.config['forums'] || []
+      {
+        token: brand_identity.andand.data[:access_token],
+        forums: forums.map{|p| p['id']}
+      }
+    end
+  end
+
+  class Meetup < Generic
+    def config
+      groups = feed_config.andand.config['groups'] || []
+      pp groups
+      {
+        token: brand_identity.andand.data[:access_token],
+        groups: groups.map{|g| g['id']}
+      }
+    end
+  end
+
+  class Rss < Generic
+
+  end
+
+end
+
 class FeedConfig < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
   include AmqpHelpers
@@ -50,6 +136,16 @@ class FeedConfig < ActiveRecord::Base
         config['pages'] = config['pages'].map{|k,v| v}
       end
     end
+    if is_meetup?
+      if has?('groups')
+        config['groups'] = config['groups'].map{|k,v| v}
+      end
+    end
+    if is_disqus?
+      if has?('forums')
+        config['forums'] = config['forums'].map{|k,v| v}
+      end
+    end
   end
 
   def brand
@@ -88,6 +184,14 @@ class FeedConfig < ActiveRecord::Base
     feed_name == 'twitter'
   end
 
+  def is_disqus?
+    feed_name == 'disqus'
+  end
+
+  def is_meetup?
+    feed_name == 'meetup'
+  end
+
   def valid_github?
     has?('access_token') && has?('orgs') && has?('repos')
   end
@@ -116,7 +220,7 @@ class FeedConfig < ActiveRecord::Base
     has?('forums')
   end
 
-  def valid_stackexchange
+  def valid_stackexchange?
     has?('terms')
   end
 
@@ -125,6 +229,10 @@ class FeedConfig < ActiveRecord::Base
     returning(config && config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end
+  end
+
+  def builder
+    "ConfigBuilders::#{feed_name.classify}".constantize.new(self, brand.identities.where(provider: feed_name).first)
   end
 
   # TODO has_nested?

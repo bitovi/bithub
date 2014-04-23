@@ -11,7 +11,7 @@ module FeedSupervisors
     end
 
     def boot
-      Celluloid.logger.info "Booting Github supervisor for #{@brand_name}"
+      Celluloid.logger.info "Booting Github supervisor for brand '#{@brand_name}'"
       @endpoints = SupervisionGroup.new
 
       repos.each do |repo_name|
