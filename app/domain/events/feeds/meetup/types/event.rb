@@ -15,7 +15,7 @@ module Events
         id + url + name +
         description + status +
         @venue.composite_location +
-        host_ids_csv +
+        host_ids_csv.to_s +
         self.class.name
       end
 

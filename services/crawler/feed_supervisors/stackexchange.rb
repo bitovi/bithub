@@ -1,5 +1,5 @@
 module FeedSupervisors
-  class Questions
+  class Stackexchange
     include Celluloid
 
     def initialize(brand_name)
@@ -30,4 +30,3 @@ module FeedSupervisors
 
   end
 end
-
