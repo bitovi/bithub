@@ -18,7 +18,7 @@ module FeedSupervisors
         @endpoints.supervise_as \
           actor_name('repo_activity', repo_name),
           Poller,
-          *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name}), {interval: 60}]
+          *[@brand_name, Fetchers::Github::RepoActivity.new(@client, {user_repo: repo_name}), {interval: 600}]
 
       #   @endpoints.supervise_as \
       #     actor_name('issues', repo_name),
@@ -46,7 +46,7 @@ module FeedSupervisors
         @endpoints.supervise_as \
           actor_name(org_name , 'org_activity'),
           Poller,
-          *[@brand_name, Fetchers::Github::OrgActivity.new(@client, {org_name: org_name}), {interval: 30}]
+          *[@brand_name, Fetchers::Github::OrgActivity.new(@client, {org_name: org_name}), {interval: 600}]
       end
     end
 
