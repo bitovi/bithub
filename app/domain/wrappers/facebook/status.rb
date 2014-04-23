@@ -7,7 +7,8 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      has :id, :type, :message, :link
+      has :id, :type
+      maybe_has :message, :link
 
       def initialize(status)
         @data = symbolize_keys(status)
