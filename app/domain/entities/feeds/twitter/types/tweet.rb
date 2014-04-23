@@ -2,7 +2,7 @@ module Entities
   module Twitter
 
     class Tweet < Protocol
-      
+
       def find
         @event.id && find_by_tweet_id.first
       end
@@ -23,9 +23,9 @@ module Entities
         built[:props][:retweeted_id] = @event.original_tweet_id if @event.retweet?
         built
       end
-      
+
       def find_parent
-        @event.retweet.id_str && find_original_tweet.first
+        (@event.retweet.id_str && find_original_tweet.first) if @event.retweet?
       end
 
       def find_children
@@ -39,7 +39,7 @@ module Entities
         .type('tweet')
         .where(origin_id: @event.id_str)
       end
-      
+
       def find_original_tweet
         Entity
         .feed('twitter')

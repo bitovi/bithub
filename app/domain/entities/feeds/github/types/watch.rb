@@ -9,7 +9,7 @@ module Entities
 
       def build
         Entity.new({
-          title: "started watching #{@event.repo_name}",
+          title: "started watching #{@event.repo.name}",
           origin_ts: @event.created_at,
           props: {
             origin_author_id: @event.actor.id,

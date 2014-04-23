@@ -2,7 +2,7 @@ ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 require File.join(ROOT_DIR, 'lib', 'logger_factory')
 
 worker_processes 1
-timeout 5
+timeout 30
 preload_app true
 
 # Unix socket
