@@ -57,9 +57,9 @@ Listener
     begin
       Dispatcher.new(logger: logger).dispatch payload
     rescue Exception => err
-      logger.error "(#{content_digest}) Dispaching failed: #{err.message}"
+      logger.error "(#{content_digest}) Dispatching failed: #{err.message}"
     else
-      logger.info "(#{content_digest}) Dispatch successful"
+      logger.info "(#{content_digest}) Dispatching successful"
     end
 
     Apartment::Database.switch

@@ -10,7 +10,7 @@ module Fetchers
       end
 
       def fetch
-        @client.activity.events.public user: @user, repo: @repo
+        @client.pull_requests.list user: @user, repo: @repo
       end
     end
   end
