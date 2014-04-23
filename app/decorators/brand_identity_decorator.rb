@@ -1,3 +1,5 @@
+require 'identities/builders'
+
 class BrandIdentityDecorator < Draper::Decorator
   delegate_all
 
@@ -11,7 +13,7 @@ class BrandIdentityDecorator < Draper::Decorator
   def data
     provider = source.provider
     source_data = source.source_data
-    data = Identities::Builders.const_get(provider.camel_case).new(source_data)
+    data = ::Identities::Builders.const_get(provider.camel_case).new(source_data)
 
     provider_method = "provider_#{provider}".to_sym
     self.respond_to?(provider_method) ? self.send(provider_method, data) : {}

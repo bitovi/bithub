@@ -10,4 +10,8 @@ require_relative 'github/repo_pull_requests'
 require_relative 'github/repo_pull_requests_comments'
 
 require_relative 'twitter/tweet_search'
+
 require_relative 'facebook/page_feed'
+
+require_relative 'meetup/events'
+require_relative 'meetup/open_events'

@@ -6,7 +6,7 @@ module ConfigBuilders
 
     def initialize(feed_config, brand_identity)
       @feed_config    = feed_config
-      @brand_identity = BrandIdentityDecorator.new(brand_identity)
+      @brand_identity = ::BrandIdentityDecorator.new(brand_identity)
     end
 
     def terms
@@ -28,9 +28,9 @@ module ConfigBuilders
   class Github < Generic
     def config
       {
-        token: brand_identity.andand.data[:access_token],
-        repos: feed_config.andand.config['repos'],
-        orgs: feed_config.andand.config['orgs']
+        access_token: brand_identity.andand.data[:access_token],
+        repos: feed_config.andand.config['repos'] || [],
+        orgs: feed_config.andand.config['orgs'] || []
       }
     end
   end
@@ -38,9 +38,9 @@ module ConfigBuilders
   class Twitter < Generic
     def config
       {
-        token: brand_identity.andand.data[:access_token],
-        secret: brand_identity.andand.data[:access_secret],
-        terms: terms
+        access_token: brand_identity.andand.data[:access_token],
+        access_secret: brand_identity.andand.data[:access_secret],
+        terms: terms || []
       }
     end
   end
@@ -49,7 +49,7 @@ module ConfigBuilders
     def config
       {
         token: brand_identity.andand.data[:access_token],
-        pages: feed_config.andand.config['pages']
+        pages: feed_config.andand.config['pages'] || []
       }
     end
   end
@@ -58,7 +58,7 @@ module ConfigBuilders
     def config
       {
         token: brand_identity.andand.data[:access_token],
-        tags: brand_identity.andand.brand.andand.keywords
+        terms: brand_identity.andand.brand.andand.keywords || []
       }
     end
   end
@@ -68,7 +68,7 @@ module ConfigBuilders
       forums = feed_config.andand.config['forums'] || []
       {
         token: brand_identity.andand.data[:access_token],
-        forums: forums.map{|p| p['id']}
+        forums: forums.map{|p| p['id']} || []
       }
     end
   end
@@ -76,17 +76,15 @@ module ConfigBuilders
   class Meetup < Generic
     def config
       groups = feed_config.andand.config['groups'] || []
-      pp groups
       {
         token: brand_identity.andand.data[:access_token],
-        groups: groups.map{|g| g['id']},
-        terms: terms
+        groups: groups.map{|g| g['id']} || [],
+        terms: terms || []
       }
     end
   end
 
   class Rss < Generic
-
   end
 
 end
@@ -232,7 +230,6 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def has?(key)
-    p config
     returning(config && config.has_key?(key) && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end

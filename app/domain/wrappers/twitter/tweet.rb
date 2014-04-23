@@ -27,7 +27,6 @@ module Wrappers
       end
 
       alias_method :retweeted_status, :retweet
-
     end
   end
 end
