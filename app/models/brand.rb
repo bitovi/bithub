@@ -14,8 +14,6 @@ class Brand < ActiveRecord::Base
   after_save :update_tenant
   after_destroy :destroy_tenant
 
-  after_save :update_twitter_config
-
   private
 
   def create_tenant
@@ -51,14 +49,6 @@ class Brand < ActiveRecord::Base
 
       sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
       ActiveRecord::Base.connection.execute(sql)
-    end
-  end
-
-  def update_twitter_config
-    twitter_config = FeedConfig.where({brand_name: name, feed_name: 'twitter'}).first
-    unless twitter_config.nil?
-      twitter_config.set_keywords
-      twitter_config.save
     end
   end
 
