@@ -20,8 +20,8 @@ class BrandSupervisor
       Celluloid.logger.info "Reloading #{actor_name(feed_name)}"
       Celluloid::Actor[actor_name(feed_name)].reload
     else
-      stop_feed
-      start_feed
+      stop_feed(feed_name)
+      start_feed(feed_name)
     end
   end
 

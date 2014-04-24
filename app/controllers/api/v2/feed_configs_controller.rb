@@ -7,7 +7,6 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
   def index
     @configs = FeedConfig.all
-
     render :index
   end
 
@@ -46,7 +45,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
   def tree
     grouped_configs = FeedConfig.all
-    .each do |fc|
+    .select do |fc|
+      fc.valid_config?
+    end.each do |fc|
       fc.config = fc.builder.config
     end.map do |fc|
       fc.attributes
