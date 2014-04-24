@@ -3,9 +3,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   # before_filter :check_token, :only => :tree
 
   def index
-    @configs = FeedConfig.all.each do |fc|
-      fc.config = fc.builder.config
-    end
+    @configs = FeedConfig.all
 
     render :index
   end
