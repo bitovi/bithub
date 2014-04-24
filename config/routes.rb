@@ -75,8 +75,6 @@ Bithub::Application.routes.draw do
       # Rewards
       resources :rewards
 
-      # Tags
-
       # Countries
       resources :countries, :only => :index
 
@@ -97,7 +95,11 @@ Bithub::Application.routes.draw do
       resources :scoring_rules
 
       # Feed config
-      resources :feed_configs
+      resources :feed_configs do
+        collection do 
+          get 'tree', :to => 'feed_configs#tree'
+        end
+      end
 
       # Non-matched redirect to root
       match '*path', :to => redirect("/api/v2")

@@ -38,7 +38,7 @@ class Poller
   end
 
   def feed_name
-    fetcher_name.split('::').second.snake_case
+    fetcher_name.split('::')[1].snake_case
   end
 
   def x_seconds

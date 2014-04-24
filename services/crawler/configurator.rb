@@ -1,12 +1,4 @@
-require 'strong_parameters'
-require 'active_model'
-require 'active_record'
-require 'draper'
-require 'activerecord-postgres-hstore'
-require 'models/feed_config'
-require 'models/brand'
-require 'models/brand_identity'
-require 'decorators/brand_identity_decorator'
+require 'httparty'
 
 class Configurator
   include Celluloid
@@ -14,83 +6,42 @@ class Configurator
 
   def initialize(opts)
     @env = opts.fetch(:environment)
-    connect
+    @all_brands = symbolize_keys remote_config
+    Celluloid.logger.debug "All brands: #{@all_brands}"
   end
-  attr_reader :config
-
-  def reload
-    @grouped = fetch_grouped
-  end
+  attr_reader :all_brands
 
   def static_config
     path = File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
-    @config ||= YAML.load_file path
+    @static_config ||= YAML.load_file path
   end
+
+  def brand(brand_name)
+    all_brands.fetch(brand_name.to_sym)
+  end
+  alias_method :brand_config, :brand
+
+  def feed(brand_name, feed_name)
+    all_brands.fetch(brand_name.to_sym).fetch(feed_name.to_sym)
+  end
+  alias_method :feed_config, :feed
 
   def whole_config
-    all_brand_configs
+    all_brands.merge(static_config)
   end
 
-  def brand_config(brand_name)
-    all_brand_configs.fetch(brand_name.to_sym)
-  end
-
-  def feed_config(brand_name, feed_name)
-    all_brand_configs.fetch(brand_name.to_sym).fetch(feed_name.to_sym)
+  def reload
+    @brands_config = remote_config
   end
 
   private
 
-  # Converts relational result to a tree-like one, Dragons be here!
-  def all_brand_configs
-    symbolize_keys(Hash[grouped.keys.zip(
-      grouped.values.map do |bc|
-        bc.each do |fc|
-          fc.delete('brand_name')
-        end.map do |fc|
-          Hash[fc['feed_name'], fc['config']]
-        end.reduce({}) do |acc, el|
-          acc.merge(el)
-        end
-      end
-    )])
+  def remote_config
+    HTTParty.get url, :query => {:token => 'dedamrazcetidonjetdarove'}
   end
 
-  def connect
-    if (@conn_pool ||= ActiveRecord::Base.establish_connection(db_config))
-      [:ok, nil]
-    else
-      [:error, "Could not connect"]
-    end
+  def url
+    @env == 'development' ? 'http://bithub.dev/api/v2/feed_configs/tree' : 'http://bithub.com/api/v2/feed_configs/tree'
   end
 
-  def grouped
-    @grouped ||= fetch_grouped
-  end
-
-  def fetch_grouped
-    configs = FeedConfig.all.each{|fc| fc.config = fc.builder.config}
-
-    Celluloid.logger.info "Found #{configs.count} valid config entries"
-    Celluloid.logger.debug configs
-
-    configs.map{|fc| fc.attributes}.group_by{|el| el['brand_name']}
-  end
-
-  def db_config
-    @dbconfig ||= YAML.load_file(File.expand_path(File.join('config', 'database.yml')))
-    @dbconfig.fetch(@env)
-  end
-
-  def app_auth
-    {
-      twitter: {
-        api_key: 'huCmG0TZ7vs6leLqLNlGQ',
-        api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
-      },
-      meetup: {
-        api_key: '663a24605a37767831495d6332546b4a'
-      }
-    }
-  end
 end

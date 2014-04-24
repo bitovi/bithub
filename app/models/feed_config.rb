@@ -10,8 +10,8 @@ module ConfigBuilders
     end
 
     def terms
-      terms = ([] << brand_identity.andand.brand.andand.name)
-      terms += (kws = brand_identity.andand.brand.andand.keywords) if kws
+      terms = ([] << brand_identity.brand.name)
+      terms += brand_identity.brand.keywords
       terms
     end
 
