@@ -30,10 +30,9 @@ set :keep_releases, 10
 # Custom variables
 set :backup_path, "/backups/dbsnapshots/"
 set :backup_ext, ".backup"
-set :log_path, "/var/log/bithub/web/"
+set :log_path, "/home/bithub/web/shared/log/"
 set :current_path, File.join([fetch(:deploy_to), 'current'])
 set :shared_path, File.join([fetch(:deploy_to), 'shared'])
-set :unicorn_log_path, "/home/bithub/web/shared/log"
 set :user, "bithub"
 
 # 'foreman' command should be prefixed with 'rbenv exec' and 'bundle exec'
