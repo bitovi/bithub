@@ -17,6 +17,7 @@ module Bithub
     config.active_record.whitelist_attributes = true
     config.active_record.schema_format = :sql
     config.i18n.enforce_available_locales = false
+    config.active_record.auto_explain_threshold_in_seconds = 0.5
 
     # Logging
     lf = LoggerFactory.new('rails', Rails.env)
