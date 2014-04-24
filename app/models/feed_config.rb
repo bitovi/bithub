@@ -11,7 +11,7 @@ module ConfigBuilders
 
     def terms
       terms = ([] << brand_identity.brand.name)
-      terms += (brand_identity.brand.keywords || []) & (feed_config.config['terms'] || [])
+      terms += (brand_identity.brand.keywords || []) & (feed_config.config.andand['terms'] || [])
       terms.uniq
     end
 
@@ -101,15 +101,17 @@ class FeedConfig < ActiveRecord::Base
   before_save :clean_config
 
   def notify_crawler
-    msg = {
-      brand_name: self.brand_name,
-      feed_name: self.feed_name,
-      action: :restart
-    }
+    if valid_config?
+      msg = {
+        brand_name: self.brand_name,
+        feed_name: self.feed_name,
+        action: :restart
+      }
 
-    Rails.logger.info "Publishing command #{msg}"
-    rabbit(exchange_name: 'x.crawler').publish(msg, :config)
-    [:ok, msg]
+      Rails.logger.info "Publishing command #{msg}"
+      rabbit(exchange_name: 'x.crawler').publish(msg, :config)
+      [:ok, msg]
+    end
   end
 
   def terms
@@ -175,7 +177,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_github?
-    has?('access_token') && has?('orgs') && has?('repos')
+    has?('orgs') || has?('repos')
   end
 
   def valid_facebook?
@@ -183,15 +185,15 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_twitter?
-    has?('access_token') && has?('access_secret') && has?('terms')
+    has?('terms')
   end
 
   def valid_meetup?
-    has?('token') && has?('groups') && has?('terms')
+    has?('groups') || has?('terms')
   end
 
   def valid_foursquare?
-    has?('token') && has?('venues')
+    has?('venues')
   end
 
   def valid_rss?
@@ -227,6 +229,7 @@ class FeedConfig < ActiveRecord::Base
 
   def pages_have_token?
     config.fetch('pages').all?{|el| el.has_key?('access_token')}
+    true
   end
 
 end

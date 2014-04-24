@@ -10,7 +10,7 @@ module Fetchers
       end
 
       def fetch
-        @client.activity.events.public org: @org
+        @client.activity.events.org @org
       end
     end
   end
