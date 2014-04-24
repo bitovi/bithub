@@ -17,7 +17,7 @@ require 'logger_factory'
 
 class Listener
   def initialize(uri=ENV['RABBITMQ_URI'])
-    @logger = LoggerFactory.new('listener', ENV['ENV']).component_logger
+    @logger = LoggerFactory.new('listener', :environment => ENV['ENV']).component_logger
     @logger.info 'Starting listener'
 
     @conn = Bunny.new(uri).start
