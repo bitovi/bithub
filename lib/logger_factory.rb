@@ -42,7 +42,7 @@ class LoggerFactory
   end
 
   def config_path_builder(env = nil)
-    filename = env ? 'log4r.yml' : "log4r_#{evn}.yml"
+    filename = env ? "log4r_#{env}.yml" : 'log4r.yml'
     File.join($root_dir, 'config', filename)
   end
 
