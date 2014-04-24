@@ -36,7 +36,7 @@ require_relative 'response_processor'
 
 # log4r logger
 $env = ENV.fetch('ENV')
-logger = LoggerFactory.new('crawler', $env).component_logger
+logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 
 Celluloid.logger = logger
 
