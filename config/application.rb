@@ -1,7 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
-require './lib/logger_factory'
 
 if defined?(Bundler)
   Bundler.require(*Rails.groups(:assets => %w(development test)))
@@ -18,13 +17,6 @@ module Bithub
     config.active_record.schema_format = :sql
     config.i18n.enforce_available_locales = false
     config.active_record.auto_explain_threshold_in_seconds = 0.5
-
-    # Logging
-    lf = LoggerFactory.new('rails', Rails.env)
-    config.logger = lf.component_logger
-    config.action_controller.logger = lf.ac_logger
-    config.active_record.logger = lf.ar_logger
-    config.log_level = :unknown
 
     # Autoload 'lib' and 'domain' folders
     config.autoload_paths += %W(#{Rails.root}/app/domain #{Rails.root}/lib)

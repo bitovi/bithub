@@ -60,7 +60,6 @@ gem 'spring-commands-rspec', group: [:development, :test]
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
-gem 'twitter-text'
 
 
 # API client libs

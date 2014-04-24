@@ -1,3 +1,5 @@
+require './lib/logger_factory'
+
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -35,9 +37,12 @@ Bithub::Application.configure do
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
 
-  # Use a different logger for distributed setups
-  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
-
+  # Logging
+  lf = LoggerFactory.new 'rails', :environment => Rails.env, :path => '/home/bithub/web/shared/log'
+  config.logger = lf.component_logger
+  config.action_controller.logger = lf.ac_logger
+  config.active_record.logger = lf.ar_logger
+  config.log_level = :unknown
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
