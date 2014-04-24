@@ -6,17 +6,18 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @configs = FeedConfig.all
+    @configs = FeedConfig.where(brand_name: current_account.brand.name)
     render :index
   end
 
   def show
-    @config = FeedConfig.find(params[:id])
+    @config = FeedConfig.where(id: params[:id], brand_name: current_account.brand.name).first
     render :show
   end
 
   def create
     @config = FeedConfig.new(config_params)
+    @config.brand_name =  current_account.brand.name
 
     if @config.save
       render :show
@@ -35,7 +36,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def destroy
-    @config = FeedConfig.find(params[:id])
+    @config = FeedConfig.where(id: params[:id], brand_name: current_account.brand.name)
     if @config.destroy
       render :json => msg_hash(@config, 'destroy', 'success')
     else
