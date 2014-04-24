@@ -53,6 +53,7 @@ gem 'andand'
 gem 'multi_json'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
+gem 'twitter-text' # Autolinking twitter
 
 gem 'spring', group: [:development, :test]
 gem 'spring-commands-rspec', group: [:development, :test]

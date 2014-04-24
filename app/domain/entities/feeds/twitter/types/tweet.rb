@@ -20,7 +20,7 @@ module Entities
             entities_urls: ActiveSupport::JSON.encode(@event.entities.urls),
           }
         })
-        built[:props][:retweeted_id] = @event.original_tweet_id if @event.retweet?
+        built[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
         built
       end
 
