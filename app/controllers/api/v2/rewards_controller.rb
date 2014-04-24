@@ -53,6 +53,14 @@ class Api::V2::RewardsController < Api::V2::BaseController
   private
 
   def reward_params
+    if params[:reward].is_a? String
+      params[:reward] = Rack::Utils.parse_nested_query(params[:reward])
+    end
+
+    if params[:files]
+      params[:reward][:image] = params[:files].first
+    end
+
     params.require(:reward).permit(:title, :description, :point_minimum, :image, :disabled_ts)
   end
 
