@@ -436,12 +436,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-text (1.9.0)
-      unf (~> 0.1.0)
     tzinfo (0.3.39)
-    unf (0.1.4)
-      unf_ext
-    unf_ext (0.0.6)
     unicorn (4.8.2)
       kgio (~> 2.6)
       rack
@@ -532,5 +527,4 @@ DEPENDENCIES
   spring-commands-rspec
   strong_parameters
   twitter!
-  twitter-text
   unicorn
