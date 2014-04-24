@@ -8,6 +8,9 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def show
+    if current_account.nil?
+      render :json => {error: 'login required'}, :status => 401
+    end
     if (@brand = Brand.find_by_id(current_account.brand_id))
       render :show
     else
