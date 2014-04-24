@@ -49,7 +49,7 @@ class MainSupervisor
   private
 
   def all_brand_configs
-    Celluloid::Actor[:configurator].whole_config
+    Celluloid::Actor[:configurator].all_brands
   end
 
   def actor_name(brand_name)
