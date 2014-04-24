@@ -1,3 +1,5 @@
+require './lib/logger_factory'
+
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -12,6 +14,13 @@ Bithub::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
+
+  # Logging
+  lf = LoggerFactory.new 'rails', :environment => Rails.env
+  config.logger = lf.component_logger
+  config.action_controller.logger = lf.ac_logger
+  config.active_record.logger = lf.ar_logger
+  config.log_level = :unknown
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
