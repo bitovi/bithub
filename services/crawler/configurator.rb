@@ -41,7 +41,7 @@ class Configurator
   end
 
   def url
-    @env == 'development' ? 'http://bithub.dev/api/v2/feed_configs/tree' : 'http://bithub.com/api/v2/feed_configs/tree'
+    ENV['CRAWLER_CONFIG']
   end
 
 end
