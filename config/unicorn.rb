@@ -11,7 +11,7 @@ listen "/home/bithub/web/shared/sockets/unicorn.sock", :backlog => 64
 # PID
 pid "/home/bithub/web/shared/pids/unicorn.pid"
 
-logger(LoggerFactory.new('unicorn', ENV['ENV']).component_logger)
+logger(LoggerFactory.new('unicorn', :environment => ENV['ENV']).component_logger)
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)
