@@ -1,6 +1,6 @@
 class Api::V2::FeedConfigsController < Api::V2::BaseController
   respond_to :json
-  before_filter :check_token
+  # before_filter :check_token, :only => :tree
 
   def index
     @configs = FeedConfig.all.each do |fc|
