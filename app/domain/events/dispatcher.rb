@@ -137,22 +137,11 @@ module Events
       end
 
       def github_event?
-        not(@source_data[:type].nil?) && valid_embedded?
+        not(@source_data[:type].nil?)
       end
 
       def github_issue?
         not(@source_data[:labels].nil?) && not(@source_data[:state].nil?) && not(@source_data[:comments].nil?)
-      end
-
-      # Because of old Github events that have only a Issue # or PR # instead of the embedded doc.
-      def valid_embedded?
-        if @source_data[:type] =~ /Issues/i
-          @source_data[:payload][:issue].is_a? Hash
-        elsif @source_data[:type] =~ /PullRequest/i
-          @source_data[:payload][:pull_request].is_a? Hash
-        else
-          true
-        end
       end
     end
   end

@@ -37,7 +37,7 @@ module Events
       def wrap_response
         @actor ||= Wrappers::Github::User.new(source_data.fetch(:actor))
         @repo ||= Wrappers::Github::Repo.new(source_data.fetch(:repo))
-        @commits = payload[:commits].andand.map{|c| Wrappers::Github::Commit.new(c)}
+        @commits = payload.fetch(:commits).map{|c| Wrappers::Github::Commit.new(c)}
         self
       end
 
