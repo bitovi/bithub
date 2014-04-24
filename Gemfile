@@ -71,6 +71,7 @@ gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
 gem 'rmeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
 gem 'httparty'
 gem 'feedjira'
+gem 'twitter-text'
 
 
 group :test do

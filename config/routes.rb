@@ -73,7 +73,11 @@ Bithub::Application.routes.draw do
       end
 
       # Rewards
-      resources :rewards
+      resources :rewards do
+        member do
+          post "", :to => 'rewards#update'
+        end
+      end
 
       # Countries
       resources :countries, :only => :index
