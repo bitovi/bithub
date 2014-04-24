@@ -11,8 +11,8 @@ module ConfigBuilders
 
     def terms
       terms = ([] << brand_identity.brand.name)
-      terms += brand_identity.brand.keywords
-      terms
+      terms += (brand_identity.brand.keywords || []) & (feed_config.config['terms'] || [])
+      terms.uniq
     end
 
     def config
