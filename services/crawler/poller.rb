@@ -38,9 +38,7 @@ class Poller
   end
 
   def feed_name
-    fn = fetcher_name.split('::')[1].snake_case
-    Celluloid.logger.info "----------------------------> #{fn}"
-    fn
+    fetcher_name.split('::')[1].snake_case
   end
 
   def x_seconds
