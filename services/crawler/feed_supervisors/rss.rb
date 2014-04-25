@@ -16,7 +16,7 @@ module FeedSupervisors
         @endpoints.supervise_as \
           actor_name(url),
           Poller,
-          *[@brand_name, Fetchers::Rss::Rss.new(url), {interval: 5}]
+          *[@brand_name, Fetchers::Rss::Rss.new(url), {interval: 300}]
       end
 
     end
