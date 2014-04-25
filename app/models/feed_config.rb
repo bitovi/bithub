@@ -98,7 +98,7 @@ class FeedConfig < ActiveRecord::Base
 
   attr_accessible :brand_name, :feed_name, :config
   serialize :config, JSON
-  validates_presence_of :brand_name, :feed_name, :config
+  validates_presence_of :brand_name, :feed_name
   after_update :notify_crawler
   after_create :notify_crawler
   before_save :clean_config
