@@ -4,6 +4,7 @@ module FeedSupervisors
 
     def initialize(brand_name)
       @brand_name = brand_name
+      boot
     end
 
     def boot

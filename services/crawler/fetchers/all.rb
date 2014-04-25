@@ -19,3 +19,6 @@ require_relative 'meetup/open_events'
 require_relative 'stackexchange/base'
 require_relative 'stackexchange/questions'
 require_relative 'stackexchange/search'
+
+
+require_relative 'disqus/comments'

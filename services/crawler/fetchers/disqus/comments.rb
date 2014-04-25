@@ -12,17 +12,22 @@ module Fetchers
       end
 
       def fetch
-        HTTParty.get url, :query => related.merge(forums).merge(auth)
+        resp = HTTParty.get url, :query => related.merge(forums).merge(auth)
+        pluck(resp)
       end
 
       private
 
+      def pluck(response)
+        response['response'] || []
+      end
+
       def forums
-        { :forums => @forums }
+        { :forum => @forums }
       end
 
       def related
-        { :related: %w(thread forum) }
+        { :related => %w(thread forum) }
       end
 
       def url
