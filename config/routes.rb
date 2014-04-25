@@ -1,5 +1,7 @@
 Bithub::Application.routes.draw do
 
+  match "/api/login_and_oauth", :to => 'api/auth/sign_in_oauth#login_and_redirect_to_oauth'
+
   # Devise
   #
   devise_for :users,
