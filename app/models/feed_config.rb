@@ -85,9 +85,9 @@ module ConfigBuilders
   end
 
   class Rss < Generic
-    {
-      urls : feed_config.andand.urls || []
-    }
+    def config
+      { urls: feed_config.andand.urls || [] }
+    end
   end
 
 end
