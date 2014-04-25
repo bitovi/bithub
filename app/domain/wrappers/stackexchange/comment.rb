@@ -1,7 +1,7 @@
 require 'wrappers/data_accessible'
 
 module Wrappers
-  module StackExchange
+  module Stackexchange
 
     class Comment
       include DataAccessible

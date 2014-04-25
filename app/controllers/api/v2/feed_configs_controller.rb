@@ -17,7 +17,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
   def create
     @config = FeedConfig.new(config_params)
-    @config.brand_name =  current_account.brand.name
+    @config.brand_name = current_account.brand.name
 
     if @config.save
       render :show

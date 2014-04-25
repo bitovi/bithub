@@ -162,7 +162,7 @@ module Meetup
   end
 end
 
-module StackExchange
+module Stackexchange
   class Processor < BasicTypeProcessor
     def parse
       @parsed ||= Yajl::Parser.parse(@response)

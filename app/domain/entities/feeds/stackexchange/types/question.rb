@@ -1,5 +1,5 @@
 module Entities
-  module StackExchange
+  module Stackexchange
 
     class Question < Protocol
 
@@ -49,34 +49,34 @@ module Entities
 
       def build_answers
         @event.answers.map do |a| # Wrappers
-          Events::StackExchange::Answer.new(a.raw)
+          Events::Stackexchange::Answer.new(a.raw)
         end.map do |a_e| # Events
-          Entities::StackExchange::Answer.new(a_e)
+          Entities::Stackexchange::Answer.new(a_e)
           .procure.determine.group.normalize.instance
         end if @event.answers
       end
 
       def build_comments
         @event.comments.map do |c| # Wrappers
-          Events::StackExchange::Comment.new(c.raw)
+          Events::Stackexchange::Comment.new(c.raw)
         end.map do |c_e| # Events
-          Entities::StackExchange::Comment.new(c_e)
+          Entities::Stackexchange::Comment.new(c_e)
           .procure.determine.group.normalize.instance
         end if @event.comments
       end
 
       def update_answers
         @event.answers.map do |a| # Wrappers
-          Events::StackExchange::Answer.new(a.raw)
+          Events::Stackexchange::Answer.new(a.raw)
         end.map do |a_e| # Events
-          Entities::StackExchange::Answer.new(a_e)
+          Entities::Stackexchange::Answer.new(a_e)
           .procure.update.determine.group.normalize.persist
         end if @event.answers
       end
 
       def find_by_question_id
         Entity
-          .feed('stack_exchange')
+          .feed('stackexchange')
           .type('question')
           .where(origin_id: @event.question_id.to_s)
           .first

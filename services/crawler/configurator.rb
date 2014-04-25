@@ -12,8 +12,8 @@ class Configurator
   attr_reader :all_brands
 
   def static_config
-    path = File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
-    @static_config ||= YAML.load_file path
+    @static_config ||= YAML.load_file config_file_path
+    @static_config.fetch(:app_level)
   end
 
   def brand(brand_name)
@@ -42,6 +42,10 @@ class Configurator
 
   def url
     ENV['CRAWLER_CONFIG']
+  end
+
+  def config_file_path
+    File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
   end
 
 end

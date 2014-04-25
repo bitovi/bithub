@@ -198,7 +198,7 @@ module Events
     end
   end
 
-  module StackExchange
+  module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
         Events::StackExchange::Question

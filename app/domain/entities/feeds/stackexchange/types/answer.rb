@@ -1,5 +1,5 @@
 module Entities
-  module StackExchange
+  module Stackexchange
 
     class Answer < Protocol
 
@@ -41,9 +41,9 @@ module Entities
 
       def build_comments
         @event.comments.map do |c| # Wrappers
-          Events::StackExchange::Comment.new(c.raw)
+          Events::Stackexchange::Comment.new(c.raw)
         end.map do |c_e| # Events
-          Entities::StackExchange::Comment.new(c_e)
+          Entities::Stackexchange::Comment.new(c_e)
             .procure
             .determine
             .group
@@ -56,7 +56,7 @@ module Entities
 
       def find_by_origin_id
         Entity
-          .feed('stack_exchange')
+          .feed('stackexchange')
           .type('answer')
           .where(origin_id: @event.answer_id.to_s)
           .first

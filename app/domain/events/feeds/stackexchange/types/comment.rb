@@ -1,5 +1,5 @@
 module Events
-  module StackExchange
+  module Stackexchange
 
     class Comment < Protocol
       extend Forwardable
@@ -14,8 +14,8 @@ module Events
       end
 
       def wrap_response
-        @comment = Wrappers::StackExchange::Comment.new(source_data)
-        @owner = Wrappers::StackExchange::User.new(source_data[:owner])
+        @comment = Wrappers::Stackexchange::Comment.new(source_data)
+        @owner = Wrappers::Stackexchange::User.new(source_data[:owner])
         self
       end
 

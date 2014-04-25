@@ -1,5 +1,5 @@
 module Events
-  module StackExchange
+  module Stackexchange
     module Accessors
 
       module Standard

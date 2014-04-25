@@ -18,7 +18,7 @@ module OmniAuth::Strategies
     end
   end
 
-  class StackExchangeBrand < StackExchange
+  class StackexchangeBrand < StackExchange
     def name
       :stackexchange_brand
     end
@@ -45,4 +45,4 @@ module OmniAuth::Strategies
 end
 
 OmniAuth.config.add_camelization 'github_brand', 'GitHubBrand'
-OmniAuth.config.add_camelization 'stackexchange_brand', 'StackExchangeBrand'
+OmniAuth.config.add_camelization 'stackexchange_brand', 'StackexchangeBrand'

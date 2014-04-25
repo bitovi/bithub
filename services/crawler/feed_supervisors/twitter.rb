@@ -50,7 +50,7 @@ module FeedSupervisors
     end
 
     def static_config
-      Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:twitter)
+      Celluloid::Actor[:configurator].static_config.fetch(:twitter)
     end
 
   end

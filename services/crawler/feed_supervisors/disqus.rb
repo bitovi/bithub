@@ -31,7 +31,7 @@ module FeedSupervisors
     end
     
     def api_key
-      Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:disqus).fetch(:api_key)
+      Celluloid::Actor[:configurator].static_config.fetch(:disqus).fetch(:api_key)
     end
     
     def actor_name(endpoint_type)

@@ -11,7 +11,7 @@ module ConfigBuilders
 
     def terms
       terms = ([] << brand_identity.brand.name)
-      terms += (brand_identity.brand.keywords || []) & (feed_config.config.andand['terms'] || [])
+      terms += (brand_identity.brand.keywords || []) & (feed_config.config.andand['terms'] || feed_config.config.andand['tags'] || [])
       terms.uniq
     end
 
@@ -58,7 +58,7 @@ module ConfigBuilders
     def config
       {
         token: brand_identity.andand.data[:access_token],
-        terms: brand_identity.andand.brand.andand.keywords || []
+        terms: terms || []
       }
     end
   end
@@ -205,7 +205,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_stackexchange?
-    has?('terms')
+    has?('tags')
   end
 
   def has?(key)
