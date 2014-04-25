@@ -1,5 +1,5 @@
 module ConfigBuilders
-  
+
   class Generic
 
     attr_reader :feed_config, :brand_identity
