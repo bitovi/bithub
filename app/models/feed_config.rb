@@ -84,9 +84,9 @@ module ConfigBuilders
     end
   end
 
-  class Rss < Generic
+  class Rs < Generic
     def config
-      { urls: feed_config.andand.urls || [] }
+      { urls: feed_config.andand.config['urls'] || [] }
     end
   end
 
@@ -98,7 +98,7 @@ class FeedConfig < ActiveRecord::Base
 
   attr_accessible :brand_name, :feed_name, :config
   serialize :config, JSON
-  validates_presence_of :brand_name, :feed_name
+  validates_presence_of :brand_name, :feed_name, :config
   after_update :notify_crawler
   after_create :notify_crawler
   before_save :clean_config
