@@ -18,7 +18,6 @@ module FeedSupervisors
     end
 
     def reload
-      Celluloid::Actor[:configurator].reload
       Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
       @client = init_client

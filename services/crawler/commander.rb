@@ -3,7 +3,6 @@ require 'amqp_helpers'
 
 class Commander
   include Celluloid
-  include AmqpHelpers
 
   def initialize
     Celluloid.logger.info "Initializing Commander"
@@ -38,6 +37,14 @@ class Commander
 
   def message_scope(msg)
     [msg.fetch(:brand_name), msg.fetch(:feed_name)]
+  end
+
+  def wait_time
+    5
+  end
+  
+  def rabbitmq_uri
+    ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/bithub" }
   end
 
 end
