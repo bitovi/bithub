@@ -21,13 +21,19 @@ class MainSupervisor
   end
 
   def reload_brand_feed(brand_name, feed_name)
+    Celluloid::Actor[:configurator].reload
+
     if Celluloid::Actor[actor_name(brand_name)].respond_to? :reload_feed
       Celluloid.logger.info "Reloading #{actor_name(brand_name)}"
       Celluloid::Actor[actor_name(brand_name)].reload_feed(feed_name)
     else
-      stop_brand(brand_name)
-      start_brand(brand_name)
+      restart_brand(brand_name)
     end
+  end
+
+  def restart_brand(brand_name)
+    stop_brand(brand_name)
+    start_brand(brand_name)
   end
 
   def start_brand(brand_name)
