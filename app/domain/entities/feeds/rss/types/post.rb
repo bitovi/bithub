@@ -12,7 +12,7 @@ module Entities
           title: @event.title,
           body: @event.description,
           url: @event.link,
-          origin_ts: @event.pub_date,
+          origin_ts: @event.pub_date || Time.now.utc,
         })
       end
 
