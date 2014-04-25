@@ -12,13 +12,12 @@ module FeedSupervisors
       @client = init_client
 
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: terms}), {interval: 3600}])
+      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: terms}), {interval: 60}])
 
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
     end
 
     def reload
-      Celluloid::Actor[:configurator].reload
       Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
       @client = init_client

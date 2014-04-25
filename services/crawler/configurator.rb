@@ -6,7 +6,7 @@ class Configurator
 
   def initialize(opts)
     @env = opts.fetch(:environment)
-    @all_brands = symbolize_keys remote_config
+    reload
     Celluloid.logger.debug "All brands: #{@all_brands}"
   end
   attr_reader :all_brands
@@ -31,7 +31,7 @@ class Configurator
   end
 
   def reload
-    @brands_config = remote_config
+    @all_brands = symbolize_keys(remote_config)
   end
 
   private
