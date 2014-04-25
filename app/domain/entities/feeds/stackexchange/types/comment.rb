@@ -1,5 +1,5 @@
 module Entities
-  module StackExchange
+  module Stackexchange
 
     class Comment < Protocol
 
@@ -33,7 +33,7 @@ module Entities
 
       def find_by_origin_id
         Entity
-          .feed('stack_exchange')
+          .feed('stackexchange')
           .type('comment')
           .where(origin_id: @event.comment_id.to_s)
           .first

@@ -91,7 +91,7 @@ meetup:
   display_name: "Meetup"
   group_list: "feeds"
 
-stack_exchange:
+stackexchange:
   display_name: "StackExchange"
   group_list: "feeds"
 

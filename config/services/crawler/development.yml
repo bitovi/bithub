@@ -1,4 +1,4 @@
-:public_streams:
+:app_level:
     :twitter:
         :api_key: 'huCmG0TZ7vs6leLqLNlGQ'
         :api_secret: 'X4mx1qgGlZ1BVIFFUDB4kzrE1NV7t0nAjx5hY5tQOWQ'
@@ -7,9 +7,8 @@
         :api_secret: 'BSWJz6FhQbtFbruIQ39aaCjsKgtf7WZbyhTDCE1lGqnZZn2z3XuS6KSALgZX4S0n'
     :meetup:
         :api_key: '663a24605a37767831495d6332546b4a'
-    :stack_exchange:
-        :key: "8EAiwRhHlupc0Z1aV3SCVg(("
-        :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+    :stackexchange:
+        :api_key: "8EAiwRhHlupc0Z1aV3SCVg(("
 
 :brands:
     :nikica:

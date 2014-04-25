@@ -19,7 +19,7 @@ module Entities
   module Irc; end
   module Meetup; end
   module Twitter; end
-  module StackExchange; end
+  module Stackexchange; end
   module Facebook; end
 
   class Protocol
@@ -84,5 +84,5 @@ require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
-require_relative 'feeds/stack_exchange/stack_exchange'
+require_relative 'feeds/stackexchange/stackexchange'
 require_relative 'feeds/facebook/facebook'

@@ -1,5 +1,5 @@
 module Entities
-  module StackExchange
+  module Stackexchange
     class Question < Protocol; end
     class Answer < Protocol; end
     class Comment < Protocol; end

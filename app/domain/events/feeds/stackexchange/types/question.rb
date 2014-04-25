@@ -17,10 +17,10 @@ module Events
       end
 
       def wrap_response
-        @question = Wrappers::StackExchange::Question.new(source_data)
-        @answers = source_data[:answers].andand.map{|a| Wrappers::StackExchange::Answer.new(a)}
-        @comments = source_data[:comments].andand.map{|c| Wrappers::StackExchange::Comment.new(c)}
-        @owner = Wrappers::StackExchange::User.new(source_data[:owner])
+        @question = Wrappers::Stackexchange::Question.new(source_data)
+        @answers = source_data[:answers].andand.map{|a| Wrappers::Stackexchange::Answer.new(a)}
+        @comments = source_data[:comments].andand.map{|c| Wrappers::Stackexchange::Comment.new(c)}
+        @owner = Wrappers::Stackexchange::User.new(source_data[:owner])
       end
     end
 

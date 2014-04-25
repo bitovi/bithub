@@ -10,7 +10,7 @@ class MainSupervisor
     @streams.supervise_as(
       :twitter_public_stream,
       Streamers::Twitter::Filter,
-      *[twitter_auth]
+      *[]
     )
 
     @brands = SupervisionGroup.new
@@ -54,14 +54,5 @@ class MainSupervisor
 
   def actor_name(brand_name)
     "#{brand_name}_supervisor".to_sym
-  end
-
-  def twitter_auth
-    config = Celluloid::Actor[:configurator].static_config
-    if config
-      config.fetch(:public_streams).fetch(:twitter)
-    else
-      [:error, "unable to provide local config"]
-    end
   end
 end

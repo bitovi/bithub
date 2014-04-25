@@ -156,10 +156,10 @@ module Entities
     end
   end
 
-  module StackExchange
+  module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
-        StackExchange.const_get(@event.type_name_sym)
+        Stackexchange.const_get(@event.type_name_sym)
       end
     end
   end

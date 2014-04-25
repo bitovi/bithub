@@ -10,7 +10,6 @@ module Fetchers
         @forums = opts.fetch(:forums)
         @api_key = opts.fetch(:api_key)
       end
-      attr_readed :token
 
       def fetch
         HTTParty.get url, :query => related.merge(forums).merge(auth)
