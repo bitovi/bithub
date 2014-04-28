@@ -5,7 +5,7 @@ describe Wrappers::Rss::Item do
   let(:raw_item) do
     raw_data(response_path: 'forum/feed.rss').fetch('rss').fetch('channel').fetch('item').first
   end
-  
+
   subject(:item) do
     Wrappers::Rss::Item.new(raw_item)
   end
@@ -33,7 +33,7 @@ describe Wrappers::Rss::Item do
       expect(item.category).to eq raw_item['category']
     end
   end
-  
+
   describe "#pub_date" do
     it "is in UTC" do
       expect(item.pub_date.zone).to eq "UTC"
