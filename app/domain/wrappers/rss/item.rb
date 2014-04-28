@@ -16,6 +16,8 @@ module Wrappers
 
       def published
         if @data[:published]
+          Time.parse(@data[:published]).utc
+        elsif @data[:pubDate]
           Time.parse(@data[:pubDate]).utc
         end
       end
