@@ -2,20 +2,21 @@ require_relative 'spec_helper'
 
 describe Tagger do
 
-  before :all do
-    import_tags
-  end
-
-  after :all do
-    Tag.destroy_all
-  end
-
   let(:tagger_config) do
     { :levenshtein_treshold => 1 }
   end
 
   subject(:tagger) do
-    Tagger.new(Tag.projects, tagger_config)
+    tags = [
+      {name: 'canjs'},
+      {name: 'documentjs',    aliases: ['document_js']},
+      {name: 'funcunit',      aliases: ['func_unit']},
+      {name: 'javascriptmvc', aliases: ['jmvc','java_script_mvc']},
+      {name: 'jquerypp',      aliases: ['j_querypp','j_query++','jquery++']},
+      {name: 'stealjs',       aliases: ['steal','steal_js']},
+    ]
+
+    Tagger.new(tags, tagger_config)
   end
 
   describe "#textualize" do

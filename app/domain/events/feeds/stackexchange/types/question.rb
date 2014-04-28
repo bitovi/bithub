@@ -1,5 +1,5 @@
 module Events
-  module StackExchange
+  module Stackexchange
 
     class Question < Protocol
       extend Forwardable

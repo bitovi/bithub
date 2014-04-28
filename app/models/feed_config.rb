@@ -1,5 +1,5 @@
 module ConfigBuilders
-  
+
   class Generic
 
     attr_reader :feed_config, :brand_identity
@@ -84,9 +84,9 @@ module ConfigBuilders
     end
   end
 
-  class Rss < Generic
+  class Rs < Generic
     def config
-      { urls: feed_config.andand.urls || [] }
+      { urls: feed_config.andand.config['urls'] || [] }
     end
   end
 

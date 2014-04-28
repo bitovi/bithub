@@ -171,7 +171,7 @@ module Entities
       end
     end
   end
-
+  
   module Blog
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -180,6 +180,14 @@ module Entities
     end
   end
 
+  module Rss
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Rss::Post
+      end
+    end
+  end
+  
   module Irc
     class Dispatcher < BasicTypeDispatcher
       def type

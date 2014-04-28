@@ -29,11 +29,6 @@ describe Determinators::CategoryDeterminator do
       expect(d.best_match).to eq(rule2.name)
     end
 
-    it "returns nil if there is no match with score higher than 0" do
-      d = Determinators::CategoryDeterminator.new(%w(more tags), rules)
-      expect(d.best_match).to eq nil
-    end
-
     it "returns first match if more rules achieve the same score" do
       d = Determinators::CategoryDeterminator.new(%w(foo bar), rules)
       expect(d.best_match).to eq rule2.name

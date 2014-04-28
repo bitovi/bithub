@@ -1,13 +1,13 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::StackExchange::Answer do
+describe Wrappers::Stackexchange::Answer do
 
   let(:raw_answer) do
     raw_data(response_path: 'stackexchange/question.json')['answers'].first
   end
-  
+
   subject(:answer) do
-    Wrappers::StackExchange::Answer.new(raw_answer)
+    Wrappers::Stackexchange::Answer.new(raw_answer)
   end
 
   describe "#answer_id" do
@@ -27,7 +27,7 @@ describe Wrappers::StackExchange::Answer do
       expect(answer.title).to eq raw_answer['title']
     end
   end
-  
+
   describe "#body" do
     it "should respond with 'body' from raw response" do
       expect(answer.body).to eq raw_answer['body']
@@ -45,13 +45,13 @@ describe Wrappers::StackExchange::Answer do
       expect(answer.score).to eq raw_answer['score']
     end
   end
-  
+
   describe "#accepted?" do
     it "should respond with 'is_accepted' from raw response" do
       expect(answer.accepted?).to eq raw_answer['is_accepted']
     end
   end
-  
+
   describe "#creation_date" do
     it "should be in UTC" do
       expect(answer.creation_date.zone).to eq "UTC"
@@ -60,7 +60,7 @@ describe Wrappers::StackExchange::Answer do
       expect(answer.creation_date).to eq Time.at(raw_answer['creation_date'])
     end
   end
-  
+
   describe "#last_activity_date" do
     it "should be in UTC" do
       expect(answer.last_activity_date.zone).to eq "UTC"
@@ -69,5 +69,5 @@ describe Wrappers::StackExchange::Answer do
       expect(answer.last_activity_date).to eq Time.at(raw_answer['last_activity_date'])
     end
   end
-    
+
 end
