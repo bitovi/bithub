@@ -36,12 +36,12 @@ describe Wrappers::Rss::Item do
 
   describe "#pub_date" do
     it "is in UTC" do
-      expect(item.pub_date.zone).to eq "UTC"
+      expect(item.published.zone).to eq "UTC"
     end
 
     it "should time-parse the 'pubDate' from raw response" do
       parsed = Time.parse(raw_item['pubDate'])
-      expect(item.pub_date).to eq parsed
+      expect(item.published).to eq parsed
     end
   end
 
