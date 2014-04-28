@@ -14,8 +14,10 @@ module Wrappers
         @data = symbolize_keys(item)
       end
 
-      def pub_date
-        Time.parse(@data.fetch(:pubDate)).utc
+      def published
+        if @data[:published]
+          Time.parse(@data[:pubDate]).utc
+        end
       end
 
       def link
@@ -23,6 +25,8 @@ module Wrappers
           @data[:entry_id]
         elsif @data[:link]
           @data[:link]
+        elsif @data[:url]
+          @data[:url]
         end
       end
     end

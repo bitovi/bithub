@@ -107,6 +107,10 @@ yelp:
   display_name: "Yelp"
   group_list: "feeds"
 
+rss:
+  display_name: "RSS"
+  group_list: "feeds"
+
 # --------
 # Types
 # --------

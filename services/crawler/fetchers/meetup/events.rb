@@ -10,7 +10,7 @@ module Fetchers
       end
 
       def fetch
-        @client.fetch :events, group_id: group_ids, status: "upcoming,past"
+        @client.fetch :events, group_id: group_ids, status: "upcoming,past", fields: "event_hosts"
       end
 
       # todo events that can be looked up in redis <3
