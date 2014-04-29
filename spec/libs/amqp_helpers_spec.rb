@@ -1,4 +1,4 @@
-require 'no_rails_spec_helper'
+require 'spec_helper'
 require 'bunny'
 require 'lib/amqp_helpers'
 
