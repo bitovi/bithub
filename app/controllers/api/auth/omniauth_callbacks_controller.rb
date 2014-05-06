@@ -56,7 +56,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def foursquare_brand
-    oauthorize_brand "foursquare_brand"
+    oauthorize_brand "foursquare"
   end
 
   ###
