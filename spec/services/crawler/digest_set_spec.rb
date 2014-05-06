@@ -1,5 +1,5 @@
 require 'no_rails_spec_helper'
-require 'services/crawler/crawler'
+require 'services/crawler/digest_set'
 
 describe DigestSet do
 

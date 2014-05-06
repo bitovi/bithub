@@ -1,4 +1,9 @@
-describe Registrable do
+require 'no_rails_spec_helper'
+require 'services/crawler/streamers/all'
+require 'services/crawler/streamers/registrable'
+
+describe Streamers::Registrable do
+
   describe "#register" do
     it "adds the channel to list of subscribers"
   end
