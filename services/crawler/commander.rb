@@ -9,8 +9,6 @@ class Commander
     @rabbit = Bunny.new(rabbitmq_uri)
     @rabbit.start
     @chan = @rabbit.create_channel
-
-    # Exchange and queue
     @x = @chan.direct("x.crawler", :auto_delete => true)
     listen
   end
@@ -30,17 +28,12 @@ class Commander
     Celluloid::Actor[:main_supervisor].reload_brand_feed(*message_scope(msg))
   end
 
-  private
   def message_action(msg)
     msg.fetch(:action)
   end
 
   def message_scope(msg)
     [msg.fetch(:brand_name), msg.fetch(:feed_name)]
-  end
-
-  def wait_time
-    5
   end
   
   def rabbitmq_uri
