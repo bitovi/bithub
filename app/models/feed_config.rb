@@ -63,7 +63,7 @@ module ConfigBuilders
     end
   end
 
-  class Disqu < Generic
+  class Disqus < Generic
     def config
       forums = feed_config.andand.config['forums'] || []
       {
@@ -87,6 +87,15 @@ module ConfigBuilders
   class Rs < Generic
     def config
       { urls: feed_config.andand.config['urls'] || [] }
+    end
+  end
+
+  class Foursquare < Generic
+    def config
+      venues = feed_config.andand.config['venues'] || []
+      {
+        venues: venues.map {|v| {id: v['id']}}
+      }
     end
   end
 
