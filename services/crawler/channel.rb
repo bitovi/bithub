@@ -5,8 +5,10 @@ class Channel
   end
   attr_reader :name, :topics
 
-  def interested?(object, attrs)
-    @topics.reduce(false) { |mem, topic| mem || not(target_text(object, attrs).scan(topic).empty?) }
+  def interested?(object, attrs = %i(title body))
+    @topics.reduce(false) do |mem, topic|
+      mem || not(target_text(object, attrs).scan(topic).empty?)
+    end
   end
 
   def target_text(object, attrs)
