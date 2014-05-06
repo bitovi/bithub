@@ -1,7 +1,8 @@
 require 'no_rails_spec_helper'
-require 'services/crawler/crawler'
+require 'services/crawler/poller'
 
 describe Poller do
+
   describe "#set_interval" do
     it "sets a new polling interval"
   end
