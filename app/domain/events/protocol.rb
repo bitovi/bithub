@@ -18,6 +18,7 @@ module Events
   module Irc; end
   module Stackexchange; end
   module Facebook; end
+  module Foursquare; end
 
   class Protocol
     include CoreHelpers
@@ -98,3 +99,4 @@ require 'events/feeds/meetup/meetup'
 require 'events/feeds/stackexchange/stackexchange'
 require 'events/feeds/facebook/facebook'
 require 'events/feeds/rss/rss'
+require 'events/feeds/foursquare/foursquare'

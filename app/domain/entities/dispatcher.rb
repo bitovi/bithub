@@ -171,7 +171,7 @@ module Entities
       end
     end
   end
-  
+
   module Blog
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -187,7 +187,7 @@ module Entities
       end
     end
   end
-  
+
   module Irc
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -208,6 +208,15 @@ module Entities
     class Dispatcher < BasicTypeDispatcher
       def type
         Entities::Facebook::Status
+      end
+    end
+  end
+
+  module Foursquare
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        ### TODO,
+        Entities::Foursquare::Checkin
       end
     end
   end
