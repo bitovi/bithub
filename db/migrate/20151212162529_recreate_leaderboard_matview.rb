@@ -29,7 +29,6 @@ SELECT users.id AS user_id,
            FROM internals
           WHERE internals.receiver_id = users.id)) AS user_score
    FROM users
-   LEFT JOIN users_roles ON users.id = users_roles.user_id
   WHERE users.name IS NOT NULL
   ORDER BY (( SELECT COALESCE(sum(r.authorship_value), 0::bigint) AS "coalesce"
       FROM entities e,
