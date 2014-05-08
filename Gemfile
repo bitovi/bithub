@@ -20,7 +20,7 @@ gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
 
-gem 'apartment', :github => 'veljkodragsic/apartment', :branch => 'development'
+gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
 gem 'strong_parameters'
 gem 'activerecord-postgres-hstore'
