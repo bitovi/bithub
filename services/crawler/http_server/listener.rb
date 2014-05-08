@@ -4,7 +4,10 @@ require_relative 'handlers/all'
 module HttpServer
   class Listener < Reel::Server::HTTP
 
-    def initialize(host = "127.0.0.1", port = 3001)
+    def initialize(args={})
+      host = args[:host] || ENV['CRAWLER_HTTP_HOST'] || '127.0.0.1'
+      port = args[:port] || ENV['CRAWLER_HTTP_PORT'] || '3001'
+
       super(host, port, &method(:on_connection))
 
       @routes = {}
