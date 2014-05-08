@@ -25,8 +25,6 @@ class DigestSet
     new_events
   end
 
-  private
-
   def add_many(events)
     events.map {|e| add(e)}.reduce{|acc, x| acc && x}
   end
