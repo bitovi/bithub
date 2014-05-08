@@ -253,4 +253,14 @@ module Events
       end
     end
   end
+
+  module Foursquare
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        ### add some logic
+        Events::Foursquare::Checkin
+      end
+    end
+  end
+
 end
