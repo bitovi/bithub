@@ -6,6 +6,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.name AS user_name,
     users.email AS user_email,
     users.props -> 'avatar_url'::text AS user_gravatar_url,
+    ARRAY( SELECT r.name
+	    FROM roles r
+	    LEFT JOIN users_roles ur ON ur.role_id = r.id
+	    WHERE ur.user_id = users.id ) AS user_roles,
     (( SELECT COALESCE(sum(r.authorship_value), 0::bigint) AS "coalesce"
            FROM entities e,
             ownerships o,
