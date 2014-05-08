@@ -2,20 +2,23 @@ require 'no_rails_spec_helper'
 require 'services/crawler/streamers/all'
 require 'services/crawler/streamers/registrable'
 
-module Streamers
-  class GetMyData
-    include Registrable
-
-    def connect; end
-    def reconnect; end
-  end
-end
 
 describe Streamers::Registrable do
-  Channel = Struct.new(:name, :topics)
+
+  module Streamers
+    class GetMyData
+      include Registrable
+
+      def connect; end
+      def reconnect; end
+    end
+  end
 
   let(:channel) do
-    Channel.new
+    channel = double()
+    channel.stub(:name) { "nikica" }
+    channel.stub(:topics) { %w(canjs jquery) }
+    channel
   end
 
   describe "#register" do
@@ -34,8 +37,4 @@ describe Streamers::Registrable do
     end
   end
 
-  describe "#route" do
-    it "routes the message to the appropriate channel" do
-    end
-  end
 end
