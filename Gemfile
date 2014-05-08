@@ -7,6 +7,8 @@ gem 'rails', '~> 3.2'
 gem 'rake'
 gem 'rspec', '~> 2.14'
 gem 'rspec-rails'
+gem 'vcr'
+gem 'webmock'
 gem 'pry'
 gem 'pry-rails'
 
