@@ -21,6 +21,7 @@ module Entities
   module Twitter; end
   module Stackexchange; end
   module Facebook; end
+  module Foursquare; end
 
   class Protocol
     include Validatable
@@ -87,3 +88,4 @@ require_relative 'feeds/bithub/bithub'
 require_relative 'feeds/stackexchange/stackexchange'
 require_relative 'feeds/facebook/facebook'
 require_relative 'feeds/rss/rss'
+require_relative 'feeds/foursquare/foursquare'

@@ -9,15 +9,16 @@ module Identities
       end
 
       def build
-        sync_venues
-        self
+        #sync_venues
+        @data
       end
 
       def sync_venues
-        @data[:vanues] = fetch_venues
+        @data[:venues] = fetch_venues
       end
 
       # Accessors
+
       def access_token
         oauth.fetch(:credentials).fetch(:token)
       end
