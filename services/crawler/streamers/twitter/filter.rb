@@ -40,7 +40,6 @@ module Streamers
 
       def initialize(auth = {})
         @auth = auth
-        @channels = []
       end
 
       def reconnect
