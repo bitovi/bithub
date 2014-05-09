@@ -16,7 +16,10 @@ namespace :test do
     t.pattern = FileList["spec/libs"]
   end
 
+  RSpec::Core::RakeTask.new(:services) do |t|
+    t.pattern = FileList["spec/services"]
+  end
 end
 
-task :test => %w(test:domain test:models test:libs)
+task :test => %w(test:domain test:models test:libs test:services)
 task :default => :test

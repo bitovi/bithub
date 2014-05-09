@@ -35,7 +35,7 @@ require_relative 'digest_set'
 require_relative 'response_processor'
 
 # log4r logger
-$env = ENV.fetch('ENV')
+$env = ENV.fetch('ENV') { 'development' }
 logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 
 Celluloid.logger = logger

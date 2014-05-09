@@ -3,15 +3,27 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$:.unshift PROJECT_ROOT
-
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
+$:.unshift PROJECT_ROOT
 
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
 
 require 'rspec/mocks'
 require 'rspec/rails'
+
+# ----------
+# VCR config
+# ----------
+
+# VCR.configure do |c|
+#   c.cassette_library_dir = 'fixtures/vcr_cassettes'
+#   c.hook_into :webmock
+# end
+
+# ---------------
+# Tag definitions
+# ---------------
 
 TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
 CATEGORY_RULES_PATH = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
@@ -50,6 +62,11 @@ def import_scoring_rules
     ScoringRule.create(rule_config)
   end
 end
+
+
+# ----------------
+# Response loading
+# ----------------
 
 def load_and_parse(path)
   ext_name = File.extname(path).gsub('.','').to_sym
