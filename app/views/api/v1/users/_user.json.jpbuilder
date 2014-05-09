@@ -1,6 +1,7 @@
 json.(user, :id, :name)
 
 json.score user.total_score
+json.identities user.reduced_identities
 
 json.avatar_url user.props['avatar_url']
 
@@ -8,5 +9,5 @@ if user_signed_in? #&& can?(:read_sensitive_data, @user)
   json.(user, :email, :address, :city, :postal, :state, :country)
   unless is_list
     json.(user, :activities, :achievements, :identities, :roles)
-  end 
+  end
 end
