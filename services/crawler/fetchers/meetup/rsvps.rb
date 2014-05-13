@@ -4,8 +4,9 @@ module Fetchers
     class Rsvps
       include Protocol
 
-      def initialize(client)
+      def initialize(client, opts)
         @client = client
+        @event_set = opts.fetch(:event_set)
       end
 
       def fetch
@@ -13,7 +14,7 @@ module Fetchers
       end
 
       def event_ids
-        # todo fetch from redis
+        @event_set.members.join ','
       end
     end
   end
