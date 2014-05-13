@@ -6,6 +6,8 @@ class Configurator
 
   def initialize(opts)
     @env = opts.fetch(:environment)
+    reload
+    Celluloid.logger.debug "All brands: #{@all_brands}"
   end
   attr_reader :all_brands
 
