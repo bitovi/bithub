@@ -24,7 +24,7 @@ module Tagger
 
     def match_tag(tag)
       @required_tags
-        .select {|t| t[:name] == tag}
+        .select {|t| t.names.include? tag.name}
         .first
     end
 

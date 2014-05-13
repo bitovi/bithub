@@ -27,14 +27,13 @@ module Entities
       @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     end
 
-
     def determine_category
       tags = @instance.tag_list
       rules = CategoryDeterminationRule.all
 
-      if category = Tagger::List.new(tags).best_match(rules)
-        @instance.tag_list.add category.snake_case
-        @instance.category_name = category.snake_case
+      if rule = Tagger::List.new(tags).best_match(rules)
+        @instance.tag_list.add rule.category_name.snake_case
+        @instance.category_name = rule.category_name.snake_case
       end
     end
 
