@@ -668,6 +668,20 @@ CREATE TABLE ownerships (
 
 
 --
+-- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles (
+    id integer NOT NULL,
+    name character varying(255),
+    resource_id integer,
+    resource_type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: scoring_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -713,6 +727,16 @@ CREATE TABLE users (
 
 
 --
+-- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users_roles (
+    user_id integer,
+    role_id integer
+);
+
+
+--
 -- Name: leaderboard; Type: MATERIALIZED VIEW; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -721,6 +745,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.name AS user_name,
     users.email AS user_email,
     (users.props -> 'avatar_url'::text) AS user_gravatar_url,
+    ARRAY( SELECT r.name
+           FROM (roles r
+      LEFT JOIN users_roles ur ON ((ur.role_id = r.id)))
+     WHERE (ur.user_id = users.id)) AS user_roles,
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
            FROM entities e,
             ownerships o,
@@ -828,20 +856,6 @@ CREATE SEQUENCE rewards_id_seq
 --
 
 ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
-
-
---
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles (
-    id integer NOT NULL,
-    name character varying(255),
-    resource_id integer,
-    resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
 
 
 --
@@ -1028,16 +1042,6 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
-
-
---
--- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users_roles (
-    user_id integer,
-    role_id integer
-);
 
 
 --
