@@ -2,10 +2,12 @@ module Tagger
   class Rule
     class InvalidRuleDefinitionException < Exception; end
 
-    attr_reader :required_tags, :action, :subject
+    attr_reader :required_tags
 
     def initialize(rule)
-      @required_tags = rule[:required_tags].map {|t| Tag.new t}
+      @required_tags = rule[:required_tags].map do |name, weight|
+        Tag.new({name: name, weight: weight})
+      end
     end
 
     def rate(tags)

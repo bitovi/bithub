@@ -12,7 +12,7 @@ module QueryLogic
     }
 
     def initialize(model, params)
-      @qis = params.map do |kv| 
+      @qis = params.map do |kv|
         key, value = kv
         if value.is_a? Array
           value.map{|v| QueryItem.new(model, [key, v]) }
@@ -121,7 +121,7 @@ module QueryLogic
         o = [o]
       end
     end
-  
+
     def replace_attr_if_virt(pair)
       attribute, direction = pair.split
       if VIRT_ATTRS[attribute]
