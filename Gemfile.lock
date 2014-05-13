@@ -44,10 +44,10 @@ GIT
 
 GIT
   remote: git://github.com/neektza/rmeetup.git
-  revision: 42b3199ad47664d4b30ec0dcb0e6b42e85eb8514
+  revision: 1d290142eb3a5ee329111620ecefe0140c6b2da8
   branch: master
   specs:
-    rmeetup (2.0.0)
+    rMeetup (2.0.0)
       buftok (~> 0.2)
       http (~> 0.6)
       http_parser.rb (~> 0.6)
@@ -239,7 +239,7 @@ GEM
     hashie (2.1.1)
     hike (1.2.3)
     htmlentities (4.3.1)
-    http (0.6.0)
+    http (0.6.1)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
     httparty (0.13.0)
@@ -519,6 +519,7 @@ DEPENDENCIES
   pg
   pry
   pry-rails
+  rMeetup!
   rails (~> 3.2)
   rake
   rb-fsevent (~> 0.9)
@@ -527,7 +528,6 @@ DEPENDENCIES
   redis-rails
   reel!
   rmagick
-  rmeetup!
   rolify (~> 3.2)
   rspec (~> 2.14)
   rspec-rails
