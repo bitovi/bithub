@@ -1,53 +1,13 @@
 # ----------
-# Categories
+# Groups
 # ----------
 
-article:
-  display_name: "Article"
-  group_list: "categories"
+categories: {}
+feeds: {}
+keywords: {}
+categories: {}
 
-bug:
-  display_name: "Bug"
-  group_list: "categories, labels"
-
-chat:
-  display_name: "Chat"
-  group_list: "categories"
-
-code:
-  display_name: "Code"
-  group_list: "categories"
-
-comment:
-  display_name: "Comment"
-  group_list: "categories"
-
-github_comment:
-  display_name: "Github Comment"
-  group_list: "categories"
-
-digest:
-  display_name: "Digest"
-  group_list: "categories"
-
-event:
-  display_name: "Event"
-  group_list: "categories"
-
-feature:
-  display_name: "Feature"
-  group_list: "categories, labels"
-  aliases:
-    - "enhancement"
-    - "feature-request"
-
-issue:
-  display_name: "Issue"
-  group_list: "categories"
-
-question:
-  group_list: "categories"
-  display_name: "Question"
+# default category
 
 uncategorized:
   group_list: "categories"
