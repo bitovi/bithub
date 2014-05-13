@@ -63,7 +63,7 @@ module ConfigBuilders
     end
   end
 
-  class Disqus < Generic
+  class Disqu < Generic
     def config
       forums = feed_config.andand.config['forums'] || []
       {
