@@ -14,6 +14,7 @@ require_relative 'twitter/tweet_search'
 require_relative 'facebook/page_feed'
 
 require_relative 'meetup/events'
+require_relative 'meetup/rsvps'
 require_relative 'meetup/open_events'
 
 require_relative 'stackexchange/base'
