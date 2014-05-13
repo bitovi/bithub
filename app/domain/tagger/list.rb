@@ -10,13 +10,12 @@ module Tagger
     end
 
     def best_match(rules=[])
-      rules = rules.map {|r| Rule.new(r)}
-
       scores = rules.map do |r|
-        r.rate(@tags)
+        Rule.new(r).rate(@tags)
       end
 
-      scores.max {|a,b| a <=> b}
+      score, idx = scores.each_with_index.max
+      idx.class == Fixnum ? rules[idx] : nil
     end
 
     def taggify(input)
@@ -25,7 +24,7 @@ module Tagger
       Tagger.tokenize(text).reduce([]) do |result, word|
         @tags.each do |t|
           t.names.each do |name|
-            if (Levenshtein.distance(word, name) <= t.tolerance)
+            if Levenshtein.distance(word, name) <= t.tolerance
               (result << t.name) unless result.include?(t.name)
               break
             end

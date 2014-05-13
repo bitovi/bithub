@@ -29,7 +29,7 @@ module Entities
 
 
     def determine_category
-      tags = Tag.tagged_with('category')
+      tags = @instance.tag_list
       rules = CategoryDeterminationRule.all
 
       if category = Tagger::List.new(tags).best_match(rules)

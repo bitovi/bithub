@@ -11,7 +11,22 @@ class Tag < ActsAsTaggableOn::Tag
     name
   end
 
+  def add_group(name)
+    group_list.push(name)
+  end
+
+  def remove_group(name)
+    group_list.remove(name)
+  end
+
   def self.find_by_name(name)
-    Tag.select {|tag| tag[:name] == name || (tag[:aliases] && tag[:aliases].include?(name)) }.first
+    Tag.select do |tag|
+      tag[:name] == name || tag[:aliases].andand.include?(name)
+    end.first
+  end
+
+  ### app/domain/query_logic/query.rb
+  def self.categories_order
+    tagged_with('categories').order("props -> 'order_on_page'").pluck(:id)
   end
 end

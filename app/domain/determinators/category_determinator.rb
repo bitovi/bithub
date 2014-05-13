@@ -21,7 +21,10 @@ module Determinators
 
     def category_scores
       @rules.map do |rule|
-        score = (rule.scorings.keys & @tags).reduce(0) {|score, key| score + rule.scorings[key].to_i}
+        score = (rule.required_tags.keys & @tags).reduce(0) do |score, key|
+          score + rule.required_tags[key].to_i
+        end
+
         {:name => rule.name, :score => score}
       end
     end
