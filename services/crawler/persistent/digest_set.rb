@@ -9,15 +9,20 @@ class DigestSet < RedisSet
   end
 
   def key(event)
-    meta  = event.fetch(:meta)
-    brand = meta.fetch(:brand_name)
-    feed  = meta.fetch(:feed_name)
-    type  = meta.fetch(:type_name)
-
-    "digests:#{brand}:#{feed}:#{type}"
+    colon_separated [prefix] + keys_path(event)
   end
 
   def value(event)
     event.fetch(:content_digest)
+  end
+
+  def prefix
+    "digests"
+  end
+    
+  def keys_path(event)
+    [event.fetch(:meta).fetch(:brand_name),
+     event.fetch(:meta).fetch(:feed_name),
+     event.fetch(:meta).fetch(:type_name)]
   end
 end
