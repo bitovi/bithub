@@ -15,6 +15,10 @@ describe Tagger::List do
     Tagger::List.new(tags)
   end
 
+  subject(:rule1) { {required_tags: {'canjs' => 10} } }
+  subject(:rule2) { {required_tags: {'j_querypp' => 5} } }
+  subject(:rule3) { {required_tags: {'stealjs' => 5, 'funcunit' => 5} } }
+
   describe "#taggify" do
     it "matches lowercase lexems" do
       text = "Many words ... canjs, other words jquerypp, more words steal"
@@ -56,4 +60,20 @@ describe Tagger::List do
       expect(tagger.taggify(text)).to match_array %w(canjs)
     end
   end
+
+  describe "#best_match" do
+    it "matches tag name" do
+      expect(tagger.best_match([rule1])).to eq(rule1)
+    end
+
+    it "matches tag by alias" do
+      expect(tagger.best_match([rule2])).to eq(rule2)
+    end
+
+    it "matches last rule with same value" do
+      expect(tagger.best_match([rule3, rule2, rule1])).to eq(rule1)
+      expect(tagger.best_match([rule1, rule3, rule2])).to eq(rule3)
+    end
+  end
+
 end

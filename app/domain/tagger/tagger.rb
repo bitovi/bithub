@@ -1,7 +1,6 @@
 require_relative 'tag'
 require_relative 'rule'
 
-
 module Tagger
 
   DEFAULT_DELIMITERS = /[ ,.!?;\/]/

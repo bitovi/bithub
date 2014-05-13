@@ -1,5 +1,6 @@
 require_relative 'tag'
 require_relative 'rule'
+require_relative 'tagger'
 
 module Tagger
   class List
@@ -14,8 +15,9 @@ module Tagger
         Rule.new(r).rate(@tags)
       end
 
+      # takes last max value
       score, idx = scores.each_with_index.max
-      idx.class == Fixnum ? rules[idx] : nil
+      idx && rules[idx]
     end
 
     def taggify(input)
