@@ -29,14 +29,20 @@ module Entities
 
 
     def determine_category
-      if (category = Determinators::CategoryDeterminator.best_match @instance)
+      tags = Tag.tagged_with('category')
+      rules = CategoryDeterminationRule.all
+
+      if category = Tagger::List.new(tags).best_match(rules)
         @instance.tag_list.add category.snake_case
         @instance.category_name = category.snake_case
       end
     end
 
     def determine_rule
-      @instance.scoring_rule = Determinators::ScoringRuleDeterminator.best_match @instance
+      tags = @instance.tag_list
+      rules = ScoringRule.all
+
+      @instance.scoring_rule = Tagger::List.new(tags).best_match(rules)
     end
 
     def determine_author
@@ -55,8 +61,10 @@ module Entities
     end
 
     def taggify_content
+      tags = Tag.tagged_with('keyword')
       input = ATTRS_FOR_TAGGING.map {|attr| @instance.send(attr)}.compact
-      Tagger.new(Tag.projects).find_tags(input)
+
+      Tagger::List.new(tags).taggify(input)
     end
 
     def taggify_props
