@@ -271,8 +271,12 @@ ALTER SEQUENCE brands_id_seq OWNED BY brands.id;
 
 CREATE TABLE category_determination_rules (
     id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    scorings hstore
+    name character varying(255),
+    required_tags hstore,
+    props hstore,
+    category_name character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -688,11 +692,11 @@ CREATE TABLE roles (
 CREATE TABLE scoring_rules (
     id integer NOT NULL,
     name character varying(255),
-    required_tags character varying(255)[],
-    authorship_value integer,
-    award_value integer,
-    upvote_value integer,
-    priority integer,
+    required_tags hstore,
+    authorship_value integer DEFAULT 0,
+    award_value integer DEFAULT 0,
+    upvote_value integer DEFAULT 0,
+    props hstore,
     valid_until timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1259,14 +1263,6 @@ ALTER TABLE ONLY brand_identities
 
 ALTER TABLE ONLY brands
     ADD CONSTRAINT brands_pkey PRIMARY KEY (id);
-
-
---
--- Name: category_determination_rules_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY category_determination_rules
-    ADD CONSTRAINT category_determination_rules_name_key UNIQUE (name);
 
 
 --

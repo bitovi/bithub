@@ -19,7 +19,7 @@ uncategorized:
 
 twitter:
   display_name: "Twitter"
-  group_list: "feeds, categories"
+  group_list: "feeds"
 
 github:
   display_name: "Github"

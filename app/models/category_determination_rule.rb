@@ -1,6 +1,6 @@
 class CategoryDeterminationRule < ActiveRecord::Base
-  attr_accessible :name, :scorings
-  serialize :scorings, ActiveRecord::Coders::Hstore
+  attr_accessible :name, :required_tags, :category_name
+  serialize :required_tags, ActiveRecord::Coders::Hstore
 
-  validates_uniqueness_of :name
+  validates_presence_of :category_name
 end
