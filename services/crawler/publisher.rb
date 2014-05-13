@@ -1,5 +1,5 @@
 require 'bunny'
-require_relative 'digest_set'
+require 'persistent/digest_set'
 
 class Publisher
   include Celluloid
