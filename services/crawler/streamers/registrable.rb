@@ -1,16 +1,12 @@
 module Streamers
   module Registrable
+    attr_reader :last_registration
 
     def register(channel, reloading: false)
       Celluloid.logger.info "Registering new channel #{channel.name} with topics #{channel.topics}"
       if channels.select{|c| c.name == channel.name}.empty?
         channels << channel
-
-        if reloading
-          reconnect
-        else
-          connect
-        end
+        timed_connect(reloading)
       end
     end
 
@@ -36,5 +32,17 @@ module Streamers
     def channels
       @channels ||= Array.new
     end
+
+    def timed_connect(reloading)
+      @last_registration.cancel if @last_registration
+      @last_registration = after(registration_timeout) do
+        reloading ? reconnect : connect
+      end
+    end
+
+    def registration_timeout
+      60
+    end
+
   end
 end
