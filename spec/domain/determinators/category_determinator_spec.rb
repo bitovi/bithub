@@ -2,9 +2,16 @@ require 'domain/spec_helper'
 
 describe Determinators::CategoryDeterminator do
 
-  let (:rule1) { FactoryGirl.build(:category_determination_rule, name: "foo", scorings: {"foo" => 1}) }
-  let (:rule2) { FactoryGirl.build(:category_determination_rule, name: "foobarbaz", scorings: {"foo" => 1, "bar" =>1, "baz" =>1}) }
-  let (:rule3) { FactoryGirl.build(:category_determination_rule, name: "foobar", scorings: {"foo" => 1, "bar" => 1}) }
+  let (:rule1) do
+    FactoryGirl.build(:category_determination_rule, name: "foo", required_tags: {"foo" => 1}, category_name: "foo")
+  end
+
+  let (:rule2) do
+    FactoryGirl.build(:category_determination_rule, name: "foobarbaz", required_tags: {"foo" => 1, "bar" =>1, "baz" =>1}, category_name: "foobarbaz")
+  end
+
+  let (:rule3) do FactoryGirl.build(:category_determination_rule, name: "foobar", required_tags: {"foo" => 1, "bar" => 1}, name: "foobar")
+  end
 
   let(:rules) {[ rule1, rule2, rule3 ]}
 
