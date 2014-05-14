@@ -9,6 +9,7 @@ class CreateScoringRules < ActiveRecord::Migration
       t.integer :upvote_value, :default => 0
 
       t.hstore  :props
+      t.integer :position
 
       t.datetime :valid_until
 

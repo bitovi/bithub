@@ -1,10 +1,11 @@
+require 'acts_as_list'
+
 class ScoringRule < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
 
   attr_accessible :name, :required_tags, \
                   :authorship_value, :upvote_value, :award_value, \
-                  :valid_until
-
+                  :valid_until, :position
   attr_readonly :required_tags
 
   serialize :required_tags, ActiveRecord::Coders::Hstore
@@ -12,6 +13,8 @@ class ScoringRule < ActiveRecord::Base
   validates_presence_of :authorship_value
 
   has_many :entities
+
+  acts_as_list
 
   def invalidate!
     if entities.count == 0
