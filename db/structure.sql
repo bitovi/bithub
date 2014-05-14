@@ -275,6 +275,7 @@ CREATE TABLE category_determination_rules (
     required_tags hstore,
     props hstore,
     category_name character varying(255),
+    "position" integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -697,6 +698,7 @@ CREATE TABLE scoring_rules (
     award_value integer DEFAULT 0,
     upvote_value integer DEFAULT 0,
     props hstore,
+    "position" integer,
     valid_until timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
