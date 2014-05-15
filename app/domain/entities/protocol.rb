@@ -33,8 +33,8 @@ module Entities
     attr_reader :instance
 
     def initialize(payload)
-      @payload = payload
-      @event = @payload
+      @payload = payload 
+      @event = @payload # FIXME does it always have to be an event?
     end
 
     def procure

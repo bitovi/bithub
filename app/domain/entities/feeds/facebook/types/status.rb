@@ -29,6 +29,17 @@ module Entities
 
         built
       end
+      
+      def build_children
+        build_comments.to_a
+      end
+      
+      def build_comments
+        @event.comments.map do |c| # Build entities
+          Entities::Facebook::Comment.new(@event, c)
+          .procure.determine.group.normalize.instance
+        end if @event.comments
+      end
 
       private
 

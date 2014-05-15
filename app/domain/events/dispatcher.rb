@@ -198,6 +198,14 @@ module Events
     end
   end
 
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Facebook::Status
+      end
+    end
+  end
+
   module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -242,14 +250,6 @@ module Events
     class Dispatcher < BasicTypeDispatcher
       def type
         Events::Irc::Message
-      end
-    end
-  end
-
-  module Facebook
-    class Dispatcher < BasicTypeDispatcher
-      def type
-        Events::Facebook::Status
       end
     end
   end
