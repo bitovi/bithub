@@ -1671,7 +1671,7 @@ ALTER TABLE ONLY achievements
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "public","public";
 
 INSERT INTO schema_migrations (version) VALUES ('0');
 
