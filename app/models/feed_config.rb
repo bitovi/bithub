@@ -89,9 +89,16 @@ class FeedConfig < ActiveRecord::Base
     end
   end
 
-  def builder
-    "ConfigBuilders::#{feed_name.capitalize}".constantize.new(self, brand.identities.where(provider: feed_name).first)
+  def presenter
+    require 'presenters/eager_load'
+    if Presenters::FeedConfig.constants.include?(feed_name.capitalize.to_sym)
+      Presenters::FeedConfig.const_get(feed_name.capitalize.to_sym)
+      .new(self, brand.identities.where(provider: feed_name).first)
+    else
+      [:error, "No presenter for this feed config"]
+    end
   end
+  alias_method :builder, :presenter
 
   # TODO has_nested?
 
