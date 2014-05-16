@@ -12,13 +12,15 @@ module HttpServer
       end
 
       def handle(body)
-        parsed = CGI.parse body
+        parsed  = CGI.parse body.to_s
+        secret  = parsed['secret']
+        payload = parsed['checkin'] || parsed['like'] || parsed['tip'] || []
 
-        if checkin = parsed['checkin'].first
-          checkin = JSON.parse checkin
+        if payload = payload.first
+          payload = JSON.parse payload
 
           @channels.each do |brand, ids|
-            publish brand, checkin if ids.include? venue_id(checkin)
+            publish brand, payload if ids.include? venue_id(payload)
           end
         end
       end
