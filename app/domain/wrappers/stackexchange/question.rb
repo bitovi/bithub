@@ -16,8 +16,6 @@ module Wrappers
       alias_method :answered?, :is_answered
       alias_method :upvote_count, :up_vote_count
 
-      attr_reader :answers, :comments, :owner
-
       def initialize(question)
         @data = symbolize_keys(question)
       end
