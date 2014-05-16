@@ -6,18 +6,18 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @configs = FeedConfig.where(brand_name: current_account.brand.name)
+    @configs = current_account.brand.feed_configs.all
     render :index
   end
 
   def show
-    @config = FeedConfig.where(id: params[:id], brand_name: current_account.brand.name).first
+    @config = current_account.brand.feed_configs.find_by_id params[:id]
     render :show
   end
 
   def create
     @config = FeedConfig.new(config_params)
-    @config.brand_name = current_account.brand.name
+    @config.brand = current_account.brand
 
     if @config.save
       render :show
@@ -27,7 +27,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = FeedConfig.where(brand_name: current_account.brand.name, id: params[:id]).first
+    @config = current_account.brand.feed_configs.find_by_id params[:id]
     if @config && @config.update_attributes(config_params)
       render :show
     else
@@ -36,7 +36,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def destroy
-    @config = FeedConfig.where(id: params[:id], brand_name: current_account.brand.name)
+    @config = current_account.brand.feed_configs.find_by_id params[:id]
     if @config.destroy
       render :json => msg_hash(@config, 'destroy', 'success')
     else
@@ -49,7 +49,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
     .select do |fc|
       fc.valid_config?
     end.each do |fc|
-      fc.config = fc.builder.config
+      fc.config = fc.presenter.config
     end.map do |fc|
       fc.attributes
     end.group_by do |el|
@@ -72,23 +72,12 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
     render :json => @configs
   end
 
-  # def self.config_definitions
-  #   {
-  #     github:     [:token, :repos, :orgs],
-  #     meetup:     [:token, :terms, :groups],
-  #     facebook:   [:token, :pages => [:id, :token]],
-  #     twitter:    [:token, :token_secret, :terms],
-  #     disqus:     [:token, :forums],
-  #     foursquare: [:token, :venues]
-  #   }
-  # end
-
   private
 
   def config_params
     params
     .require(:feed_config)
-    .permit(:brand_name, :feed_name, :config)
+    .permit(:feed_name, :config)
     .tap {|wl| wl[:config] = params[:feed_config][:config]}
   end
 
