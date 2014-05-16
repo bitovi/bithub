@@ -8,10 +8,7 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def show
-    if current_account.nil?
-      render :json => {error: 'login required'}, :status => 401
-    end
-    if (@brand = Brand.find_by_id(current_account.brand_id))
+    if (@brand = current_account.brand)
       render :show
     else
       render :json => msg_hash(@brand, 'update'), :status => 406
@@ -19,7 +16,7 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def update
-    if (@brand = Brand.find_by_id(current_account.id))
+    if (@brand = current_account.brand)
       @brand.update_attributes(brand_params)
       render :show
     else

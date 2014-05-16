@@ -2,15 +2,18 @@ class FeedConfig < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
   include AmqpHelpers
 
-  Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss)
+  attr_accessible :feed_name, :config
 
-  attr_accessible :brand_name, :feed_name, :config
+  belongs_to :brand
   serialize :config, JSON
-  validates_presence_of :brand_name, :feed_name
+
+  validates_presence_of :feed_name
+
   after_update :notify_crawler
   after_create :notify_crawler
   before_save :js_obj_to_array
-  
+
+  Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss)
   Feeds.each do |feed|
     define_method("is_#{feed}?") do
       feed_name == feed.to_s
@@ -20,8 +23,8 @@ class FeedConfig < ActiveRecord::Base
   def notify_crawler
     if valid_config?
       msg = {
-        brand_name: self.brand_name,
-        feed_name: self.feed_name,
+        brand_name: brand.name,
+        feed_name: feed_name,
         action: :restart
       }
 
@@ -45,10 +48,6 @@ class FeedConfig < ActiveRecord::Base
 
   def valid_config?
     send("valid_#{feed_name}?")
-  end
-
-  def brand
-    @_brand ||= Brand.find_by_name(brand_name)
   end
 
   def valid_github?
@@ -88,19 +87,16 @@ class FeedConfig < ActiveRecord::Base
       errors.add :config, "must have #{key}" unless indeed
     end
   end
+  
+  def pages_have_token?
+    config.fetch('pages').all?{|el| el.has_key?('access_token')}
+    true
+  end
 
   def presenter
-    require 'presenters/eager_load'
-    if Presenters::FeedConfig.constants.include?(feed_name.capitalize.to_sym)
-      Presenters::FeedConfig.const_get(feed_name.capitalize.to_sym)
-      .new(self, brand.identities.where(provider: feed_name).first)
-    else
-      [:error, "No presenter for this feed config"]
-    end
+    @presenter ||= Presenters::FeedConfig.new(self)
   end
   alias_method :builder, :presenter
-
-  # TODO has_nested?
 
   private
   
@@ -119,11 +115,6 @@ class FeedConfig < ActiveRecord::Base
   def returning(exp)
     yield exp
     exp
-  end
-
-  def pages_have_token?
-    config.fetch('pages').all?{|el| el.has_key?('access_token')}
-    true
   end
 
 end
