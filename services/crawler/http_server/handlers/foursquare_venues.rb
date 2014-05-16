@@ -37,7 +37,7 @@ module HttpServer
         body.fetch('venue').fetch('id')
       end
 
-      def self.route
+      def self.path
         '/foursquare/venues'
       end
 

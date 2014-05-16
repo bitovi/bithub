@@ -10,7 +10,9 @@ module HttpServer
 
       super(host, port, &method(:on_connection))
 
+      @path_prefix = args[:route_prefix] || ENV['CRAWLER_HTTP_PREFIX'] || '/'
       @routes = {}
+
       Celluloid.logger.info "Started HTTP server on http://#{host}:#{port}"
       boot
     end
@@ -19,14 +21,15 @@ module HttpServer
       @handlers = SupervisionGroup.new
 
       Handlers.constants.each do |handler_name|
-        handler = HttpServer::Handlers.const_get(handler_name)
+        handler    = HttpServer::Handlers.const_get(handler_name)
         actor_name = build_actor_name(handler_name)
+        path       = File.join @path_prefix, handler.path
 
         # start actor and register route
         @handlers.supervise_as actor_name, handler
-        add_route handler.route, actor_name
+        add_route path, actor_name
 
-        Celluloid.logger.info "HTTP handler for #{actor_name.inspect} on #{handler.route}"
+        Celluloid.logger.info "HTTP handler for #{actor_name.inspect} on #{path}"
       end
     end
 
