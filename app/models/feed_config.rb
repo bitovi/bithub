@@ -2,12 +2,20 @@ class FeedConfig < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
   include AmqpHelpers
 
+  Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss)
+
   attr_accessible :brand_name, :feed_name, :config
   serialize :config, JSON
   validates_presence_of :brand_name, :feed_name
   after_update :notify_crawler
   after_create :notify_crawler
-  before_save :clean_config
+  before_save :js_obj_to_array
+  
+  Feeds.each do |feed|
+    define_method("is_#{feed}?") do
+      feed_name == feed.to_s
+    end
+  end
 
   def notify_crawler
     if valid_config?
@@ -27,7 +35,7 @@ class FeedConfig < ActiveRecord::Base
     if has_terms?
       config['terms']
     else
-      no_terms
+      [:error, "not a config with terms"]
     end
   end
 
@@ -35,54 +43,12 @@ class FeedConfig < ActiveRecord::Base
     not(config['terms'].nil?)
   end
 
-  def no_terms
-    [:error, "not a config with terms"]
-  end
-
   def valid_config?
     send("valid_#{feed_name}?")
   end
 
-  def clean_config
-    if is_facebook?
-      if has?('pages')
-        config['pages'] = config['pages'].map{|k,v| v}
-      end
-    end
-    if is_meetup?
-      if has?('groups')
-        config['groups'] = config['groups'].map{|k,v| v}
-      end
-    end
-    if is_disqus?
-      if has?('forums')
-        config['forums'] = config['forums'].map{|k,v| v}
-      end
-    end
-  end
-
   def brand
     @_brand ||= Brand.find_by_name(brand_name)
-  end
-
-  def is_github?
-    feed_name == 'github'
-  end
-
-  def is_facebook?
-    feed_name == 'facebook'
-  end
-
-  def is_twitter?
-    feed_name == 'twitter'
-  end
-
-  def is_disqus?
-    feed_name == 'disqus'
-  end
-
-  def is_meetup?
-    feed_name == 'meetup'
   end
 
   def valid_github?
@@ -130,6 +96,18 @@ class FeedConfig < ActiveRecord::Base
   # TODO has_nested?
 
   private
+  
+  # Sometimes the API sends arrays serialized as Javascript objects
+  # in form of { "1": "val1", "2": "val2 }. This method fixes that.
+  def js_obj_to_array
+    if is_facebook? && has?('pages')
+      config['pages'] = config['pages'].map{|k,v| v}
+    elsif is_meetup? && has?('groups')
+      config['groups'] = config['groups'].map{|k,v| v}
+    elsif is_disqus? && has?('forums')
+      config['forums'] = config['forums'].map{|k,v| v}
+    end
+  end
 
   def returning(exp)
     yield exp
