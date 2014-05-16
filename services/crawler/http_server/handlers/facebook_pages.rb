@@ -23,7 +23,7 @@ module HttpServer
         end
       end
 
-      def self.route
+      def self.path
         '/facebook/pages'
       end
     end
