@@ -1,3 +1,5 @@
+require 'cgi'
+
 module HttpServer
   module Handlers
 
@@ -10,10 +12,14 @@ module HttpServer
       end
 
       def handle(body)
-        body = JSON.parse(body)
+        parsed = CGI.parse body
 
-        @channels.each do |brand, ids|
-          publish brand, body if ids.include? venue_id(body)
+        if checkin = parsed['checkin'].first
+          checkin = JSON.parse checkin
+
+          @channels.each do |brand, ids|
+            publish brand, checkin if ids.include? venue_id(checkin)
+          end
         end
       end
 
