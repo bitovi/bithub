@@ -28,4 +28,19 @@ describe Tagger do
       expect(Tagger.textualize(input)).to eq "start foo baz stop"
     end
   end
+
+  describe "#list_to_name_weight_hash" do
+    it "converts array of tag names to hash of name-weight pairs" do
+      input  = ['foo', '!bar']
+      args   = {weight: 5}
+      expect(Tagger.list_to_name_weight_hash(input, args)).to eq({"foo" => 5, "bar" => -5})
+    end
+
+    it "converts CSV list of tag names to hash of name-weight pairs" do
+      input  = 'foo, !bar'
+      args   = {weight: 5}
+      expect(Tagger.list_to_name_weight_hash(input, args)).to eq({"foo" => 5, "bar" => -5})
+    end
+  end
+
 end
