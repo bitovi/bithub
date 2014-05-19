@@ -1,21 +1,20 @@
-class Api::V2::ScoringRulesController < Api::V2::BaseController
+class Api::V2::CategoryDeterminationRulesController < Api::V2::BaseController
   respond_to :json
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @rules = ScoringRule.all
-    render :index
+    @rules = CategoryDeterminationRule.all
   end
 
   def show
-    @rule = ScoringRule.find params[:id]
+    @rule = CategoryDeterminationRule.find params[:id]
     render :show
   end
 
   def create
-    @rule = ScoringRule.new rule_params_on_post
+    @rule = CategoryDeterminationRule.new rule_params
 
     if @rule.save
       render :show
@@ -25,9 +24,9 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def update
-    @rule = ScoringRule.find params[:id]
+    @rule = CategoryDeterminationRule.find params[:id]
 
-    if @rule.update_attributes rule_params_on_put
+    if @rule.update_attributes rule_params
       render :show
     else
       render :json => msg_hash(@rule, 'update'), :status => 406
@@ -35,9 +34,9 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def destroy
-    @rule = ScoringRule.find params[:id]
+    @rule = CategoryDeterminationRule.find params[:id]
 
-    if @rule.invalidate
+    if @rule.destroy
       render :json => msg_hash(@rule, 'destroy', 'success')
     else
       render :json => msg_hash(@rule, 'destroy'), :status => 406
@@ -46,11 +45,8 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
 
   private
 
-  def rule_params_on_post
-    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value, :required_tags => [])
+  def rule_params
+    params.require(:rule).permit(:name, :category_name, :required_tags => [])
   end
 
-  def rule_params_on_put
-    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value)
-  end
 end

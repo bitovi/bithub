@@ -11,6 +11,8 @@ notifications:
     - veljko@kset.org
     - neektza@gmail.com
     - konjevic@gmail.com
+services:
+  - redis-server
 addons:
   postgresql: 9.3
   code_climate:
