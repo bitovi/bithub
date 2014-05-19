@@ -1,6 +1,7 @@
 require 'identities/builders'
 
 class BrandIdentityDecorator < ::Draper::Decorator
+  delegate :id, :brand, :uid, :provider
 
   def data
     @builder = ::Identities::Builders\
