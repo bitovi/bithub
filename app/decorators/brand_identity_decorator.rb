@@ -1,73 +1,63 @@
 require 'identities/builders'
 
-class BrandIdentityDecorator < Draper::Decorator
-  delegate_all
-
-  def credentials
-    {
-      # access_token: source.access_token,
-      # access_secret: nil
-    }
-  end
+class BrandIdentityDecorator < ::Draper::Decorator
 
   def data
-    provider = source.provider
-    source_data = source.source_data
-    data = ::Identities::Builders.const_get(provider.camel_case).new(source_data)
+    @builder = ::Identities::Builders\
+      .const_get(source.provider.camel_case)\
+      .new(source.source_data)
 
-    provider_method = "provider_#{provider}".to_sym
-    self.respond_to?(provider_method) ? self.send(provider_method, data) : {}
+    provider_method = "provider_#{source.provider}".to_sym
+    respond_to?(provider_method) ? self.send(provider_method) : {}
   end
 
-  # private
-
-  def provider_github(data)
+  def provider_github
     {
-      access_token: data.access_token,
-      repos: data.repo_names,
-      orgs: data.org_names
+      access_token: @builder.access_token,
+      repos: @builder.repo_names,
+      orgs: @builder.org_names
     }
   end
 
-  def provider_facebook(data)
+  def provider_facebook
     {
-      access_token: data.access_token,
-      pages: data.pages.map do |p|
+      access_token: @builder.access_token,
+      pages: @builder.pages.map do |p|
         {id: p[:id], access_token: p[:access_token], name: p[:name]}
       end
     }
   end
 
-  def provider_twitter(data)
+  def provider_twitter
     {
-      access_token: data.access_token,
-      access_secret: data.access_secret
+      access_token: @builder.access_token,
+      access_secret: @builder.access_secret
     }
   end
 
-  def provider_disqus(data)
+  def provider_disqus
     {
-      access_token: data.access_token,
-      forums: data.forum_names_and_ids
+      access_token: @builder.access_token,
+      forums: @builder.forum_names_and_ids
     }
   end
 
-  def provider_foursquare(data)
+  def provider_foursquare
     {
-      access_token: data.access_token
+      access_token: @builder.access_token
     }
   end
 
-  def provider_meetup(data)
+  def provider_meetup
     {
-      access_token: data.access_token,
-      groups: data.group_names_and_ids
+      access_token: @builder.access_token,
+      groups: @builder.group_names_and_ids
     }
   end
 
-  def provider_stackexchange(data)
+  def provider_stackexchange
     {
-      access_token: data.access_token
+      access_token: @builder.access_token
     }
   end
 end

@@ -45,31 +45,12 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def tree
-    grouped_configs = FeedConfig.all
-    .select do |fc|
-      fc.valid_config?
-    end.each do |fc|
-      fc.config = fc.presenter.config
-    end.map do |fc|
-      fc.attributes
-    end.group_by do |el|
-      el['brand_name']
+    @tree = Brand.all.map do |b|
+      fcs = FeedConfigDecorator.decorate_collection(b.feed_configs)
+      Hash[b.name, Hash[fcs.map {|fc| [fc.feed_name, fc.config]}]]
     end
 
-
-    @configs = Hash[grouped_configs.keys.zip(
-      grouped_configs.values.map do |bc|
-        bc.each do |fc|
-          fc.delete('brand_name')
-        end.map do |fc|
-          Hash[fc['feed_name'], fc['config']]
-        end.reduce({}) do |acc, el|
-          acc.merge(el)
-        end
-      end
-    )]
-
-    render :json => @configs
+    render :json => @tree
   end
 
   private
