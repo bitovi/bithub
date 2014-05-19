@@ -1,13 +1,17 @@
 class CreateScoringRules < ActiveRecord::Migration
   def change
     create_table :scoring_rules do |t|
-      t.string       :name
-      t.string_array :required_tags
-      t.integer      :authorship_value
-      t.integer      :award_value
-      t.integer      :upvote_value
-      t.integer      :priority
-      t.datetime     :valid_until
+      t.string  :name
+      t.hstore  :required_tags
+
+      t.integer :authorship_value, :default => 0
+      t.integer :award_value, :default => 0
+      t.integer :upvote_value, :default => 0
+
+      t.hstore  :props
+      t.integer :position
+
+      t.datetime :valid_until
 
       t.timestamps
     end

@@ -27,16 +27,24 @@ module Entities
       @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     end
 
-
     def determine_category
-      if (category = Determinators::CategoryDeterminator.best_match @instance)
-        @instance.tag_list.add category.snake_case
-        @instance.category_name = category.snake_case
+      tags = @instance.tag_list
+      rules = CategoryDeterminationRule.order(position: :desc)
+      # rule checking is done in reverse order so that that 'highest'
+      # value with the same score is returned
+
+      if rule = Tagger::List.new(tags).best_match(rules)
+        @instance.tag_list.add rule.category_name.snake_case
+        @instance.category_name = rule.category_name.snake_case
       end
     end
 
     def determine_rule
-      @instance.scoring_rule = Determinators::ScoringRuleDeterminator.best_match @instance
+      tags = @instance.tag_list
+      rules = ScoringRule.order(position: :desc)
+      # same as in #determine_category ^^^
+
+      @instance.scoring_rule = Tagger::List.new(tags).best_match(rules)
     end
 
     def determine_author
@@ -55,8 +63,10 @@ module Entities
     end
 
     def taggify_content
+      tags = Tag.tagged_with('keyword')
       input = ATTRS_FOR_TAGGING.map {|attr| @instance.send(attr)}.compact
-      Tagger.new(Tag.projects).find_tags(input)
+
+      Tagger::List.new(tags).taggify(input)
     end
 
     def taggify_props

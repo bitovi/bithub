@@ -100,9 +100,12 @@ Bithub::Application.routes.draw do
       # Scoring rules
       resources :scoring_rules
 
+      # Scoring rules
+      resources :category_determination_rules
+
       # Feed config
       resources :feed_configs do
-        collection do 
+        collection do
           get 'tree', :to => 'feed_configs#tree'
         end
       end

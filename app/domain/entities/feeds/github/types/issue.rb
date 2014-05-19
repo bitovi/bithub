@@ -100,7 +100,9 @@ module Entities
       def taggify_labels
         if @instance.props[:label_names]
           input = @instance.props[:label_names]
-          Tagger.new(Tag.labels).find_tags(input)
+          tags  = Tag.tagged_with('labels')
+
+          Tagger::List.new(tags).taggify(input)
         else
           []
         end
