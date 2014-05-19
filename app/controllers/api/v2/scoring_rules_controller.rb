@@ -10,12 +10,13 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def show
-    @rule = ScoringRule.find(params[:id])
+    @rule = ScoringRule.find params[:id]
     render :show
   end
 
   def create
-    @rule = ScoringRule.new(rule_params)
+    @rule = ScoringRule.new rule_params_on_post
+
     if @rule.save
       render :show
     else
@@ -24,9 +25,9 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def update
-    @rule = ScoringRule.find(params[:id])
+    @rule = ScoringRule.find params[:id]
 
-    if @rule.update_attributes(rule_params)
+    if @rule.update_attributes rule_params_on_put
       render :show
     else
       render :json => msg_hash(@rule, 'update'), :status => 406
@@ -34,8 +35,9 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
   end
 
   def destroy
-    @rule = ScoringRule.find(params[:id])
-    if @rule.destroy
+    @rule = ScoringRule.find params[:id]
+
+    if @rule.invalidate
       render :json => msg_hash(@rule, 'destroy', 'success')
     else
       render :json => msg_hash(@rule, 'destroy'), :status => 406
@@ -44,8 +46,11 @@ class Api::V2::ScoringRulesController < Api::V2::BaseController
 
   private
 
-  def rule_params
-    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value, :priority, :valid_until)
+  def rule_params_on_post
+    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value, :required_tags => [])
   end
 
+  def rule_params_on_put
+    params.require(:rule).permit(:name, :authorship_value, :upvote_value, :award_value)
+  end
 end
