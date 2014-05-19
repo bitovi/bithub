@@ -1,4 +1,5 @@
 class FeedConfigDecorator < ::Draper::Decorator
+  delegate :id, :brand, :feed_name
 
   def config
     @bid = BrandIdentityDecorator.new(
@@ -13,10 +14,6 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def brand_name
     source.brand.name
-  end
-
-  def feed_name
-    source.feed_name
   end
 
   def github_config
