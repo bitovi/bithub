@@ -22,7 +22,7 @@ gem 'carrierwave'
 
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
-gem 'strong_parameters'
+gem 'strong_parameters', '~> 0.2'
 gem 'activerecord-postgres-hstore'
 gem 'activerecord-postgres-array', '0.0.9'
 gem 'activerecord-postgresql-extensions'
