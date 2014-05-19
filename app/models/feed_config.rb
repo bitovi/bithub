@@ -94,7 +94,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def presenter
-    @presenter ||= Presenters::FeedConfig.new(self)
+    @presenter ||= Presenters::FeedConfigPresenter.new(self)
   end
   alias_method :builder, :presenter
 
