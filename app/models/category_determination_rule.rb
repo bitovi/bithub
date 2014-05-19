@@ -1,4 +1,5 @@
 require 'acts_as_list'
+require 'tagger/tagger'
 
 class CategoryDeterminationRule < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
@@ -9,4 +10,9 @@ class CategoryDeterminationRule < ActiveRecord::Base
   validates_presence_of :category_name
 
   acts_as_list
+
+  def required_tags=(tags)
+    tags = Tagger.list_to_name_weight_hash tags
+    write_attribute(:required_tags, tags)
+  end
 end
