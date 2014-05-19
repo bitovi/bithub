@@ -11,7 +11,6 @@ class FeedConfig < ActiveRecord::Base
 
   after_update :notify_crawler
   after_create :notify_crawler
-  before_save :js_obj_to_array
 
   Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss)
   Feeds.each do |feed|
@@ -83,14 +82,16 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def has?(key)
-    returning(config && config.has_key?(key) && config[key].present?) do |indeed|
+    returning(config\
+              && config.instance_of?(Hash)\
+              && config.has_key?(key)\
+              && config[key].present?) do |indeed|
       errors.add :config, "must have #{key}" unless indeed
     end
   end
   
   def pages_have_token?
     config.fetch('pages').all?{|el| el.has_key?('access_token')}
-    true
   end
 
   def presenter
@@ -100,18 +101,6 @@ class FeedConfig < ActiveRecord::Base
 
   private
   
-  # Sometimes the API sends arrays serialized as Javascript objects
-  # in form of { "1": "val1", "2": "val2 }. This method fixes that.
-  def js_obj_to_array
-    if is_facebook? && has?('pages')
-      config['pages'] = config['pages'].map{|k,v| v}
-    elsif is_meetup? && has?('groups')
-      config['groups'] = config['groups'].map{|k,v| v}
-    elsif is_disqus? && has?('forums')
-      config['forums'] = config['forums'].map{|k,v| v}
-    end
-  end
-
   def returning(exp)
     yield exp
     exp
