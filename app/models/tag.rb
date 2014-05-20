@@ -53,9 +53,4 @@ class Tag < ActsAsTaggableOn::Tag
       tag.destroy
     end
   end
-
-  ### Delete later -> used in: app/domain/query_logic/query.rb
-  def self.categories_order
-    tagged_with('categories').order("props -> 'order_on_page'").pluck(:id)
-  end
 end
