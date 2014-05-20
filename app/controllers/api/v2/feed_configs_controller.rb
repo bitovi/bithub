@@ -18,6 +18,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   def create
     @config = FeedConfig.new(actual_params)
     @config.brand = current_account.brand
+    FeedConfigTagPlucker.new(actual_params).create_tags
 
     if @config.save
       render :show
@@ -28,6 +29,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
   def update
     @config = current_account.brand.feed_configs.find_by_id params[:id]
+    FeedConfigTagPlucker.new(actual_params).create_tags
     if @config && @config.update_attributes(actual_params)
       render :show
     else
