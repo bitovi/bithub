@@ -8,7 +8,7 @@ module QueryLogic
       'feed' => 'feed_name',
       'type' => 'type_name',
       'category' => 'category_name',
-      'categories' => "idx(array#{Tag.categories_order}, category_id)",
+      'categories' => "idx(array#{Tag.tagged_with('categories').order('position').pluck(:id)}, category_id)",
     }
 
     def initialize(model, params)
