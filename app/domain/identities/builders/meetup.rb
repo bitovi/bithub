@@ -1,3 +1,5 @@
+require 'rmeetup'
+
 module Identities
   module Builders
     class Meetup < Base
