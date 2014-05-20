@@ -1,5 +1,4 @@
 require 'acts_as_list'
-require 'tagger/tagger'
 
 class CategoryDeterminationRule < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection

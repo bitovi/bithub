@@ -1,5 +1,5 @@
-require_relative 'tag'
-require_relative 'rule'
+require_relative 'tagger/tag'
+require_relative 'tagger/rule'
 
 module Tagger
 
