@@ -6,6 +6,7 @@ class Brand < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore.new({})
 
   has_many :accounts
+  has_many :feed_configs
   has_many :identities, :class_name => 'BrandIdentity'
 
   validates :name, format: { with: /\A[-_0-9a-zA-Z]+\z/, message: "invalid characters" }
