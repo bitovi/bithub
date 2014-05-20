@@ -5,7 +5,7 @@ class FeedConfigTagPlucker
   end
 
   def create_tags
-    tags.each do |t|
+    tags.andand.each do |t|
       Tag.create(name: t)
     end
   end
