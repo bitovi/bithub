@@ -4,6 +4,12 @@ class FeedConfigTagPlucker
     @params = params
   end
 
+  def create_tags
+    tags.each do |t|
+      Tag.create(name: t)
+    end
+  end
+
   def tags
     method_name = "tags_from_#{@params['feed_name']}".to_sym
     if respond_to? method_name
