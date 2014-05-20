@@ -8,8 +8,7 @@ class BrandIdentity < ActiveRecord::Base
 
   def create_feed_config
     if self.brand && self.provider
-      FeedConfig.create({
-        brand_name: self.brand.name,
+      self.brand.feed_configs.create({
         feed_name: self.provider.gsub('_brand',''),
         config: {}
       })
