@@ -1,6 +1,5 @@
 require_relative 'tag'
 require_relative 'rule'
-require_relative 'tagger'
 
 module Tagger
   class List
