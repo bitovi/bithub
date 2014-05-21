@@ -54,9 +54,9 @@ class Brand < ActiveRecord::Base
 
   def rename_tenant
     old_name, new_name = self.changes['name']
-
-    # skip rest upon creating
     return unless old_name
+
+    Tag.remove_group old_name, 'keywords'
 
     sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
     ActiveRecord::Base.connection.execute(sql)
@@ -68,14 +68,7 @@ class Brand < ActiveRecord::Base
 
     # remove old tags from keywords
     old_keywords.each do |k|
-      if tag = Tag.find_by_name(k)
-        tag.remove_group('keywords').save!
-      end
-    end
-
-    # register new tags
-    new_keywords.each do |k|
-      Tag.register k, 'keywords'
+      Tag.remove_group k, 'keywords'
     end
   end
 end
