@@ -46,17 +46,36 @@ class Brand < ActiveRecord::Base
   end
 
   def update_tenant
-    # update schema name
-    if name = self.changes["name"]
-      old_name = name.first
-      new_name = name.second
-
-      # skip rest upon creating
-      return unless old_name
-
-      sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
-      ActiveRecord::Base.connection.execute(sql)
-    end
+    rename_tenant if self.changes['name']
+    update_keywords if self.changes['keywords']
   end
 
+  private
+
+  def rename_tenant
+    old_name, new_name = self.changes['name']
+
+    # skip rest upon creating
+    return unless old_name
+
+    sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def update_keywords
+    old_keywords = self.changes['keywords'].first || []
+    new_keywords = self.changes['keywords'].second || []
+
+    # remove old tags from keywords
+    old_keywords.each do |k|
+      if tag = Tag.find_by_name(k)
+        tag.remove_group('keywords').save!
+      end
+    end
+
+    # register new tags
+    new_keywords.each do |k|
+      Tag.register k, 'keywords'
+    end
+  end
 end
