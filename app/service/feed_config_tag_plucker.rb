@@ -6,7 +6,7 @@ class FeedConfigTagPlucker
 
   def create_tags
     tags.andand.each do |t|
-      Tag.create(name: t)
+      Tag.register t, 'keywords'
     end
   end
 
@@ -36,6 +36,14 @@ class FeedConfigTagPlucker
 
   def tags_from_disqus
     taggify config['forums'].map {|f| f['id']}
+  end
+  
+  def tags_from_twitter
+    taggify config['terms']
+  end
+  
+  def tags_from_stackexchange
+    taggify config['tags']
   end
   
   private

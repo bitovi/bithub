@@ -53,4 +53,10 @@ class Tag < ActsAsTaggableOn::Tag
       tag.destroy
     end
   end
+
+  def self.remove_group(name, group)
+    if tag = find_by_name(name)
+      tag.remove_group(group).save
+    end
+  end
 end

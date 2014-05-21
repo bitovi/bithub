@@ -11,7 +11,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def show
-    @config = current_account.brand.feed_configs.find_by_id params[:id]
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
     render :show
   end
 
@@ -28,7 +28,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = current_account.brand.feed_configs.find_by_id params[:id]
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
     FeedConfigTagPlucker.new(actual_params).create_tags
     if @config && @config.update_attributes(actual_params)
       render :show
@@ -38,7 +38,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def destroy
-    @config = current_account.brand.feed_configs.find_by_id params[:id]
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
     if @config.destroy
       render :json => msg_hash(@config, 'destroy', 'success')
     else
@@ -58,10 +58,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   private
 
   def actual_params
-    @actual ||= params
-    .require(:feed_config)
-    .permit(:feed_name, :config)
-    .tap{|p| fix_params_if_broken(p) unless @fixed}
+    @actual ||= params.require(:feed_config).permit!
+    fix_params_if_broken(@actual) unless @fixed
+    @actual
   end
 
   def check_token
@@ -73,19 +72,19 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   # Sometimes the API sends arrays serialized as Javascript objects
   # in form of { "1": "val1", "2": "val2 }. This method fixes that.
   def fix_params_if_broken(params)
-    fn = params.fetch(:feed_name)
-    cfg = params.fetch(:config) { Hash.new }
+    params.delete(:brand_name)
 
+    fn = params.fetch(:feed_name)
     params[:config] = {} if params[:config] == ""
 
-    if fn == 'facebook' && cfg[:pages]
-      cfg[:pages] = cfg[:pages].map{|k,v| v}.reject{|el| el.nil?}
+    if fn == 'facebook' && params[:config][:pages]
+      params[:config][:pages] = params[:config][:pages].map{|k,v| v}.reject{|el| el.nil?}
 
-    elsif fn == 'meetup' && cfg[:groups]
-      cfg[:groups] = cfg[:groups].map{|k,v| v}.reject{|el| el.nil?}
+    elsif fn == 'meetup' && params[:config][:groups]
+      params[:config][:groups] = params[:config][:groups].map{|k,v| v}.reject{|el| el.nil?}
 
-    elsif fn == 'disqus' && cfg[:forums]
-      cfg[:forums] = cfg[:forums].map{|k,v| v}.reject{|el| el.nil?}
+    elsif fn == 'disqus' && params[:config][:forums]
+      params[:config][:forums] = params[:config][:forums].map{|k,v| v}.reject{|el| el.nil?}
     end
 
     @fixed = true
