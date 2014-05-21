@@ -9,10 +9,12 @@ module FeedSupervisors
 
     def boot
       Celluloid.logger.info "Booting Twitter supervisor for #{@brand_name}"
-      @client = init_client
 
       @endpoints = SupervisionGroup.new
-      @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(@client, {terms: terms}), {interval: 300}])
+      user_tokens.each do |tokens|
+        @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 300}])
+        @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
+      end
 
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
     end
@@ -20,7 +22,6 @@ module FeedSupervisors
     def reload
       Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
-      @client = init_client
     end
 
     def actor_name
@@ -29,8 +30,8 @@ module FeedSupervisors
 
     private
 
-    def init_client
-      token, token_secret = user_tokens
+    def client(tokens)
+      token, token_secret = tokens
       ::Twitter::REST::Client.new do |config|
         config.consumer_key        = static_config.fetch(:api_key)
         config.consumer_secret     = static_config.fetch(:api_secret)
@@ -41,7 +42,9 @@ module FeedSupervisors
 
     def user_tokens
       wc = Celluloid::Actor[:configurator].feed_config(@brand_name, :twitter)
-      [wc.fetch(:access_token), wc.fetch(:access_secret)]
+      wc.fetch(:identities).map do |id|
+        [id.fetch(:access_token), id.fetch(:access_secret)]
+      end
     end
 
     def terms
