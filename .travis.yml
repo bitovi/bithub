@@ -13,6 +13,7 @@ notifications:
     - konjevic@gmail.com
 services:
   - redis-server
+  - rabbitmq
 addons:
   postgresql: 9.3
   code_climate:
