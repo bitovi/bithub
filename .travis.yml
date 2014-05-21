@@ -1,4 +1,7 @@
 language: ruby
+cache: bundler
+env:
+  - RABBITMQ_URI=amqp://guest:guest@localhost/ REDIS_URL=redis://127.0.0.1:6379/15
 script:
   - "bundle exec rake db:migrate"
   - "bundle exec rake db:test:prepare"
@@ -13,6 +16,7 @@ notifications:
     - konjevic@gmail.com
 services:
   - redis-server
+  - rabbitmq
 addons:
   postgresql: 9.3
   code_climate:
