@@ -8,7 +8,8 @@ class FeedConfig < ActiveRecord::Base
   serialize :config, JSON
 
   validates_presence_of :feed_name
-
+  validates_uniqueness_of :feed_name, scope: :brand_id
+  
   after_update :notify_crawler
   after_create :notify_crawler
 
