@@ -6,7 +6,7 @@ class Configurator
 
   def initialize(opts)
     @env = opts.fetch(:environment)
-    reload
+    reload unless @env == 'test'
     Celluloid.logger.debug "All brands: #{@all_brands}"
   end
   attr_reader :all_brands
@@ -15,7 +15,7 @@ class Configurator
     reload unless @all_brands
     all_brands.merge(static_config)
   end
-  
+
   def static_config
     @static_config ||= YAML.load_file config_file_path
     @static_config.fetch(:app_level)
@@ -44,7 +44,7 @@ class Configurator
   def config_file_path
     File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
   end
-  
+
   private
   def url
     ENV['CRAWLER_CONFIG']
