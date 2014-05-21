@@ -27,6 +27,9 @@ class Api::V2::BrandsController < Api::V2::BaseController
   private
 
   def brand_params
-    params.require(:brand).permit(:name, :description, :keywords)
+    keywords = params[:brand][:keywords]
+    params[:brand][:keywords] = [] if keywords.empty?
+
+    params.require(:brand).permit(:name, :description, :keywords => [])
   end
 end
