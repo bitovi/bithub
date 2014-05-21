@@ -2,8 +2,8 @@ class FeedConfigDecorator < ::Draper::Decorator
   delegate :id, :brand, :feed_name
 
   def config
-    @bid = BrandIdentityDecorator.new(
-      source.brand.identities.find_by_provider(source.feed_name)
+    @bids = BrandIdentityDecorator.decorate_collection(
+      source.brand.identities.where(:provider => source.feed_name).all
     )
 
     build_method = "#{source.feed_name}_config".to_sym
@@ -18,16 +18,15 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def github_config
     {
-      access_token: @bid.data.andand[:access_token],
+      access_token: @bids.first.data.andand[:access_token],
       repos: source.config.andand['repos'] || [],
       orgs: source.config.andand['orgs'] || []
     }
   end
 
-
   def facebook_config
     {
-      token: @bid.data.andand[:access_token],
+      token: @bid.first.data.andand[:access_token],
       pages: source.config.andand['pages'] || []
     }
   end
@@ -44,7 +43,7 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def disqus_config
     {
-      token: @bid.data.andand[:access_token],
+      token: @bids.first.data.andand[:access_token],
       forums: source.config
       .andand['forums']
       .map do |page|
@@ -56,7 +55,7 @@ class FeedConfigDecorator < ::Draper::Decorator
   def meetup_config
     {
       terms: terms || [],
-      token: @bid.data.andand[:access_token],
+      token: @bid.first.data.andand[:access_token],
       groups: source.config
       .andand['groups']
       .map do |group|
@@ -65,11 +64,17 @@ class FeedConfigDecorator < ::Draper::Decorator
     }
   end
 
+
+
   def twitter_config
-    {
-      access_token: @bid.data.andand[:access_token],
-      access_secret: @bid.data.andand[:access_secret],
-      terms: terms || []
+    { 
+      terms: terms || [],
+      identities: @bids.map do |id|
+        {
+          access_token: id.data.andand[:access_token],
+          access_secret: id.data.andand[:access_secret],
+        }
+      end
     }
   end
 
