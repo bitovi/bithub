@@ -13,8 +13,8 @@ module Tagger
 
       @name      = tag[:name]
       @aliases   = tag[:aliases] || []
-      @tolerance = tag[:tolerance] || DEFAULT_TOLERANCE
-      @weight    = tag[:weight] || DEFAULT_WEIGHT
+      @tolerance = tag[:tolerance].to_i || DEFAULT_TOLERANCE
+      @weight    = tag[:weight].to_i || DEFAULT_WEIGHT
     end
 
     def names
