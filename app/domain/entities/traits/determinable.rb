@@ -29,7 +29,7 @@ module Entities
 
     def determine_category
       tags = @instance.tag_list
-      rules = CategoryDeterminationRule.order(position: :desc)
+      rules = CategoryDeterminationRule.order('position DESC')
       # rule checking is done in reverse order so that that 'highest'
       # value with the same score is returned
 
@@ -41,7 +41,7 @@ module Entities
 
     def determine_rule
       tags = @instance.tag_list
-      rules = ScoringRule.order(position: :desc)
+      rules = ScoringRule.order('position DESC')
       # same as in #determine_category ^^^
 
       @instance.scoring_rule = Tagger::List.new(tags).best_match(rules)
