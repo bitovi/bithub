@@ -48,7 +48,7 @@ module Entities
         @instance.parent.title = @event.ipr.title
         @instance.parent.body = @event.ipr.body
         @instance.parent.props[:state] = @event.ipr.state
-        @instance.parent.props[:labels_names] = @event.ipr.lables.andand.names_csv
+        @instance.parent.props[:labels_names] = @event.ipr.labels.andand.names_csv
       end
 
       # Finders
