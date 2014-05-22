@@ -3,7 +3,6 @@ module Events
 
     class CustomFollow < Protocol
 
-
       def content_digest
         seed = identity_uid.to_s + target_screen_name
         calc_digest(seed)

@@ -180,6 +180,8 @@ module Events
       def type_name
         if is_follow_event?
           :Follow
+        elsif is_fake_follow_event?
+          :FakeFollow
         elsif is_status_event?
           :Tweet
         elsif source_data[:custom_follow]
@@ -189,6 +191,10 @@ module Events
 
       def is_follow_event?
         (@source_data[:event].andand == 'follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
+      end
+      
+      def is_fake_follow_event?
+        (@source_data[:event].andand == 'fake_follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
       end
 
       def is_status_event?
