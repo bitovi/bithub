@@ -13,7 +13,7 @@ module FeedSupervisors
       @endpoints = SupervisionGroup.new
       user_tokens.each do |tokens|
         @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 300}])
-        @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
+        @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens), @user_id), {interval: 21600}])
       end
 
       Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
@@ -32,12 +32,14 @@ module FeedSupervisors
 
     def client(tokens)
       token, token_secret = tokens
-      ::Twitter::REST::Client.new do |config|
+      client = ::Twitter::REST::Client.new do |config|
         config.consumer_key        = static_config.fetch(:api_key)
         config.consumer_secret     = static_config.fetch(:api_secret)
         config.access_token        = token
         config.access_token_secret = token_secret
       end
+      @user_id = client.user.id
+      client
     end
 
     def user_tokens

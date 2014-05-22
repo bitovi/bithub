@@ -4,14 +4,24 @@ module Fetchers
     class Followers
       include Protocol
 
-      def initialize(client)
+      def initialize(client, user_id)
         @client = client
+        @user_id = user_id
       end
 
       def fetch
-        ids = @client.follower_ids.map {|uid| uid}
-        Celluloid.logger.debug "----------> #{ids}"
-        []
+        @client.follower_ids.map do |uid| 
+          {
+            source: {
+              id: uid,
+            },
+            target: {
+              id: @user_id,
+            },
+            event: "fake_follow",
+            created: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
+          }
+        end
       end
     end
   end
