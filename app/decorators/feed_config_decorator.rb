@@ -26,13 +26,13 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def facebook_config
     {
-      token: @bid.first.data.andand[:access_token],
+      token: @bids.first.data.andand[:access_token],
       pages: source.config.andand['pages'] || []
     }
   end
 
   def foursquare_config
-    { 
+    {
       venues: source.config
       .andand['venues']
       .map do |venue|
@@ -55,7 +55,7 @@ class FeedConfigDecorator < ::Draper::Decorator
   def meetup_config
     {
       terms: terms || [],
-      token: @bid.first.data.andand[:access_token],
+      token: @bids.first.data.andand[:access_token],
       groups: source.config
       .andand['groups']
       .map do |group|
@@ -67,7 +67,7 @@ class FeedConfigDecorator < ::Draper::Decorator
 
 
   def twitter_config
-    { 
+    {
       terms: terms || [],
       identities: @bids.map do |id|
         {
@@ -80,7 +80,7 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def stackexchange_config
     {
-      token: @bid.data.andand[:access_token],
+      token: @bids.first.data.andand[:access_token],
       terms: terms || []
     }
   end
@@ -90,7 +90,7 @@ class FeedConfigDecorator < ::Draper::Decorator
   end
 
   private
-  
+
   def terms
     ([source.brand.name] + (brand_keywords & feed_config_keywords)).uniq
   end
