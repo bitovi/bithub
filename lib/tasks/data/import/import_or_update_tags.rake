@@ -4,7 +4,12 @@ namespace :data do
 
     puts "---"
     puts "Importing/updating tags"
-    
+
+    if tenant = ENV['TENANT']
+      Apartment::Database.switch tenant
+      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
+    end
+
     tags = YAML::load_file('config/tag_definitions.yml')
     updated = []
     imported = []
@@ -27,7 +32,7 @@ namespace :data do
         t.save ? imported.push(tag_name) : failed.push(tag_name)
       end
     end
-    
+
     puts "Summary:"
     puts "  #{imported.length} tags imported"
     puts "  #{updated.length} tags updated"

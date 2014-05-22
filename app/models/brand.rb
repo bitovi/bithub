@@ -54,6 +54,9 @@ class Brand < ActiveRecord::Base
 
   def rename_tenant
     old_name, new_name = self.changes['name']
+
+    Tag.register new_name, 'keywords'
+
     return unless old_name
 
     Tag.remove_group old_name, 'keywords'
