@@ -203,8 +203,8 @@ checkin:
   group_list: "types,foursquare,facebook"
 
 tip:
-  display_name: "Tip,foursquare"
-  group_list: "types"
+  display_name: "Tip"
+  group_list: "types,foursquare"
 
 # like:
 #   display_name: "Like"

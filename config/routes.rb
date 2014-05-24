@@ -57,6 +57,15 @@ Bithub::Application.routes.draw do
         delete :award, :to => 'event_activities#destory_award'
       end
 
+      # Tags
+      resources :tags, :except => [:new, :edit] do
+        collection do
+          get :feeds, :to => 'tags#index'
+          get :categories, :to => 'tags#index'
+          get :projects, :to => 'tags#index'
+        end
+      end
+
       # Users
       resources :users, :except => [:new, :edit] do
         get 'activities', :to => 'user_activities#index'
