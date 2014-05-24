@@ -60,9 +60,7 @@ Bithub::Application.routes.draw do
       # Tags
       resources :tags, :except => [:new, :edit] do
         collection do
-          get :feeds, :to => 'tags#index'
-          get :categories, :to => 'tags#index'
-          get :projects, :to => 'tags#index'
+          get :tree, :to => 'tags#tree'
         end
       end
 
@@ -170,9 +168,4 @@ Bithub::Application.routes.draw do
       root :to => "base#home"
     end
   end
-
-  # Redirect to v1 endpoints
-  #
-  # match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
-  # match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
