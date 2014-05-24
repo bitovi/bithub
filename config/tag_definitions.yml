@@ -144,11 +144,11 @@ create:
 
 open:
   display_name: "Open"
-  group_list: "github,feed_specifics"
+  group_list: "github,issue,feed_specifics"
 
 closed:
   display_name: "Closed"
-  group_list: "github,feed_specifics"
+  group_list: "github,issue,feed_specifics"
 
 ### RSS
 
