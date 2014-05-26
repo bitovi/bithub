@@ -1,0 +1,2 @@
+json.set! :feeds, @tree[:feeds]
+json.set! :keywords, @tree[:keywords]
