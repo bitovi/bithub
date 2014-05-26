@@ -103,6 +103,13 @@ Bithub::Application.routes.draw do
       # Scoring rules
       resources :category_determination_rules
 
+      # Funnelsj
+      get 'funnels', :to => 'funnels#index'
+      get 'funnels/:name', :to => 'funnels#show'
+      post 'funnels', :to => 'funnels#create'
+      put 'funnels/:name', :to => 'funnels#update'
+      delete 'funnels/:name', :to => 'funnels#destroy'
+
       # Feed config
       resources :feed_configs do
         collection do
