@@ -107,12 +107,12 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.from_funnel(funnel)
-    q = funnel.as_query
-
-    scope = Entity.scoped
-    scope.tagged_with(q[:tagged_with], :any => true) if q[:tagged_with] && not(q[:tagged_with].empty?)
-    scope.where(q[:where])
+  def self.from_funnel(q)
+    if q[:tagged_with] && not(q[:tagged_with].empty?)
+      where(q[:where]).tagged_with(q[:tagged_with], :any => true)
+    else
+      where(q[:where])
+    end
   end
 
   def self.scoped_with_includes
