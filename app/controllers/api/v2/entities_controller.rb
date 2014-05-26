@@ -11,8 +11,8 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_401
 
-  DEFAULT_CATEGORIES_TO_SUMMARIZE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
-  POSSIBLE_ISSUE_STATES = ['open', 'closed']
+  CategoriesToSummarize = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
+  PossibleIssueStates = ['open', 'closed']
 
   def index
     set_params
@@ -53,7 +53,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def summary
-    cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
+    cats_to_sum = params[:categories] || CategoriesToSummarize
     @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
     render :summary
   end
@@ -65,9 +65,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   private # SCOPE BUILDING
-
-  def funnelize
-  end
 
   def set_params
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
@@ -89,10 +86,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
       @entity = EntityDecorator.decorate(entity)
       @ev_relations = EntityRelations.new(@entity.id)
 
-      # if author = @event.author
-      #   Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      # end
-
       render :show
     else
       render :json => {
@@ -104,49 +97,42 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
   def build_scope(muster_query, params)
     scope = Entity.scoped_with_includes
+
     scope = scope.no_children if !counting?
     scope = scope.no_feed('irc').no_category('digest') if on_greatest?
-    scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
+    scope = scope.with_state(params[:state]) if PossibleIssueStates.include?(params[:state])
 
-    scope = scope.no_type(params[:no_feed]) if params[:no_feed].present?
-    scope = scope.no_type(params[:no_type]) if params[:no_type].present?
-    scope = scope.no_type(params[:no_category]) if params[:no_category].present?
+    scope = scope.without_future(params[:clientTz] || 'UTC') if params[:without_future].present?
+    scope = scope.in_future(params[:clientTz] || 'UTC') if params[:in_future].present?
 
-    if params[:without_future].present?
-      scope = scope.without_future(params[:clientTz] || 'UTC')
-    end
+    scope = scope.with_author(params[:author_id]) if params[:author_id].present?
+    scope = scope.with_author(params[:host_id]) if params[:host_id].present?
 
-    if params[:in_future].present?
-      scope = scope.in_future(params[:clientTz] || 'UTC')
-    end
-
-    if params[:author_id].present?
-      scope = scope.joins(:ownerships)\
-        .where("ownerships.ownership_type = 'author'")\
-        .where("ownerships.owner_id = ?", params[:author_id])
-    end
-
-    if params[:host_id].present?
-      scope = scope.joins(:ownerships)\
-        .where("ownerships.ownership_type = 'host'")\
-        .where("ownerships.owner_id = ?", params[:host_id])
-    end
-
-    scope_applier(params, scope)
+    scope = scope_applier(scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
     .apply_order_to_scope
     .result
+
+    (params[:funnels].present?) ? funnelize(scope) : scope
+  end
+
+  def funnelize(scope)
+    fs = Funnel\
+      .where(:name => params[:funnels])\
+      .map {|f| scope.from_funnel(f.as_query)}
+
+    Entity.union_scope *fs
   end
 
   def query_logic(params)
     @query_logic ||= QueryLogic::Query.new(Entity, params)
   end
 
-  def scope_applier(params, current_scope = nil)
-    ScopeApplier.new((current_scope || Entity.scoped), query_logic(params))
+  def scope_applier(current_scope = nil)
+    ScopeApplier.new(current_scope || Entity.scoped, query_logic(params))
   end
 
   def date_filtered_summary(tag, params)
