@@ -10,7 +10,6 @@ class ScopeApplier
     @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
     @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
-    @scope = @scope.limit(muster_query[:limit]) if muster_query[:count].blank?
     self
   end
 
