@@ -66,6 +66,9 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
   private # SCOPE BUILDING
 
+  def funnelize
+  end
+
   def set_params
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
     params[:order] = "thread_updated_ts:asc"  if params[:order] == "thread_updated_at:asc"
@@ -118,13 +121,15 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     end
 
     if params[:author_id].present?
-      scope = scope.joins(:ownerships)
-           .where("ownerships.ownership_type = 'author' AND ownerships.owner_id = ?", params[:author_id])
+      scope = scope.joins(:ownerships)\
+        .where("ownerships.ownership_type = 'author'")\
+        .where("ownerships.owner_id = ?", params[:author_id])
     end
 
     if params[:host_id].present?
-      scope = scope.joins(:ownerships)
-           .where("ownerships.ownership_type = 'host' AND ownerships.owner_id = ?", params[:host_id])
+      scope = scope.joins(:ownerships)\
+        .where("ownerships.ownership_type = 'host'")\
+        .where("ownerships.owner_id = ?", params[:host_id])
     end
 
     scope_applier(params, scope)
