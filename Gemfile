@@ -55,8 +55,7 @@ gem 'multi_json'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
-gem 'spring', group: [:development, :test]
-gem 'spring-commands-rspec', group: [:development, :test]
+gem 'spork', group: [:development]
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
