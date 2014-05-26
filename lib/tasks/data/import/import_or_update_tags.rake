@@ -24,7 +24,7 @@ namespace :data do
 
       if existing = Tag.find_by_name(tag_name)
         existing.assign_attributes(attrs)
-        existing.group_list = opts['group_list']
+        existing.add_groups(opts['group_list']) if opts['group_list']
         existing.save ? updated.push(tag_name) : failed.push(tag_name)
       else
         t = Tag.new({:name => tag_name}.merge(attrs))

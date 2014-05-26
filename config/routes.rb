@@ -57,6 +57,13 @@ Bithub::Application.routes.draw do
         delete :award, :to => 'event_activities#destory_award'
       end
 
+      # Tags
+      resources :tags, :except => [:new, :edit] do
+        collection do
+          get :tree, :to => 'tags#tree'
+        end
+      end
+
       # Users
       resources :users, :except => [:new, :edit] do
         get 'activities', :to => 'user_activities#index'
@@ -168,9 +175,4 @@ Bithub::Application.routes.draw do
       root :to => "base#home"
     end
   end
-
-  # Redirect to v1 endpoints
-  #
-  # match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
-  # match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
