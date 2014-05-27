@@ -1,4 +1,4 @@
 json.set! :data do
-  json.(@rule, :id, :required_tags, :authorship_value, :upvote_value, :award_value, :priority , :name)
+  json.(@rule, :id, :required_tags, :authorship_value, :upvote_value, :award_value, :position , :name)
 
 end
