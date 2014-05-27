@@ -16,8 +16,9 @@ module Events
   module Bithub; end
   module Meetup; end
   module Irc; end
-  module StackExchange; end
+  module Stackexchange; end
   module Facebook; end
+  module Foursquare; end
 
   class Protocol
     include CoreHelpers
@@ -95,6 +96,7 @@ require 'events/feeds/forum/forum'
 require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
-require 'events/feeds/stack_exchange/stack_exchange'
+require 'events/feeds/stackexchange/stackexchange'
 require 'events/feeds/facebook/facebook'
 require 'events/feeds/rss/rss'
+require 'events/feeds/foursquare/foursquare'

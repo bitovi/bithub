@@ -8,11 +8,11 @@ module QueryLogic
       'feed' => 'feed_name',
       'type' => 'type_name',
       'category' => 'category_name',
-      'categories' => "idx(array#{Tag.categories_order}, category_id)",
+      'categories' => "idx(array#{Tag.tagged_with('categories').order('id').pluck(:id)}, category_id)",
     }
 
     def initialize(model, params)
-      @qis = params.map do |kv| 
+      @qis = params.map do |kv|
         key, value = kv
         if value.is_a? Array
           value.map{|v| QueryItem.new(model, [key, v]) }
@@ -121,7 +121,7 @@ module QueryLogic
         o = [o]
       end
     end
-  
+
     def replace_attr_if_virt(pair)
       attribute, direction = pair.split
       if VIRT_ATTRS[attribute]

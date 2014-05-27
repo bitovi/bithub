@@ -1,5 +1,5 @@
 require 'bunny'
-require_relative 'digest_set'
+require 'persistent/digest_set'
 
 class Publisher
   include Celluloid
@@ -19,22 +19,19 @@ class Publisher
   end
 
   def publish(brand, feed, events)
-    # process events, build event hashes for sending
-    processed_events = process(events, brand, feed).compact
-
     # reject previously sent events
-    new_events  = reject_old processed_events
+    new_events  = reject_old processed(events, brand, feed)
 
     # finally send events to MQ
     send new_events, brand
   end
 
   def send(events, brand)
+    Celluloid.logger.info "Publishing #{events.size} messages!"
     events.each {|e| send_one e,brand}
   end
 
   def send_one(event, brand)
-    Celluloid.logger.info "(#{event[:content_digest]}) Publishing message!"
     @x.publish MultiJson.dump(event)
   end
 
@@ -44,10 +41,10 @@ class Publisher
     @filter.reject_old events
   end
 
-  def process(events, brand, feed)
+  def processed(events, brand, feed)
     events.map do |e|
       process_one e, brand, feed
-    end
+    end.compact
   end
 
   def process_one(event, brand, feed)

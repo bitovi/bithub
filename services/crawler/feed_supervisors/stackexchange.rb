@@ -8,14 +8,20 @@ module FeedSupervisors
     end
 
     def boot
-      Celluloid.logger.info "Skipping StackExchange supervisor for #{@brand_name}"
+      Celluloid.logger.info "Booting StackExchange supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
 
-      # fetchers = Fetchers::StackExchange::Questions.new(terms: terms)
-      # @endpoints.supervise_as(
-      #   actor_name,
-      #   Poller,
-      #   *[@brand_name, fetchers, {interval: 30}])
+      fetcher = Fetchers::Stackexchange::Questions.new(terms: terms, token: token)
+      @endpoints.supervise_as(
+        actor_name,
+        Poller,
+        *[@brand_name, fetcher, {interval: 30}])
+      
+      fetcher = Fetchers::Stackexchange::Search.new(terms: terms, token: token)
+      @endpoints.supervise_as(
+        actor_name,
+        Poller,
+        *[@brand_name, fetcher, {interval: 300}])
     end
 
     private
@@ -24,8 +30,16 @@ module FeedSupervisors
       "#{@brand_name}_stackexchange".to_sym
     end
 
+    def config
+      Celluloid::Actor[:configurator].feed_config(@brand_name, :stackexchange)
+    end
+
     def terms
-      Celluloid::Actor[:configurator].feed_config(@brand_name, :stackoverflow).fetch(:terms)
+      config.fetch(:terms)
+    end
+
+    def token
+      config.fetch(:token)
     end
 
   end

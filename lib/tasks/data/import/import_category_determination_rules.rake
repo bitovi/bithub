@@ -3,29 +3,28 @@ namespace :data do
   task :import_category_determination_rules => :environment do
 
     puts "---"
-    puts "Importing/updating category determination rules"
+    puts "Importing category determination rules"
 
     rules = YAML::load_file('config/category_determination_rules.yml')
-    updated = []
-    imported = []
-    failed = []
 
-    rules.each do |category, scorings|
-      if existing = CategoryDeterminationRule.where({:name => category}).first
-        existing.update_attributes({:scorings => scorings}) ? updated.push(category) : failed.push(category)
+    def exists?(required_tags)
+      CategoryDeterminationRule
+        .pluck(:required_tags)
+        .select {|r| r.keys.sort == required_tags.keys.sort}
+        .count > 0
+    end
+
+    rules.each do |rule|
+      if exists?(rule['required_tags'])
+        puts "Rule '#{rule['name']}' already exists!"
       else
-        if CategoryDeterminationRule.create({:name => category, :scorings => scorings})
-          imported.push(category)
+        if ar_rule = CategoryDeterminationRule.create(rule)
+          puts "Rule '#{rule['name']}' imported --> #{ar_rule.inspect}"
         else
-          failed.push(category)
+          puts "Rule '#{rule['name']}' failed!"
         end
       end
     end
-
-    puts "Summary:"
-    puts "  #{imported.length} rules imported"
-    puts "  #{updated.length} rules updated"
-    puts "  #{failed.length} rules failed: #{failed.to_s}"
 
   end
 end

@@ -53,6 +53,12 @@ class Identity < ActiveRecord::Base
     source_data['name']
   end
 
+  def profile_url
+    if urls = source_data['urls']
+      urls['GitHub'] || urls['Twitter'] || urls['public_profile']
+    end
+  end
+
   def identifier
     nickname || name || email
   end

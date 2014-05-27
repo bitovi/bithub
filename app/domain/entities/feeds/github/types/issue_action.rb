@@ -6,7 +6,7 @@ module Entities
       def find
         nil
       end
-      
+
       def find_parent
         upstream = [Entities::Github::Issue, Entities::Github::PullRequest]
         if @event.repo.name && @event.number
@@ -41,7 +41,7 @@ module Entities
         @instance.parent.title = @event.title
         @instance.parent.body = @event.body
         @instance.parent.props[:state] = @event.state
-        @instance.parent.props[:label_names] = @event.lables.andand.names_csv
+        @instance.parent.props[:label_names] = @event.labels.andand.names_csv
       end
 
       # Finders

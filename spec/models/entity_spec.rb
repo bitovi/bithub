@@ -7,6 +7,7 @@ describe Entity do
   end
 
   after(:all) do
+    Entity.destroy_all
     Tag.destroy_all
   end
 

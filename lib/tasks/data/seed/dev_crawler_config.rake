@@ -12,7 +12,7 @@ namespace :data do
     brands.each do |brand_name, feeds|
       feeds.each do |feed_name, cfg|
         cnt += 1
-        FeedConfig.create(brand_name: brand_name, feed_name: feed_name, config: cfg)
+        FeedConfig.create!(brand_name: brand_name, feed_name: feed_name, config: cfg)
       end
     end
 
