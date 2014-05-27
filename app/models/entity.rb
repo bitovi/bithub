@@ -55,6 +55,14 @@ class Entity < ActiveRecord::Base
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 
+  # Basic
+  scope :feed, lambda {|f| where(feed_name: f) }
+  scope :no_feed, lambda {|f| where("feed_name <> ?", f) }
+  scope :type, lambda {|t| where(type_name: t) }
+  scope :no_type, lambda {|t| where("type_name <> ?", t) }
+  scope :category, lambda {|c| where(category_name: c) }
+  scope :no_category, lambda {|c| where("category_name <> ?", c) }
+
   scope :without_future, lambda { |clientTz|
     end_of_today = Time.now.in_time_zone(clientTz).change(hour: 23, min: 59, sec: 59)
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
