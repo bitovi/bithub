@@ -1,0 +1,1 @@
+json.partial! "api/v2/funnels/funnel", funnel_group: @funnel_group
