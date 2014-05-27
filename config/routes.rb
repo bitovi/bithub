@@ -112,10 +112,10 @@ Bithub::Application.routes.draw do
 
       # Funnelsj
       get 'funnels', :to => 'funnels#index'
-      get 'funnels/:name', :to => 'funnels#show'
+      get 'funnels/:id', :to => 'funnels#show'
       post 'funnels', :to => 'funnels#create'
-      put 'funnels/:name', :to => 'funnels#update'
-      delete 'funnels/:name', :to => 'funnels#destroy'
+      put 'funnels/:id', :to => 'funnels#update'
+      delete 'funnels/:id', :to => 'funnels#destroy'
 
       # Feed config
       resources :feed_configs do
