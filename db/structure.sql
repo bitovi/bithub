@@ -449,10 +449,10 @@ CREATE TABLE tags (
 --
 
 CREATE VIEW entity_aggregated_tag_list AS
- SELECT e.id AS entity_id, 
+ SELECT e.id AS entity_id,
     string_agg((t.name)::text, ','::text) AS tag_list
-   FROM entities e, 
-    tags t, 
+   FROM entities e,
+    tags t,
     taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
@@ -507,9 +507,9 @@ CREATE TABLE upvotes (
 --
 
 CREATE VIEW entity_total_upvotes AS
- SELECT e.id AS entity_id, 
+ SELECT e.id AS entity_id,
     sum(u.value) AS upvotes_sum
-   FROM entities e, 
+   FROM entities e,
     upvotes u
   WHERE (e.id = u.applies_to_id)
   GROUP BY e.id;
@@ -717,25 +717,30 @@ CREATE TABLE users (
 --
 
 CREATE MATERIALIZED VIEW leaderboard AS
- SELECT users.id AS user_id, 
-    users.name AS user_name, 
-    users.email AS user_email, 
-    (users.props -> 'avatar_url'::text) AS user_gravatar_url, 
+ SELECT users.id AS user_id,
+    users.name AS user_name,
+    users.email AS user_email,
+    (users.props -> 'avatar_url'::text) AS user_gravatar_url,
+    ARRAY( SELECT r.name
+           FROM (roles r
+      LEFT JOIN users_roles ur ON ((ur.role_id = r.id)))
+     WHERE (ur.user_id = users.id)) AS user_roles,
     (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             scoring_rules r
           WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             upvotes u
           WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             awards a
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
           WHERE (internals.receiver_id = users.id))) AS user_score
+<<<<<<< HEAD
    FROM users
   WHERE (users.name IS NOT NULL)
   ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
@@ -753,6 +758,26 @@ CREATE MATERIALIZED VIEW leaderboard AS
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
           WHERE (internals.receiver_id = users.id))) DESC
+=======
+   FROM (users
+   LEFT JOIN users_roles ON ((users.id = users_roles.user_id)))
+  WHERE (users.name IS NOT NULL)
+  ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       scoring_rules r
+     WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       upvotes u
+     WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+      FROM entities e,
+       ownerships o,
+       awards a
+     WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+      FROM internals
+     WHERE (internals.receiver_id = users.id))) DESC
+>>>>>>> c4fccb53ddec68fea73226427c578f44a444cafb
   WITH NO DATA;
 
 
@@ -780,11 +805,11 @@ ALTER SEQUENCE ownerships_id_seq OWNED BY ownerships.id;
 --
 
 CREATE MATERIALIZED VIEW pagination AS
- SELECT e.thread_updated_ts AS ts, 
-    e.id, 
-    categories.name AS category, 
+ SELECT e.thread_updated_ts AS ts,
+    e.id,
+    categories.name AS category,
     ARRAY( SELECT t.name
-           FROM taggings tt, 
+           FROM taggings tt,
             tags t
           WHERE ((((tt.taggable_type)::text = 'Entity'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
    FROM (entities e
@@ -953,6 +978,7 @@ ALTER SEQUENCE upvotes_id_seq OWNED BY upvotes.id;
 --
 
 CREATE MATERIALIZED VIEW user_activities AS
+<<<<<<< HEAD
         (         SELECT 'Entity'::text AS model_name, 
                     entities.id, 
                     ownerships.owner_id AS user_id, 
@@ -982,6 +1008,47 @@ UNION
             entities.title, 
             0 AS value, 
             upvotes.created_at AS ts, 
+=======
+        (        (         SELECT 'Entity'::text AS model_name,
+                            entities.id,
+                            ownerships.owner_id AS user_id,
+                            ownerships.ownership_type,
+                            entities.title,
+                            (entities.total_upvotes + scoring_rules.authorship_value) AS value,
+                            entities.origin_ts AS ts,
+                            entities.cached_tag_list AS tags
+                           FROM ((entities
+                      JOIN ownerships ON ((ownerships.entity_id = entities.id)))
+                 JOIN scoring_rules ON ((scoring_rules.id = entities.scoring_rule_id)))
+                UNION
+                         SELECT 'Internal'::text AS model_name,
+                            internals.id,
+                            internals.receiver_id AS user_id,
+                            NULL::character varying AS ownership_type,
+                            internals.comment AS title,
+                            internals.value,
+                            internals.created_at AS ts,
+                            ''::character varying AS tags
+                           FROM internals)
+        UNION
+                 SELECT 'Anteup'::text AS model_name,
+                    anteups.id,
+                    anteups.actor_id AS user_id,
+                    NULL::character varying AS ownership_type,
+                    ''::text AS title,
+                    anteups.value,
+                    anteups.created_at AS ts,
+                    ''::character varying AS tags
+                   FROM anteups)
+UNION
+         SELECT 'Upvote'::text AS model_name,
+            upvotes.id,
+            upvotes.actor_id AS user_id,
+            NULL::character varying AS ownership_type,
+            entities.title,
+            0 AS value,
+            upvotes.created_at AS ts,
+>>>>>>> c4fccb53ddec68fea73226427c578f44a444cafb
             ''::character varying AS tags
            FROM (upvotes
       JOIN entities ON ((upvotes.applies_to_id = entities.id)))
@@ -993,17 +1060,17 @@ UNION
 --
 
 CREATE VIEW user_total_score AS
- SELECT users.id AS user_id, 
+ SELECT users.id AS user_id,
     (((( SELECT COALESCE(sum(o.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
+           FROM entities e,
             ownerships o
           WHERE ((e.id = o.entity_id) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             upvotes u
           WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e, 
-            ownerships o, 
+           FROM entities e,
+            ownerships o,
             awards a
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(i.value), (0)::bigint) AS "coalesce"
            FROM internals i
@@ -1740,3 +1807,6 @@ INSERT INTO schema_migrations (version) VALUES ('3040');
 INSERT INTO schema_migrations (version) VALUES ('3050');
 
 INSERT INTO schema_migrations (version) VALUES ('40');
+INSERT INTO schema_migrations (version) VALUES ('20151212162528');
+
+INSERT INTO schema_migrations (version) VALUES ('20151212162529');

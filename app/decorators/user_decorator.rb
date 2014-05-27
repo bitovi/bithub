@@ -8,5 +8,17 @@ class UserDecorator < Draper::Decorator
   def score
     self.total_score
   end
-  
+
+  def reduced_identities
+    user.identities.map do |i|
+      {
+        provider: i.provider,
+        uid: i.uid,
+        name: i.name,
+        username: i.nickname,
+        profile_url: i.profile_url
+      }
+    end
+  end
+
 end
