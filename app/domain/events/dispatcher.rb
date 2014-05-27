@@ -180,6 +180,8 @@ module Events
       def type_name
         if is_follow_event?
           :Follow
+        elsif is_fake_follow_event?
+          :FakeFollow
         elsif is_status_event?
           :Tweet
         elsif source_data[:custom_follow]
@@ -190,6 +192,10 @@ module Events
       def is_follow_event?
         (@source_data[:event].andand == 'follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
       end
+      
+      def is_fake_follow_event?
+        (@source_data[:event].andand == 'fake_follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
+      end
 
       def is_status_event?
         not(@source_data[:text].nil?) && not(@source_data[:user].andand[:screen_name].nil?)
@@ -198,7 +204,15 @@ module Events
     end
   end
 
-  module StackExchange
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Facebook::Status
+      end
+    end
+  end
+
+  module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
         Events::StackExchange::Question
@@ -246,11 +260,13 @@ module Events
     end
   end
 
-  module Facebook
+  module Foursquare
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Facebook::Status
+        ### add some logic
+        Events::Foursquare::Checkin
       end
     end
   end
+
 end

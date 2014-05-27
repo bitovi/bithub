@@ -1,6 +1,5 @@
 json.set! :data do
   json.array! @rules do |r|
-    json.(r, :id, :required_tags, :authorship_value, :upvote_value, :award_value, :position, :name)
-
+    json.partial! "api/v2/scoring_rules/rule", rule: r
   end
 end

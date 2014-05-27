@@ -1,4 +1,4 @@
-:public_streams:
+:app_level:
     :twitter:
         :api_key: 'L9KJpnqaL0phM3u3NBYf3A'
         :api_secret: 'HHMyYzHRoj9qrHw6gmobQWBpTnLOgxBWBMRA0ICk4U'
@@ -7,6 +7,6 @@
     :disqus:
         :api_key: 'XSAmjIPIYZytWdKDZR5L51Iccdq7XLRT5VIaOeVZExxUSraVjBhXwf5i0ZzpZDbC'
         :api_secret: 'rueztOuYC36nf92Fc291UOHFR2VCED40PVvxfyqeMrGQz6mVBAGAx5p1PF5PEARn'
-    :stack_exchange:
+    :stackexchange:
         :key: "8EAiwRhHlupc0Z1aV3SCVg(("
         :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"

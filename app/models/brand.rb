@@ -6,6 +6,7 @@ class Brand < ActiveRecord::Base
   serialize :props, ActiveRecord::Coders::Hstore.new({})
 
   has_many :accounts
+  has_many :feed_configs
   has_many :identities, :class_name => 'BrandIdentity'
 
   validates :name, format: { with: /\A[-_0-9a-zA-Z]+\z/, message: "invalid characters" }
@@ -45,17 +46,32 @@ class Brand < ActiveRecord::Base
   end
 
   def update_tenant
-    # update schema name
-    if name = self.changes["name"]
-      old_name = name.first
-      new_name = name.second
-
-      # skip rest upon creating
-      return unless old_name
-
-      sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
-      ActiveRecord::Base.connection.execute(sql)
-    end
+    rename_tenant if self.changes['name']
+    update_keywords if self.changes['keywords']
   end
 
+  private
+
+  def rename_tenant
+    old_name, new_name = self.changes['name']
+
+    Tag.register new_name, 'keywords'
+
+    return unless old_name
+
+    Tag.remove_group old_name, 'keywords'
+
+    sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def update_keywords
+    old_keywords = self.changes['keywords'].first || []
+    new_keywords = self.changes['keywords'].second || []
+
+    # remove old tags from keywords
+    old_keywords.each do |k|
+      Tag.remove_group k, 'keywords'
+    end
+  end
 end

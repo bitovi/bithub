@@ -1,3 +1,5 @@
+require 'cgi'
+
 module HttpServer
   module Handlers
 
@@ -10,10 +12,16 @@ module HttpServer
       end
 
       def handle(body)
-        body = JSON.parse(body)
+        parsed  = CGI.parse body.to_s
+        secret  = parsed['secret']
+        payload = parsed['checkin'] || parsed['like'] || parsed['tip'] || []
 
-        @channels.each do |brand, ids|
-          publish brand, body if ids.include? venue_id(body)
+        if payload = payload.first
+          payload = JSON.parse payload
+
+          @channels.each do |brand, ids|
+            publish brand, payload if ids.include? venue_id(payload)
+          end
         end
       end
 
@@ -37,7 +45,7 @@ module HttpServer
         body.fetch('venue').fetch('id')
       end
 
-      def self.route
+      def self.path
         '/foursquare/venues'
       end
 

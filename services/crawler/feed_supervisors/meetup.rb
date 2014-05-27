@@ -1,4 +1,5 @@
 require 'rmeetup'
+require 'persistent/id_set'
 
 module FeedSupervisors
   class Meetup
@@ -14,16 +15,37 @@ module FeedSupervisors
       Celluloid.logger.info "Booting Meetup supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
 
+      event_set = IdSet.new(@brand_name, "meetup", "rsvp")
+
       @endpoints.supervise_as(
         actor_name('open_events'),
         Poller,
-        *[@brand_name, Fetchers::Meetup::OpenEvents.new(@client, terms: terms)]
+        *[@brand_name,
+          Fetchers::Meetup::OpenEvents.new(
+            @client,
+            terms: terms
+        )]
       )
 
       @endpoints.supervise_as(
         actor_name('events'),
-        Poller ,
-        *[@brand_name, Fetchers::Meetup::Events.new(@client, group_ids: group_ids)]
+        Poller,
+        *[@brand_name,
+          Fetchers::Meetup::Events.new(
+            @client,
+            group_ids: group_ids,
+            event_set: event_set
+        )]
+      )
+      
+      @endpoints.supervise_as(
+        actor_name('rsvps'),
+        Poller,
+        *[@brand_name,
+          Fetchers::Meetup::Rsvps.new(
+            @client,
+            event_set: event_set
+        )]
       )
     end
 
@@ -45,7 +67,7 @@ module FeedSupervisors
     end
 
     def api_key
-      Celluloid::Actor[:configurator].static_config.fetch(:public_streams).fetch(:meetup).fetch(:api_key)
+      Celluloid::Actor[:configurator].static_config.fetch(:meetup).fetch(:api_key)
     end
 
     def actor_name(endpoint_type)

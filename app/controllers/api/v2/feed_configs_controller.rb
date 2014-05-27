@@ -6,18 +6,19 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
 
   def index
-    @configs = FeedConfig.where(brand_id: current_account.brand.id)
+    @configs = current_account.brand.feed_configs.all
     render :index
   end
 
   def show
-    @config = FeedConfig.where(id: params[:id], brand_id: current_account.brand.id).first
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
     render :show
   end
 
   def create
-    @config = FeedConfig.new(config_params)
-    @config.brand_id =  current_account.brand.id
+    @config = FeedConfig.new(actual_params)
+    @config.brand = current_account.brand
+    FeedConfigTagPlucker.new(actual_params).create_tags
 
     if @config.save
       render :show
@@ -27,8 +28,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = FeedConfig.where(brand_id: current_account.brand.id, id: params[:id]).first
-    if @config && @config.update_attributes(config_params)
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
+    FeedConfigTagPlucker.new(actual_params).create_tags
+    if @config && @config.update_attributes(actual_params)
       render :show
     else
       render :json => msg_hash(@config, 'update'), :status => 406
@@ -36,7 +38,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def destroy
-    @config = FeedConfig.where(id: params[:id], brand_id: current_account.brand.id)
+    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
     if @config.destroy
       render :json => msg_hash(@config, 'destroy', 'success')
     else
@@ -45,56 +47,46 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def tree
-    grouped_configs = FeedConfig.all
-    .select do |fc|
-      fc.valid_config?
-    end.each do |fc|
-      fc.config = fc.builder.config
-    end.map do |fc|
-      fc.attributes
-    end.group_by do |el|
-      el['brand_name']
-    end
+    @tree = Hash[Brand.all.map do |b|
+      fcs = FeedConfigDecorator.decorate_collection(b.feed_configs)
+      [b.name, Hash[fcs.map {|fc| [fc.feed_name, fc.config]}]]
+    end]
 
-
-    @configs = Hash[grouped_configs.keys.zip(
-      grouped_configs.values.map do |bc|
-        bc.each do |fc|
-          fc.delete('brand_name')
-        end.map do |fc|
-          Hash[fc['feed_name'], fc['config']]
-        end.reduce({}) do |acc, el|
-          acc.merge(el)
-        end
-      end
-    )]
-
-    render :json => @configs
+    render :json => @tree
   end
-
-  # def self.config_definitions
-  #   {
-  #     github:     [:token, :repos, :orgs],
-  #     meetup:     [:token, :terms, :groups],
-  #     facebook:   [:token, :pages => [:id, :token]],
-  #     twitter:    [:token, :token_secret, :terms],
-  #     disqus:     [:token, :forums],
-  #     foursquare: [:token, :venues]
-  #   }
-  # end
 
   private
 
-  def config_params
-    params
-    .require(:feed_config)
-    .permit(:brand_name, :feed_name, :config)
-    .tap {|wl| wl[:config] = params[:feed_config][:config]}
+  def actual_params
+    @actual ||= params.require(:feed_config).permit!
+    fix_params_if_broken(@actual) unless @fixed
+    @actual
   end
 
   def check_token
     if (params[:token] != 'dedamrazcetidonjetdarove') || (request.remote_ip != '127.0.0.1')
       render :text => 'not authorized', :status => 406
     end
+  end
+
+  # Sometimes the API sends arrays serialized as Javascript objects
+  # in form of { "1": "val1", "2": "val2 }. This method fixes that.
+  def fix_params_if_broken(params)
+    params.delete(:brand_name)
+
+    fn = params.fetch(:feed_name)
+    params[:config] = {} if params[:config] == ""
+
+    if fn == 'facebook' && params[:config][:pages]
+      params[:config][:pages] = params[:config][:pages].map{|k,v| v}.reject{|el| el.nil?}
+
+    elsif fn == 'meetup' && params[:config][:groups]
+      params[:config][:groups] = params[:config][:groups].map{|k,v| v}.reject{|el| el.nil?}
+
+    elsif fn == 'disqus' && params[:config][:forums]
+      params[:config][:forums] = params[:config][:forums].map{|k,v| v}.reject{|el| el.nil?}
+    end
+
+    @fixed = true
   end
 end

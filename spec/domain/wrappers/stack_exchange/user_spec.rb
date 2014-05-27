@@ -1,13 +1,13 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::StackExchange::User do
+describe Wrappers::Stackexchange::User do
 
   let(:raw_user) do
     raw_data(response_path: 'stackexchange/question.json').fetch('owner')
   end
-  
+
   subject(:user) do
-    Wrappers::StackExchange::User.new(raw_user)
+    Wrappers::Stackexchange::User.new(raw_user)
   end
 
   describe "#user_id" do
@@ -15,7 +15,7 @@ describe Wrappers::StackExchange::User do
       expect(user.user_id).to eq raw_user['user_id']
     end
   end
-  
+
   describe "#display_name" do
     it "should respond with 'display_name' from raw response" do
       expect(user.display_name).to eq raw_user['display_name']

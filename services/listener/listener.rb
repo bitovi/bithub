@@ -43,8 +43,8 @@ Listener
   .listen('q.events') do |payload, logger|
     meta           = payload.fetch('meta')
     brand_name     = meta.fetch('brand_name').to_s
-    feed_name      = meta.fetch('type_name')
-    type_name      = meta.fetch('feed_name')
+    feed_name      = meta.fetch('feed_name')
+    type_name      = meta.fetch('type_name')
     content_digest = payload.fetch('content_digest')
 
     logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', feed: '#{feed_name}', type: '#{type_name}'"

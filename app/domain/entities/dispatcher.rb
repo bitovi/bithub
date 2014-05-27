@@ -122,6 +122,7 @@ module Entities
 
       Mappings = {
         :CustomFollow => :Follow,
+        # :FakeFollow => :Follow,
       }
 
       def initialize(event)
@@ -156,10 +157,10 @@ module Entities
     end
   end
 
-  module StackExchange
+  module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
-        StackExchange.const_get(@event.type_name_sym)
+        Stackexchange.const_get(@event.type_name_sym)
       end
     end
   end
@@ -176,6 +177,14 @@ module Entities
     class Dispatcher < BasicTypeDispatcher
       def type
         Entities::Blog::Post
+      end
+    end
+  end
+
+  module Rss
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Rss::Post
       end
     end
   end
@@ -200,6 +209,15 @@ module Entities
     class Dispatcher < BasicTypeDispatcher
       def type
         Entities::Facebook::Status
+      end
+    end
+  end
+
+  module Foursquare
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        ### TODO,
+        Entities::Foursquare::Checkin
       end
     end
   end

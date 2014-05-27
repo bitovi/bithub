@@ -15,10 +15,6 @@ module Events
         Sanitizer.sanitize(@item.summary)
       end
 
-      def pub_date
-        published
-      end
-
       def wrap_response
         @item = Wrappers::Rss::Item.new(source_data)
         self

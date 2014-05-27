@@ -15,7 +15,7 @@ module AmqpHelpers
   end
 
   def publish(msg, rk)
-    after @x.publish(MultiJson.dump(msg), :routing_key => rk) do
+    returning @x.publish(MultiJson.dump(msg), :routing_key => rk) do
       @conn.close
     end
   end
@@ -28,7 +28,7 @@ module AmqpHelpers
     ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/bithub" }
   end
 
-  def after(exp)
+  def returning(exp)
     yield
     exp
   end

@@ -19,7 +19,7 @@ module Bithub
     config.active_record.auto_explain_threshold_in_seconds = 0.5
 
     # Autoload 'lib' and 'domain' folders
-    config.autoload_paths += %W(#{Rails.root}/app/domain #{Rails.root}/lib)
+    config.autoload_paths += %W(#{Rails.root}/app #{Rails.root}/lib #{Rails.root}/app/domain)
 
     # Enable the asset pipeline
     config.assets.enabled = true

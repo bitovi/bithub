@@ -1,13 +1,13 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::StackExchange::Comment do
+describe Wrappers::Stackexchange::Comment do
 
   let(:raw_comment) do
     raw_data(response_path: 'stackexchange/question.json')['comments'].first
   end
-  
+
   subject(:comment) do
-    Wrappers::StackExchange::Comment.new(raw_comment)
+    Wrappers::Stackexchange::Comment.new(raw_comment)
   end
 
   describe "#comment_id" do
@@ -21,13 +21,13 @@ describe Wrappers::StackExchange::Comment do
       expect(comment.post_id).to eq raw_comment['post_id']
     end
   end
-  
+
   describe "#post_type" do
     it "should respond with 'post_type' from raw response" do
       expect(comment.post_type).to eq raw_comment['post_type']
     end
   end
-  
+
   describe "#body" do
     it "should respond with 'body' from raw response" do
       expect(comment.body).to eq raw_comment['body']
@@ -51,7 +51,7 @@ describe Wrappers::StackExchange::Comment do
       expect(comment.edited?).to eq raw_comment['edited']
     end
   end
-  
+
   describe "#body_markdown" do
     it "should respond with 'body_markdown' from raw response" do
       expect(comment.body_markdown).to eq raw_comment['body_markdown']
@@ -66,5 +66,5 @@ describe Wrappers::StackExchange::Comment do
       expect(comment.creation_date).to eq Time.at(raw_comment['creation_date'])
     end
   end
-    
+
 end

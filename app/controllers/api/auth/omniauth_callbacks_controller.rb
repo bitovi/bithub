@@ -56,7 +56,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def foursquare_brand
-    oauthorize_brand "foursquare_brand"
+    oauthorize_brand "foursquare"
   end
 
   ###
@@ -117,10 +117,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     source_data = Identities::Builders.const_get(kind.camel_case).new({oauth: oauth_data}).build
 
     # Find or update brand
-    if identity = BrandIdentity.where({brand_id: brand.id, provider: kind, uid: uid}).first
+    if (identity = brand.identities.where(provider: kind, uid: uid).first)
       identity.source_data = source_data
     else
-      identity = BrandIdentity.new({provider: kind, brand: brand, uid: oauth_data[:uid], source_data: source_data})
+      identity = brand.identities.build({provider: kind, uid: oauth_data[:uid], source_data: source_data})
     end
 
     if identity.save

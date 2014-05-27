@@ -5,6 +5,7 @@ $:.unshift(File.join(RootDir, 'app'))
 $:.unshift(File.join(RootDir, 'app', 'domain'))
 $:.unshift(File.join(RootDir, 'lib'))
 $:.unshift(File.join(RootDir, 'services'))
+$:.unshift(File.join(RootDir, 'services', 'crawler'))
 
 require 'bundler/setup'
 require 'rubygems'
@@ -31,11 +32,11 @@ require_relative 'channel'
 require_relative 'streamers/all'
 require_relative 'fetchers/all'
 require_relative 'http_server/listener'
-require_relative 'digest_set'
+require_relative 'persistent/digest_set'
 require_relative 'response_processor'
 
 # log4r logger
-$env = ENV.fetch('ENV')
+$env = ENV.fetch('ENV') { 'development' }
 logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 
 Celluloid.logger = logger

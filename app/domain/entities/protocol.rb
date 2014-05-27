@@ -19,8 +19,9 @@ module Entities
   module Irc; end
   module Meetup; end
   module Twitter; end
-  module StackExchange; end
+  module Stackexchange; end
   module Facebook; end
+  module Foursquare; end
 
   class Protocol
     include Validatable
@@ -32,8 +33,8 @@ module Entities
     attr_reader :instance
 
     def initialize(payload)
-      @payload = payload
-      @event = @payload
+      @payload = payload 
+      @event = @payload # FIXME does it always have to be an event?
     end
 
     def procure
@@ -84,5 +85,7 @@ require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
-require_relative 'feeds/stack_exchange/stack_exchange'
+require_relative 'feeds/stackexchange/stackexchange'
 require_relative 'feeds/facebook/facebook'
+require_relative 'feeds/rss/rss'
+require_relative 'feeds/foursquare/foursquare'

@@ -1,3 +1,11 @@
+-
+  name: 'uncategorized'
+  required_tags: {}
+  category_name: 'uncategorized'
+
+
+### Keep until release
+
 # digest:
 #   follow: 10
 #   fork: 10
@@ -26,7 +34,7 @@
 # question:
 #   forum: 10
 #   question: 10
-#   stack_exchange: 10
+#   stackexchange: 10
 
 # chat:
 #   irc: 10
@@ -52,5 +60,3 @@
 # event:
 #   meetup: 20
 #   event: 10
-
-uncategorized: {}
