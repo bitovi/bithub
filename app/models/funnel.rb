@@ -1,13 +1,9 @@
 class Funnel < ActiveRecord::Base
-  attr_accessible :name, :display_name, :feed_name, :type_name, :tags
+  attr_accessible :feed_name, :type_name
+  validates_presence_of :feed_name, :type_name
+  has_and_belongs_to_many :funnel_groups
 
-  def as_query
-    {
-      :tagged_with => tags,
-      :where => {
-        :type_name => type_name,
-        :feed_name => feed_name
-      }
-    }
+  def constraints
+    { :type_name => type_name, :feed_name => feed_name }
   end
 end
