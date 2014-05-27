@@ -57,6 +57,12 @@ class Identity < ActiveRecord::Base
     nickname || name || email
   end
 
+  def profile_url
+    if urls = source_data['urls']
+      urls['GitHub'] || urls['Twitter'] || urls['public_profile']
+    end
+  end
+
   def update_source_data(sd)
     processed = Processor.new().send provider.to_sym, sd
     self.update_attribute(:source_data, processed)
@@ -70,7 +76,7 @@ class Identity < ActiveRecord::Base
   def self.find_or_create_with_oauth_data(oauth_data)
     self.find_or_create_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
   end
-  
+
   def self.find_or_init_with_oauth_data(oauth_data)
     self.find_or_init_with_provider_and_uid(oauth_data['provider'], oauth_data['uid'], oauth_data['info'])
   end
