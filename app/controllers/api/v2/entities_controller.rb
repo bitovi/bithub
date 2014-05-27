@@ -116,15 +116,17 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     .apply_order_to_scope
     .result
 
-    (params[:funnels].present?) ? funnelize(scope) : scope
+    (params[:funnel_id].present? || params[:funnel_name].present?) ? funnelize(scope) : scope
   end
 
   def funnelize(scope)
-    fs = Funnel\
-      .where(:name => params[:funnels])\
-      .map {|f| scope.from_funnel(f.as_query)}
+    find_by = params[:funnel_id] || params[:funnel_name]
+    fg = FunnelGroup.find_by_id(find_by)
 
-    Entity.union_scope *fs
+    scope.from_funnel_group fg
+    scopes = fg.funnels.map {|f| scope.from_funnel f}
+
+    Entity.union_scope *scopes
   end
 
   def query_logic(params)
