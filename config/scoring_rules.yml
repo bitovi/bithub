@@ -5,6 +5,198 @@
   award_value: 0
   upvote_value: 1
 
+### Twitter
+
+-
+  name: 'Posting a Tweet'
+  required_tags:
+    - twitter
+    - tweet
+
+-
+  name: 'Follow'
+  required_tags:
+    - twitter
+    - follow
+
+### Github
+
+-
+  name: 'Making a push'
+  required_tags:
+    - github
+    - push
+
+-
+  name: 'Commiting'
+  required_tags:
+    - github
+    - commit
+
+-
+  name: 'Forking a repo'
+  required_tags:
+    - github
+    - fork
+
+-
+  name: 'Making pull request'
+  required_tags:
+    - github
+    - pull_request
+
+-
+  name: 'Create event'
+  required_tags:
+    - github
+    - create
+
+-
+  name: 'Raising an issue'
+  required_tags:
+    - github
+    - issue
+
+-
+  name: 'Raising an bug issue'
+  required_tags:
+    - github
+    - issue
+    - bug
+
+-
+  name: 'Raising an feature issue'
+  required_tags:
+    - github
+    - issue
+    - feature
+
+-
+  name: 'Closing an issue'
+  required_tags:
+    - github
+    - issue_action
+    - closed
+
+### merging pull request ?
+
+-
+  name: 'Commeting an issue'
+  required_tags:
+    - github
+    - issue_comment
+
+-
+  name: 'Commeting a commit'
+  required_tags:
+    - github
+    - commit_comment
+
+-
+  name: 'Starring a repo'
+  required_tags:
+    - github
+    - watch
+
+-
+  name: 'Github pull request review comment'
+  required_tags:
+    - github
+    - push
+
+-
+  name: 'Github public'
+  required_tags:
+    - github
+    - public
+
+### Forum
+
+### Meetup
+
+-
+  name: 'RSVP'
+  required_tags:
+    - meetup
+    - rsvp
+
+# hosting, confirmed, waitlist ... ?
+
+### StackExchange
+
+-
+  name: 'Asking question'
+  required_tags:
+    - stackexchange
+    - question
+
+-
+  name: 'Answering a question'
+  required_tags:
+    - stackexchange
+    - answer
+
+-
+  name: 'Commeting question or answer'
+  required_tags:
+    - stackexchange
+    - comment
+
+### Facebook
+
+-
+  name: 'Posting a status'
+  required_tags:
+    - facebook
+    - status
+
+-
+  name: 'Like'
+  required_tags:
+    - facebook
+    - like
+
+-
+  name: 'Commenting'
+  required_tags:
+    - facebook
+    - comment
+
+-
+  name: 'Check-in'
+  required_tags:
+    - facebook
+    - checkin
+
+### Foursquare
+
+-
+  name: 'Check-in'
+  required_tags:
+    - foursquare
+    - checkin
+
+-
+  name: 'Like'
+  required_tags:
+    - foursquare
+    - like
+
+-
+  name: 'Leaving a tip'
+  required_tags:
+    - foursquare
+    - tip
+
+### IRC
+
+-
+  name: 'Message'
+  required_tags:
+    - irc
+    - message
+
+
 # -
 #   required_tags:
 #     - article

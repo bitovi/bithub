@@ -15,7 +15,12 @@ namespace :data do
     end
 
     rules.each do |rule|
-      if exists?(rule['required_tags'])
+      required_tags = Tagger.list_to_name_weight_hash rule['required_tags']
+      rule['authorship_value'] ||= 0
+      rule['award_value'] ||= 0
+      rule['upvote_value'] ||= 1
+
+      if exists? required_tags
         puts "Rule '#{rule['name']}' already exists!"
       else
         if ar_rule = ScoringRule.create(rule)
