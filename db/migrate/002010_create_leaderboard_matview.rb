@@ -1,8 +1,9 @@
 class CreateLeaderboardMatview < ActiveRecord::Migration
   def up
     execute <<-SQL
-CREATE MATERIALIZED VIEW leaderboard AS
- SELECT users.id AS user_id,
+CREATE MATERIALIZED VIEW leaderboard
+AS
+SELECT users.id AS user_id,
     users.name AS user_name,
     users.email AS user_email,
     users.props -> 'avatar_url'::text AS user_gravatar_url,
@@ -42,11 +43,8 @@ CREATE MATERIALIZED VIEW leaderboard AS
      WHERE a.applies_to_id = e.id AND e.id = o.entity_id AND o.owner_id = users.id)) + (( SELECT COALESCE(sum(internals.value), 0::bigint) AS "coalesce"
       FROM internals
      WHERE internals.receiver_id = users.id)) DESC
-    SQL
-
-    execute <<-SQL
-REFRESH MATERIALIZED VIEW leaderboard;
-    SQL
+WITH DATA;
+SQL
   end
 
   def down
