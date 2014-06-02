@@ -1,4 +1,4 @@
-json.(user, :id, :name)
+json.(user, :id, :name, :reduced_identities)
 
 json.score user.total_score
 
@@ -8,5 +8,5 @@ if user_signed_in? #&& can?(:read_sensitive_data, @user)
   json.(user, :email, :address, :city, :postal, :state, :country)
   unless is_list
     json.(user, :activities, :achievements, :identities, :roles)
-  end 
+  end
 end
