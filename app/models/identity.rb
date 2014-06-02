@@ -63,6 +63,12 @@ class Identity < ActiveRecord::Base
     nickname || name || email
   end
 
+  def profile_url
+    if urls = source_data['urls']
+      urls['GitHub'] || urls['Twitter'] || urls['public_profile']
+    end
+  end
+
   def update_source_data(sd)
     processed = Processor.new().send provider.to_sym, sd
     self.update_attribute(:source_data, processed)
