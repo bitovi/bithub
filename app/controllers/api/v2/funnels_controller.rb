@@ -2,38 +2,63 @@ class Api::V2::FunnelsController < Api::V2::BaseController
   respond_to :json
 
   def index
-    @funnel_groups = FunnelGroup.all
+    @funnels = Funnel.all
     render :index
   end
 
   def show
-    @funnel_group = FunnelGroup.find_by_id(params[:id])
-    render :show
+    if (@funnel = Funnel.find_by_id(params[:id]))
+      render :show
+    end
   end
 
   def create
-    constraints = params[:funnel].delete(:constraints)
-    if @funnel_group = FunnelGroup.create(params[:funnel]) && @funnel_group.assoc_funnels(constraints)
+    @funnel = Funnel.new(only_funnel)
+    @funnel.constraints.build(constraints)
+
+    if @funnel.save
       render :show
     else
-      render :json => msg_hash(@funnel_group, 'destroy'), :status => 406
+      render :json => msg_hash(:funnel, 'create'), :status => 406
     end
   end
 
   def update
-    constraints = params[:funnel].delete(:constraints)
-    @funnel_group = FunnelGroup.find_by_id params[:id]
+    if @funnel = Funnel.find_by_id(params[:id])
 
-    if @funnel_group.update_attributes(params[:funnel]) && @funnel_group.assoc_funnels(constraints)
-      render :show
+      @funnel.assign_attributes(only_funnel)
+      @funnel.constraints.destroy_all
+      @funnel.constraints.build(constraints)
+
+      if @funnel.save
+        render :show
+      else
+        render :json => msg_hash(:funnel, 'update'), :status => 406
+      end
     else
-      render :json => msg_hash(@funnel_group, 'destroy'), :status => 406
+      render :json => msg_hash(:funnel, 'update'), :status => 406
+    end
+  end
+
+  def destroy
+    @funnel = Funnel.find_by_id params[:id]
+
+    if @funnel && @funnel.destroy
+      render :json => msg_hash(@funnel, 'destroy', 'success')
+    else
+      render :json => msg_hash(@funnel, 'destroy'), :status => 406
     end
   end
 
   private
-  def only_funnel_group
-    params.require(:funnel).permit!
+  def only_funnel
+    @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
+    @json.require(:funnel).permit(:id, :name, :display_name, {:tags => []})
+  end
+
+  def constraints
+    @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
+    @json.require(:funnel).permit(:constraints => [:feed_name, :type_name]).require(:constraints)
   end
 
 end
