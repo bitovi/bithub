@@ -111,11 +111,7 @@ Bithub::Application.routes.draw do
       resources :category_determination_rules
 
       # Funnelsj
-      get 'funnels', :to => 'funnels#index'
-      get 'funnels/:id', :to => 'funnels#show'
-      post 'funnels', :to => 'funnels#create'
-      put 'funnels/:id', :to => 'funnels#update'
-      delete 'funnels/:id', :to => 'funnels#destroy'
+      resources :funnels
 
       # Feed config
       resources :feed_configs do
