@@ -9,11 +9,11 @@ class FeedConfig < ActiveRecord::Base
 
   validates_presence_of :feed_name
   validates_uniqueness_of :feed_name, scope: :brand_id
-  
+
   after_update :notify_crawler
   after_create :notify_crawler
 
-  Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss)
+  Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss irc)
   Feeds.each do |feed|
     define_method("is_#{feed}?") do
       feed_name == feed.to_s
@@ -74,6 +74,10 @@ class FeedConfig < ActiveRecord::Base
     has?('urls')
   end
 
+  def valid_irc?
+    has?('server') && has?('channels')
+  end
+
   def valid_disqus?
     has?('forums')
   end
@@ -90,7 +94,7 @@ class FeedConfig < ActiveRecord::Base
       errors.add :config, "must have #{key}" unless indeed
     end
   end
-  
+
   def pages_have_token?
     config.fetch('pages').all?{|el| el.has_key?('access_token')}
   end
@@ -101,7 +105,7 @@ class FeedConfig < ActiveRecord::Base
   alias_method :builder, :presenter
 
   private
-  
+
   def returning(exp)
     yield exp
     exp

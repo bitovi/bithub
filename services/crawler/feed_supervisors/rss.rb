@@ -22,10 +22,11 @@ module FeedSupervisors
     end
 
     private
+
     def config
       Celluloid::Actor[:configurator].feed_config(@brand_name, :rss)
     end
-    
+
     def urls
       config.fetch(:urls)
     end
@@ -36,4 +37,3 @@ module FeedSupervisors
 
   end
 end
-
