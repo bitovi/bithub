@@ -64,8 +64,6 @@ class FeedConfigDecorator < ::Draper::Decorator
     }
   end
 
-
-
   def twitter_config
     {
       terms: terms || [],
@@ -87,6 +85,10 @@ class FeedConfigDecorator < ::Draper::Decorator
 
   def rss_config
     { urls: source.config.andand['urls'] || [] }
+  end
+
+  def irc_config
+    source.config
   end
 
   private
