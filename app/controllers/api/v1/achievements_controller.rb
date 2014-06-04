@@ -42,7 +42,7 @@ class Api::V1::AchievementsController < Api::V1::BaseController
       render :json => msg_hash(@achievement, 'update'), :status => 406
     end
   end
-  
+
   def destroy
     authorize! :manage, Reward, :message => "No rights to manage rewards."
     @achievement = Reward.find(params[:id])
@@ -52,7 +52,7 @@ class Api::V1::AchievementsController < Api::V1::BaseController
       render :json => msg_hash(@achievement, 'destroy'), :status => 406
     end
   end
-  
+
   # SCOPE BUILDING
   # --------------
 
@@ -61,11 +61,15 @@ class Api::V1::AchievementsController < Api::V1::BaseController
   end
 
   def scope_applier(current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer) 
+    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer)
   end
 
   def build_scope(muster_query)
-    scope = Achievement.scoped
-    scope = scope_applier.apply_muster_query_to_scope(muster_query)
+    scope = Achievement.scoped #_with_includes
+    scope_applier(scope)
+      .apply_negated_attrs_to_scope
+      .apply_muster_query_to_scope(muster_query)
+      .apply_regular_params_to_scope
+      .apply_order_to_scope
   end
 end
