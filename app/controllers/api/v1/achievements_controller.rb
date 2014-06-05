@@ -65,9 +65,10 @@ class Api::V1::AchievementsController < Api::V1::BaseController
   end
 
   def build_scope(muster_query)
-    scope = Achievement.scoped #_with_includes
+    scope = Achievement.scoped
     scope_applier(scope)
       .apply_negated_attrs_to_scope
+      .apply_existence_attrs_to_scope
       .apply_muster_query_to_scope(muster_query)
       .apply_regular_params_to_scope
       .apply_order_to_scope
