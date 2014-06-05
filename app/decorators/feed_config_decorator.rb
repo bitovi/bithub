@@ -84,7 +84,7 @@ class FeedConfigDecorator < ::Draper::Decorator
   end
 
   def rss_config
-    { urls: source.config.andand['urls'] || [] }
+    { sites: source.config.andand['sites'] || [] }
   end
 
   def irc_config
