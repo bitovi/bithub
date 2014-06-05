@@ -12,6 +12,7 @@ module QueryLogic
     }
 
     def initialize(model, params)
+      @model = model
       @qis = params.map do |kv| 
         key, value = kv
         if value.is_a? Array
@@ -32,6 +33,18 @@ module QueryLogic
     end
 
     # --- Filters ---
+    
+    def existences
+      after(@qis.select{|qi| qi.existence?}) do
+        @qis.reject!{|qi| qi.existence?}
+      end
+    end
+
+    def nonexistences
+      after(@qis.select{|qi| qi.nonexistence?}) do
+        @qis.reject!{|qi| qi.nonexistence?}
+      end
+    end
 
     def negations
       @qis.select{|qi| qi.negation?}
@@ -58,6 +71,14 @@ module QueryLogic
     end
 
     # --- API ---
+    
+    def pluck_and_process_existence_attributes
+      existences.collect{|qi| qi.name}
+    end
+    
+    def pluck_and_process_nonexistence_attributes
+      nonexistences.collect{|qi| qi.name}
+    end
 
     def pluck_and_process_negated_attributes
       Hash[negations.collect{|qi| [qi.name, qi.value]}]
@@ -143,6 +164,13 @@ module QueryLogic
 
     def category_name_order
       @name_order ||= YAML::load_file('config/categories_order.yml')['categories']
+    end
+
+    private
+
+    def after(exp)
+      yield if block_given?
+      exp
     end
   end
 end

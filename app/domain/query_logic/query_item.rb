@@ -1,16 +1,18 @@
 module QueryLogic
   class QueryItem
-    attr_reader :name, :value
     TAG_FIELD_NAMES = ['tag', 'feed', 'category', 'project']
 
     DELIMITERS = { :and => ',', :or => '|', :between => ':' }
     OPTIONAL_LOGIC = { :exclude => 'exclude' }
-    NEGATION = '!'
+    NEGATION_PREFIX = '!'
+    EXISTENCE_QUALIFIER = "*notnull"
+    NONEXISTENCE_QUALIFIER = "*null"
 
     def initialize(model, param)
       @model = model
       @name, @value = param
     end
+    attr_reader :name, :value
 
     def value
       if negation? 
@@ -39,9 +41,17 @@ module QueryLogic
     end
 
     def negation?
-      native? && @value[0] == NEGATION
+      native? && @value[0] == NEGATION_PREFIX
     end
 
+    def existence?
+      native? && @value == EXISTENCE_QUALIFIER
+    end
+
+    def nonexistence?
+      native? && @value == NONEXISTENCE_QUALIFIER
+    end
+    
     def exclusion?
       OPTIONAL_LOGIC[:exclude] == @name || OPTIONAL_LOGIC[:exclude] == @name.to_s
     end
@@ -89,7 +99,7 @@ module QueryLogic
     end
 
     def native?
-      @model.respond_to?(:has_an_attribute) && @model.has_an_attribute?(@name)
+      @model.has_an_attribute?(@name)
     end
   end
 end
