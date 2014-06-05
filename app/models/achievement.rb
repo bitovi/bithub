@@ -1,4 +1,5 @@
 class Achievement < ActiveRecord::Base
+  extend Solipsism
 
   attr_accessible :note, :achieved_at, :shipped_at, :reward, :user
 
