@@ -6,6 +6,7 @@ class Poller
   def initialize(brand_name, fetcher, opts = {})
     @brand_name = brand_name
     @fetcher = fetcher
+    @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     interval = opts.fetch(:interval) { 3600 }
     @timer = every(interval) { fetch }
@@ -30,7 +31,7 @@ class Poller
 
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
-    Celluloid::Actor[:publisher].publish @brand_name, feed_name, data
+    Celluloid::Actor[:publisher].publish @brand_name, feed_name, data, decorator: @decorator
   end
 
   def fetcher_name
