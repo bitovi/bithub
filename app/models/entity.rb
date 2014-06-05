@@ -1,4 +1,5 @@
 class Entity < ActiveRecord::Base
+  extend Solipsism
 
   class TotalVotesUpdater < Struct.new(:id)
     def perform
@@ -298,12 +299,6 @@ class Entity < ActiveRecord::Base
   private
 
   # Helper methods
-  def self.has_an_attribute?(attr)
-    Event.reflections.include?(attr.to_sym) ||
-    Event.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    Event.attribute_names.include?(attr.to_s) ||
-    Event.attribute_names.include?(attr.to_s.pluralize)
-  end
 
   def reformat_uniqueness_validation
     if errors[:hash_key]
