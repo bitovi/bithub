@@ -59,7 +59,6 @@ group :test, :testing, :development do
   gem 'better_errors'
   gem 'evented-spec'
   gem 'git'
-  gem 'database_cleaner'
   gem 'travis', require: false
 end
 
@@ -78,8 +77,6 @@ gem 'em-http-request'
 gem 'em-twitter'
 gem 'nokogiri'
 gem 'nori', '~>2.3.0'
-gem 'sanitize'
-gem 'htmlentities'
 
 # ----------------
 # services/irc-bot
