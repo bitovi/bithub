@@ -71,7 +71,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_rss?
-    has?('urls')
+    has?('sites')
   end
 
   def valid_irc?
