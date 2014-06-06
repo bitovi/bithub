@@ -72,7 +72,7 @@ namespace :db do
     end
   end
 
-  desc "Sync db with production"
+  desc "Sync staging db with production"
   task :sync, :roles => :db, :only => {:primary => true} do
     dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
     run "dropdb #{dbname}"
@@ -84,7 +84,7 @@ namespace :db do
     puts "#{foobar}"
   end
 
-  desc "Pull production db"
+  desc "Pull db from server"
   task :pull, :roles => :db, :only => {:primary => true} do
 
     # create backup to /tmp/
@@ -103,8 +103,7 @@ namespace :db do
   task :recreate, :roles => :db, :only => {:primary => true} do
 
     if not exists? :local_db
-      puts "You can specify to which local db to restore to. Hint: use \"cap db:sync_local -s local_db=__db_name__\""
-      puts "Using 'bithub_development'"
+      puts "Loading backup into 'bithub_development'"
       restore_db = 'bithub_development'
     else
       restore_db = local_db
@@ -114,6 +113,4 @@ namespace :db do
     run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
     run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
   end
-
-
 end
