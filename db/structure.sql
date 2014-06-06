@@ -651,24 +651,23 @@ CREATE MATERIALIZED VIEW leaderboard AS
           WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
            FROM internals
           WHERE (internals.receiver_id = users.id))) AS user_score
-   FROM (users
-   LEFT JOIN users_roles ON ((users.id = users_roles.user_id)))
+   FROM users
   WHERE (users.name IS NOT NULL)
   ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       scoring_rules r
-     WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       upvotes u
-     WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-      FROM entities e,
-       ownerships o,
-       awards a
-     WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
-      FROM internals
-     WHERE (internals.receiver_id = users.id))) DESC
+           FROM entities e,
+            ownerships o,
+            scoring_rules r
+          WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            upvotes u
+          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
+           FROM entities e,
+            ownerships o,
+            awards a
+          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
+           FROM internals
+          WHERE (internals.receiver_id = users.id))) DESC
   WITH NO DATA;
 
 
