@@ -28,10 +28,10 @@ module Events
 
     attr_reader :instance, :source_data, :meta
 
-    def initialize(payload)
+    def initialize(payload, opts={})
       _raw = symbolize_keys(payload)
       @source_data = _raw[:source_data] || _raw
-      @meta = _raw[:meta] || nil
+      @meta = opts[:meta]
       wrap_response if self.respond_to? :wrap_response
     end
 
