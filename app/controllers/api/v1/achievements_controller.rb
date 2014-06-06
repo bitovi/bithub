@@ -77,14 +77,19 @@ class Api::V1::AchievementsController < Api::V1::BaseController
   end
 
   def profile_completed_or_not(scope)
+    scope = scope.joins(:user).order("users.name ASC").order("shipped_at DESC")
+
     if params[:profile_completed]
-      scope = scope.joins(:user).where(CompletedProfileString)
+      scope = scope.where(CompletedProfileString)
     elsif params[:profile_not_completed]
-      scope = scope.joins(:user).where(NotCompletedProfileString)
+      scope = scope.where(NotCompletedProfileString)
     end
+
     scope
   end
 
-  CompletedProfileString = "users.name IS NOT NULL and users.email IS NOT NULL and users.address IS NOT NULL and users.city IS NOT NULL and users.postal IS NOT NULL"
-  NotCompletedProfileString = "users.name IS NULL and users.email IS NULL and users.address IS NULL and users.city IS NULL and users.postal IS NULL"
+  Columns = %w(name email address city postal)
+
+  CompletedProfileString = (Columns.map{|c| "users.#{c} IS NOT NULL" } + Columns.map{|c| "users.#{c} <> ''"} + Columns.map {|c| "users.#{c} <> 'null'"}).join(" AND ")
+  NotCompletedProfileString = (Columns.map{|c| "users.#{c} IS NULL"} + Columns.map{|c| "users.#{c} = ''"}).join(" OR ")
 end
