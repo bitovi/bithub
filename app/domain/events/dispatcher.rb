@@ -46,14 +46,19 @@ module Events
     end
 
     def dispatch
-      type.new(source_data)
+      type.new source_data, meta: meta
     end
 
     def source_data
       @source_data ||= extracted_source_data(@_raw)
     end
 
+    def meta
+      @meta ||= @_raw[:meta]
+    end
+
     private
+
     def maybe_meta_feed_name
       @_raw[:meta].andand[:feed_name] || @_raw['meta'].andand['feed_name']
     end
@@ -192,7 +197,7 @@ module Events
       def is_follow_event?
         (@source_data[:event].andand == 'follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
       end
-      
+
       def is_fake_follow_event?
         (@source_data[:event].andand == 'fake_follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
       end
