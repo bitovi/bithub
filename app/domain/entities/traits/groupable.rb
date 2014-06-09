@@ -6,6 +6,7 @@ module Entities
       adopt
       associate_references
       write_history
+      bump_thread
       self
     end
 
@@ -75,6 +76,10 @@ module Entities
 
     def write_history
       @instance.events << @payload.instance if @payload.instance
+    end
+
+    def bump_thread
+      @instance.bump_thread
     end
 
   end
