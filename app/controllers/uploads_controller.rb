@@ -7,7 +7,7 @@ class UploadsController < ActionController::Base
     if image && resized = image.resize_and_save
       send_data resized, type: image.mimetype, disposition: "inline"
     else
-      render :status => 500
+      render :json => { :error => "Couldn't resize image." }, :status => 500
     end
 
   end
