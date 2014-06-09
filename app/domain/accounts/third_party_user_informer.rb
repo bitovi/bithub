@@ -59,10 +59,5 @@ module Accounts
       @github.activity.starring.list(user, repo).map{|sg| sg.id}
     end
 
-    def refresh_tweet_user_avatars
-      ids = Entity.where(:feed_name => 'twitter').where(:type_name => 'tweet').map{|t| t.props["origin_author_id"]}.uniq.map{|id| id.to_i}
-      @twitter.users(ids).map {|u| [u.id, u.profile_image_url]}
-    end
-
   end
 end
