@@ -1,0 +1,119 @@
+
+* Bithub Platform Beta
+
+** Models
+
+   *Account*
+   - email
+   - password
+   - name
+   - props (hstore)
+   - brand\_id
+
+   *Brand*
+   - name
+   - description
+   - keywords [(string)]
+   - props (hstore)
+
+   *Feed config*
+   - feed\_name
+   - config (json)
+
+   *Scoring rule*
+   - tags [(string)]
+   - name
+   - points
+
+   *Rewards*
+   - name
+   - description
+   - required points
+   - image
+
+   *continue the list*
+   - foo
+   - bar
+
+** API
+
+| name        | action            |   | method   | endpoint                       | params                                                             |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Account     | reg. (create)     | + | POST     | /api/admin                     | account[email], account[password], account[password\_confirmation] |
+|             | reg. (destroy)    | + | DELETE   | /api/admin                     |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | session (create)  | + | POST     | /api/admin/login               | account[email], account[password]                                  |
+|             | session (destroy) | + | DELETE   | /api/admin/logout              |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | read              | + | GET      | /api/accounts/[:id]            |                                                                    |
+|             | update            | + | PUT      | /api/accounts/:id              |                                                                    |
+|             | update (pw)       | + | PUT      | /api/accounts/:id/password     |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Brand       | read              | + | GET      | /api/v2/brands/[:id]           | brand[name], brand[description], brand[keywords][]                 |
+|             | update            | + | PUT      | /api/v2/brands/:id             |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Feed config | create            | + | POST     | /api/v2/feed\_config/          | feed\_config[feed_name], feed\_config[config]                      |
+|             | read              | + | GET      | /api/v2/feed\_config/[:id]     |                                                                    |
+|             | update            | + | PUT      | /api/v2/feed\_config/          |                                                                    |
+|             | delete            | + | DELETE   | /api/v2/feed\_config/:id       |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Country     | read              | + | GET      | /api/v2/countries              |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Reward      | create            | + | POST     | /api/v2/rewards/               | reward[title], reward[description], reward[point\_minimum]         |
+|             | read              | + | GET      | /api/v2/rewards/[:id]          | reward[image], reward[disabled\_ts]                                |
+|             | update            | + | PUT      | /api/v2/rewards/:id            |                                                                    |
+|             | delete            | + | DELETE   | /api/v2/rewards/:id            |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| ScoringRule | create            | + | POST     | /api/v2/scoring\_rules/        | rule[required_tags][], rule[authorship_value],                     |
+|             | read              | + | GET      | /api/v2/scoring\_rules/[:id]   | rule[upvote_value], rule[award_value], rule[priority]              |
+|             | update            | + | PUT      | /api/v2/scoring\_rules/:id     |                                                                    |
+|             | delete            | + | DELETE   | /api/v2/scoring\_rules/:id     |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Entity      | create            | + | POST     | /api/v2/entities               |                                                                    |
+|             | read              | + | GET      | /api/v2/entities/[:id]         |                                                                    |
+|             | update            | + | PUT      | /api/v2/entities/:id           |                                                                    |
+|             | delete            | + | DELETE   | /api/v2/entities/:id           |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | upvote            |   | POST     | /api/v2/entities/:id/upvote    |                                                                    |
+|             |                   |   | DELETE   | /api/v2/entities/:id/upvote    |                                                                    |
+|             | award             |   | POST     | /api/v2/entities/:id/award     |                                                                    |
+|             |                   |   | DELETE   | /api/v2/entities/:id/award     |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | summary           | + | GET      | /api/v2/entities/summary       |                                                                    |
+|             | pagination        | + | GET      | /api/v2/entities/pagination    |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| User        | read              | + | GET      | /api/v2/users/[:id]            |                                                                    |
+|             | update            | + | PUT      | /api/v2/users/:id              |                                                                    |
+|             | delete            | + | DELETE   | /api/v2/users/:id              |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | oauth (login)     | + | GET/POST | /api/auth/:provider            |                                                                    |
+|             | oauth (callback)  | + | GET      | /api/auth/:provider/callback   |                                                                    |
+|             | session           | + | GET      | /api/auth/session              |                                                                    |
+|             | logout            | + | GET      | /api/auth/logout               |                                                                    |
+|             | link account      | + | POST     | /api/auth/link_identity        |                                                                    |
+|             | unlink account    |   | DELETE   | /api/auth/unlink_identity      |                                                                    |
+|             | ---               |   |          |                                |                                                                    |
+|             | activities        | + | GET      | /api/v2/users/:id/activities   |                                                                    |
+|             | achievements      | + | GET      | /api/v2/users/:id/achievements |                                                                    |
+|             | entities          |   | GET      | /api/v2/users/:id/entities     |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+| Tags?       |                   |   |          |                                |                                                                    |
+|             |                   |   |          |                                |                                                                    |
+|-------------+-------------------+---+----------+--------------------------------+--------------------------------------------------------------------|
+
+** Authentification
+
+| controller       | users | accounts | admin accounts |
+|------------------+-------+----------+----------------|
+| Accounts         |       |          |                |
+| BrandIdentities  |       |          |                |
+| User             |       |          |                |
+|                  |       |          |                |
+|------------------+-------+----------+----------------|
+|                  |       |          |                |
+|                  |       |          |                |
+|                  |       |          |                |
+|                  |       |          |                |
+|                  |       |          |                |
+|                  |       |          |                |
+|                  |       |          |                |
