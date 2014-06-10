@@ -77,7 +77,7 @@ namespace :db do
     dbname = (app_env == 'prod') ? 'bithub' : 'bithub_' + app_env
     run "dropdb #{dbname}"
     run "createdb --template=template1 --owner=bithub #{dbname}"
-    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub | pg_restore --format=c --schema=public --dbname=#{dbname}"
+    run "pg_dump --format=c --no-password --host=69.164.216.88 bithub2 | pg_restore --format=c --schema=public --dbname=#{dbname}"
   end
 
   task :pass_var, :roles => :db, :only => {:primary => true} do
