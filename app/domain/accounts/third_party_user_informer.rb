@@ -22,6 +22,7 @@ module Accounts
         config.basic_auth      = "#{GITHUB_USERNAME}:#{GITHUB_PASSWORD}"
       end
     end
+    attr_reader :twitter, :github
 
     def from_twitter(q)
       twitter.user_search(q)

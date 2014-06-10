@@ -4,8 +4,8 @@ module Entities
     def group
       join_family
       adopt
-      associate_references
       write_history
+      bump_thread
       self
     end
 
@@ -45,36 +45,12 @@ module Entities
       self
     end
 
-    def associate_references
-
-      if self.respond_to? :find_references_from_self
-        if (refs = find_references_from_self) #ENTITY
-          if @instance.parent.present?
-            @instance.parent.references_to += refs
-          else
-            @instance.references_to += refs
-          end
-        end
-      end
-
-      if self.respond_to? :find_references_to_self
-        if (refs = find_references_to_self) #ENTITY
-          if refs.reduce(false) {|acc, p| acc || p.parent.present?}
-            @instance.referenced_from += refs.map {|r| (p = r.parent) ? p : r }.reject{|e| @instance.referenced_from.include?(e)}.uniq
-          else
-            @instance.referenced_from += refs
-          end
-        end
-      end
-
-      #if self.respond_to? :build_references
-      #  @instance.references_to += build_references
-      #end
-      self
-    end
-
     def write_history
       @instance.events << @payload.instance if @payload.instance
+    end
+
+    def bump_thread
+      @instance.bump_thread
     end
 
   end
