@@ -8,7 +8,9 @@ class Api::V1::AchievementsController < Api::V1::BaseController
 
   def index
     authorize! :read, Achievement, :message => "No rights to read achievements."
+
     @achievements = build_scope(request.env['muster.query']).all
+    @achievements_count = build_scope(request.env['muster.query']).offset(0).limit(100_000_000).count
     render :index
   end
 
