@@ -7,7 +7,7 @@ module Accounts
     class ResponseNot200 < Exception; end
 
     GITHUB_USERNAME = 'neektza'
-    GITHUB_PASSWORD = 'ahn8Choo'
+    GITHUB_PASSWORD = 'U92C8CXrJRx3'
 
     def initialize
       @twitter = Twitter::REST::Client.new do |config|
