@@ -102,15 +102,11 @@ namespace :db do
   desc "Recreate local db with given dump file"
   task :recreate, :roles => :db, :only => {:primary => true} do
 
-    if not exists? :local_db
-      puts "Loading backup into 'bithub_development'"
-      restore_db = 'bithub_development'
-    else
-      restore_db = local_db
-    end
+    puts "Loading backup into 'bithub_development'"
+    restore_db = 'bithub_development'
 
     run_locally "dropdb --if-exists #{restore_db} "
     run_locally "createdb --template=template1 --owner=bithub #{restore_db}"
-    run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{dest}"
+    run_locally "pg_restore --format=c --schema=public --username=bithub --dbname=#{restore_db} #{from}"
   end
 end
