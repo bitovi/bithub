@@ -86,10 +86,6 @@ class Api::V1::EventsController < Api::V1::BaseController
       @event = EntityDecorator.decorate(entity)
       @ev_relations = EntityRelations.new(@event.id)
 
-      # if author = @event.author
-      #   Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      # end
-
       render :show
     else
       render :json => {
