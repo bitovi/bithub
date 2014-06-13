@@ -57,7 +57,10 @@ class Identity < ActiveRecord::Base
 
   def profile_url
     if urls = source_data['urls']
-      urls['GitHub'] || urls['Twitter'] || urls['public_profile']
+      # lowercase and symbolize keys
+      urls = urls.reduce({}) {|m,(k,v)| m[k.downcase.to_sym] = v; m }
+
+      urls[:github] || urls[:twitter] || urls[:public_profile]
     end
   end
 
