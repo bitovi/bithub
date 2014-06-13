@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
-  # before_save :calculate_avatar_url
+  before_save :calculate_avatar_url
   after_save :award_points_for_completing_profile
 
   def actions
