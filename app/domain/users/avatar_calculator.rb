@@ -11,10 +11,8 @@ module Users
       maybe_gravatar || maybe_source_data || DefaultUrl
     end
 
-    private
-
     def maybe_source_data
-      @user.identities.map do |ident|
+      @user.identities.order("provider asc").map do |ident|
         ImageAttributes.map do |attr|
           ident.andand['source_data'].andand[attr]
         end.compact
