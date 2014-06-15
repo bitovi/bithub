@@ -1,6 +1,6 @@
 namespace :data do
   desc "Update junk identities from 3rd party APIs"
-  task :update_identities => :environment do
+  task :update_identities_with_nicknames => :environment do
 
     @tpui = Accounts::ThirdPartyUserInformer.new
 
