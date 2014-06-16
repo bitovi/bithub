@@ -37,6 +37,10 @@ class Api::V1::UsersController < Api::V1::BaseController
     u = User.find(params[:id])
     filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
 
+    if params[:size]
+      u.props['size'] = params[:size]
+    end
+
     if u.update_attributes(filtered_params)
       u.calculate_avatar_url; u.save
       @user = UserDecorator.decorate(u)
