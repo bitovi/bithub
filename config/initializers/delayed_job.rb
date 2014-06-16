@@ -13,3 +13,7 @@ module Delayed
 end
 
 Delayed::Worker.destroy_failed_jobs = false
+  
+DelayedJobWeb.use Rack::Auth::Basic do |username, password|
+  username == 'djadmin' && password == 'negativ1Q'
+end
