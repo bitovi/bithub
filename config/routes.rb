@@ -66,6 +66,8 @@ Bithub::Application.routes.draw do
     end
   end
 
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
+
   match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
   match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end
