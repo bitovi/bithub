@@ -12,6 +12,7 @@
         :events: 60
     :blog: 240
     :twitter: 480
+    :stackexchange: 60
 
 :feeds:
     :blog:
@@ -99,3 +100,12 @@
                     :consumer_secret: "GgBnHe2pyNbVQoBiZYMqeRM39juGphZ4tsCcpn79uTM"
                     :token: "1911709506-lxbZcO7DbjeZ4D6HlfpHTmYaMgyNwKyD1x3OcZs"
                     :token_secret: "H4mVLnP21EUD2zkvfonQfIOMS0GVT585bXhRNMT9ZI"
+
+    :stackexchange:
+        :url: "https://api.stackexchange.com/2.2/questions"
+        :query:
+            :site: "stackoverflow"
+            :tagged: "canjs"
+            :filter: "_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs"
+            :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+            :key: "8EAiwRhHlupc0Z1aV3SCVg(("

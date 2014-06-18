@@ -141,7 +141,8 @@ class Poller
 
 
   def determine_feed(uri)
-    f = %w(meetup twitter github disqus blog forum).select{|f| uri =~ /#{f}/}
+    f = %w(meetup twitter github disqus blog forum stackexchange).select{|f| uri =~ /#{f}/}
+
     f.first
   end
 
