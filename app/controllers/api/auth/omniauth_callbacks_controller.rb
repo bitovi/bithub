@@ -15,6 +15,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     oauthorize "meetup"
   end
 
+  def stackexchange
+    oauthorize "stackexchange"
+  end
+
   def show_auth_error
     render :template => 'oauth/auth_error.html.erb'
   end
@@ -35,7 +39,8 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     @sites = HashWithIndifferentAccess.new({
       github: 'GitHub',
       twitter: 'Twitter',
-      meetup: 'Meetup'
+      meetup: 'Meetup',
+      stackexchange: 'StackExchange'
     })
 
     @identity = Identity.find_or_init_with_oauth_data(oauth_data)

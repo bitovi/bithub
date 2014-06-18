@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/nashby/omniauth-stackexchange.git
+  revision: e7c893e70dc5609627a0c63a279157d5986e8a2d
+  specs:
+    omniauth-stackexchange (0.2.0)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
+
+GIT
   remote: git://github.com/neektza/muster.git
   revision: 5faaaac3ff69c7f3dc89abfe6b5841782c18cb2f
   specs:
@@ -462,6 +470,7 @@ DEPENDENCIES
   omniauth
   omniauth-github
   omniauth-meetup
+  omniauth-stackexchange!
   omniauth-twitter
   pg
   pry-rails
