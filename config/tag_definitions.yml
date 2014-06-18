@@ -96,6 +96,9 @@ meetup:
   display_name: "Meetup"
   group_list: "feeds"
 
+stackexchange:
+  display_name: "StackExchange"
+  group_list: "feeds"
 
 # ----------
 # Categories
@@ -241,6 +244,12 @@ rsvp: {}
 ### IRC specific
 
 message: {}
+
+### StackExchange specific
+
+#question: {}
+answer: {}
+#comment: {}
 
 ### Others
 

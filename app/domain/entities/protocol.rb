@@ -14,6 +14,7 @@ module Entities
   module Irc; end
   module Meetup; end
   module Twitter; end
+  module Stackexchange; end
 
   class Protocol
     include Determinable
@@ -58,7 +59,7 @@ module Entities
     def type_name
       self.class.name.match(/::.*::(.+)$/).to_a[1]
     end
-    
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
@@ -76,3 +77,4 @@ require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
 require_relative 'feeds/irc/irc'
 require_relative 'feeds/bithub/bithub'
+require_relative 'feeds/stackexchange/stackexchange'

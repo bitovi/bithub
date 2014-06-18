@@ -12,6 +12,7 @@ module Events
   module Bithub; end
   module Meetup; end
   module Irc; end
+  module Stackexchange; end
 
   class Protocol
     include CoreHelpers
@@ -28,11 +29,17 @@ module Events
       @meta = _raw[:meta] || nil
     end
 
+    def raw
+      @source_data
+    end
+
     def content_digest
       if respond_to?(:event_id)
         calc_digest(event_id.to_s)
       elsif respond_to?(:origin_id)
         calc_digest(origin_id.to_s)
+      elsif respond_to?(:digest_seed)
+        calc_digest(digest_seed)
       else
         fail BuildingError.new("Couldn't calculate digest. Probably missing a seed.", nice_name)
       end
@@ -53,7 +60,7 @@ module Events
     def type_name_sym
       type_name.to_sym
     end
-    
+
     def ==(other)
       @data == other
     end
@@ -61,19 +68,19 @@ module Events
     def origin_ts
       origin_timestamp
     end
-    
+
     def origin_timestamp_iso
       origin_timestamp.iso8601
     end
 
-    def referenced_issue_numbers 
+    def referenced_issue_numbers
       []
     end
-    
+
     def nice_name
       self.class.name.gsub(/^Events::.*::/, '')
     end
-    
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
@@ -95,3 +102,4 @@ require 'events/feeds/forum/forum'
 require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
+require 'events/feeds/stackexchange/stackexchange'
