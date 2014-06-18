@@ -55,6 +55,7 @@ module Events
     end
 
     private
+
     def maybe_meta_feed_name
       @_raw[:meta].andand[:feed_name] || @_raw['meta'].andand['feed_name']
     end
@@ -196,6 +197,14 @@ module Events
         not(@source_data[:text].nil?) && not(@source_data[:user].andand[:screen_name].nil?)
       end
 
+    end
+  end
+
+  module Stackexchange
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Stackexchange::Question
+      end
     end
   end
 

@@ -17,11 +17,11 @@ module Entities
     def self.dispatch(event)
       new(event).dispatch
     end
-    
+
     def self.feed(event)
       self.new(event).feed
     end
-    
+
     def self.type(event)
       self.new(event).type
     end
@@ -155,7 +155,15 @@ module Entities
       end
     end
   end
-  
+
+  module Stackexchange
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Stackexchange.const_get(@event.type_name_sym)
+      end
+    end
+  end
+
   module Forum
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -163,7 +171,7 @@ module Entities
       end
     end
   end
-  
+
   module Blog
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -179,7 +187,7 @@ module Entities
       end
     end
   end
-  
+
   module Disqus
     class Dispatcher < BasicTypeDispatcher
       def type
