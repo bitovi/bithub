@@ -119,6 +119,16 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     end
 
 
+    # --- StackExchange
+    feed_config = feeds[:stackexchange]
+    log_registering(feed_config[:url])
+
+    EM.add_periodic_timer(intervals[:stackexchange], Poller.new(ex, feed_config[:url]) do |c|
+      c.http_query = feed_config[:query]
+      c.http_query[:pagesize] = 100
+    end.extend(Pageable::Stackexchange).handler)
+
+
     # --- Meetup open events
     feed_config = feeds[:meetup][:open_events][:polling]
     log_registering(feed_config[:url])
@@ -126,10 +136,6 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     EM.add_periodic_timer(intervals[:meetup][:events], Poller.new(ex, feed_config[:url]) do |c|
       c.http_query = feed_config[:query]
     end.handler)
-    
-
-
-
 
     # --- Meetup events by event ids
     feed_config = feeds[:meetup][:all_events]
@@ -152,14 +158,9 @@ AMQP.start(ENV['RABBITMQ_URI']) do |connection, open_ok|
     end.boot.handler)
 
 
-
-
-
-
     # --- Forums general feed
     log_registering(feeds[:forum][:general][:url])
     EM.add_periodic_timer(intervals[:forum], Poller.new(ex, feeds[:forum][:general][:url]).handler)
-
 
     # --- Forums questions feed
     log_registering(feeds[:forum][:questions][:url])
