@@ -73,5 +73,10 @@ class Brand < ActiveRecord::Base
     old_keywords.each do |k|
       Tag.remove_group k, 'keywords'
     end
+
+    # register new keywords as tags
+    new_keywords.each do |k|
+      Tag.register k, 'keywords'
+    end
   end
 end
