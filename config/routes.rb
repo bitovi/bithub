@@ -97,11 +97,14 @@ Bithub::Application.routes.draw do
         end
       end
 
+      # Tags
+      resources :tags
+
       # Scoring rules
       resources :scoring_rules
 
-      # Scoring rules
-      resources :category_determination_rules
+      # Category determination rules
+      #resources :category_determination_rules
 
       # Feed config
       resources :feed_configs do
