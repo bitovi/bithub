@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+  rolify :role_cname => 'AccountRole'
   include ActiveModel::ForbiddenAttributesProtection
 
   devise :database_authenticatable, :registerable,
