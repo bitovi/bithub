@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  rolify :role_cname => 'UserRole'
 
   class AsyncUserUpdater < Struct.new(:id, :method)
     def perform
@@ -9,7 +10,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  rolify
   devise :rememberable, :trackable, :omniauthable
 
   attr_accessible :name, :email,

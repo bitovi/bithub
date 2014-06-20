@@ -58,6 +58,39 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: account_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE account_roles (
+    id integer NOT NULL,
+    name character varying(255),
+    resource_id integer,
+    resource_type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: account_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE account_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: account_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE account_roles_id_seq OWNED BY account_roles.id;
+
+
+--
 -- Name: accounts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -78,6 +111,16 @@ CREATE TABLE accounts (
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip character varying(255),
     last_sign_in_ip character varying(255)
+);
+
+
+--
+-- Name: accounts_account_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE accounts_account_roles (
+    account_id integer,
+    account_role_id integer
 );
 
 
@@ -658,48 +701,14 @@ ALTER SEQUENCE internals_id_seq OWNED BY internals.id;
 
 
 --
--- Name: ownerships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: user_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE ownerships (
-    id integer NOT NULL,
-    owner_id integer,
-    entity_id integer,
-    value integer,
-    ownership_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles (
+CREATE TABLE user_roles (
     id integer NOT NULL,
     name character varying(255),
     resource_id integer,
     resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: scoring_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE scoring_rules (
-    id integer NOT NULL,
-    name character varying(255),
-    required_tags hstore,
-    authorship_value integer DEFAULT 0,
-    award_value integer DEFAULT 0,
-    upvote_value integer DEFAULT 0,
-    props hstore,
-    "position" integer,
-    valid_until timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -733,12 +742,12 @@ CREATE TABLE users (
 
 
 --
--- Name: users_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: users_user_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE users_roles (
+CREATE TABLE users_user_roles (
     user_id integer,
-    role_id integer
+    user_role_id integer
 );
 
 
@@ -752,42 +761,28 @@ CREATE MATERIALIZED VIEW leaderboard AS
     users.email AS user_email,
     (users.props -> 'avatar_url'::text) AS user_gravatar_url,
     ARRAY( SELECT r.name
-           FROM (roles r
-      LEFT JOIN users_roles ur ON ((ur.role_id = r.id)))
+           FROM (user_roles r
+      LEFT JOIN users_user_roles ur ON ((ur.user_role_id = r.id)))
      WHERE (ur.user_id = users.id)) AS user_roles,
-    (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            scoring_rules r
-          WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            upvotes u
-          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            awards a
-          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
-           FROM internals
-          WHERE (internals.receiver_id = users.id))) AS user_score
+    users.total_score AS user_score
    FROM users
-  WHERE (users.name IS NOT NULL)
-  ORDER BY (((( SELECT COALESCE(sum(r.authorship_value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            scoring_rules r
-          WHERE (((r.id = e.scoring_rule_id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id))) + ( SELECT COALESCE(sum(u.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            upvotes u
-          WHERE (((u.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(a.value), (0)::bigint) AS "coalesce"
-           FROM entities e,
-            ownerships o,
-            awards a
-          WHERE (((a.applies_to_id = e.id) AND (e.id = o.entity_id)) AND (o.owner_id = users.id)))) + ( SELECT COALESCE(sum(internals.value), (0)::bigint) AS "coalesce"
-           FROM internals
-          WHERE (internals.receiver_id = users.id))) DESC
+  ORDER BY users.total_score DESC
   WITH NO DATA;
+
+
+--
+-- Name: ownerships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE ownerships (
+    id integer NOT NULL,
+    owner_id integer,
+    entity_id integer,
+    value integer,
+    ownership_type character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
 
 
 --
@@ -865,30 +860,30 @@ ALTER SEQUENCE rewards_id_seq OWNED BY rewards.id;
 
 
 --
--- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE schema_migrations (
     version character varying(255) NOT NULL
+);
+
+
+--
+-- Name: scoring_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE scoring_rules (
+    id integer NOT NULL,
+    name character varying(255),
+    required_tags hstore,
+    authorship_value integer DEFAULT 0,
+    award_value integer DEFAULT 0,
+    upvote_value integer DEFAULT 0,
+    props hstore,
+    "position" integer,
+    valid_until timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -1009,6 +1004,25 @@ UNION
 
 
 --
+-- Name: user_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE user_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE user_roles_id_seq OWNED BY user_roles.id;
+
+
+--
 -- Name: user_total_score; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1048,6 +1062,13 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY account_roles ALTER COLUMN id SET DEFAULT nextval('account_roles_id_seq'::regclass);
 
 
 --
@@ -1173,13 +1194,6 @@ ALTER TABLE ONLY rewards ALTER COLUMN id SET DEFAULT nextval('rewards_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY scoring_rules ALTER COLUMN id SET DEFAULT nextval('scoring_rules_id_seq'::regclass);
 
 
@@ -1208,7 +1222,22 @@ ALTER TABLE ONLY upvotes ALTER COLUMN id SET DEFAULT nextval('upvotes_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY user_roles ALTER COLUMN id SET DEFAULT nextval('user_roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: account_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY account_roles
+    ADD CONSTRAINT account_roles_pkey PRIMARY KEY (id);
 
 
 --
@@ -1380,14 +1409,6 @@ ALTER TABLE ONLY rewards
 
 
 --
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY roles
-    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
-
-
---
 -- Name: scoring_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1420,6 +1441,14 @@ ALTER TABLE ONLY upvotes
 
 
 --
+-- Name: user_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY user_roles
+    ADD CONSTRAINT user_roles_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1446,6 +1475,27 @@ CREATE INDEX entity_refs_on_from_id ON entity_refs USING btree (from_id);
 --
 
 CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
+
+
+--
+-- Name: index_account_roles_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_account_roles_on_name ON account_roles USING btree (name);
+
+
+--
+-- Name: index_account_roles_on_name_and_resource_type_and_resource_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_account_roles_on_name_and_resource_type_and_resource_id ON account_roles USING btree (name, resource_type, resource_id);
+
+
+--
+-- Name: index_accounts_account_roles_on_account_id_and_account_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_accounts_account_roles_on_account_id_and_account_role_id ON accounts_account_roles USING btree (account_id, account_role_id);
 
 
 --
@@ -1484,20 +1534,6 @@ CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --
--- Name: index_roles_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_roles_on_name ON roles USING btree (name);
-
-
---
--- Name: index_roles_on_name_and_resource_type_and_resource_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_roles_on_name_and_resource_type_and_resource_id ON roles USING btree (name, resource_type, resource_id);
-
-
---
 -- Name: index_tags_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1512,6 +1548,20 @@ CREATE INDEX index_upvotes_on_applies_to_id ON upvotes USING btree (applies_to_i
 
 
 --
+-- Name: index_user_roles_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_user_roles_on_name ON user_roles USING btree (name);
+
+
+--
+-- Name: index_user_roles_on_name_and_resource_type_and_resource_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_user_roles_on_name_and_resource_type_and_resource_id ON user_roles USING btree (name, resource_type, resource_id);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1519,10 +1569,10 @@ CREATE INDEX index_users_on_email ON users USING btree (email);
 
 
 --
--- Name: index_users_roles_on_user_id_and_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_users_user_roles_on_user_id_and_user_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_users_roles_on_user_id_and_role_id ON users_roles USING btree (user_id, role_id);
+CREATE INDEX index_users_user_roles_on_user_id_and_user_role_id ON users_user_roles USING btree (user_id, user_role_id);
 
 
 --
@@ -1711,6 +1761,10 @@ INSERT INTO schema_migrations (version) VALUES ('1150');
 
 INSERT INTO schema_migrations (version) VALUES ('1160');
 
+INSERT INTO schema_migrations (version) VALUES ('1170');
+
+INSERT INTO schema_migrations (version) VALUES ('1180');
+
 INSERT INTO schema_migrations (version) VALUES ('20');
 
 INSERT INTO schema_migrations (version) VALUES ('2000');
@@ -1722,8 +1776,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140407132411');
 INSERT INTO schema_migrations (version) VALUES ('20140407132412');
 
 INSERT INTO schema_migrations (version) VALUES ('20140516152418');
-
-INSERT INTO schema_migrations (version) VALUES ('20151212162529');
 
 INSERT INTO schema_migrations (version) VALUES ('2020');
 
