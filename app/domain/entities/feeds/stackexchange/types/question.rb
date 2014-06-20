@@ -10,7 +10,7 @@ module Entities
       def build
         Entity.new({
           title: @event.title,
-          body: @event.body_markdown || @event.body,
+          body: @event.body_markdown,
           url: @event.link,
           origin_ts: @event.creation_date,
           origin_id: @event.question_id.to_s,
@@ -24,7 +24,7 @@ module Entities
           }
         })
       end
-      
+
       def update
         @instance.title = @event.title
         @instance.body = @event.body_markdown || @event.body

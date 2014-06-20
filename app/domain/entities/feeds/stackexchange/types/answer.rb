@@ -10,7 +10,7 @@ module Entities
       def build
         Entity.new({
           title: "answered ##{@event.question_id}", # @event.title
-          body: @event.body_markdown || @event.body,
+          body: @event.body_markdown,
           url: @event.link,
           origin_ts: @event.creation_date,
           origin_id: @event.answer_id.to_s,
@@ -25,7 +25,7 @@ module Entities
           }
         })
       end
-      
+
       def update
         @instance.body = @event.body_markdown || @event.body
         @instance.props[:origin_score] = @event.score
