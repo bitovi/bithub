@@ -10,7 +10,7 @@ module Entities
       def build
         Entity.new({
           title: "commented #{@event.post_type} ##{@event.post_id}",
-          body: @event.body_markdown || @event.body,
+          body: @event.body_markdown,
           url: @event.link,
           origin_ts: @event.creation_date,
           origin_id: @event.comment_id.to_s,

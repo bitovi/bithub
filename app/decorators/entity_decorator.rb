@@ -26,7 +26,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def body
-    if (contains? source.cached_tags, ['github','bithub']) && source.body
+    if (contains? source.cached_tags, ['github','stackexchange','bithub']) && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
@@ -129,7 +129,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def apply_hyperlinks(text, urls )
-    
+
     urls = ActiveSupport::JSON.decode(urls || '[]')
 
     urls.reduce(text) do |acc, url|
