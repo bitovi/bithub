@@ -10,7 +10,7 @@ module Entities
       def build
         Entity.new({
           title: @payload.title,
-          body: @payload.body_markdown || @payload.body,
+          body: @payload.body_markdown,
           url: @payload.link,
           origin_ts: @payload.creation_date,
           origin_id: @payload.question_id.to_s,
