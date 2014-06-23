@@ -5,6 +5,6 @@ namespace :data do
     Rake::Task["data:import_or_update_tags"].execute
     Rake::Task["data:import_scoring_rules"].execute
     Rake::Task["data:import_category_determination_rules"].execute
+    Rake::Task["data:create_or_reset_admin_account"].execute
   end
 end
-
