@@ -1,8 +1,6 @@
 class Api::V2::ScoringRulesController < Api::V2::BaseController
-  respond_to :json
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @rules = ScoringRule.all

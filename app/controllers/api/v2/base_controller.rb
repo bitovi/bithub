@@ -26,4 +26,17 @@ class Api::V2::BaseController < ActionController::Base
     end
   end
 
+  # Handle mutiple devise models for auth
+  def authenticate!
+    if account_signed_in?
+      :authenticate_account!
+    else
+      :authenticate_user!
+    end
+  end
+
+  def is_admin?
+    current_account && current_account.has_role?(:admin)
+  end
+
 end

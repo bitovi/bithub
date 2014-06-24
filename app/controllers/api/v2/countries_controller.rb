@@ -1,9 +1,6 @@
 class Api::V2::CountriesController < Api::V2::BaseController
-  #load_and_authorize_resource
-  respond_to :json
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     scope = build_scope(request.env['muster.query'], params)

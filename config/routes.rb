@@ -63,15 +63,15 @@ Bithub::Application.routes.draw do
         get 'achievements', :to => 'user_activities#achievements'
         #get 'entities', :to => 'user_activities#entities'
 
-        member do
-          put 'addrole', :to => 'users#add_role'
-          put 'removerole', :to => 'users#remove_role'
-        end
+        # member do
+        #   put 'addrole', :to => 'users#add_role'
+        #   put 'removerole', :to => 'users#remove_role'
+        # end
 
-        collection do
-          get 'twitter', :to => 'users#from_twitter'
-          get 'github', :to => 'users#from_github'
-        end
+        # collection do
+        #   get 'twitter', :to => 'users#from_twitter'
+        #   get 'github', :to => 'users#from_github'
+        # end
       end
 
       # Rewards

@@ -1,10 +1,6 @@
 class Api::V2::RewardsController < Api::V2::BaseController
-  #before_filter :authenticate_user!, except: [:index, :show]
-  respond_to :json
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  #rescue_from CanCan::AccessDenied, with: :show_401
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     scope = build_scope(request.env['muster.query'], params)
@@ -18,8 +14,6 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def create
-    #authorize! :manage, Reward, :message => "No rights to manage rewards."
-
     @reward = Reward.new(reward_params)
     if @reward.save
       render :show
@@ -29,8 +23,6 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def update
-    #authorize! :manage, Reward, :message => "No rights to manage rewards."
-
     @reward = Reward.find(params[:id])
     if @reward.update_attributes(reward_params)
       render :show
@@ -40,8 +32,6 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def destroy
-    #authorize! :manage, Reward, :message => "No rights to manage rewards."
-
     @reward = Reward.find(params[:id])
     if @reward.destroy
       render :json => msg_hash(@reward, 'destroy', 'success')

@@ -1,8 +1,8 @@
 class Api::V2::CategoryDeterminationRulesController < Api::V2::BaseController
-  respond_to :json
+  before_filter :authenticate!
+  load_and_authorize_resource
 
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  respond_to :json
 
   def index
     @rules = CategoryDeterminationRule.all
