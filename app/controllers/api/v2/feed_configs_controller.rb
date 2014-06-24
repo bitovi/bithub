@@ -1,9 +1,6 @@
 class Api::V2::FeedConfigsController < Api::V2::BaseController
-  respond_to :json
-  # before_filter :check_token, :only => :tree
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @configs = current_account.brand.feed_configs.all

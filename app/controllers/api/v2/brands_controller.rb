@@ -1,6 +1,6 @@
 class Api::V2::BrandsController < Api::V2::BaseController
-  #before_filter :authenticate_account!, except: [:index, :show]
-  respond_to :json
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @brands = Brand.all
@@ -27,9 +27,13 @@ class Api::V2::BrandsController < Api::V2::BaseController
   private
 
   def brand_params
-    keywords = params[:brand][:keywords]
-    params[:brand][:keywords] = [] if keywords.empty?
+    unless brand = params.andand[:brand]
+      params[:brand] = {}
+    end
+    unless keywords = brand.andand[:keywords]
+      params[:brand][:keywords] = []
+    end
 
-    params.require(:brand).permit(:name, :description, :keywords => [])
+    params.require(:brand).permit(:description, :keywords => [])
   end
 end

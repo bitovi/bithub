@@ -1,10 +1,6 @@
 class Api::V2::UsersController < Api::V2::BaseController
-  before_filter :authenticate_user!, except: [:index, :show]
-  respond_to :json
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     if params[:cached] == "true"
@@ -29,17 +25,13 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   def update
-    if params[:countryISO]
-      country = Country.where({:iso => params[:countryISO]}).first
-      params[:country] = country ? country : nil
-    end
-
     u = User.find(params[:id])
-    filtered_params = params.select {|param| User.accessible_attributes.include?(param)}
 
-    if u.update_attributes(filtered_params)
-      u.calculate_avatar_url; u.save
-      @user = UserDecorator.decorate(u)
+    if u.update_attributes(user_params)
+      u.calculate_avatar_url
+      u.save
+
+      @user = UserDecorator.decorate u
       render :show
     else
       render :json => msg_hash(u, 'update'), :status => 406
@@ -48,7 +40,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   def destroy
     user = User.find(params[:id])
-    authorize! :destroy_user, user, :message => "No rights to destroy user."
+
     if user && user.destroy
       @user = UserDecorator.decorate(user)
       render :show
@@ -57,39 +49,40 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
   end
 
-  def from_github
-    res = user_apis.from_github(params[:user])
-    render :json => res
-  end
+  # def from_github
+  #   res = user_apis.from_github(params[:user])
+  #   render :json => res
+  # end
 
-  def from_twitter
-    res = user_apis.from_twitter(params[:user])
-    render :json => res
-  end
+  # def from_twitter
+  #   res = user_apis.from_twitter(params[:user])
+  #   render :json => res
+  # end
 
-  def add_role
-    authorize! :manage_roles, User, :message => "No rights to manage user roles!"
-    user = User.find(params[:id])
-    if user && user.add_role(params[:role])
-      @user = UserDecorator.decorate(user)
-      render :show
-    else
-      render :json => msg_hash(u, 'role_management'), :status => 406
-    end
-  end
+  # def add_role
+  #   user = User.find(params[:id])
 
-  def remove_role
-    authorize! :manage_roles, User, :message => "No rights to manage user roles!"
-    user = User.find(params[:id])
-    if user && user.remove_role(params[:role])
-      @user = UserDecorator.decorate(user)
-      render :show
-    else
-      render :json => msg_hash(u, 'role_management'), :status => 406
-    end
-  end
+  #   if user && user.add_role(params[:role])
+  #     @user = UserDecorator.decorate(user)
+  #     render :show
+  #   else
+  #     render :json => msg_hash(u, 'role_management'), :status => 406
+  #   end
+  # end
+
+  # def remove_role
+  #   user = User.find(params[:id])
+
+  #   if user && user.remove_role(params[:role])
+  #     @user = UserDecorator.decorate(user)
+  #     render :show
+  #   else
+  #     render :json => msg_hash(u, 'role_management'), :status => 406
+  #   end
+  # end
 
   private # SCOPE BUILDING
+
   def build_scope(muster_query, params)
     scope = User.scoped
     scope = scope.only_not_null_names
@@ -108,4 +101,14 @@ class Api::V2::UsersController < Api::V2::BaseController
   def user_apis
     @user_apis ||= Accounts::ThirdPartyUserInformer.new
   end
+
+  def user_params
+    if params[:countryISO]
+      country = Country.where({:iso => params[:countryISO]}).first
+      params[:country] = country ? country : nil
+    end
+
+    params.require(:user).permit(:name, :email, :address, :address2, :city, :postal, :state, :country)
+  end
+
 end

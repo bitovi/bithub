@@ -1,9 +1,11 @@
 class Api::V2::BrandIdentitiesController < Api::V2::BaseController
-  #before_filter :authenticate_user!, except: [:index, :show]
-  respond_to :json
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
-    @brand_identities = BrandIdentityDecorator.decorate_collection BrandIdentity.all
+    identities = is_admin? ? BrandIdentity.all : current_account.brand.identities
+
+    @brand_identities = BrandIdentityDecorator.decorate_collection identities
     render :index
   end
 

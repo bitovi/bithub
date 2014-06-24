@@ -1,19 +1,18 @@
 class Api::V2::EntityActivitiesController < Api::V2::BaseController
-  before_filter :authenticate_user!, except: [:index]
-  skip_load_and_authorize_resource :only => :index
-  respond_to :json
+  before_filter :authenticate!
 
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
+  # load_and_authorize_resource
+  # skip_load_and_authorize_resource :only => :index
 
   def index
-    @activities = ActivityDecorator.decorate_collection(Event.find(params[:event_id]).activities)
+    event = Event.find params[:event_id]
+    @activities = ActivityDecorator.decorate_collection event.activities
     render 'api/v1/activities/index'
   end
 
   def create_award
     authorize! :create_award, Award, :message => "No right to create an award!"
+
     if (award = Actions::Awarder.new(current_user, Entity.find(params[:event_id]))).award
       render :json => award
     else
@@ -40,11 +39,6 @@ class Api::V2::EntityActivitiesController < Api::V2::BaseController
     else
       render :json => { message: "Not found!" }, :status => 404
     end
-  end
-
-  def create_anteup
-    authorize! :create_award, Anteup, :message => "No right to create an anteup!"
-    render :json => { message: 'Coming soon.', errors: [] }, :status => 200
   end
 
 end

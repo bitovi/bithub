@@ -1,29 +1,15 @@
 class Api::V2::TagsController < Api::V2::BaseController
-  before_filter :authenticate_user!, except: [:index, :show]
+  before_filter :authenticate!
   load_and_authorize_resource
-  skip_load_and_authorize_resource only: [:index, :show]
-
-  respond_to :json
-
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
 
   def index
-
     mq = request.env['muster.query']
 
-    # overridedefault limit (50)
+    # override default limit (50)
     mq['limit'] = 1000 if mq['limit'].to_i < 1000
 
     scope = build_scope(mq, params)
     scope = scope.tagged_with(params[:type].pluralize) if params[:type]
-
-    # replace ordering by priority if any
-    if order_by_priority = mq['order'].select {|o| o.starts_with? 'priority'}.first
-      order_by_priority.gsub! /priority/, "CASE WHEN (props -> 'priority') IS NULL THEN 0 ELSE (props -> 'priority')::integer END"
-      scope = scope.order(order_by_priority)
-    end
 
     @tags = scope.all
 
@@ -36,8 +22,8 @@ class Api::V2::TagsController < Api::V2::BaseController
   end
 
   def create
-    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.new(params[:tag])
+
     if @tag.save
       render :show
     else
@@ -46,8 +32,8 @@ class Api::V2::TagsController < Api::V2::BaseController
   end
 
   def update
-    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.find(params[:id])
+
     if @tag.update_attributes(params[:tag])
       render :show
     else
@@ -56,8 +42,8 @@ class Api::V2::TagsController < Api::V2::BaseController
   end
 
   def destroy
-    authorize! :manage, Tag, :message => "No rights to manage tags."
     @tag = Tag.find(params[:id])
+
     if @tag.destroy
       render :json => msg_hash(@tag, 'destroy', 'success'), :status => 200
     else

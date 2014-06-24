@@ -1,6 +1,6 @@
 class Api::V2::AccountsController < Api::V2::BaseController
-  #before_filter :authenticate_user!, except: [:index, :show]
-  respond_to :json
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @accounts = AccountDecorator.decorate_collection Account.all
@@ -32,17 +32,20 @@ class Api::V2::AccountsController < Api::V2::BaseController
     end
   end
 
-  def update_password
-    account = Account.find(params[:id])
-    password_params = params.require(:account).permit(:password, :password_confirmation, :current_password)
+  # Should be handled by Devise
+  # Define security before enabling!
+  #
+  # def update_password
+  #   account = Account.find(params[:id])
+  #   password_params = params.require(:account).permit(:password, :password_confirmation, :current_password)
 
-    if account.update_with_password(password_params)
-      @account = AccountDecorator.decorate account
-      render :show
-    else
-      render :json => msg_hash(account, 'update'), :status => 406
-    end
-  end
+  #   if account.update_with_password(password_params)
+  #     @account = AccountDecorator.decorate account
+  #     render :show
+  #   else
+  #     render :json => msg_hash(account, 'update'), :status => 406
+  #   end
+  # end
 
   private
 

@@ -2,24 +2,15 @@ class UserAbility
   include CanCan::Ability
 
   def initialize(user)
-    can :read, :all
-
-    # if user.has_role? :admin
-    #   can :manage, :all
-    #   can :create_award, Award
-    #   can :manage_roles, User
-    #   can :read_sensitive_data, :user
-    # else
-    #   can :read, :all
-    #   can :create_upvote, Upvote
-    #   can :create_anteup, Anteup
-    #   can :destroy_upvote, Upvote
-    #   cannot :create_award, Award
-    #   cannot :read, Achievement
-    # end
-
-    # can :destroy_user, User do |subject_user|
-    #   user.has_role?(:admin) || user.id == subject_user.id
-    # end
+    can :read, Tag
+    can :read, Country
+    can :read, Reward
+    can [:read, :update], User, id: user.id
+    can [:create, :read], Entity
+    can [:update, :destroy], Entity # check current_user entities
+    can :create_upvote, Upvote
+    can :destroy_upvote, Upvote
+    can :read_pagination, Pagination
+    can :read, Achievement
   end
 end

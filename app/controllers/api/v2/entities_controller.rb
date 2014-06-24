@@ -1,17 +1,15 @@
 require 'digest/md5'
 
 class Api::V2::EntitiesController < Api::V2::BaseController
-  before_filter :authenticate_user!, except: [:index, :show, :summary, :pagination]
+  before_filter :authenticate!
 
-  respond_to :json
+  load_and_authorize_resource
+  skip_load_and_authorize_resource :only => :pagination
+
   helper_method :custom_cache_key
   helper_method :list_cache_key
 
-  rescue_from ActiveRecord::RecordNotFound, with: :show_404
-  rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
-
-  DEFAULT_CATEGORIES_TO_SUMMARIZE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
+  # DEFAULT_CATEGORIES_TO_SUMMARIZE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   POSSIBLE_ISSUE_STATES = ['open', 'closed']
 
   def index
@@ -42,25 +40,28 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def update
-    authorize! :manage, Entity, :message => "No rights to manage events."
     create_or_update
   end
 
   def destroy
-    authorize! :manage, Entity, :message => "No rights to manage events."
     Entity.find(params[:id]).destroy
     render :json => { error: t('api.entities.destroy.success') }
   end
 
-  def summary
-    cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
-    @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
-    render :summary
-  end
+  # Do we need this? --> used only on canjs.com
+  #
+  # def summary
+  #   cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
+  #   @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
+  #   render :summary
+  # end
 
   def pagination
+    authorize! :read_pagination, Pagination
+
     params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
     @dates = Pagination.grouped(params)
+
     render :pagination_index
   end
 
