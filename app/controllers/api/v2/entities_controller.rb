@@ -77,9 +77,9 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     method        = params[:id].nil?? 'create' : 'update'
     event, entity = Entities::Bithub::Post.forge(params, current_user)
 
-    errors = [event, entity].compact.reduce({}){|memo, model|
-      memo.merge(model.errors)
-    }
+    errors = [event, entity].compact.reduce({}) do |memo, model|
+      memo.merge model.errors
+    end
 
     errors.delete(:base) if errors[:base].blank?
 

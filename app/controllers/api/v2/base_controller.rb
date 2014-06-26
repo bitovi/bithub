@@ -30,7 +30,7 @@ class Api::V2::BaseController < ActionController::Base
   def authenticate!
     if account_signed_in?
       :authenticate_account!
-    else
+    elsif user_signed_in?
       :authenticate_user!
     end
   end

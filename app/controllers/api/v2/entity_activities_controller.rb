@@ -7,7 +7,7 @@ class Api::V2::EntityActivitiesController < Api::V2::BaseController
   def index
     event = Event.find params[:event_id]
     @activities = ActivityDecorator.decorate_collection event.activities
-    render 'api/v1/activities/index'
+    render 'api/v2/activities/index'
   end
 
   def create_award
