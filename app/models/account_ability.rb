@@ -6,14 +6,13 @@ class AccountAbility
       can :manage, :all
     else
       can :read, Tag
-      can :read, BrandIdentity
-      can [:read, :update], Brand
+      can [:read, :update], Brand, id: account.brand.id
       can :read, Country
       can [:read, :update], ScoringRule
       can :manage, Reward
-      can :manage, FeedConfig
-      can :read, User
-      can [:read, :destroy], Entity
+      can :manage, FeedConfig, brand_id: account.brand.id
+      can :read, User # check somehow if user is present in current tenant
+      can :manage, Entity
       can :create_award, Award
       can :read_pagination, Pagination
       can :manage, Achievement
