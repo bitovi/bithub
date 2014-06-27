@@ -1,5 +1,4 @@
 class Upvote < ActiveRecord::Base
-  attr_accessible :actor, :applies_to, :value
   after_save :bust_event_cache
 
   belongs_to :applies_to, :class_name => "Entity"

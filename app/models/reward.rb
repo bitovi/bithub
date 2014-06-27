@@ -1,9 +1,4 @@
 class Reward < ActiveRecord::Base
-  include ActiveModel::ForbiddenAttributesProtection
-
-  attr_accessible :title, :description, :point_minimum, :image, :disabled_ts, :props
-
-  serialize :props, ActiveRecord::Coders::Hstore
 
   mount_uploader :image, RewardImageUploader
 

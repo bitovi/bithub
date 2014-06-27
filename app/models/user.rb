@@ -12,12 +12,6 @@ class User < ActiveRecord::Base
 
   devise :rememberable, :trackable, :omniauthable
 
-  attr_accessible :name, :email,
-    :address, :address2, :city, :postal, :state, :country,
-    :remember_me, :entities, :total_score
-
-  serialize :props, ActiveRecord::Coders::Hstore
-
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
   has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify

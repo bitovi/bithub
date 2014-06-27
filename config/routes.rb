@@ -1,6 +1,6 @@
 Bithub::Application.routes.draw do
 
-  match "/api/login_and_oauth", :to => 'api/auth/sign_in_oauth#login_and_redirect_to_oauth'
+  get "/api/login_and_oauth", :to => 'api/auth/sign_in_oauth#login_and_redirect_to_oauth'
 
   # Devise
   #
@@ -23,7 +23,7 @@ Bithub::Application.routes.draw do
 
   # Dynamic image resizer
   #
-  match '/uploads/*other' => "uploads#index"
+  post '/uploads/*other' => "uploads#index"
 
 
   # SERVICE API Routes
@@ -116,7 +116,7 @@ Bithub::Application.routes.draw do
       end
 
       # Non-matched redirect to root
-      match '*path', :to => redirect("/api/v2")
+      get '*path', :to => redirect("/api/v2")
 
       # Homepage
       root :to => "base#home"
@@ -167,8 +167,4 @@ Bithub::Application.routes.draw do
     end
   end
 
-  # Redirect to v1 endpoints
-  #
-  # match 'api/v:number/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
-  # match 'api/*path', :to => redirect {|params, req| "/api/v1/#{params[:path]}?#{req.query_string}"}
 end

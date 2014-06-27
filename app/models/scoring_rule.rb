@@ -1,20 +1,13 @@
 require 'acts_as_list'
 
 class ScoringRule < ActiveRecord::Base
-  include ActiveModel::ForbiddenAttributesProtection
-
-  attr_accessible :name, :required_tags, \
-                  :authorship_value, :upvote_value, :award_value, \
-                  :valid_until, :position
-  attr_readonly :required_tags
-
-  serialize :required_tags, ActiveRecord::Coders::Hstore
 
   validates_presence_of :authorship_value
 
   has_many :entities
 
-  acts_as_list
+  # brakes saving after upgrade to rails 4
+  # acts_as_list
 
   def required_tags=(tags)
     tags = Tagger.list_to_name_weight_hash tags

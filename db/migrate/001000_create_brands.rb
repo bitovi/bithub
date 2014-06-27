@@ -3,7 +3,7 @@ class CreateBrands < ActiveRecord::Migration
     create_table :brands do |t|
       t.string :name
       t.string :description
-      t.string_array :keywords
+      t.string :keywords, array: true, default: []
       t.hstore :props
 
       t.timestamps

@@ -1,11 +1,7 @@
 class FeedConfig < ActiveRecord::Base
-  include ActiveModel::ForbiddenAttributesProtection
   include AmqpHelpers
 
-  attr_accessible :feed_name, :config
-
   belongs_to :brand
-  serialize :config, JSON
 
   validates_presence_of :feed_name
   validates_uniqueness_of :feed_name, scope: :brand_id
