@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   helper_method :crypter
 
   def redirect_to_subdomain
-
     if params[:acc].present?
       account = Account.find(crypter.decrypt_and_verify(params[:acc]).to_i)
       subdomain = account.brand.name
@@ -13,7 +12,6 @@ class ApplicationController < ActionController::Base
         redirect_to "/admin"
       end
     end
-
   end
 
   def crypter
