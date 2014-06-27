@@ -18,9 +18,11 @@ class Publisher
     @filter = DigestSet.new
   end
 
-  def publish(brand, feed, events)
+  def publish(brand, feed, events, opts={})
+    decorator = opts.fetch(:decorator) { Decorators::Basic.new }
+
     # reject previously sent events
-    new_events  = reject_old processed(events, brand, feed)
+    new_events  = reject_old processed events, brand, feed, decorator
 
     # finally send events to MQ
     send new_events, brand
@@ -41,13 +43,13 @@ class Publisher
     @filter.reject_old events
   end
 
-  def processed(events, brand, feed)
+  def processed(events, brand, feed, decorator)
     events.map do |e|
-      process_one e, brand, feed
+      process_one e, brand, feed, decorator
     end.compact
   end
 
-  def process_one(event, brand, feed)
+  def process_one(event, brand, feed, decorator)
     event     = event.to_h
     feed      = feed.to_s
     brand     = brand.to_s
@@ -55,15 +57,18 @@ class Publisher
 
     begin
       dispatched = Events::Dispatcher.dispatch(event, feed)
+
+      # todo: move this to separete decorator?
       processed = {
         meta: {
           feed_name: feed,
           type_name: dispatched.type_name.snake_case,
-          brand_name: brand,
+          brand_name: brand
         },
         content_digest: dispatched.content_digest,
         source_data: event
       }
+
       Celluloid.logger.debug "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
 
     rescue Events::DispatchError => e
@@ -71,7 +76,7 @@ class Publisher
       Celluloid.logger.debug "Failed to dispatch event #{event.inspect}"
     end
 
-    processed
+    decorator.decorate processed
   end
 
 end
