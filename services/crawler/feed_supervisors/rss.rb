@@ -12,13 +12,16 @@ module FeedSupervisors
       Celluloid.logger.info "Booting RSS supervisor for #{@brand_name}"
       @endpoints = SupervisionGroup.new
 
-      urls.each do |url|
-        @endpoints.supervise_as \
-          actor_name(url),
-          Poller,
-          *[@brand_name, Fetchers::Rss::Rss.new(url), {interval: 300}]
-      end
+      sites.each do |site|
+        if url = site[:url]
+          decorator = Decorators::Rss.new site
 
+          @endpoints.supervise_as \
+            actor_name(url),
+            Poller,
+            *[@brand_name, Fetchers::Rss::Rss.new(url), {interval: 300, decorator: decorator}]
+        end
+      end
     end
 
     private
@@ -27,8 +30,8 @@ module FeedSupervisors
       Celluloid::Actor[:configurator].feed_config(@brand_name, :rss)
     end
 
-    def urls
-      config.fetch(:urls)
+    def sites
+      config.fetch(:sites)
     end
 
     def actor_name(url)
