@@ -85,6 +85,8 @@ Bithub::Application.routes.draw do
       resources :countries, :only => :index
 
       # Brands
+      get 'brands/brand', :to => 'brands#show'
+      put 'brands/brand', :to => 'brands#update'
       resources :brands, :only => [:index, :show, :update]
 
       # Brand identities
