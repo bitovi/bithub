@@ -9,18 +9,8 @@ class Entity < ActiveRecord::Base
     end
   end
 
-  attr_accessible :id,
-    :body, :title, :url, :origin_id,
-    :tag_list, :owners, :ownerships,
-    :feed_name, :type_name, :category_name,
-    :feed_id, :type_id, :category_id,
-    :origin_ts, :thread_updated_ts,
-    :created_at, :updated_at,
-    :props, :image, :total_upvotes
-
   acts_as_taggable
   mount_uploader :image, EventImageUploader
-  serialize :props, ActiveRecord::Coders::Hstore
 
   has_and_belongs_to_many :references_to,
   :class_name => 'Entity',

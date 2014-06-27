@@ -1,6 +1,4 @@
 class Tag < ActsAsTaggableOn::Tag
-  serialize :props, ActiveRecord::Coders::Hstore
-  attr_accessible :name, :display_name, :aliases, :props
 
   acts_as_taggable_on :groups
 

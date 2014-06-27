@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.1.1'
 
 gem 'unicorn'
-gem 'rails', '~> 3.2'
+gem 'rails', '~> 4.1'
 
 gem 'rake'
 gem 'rspec', '~> 2.14'
@@ -11,7 +11,7 @@ gem 'pry'
 gem 'pry-rails'
 
 gem 'bunny'
-gem 'pg'
+gem 'pg', '~> 0.17.1'
 
 gem 'redis'
 gem 'redis-rails'
@@ -22,10 +22,6 @@ gem 'carrierwave'
 
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
-gem 'strong_parameters', '~> 0.2'
-gem 'activerecord-postgres-hstore'
-gem 'activerecord-postgres-array', '0.0.9'
-gem 'activerecord-postgresql-extensions'
 gem 'acts-as-taggable-on'
 gem 'acts-as-list'
 gem 'daemons'
@@ -99,7 +95,7 @@ end
 # --------
 gem 'celluloid'
 gem 'celluloid-io'
-gem 'reel', :github => 'celluloid/reel'
+gem 'reel' #, :github => 'celluloid/reel'
 gem 'nokogiri'
 gem 'nori', '~> 2.3.0'
 gem 'vetinari'

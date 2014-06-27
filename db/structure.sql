@@ -66,8 +66,8 @@ CREATE TABLE account_roles (
     name character varying(255),
     resource_id integer,
     resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -99,8 +99,8 @@ CREATE TABLE accounts (
     name character varying(255),
     props hstore,
     brand_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     email character varying(255) DEFAULT ''::character varying NOT NULL,
     encrypted_password character varying(255) DEFAULT ''::character varying NOT NULL,
     reset_password_token character varying(255),
@@ -216,8 +216,8 @@ CREATE TABLE awards (
     applies_to_id integer NOT NULL,
     actor_id integer NOT NULL,
     value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -250,8 +250,8 @@ CREATE TABLE brand_identities (
     uid character varying(255),
     source_data json,
     brand_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -282,10 +282,10 @@ CREATE TABLE brands (
     id integer NOT NULL,
     name character varying(255),
     description character varying(255),
-    keywords character varying(255)[],
+    keywords character varying(255)[] DEFAULT '{}'::character varying[],
     props hstore,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -319,8 +319,8 @@ CREATE TABLE category_determination_rules (
     props hstore,
     category_name character varying(255),
     "position" integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -390,8 +390,8 @@ CREATE TABLE delayed_jobs (
     failed_at timestamp without time zone,
     locked_by character varying(255),
     queue character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -438,8 +438,8 @@ CREATE TABLE entities (
     cached_tag_list character varying(255),
     total_upvotes integer,
     props hstore,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -486,7 +486,7 @@ CREATE TABLE tags (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     display_name character varying(255),
-    aliases character varying[],
+    aliases character varying(255)[] DEFAULT '{}'::character varying[],
     props hstore,
     taggings_count integer DEFAULT 0
 );
@@ -545,8 +545,8 @@ CREATE TABLE upvotes (
     applies_to_id integer NOT NULL,
     actor_id integer NOT NULL,
     value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -575,8 +575,8 @@ CREATE TABLE events (
     content_digest character varying(255),
     props hstore,
     entity_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -607,8 +607,8 @@ CREATE TABLE feed_configs (
     id integer NOT NULL,
     feed_name character varying(255),
     config json,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     brand_id integer
 );
 
@@ -676,8 +676,8 @@ CREATE TABLE internals (
     variant character varying(255),
     comment character varying(255),
     value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -709,8 +709,8 @@ CREATE TABLE user_roles (
     name character varying(255),
     resource_id integer,
     resource_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -730,8 +730,8 @@ CREATE TABLE users (
     props hstore,
     total_score integer DEFAULT 0,
     country_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     remember_created_at timestamp without time zone,
     sign_in_count integer DEFAULT 0,
     current_sign_in_at timestamp without time zone,
@@ -780,8 +780,8 @@ CREATE TABLE ownerships (
     entity_id integer,
     value integer,
     ownership_type character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -835,8 +835,8 @@ CREATE TABLE rewards (
     image character varying(255),
     disabled_ts timestamp without time zone,
     props hstore,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -882,8 +882,8 @@ CREATE TABLE scoring_rules (
     props hstore,
     "position" integer,
     valid_until timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -1345,14 +1345,6 @@ ALTER TABLE ONLY entity_refs
 
 
 --
--- Name: events_content_digest_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY events
-    ADD CONSTRAINT events_content_digest_key UNIQUE (content_digest);
-
-
---
 -- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1800,3 +1792,4 @@ INSERT INTO schema_migrations (version) VALUES ('3040');
 INSERT INTO schema_migrations (version) VALUES ('3050');
 
 INSERT INTO schema_migrations (version) VALUES ('40');
+

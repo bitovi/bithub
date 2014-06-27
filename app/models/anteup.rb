@@ -1,11 +1,9 @@
 class Anteup < ActiveRecord::Base
-  attr_accessible :actor, :applies_to, :value, :fullfilled
-
   belongs_to :applies_to, :class_name => "Entity"
   belongs_to :actor, :class_name => "User"
 
   scope :fullfilled, where(:fullfilled => true)
-  
+
   validates_presence_of :applies_to_id, :actor_id
 
   def self.create_anteup(actor, entity, value=25)

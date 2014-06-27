@@ -1,9 +1,4 @@
 class Brand < ActiveRecord::Base
-  include ActiveModel::ForbiddenAttributesProtection
-
-  attr_accessible :name, :description, :keywords, :props
-
-  serialize :props, ActiveRecord::Coders::Hstore.new({})
 
   has_many :accounts
   has_many :feed_configs

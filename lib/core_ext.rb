@@ -20,7 +20,7 @@ class Hash
   def deep_merge(other_hash = nil)
     dup.deep_merge!(other_hash)
   end
-  
+
   def project(keys)
     keys.map{|k| self[k]}
   end
@@ -69,12 +69,6 @@ class String
     host.start_with?('www.') ? host[4..-1] : host
   end
 
-end
-
-class Symbol
-  def to_proc
-    Proc.new {|thing, *args| thing.send(self, *args)}
-  end
 end
 
 module Enumerable

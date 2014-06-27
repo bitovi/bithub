@@ -1,7 +1,6 @@
 class Identity < ActiveRecord::Base
-  attr_accessible :provider, :uid, :source_data
   belongs_to :user
-  serialize :source_data, JSON
+
   validates_uniqueness_of :uid, scope: :provider
 
   after_destroy :remove_internal

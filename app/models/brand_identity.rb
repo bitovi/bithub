@@ -1,8 +1,5 @@
 class BrandIdentity < ActiveRecord::Base
-  attr_accessible :provider, :uid, :source_data, :brand
-
   belongs_to :brand
-  serialize :source_data, JSON
 
   after_save :create_feed_config
 
