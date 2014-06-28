@@ -52,11 +52,11 @@ class Api::V2::AchievementsController < Api::V2::BaseController
   end
 
   def scope_applier(current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer)
+    @scope_applier ||= ScopeApplier.new(current_scope || Achievement, logic_analyzer)
   end
 
   def build_scope(muster_query)
-    scope = Achievement.scoped
+    scope = Achievement
     scope = scope_applier.apply_muster_query_to_scope(muster_query)
   end
 end

@@ -60,11 +60,11 @@ class Api::V2::TagsController < Api::V2::BaseController
   end
 
   def scope_applier(params, current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || Tag.scoped, query_logic(params))
+    @scope_applier ||= ScopeApplier.new(current_scope || Tag, query_logic(params))
   end
 
   def build_scope(muster_query, params)
-    scope = Tag.scoped
+    scope = Tag
 
     scope_applier(params, scope)
     .apply_muster_query_to_scope(muster_query)

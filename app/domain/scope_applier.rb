@@ -1,7 +1,7 @@
 class ScopeApplier
 
   def initialize(initial, query)
-    @scope = (initial.class.name =~ /Relation/) ? initial : initial.scoped
+    @scope = initial
     @query = query
     apply_overrides
   end
@@ -22,7 +22,7 @@ class ScopeApplier
     end
     self
   end
-  
+
   def apply_tag_based_params_to_scope
     if (taggables = @query.pluck_and_process_tag_based_params)
       @scope = @scope.tagged_with(taggables[:any], :any => true) if taggables[:any]
@@ -30,7 +30,7 @@ class ScopeApplier
     end
     self
   end
-  
+
   def apply_regular_params_to_scope
     if (regpars = @query.pluck_and_process_regular_params)
       regpars.each do |k,v|
@@ -39,7 +39,7 @@ class ScopeApplier
     end
     self
   end
-  
+
   def apply_order_to_scope
     if (orderings = @query.pluck_and_process_orderings)
       @scope = @scope.order(orderings)
@@ -57,7 +57,7 @@ class ScopeApplier
   def result
     @scope
   end
-  
+
   private
     def override_thread_updated_date(val)
       start_date, end_date = val.split(':')

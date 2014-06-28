@@ -87,6 +87,8 @@ class Entity < ActiveRecord::Base
   scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
 
+  scope :scoped_with_includes, lambda { includes(:owners).includes(:parent) }
+
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_create :adopt_references_from_children
@@ -96,13 +98,6 @@ class Entity < ActiveRecord::Base
   after_destroy :update_pagination_table
 
   after_validation :reformat_uniqueness_validation
-
-  def self.scoped_with_includes
-    scope = Entity.scoped
-    scope = scope.includes(:owners)
-    scope = scope.includes(:parent)
-    scope
-  end
 
   def author=(user)
     self.remove_author
