@@ -59,11 +59,11 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def scope_applier(params, current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || Reward.scoped, query_logic(params))
+    @scope_applier ||= ScopeApplier.new(current_scope || Reward, query_logic(params))
   end
 
   def build_scope(muster_query, params)
-    scope = Reward.scoped
+    scope = Reward
 
     scope_applier(params, scope)
     .apply_order_to_scope

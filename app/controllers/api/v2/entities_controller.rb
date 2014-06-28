@@ -142,11 +142,11 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def scope_applier(params, current_scope = nil)
-    ScopeApplier.new((current_scope || Entity.scoped), query_logic(params))
+    ScopeApplier.new((current_scope || Entity), query_logic(params))
   end
 
   def date_filtered_summary(tag, params)
-    scope = Entity.scoped.tagged_with(tag)
+    scope = Entity.tagged_with(tag)
 
     scope_applier(params, scope)
     .apply_tag_based_params_to_scope

@@ -84,7 +84,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   private # SCOPE BUILDING
 
   def build_scope(muster_query, params)
-    scope = User.scoped
+    scope = User
     scope = scope.only_not_null_names
     scope = scope_applier(scope).apply_muster_query_to_scope(muster_query)
     scope = scope_applier(scope).apply_regular_params_to_scope
@@ -95,7 +95,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   def scope_applier(current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || User.scoped, logic_analyzer)
+    @scope_applier ||= ScopeApplier.new(current_scope || User, logic_analyzer)
   end
 
   def user_apis
