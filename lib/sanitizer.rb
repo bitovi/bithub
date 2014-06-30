@@ -3,8 +3,9 @@ require 'htmlentities'
 
 class Sanitizer
 
-  CUSTOM_RULESET = Sanitize::Config::RELAXED
-  CUSTOM_RULESET[:elements] << "div"
+  CUSTOM_RULESET = Sanitize::Config.merge \
+    Sanitize::Config::RELAXED,
+    :elements => Sanitize::Config::RELAXED[:elements] + ['div']
 
   def encode(text)
     @htmlEscaper ||= HTMLEntities.new
@@ -18,7 +19,7 @@ class Sanitizer
 
 
   def self.sanitize(html)
-    Sanitize.clean(html, CUSTOM_RULESET)
+    Sanitize.fragment(html, CUSTOM_RULESET)
   end
 
   def self.sanitize_forum_post(html)
