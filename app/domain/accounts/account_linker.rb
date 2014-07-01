@@ -22,6 +22,7 @@ module Accounts
       end
       self
     end
+    attr_reader :state
 
     def link
       return nil if (@state == :undecided) || (@state == :already_linked)
@@ -94,10 +95,6 @@ module Accounts
       @state == :invalid_merge
     end
     
-    def merging_state
-      @state
-    end
-
     def merging_user
       @identity.user
     end
@@ -108,6 +105,7 @@ module Accounts
       end
     end
 
+    alias_method :merging_state, :state
     alias_method :only_linking?, :not_merging?
     alias_method :merging?, :valid_merge?
 
