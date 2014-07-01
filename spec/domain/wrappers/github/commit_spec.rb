@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Wrappers::Github::Commit do
+RSpec.describe Wrappers::Github::Commit, :type => :domain do
 
   let(:raw_commit) do
     raw_data(response_path: 'github/events/push_event.json')['payload']['commits'].first

@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Disqus::Forum do
+RSpec.describe Wrappers::Disqus::Forum, :type => :domain do
 
   let(:raw_forum) do
     raw_data(response_path: 'disqus/comment_list.json')['response'].first['forum']

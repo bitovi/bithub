@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Meetup::Event do
+RSpec.describe Wrappers::Meetup::Event, :type => :domain do
 
   let(:raw_event) do
     raw_data(response_path: 'meetup/2_events.json')['results'].first
