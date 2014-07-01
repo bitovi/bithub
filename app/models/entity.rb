@@ -1,4 +1,5 @@
 class Entity < ActiveRecord::Base
+  include Solipsism
 
   class TotalVotesUpdater < Struct.new(:id)
     def perform
@@ -281,15 +282,6 @@ class Entity < ActiveRecord::Base
   alias_method :upvotes_sum, :sum_upvotes
 
   private
-
-  # Helper methods
-  def self.has_an_attribute?(attr)
-    self.attribute_method? attr.to_sym ||
-    self.reflections.include?(attr.to_sym) ||
-    self.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    self.attribute_names.include?(attr.to_s) ||
-    self.attribute_names.include?(attr.to_s.pluralize)
-  end
 
   def reformat_uniqueness_validation
     if errors[:hash_key]

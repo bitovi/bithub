@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Entity do
+RSpec.describe Entity, :type => :model do
 
   before(:all) do
     import_tags
@@ -17,28 +17,6 @@ describe Entity do
       it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
         generic_entity = FactoryGirl.build(:entity)
         expect{generic_entity.save!}.to raise_error
-      end
-    end
-
-    describe ".has_an_attribute?" do
-      context "symbol given" do
-        it "confirms that the Entity model indeed has an attribute" do
-          expect(Entity.has_an_attribute?(:title)).to be_true
-        end
-
-        it "denies that the Entity model has a non-existent attribute" do
-          expect(Entity.has_an_attribute?(:budalas)).to be_false
-        end
-      end
-
-      context "string given" do
-        it "confirms that the Entity model indeed has an attribute" do
-          expect(Entity.has_an_attribute?("title")).to be_true
-        end
-
-        it "denies that the Entity model has a non-existent attribute" do
-          expect(Entity.has_an_attribute?("titles")).to be_false
-        end
       end
     end
 
@@ -71,7 +49,9 @@ describe Entity do
     end
 
     describe "#cache_key" do
-      before(:each) { @entity = FactoryGirl.create(:determined_entity, title: "Entity in entity_spec, testing #cache_key") }
+      before(:each) do
+        @entity = FactoryGirl.create(:determined_entity, title: "Entity in entity_spec, testing #cache_key")
+      end
 
       it "uses the id, updated_at and thread_updated_ts timestamps when they are present" do
         expect(@entity.reload.cache_key).to eq "entities/#{@entity.id}-#{@entity.updated_at.utc.to_s(:number)}-#{@entity.thread_updated_ts.utc.to_s(:number)}"
