@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Meetup::Rsvp do
+RSpec.describe Wrappers::Meetup::Rsvp, :type => :domain do
 
   let(:raw_rsvp) do
     raw_data(response_path: 'meetup/2_rsvps.json')['results'].first

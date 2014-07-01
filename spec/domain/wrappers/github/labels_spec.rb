@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Github::Labels do
+RSpec.describe Wrappers::Github::Labels, :type => :domain do
 
   let(:raw_labels) do
     raw_data(response_path: 'github/events/issue_comment_event.json')['payload']['issue']['labels']

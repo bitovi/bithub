@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Disqus::Author do
+RSpec.describe Wrappers::Disqus::Author, :type => :domain do
 
   let(:raw_author) do
     raw_data(response_path: 'disqus/comment_list.json')['response'][5]['author']

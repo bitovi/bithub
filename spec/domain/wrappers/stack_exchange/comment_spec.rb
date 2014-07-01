@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Stackexchange::Comment do
+RSpec.describe Wrappers::Stackexchange::Comment, :type => :domain do
 
   let(:raw_comment) do
     raw_data(response_path: 'stackexchange/question.json')['comments'].first

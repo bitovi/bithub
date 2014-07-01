@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Twitter::Entities do
+RSpec.describe Wrappers::Twitter::Entities, :type => :domain do
 
   let(:raw_entities) do
     raw_data(response_path: 'twitter/status_event.json')['entities']
