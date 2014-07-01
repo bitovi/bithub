@@ -1,49 +1,45 @@
-# require 'domain/spec_helper'
+require 'domain/spec_helper'
 
-# describe Accounts::AccountLinker do
+RSpec.describe Accounts::AccountLinker, :type => :domain do
   
-#   describe "#update_blank_oauth_attrs" do
-#     it "should update the user's attrs if they're blank" do
-#       user = create(:user, name: "Nikica Jokic", email: nil)
-#       user.update_blank_oauth_attrs!({name: "Nikica Prdovic", email: "neektza@gmail.com"})
-#       expect(user.reload.email).to eq ("neektza@gmail.com")
-#     end
-#   end
+  describe "#determine_state" do
 
-#   describe "#link_ident!" do
+    before :each do
+      @nikica = FactoryGirl.create(:user, name: 'Nikica', email: 'neektza@gmail.com')
+      @veljko = FactoryGirl.create(:user, name: 'Veljko', email: 'veljko@kset.org')
+    end
 
-#     before :each do
-#       @nikica = create(:user, name: 'Nikica', email: 'neektza@gmail.com')
-#       @veljko = create(:user, name: 'Veljko', email: 'veljko@kset.org')
-#     end
+    context "linking with a new, unclaimed identity" do
+      it "should claim the identity to the existing user" do
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
 
-#     context "when there is already a github identity associated with the user" do
-#       it "should add a new twitter identity to the existing user" do
-#         identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
-#         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
+        al = Accounts::AccountLinker.new(@nikica, identity_twitter)
+        expect(al.determine_state.state).to eq :only_linking
+      end
+    end
 
-#         @nikica.link_ident!(identity_twitter)
-#         expect(@nikica.reload.identities.where({:provider => 'twitter'}).first).to be
-#       end
-#     end
+    context "linking with a claimed identity whose user has no more identities assigned" do
+      it "should claim that identity and merge users into one user" do
+        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
 
-#     context "when there is already a twitter identity associated with the user" do
-#       it "shoul add a new twitter identity to the existing user" do
-#         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
-#         identity_github = create(:identity, uid: 987654321, provider: 'github')
+        al = Accounts::AccountLinker.new(@nikica, identity_twitter)
+        expect(al.determine_state.state).to eq :valid_merge
+      end
+    end
 
-#         @nikica.link_ident!(identity_github)
-#         expect(@nikica.reload.identities.where({:provider => 'github'}).first).to be
-#       end
-#     end
+    context "when there is already another user that owns the identity being merged and has an identity of same provider" do
+      it "should destroy the other user and snatches it's identity" do
+        identity_github_n = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
 
-#     context "when there is already another user that owns the identity being merged" do
-#       it "should destroy the other user and snatches it's identity" do
-#         identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
-#         identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
-#         @nikica.link_ident!(identity_twitter)
-#         expect(User.where(:id => @veljko).first).to be_nil
-#       end
-#     end
-#   end
-# end
+        identity_github_v = create(:identity, uid: 12849234, provider: 'github', user: @veljko)
+        identity_meetup = create(:identity, uid: 456712345, provider: 'meethup', user: @veljko)
+
+        al = Accounts::AccountLinker.new(@nikica, identity_meetup)
+        expect(al.determine_state.state).to eq :invalid_merge
+      end
+    end
+  end
+end
