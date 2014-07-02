@@ -11,7 +11,7 @@ class Api::Auth::AccountSessionsController < Devise::SessionsController
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    '/login'
+    "http://#{request.domain}/login"
   end
 
 end
