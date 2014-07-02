@@ -1,4 +1,4 @@
-describe Users::AvatarCalculator do
+RSpec.describe Users::AvatarCalculator, :type => :domain do
 
   describe "#maybe_source_data" do
     it "should be able to get the avatar url from identity's source data"
