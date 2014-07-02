@@ -64,14 +64,14 @@ describe Streamers::Registrable do
     it "waits the 'registration_timeout' before connecting" do
       s = Streamers::GetMyData.new
       s.register channel
-      expect(s.restarted).to be_false
+      expect(s.restarted).to be_falsey
     end
 
     it "restarts the connection after the specified period" do
       s = Streamers::GetMyData.new
       s.register channel
       sleep 2
-      expect(s.restarted).to be_true
+      expect(s.restarted).to be_truthy
     end
     
   end

@@ -1,4 +1,5 @@
 require 'core_ext'
+require_relative 'decorators/all'
 
 class Poller
   include Celluloid

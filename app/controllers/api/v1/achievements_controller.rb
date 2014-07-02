@@ -8,7 +8,9 @@ class Api::V1::AchievementsController < Api::V1::BaseController
 
   def index
     authorize! :read, Achievement, :message => "No rights to read achievements."
-    @achievements = build_scope(request.env['muster.query']).result.all
+
+    @achievements = build_scope(request.env['muster.query']).all
+    @achievements_count = build_scope(request.env['muster.query']).offset(0).limit(100_000_000).count
     render :index
   end
 
@@ -42,7 +44,7 @@ class Api::V1::AchievementsController < Api::V1::BaseController
       render :json => msg_hash(@achievement, 'update'), :status => 406
     end
   end
-  
+
   def destroy
     authorize! :manage, Reward, :message => "No rights to manage rewards."
     @achievement = Reward.find(params[:id])
@@ -52,7 +54,7 @@ class Api::V1::AchievementsController < Api::V1::BaseController
       render :json => msg_hash(@achievement, 'destroy'), :status => 406
     end
   end
-  
+
   # SCOPE BUILDING
   # --------------
 
@@ -61,11 +63,35 @@ class Api::V1::AchievementsController < Api::V1::BaseController
   end
 
   def scope_applier(current_scope = nil)
-    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer) 
+    @scope_applier ||= ScopeApplier.new(current_scope || Achievement.scoped, logic_analyzer)
   end
 
   def build_scope(muster_query)
     scope = Achievement.scoped
-    scope = scope_applier.apply_muster_query_to_scope(muster_query)
+    scope = profile_completed_or_not(scope)
+    scope_applier(scope)
+      .apply_muster_query_to_scope(muster_query)
+      .apply_negated_attrs_to_scope
+      .apply_existence_attrs_to_scope
+      .apply_regular_params_to_scope
+      .apply_order_to_scope
+      .result
   end
+
+  def profile_completed_or_not(scope)
+    scope = scope.joins(:user).order("users.name ASC").order("shipped_at DESC")
+
+    if params[:profile_completed]
+      scope = scope.where(CompletedProfileString)
+    elsif params[:profile_not_completed]
+      scope = scope.where(NotCompletedProfileString)
+    end
+
+    scope
+  end
+
+  Columns = %w(name email address city postal)
+
+  CompletedProfileString = (Columns.map{|c| "users.#{c} IS NOT NULL" } + Columns.map{|c| "users.#{c} <> ''"} + Columns.map {|c| "users.#{c} <> 'null'"}).join(" AND ")
+  NotCompletedProfileString = (Columns.map{|c| "users.#{c} IS NULL"} + Columns.map{|c| "users.#{c} = ''"}).join(" OR ")
 end

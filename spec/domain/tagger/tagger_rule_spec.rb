@@ -1,6 +1,6 @@
-require_relative 'spec_helper'
+require 'domain/spec_helper'
 
-describe Tagger::Rule do
+RSpec.describe Tagger::Rule, :type => :tagger do
 
   let(:rule) { Tagger::Rule.new({required_tags: {"foo" => 5, "bar" => 10}}) }
   let(:tag_foo) { Tagger::Tag.new({name: "foo"}) }

@@ -1,6 +1,6 @@
 require 'domain/queries/spec_helper'
 
-describe QueryLogic::QueryItem do
+RSpec.describe QueryLogic::QueryItem, :type => :domain do
   let(:model) { double() }
 
   describe "#value" do

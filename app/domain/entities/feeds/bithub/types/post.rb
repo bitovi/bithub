@@ -11,7 +11,6 @@ module Entities
         source_data[:origin_ts] = Time.now.utc unless params[:id]
         source_data[:id]        = params[:id] if params[:id]
 
-          # handle post-as
         if !current_user.has_role?(:admin) || !posting_for_another_user
           source_data[:local_author_id] = current_user.id
         end

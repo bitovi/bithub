@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Facebook::Status do
+RSpec.describe Wrappers::Facebook::Status, :type => :domain do
 
   let(:raw_status) do
     raw_data(response_path: 'facebook/feed.json').first

@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Twitter::User do
+RSpec.describe Wrappers::Twitter::User, :type => :domain do
 
   let(:raw_user) do
     raw_data(response_path: 'twitter/status_event.json')['user']

@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  rolify :role_cname => 'UserRole'
+  extend Solipsism
 
   class AsyncUserUpdater < Struct.new(:id, :method)
     def perform
@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  rolify :role_cname => 'UserRole'
   devise :rememberable, :trackable, :omniauthable
 
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
@@ -33,7 +34,7 @@ class User < ActiveRecord::Base
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
 
-  # before_save :calculate_avatar_url
+  before_save :calculate_avatar_url
   after_save :award_points_for_completing_profile
 
   def actions
@@ -131,11 +132,4 @@ class User < ActiveRecord::Base
     Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :unreward_if_uneligible)
   end
 
-  # Helpers
-  def self.has_an_attribute?(attr)
-    User.reflections.include?(attr) ||
-    User.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    User.attribute_names.include?(attr) ||
-    User.attribute_names.include?(attr.to_s.pluralize.to_sym)
-  end
 end

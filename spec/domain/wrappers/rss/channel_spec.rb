@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Rss::Channel do
+RSpec.describe Wrappers::Rss::Channel, :type => :domain do
 
   let(:raw_channel) do
     raw_data(response_path: 'forum/feed.rss').fetch('rss').fetch('channel')

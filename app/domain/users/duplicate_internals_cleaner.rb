@@ -6,7 +6,7 @@ module Users
     end
 
     def duplicates
-      @user.internals - @user.internals.uniq_by {|i| i.comment}
+      @user.internals - @user.internals.to_a.uniq {|i| i.comment}
     end
 
     def clean

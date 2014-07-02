@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Stackexchange::User do
+RSpec.describe Wrappers::Stackexchange::User, :type => :domain do
 
   let(:raw_user) do
     raw_data(response_path: 'stackexchange/question.json').fetch('owner')
