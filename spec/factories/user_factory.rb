@@ -18,6 +18,8 @@ FactoryGirl.define do
       association :country, factory: :country
     end
 
+    props Hash.new
+
     trait :with_both_idents do
       after :build do |user|
         user.identities << FactoryGirl.build(:identity, user: user, provider: 'github', uid: 123456789)
