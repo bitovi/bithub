@@ -1,6 +1,7 @@
 Bithub::Application.routes.draw do
 
-  get "/api/login_and_oauth", :to => 'api/auth/sign_in_oauth#login_and_redirect_to_oauth'
+  root "kickstart#frontend"
+  get "/admin", :to => "kickstart#admin"
 
   # Devise
 

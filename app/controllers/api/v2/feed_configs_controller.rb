@@ -66,24 +66,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
     end
   end
 
-  # Sometimes the API sends arrays serialized as Javascript objects
-  # in form of { "1": "val1", "2": "val2 }. This method fixes that.
   def fix_params_if_broken(params)
     params.delete(:brand_name)
-
-    fn = params.fetch(:feed_name)
-    params[:config] = {} if params[:config] == ""
-
-    if fn == 'facebook' && params[:config][:pages]
-      params[:config][:pages] = params[:config][:pages].map{|k,v| v}.reject{|el| el.nil?}
-
-    elsif fn == 'meetup' && params[:config][:groups]
-      params[:config][:groups] = params[:config][:groups].map{|k,v| v}.reject{|el| el.nil?}
-
-    elsif fn == 'disqus' && params[:config][:forums]
-      params[:config][:forums] = params[:config][:forums].map{|k,v| v}.reject{|el| el.nil?}
-    end
-
+    params[:config] = {} if params[:config].empty?
     @fixed = true
   end
 end
