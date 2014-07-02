@@ -12,6 +12,8 @@ CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
 require 'rspec/mocks'
 require 'rspec/rails'
 
+ActiveRecord::Migration.maintain_test_schema! if defined?(ActiveRecord::Migration)
+
 # ----------
 # VCR config
 # ----------
@@ -63,6 +65,13 @@ def import_scoring_rules
   end
 end
 
+# ----------------
+# Oauth dummy data
+# ----------------
+
+def oauth_data_hash(provider = 'github', uid = 123456789, email = 'neektza@gmail.com', name = 'Nikica Jokic')
+  Hash["omniauth.auth", Hash["provider", provider, "uid", uid, 'info', Hash["email", email, "name", name]]]
+end
 
 # ----------------
 # Response loading

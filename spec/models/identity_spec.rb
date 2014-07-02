@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-def oauth_data_hash(provider = 'github', uid = 123456789, email = 'neektza@gmail.com', name = 'Nikica Jokic')
-  Hash["omniauth.auth", Hash["provider", provider, "uid", uid, 'info', Hash["email", email, "name", name]]]
-end
-
 RSpec.describe Identity, :type => :model do
   describe "#update_source_data_if_blank" do
     before (:all) { Identity.delete_all }
