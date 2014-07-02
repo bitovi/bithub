@@ -1,6 +1,6 @@
-require_relative 'spec_helper'
+require 'domain/spec_helper'
 
-describe Tagger::List do
+RSpec.describe Tagger::List, :typo => :tagger do
 
   subject(:tagger) do
     tags = [
