@@ -11,7 +11,6 @@ module Entities
         source_data[:origin_ts] = Time.now.utc unless params[:id]
         source_data[:id]        = params[:id] if params[:id]
 
-          # handle post-as
         if !current_user.has_role?(:admin) || !posting_for_another_user
           source_data[:local_author_id] = current_user.id
         end
@@ -51,6 +50,7 @@ module Entities
 
       def determine_author
         # only set user automatically to the current user if this is a new record
+<<<<<<< HEAD
         if @instance.new_record? && !@event.local_author_id.nil?
           @instance.author = User.find(@event.local_author_id)
         else
@@ -63,6 +63,16 @@ module Entities
           else
             @instance.remove_author
           end
+=======
+        if @instance.new_record? && !@payload.local_author_id.nil?
+          @instance.author = User.find(@payload.local_author_id)
+        elsif (ident = Identity.find_or_create_with_provider_and_uid(
+                @instance.props[:origin_author_feed],
+                @instance.props[:origin_author_id]
+              ))
+
+          @instance.author = ident.user if ident.user
+>>>>>>> master
         end
       end
 
