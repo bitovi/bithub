@@ -10,6 +10,7 @@ gem 'rspec-rails'
 gem 'pry'
 gem 'pry-rails'
 
+gem 'amqp'
 gem 'bunny'
 gem 'pg', '~> 0.17.1'
 
@@ -24,14 +25,15 @@ gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
 gem 'acts-as-taggable-on'
 gem 'acts-as-list'
-gem 'daemons'
 gem 'delayed_job'
+gem 'delayed_job_web'
 gem 'delayed_job_active_record'
 gem 'jbuilder', '~> 1.3.0'
 gem 'jpbuilder', '~> 0.2'
 
 gem 'devise', '~> 3.2'
 gem 'rolify', '~> 3.2'
+
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
@@ -51,12 +53,8 @@ gem 'multi_json'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
-gem 'spring', group: [:development, :test]
-gem 'spring-commands-rspec', group: [:development, :test]
-
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
-
 
 # API client libs
 gem 'octokit', '~> 2.0'
@@ -78,6 +76,7 @@ group :test do
   gem 'better_errors'
   gem 'evented-spec'
   gem 'git'
+  gem 'travis', require: false
 end
 
 group :development do
@@ -95,9 +94,8 @@ end
 # --------
 gem 'celluloid'
 gem 'celluloid-io'
-gem 'reel' #, :github => 'celluloid/reel'
+gem 'reel'
 gem 'nokogiri'
 gem 'nori', '~> 2.3.0'
 gem 'vetinari'
-gem 'blather'
 gem 'newrelic_rpm'

@@ -10,6 +10,6 @@ class Reward < ActiveRecord::Base
   #after_create :reward_all_eligible_users
 
   def reward_all_eligible_users
-    RewardEligiblityDecider.new(reward: self).reward_all_eligible_users
+    Users::RewardEligiblityDecider.new(reward: self).reward_all_eligible_users
   end
 end

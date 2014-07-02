@@ -14,6 +14,21 @@ class ScopeApplier
     self
   end
 
+  def apply_existence_attrs_to_scope
+    if (existence_attrs = @query.pluck_and_process_existence_attributes)
+      existence_attrs.each do |na_name|
+        @scope = @scope.where("#{@query.table_name}.#{na_name} IS NOT NULL")
+      end
+    end
+    
+    if (nonexistence_attrs = @query.pluck_and_process_nonexistence_attributes)
+      nonexistence_attrs.each do |na_name|
+        @scope = @scope.where("#{@query.table_name}.#{na_name} IS NULL")
+      end
+    end
+    self
+  end
+
   def apply_negated_attrs_to_scope
     if (negated_attrs = @query.pluck_and_process_negated_attributes)
       negated_attrs.each do |na_name, na_value|

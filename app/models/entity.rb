@@ -1,5 +1,5 @@
 class Entity < ActiveRecord::Base
-  include Solipsism
+  extend Solipsism
 
   class TotalVotesUpdater < Struct.new(:id)
     def perform
@@ -60,13 +60,11 @@ class Entity < ActiveRecord::Base
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
   scope :without_future, lambda { |clientTz|
-    end_of_today = Time.now.in_time_zone(clientTz).change(hour: 23, min: 59, sec: 59)
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
   }
 
   scope :in_future, lambda { |clientTz|
-    start_of_today = Time.now.in_time_zone(clientTz).change(hour: 0, min: 0, sec: 0)
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > ?", clientTz, start_of_today)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > date_trunc('day', now() AT TIME ZONE ?)", clientTz, clientTz)
   }
 
   # Thread belonging

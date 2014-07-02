@@ -3,7 +3,7 @@ Bithub::Application.routes.draw do
   get "/api/login_and_oauth", :to => 'api/auth/sign_in_oauth#login_and_redirect_to_oauth'
 
   # Devise
-  #
+
   devise_for :users,
     path: '/api',
     controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
@@ -22,16 +22,16 @@ Bithub::Application.routes.draw do
 
 
   # Dynamic image resizer
-  #
+
   post '/uploads/*other' => "uploads#index"
 
 
   # SERVICE API Routes
-  #
+
   namespace :api, :defaults => { :format => 'json' } do
 
     # Auth
-    #
+
     namespace :auth do
       get    :session, :to => 'sessions#current'
       get    :logout, :to => 'sessions#destroy', :as => :destroy_user_session
@@ -40,7 +40,7 @@ Bithub::Application.routes.draw do
     end
 
     # API v2
-    #
+
     namespace :v2 do
 
       # Entities
@@ -167,4 +167,5 @@ Bithub::Application.routes.draw do
     end
   end
 
+  get "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 end

@@ -1,4 +1,5 @@
 class Achievement < ActiveRecord::Base
+  extend Solipsism
 
   belongs_to :user
   belongs_to :reward
