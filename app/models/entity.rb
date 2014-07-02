@@ -1,4 +1,5 @@
 class Entity < ActiveRecord::Base
+  extend Solipsism
 
   class TotalVotesUpdater < Struct.new(:id)
     def perform
@@ -59,13 +60,11 @@ class Entity < ActiveRecord::Base
   scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
   scope :without_future, lambda { |clientTz|
-    end_of_today = Time.now.in_time_zone(clientTz).change(hour: 23, min: 59, sec: 59)
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < ?", clientTz, end_of_today)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
   }
 
   scope :in_future, lambda { |clientTz|
-    start_of_today = Time.now.in_time_zone(clientTz).change(hour: 0, min: 0, sec: 0)
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > ?", clientTz, start_of_today)
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > date_trunc('day', now() AT TIME ZONE ?)", clientTz, clientTz)
   }
 
   # Thread belonging
@@ -281,15 +280,6 @@ class Entity < ActiveRecord::Base
   alias_method :upvotes_sum, :sum_upvotes
 
   private
-
-  # Helper methods
-  def self.has_an_attribute?(attr)
-    self.attribute_method? attr.to_sym ||
-    self.reflections.include?(attr.to_sym) ||
-    self.reflections.include?(attr.to_s.pluralize.to_sym) ||
-    self.attribute_names.include?(attr.to_s) ||
-    self.attribute_names.include?(attr.to_s.pluralize)
-  end
 
   def reformat_uniqueness_validation
     if errors[:hash_key]

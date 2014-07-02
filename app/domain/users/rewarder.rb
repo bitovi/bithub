@@ -34,7 +34,7 @@ module Users
     end
     
     def eligible_users
-      Users.where("total_score >= ?", @reward.point_minimum).all
+      User.where("total_score >= ?", @reward.point_minimum).all
     end
     
     private

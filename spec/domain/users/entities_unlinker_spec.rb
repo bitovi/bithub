@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Users::EntitiesUnlinker do
+RSpec.describe Users::EntitiesUnlinker, :type => :domain do
 
   before do
     @user = FactoryGirl.create(:user)

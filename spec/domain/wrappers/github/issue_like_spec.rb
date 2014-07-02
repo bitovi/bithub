@@ -9,7 +9,7 @@ class IssueLikeClass
   end
 end
 
-describe Wrappers::Github::IssueLike do
+RSpec.describe Wrappers::Github::IssueLike, :type => :domain do
 
   let(:raw_issue) do
     raw_data(response_path: 'github/events/issues_event.json')['payload']['issue']
