@@ -18,7 +18,7 @@ class FeedConfigTagPlucker
   end
 
   def tags_from_github
-    taggify config.fetch('orgs') + config.fetch('repos')
+    taggify (config.fetch('orgs') || []) + (config.fetch('repos') || [])
       .map{|repo_name| repo_name.gsub(/.+\//, '')}
   end
 
@@ -48,7 +48,7 @@ class FeedConfigTagPlucker
   
   private
   def taggify(tags)
-    tags.map {|t| t.snake_case}
+    tags.map {|t| t.snake_case} unless tags.nil?
   end
 
   def config

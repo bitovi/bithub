@@ -67,6 +67,7 @@ gem 'rMeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
 gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
+gem 'reel', '~> 0.5.0'
 
 
 group :test do
@@ -92,7 +93,7 @@ end
 # --------
 # services
 # --------
-gem 'celluloid'
+gem 'celluloid', '~> 0.15.0'
 gem 'celluloid-io'
 gem 'nokogiri'
 gem 'nori', '~> 2.3.0'
