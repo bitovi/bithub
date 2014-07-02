@@ -94,7 +94,6 @@ end
 # --------
 gem 'celluloid'
 gem 'celluloid-io'
-gem 'reel'
 gem 'nokogiri'
 gem 'nori', '~> 2.3.0'
 gem 'vetinari'
