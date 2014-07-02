@@ -9,6 +9,8 @@ class Entity < ActiveRecord::Base
       end
     end
   end
+  
+  store_accessor :props
 
   acts_as_taggable
   mount_uploader :image, EventImageUploader

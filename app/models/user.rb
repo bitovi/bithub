@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  store_accessor :props
+
   rolify :role_cname => 'UserRole'
   devise :rememberable, :trackable, :omniauthable
 

@@ -5,8 +5,8 @@ RSpec.describe User, :type => :model do
 
     before :each do
       @rule = FactoryGirl.create(:scoring_rule, authorship_value: 30, award_value: 10, upvote_value: 5)
-      @author = FactoryGirl.create(:user, name: "Nikica")
-      @actor = FactoryGirl.create(:user, name: "Veljko")
+      @author = FactoryGirl.create(:user, name: "Nikica", props: {})
+      @actor = FactoryGirl.create(:user, name: "Veljko", props: {})
     end
 
     after :all do
