@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Users::Snatcher do
+RSpec.describe Users::Snatcher, :type => :domain do
 
   before do
     @veljko = create(:user, name: 'Veljko')

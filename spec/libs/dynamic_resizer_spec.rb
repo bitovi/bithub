@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe DynamicResizer do
+RSpec.describe DynamicResizer, :type => :libs do
   
   let(:origin_filename) { "foo_bar.jpg" }
   let(:width) { 400 }
@@ -30,12 +30,12 @@ describe DynamicResizer do
   describe "#is_geometry_valid?" do
     it "validate width and height to be greater than 0" do
       expect(image.send(:is_geometry_valid?, 400,300)).to be
-      expect(image.send(:is_geometry_valid?, -400,300)).to be_false      
-      expect(image.send(:is_geometry_valid?, 0,0)).to be_false      
+      expect(image.send(:is_geometry_valid?, -400,300)).to be_falsey
+      expect(image.send(:is_geometry_valid?, 0,0)).to be_falsey
     end
     it "validate width and height to be less smaller than limit" do
       expect(image.send(:is_geometry_valid?, 400,300)).to be
-      expect(image.send(:is_geometry_valid?, width_limit+1, height_limit)).to be_false      
+      expect(image.send(:is_geometry_valid?, width_limit+1, height_limit)).to be_falsey
     end
   end
 

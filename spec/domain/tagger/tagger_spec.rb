@@ -1,6 +1,7 @@
-require_relative 'spec_helper'
+require 'domain/spec_helper'
+require 'yaml'
 
-describe Tagger do
+RSpec.describe Tagger, :type => :tagger do
 
   describe "#textualize" do
     it "untouches input string" do
