@@ -1,6 +1,6 @@
 require 'domain/spec_helper'
 
-describe Activities::Awarder do
+RSpec.describe Activities::Awarder, :type => :domain do
 
   let(:actor) { FactoryGirl.create(:user) }
   let(:entity) { FactoryGirl.create(:determined_entity) }

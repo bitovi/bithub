@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Github::Issue do
+RSpec.describe Wrappers::Github::Issue, :type => :domain do
 
   let(:raw_repo) do
     raw_data(response_path: 'github/events/issue_comment_event.json')['repo']

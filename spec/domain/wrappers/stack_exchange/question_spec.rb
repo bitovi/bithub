@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Stackexchange::Question do
+RSpec.describe Wrappers::Stackexchange::Question, :type => :domain do
 
   let(:raw_question) do
     raw_data(response_path: 'stackexchange/question.json')

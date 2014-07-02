@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Stackexchange::Answer do
+RSpec.describe Wrappers::Stackexchange::Answer, :type => :domain do
 
   let(:raw_answer) do
     raw_data(response_path: 'stackexchange/question.json')['answers'].first

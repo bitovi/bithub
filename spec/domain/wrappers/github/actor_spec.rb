@@ -1,6 +1,6 @@
 require 'domain/wrappers/spec_helper'
 
-describe Wrappers::Github::User do
+RSpec.describe Wrappers::Github::User, :type => :domain do
 
   let(:raw_user) do
     raw_data(response_path: 'github/events/create_event.json')['actor']
