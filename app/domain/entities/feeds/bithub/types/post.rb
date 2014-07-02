@@ -50,7 +50,6 @@ module Entities
 
       def determine_author
         # only set user automatically to the current user if this is a new record
-<<<<<<< HEAD
         if @instance.new_record? && !@event.local_author_id.nil?
           @instance.author = User.find(@event.local_author_id)
         else
@@ -63,16 +62,6 @@ module Entities
           else
             @instance.remove_author
           end
-=======
-        if @instance.new_record? && !@payload.local_author_id.nil?
-          @instance.author = User.find(@payload.local_author_id)
-        elsif (ident = Identity.find_or_create_with_provider_and_uid(
-                @instance.props[:origin_author_feed],
-                @instance.props[:origin_author_id]
-              ))
-
-          @instance.author = ident.user if ident.user
->>>>>>> master
         end
       end
 
