@@ -1,16 +1,16 @@
 require 'domain/spec_helper'
 
-describe Users::PointAwarder do
+RSpec.describe Users::PointAwarder, :type => :domain do
 
   describe "#completed_profile?" do
     it "responds with false if all profile fields have not been filled" do
       user = FactoryGirl.build(:user)
-      expect(Users::PointAwarder.new(user).completed_profile?).to be_false
+      expect(Users::PointAwarder.new(user).completed_profile?).to be_falsey
     end
 
     it "responds with true if all profile fields have been filled" do
       user = FactoryGirl.build(:user, :with_completed_profile)
-      expect(Users::PointAwarder.new(user).completed_profile?).to be_true
+      expect(Users::PointAwarder.new(user).completed_profile?).to be_truthy
     end
   end
   
