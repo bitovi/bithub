@@ -1,5 +1,10 @@
 class Api::V2::FeedConfigsController < Api::V2::BaseController
   before_filter :authenticate!
+
+  # CanCan vs Rails4 bug, see:
+  # https://github.com/ryanb/cancan/issues/835#issuecomment-21321676
+  before_filter :load_config, only: :create
+
   load_and_authorize_resource
 
   def index
@@ -13,7 +18,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def create
-    @config = FeedConfig.new(actual_params)
+    #@config = FeedConfig.new actual_params
     @config.brand = current_account.brand
     FeedConfigTagPlucker.new(actual_params).create_tags
 
@@ -25,8 +30,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
+    @config = current_account.brand.feed_configs.find_by_id params[:id]
     FeedConfigTagPlucker.new(actual_params).create_tags
+
     if @config && @config.update_attributes(actual_params)
       render :show
     else
@@ -36,6 +42,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
   def destroy
     @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
+
     if @config.destroy
       render :json => msg_hash(@config, 'destroy', 'success')
     else
@@ -55,20 +62,18 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   private
 
   def actual_params
-    @actual ||= params.require(:feed_config).permit!
-    fix_params_if_broken(@actual) unless @fixed
+    @actual ||= params.require(:feed_config).permit! #permit(:feed_name, :brand_name, :config)
+    fix_params_if_broken unless @fixed
     @actual
   end
 
-  def check_token
-    if (params[:token] != 'dedamrazcetidonjetdarove') || (request.remote_ip != '127.0.0.1')
-      render :text => 'not authorized', :status => 406
-    end
+  def fix_params_if_broken
+    @actual.delete(:brand_name)
+    @actual[:config] = {} if @actual[:config].blank?
+    @fixed = true
   end
 
-  def fix_params_if_broken(params)
-    params.delete(:brand_name)
-    params[:config] = {} if params[:config].empty?
-    @fixed = true
+  def load_config
+    @config = FeedConfig.new actual_params
   end
 end

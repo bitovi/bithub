@@ -31,22 +31,23 @@ class FeedConfigTagPlucker
   end
 
   def tags_from_rss
-    taggify config['urls'].map {|url| url.main_domain}
+    taggify (config.fetch('sites') || []).map {|site| site['name']}
   end
 
   def tags_from_disqus
     taggify config['forums'].map {|f| f['id']}
   end
-  
+
   def tags_from_twitter
     taggify config['terms']
   end
-  
+
   def tags_from_stackexchange
     taggify config['tags']
   end
-  
+
   private
+
   def taggify(tags)
     tags.map {|t| t.snake_case} unless tags.nil?
   end
