@@ -6,7 +6,7 @@ class CreateRewards < ActiveRecord::Migration
       t.integer  :point_minimum
       t.string   :image
       t.datetime :disabled_ts
-      t.hstore   :props
+      t.hstore   :props, default: ''
 
       t.timestamps
     end
