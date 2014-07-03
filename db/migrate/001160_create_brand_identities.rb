@@ -3,7 +3,7 @@ class CreateBrandIdentities < ActiveRecord::Migration
     create_table :brand_identities do |t|
       t.string :provider
       t.string :uid
-      t.json :source_data, default: ''
+      t.json :source_data, default: '{}'
 
       t.references :brand
       t.timestamps

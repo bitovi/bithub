@@ -2,7 +2,7 @@ class CreateIdentities < ActiveRecord::Migration
   def up
     create_table :identities do |t|
       t.string :provider
-      t.json :source_data, default: ''
+      t.json :source_data, default: '{}'
       t.references :user
     end
 
