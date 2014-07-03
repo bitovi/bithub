@@ -9,6 +9,7 @@ module Streamers
       def initialize(opts, &block)
         @block = block
 
+
         @auth = opts.fetch(:auth)
         @topics = opts.fetch(:topics)
 
@@ -18,10 +19,8 @@ module Streamers
         }) do |config|
           config.consumer_key        = @auth.fetch(:api_key)
           config.consumer_secret     = @auth.fetch(:api_secret)
-          config.access_token        = '55592490-BY9N7LVYvPvEXd1K4oIGwQtlALzt2Yohl6soLfyOf'
-          config.access_token_secret = '9pc9YaI4UPJ7kSuvayKWC1QtSTfiiNoEX17lnAraKLtUK'
-          # config.access_token        = @auth.fetch(:access_token)
-          # config.access_token_secret = @auth.fetch(:access_token_secret)
+          config.access_token        = '55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw'
+          config.access_token_secret = 'XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE'
         end
 
         async.connect
