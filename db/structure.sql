@@ -97,7 +97,7 @@ ALTER SEQUENCE account_roles_id_seq OWNED BY account_roles.id;
 CREATE TABLE accounts (
     id integer NOT NULL,
     name character varying(255),
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     brand_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
@@ -248,7 +248,7 @@ CREATE TABLE brand_identities (
     id integer NOT NULL,
     provider character varying(255),
     uid character varying(255),
-    source_data json,
+    source_data json DEFAULT '{}'::json,
     brand_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -283,7 +283,7 @@ CREATE TABLE brands (
     name character varying(255),
     description character varying(255),
     keywords character varying(255)[] DEFAULT '{}'::character varying[],
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -437,7 +437,7 @@ CREATE TABLE entities (
     image character varying(255),
     cached_tag_list character varying(255),
     total_upvotes integer,
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -487,7 +487,7 @@ CREATE TABLE tags (
     name character varying(255) NOT NULL,
     display_name character varying(255),
     aliases character varying(255)[] DEFAULT '{}'::character varying[],
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     taggings_count integer DEFAULT 0
 );
 
@@ -573,7 +573,7 @@ CREATE TABLE events (
     feed_name character varying(255),
     source_data text,
     content_digest character varying(255),
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     entity_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -639,7 +639,7 @@ ALTER SEQUENCE feed_configs_id_seq OWNED BY feed_configs.id;
 CREATE TABLE identities (
     id integer NOT NULL,
     provider character varying(255),
-    source_data text,
+    source_data json DEFAULT '{}'::json,
     user_id integer,
     uid bigint
 );
@@ -727,7 +727,7 @@ CREATE TABLE users (
     city character varying(255),
     postal character varying(255),
     state character varying(255),
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     total_score integer DEFAULT 0,
     country_id integer,
     created_at timestamp without time zone,
@@ -834,7 +834,7 @@ CREATE TABLE rewards (
     point_minimum integer,
     image character varying(255),
     disabled_ts timestamp without time zone,
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -879,7 +879,7 @@ CREATE TABLE scoring_rules (
     authorship_value integer DEFAULT 0,
     award_value integer DEFAULT 0,
     upvote_value integer DEFAULT 0,
-    props hstore,
+    props hstore DEFAULT ''::hstore,
     "position" integer,
     valid_until timestamp without time zone,
     created_at timestamp without time zone,
