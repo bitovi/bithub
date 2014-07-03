@@ -2,7 +2,7 @@ class CreateScoringRules < ActiveRecord::Migration
   def change
     create_table :scoring_rules do |t|
       t.string  :name
-      t.hstore  :required_tags
+      t.hstore  :required_tags, default: ''
 
       t.integer :authorship_value, :default => 0
       t.integer :award_value, :default => 0

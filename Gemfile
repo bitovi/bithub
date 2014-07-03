@@ -45,7 +45,7 @@ gem 'omniauth-foursquare'
 
 gem 'redcarpet'
 
-gem 'foreman'
+gem 'foreman', '~> 0.63.0'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
