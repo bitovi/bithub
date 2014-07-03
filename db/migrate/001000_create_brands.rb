@@ -4,7 +4,7 @@ class CreateBrands < ActiveRecord::Migration
       t.string :name
       t.string :description
       t.string :keywords, array: true, default: []
-      t.hstore :props
+      t.hstore :props, default: ''
 
       t.timestamps
     end
