@@ -43,37 +43,6 @@ GIT
       json (~> 1.8)
 
 GIT
-  remote: git://github.com/peter-murach/github.git
-  revision: a87008bc852a57f0c36bb9de54e183708e4e6320
-  branch: master
-  specs:
-    github_api (0.11.3)
-      addressable (~> 2.3)
-      descendants_tracker (~> 0.0.1)
-      faraday (~> 0.8, < 0.10)
-      hashie (>= 1.2)
-      multi_json (>= 1.7.5, < 2.0)
-      nokogiri (~> 1.6.0)
-      oauth2
-
-GIT
-  remote: git://github.com/sferik/twitter.git
-  revision: 7e30640e0715a1df13e50187ab1076e904be5f58
-  branch: master
-  specs:
-    twitter (5.11.0)
-      addressable (~> 2.3)
-      buftok (~> 0.2.0)
-      equalizer (~> 0.0.9)
-      faraday (~> 0.9.0)
-      http (~> 0.6.0)
-      http_parser.rb (~> 0.6.0)
-      json (~> 1.8)
-      memoizable (~> 0.4.0)
-      naught (~> 1.0)
-      simple_oauth (~> 0.2.0)
-
-GIT
   remote: git://github.com/vdragsic/apartment.git
   revision: 2757c99c4beea10b2341226ad4f94f88c84c8c02
   branch: development
@@ -226,6 +195,14 @@ GEM
       net-http-persistent (>= 2.7)
       net-http-pipeline
     git (1.2.7)
+    github_api (0.11.3)
+      addressable (~> 2.3)
+      descendants_tracker (~> 0.0.1)
+      faraday (~> 0.8, < 0.10)
+      hashie (>= 1.2)
+      multi_json (>= 1.7.5, < 2.0)
+      nokogiri (~> 1.6.0)
+      oauth2
     hashie (2.1.2)
     highline (1.6.21)
     hike (1.2.3)
@@ -449,6 +426,17 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    twitter (5.11.0)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      equalizer (~> 0.0.9)
+      faraday (~> 0.9.0)
+      http (~> 0.6.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.2.0)
     twitter-text (1.9.0)
       unf (~> 0.1.0)
     typhoeus (0.6.9)
@@ -505,7 +493,7 @@ DEPENDENCIES
   foreman (~> 0.63.0)
   foursquare2!
   git
-  github_api!
+  github_api
   htmlentities
   httparty
   jbuilder (~> 1.3.0)
@@ -545,7 +533,7 @@ DEPENDENCIES
   ruby_gntp
   sanitize
   travis
-  twitter!
+  twitter
   twitter-text
   unicorn
   vetinari
