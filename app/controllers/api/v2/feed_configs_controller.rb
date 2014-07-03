@@ -5,7 +5,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   # https://github.com/ryanb/cancan/issues/835#issuecomment-21321676
   before_filter :load_config, only: :create
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:tree]
 
   def index
     @configs = current_account.brand.feed_configs.all
@@ -51,6 +51,9 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def tree
+    # used by crawler!
+    authorize! :read, FeedConfig if request.ip != '127.0.0.1'
+
     @tree = Hash[Brand.all.map do |b|
       fcs = FeedConfigDecorator.decorate_collection(b.feed_configs)
       [b.name, Hash[fcs.map {|fc| [fc.feed_name, fc.config]}]]

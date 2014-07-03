@@ -5,7 +5,7 @@ class CreateEvents < ActiveRecord::Migration
       t.string :feed_name, :null => true
       t.text   :source_data
       t.string :content_digest, :unique => true
-      t.hstore :props
+      t.hstore :props, default: ''
 
       ### one event can produce many 'parent' entities?!
       t.references :entity
