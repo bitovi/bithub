@@ -22,7 +22,7 @@ class CreateEntities < ActiveRecord::Migration
       t.string :cached_tag_list
       t.integer :total_upvotes
 
-      t.hstore :props
+      t.hstore :props, default: ''
       t.timestamps
     end
 

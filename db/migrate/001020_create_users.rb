@@ -8,8 +8,8 @@ class CreateUsers < ActiveRecord::Migration
       t.string  :city
       t.string  :postal
       t.string  :state
-      t.hstore  :props
-      t.integer :total_score, :default => 0
+      t.hstore  :props, default: ''
+      t.integer :total_score, default: 0
 
       t.references :country
 
