@@ -33,7 +33,8 @@ class EntityRelations
     children_ids = children.map {|c| c.id}
 
     if @awards_for.nil?
-      @awards_for = Award.where(applies_to_id: [@ids, children_ids].compact)
+      ids = (@ids || []) + (children_ids || [])
+      @awards_for = Award.where(applies_to_id: ids)
     end
 
     @awards_for.all || []
