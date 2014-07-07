@@ -12,7 +12,13 @@ module Entities
     def adopt
       if self.respond_to? :find_children
         if (c = find_children)
-          @instance.children += c.is_a?(Array) ? c : [c]
+          @instance.children += if c.is_a?(Array)
+                                  c
+                                elsif c.is_a?(ActiveRecord::Rellation)
+                                  c.where(true)
+                                else
+                                  [c]
+                                end
         end
       end
 
