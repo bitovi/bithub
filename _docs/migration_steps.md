@@ -38,9 +38,14 @@ Migrate some tables manually because of changes in db model:
 
 Dump data and restore into tenant/bithub schema:
 
-1. `pg_dump -a -x -O -n public -t tags -t events -t entities -t upvotes -t ownerships -t awards -t internals -t taggings -t roles -t user_roles -t countries -t achievements bithub2 > tenant.sql`
+1. `pg_dump -a -x -O -n public -t tags -t events -t entities -t upvotes -t ownerships -t awards -t internals -t taggings -t user_roles -t countries -t achievements bithub2 > tenant.sql`
 3. Update search_path to tenant name!!!
-4. `psql bithub < tenant.sql`
+4. (change events.source_data type to text)
+5. `psql bithub < tenant.sql`
+
+Alter events.source_data back to json type
+
+1. `ALTER TABLE bitovi.events ALTER COLUMN source_data TYPE JSON USING source_data::JSON;`
 
 Update imported tags
 
