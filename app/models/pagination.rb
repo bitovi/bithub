@@ -42,7 +42,18 @@ class Pagination < ActiveRecord::Base
   private
 
   def self.from_hstore str
-    ActiveRecord::Coders::Hstore.load(str)
+    HstoreDeserializer.new(str).parse
+  end
+
+  class HstoreDeserializer
+    include ActiveRecord::ConnectionAdapters::PostgreSQLColumn::Cast
+    def initialize(str)
+      @str = str
+    end
+
+    def parse
+      string_to_hstore(@str)
+    end
   end
   
 end
