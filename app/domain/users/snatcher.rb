@@ -26,7 +26,6 @@ module Users
 
     def snatch_actions
       @other_user.awards_as_actor.update_all(:actor_id => @current_user)
-      @other_user.anteups_as_actor.update_all(:actor_id => @current_user)
       @other_user.upvotes_as_actor.update_all(:actor_id => @current_user)
       @other_user.internals_as_actor.update_all(:actor_id => @current_user)
     end
