@@ -16,7 +16,9 @@ module FeedSupervisors
         @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens), @user_id), {interval: 21600}])
       end
 
-      Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
+      if Celluloid::Actor[:twitter_public_stream]
+        Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
+      end
     end
 
     def reload
