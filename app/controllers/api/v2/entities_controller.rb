@@ -30,8 +30,8 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def show
-    @entity = EntityDecorator.decorate(Entity.find(params[:id]))
-    @ev_relations = EntityRelations.new(@entity.id)
+    @entity = EntityDecorator.decorate Entity.find params[:id]
+    @ev_relations = EntityRelations.new @entity.id
     render :show
   end
 
