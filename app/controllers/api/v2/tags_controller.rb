@@ -1,5 +1,4 @@
 class Api::V2::TagsController < Api::V2::BaseController
-<<<<<<< HEAD
   before_filter :authenticate!
   load_and_authorize_resource
 

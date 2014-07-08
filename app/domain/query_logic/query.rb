@@ -13,7 +13,7 @@ module QueryLogic
 
     def initialize(model, params)
       @model = model
-      @qis = params.map do |kv| 
+      @qis = params.map do |kv|
         key, value = kv
         if value.is_a? Array
           value.map{|v| QueryItem.new(@model, [key, v]) }
@@ -33,7 +33,7 @@ module QueryLogic
     end
 
     # --- Filters ---
-    
+
     def existences
       after(@qis.select{|qi| qi.existence?}) do
         @qis.reject!{|qi| qi.existence?}
@@ -71,11 +71,11 @@ module QueryLogic
     end
 
     # --- API ---
-    
+
     def pluck_and_process_existence_attributes
       existences.collect{|qi| qi.name}
     end
-    
+
     def pluck_and_process_nonexistence_attributes
       nonexistences.collect{|qi| qi.name}
     end
