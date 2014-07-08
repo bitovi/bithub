@@ -58,6 +58,13 @@ Bithub::Application.routes.draw do
         delete :award, :to => 'event_activities#destory_award'
       end
 
+      # Tags
+      resources :tags, :except => [:new, :edit] do
+        collection do
+          get :tree, :to => 'tags#tree'
+        end
+      end
+
       # Users
       resources :users, :except => [:new, :edit] do
         get 'activities', :to => 'user_activities#index'
@@ -108,6 +115,9 @@ Bithub::Application.routes.draw do
 
       # Category determination rules
       #resources :category_determination_rules
+
+      # Funnelsj
+      resources :funnels
 
       # Feed config
       resources :feed_configs do

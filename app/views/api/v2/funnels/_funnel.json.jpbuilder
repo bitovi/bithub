@@ -1,0 +1,10 @@
+json.(funnel, :id, :name, :display_name)
+
+json.constraints do
+	json.array! funnel.constraints do |c|
+		json.feed_name c.feed_name
+		json.type_name c.type_name
+	end
+end
+
+json.tags funnel.tags

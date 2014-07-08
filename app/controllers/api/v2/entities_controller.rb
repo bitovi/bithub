@@ -9,8 +9,8 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   helper_method :custom_cache_key
   helper_method :list_cache_key
 
-  # DEFAULT_CATEGORIES_TO_SUMMARIZE = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
-  POSSIBLE_ISSUE_STATES = ['open', 'closed']
+  CategoriesToSummarize = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
+  PossibleIssueStates = ['open', 'closed']
 
   def index
     set_params
@@ -48,14 +48,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     render :json => { error: t('api.entities.destroy.success') }
   end
 
-  # Do we need this? --> used only on canjs.com
-  #
-  # def summary
-  #   cats_to_sum = params[:categories] || DEFAULT_CATEGORIES_TO_SUMMARIZE
-  #   @summary = Hash[cats_to_sum.map{|cat| [cat, date_filtered_summary(cat, params)]}]
-  #   render :summary
-  # end
-
   def pagination
     authorize! :read_pagination, Pagination
 
@@ -87,10 +79,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
       @entity = EntityDecorator.decorate(entity)
       @ev_relations = EntityRelations.new(@entity.id)
 
-      # if author = @event.author
-      #   Upvote.create_based_on_rule(User.find(author.id), @event) if author.id.is_a? Integer
-      # end
-
       render :show
     else
       render :json => {
@@ -102,39 +90,36 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
   def build_scope(muster_query, params)
     scope = Entity.scoped_with_includes
+
     scope = scope.no_children if !counting?
     scope = scope.no_feed('irc').no_category('digest') if on_greatest?
-    scope = scope.with_state(params[:state]) if POSSIBLE_ISSUE_STATES.include?(params[:state])
+    scope = scope.with_state(params[:state]) if PossibleIssueStates.include?(params[:state])
 
-    scope = scope.no_type(params[:no_feed]) if params[:no_feed].present?
-    scope = scope.no_type(params[:no_type]) if params[:no_type].present?
-    scope = scope.no_type(params[:no_category]) if params[:no_category].present?
+    scope = scope.without_future(params[:clientTz] || 'UTC') if params[:without_future].present?
+    scope = scope.in_future(params[:clientTz] || 'UTC') if params[:in_future].present?
 
-    if params[:without_future].present?
-      scope = scope.without_future(params[:clientTz] || 'UTC')
-    end
+    scope = scope.with_author(params[:author_id]) if params[:author_id].present?
+    scope = scope.with_author(params[:host_id]) if params[:host_id].present?
 
-    if params[:in_future].present?
-      scope = scope.in_future(params[:clientTz] || 'UTC')
-    end
-
-    if params[:author_id].present?
-      scope = scope.joins(:ownerships)
-           .where("ownerships.ownership_type = 'author' AND ownerships.owner_id = ?", params[:author_id])
-    end
-
-    if params[:host_id].present?
-      scope = scope.joins(:ownerships)
-           .where("ownerships.ownership_type = 'host' AND ownerships.owner_id = ?", params[:host_id])
-    end
-
-    scope_applier(params, scope)
+    scope = scope_applier(scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
     .apply_order_to_scope
     .result
+
+    (params[:funnel_id].present? || params[:funnel_name].present?) ? funnelize(scope) : scope
+  end
+
+  def funnelize(scope)
+    find_by = params[:funnel_id] || params[:funnel_name]
+    fg = FunnelGroup.find_by_id(find_by)
+
+    scope.from_funnel_group fg
+    scopes = fg.funnels.map {|f| scope.from_funnel f}
+
+    Entity.union_scope *scopes
   end
 
   def query_logic(params)

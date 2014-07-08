@@ -2,16 +2,17 @@
 # Groups
 # ----------
 
-categories: {}
+funnels: {}
 feeds: {}
+types: {}
+feed_specifics: {}
 keywords: {}
-categories: {}
 
-# default category
+# default funnel
 
-uncategorized:
-  group_list: "categories"
-  display_name: "Uncategorized"
+# uncategorized:
+#   group_list: "funnels"
+#   display_name: "Uncategorized"
 
 # --------
 # Feeds
@@ -31,10 +32,6 @@ forum:
 
 irc:
   display_name: "IRC"
-  group_list: "feeds"
-
-blog:
-  display_name: "Blog"
   group_list: "feeds"
 
 disqus:
@@ -77,33 +74,88 @@ rss:
 
 ### Twitter
 
-tweet: {}
-follow: {}
+tweet:
+  display_name: "Tweet"
+  group_list: "types,twitter"
+
+follow:
+  display_name: "Follow"
+  group_list: "types,twitter"
 
 ### Github
 
-push: {}
-commit: {}
-fork: {}
-pull_request: {}
-create: {}
-issue: {}
-issue_comment: {}
-issue_action: {}
-commit_comment: {}
-watch: {}
-gollum_event: {}
-pull_request_review_comment: {}
-public: {}
+push:
+  display_name: "Push"
+  group_list: "types,github"
+
+commit:
+  display_name: "Commit"
+  group_list: "types,github"
+
+fork:
+  display_name: "Fork"
+  group_list: "types,github"
+
+pull_request:
+  display_name: "Pull request"
+  group_list: "types,github"
+
+create:
+  display_name: "Create"
+  group_list: "types,github"
+
+issue:
+  display_name: "Issue"
+  group_list: "types,github"
+
+issue_comment:
+  display_name: "Issue comment"
+  group_list: "types,github"
+
+issue_action:
+  display_name: "Issue action"
+  group_list: "types,github"
+
+commit_comment:
+  display_name: "Commit comment"
+  group_list: "types,github"
+
+watch:
+  display_name: "Watch"
+  group_list: "types,github"
+
+gollum:
+  display_name: "Gollum"
+  group_list: "types,github"
+
+pull_request_review_comment:
+  display_name: "Pull request review comment"
+  group_list: "types,github"
+
+public:
+  display_name: "Public"
+  group_list: "types,github"
+
+create:
+  display_name: "Create"
+  group_list: "types,github"
 
 # issues states
 
-open: {}
-closed: {}
+open:
+  display_name: "Open"
+  group_list: "github,issue,feed_specifics"
 
-### Forum
+closed:
+  display_name: "Closed"
+  group_list: "github,issue,feed_specifics"
 
-post: {}
+### RSS
+
+post:
+  display_name: "Post"
+  group_list: "types,rss"
+
 
 ### Bithub
 
@@ -114,29 +166,60 @@ plugin: {}
 
 ### Meetup
 
-rsvp: {}
 confirmed: {}
 waitlist: {}
+rsvp:
+  display_name: "RVSP"
+  group_list: "types,meetup"
 
 ### StackExchange
 
-question: {}
-answer: {}
-comment: {}
+question:
+  display_name: "Question"
+  group_list: "types,stackexchange"
+
+answer:
+  display_name: "Answer"
+  group_list: "types,stackexchange"
+
+comment:
+  display_name: "Comment"
+  group_list: "types,stackexchange,facebook"
 
 ### Facebook
 
-status: {}
-like: {}
-comment: {}
-checkin: {}
+status:
+  display_name: "Status"
+  group_list: "types,facebook"
+
+like:
+  display_name: "Like"
+  group_list: "types,facebook,foursquare"
+
+# comment:
+#   display_name: "Comment"
+#   group_list: "types,facebook"
+
+# checkin:
+#   display_name: "Checkin"
+#   group_list: "types,facebook"
 
 ### FourSquare
 
-checkin: {}
-tip: {}
-like: {}
+checkin:
+  display_name: "Checkin"
+  group_list: "types,foursquare,facebook"
+
+tip:
+  display_name: "Tip"
+  group_list: "types,foursquare"
+
+# like:
+#   display_name: "Like"
+#   group_list: "types,foursquare"
 
 ### IRC
 
-message: {}
+message:
+  display_name: "Message"
+  group_list: "types,irc"
