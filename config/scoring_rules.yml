@@ -22,13 +22,13 @@
 ### Github
 
 -
-  name: 'Making a push'
+  name: 'Pushing to a repo'
   required_tags:
     - github
     - push
 
 -
-  name: 'Commiting'
+  name: 'Commiting to a repo'
   required_tags:
     - github
     - commit
@@ -46,7 +46,7 @@
     - pull_request
 
 -
-  name: 'Create event'
+  name: 'Creating a repo'
   required_tags:
     - github
     - create
@@ -58,14 +58,14 @@
     - issue
 
 -
-  name: 'Raising an bug issue'
+  name: 'Raising a bug issue'
   required_tags:
     - github
     - issue
     - bug
 
 -
-  name: 'Raising an feature issue'
+  name: 'Raising a feature issue'
   required_tags:
     - github
     - issue
@@ -81,13 +81,15 @@
 ### merging pull request ?
 
 -
-  name: 'Commeting an issue'
+  name: 'Commenting on an issue'
   required_tags:
     - github
     - issue_comment
+    - feature # prevent matching feature issue
+    - bug # prevent matching bug issue
 
 -
-  name: 'Commeting a commit'
+  name: 'Commenting on a commit'
   required_tags:
     - github
     - commit_comment
@@ -98,14 +100,14 @@
     - github
     - watch
 
--
-  name: 'Github pull request review comment'
-  required_tags:
-    - github
-    - push
+# -
+#   name: 'Github pull request review comment'
+#   required_tags:
+#     - github
+#     - push
 
 -
-  name: 'Github public'
+  name: 'Open sourcing a repo'
   required_tags:
     - github
     - public
@@ -115,17 +117,17 @@
 ### Meetup
 
 -
-  name: 'RSVP'
+  name: 'RSVPing'
   required_tags:
     - meetup
     - rsvp
 
-# hosting, confirmed, waitlist ... ?
+# hosting, confirmed, waitlist
 
 ### StackExchange
 
 -
-  name: 'Asking question'
+  name: 'Asking a question'
   required_tags:
     - stackexchange
     - question
@@ -137,7 +139,7 @@
     - answer
 
 -
-  name: 'Commeting question or answer'
+  name: 'Commenting a question or an answer'
   required_tags:
     - stackexchange
     - comment
@@ -196,199 +198,37 @@
     - irc
     - message
 
+### Bithub
 
-# -
-#   required_tags:
-#     - article
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting an article'
+-
+  name: 'Submitting an app'
+  required_tags:
+    - bithub
+    - app
 
-# -
-#   required_tags:
-#     - twitter
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Tweeting'
+-
+  name: 'Submitting an article'
+  required_tags:
+    - bithub
+    - article
 
-# -
-#   required_tags:
-#     - plugin
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting a plugin'
+-
+  name: 'Submitting a plugin'
+  required_tags:
+    - bithub
+    - plugin
 
-# -
-#   required_tags:
-#     - example
-#   authorship_value: 0
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting an example'
+-
+  name: 'Organizing an event'
+  required_tags:
+    - bithub
+    - meetup
+    - event
 
-# -
-#   required_tags:
-#     - bug
-#     - github
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Reporting a bug'
+### Disqus
 
-# -
-#   required_tags:
-#     - feature
-#     - github
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting a feature'
-
-# -
-#   required_tags:
-#     - app
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting an app'
-
-# -
-#   required_tags:
-#     - code
-#     - github
-#   authorship_value: 0
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Pushing the code'
-
-# -
-#   required_tags:
-#     - comment
-#     - disqus
-#   authorship_value: 0
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Commenting'
-
-# -
-#   required_tags:
-#     - issue_comment
-#     - bug
-#     - github
-#   authorship_value: 0
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Submitting a bug'
-
-# -
-#   required_tags:
-#     - fork
-#     - digest
-#     - github
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Forking a repo'
-
-# -
-#   required_tags:
-#     - watch
-#     - digest
-#     - github
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Starring a repo'
-
-# -
-#   required_tags:
-#     - follow
-#     - twitter
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Following'
-
-# -
-#   required_tags:
-#     - event
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 1
-#   name: 'Organizing an event'
-
-# -
-#   required_tags:
-#     - rsvp
-#     - confirmed
-#     - meetup
-#   authorship_value: 2
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Going to the event'
-
-# -
-#   required_tags:
-#     - rsvp
-#     - waitlist
-#     - meetup
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'RSVPing for an event'
-
-# -
-#   required_tags:
-#     - stackexchange
-#     - question
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Asking a question'
-
-# -
-#   required_tags:
-#     - stackexchange
-#     - comment
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Commenting a question or answer'
-
-# -
-#   required_tags:
-#     - stackexchange
-#     - answer
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Answering a question'
-
-# -
-#   required_tags:
-#     - foursquare
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Checking in'
-
-# -
-#   required_tags:
-#     - facebook
-#     - like
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Liking a page'
-
-# -
-#   required_tags:
-#     - facebook
-#     - comment
-#   authorship_value: 1
-#   award_value: 0
-#   upvote_value: 0
-#   name: 'Commenting on a page'
+-
+  name: 'Commenting'
+  required_tags:
+    - comment
+    - disqus
