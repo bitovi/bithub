@@ -5,6 +5,11 @@ namespace :data do
     puts "---"
     puts "Importing scoring rules"
 
+    if tenant = ENV['TENANT']
+      Apartment::Database.switch tenant
+      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
+    end
+
     rules = YAML::load_file('config/scoring_rules.yml')
 
     def exists?(required_tags)
