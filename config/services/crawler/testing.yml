@@ -2,11 +2,10 @@
     :twitter:
         :api_key: 'L9KJpnqaL0phM3u3NBYf3A'
         :api_secret: 'HHMyYzHRoj9qrHw6gmobQWBpTnLOgxBWBMRA0ICk4U'
-    :meetup:
-        :api_key: '663a24605a37767831495d6332546b4a'
     :disqus:
         :api_key: 'XSAmjIPIYZytWdKDZR5L51Iccdq7XLRT5VIaOeVZExxUSraVjBhXwf5i0ZzpZDbC'
         :api_secret: 'rueztOuYC36nf92Fc291UOHFR2VCED40PVvxfyqeMrGQz6mVBAGAx5p1PF5PEARn'
+    :meetup:
+        :api_key: '663a24605a37767831495d6332546b4a'
     :stackexchange:
-        :key: "8EAiwRhHlupc0Z1aV3SCVg(("
-        :access_token: "ai*6QcDJ8qVkQKqxXbUARw))"
+        :api_key: "8EAiwRhHlupc0Z1aV3SCVg(("

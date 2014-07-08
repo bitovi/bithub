@@ -38,7 +38,7 @@ class Configurator
   end
 
   def remote_config
-    HTTParty.get url, :query => {:token => 'dedamrazcetidonjetdarove'}
+    HTTParty.get url
   end
 
   def config_file_path
