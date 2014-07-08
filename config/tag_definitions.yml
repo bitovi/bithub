@@ -105,6 +105,13 @@ closed: {}
 
 post: {}
 
+### Bithub
+
+app: {}
+article: {}
+event: {}
+plugin: {}
+
 ### Meetup
 
 rsvp: {}

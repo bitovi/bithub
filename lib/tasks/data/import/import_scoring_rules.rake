@@ -24,9 +24,9 @@ namespace :data do
         puts "Rule '#{rule['name']}' already exists!"
       else
         if ar_rule = ScoringRule.create(rule)
-          puts "Rule '#{rule['name']}' created --> #{ar_rule.inspect}"
+          puts "Rule '#{rule['name']}' created"
         else
-          puts "Rule '#{rule['name']}' failed!"
+          puts "Rule '#{rule['name']}' failed"
         end
       end
     end
