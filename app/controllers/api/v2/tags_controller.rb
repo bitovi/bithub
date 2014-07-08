@@ -1,4 +1,5 @@
 class Api::V2::TagsController < Api::V2::BaseController
+<<<<<<< HEAD
   before_filter :authenticate!
   load_and_authorize_resource
 
@@ -10,7 +11,6 @@ class Api::V2::TagsController < Api::V2::BaseController
 
     scope = build_scope(mq, params)
     scope = scope.tagged_with(params[:type].pluralize) if params[:type]
-
     @tags = scope.all
 
     render :index
@@ -23,7 +23,6 @@ class Api::V2::TagsController < Api::V2::BaseController
 
   def create
     @tag = Tag.new(params[:tag])
-
     if @tag.save
       render :show
     else
@@ -33,7 +32,6 @@ class Api::V2::TagsController < Api::V2::BaseController
 
   def update
     @tag = Tag.find(params[:id])
-
     if @tag.update_attributes(params[:tag])
       render :show
     else
@@ -43,7 +41,6 @@ class Api::V2::TagsController < Api::V2::BaseController
 
   def destroy
     @tag = Tag.find(params[:id])
-
     if @tag.destroy
       render :json => msg_hash(@tag, 'destroy', 'success'), :status => 200
     else
@@ -51,6 +48,30 @@ class Api::V2::TagsController < Api::V2::BaseController
     end
   end
 
+  ### Non-CRUD endpoints
+
+  def tree
+    keywords = Tag.tagged_with('keywords').pluck(:name) \
+             + Tag.tagged_with('projects').pluck(:name)
+
+    feeds = Tag.tagged_with("feeds").map do |f|
+      types = Tag.tagged_with("types,#{f.name}").map do |t|
+        specifics = Tag.tagged_with("#{f.name},#{t.name},feed_specifics").pluck :name
+        {name: t.name, specifics: specifics}
+      end
+
+      {name: f.name, types: types}
+    end
+
+    @tree = {
+      feeds: feeds,
+      keywords: keywords
+    }
+
+    render :tree
+  end
+
+  private
 
   # SCOPE BUILDING
   # --------------
@@ -65,7 +86,6 @@ class Api::V2::TagsController < Api::V2::BaseController
 
   def build_scope(muster_query, params)
     scope = Tag
-
     scope_applier(params, scope)
     .apply_muster_query_to_scope(muster_query)
     .result

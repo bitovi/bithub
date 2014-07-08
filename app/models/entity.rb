@@ -56,11 +56,6 @@ class Entity < ActiveRecord::Base
   scope :category, lambda {|c| where(category_name: c) }
   scope :no_category, lambda {|c| where("category_name <> ?", c) }
 
-  # Time/date
-  scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
-  scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
-  scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
-
   scope :without_future, lambda { |clientTz|
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
   }
@@ -99,6 +94,33 @@ class Entity < ActiveRecord::Base
   after_destroy :update_pagination_table
 
   after_validation :reformat_uniqueness_validation
+
+  def self.from_funnel_group(fg)
+    tagged_with fg.tags, :any => true if fg.tags
+  end
+
+  def self.from_funnel(f)
+    where f.constraints
+  end
+
+  def self.scoped_with_includes
+    scope = Entity.scoped
+    scope = scope.includes(:owners)
+    scope = scope.includes(:parent)
+    scope
+  end
+    
+  def self.with_author(author_id)
+    joins(:ownerships)\
+      .where("ownerships.ownership_type = 'author'")\
+      .where("ownerships.owner_id = ?", author_id) if author_id
+  end
+
+  def self.with_host(host_id)
+    joins(:ownerships)\
+      .where("ownerships.ownership_type = 'host'")\
+      .where("ownerships.owner_id = ?", host_id) if host_id
+  end
 
   def author=(user)
     self.remove_author

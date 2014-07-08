@@ -89,6 +89,7 @@ group :development do
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
   gem 'railroady'
+  gem 'spork'
 end
 
 # --------
