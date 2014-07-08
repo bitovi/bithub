@@ -36,7 +36,6 @@ class MainSupervisor
     start_brand(brand_name)
   end
 
-
   def start_brand(brand_name)
     Celluloid.logger.info "Starting #{actor_name(brand_name)}"
     @brands.supervise_as(
