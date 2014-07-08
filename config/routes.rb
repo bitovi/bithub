@@ -49,13 +49,13 @@ Bithub::Application.routes.draw do
         get :summary, :on => :collection
         get :pagination, :on => :collection
 
-        get :activities, :to => 'event_activities#index'
+        get :activities, :to => 'entity_activities#index'
 
-        post   :upvote, :to => 'event_activities#create_upvote'
-        delete :upvote, :to => 'event_activities#destroy_upvote'
+        post   :upvote, :to => 'entity_activities#create_upvote'
+        delete :upvote, :to => 'entity_activities#destroy_upvote'
 
-        post   :award, :to => 'event_activities#create_award'
-        delete :award, :to => 'event_activities#destory_award'
+        post   :award, :to => 'entity_activities#create_award'
+        delete :award, :to => 'entity_activities#destory_award'
       end
 
       # Tags
