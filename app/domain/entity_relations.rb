@@ -1,7 +1,7 @@
 class EntityRelations
 
   def initialize(ids)
-    @ids = ids
+    @ids = ids.is_a?(Array) ? ids : [ids]
   end
 
   def children
