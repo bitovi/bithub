@@ -571,9 +571,9 @@ CREATE TABLE events (
     id integer NOT NULL,
     type_name character varying(255),
     feed_name character varying(255),
-    source_data text,
     content_digest character varying(255),
     props hstore DEFAULT ''::hstore,
+    source_data json,
     entity_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -875,7 +875,7 @@ CREATE TABLE schema_migrations (
 CREATE TABLE scoring_rules (
     id integer NOT NULL,
     name character varying(255),
-    required_tags hstore,
+    required_tags hstore DEFAULT ''::hstore,
     authorship_value integer DEFAULT 0,
     award_value integer DEFAULT 0,
     upvote_value integer DEFAULT 0,
