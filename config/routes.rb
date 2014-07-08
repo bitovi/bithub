@@ -179,4 +179,6 @@ Bithub::Application.routes.draw do
   end
 
   get "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
+
+  get '*path', :controller => 'kickstart', :action => 'frontend'
 end
