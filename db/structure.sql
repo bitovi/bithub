@@ -513,6 +513,78 @@ CREATE SEQUENCE feed_configs_id_seq
 
 
 --
+-- Name: funnel_constraints; Type: TABLE; Schema: bitovi; Owner: -; Tablespace: 
+--
+
+CREATE TABLE funnel_constraints (
+    id integer NOT NULL,
+    feed_name character varying(255),
+    type_name character varying(255),
+    tags character varying(255)[] DEFAULT '{}'::character varying[]
+);
+
+
+--
+-- Name: funnel_constraints_funnels; Type: TABLE; Schema: bitovi; Owner: -; Tablespace: 
+--
+
+CREATE TABLE funnel_constraints_funnels (
+    funnel_id integer,
+    funnel_constraint_id integer
+);
+
+
+--
+-- Name: funnel_constraints_id_seq; Type: SEQUENCE; Schema: bitovi; Owner: -
+--
+
+CREATE SEQUENCE funnel_constraints_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: funnel_constraints_id_seq; Type: SEQUENCE OWNED BY; Schema: bitovi; Owner: -
+--
+
+ALTER SEQUENCE funnel_constraints_id_seq OWNED BY funnel_constraints.id;
+
+
+--
+-- Name: funnels; Type: TABLE; Schema: bitovi; Owner: -; Tablespace: 
+--
+
+CREATE TABLE funnels (
+    id integer NOT NULL,
+    name character varying(255),
+    display_name character varying(255),
+    tags character varying(255)[] DEFAULT '{}'::character varying[]
+);
+
+
+--
+-- Name: funnels_id_seq; Type: SEQUENCE; Schema: bitovi; Owner: -
+--
+
+CREATE SEQUENCE funnels_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: funnels_id_seq; Type: SEQUENCE OWNED BY; Schema: bitovi; Owner: -
+--
+
+ALTER SEQUENCE funnels_id_seq OWNED BY funnels.id;
+
+
+--
 -- Name: identities_id_seq; Type: SEQUENCE; Schema: bitovi; Owner: -
 --
 
@@ -666,25 +738,6 @@ CREATE SEQUENCE ownerships_id_seq
 --
 
 ALTER SEQUENCE ownerships_id_seq OWNED BY ownerships.id;
-
-
---
--- Name: pagination; Type: MATERIALIZED VIEW; Schema: bitovi; Owner: -; Tablespace: 
---
-
-CREATE MATERIALIZED VIEW pagination AS
- SELECT e.thread_updated_ts AS ts,
-    e.id,
-    categories.name AS category,
-    ARRAY( SELECT t.name
-           FROM taggings tt,
-            tags t
-          WHERE ((((tt.taggable_type)::text = 'Entity'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
-   FROM (entities e
-   LEFT JOIN tags categories ON ((e.category_id = categories.id)))
-  WHERE (e.parent_id IS NULL)
-  ORDER BY e.thread_updated_ts DESC
-  WITH NO DATA;
 
 
 --
@@ -1722,13 +1775,16 @@ ALTER SEQUENCE ownerships_id_seq OWNED BY ownerships.id;
 CREATE MATERIALIZED VIEW pagination AS
  SELECT e.thread_updated_ts AS ts,
     e.id,
-    categories.name AS category,
-    ARRAY( SELECT t.name
-           FROM taggings tt,
-            tags t
-          WHERE ((((tt.taggable_type)::text = 'Entity'::text) AND (tt.tag_id = t.id)) AND (tt.taggable_id = e.id))) AS tags
+    (string_to_array((e.cached_tag_list)::text, ', '::text))::character varying[] AS tags,
+    funnels.name AS funnel
    FROM (entities e
-   LEFT JOIN tags categories ON ((e.category_id = categories.id)))
+   LEFT JOIN ( SELECT f.name,
+            fc.feed_name,
+            fc.type_name,
+            f.tags
+           FROM ((funnels f
+      LEFT JOIN funnel_constraints_funnels fcf ON ((fcf.funnel_id = f.id)))
+   LEFT JOIN funnel_constraints fc ON ((fcf.funnel_constraint_id = fc.id)))) funnels ON (((((e.feed_name)::text = (funnels.feed_name)::text) AND ((e.type_name)::text = (funnels.type_name)::text)) AND ((funnels.tags = '{}'::character varying[]) OR (funnels.tags && (string_to_array((e.cached_tag_list)::text, ', '::text))::character varying[])))))
   WHERE (e.parent_id IS NULL)
   ORDER BY e.thread_updated_ts DESC
   WITH NO DATA;
@@ -2038,6 +2094,20 @@ ALTER TABLE ONLY entity_refs ALTER COLUMN id SET DEFAULT nextval('entity_refs_id
 --
 
 ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: bitovi; Owner: -
+--
+
+ALTER TABLE ONLY funnel_constraints ALTER COLUMN id SET DEFAULT nextval('funnel_constraints_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: bitovi; Owner: -
+--
+
+ALTER TABLE ONLY funnels ALTER COLUMN id SET DEFAULT nextval('funnels_id_seq'::regclass);
 
 
 --
@@ -2360,6 +2430,22 @@ ALTER TABLE ONLY entity_refs
 
 ALTER TABLE ONLY events
     ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: funnel_constraints_pkey; Type: CONSTRAINT; Schema: bitovi; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY funnel_constraints
+    ADD CONSTRAINT funnel_constraints_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: funnels_pkey; Type: CONSTRAINT; Schema: bitovi; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY funnels
+    ADD CONSTRAINT funnels_pkey PRIMARY KEY (id);
 
 
 --
