@@ -101,7 +101,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     scope = scope.with_author(params[:author_id]) if params[:author_id].present?
     scope = scope.with_author(params[:host_id]) if params[:host_id].present?
 
-    scope = scope_applier(scope)
+    scope = scope_applier(params, scope)
     .apply_negated_attrs_to_scope
     .apply_muster_query_to_scope(muster_query)
     .apply_regular_params_to_scope

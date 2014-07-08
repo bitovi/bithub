@@ -9,7 +9,7 @@ class Entity < ActiveRecord::Base
       end
     end
   end
-  
+
   store_accessor :props
 
   acts_as_taggable
@@ -104,12 +104,12 @@ class Entity < ActiveRecord::Base
   end
 
   def self.scoped_with_includes
-    scope = Entity.scoped
+    scope = Entity
     scope = scope.includes(:owners)
     scope = scope.includes(:parent)
     scope
   end
-    
+
   def self.with_author(author_id)
     joins(:ownerships)\
       .where("ownerships.ownership_type = 'author'")\

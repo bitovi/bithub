@@ -15,7 +15,7 @@ module QueryLogic
     attr_reader :name, :value
 
     def value
-      if negation? 
+      if negation?
         @value.gsub(/^!(.*)$/, '\1')
       elsif ordering?
         @value.gsub(':', ' ')
@@ -51,7 +51,7 @@ module QueryLogic
     def nonexistence?
       native? && @value == NONEXISTENCE_QUALIFIER
     end
-    
+
     def exclusion?
       OPTIONAL_LOGIC[:exclude] == @name || OPTIONAL_LOGIC[:exclude] == @name.to_s
     end
