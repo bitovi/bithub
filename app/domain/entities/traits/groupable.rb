@@ -14,7 +14,7 @@ module Entities
         if (c = find_children)
           @instance.children += if c.is_a?(Array)
                                   c
-                                elsif c.is_a?(ActiveRecord::Rellation)
+                                elsif c.is_a?(ActiveRecord::Relation)
                                   c.where(true)
                                 else
                                   [c]
