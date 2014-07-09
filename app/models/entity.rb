@@ -95,12 +95,12 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.from_funnel_group(fg)
-    tagged_with fg.tags, :any => true if fg.tags
+  def self.from_funnel(f)
+    tagged_with f.tags, :any => true if f.tags
   end
 
-  def self.from_funnel(f)
-    where f.constraints
+  def self.from_funnel_constraint(fc)
+    where fc.constraints
   end
 
   def self.scoped_with_includes
