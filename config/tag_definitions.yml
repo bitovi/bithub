@@ -26,10 +26,6 @@ github:
   display_name: "Github"
   group_list: "feeds"
 
-forum:
-  display_name: "Forum"
-  group_list: "feeds"
-
 irc:
   display_name: "IRC"
   group_list: "feeds"
@@ -58,10 +54,6 @@ facebook:
 
 foursquare:
   display_name: "Foursquare"
-  group_list: "feeds"
-
-yelp:
-  display_name: "Yelp"
   group_list: "feeds"
 
 rss:
@@ -154,7 +146,7 @@ closed:
 
 post:
   display_name: "Post"
-  group_list: "types,rss"
+  group_list: "types,rss,disqus,bithub"
 
 
 ### Bithub
@@ -223,3 +215,10 @@ tip:
 message:
   display_name: "Message"
   group_list: "types,irc"
+
+
+### Disqus
+
+# post:
+#   display_name: "Post"
+#   group_list: "types,disqus"
