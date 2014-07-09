@@ -4,14 +4,8 @@ module Users
 
   class EntitiesUnlinker
 
-    class UnlinkingJob < Struct.new(:ident_data, :user_id)
-      def perform
-        EntitiesUnlinker.new(ident_data, user_id).unlink
-      end
-    end
-    
     def async_unlink
-      Delayed::Job.enqueue Jobs::UnlinkingJob.new(IdentData.new(@uid, @provider), @user_id)
+      Workers::EntitiesUnlinker.perform_async IdentData.new(@uid, @provider), @user_id
     end
 
     def initialize(ident_data, user_id)
@@ -24,7 +18,7 @@ module Users
       unlink_hosted_entities
       UserActivity.refresh
     end
-    
+
     def unlink_authored_entities
       return if not(user_owns_identity?)
 

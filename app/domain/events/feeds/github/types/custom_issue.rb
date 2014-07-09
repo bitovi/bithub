@@ -1,7 +1,11 @@
 module Events
   module Github
 
-    class FakeRepo < Struct.new(:name)
+    class FakeRepo
+      attr_reader :repo_name
+      def initialize(name)
+        @repo_name = name
+      end
     end
 
     class CustomIssue < Protocol
@@ -38,12 +42,12 @@ module Events
       def updated_at
         source_data.andand[:updated_at]
       end
-      
+
       def repo_name
         url = source_data.andand[:url]
         url.match(/repos\/(.*)\/issues/).andand[1]
       end
-        
+
       def wrap_response
         @issue = Wrappers::Github::Issue.new(source_data)
         @user = Wrappers::Github::User.new(source_data[:user])

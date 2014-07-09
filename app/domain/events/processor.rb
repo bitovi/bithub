@@ -4,7 +4,7 @@ require 'sanitizer'
 
 require 'core_ext'
 require 'core_helpers'
-require 'loggable'
+require 'logger_factory'
 
 require 'events/dispatcher'
 
@@ -20,7 +20,6 @@ module Events
   end
 
   class Processor
-    include Loggable
 
     class Configuration
       attr_accessor :term, :feed
@@ -29,7 +28,7 @@ module Events
     end
 
     def initialize(response, &blk)
-      initialize_logger("INFO")
+      @logger = LoggerFactory.new('processor', ENV['ENV']).component_logger
 
       @config = Configuration.new
       blk.(@config) if blk
