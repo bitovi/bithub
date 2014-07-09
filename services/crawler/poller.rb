@@ -1,5 +1,6 @@
 require 'core_ext'
 require_relative 'decorators/all'
+require_relative 'polling_lock'
 
 class Poller
   include Celluloid
@@ -11,6 +12,7 @@ class Poller
 
     interval = opts.fetch(:interval) { 3600 }
     @timer = every(interval) { fetch }
+    @lock = PollingLock.new(@brand_name, fetcher_name, interval)
     fetch
   end
 
@@ -21,13 +23,19 @@ class Poller
   def interval=(seconds)
     @timer.cancel
     @timer = every(seconds) { fetch }
+    @lock.interval = seconds
   end
 
   def fetch
-    events = @fetcher.fetch
-    Celluloid.logger.info "Fetching from #{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
-
-    publish events if events.count > 0
+    unless @lock.locked?
+      @lock.lock
+      if (events = @fetcher.fetch)
+        Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
+        publish events if events.count > 0
+      end
+    else
+      Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}' LOCKED!"
+    end
   end
 
   def publish(data)
