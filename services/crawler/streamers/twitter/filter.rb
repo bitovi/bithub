@@ -9,7 +9,6 @@ module Streamers
       def initialize(opts, &block)
         @block = block
 
-
         @auth = opts.fetch(:auth)
         @topics = opts.fetch(:topics)
 
@@ -49,7 +48,7 @@ module Streamers
 
       def connect
         Celluloid.logger.info "Connecting twitter:public_stream with topics: #{topics}"
-        listen if @channels.length > 0
+        listen if channels.length > 0
       end
 
       private
@@ -61,7 +60,7 @@ module Streamers
       end
 
       def topics
-        (t = @channels.map{|c| c.topics}.uniq.flatten).empty? ? DEFAULT_TRACK_TERMS : t
+        (t = channels.map{|c| c.topics}.uniq.flatten).empty? ? DEFAULT_TRACK_TERMS : t
       end
 
       def auth

@@ -6,13 +6,6 @@ class MainSupervisor
   end
 
   def boot
-    @streams = SupervisionGroup.new
-    # @streams.supervise_as(
-    #   :twitter_public_stream,
-    #   Streamers::Twitter::Filter,
-    #   *[]
-    # )
-
     @brands = SupervisionGroup.new
     all_brand_configs.each do |brand_name, cfg|
       Celluloid.logger.info "Booting brand: #{brand_name}"

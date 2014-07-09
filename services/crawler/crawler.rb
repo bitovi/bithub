@@ -24,6 +24,7 @@ require 'events/dispatcher'
 
 require_relative 'main_supervisor'
 require_relative 'brand_supervisor'
+require_relative 'stream_supervisor'
 require_relative 'publisher'
 require_relative 'configurator'
 require_relative 'commander'
@@ -48,6 +49,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
+  supervise StreamSupervisor, as: :stream_supervisor
 end
 
 Crawler.run
