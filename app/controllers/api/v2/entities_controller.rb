@@ -113,11 +113,14 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def funnelize(scope)
-    find_by = params[:funnel_id] || params[:funnel_name]
-    fg = FunnelGroup.find_by_id(find_by)
+    if params[:funnel_id]
+      f = Funnel.find_by_id(params[:funnel_id])
+    elsif params[:funnel_name]
+      f = Funnel.find_by_name(params[:funnel_name])
+    end
 
-    scope.from_funnel_group fg
-    scopes = fg.funnels.map {|f| scope.from_funnel f}
+    scope.from_funnel f
+    scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
 
     Entity.union_scope *scopes
   end

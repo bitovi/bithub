@@ -1,15 +1,6 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
 
-  class TotalVotesUpdater < Struct.new(:id)
-    def perform
-      entity = Entity.find_by_id(id)
-      unless entity.nil?
-        entity.update_total_upvotes
-      end
-    end
-  end
-
   store_accessor :props
 
   acts_as_taggable
@@ -95,12 +86,12 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.from_funnel_group(fg)
-    tagged_with fg.tags, :any => true if fg.tags
+  def self.from_funnel(f)
+    tagged_with f.tags, :any => true if f.tags
   end
 
-  def self.from_funnel(f)
-    where f.constraints
+  def self.from_funnel_constraint(fc)
+    where fc.constraints
   end
 
   def self.scoped_with_includes
@@ -206,7 +197,7 @@ class Entity < ActiveRecord::Base
   end
 
   def async_update_total_upvotes
-    Delayed::Job.enqueue TotalVotesUpdater.new(self.id)
+    Workers::EntitiesTotalVotesUpdater.perform_async self.id
   end
 
   def increase_score_in_author
