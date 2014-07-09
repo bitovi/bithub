@@ -1,15 +1,6 @@
 class User < ActiveRecord::Base
   extend Solipsism
 
-  class AsyncUserUpdater < Struct.new(:id, :method)
-    def perform
-      user = User.find_by_id(id)
-      unless user.nil?
-        user.send(method)
-      end
-    end
-  end
-
   store_accessor :props
 
   rolify :role_cname => 'UserRole'
@@ -118,20 +109,20 @@ class User < ActiveRecord::Base
   end
 
   def async_collect_authored_entities
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :collect_authored_entities)
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :collect_hosted_entities)
+    Workers::UserUpdater.perform_async self.id, :collect_authored_entities
+    Workers::UserUpdater.perform_async self.id, :collect_hosted_entities
   end
 
   def async_update_total_score
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :update_total_score)
+    Workers::UserUpdater.perform_async self.id, :update_total_score
   end
 
   def async_reward_if_eligible
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :reward_if_eligible)
+    Workers::UserUpdater.perform_async self.id, :reward_if_eligible
   end
 
   def async_unreward_if_uneligible
-    Delayed::Job.enqueue AsyncUserUpdater.new(self.id, :unreward_if_uneligible)
+    Workers::UserUpdater.perform_async self.id, :unreward_if_uneligible
   end
 
 end

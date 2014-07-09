@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby
-
-ConfigPath = File.expand_path(File.join(File.dirname(__FILE__), '..', 'config'))
-
-require File.join(ConfigPath, 'environment')
-require 'delayed/command'
-Delayed::Command.new(ARGV).daemonize
