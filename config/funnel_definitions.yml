@@ -91,13 +91,16 @@
 -
   name: 'article'
   display_name: 'Article'
-  tags: ['article']
+  tags: []
   constraints:
     -
       feed_name: 'rss'
       type_name: 'post'
     -
       feed_name: 'bithub'
+      type_name: 'post'
+    -
+      feed_name: 'disqus'
       type_name: 'post'
 
 -
