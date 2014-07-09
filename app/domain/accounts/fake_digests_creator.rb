@@ -10,7 +10,7 @@ module Accounts
     end
 
     def async_execute
-      Delayed::Job.enqueue Jobs::CreateFakeDigestsJob.new(@identity.uid)
+      Workers::EntitiesFakeDigestsCreator.perform_async @identity.uid
     end
 
     def create_missing_repos_and_stars
