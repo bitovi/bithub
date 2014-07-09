@@ -6,7 +6,6 @@ module Tagger
 
     def initialize(tags=[])
       @tags = tags.map {|t| Tag.new(t)}
-      self
     end
 
     def best_match(rules=[])
