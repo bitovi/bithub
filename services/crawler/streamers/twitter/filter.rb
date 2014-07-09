@@ -9,7 +9,6 @@ module Streamers
       def initialize(opts, &block)
         @block = block
 
-
         @auth = opts.fetch(:auth)
         @topics = opts.fetch(:topics)
 
