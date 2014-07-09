@@ -1,15 +1,6 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
 
-  class TotalVotesUpdater < Struct.new(:id)
-    def perform
-      entity = Entity.find_by_id(id)
-      unless entity.nil?
-        entity.update_total_upvotes
-      end
-    end
-  end
-
   store_accessor :props
 
   acts_as_taggable
@@ -206,7 +197,7 @@ class Entity < ActiveRecord::Base
   end
 
   def async_update_total_upvotes
-    Delayed::Job.enqueue TotalVotesUpdater.new(self.id)
+    Workers::EntitiesTotalVotesUpdater.perform_async self.id
   end
 
   def increase_score_in_author
