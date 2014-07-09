@@ -22,6 +22,7 @@ gem 'draper'
 gem 'carrierwave'
 
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
+gem 'apartment-sidekiq'
 gem 'enumerize'
 gem 'sinatra'
 gem 'sidekiq'
