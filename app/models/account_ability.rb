@@ -5,7 +5,7 @@ class AccountAbility
     if account.has_role? :admin
       can :manage, :all
     else
-      can :read, Tag
+      can [:read, :read_tags_tree], Tag
       can [:read, :update], Brand, id: account.brand.id
       can :read, Country
       can [:read, :update], ScoringRule
