@@ -1,6 +1,6 @@
 class Api::V2::TagsController < Api::V2::BaseController
   before_filter :authenticate!
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:tree]
 
   def index
     mq = request.env['muster.query']
@@ -50,6 +50,7 @@ class Api::V2::TagsController < Api::V2::BaseController
   ### Non-CRUD endpoints
 
   def tree
+    authorize! :read_tags_tree, Tag, :message => "No right to read tag tree!"
     keywords = Tag.tagged_with('keywords').pluck(:name) \
              + Tag.tagged_with('projects').pluck(:name)
 
