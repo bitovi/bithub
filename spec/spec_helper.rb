@@ -7,7 +7,6 @@ PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 $:.unshift PROJECT_ROOT
 
-<<<<<<< HEAD
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
 
