@@ -31,7 +31,7 @@ class Api::V2::EntityActivitiesController < Api::V2::BaseController
 
   def destroy_upvote
     authorize! :destroy_upvote, Upvote, :message => "No right to destroy an upvote!"
-    if Activities::Upvoter.new(current_user, Entity.find_by_id(params[:entity_id])).unupvote
+    if Activities::Upvoter.new(current_user, Entity.find_by_id(params[:entity_id])).unvote
       render :json => { message: "Deleted" }, :status => 200
     else
       render :json => { message: "Not found!" }, :status => 404

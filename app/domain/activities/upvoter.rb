@@ -8,15 +8,13 @@ module Activities
 
     def upvote
       if (@upvote = Upvote.create(actor: @actor, applies_to: @applies_to, value: upvote_value))
-        #@upvote.applies_to.update_total_upvotes
-        #@upvote.applies_to.author.update_total_score if @upvote.applies_to.author
         async_exec_post_upvote_actions
         @upvote
       end
     end
 
-    def unupvote
-      @upvote = @actor.upvotes.where(applies_to: @applies_to).first
+    def unvote
+      @upvote = @actor.upvotes_as_actor.where(applies_to: @applies_to).first
       if @upvote.destroy
         async_exec_post_unvote_actions
       end
@@ -27,7 +25,7 @@ module Activities
       @upvote.applies_to.author.async_reward_if_eligible if @upvote.applies_to.author
     end
 
-    def asnyc_exec_post_unupvote_actions
+    def async_exec_post_unvote_actions
       update_entity_and_author
       @upvote.applies_to.author.async_unreward_if_uneligible if @upvote.applies_to.author
     end
