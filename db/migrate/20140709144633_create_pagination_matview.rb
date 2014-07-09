@@ -1,6 +1,7 @@
 class CreatePaginationMatview < ActiveRecord::Migration
   def up
     execute <<-SQL
+DROP MATERIALIZED VIEW IF EXISTS pagination;
 CREATE MATERIALIZED VIEW pagination AS
 SELECT e.thread_updated_ts AS ts,
     e.id,
@@ -23,6 +24,6 @@ REFRESH MATERIALIZED VIEW pagination;
   end
 
   def down
-    execute "drop materialized view pagination;"
+    execute "DROP MATERIALIZED VIEW IF EXISTS pagination;"
   end
 end
