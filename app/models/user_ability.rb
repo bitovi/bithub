@@ -5,6 +5,7 @@ class UserAbility
     can :read, Tag
     can :read, Country
     can :read, Reward
+    can :read, Funnel
     can :read, User
     can :update, User, id: user.id
     can [:create, :read], Entity

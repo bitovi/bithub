@@ -11,6 +11,7 @@ class AccountAbility
       can [:read, :update], ScoringRule
       can :manage, Reward
       can :manage, FeedConfig, brand_id: account.brand.id
+      can :manage, Funnel
       can :read, User # check somehow if user is present in current tenant
       can :manage, Entity
       can :create_award, Award
