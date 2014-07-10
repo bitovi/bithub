@@ -94,13 +94,6 @@ class Entity < ActiveRecord::Base
     where fc.constraints
   end
 
-  def self.scoped_with_includes
-    scope = Entity
-    scope = scope.includes(:owners)
-    scope = scope.includes(:parent)
-    scope
-  end
-
   def self.with_author(author_id)
     joins(:ownerships)\
       .where("ownerships.ownership_type = 'author'")\

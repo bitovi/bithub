@@ -14,11 +14,11 @@ class EntityRelations
 
   def references
     return
-    if @references_for.nil?
-      @references_for = Entity.select("entities.*, entity_refs.to_id").joins(:references_to).where("entity_refs.to_id" => @ids).uniq.all
-    end
+    # if @references_for.nil?
+    #   @references_for = Entity.select("entities.*, entity_refs.to_id").joins(:references_to).where("entity_refs.to_id" => @ids).uniq.all
+    # end
 
-    @references_for || []
+    # @references_for || []
   end
 
   def children_for_entity(entity)

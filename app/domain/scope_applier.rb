@@ -9,7 +9,7 @@ class ScopeApplier
   def apply_muster_query_to_scope(muster_query)
     @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-    @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
+    @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank    @scope = @scope.offset(muster_query[:limit]) if !muster_query[:count].blank?
     self
   end
 
@@ -19,7 +19,7 @@ class ScopeApplier
         @scope = @scope.where("#{@query.table_name}.#{na_name} IS NOT NULL")
       end
     end
-    
+
     if (nonexistence_attrs = @query.pluck_and_process_nonexistence_attributes)
       nonexistence_attrs.each do |na_name|
         @scope = @scope.where("#{@query.table_name}.#{na_name} IS NULL")
@@ -69,23 +69,25 @@ class ScopeApplier
   end
 
   def result
+    @scope = @scope.limit(50) if @scope.limit_value.nil?
     @scope
   end
 
   private
-    def override_thread_updated_date(val)
-      start_date, end_date = val.split(':')
 
-      if end_date.nil?
-        end_date = start_date
-      end
+  def override_thread_updated_date(val)
+    start_date, end_date = val.split(':')
 
-      start_date = Date.parse(start_date)
-      end_date   = Date.parse(end_date)
-
-      end_date = end_date + 1.day - 1.second
-
-      args = [@query.clientTz, start_date, end_date]
-      @scope.where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+    if end_date.nil?
+      end_date = start_date
     end
+
+    start_date = Date.parse(start_date)
+    end_date   = Date.parse(end_date)
+
+    end_date = end_date + 1.day - 1.second
+
+    args = [@query.clientTz, start_date, end_date]
+    @scope.where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? BETWEEN ? AND ?", *args)
+  end
 end
