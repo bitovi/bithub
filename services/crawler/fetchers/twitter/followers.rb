@@ -4,9 +4,9 @@ module Fetchers
     class Followers
       include Protocol
 
-      def initialize(client, user_id)
+      def initialize(client)
         @client = client
-        @user_id = user_id
+        @user_id = client.user.id
       end
 
       def fetch
