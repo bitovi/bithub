@@ -22,8 +22,10 @@ module FeedSupervisors
     end
 
     def reload
-      Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
-      Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
+      if Celluloid::Actor[:twitter_public_stream]
+        Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
+        Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
+      end
     end
 
     def actor_name
