@@ -1,6 +1,6 @@
 class Api::V2::FunnelsController < Api::V2::BaseController
-  before_filter :authenticate!
-  load_and_authorize_resource
+  # before_filter :authenticate!
+  # load_and_authorize_resource
 
   def index
     @funnels = Funnel.all
