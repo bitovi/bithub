@@ -49,7 +49,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
-  supervise StreamSupervisor, as: :stream_supervisor
+  # supervise StreamSupervisor, as: :stream_supervisor
 end
 
 Crawler.run
