@@ -1,5 +1,6 @@
 class Api::V2::FunnelsController < Api::V2::BaseController
-  respond_to :json
+  before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @funnels = Funnel.all
@@ -51,6 +52,7 @@ class Api::V2::FunnelsController < Api::V2::BaseController
   end
 
   private
+
   def only_funnel
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:funnel).permit(:id, :name, :display_name, {:tags => []})

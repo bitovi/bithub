@@ -5,7 +5,8 @@ class AnonAbility
     can :read, Entity
     can :read, Tag
     can :read, Reward
-    can :read, Users
+    can :read, User
+    can :read, Funnel
     can :read_pagination, Pagination
   end
 end
