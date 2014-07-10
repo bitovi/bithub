@@ -69,7 +69,7 @@ class ScopeApplier
   end
 
   def result
-    @scope = @scope.limit(50) if @scope.limit_value.nil?
+    @scope = @scope.limit(50) unless @scope.respond_to? :limit_value
     @scope
   end
 
