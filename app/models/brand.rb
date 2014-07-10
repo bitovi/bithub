@@ -23,10 +23,12 @@ class Brand < ActiveRecord::Base
     Rake::Task['data:import_or_update_tags'].reenable
     Rake::Task['data:import_category_determination_rules'].reenable
     Rake::Task['data:import_scoring_rules'].reenable
+    Rake::Task['data:import_funnel_definitions'].reenable
 
     Rake::Task['data:import_or_update_tags'].invoke
     Rake::Task['data:import_category_determination_rules'].invoke
     Rake::Task['data:import_scoring_rules'].invoke
+    Rake::Task['data:import_funnel_definitions'].invoke
 
     # repopulate matviews upon creation
     Pagination.refresh
