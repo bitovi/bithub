@@ -1,5 +1,7 @@
 class ScopeApplier
 
+  DEFAULT_LIMIT = 50
+
   def initialize(initial, query)
     @scope = initial
     @query = query
@@ -9,7 +11,8 @@ class ScopeApplier
   def apply_muster_query_to_scope(muster_query)
     @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-    @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank    @scope = @scope.offset(muster_query[:limit]) if !muster_query[:count].blank?
+    @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
+    @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
     self
   end
 
@@ -69,7 +72,6 @@ class ScopeApplier
   end
 
   def result
-    @scope = @scope.limit(50) unless @scope.respond_to? :limit_value
     @scope
   end
 
