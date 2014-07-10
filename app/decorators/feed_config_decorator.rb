@@ -102,14 +102,14 @@ class FeedConfigDecorator < ::Draper::Decorator
   end
 
   def feed_config_keywords
-    feed_config_terms || feed_config_tags
+    feed_config_terms || feed_config_tags || []
   end
 
   def feed_config_terms
-    source.config.andand['terms'] || []
+    source.config.andand['terms']
   end
 
   def feed_config_tags
-    source.config.andand['tags'] || []
+    source.config.andand['tags']
   end
 end
