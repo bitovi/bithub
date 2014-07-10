@@ -1,8 +1,8 @@
 class Brand < ActiveRecord::Base
 
   has_many :accounts, :dependent => :nullify
-  has_many :feed_configs, :dependent => :destroy_all
-  has_many :identities, :class_name => 'BrandIdentity', :dependent => :destroy_all
+  has_many :feed_configs, :dependent => :destroy
+  has_many :identities, :class_name => 'BrandIdentity', :dependent => :destroy
 
   validates :name, format: { with: /\A[-_0-9a-zA-Z]+\z/, message: "invalid characters" }
 
