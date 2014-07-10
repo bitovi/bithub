@@ -56,7 +56,7 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
 
     @tree = Hash[Brand.all.map do |b|
       fcs = FeedConfigDecorator.decorate_collection(b.feed_configs)
-      [b.name, Hash[fcs.map {|fc| [fc.feed_name, fc.config]}]]
+      [b.name, Hash[fcs.select{|fc| not(fc.config.nil?)}.map {|fc| [fc.feed_name, fc.config]}]]
     end]
 
     render :json => @tree
