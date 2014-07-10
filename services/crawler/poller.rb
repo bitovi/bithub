@@ -23,7 +23,7 @@ class Poller
   def interval=(seconds)
     @timer.cancel
     @timer = every(seconds) { fetch }
-    @lock.interval = seconds
+    @lock.interval = seconds-5
   end
 
   def fetch
