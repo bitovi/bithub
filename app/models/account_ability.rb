@@ -13,6 +13,7 @@ class AccountAbility
       can :manage, FeedConfig, brand_id: account.brand.id
       can :manage, Funnel
       can :read, User # check somehow if user is present in current tenant
+      can :manage_roles_on_user, User
       can :manage, Entity
       can :create_award, Award
       can :read_pagination, Pagination
