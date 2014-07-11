@@ -125,4 +125,34 @@ class User < ActiveRecord::Base
     Workers::UserUpdater.perform_async self.id, :unreward_if_uneligible
   end
 
+  def join_brand(brand)
+    if brand = match_brand(brand)
+      update_column :brand_ids, brand_ids.push(brand.id) unless brand_ids.include? brand.id
+    end
+
+    self
+  end
+
+  def remove_brand(brand)
+    if brand = match_brand(brand)
+      if brand_ids.delete(brand.id)
+        update_column :brand_ids, brand_ids
+      end
+    end
+
+    self
+  end
+
+  private
+
+  def match_brand(brand)
+    if brand.is_a? Integer
+      Brand.find_by_id(brand)
+    elsif brand.is_a? String or brand.is_a? Symbol
+      Brand.where(:name => brand.to_s).first
+    elsif brand.is_a? Brand
+      brand
+    end
+  end
+
 end

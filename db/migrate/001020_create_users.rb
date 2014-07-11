@@ -10,6 +10,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string  :state
       t.hstore  :props, default: ''
       t.integer :total_score, default: 0
+      t.integer :brand_ids, array: true, default: []
 
       t.references :country
 
