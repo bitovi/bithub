@@ -1,6 +1,6 @@
 class Api::V2::UsersController < Api::V2::BaseController
   before_filter :authenticate!
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:add_role, :remove_role]
 
   def index
     if params[:cached] == "true"
@@ -59,27 +59,29 @@ class Api::V2::UsersController < Api::V2::BaseController
   #   render :json => res
   # end
 
-  # def add_role
-  #   user = User.find(params[:id])
+  def add_role
+    user = User.find(params[:id])
+    authorize! :manage_roles_on_user, user
 
-  #   if user && user.add_role(params[:role])
-  #     @user = UserDecorator.decorate(user)
-  #     render :show
-  #   else
-  #     render :json => msg_hash(u, 'role_management'), :status => 406
-  #   end
-  # end
+    if user && user.add_role(params[:role])
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'role_management'), :status => 406
+    end
+  end
 
-  # def remove_role
-  #   user = User.find(params[:id])
+  def remove_role
+    user = User.find(params[:id])
+    authorize! :manage_roles_on_user, user
 
-  #   if user && user.remove_role(params[:role])
-  #     @user = UserDecorator.decorate(user)
-  #     render :show
-  #   else
-  #     render :json => msg_hash(u, 'role_management'), :status => 406
-  #   end
-  # end
+    if user && user.remove_role(params[:role])
+      @user = UserDecorator.decorate(user)
+      render :show
+    else
+      render :json => msg_hash(u, 'role_management'), :status => 406
+    end
+  end
 
   private # SCOPE BUILDING
 
