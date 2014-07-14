@@ -4,6 +4,8 @@ class Brand < ActiveRecord::Base
   has_many :feed_configs, :dependent => :destroy
   has_many :identities, :class_name => 'BrandIdentity', :dependent => :destroy
 
+  has_and_belongs_to_many :users
+
   validates :name, format: { with: /\A[-_0-9a-zA-Z]+\z/, message: "invalid characters" }
 
   after_create :create_tenant

@@ -9,7 +9,7 @@ require 'apartment/elevators/subdomain'
 # Apartment Configuration
 #
 Apartment.configure do |config|
-  config.excluded_models = %w{ Brand BrandIdentity Account AccountRole AccountsAccountRole FeedConfig User Identity }
+  config.excluded_models = %w{ Brand BrandIdentity Account AccountRole AccountsAccountRole FeedConfig User Identity BrandsUser }
   config.use_schemas = true
   config.use_sql = true
   config.tenant_names = lambda{ Brand.pluck :name }
