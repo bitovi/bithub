@@ -31,5 +31,8 @@ class CreateEntities < ActiveRecord::Migration
       t.references :to, :null => false
     end
 
+    add_index :entity_refs, :from_id
+    add_index :entity_refs, :to_id
+    add_index :entity_refs, [:from_id, :to_id], :unique => true
   end
 end

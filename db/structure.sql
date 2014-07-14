@@ -376,45 +376,6 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
--- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE delayed_jobs (
-    id integer NOT NULL,
-    priority integer DEFAULT 0 NOT NULL,
-    attempts integer DEFAULT 0 NOT NULL,
-    handler text NOT NULL,
-    last_error text,
-    run_at timestamp without time zone,
-    locked_at timestamp without time zone,
-    failed_at timestamp without time zone,
-    locked_by character varying(255),
-    queue character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: delayed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE delayed_jobs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: delayed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
-
-
---
 -- Name: entities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -605,11 +566,11 @@ ALTER SEQUENCE events_id_seq OWNED BY events.id;
 
 CREATE TABLE feed_configs (
     id integer NOT NULL,
+    brand_id integer,
     feed_name character varying(255),
     config json,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    brand_id integer
+    updated_at timestamp without time zone
 );
 
 
@@ -1121,6 +1082,16 @@ CREATE VIEW user_total_score AS
 
 
 --
+-- Name: users_brands; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users_brands (
+    user_id integer,
+    brand_id integer
+);
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1200,13 +1171,6 @@ ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
 
 
 --
@@ -1370,14 +1334,6 @@ ALTER TABLE ONLY brand_identities
 
 
 --
--- Name: brand_identities_unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY brand_identities
-    ADD CONSTRAINT brand_identities_unique_uid_provider_combination UNIQUE (provider, uid);
-
-
---
 -- Name: brands_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1402,14 +1358,6 @@ ALTER TABLE ONLY countries
 
 
 --
--- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY delayed_jobs
-    ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
-
-
---
 -- Name: entities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1423,14 +1371,6 @@ ALTER TABLE ONLY entities
 
 ALTER TABLE ONLY entity_refs
     ADD CONSTRAINT entity_refs_pkey PRIMARY KEY (id);
-
-
---
--- Name: entity_refs_unique_from_to; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY entity_refs
-    ADD CONSTRAINT entity_refs_unique_from_to UNIQUE (from_id, to_id);
 
 
 --
@@ -1471,14 +1411,6 @@ ALTER TABLE ONLY funnels
 
 ALTER TABLE ONLY identities
     ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
-
-
---
--- Name: identities_unique_uid_provider_combination; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY identities
-    ADD CONSTRAINT identities_unique_uid_provider_combination UNIQUE (provider, uid);
 
 
 --
@@ -1554,27 +1486,6 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
-
-
---
--- Name: entity_refs_on_from_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX entity_refs_on_from_id ON entity_refs USING btree (from_id);
-
-
---
--- Name: entity_refs_on_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX entity_refs_on_to_id ON entity_refs USING btree (to_id);
-
-
---
 -- Name: index_account_roles_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1596,6 +1507,13 @@ CREATE INDEX index_accounts_account_roles_on_account_id_and_account_role_id ON a
 
 
 --
+-- Name: index_accounts_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_accounts_on_brand_id ON accounts USING btree (brand_id);
+
+
+--
 -- Name: index_accounts_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1610,10 +1528,80 @@ CREATE UNIQUE INDEX index_accounts_on_reset_password_token ON accounts USING btr
 
 
 --
+-- Name: index_achievements_on_reward_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_achievements_on_reward_id ON achievements USING btree (reward_id);
+
+
+--
+-- Name: index_achievements_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_achievements_on_user_id ON achievements USING btree (user_id);
+
+
+--
 -- Name: index_api_cache_on_uid_and_provider; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_api_cache_on_uid_and_provider ON api_cache USING btree (uid, provider);
+
+
+--
+-- Name: index_awards_on_actor_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_awards_on_actor_id ON awards USING btree (actor_id);
+
+
+--
+-- Name: index_awards_on_applies_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_awards_on_applies_to_id ON awards USING btree (applies_to_id);
+
+
+--
+-- Name: index_entities_on_feed_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_entities_on_feed_id ON entities USING btree (feed_id);
+
+
+--
+-- Name: index_entities_on_scoring_rule_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_entities_on_scoring_rule_id ON entities USING btree (scoring_rule_id);
+
+
+--
+-- Name: index_entities_on_type_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_entities_on_type_id ON entities USING btree (type_id);
+
+
+--
+-- Name: index_entity_refs_on_from_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_entity_refs_on_from_id ON entity_refs USING btree (from_id);
+
+
+--
+-- Name: index_entity_refs_on_from_id_and_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_entity_refs_on_from_id_and_to_id ON entity_refs USING btree (from_id, to_id);
+
+
+--
+-- Name: index_entity_refs_on_to_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_entity_refs_on_to_id ON entity_refs USING btree (to_id);
 
 
 --
@@ -1624,6 +1612,34 @@ CREATE INDEX index_events_on_content_digest ON events USING btree (content_diges
 
 
 --
+-- Name: index_feed_configs_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_feed_configs_on_brand_id ON feed_configs USING btree (brand_id);
+
+
+--
+-- Name: index_funnel_constraints_funnels_on_funnel_constraint_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_funnel_constraints_funnels_on_funnel_constraint_id ON funnel_constraints_funnels USING btree (funnel_constraint_id);
+
+
+--
+-- Name: index_funnel_constraints_funnels_on_funnel_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_funnel_constraints_funnels_on_funnel_id ON funnel_constraints_funnels USING btree (funnel_id);
+
+
+--
+-- Name: index_identities_on_provider_and_uid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_identities_on_provider_and_uid ON identities USING btree (provider, uid);
+
+
+--
 -- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1631,10 +1647,45 @@ CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --
+-- Name: index_internals_on_actor_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_internals_on_actor_id ON internals USING btree (actor_id);
+
+
+--
+-- Name: index_internals_on_receiver_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_internals_on_receiver_id ON internals USING btree (receiver_id);
+
+
+--
+-- Name: index_ownerships_on_entity_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_ownerships_on_entity_id ON ownerships USING btree (entity_id);
+
+
+--
+-- Name: index_ownerships_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_ownerships_on_owner_id ON ownerships USING btree (owner_id);
+
+
+--
 -- Name: index_tags_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_tags_on_name ON tags USING btree (name);
+
+
+--
+-- Name: index_upvotes_on_actor_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_upvotes_on_actor_id ON upvotes USING btree (actor_id);
 
 
 --
@@ -1656,6 +1707,27 @@ CREATE INDEX index_user_roles_on_name ON user_roles USING btree (name);
 --
 
 CREATE INDEX index_user_roles_on_name_and_resource_type_and_resource_id ON user_roles USING btree (name, resource_type, resource_id);
+
+
+--
+-- Name: index_users_brands_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_brands_on_brand_id ON users_brands USING btree (brand_id);
+
+
+--
+-- Name: index_users_brands_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_brands_on_user_id ON users_brands USING btree (user_id);
+
+
+--
+-- Name: index_users_on_country_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_country_id ON users USING btree (country_id);
 
 
 --
@@ -1687,131 +1759,163 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: fk_accounts_brands; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: accounts_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts
-    ADD CONSTRAINT fk_accounts_brands FOREIGN KEY (brand_id) REFERENCES brands(id);
+    ADD CONSTRAINT accounts_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id);
 
 
 --
--- Name: fk_awards_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: achievements_reward_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT achievements_reward_id_fk FOREIGN KEY (reward_id) REFERENCES rewards(id) ON DELETE CASCADE;
+
+
+--
+-- Name: achievements_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT achievements_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: awards_actor_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY awards
-    ADD CONSTRAINT fk_awards_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
+    ADD CONSTRAINT awards_actor_id_fk FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_awards_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: awards_applies_to_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY awards
-    ADD CONSTRAINT fk_awards_users FOREIGN KEY (actor_id) REFERENCES users(id);
+    ADD CONSTRAINT awards_applies_to_id_fk FOREIGN KEY (applies_to_id) REFERENCES entities(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_entities_category_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_category_tags FOREIGN KEY (category_id) REFERENCES tags(id);
-
-
---
--- Name: fk_entities_feed_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: entities_feed_tags_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_feed_tags FOREIGN KEY (feed_id) REFERENCES tags(id);
+    ADD CONSTRAINT entities_feed_tags_fk FOREIGN KEY (feed_id) REFERENCES tags(id);
 
 
 --
--- Name: fk_entities_scoring_rules; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_scoring_rules FOREIGN KEY (scoring_rule_id) REFERENCES scoring_rules(id);
-
-
---
--- Name: fk_entities_type_tags; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: entities_scoring_rule_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY entities
-    ADD CONSTRAINT fk_entities_type_tags FOREIGN KEY (type_id) REFERENCES tags(id);
+    ADD CONSTRAINT entities_scoring_rule_id_fk FOREIGN KEY (scoring_rule_id) REFERENCES scoring_rules(id);
 
 
 --
--- Name: fk_internals_actor_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: entities_type_tags_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY entities
+    ADD CONSTRAINT entities_type_tags_fk FOREIGN KEY (type_id) REFERENCES tags(id);
+
+
+--
+-- Name: feed_configs_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY feed_configs
+    ADD CONSTRAINT feed_configs_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE;
+
+
+--
+-- Name: funnel_constraints_funnels_funnel_constraint_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY funnel_constraints_funnels
+    ADD CONSTRAINT funnel_constraints_funnels_funnel_constraint_id_fk FOREIGN KEY (funnel_constraint_id) REFERENCES funnel_constraints(id);
+
+
+--
+-- Name: funnel_constraints_funnels_funnel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY funnel_constraints_funnels
+    ADD CONSTRAINT funnel_constraints_funnels_funnel_id_fk FOREIGN KEY (funnel_id) REFERENCES funnels(id) ON DELETE CASCADE;
+
+
+--
+-- Name: internals_actor_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY internals
-    ADD CONSTRAINT fk_internals_actor_users FOREIGN KEY (actor_id) REFERENCES users(id);
+    ADD CONSTRAINT internals_actor_id_fk FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_internals_receiver_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: internals_receiver_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY internals
-    ADD CONSTRAINT fk_internals_receiver_users FOREIGN KEY (receiver_id) REFERENCES users(id);
+    ADD CONSTRAINT internals_receiver_id_fk FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_ownerships_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY ownerships
-    ADD CONSTRAINT fk_ownerships_entities FOREIGN KEY (entity_id) REFERENCES entities(id);
-
-
---
--- Name: fk_ownerships_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ownerships_entity_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ownerships
-    ADD CONSTRAINT fk_ownerships_users FOREIGN KEY (owner_id) REFERENCES users(id);
+    ADD CONSTRAINT ownerships_entity_id_fk FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_upvotes_entities; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ownerships_owner_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ownerships
+    ADD CONSTRAINT ownerships_owner_id_fk FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: upvotes_actor_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY upvotes
-    ADD CONSTRAINT fk_upvotes_entities FOREIGN KEY (applies_to_id) REFERENCES entities(id);
+    ADD CONSTRAINT upvotes_actor_id_fk FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_upvotes_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: upvotes_applies_to_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY upvotes
-    ADD CONSTRAINT fk_upvotes_users FOREIGN KEY (actor_id) REFERENCES users(id);
+    ADD CONSTRAINT upvotes_applies_to_id_fk FOREIGN KEY (applies_to_id) REFERENCES entities(id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_users_countries; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: users_brands_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users_brands
+    ADD CONSTRAINT users_brands_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE;
+
+
+--
+-- Name: users_brands_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users_brands
+    ADD CONSTRAINT users_brands_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: users_country_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
-    ADD CONSTRAINT fk_users_countries FOREIGN KEY (country_id) REFERENCES countries(id);
-
-
---
--- Name: fk_users_rewards_rewards; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY achievements
-    ADD CONSTRAINT fk_users_rewards_rewards FOREIGN KEY (reward_id) REFERENCES rewards(id);
-
-
---
--- Name: fk_users_rewards_users; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY achievements
-    ADD CONSTRAINT fk_users_rewards_users FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT users_country_id_fk FOREIGN KEY (country_id) REFERENCES countries(id);
 
 
 --
@@ -1820,87 +1924,75 @@ ALTER TABLE ONLY achievements
 
 SET search_path TO "$user",public;
 
-INSERT INTO schema_migrations (version) VALUES ('0');
+INSERT INTO schema_migrations (version) VALUES ('10000');
 
-INSERT INTO schema_migrations (version) VALUES ('10');
+INSERT INTO schema_migrations (version) VALUES ('10010');
 
-INSERT INTO schema_migrations (version) VALUES ('1000');
+INSERT INTO schema_migrations (version) VALUES ('10011');
 
-INSERT INTO schema_migrations (version) VALUES ('1010');
+INSERT INTO schema_migrations (version) VALUES ('10012');
 
-INSERT INTO schema_migrations (version) VALUES ('1011');
+INSERT INTO schema_migrations (version) VALUES ('10013');
 
-INSERT INTO schema_migrations (version) VALUES ('1020');
+INSERT INTO schema_migrations (version) VALUES ('10020');
 
-INSERT INTO schema_migrations (version) VALUES ('1030');
+INSERT INTO schema_migrations (version) VALUES ('11000');
 
-INSERT INTO schema_migrations (version) VALUES ('1040');
+INSERT INTO schema_migrations (version) VALUES ('11001');
 
-INSERT INTO schema_migrations (version) VALUES ('1050');
+INSERT INTO schema_migrations (version) VALUES ('11002');
 
-INSERT INTO schema_migrations (version) VALUES ('1060');
+INSERT INTO schema_migrations (version) VALUES ('11003');
 
-INSERT INTO schema_migrations (version) VALUES ('1070');
+INSERT INTO schema_migrations (version) VALUES ('11004');
 
-INSERT INTO schema_migrations (version) VALUES ('1080');
+INSERT INTO schema_migrations (version) VALUES ('11005');
 
-INSERT INTO schema_migrations (version) VALUES ('1090');
+INSERT INTO schema_migrations (version) VALUES ('11006');
 
-INSERT INTO schema_migrations (version) VALUES ('1100');
+INSERT INTO schema_migrations (version) VALUES ('11007');
 
-INSERT INTO schema_migrations (version) VALUES ('1120');
+INSERT INTO schema_migrations (version) VALUES ('11008');
 
-INSERT INTO schema_migrations (version) VALUES ('1130');
+INSERT INTO schema_migrations (version) VALUES ('11009');
 
-INSERT INTO schema_migrations (version) VALUES ('1140');
+INSERT INTO schema_migrations (version) VALUES ('11010');
 
-INSERT INTO schema_migrations (version) VALUES ('1150');
+INSERT INTO schema_migrations (version) VALUES ('11011');
 
-INSERT INTO schema_migrations (version) VALUES ('1160');
+INSERT INTO schema_migrations (version) VALUES ('11012');
 
-INSERT INTO schema_migrations (version) VALUES ('1170');
+INSERT INTO schema_migrations (version) VALUES ('11013');
 
-INSERT INTO schema_migrations (version) VALUES ('1180');
+INSERT INTO schema_migrations (version) VALUES ('11014');
 
-INSERT INTO schema_migrations (version) VALUES ('20');
+INSERT INTO schema_migrations (version) VALUES ('11015');
 
-INSERT INTO schema_migrations (version) VALUES ('2010');
+INSERT INTO schema_migrations (version) VALUES ('11016');
 
-INSERT INTO schema_migrations (version) VALUES ('20140407132411');
+INSERT INTO schema_migrations (version) VALUES ('11017');
 
-INSERT INTO schema_migrations (version) VALUES ('20140407132412');
+INSERT INTO schema_migrations (version) VALUES ('11018');
 
-INSERT INTO schema_migrations (version) VALUES ('20140516152418');
+INSERT INTO schema_migrations (version) VALUES ('12001');
 
-INSERT INTO schema_migrations (version) VALUES ('20140708210959');
+INSERT INTO schema_migrations (version) VALUES ('12002');
 
-INSERT INTO schema_migrations (version) VALUES ('20140708211000');
+INSERT INTO schema_migrations (version) VALUES ('12003');
 
-INSERT INTO schema_migrations (version) VALUES ('20140708211001');
+INSERT INTO schema_migrations (version) VALUES ('12004');
 
-INSERT INTO schema_migrations (version) VALUES ('20140709144633');
+INSERT INTO schema_migrations (version) VALUES ('13001');
 
-INSERT INTO schema_migrations (version) VALUES ('2020');
+INSERT INTO schema_migrations (version) VALUES ('14001');
 
-INSERT INTO schema_migrations (version) VALUES ('2030');
+INSERT INTO schema_migrations (version) VALUES ('14002');
 
-INSERT INTO schema_migrations (version) VALUES ('2040');
+INSERT INTO schema_migrations (version) VALUES ('14003');
 
-INSERT INTO schema_migrations (version) VALUES ('2050');
+INSERT INTO schema_migrations (version) VALUES ('14004');
 
-INSERT INTO schema_migrations (version) VALUES ('30');
+INSERT INTO schema_migrations (version) VALUES ('14005');
 
-INSERT INTO schema_migrations (version) VALUES ('3000');
-
-INSERT INTO schema_migrations (version) VALUES ('3010');
-
-INSERT INTO schema_migrations (version) VALUES ('3020');
-
-INSERT INTO schema_migrations (version) VALUES ('3030');
-
-INSERT INTO schema_migrations (version) VALUES ('3040');
-
-INSERT INTO schema_migrations (version) VALUES ('3050');
-
-INSERT INTO schema_migrations (version) VALUES ('40');
+INSERT INTO schema_migrations (version) VALUES ('14006');
 

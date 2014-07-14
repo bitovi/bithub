@@ -9,8 +9,6 @@ class CreateActivities < ActiveRecord::Migration
 
     end
 
-    add_index(:upvotes, :applies_to_id)
-
     create_table :awards do |t|
       t.references :applies_to, :null => false
       t.references :actor, :null => false

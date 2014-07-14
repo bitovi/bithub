@@ -13,6 +13,7 @@ gem 'pry-rails'
 gem 'amqp'
 gem 'bunny'
 gem 'pg', '~> 0.17.1'
+gem 'pg_power'
 
 gem 'redis'
 gem 'redis-rails'
