@@ -23,6 +23,9 @@ class User < ActiveRecord::Base
   has_many :rewards, :through => :achievements
 
   has_many :identities, :dependent => :nullify
+
+  has_and_belongs_to_many :brands
+
   belongs_to :country
 
   scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
@@ -127,20 +130,14 @@ class User < ActiveRecord::Base
 
   def join_brand(brand)
     if brand = match_brand(brand)
-      update_column :brand_ids, brand_ids.push(brand.id) unless brand_ids.include? brand.id
+      self.brands << brand unless self.brands.include? brand
     end
-
-    self
   end
 
   def remove_brand(brand)
     if brand = match_brand(brand)
-      if brand_ids.delete(brand.id)
-        update_column :brand_ids, brand_ids
-      end
+      self.brands.delete brand
     end
-
-    self
   end
 
   private

@@ -104,6 +104,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       if (user = @manager.procure)
         session["devise.#{kind.downcase}_data"] = oauth_data
         sign_in user, :event => :authentication
+
+        # join user to current brand
+        user.join_brand(current_brand) if current_brand
+
         render :template => 'special/close_oauth_popup.html'
       else
         render :json => { message: 'error' }, :status => 500
@@ -134,7 +138,14 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     end
   end
 
+  private
+
   def oauth_data
     env["omniauth.auth"] || session["current_oauth_data"]
   end
+
+  def current_brand
+    @brand ||= Brand.where({name: request.subdomain}).first
+  end
+
 end
