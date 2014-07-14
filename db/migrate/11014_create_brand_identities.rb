@@ -9,11 +9,7 @@ class CreateBrandIdentities < ActiveRecord::Migration
       t.timestamps
     end
 
-    execute <<-SQL
-      ALTER TABLE brand_identities
-        ADD CONSTRAINT brand_identities_unique_uid_provider_combination
-        UNIQUE (provider, uid);
-      SQL
+    # add_index :brand_identities, [:provider, :uid], :unique => true
   end
 
   def down
