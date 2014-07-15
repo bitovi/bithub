@@ -5,4 +5,9 @@ class Funnel < ActiveRecord::Base
     class_name: "FunnelConstraint",
     foreign_key: "funnel_id",
     association_foreign_key: "funnel_constraint_id"
+
+  def disabled=(value)
+    self.props_will_change!
+    self.props['disabled'] = (!!value).to_s
+  end
 end

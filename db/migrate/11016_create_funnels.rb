@@ -4,6 +4,7 @@ class CreateFunnels < ActiveRecord::Migration
       t.string :name
       t.string :display_name
       t.string :tags, array: true, default: []
+      t.hstore :props, default: ''
     end
   end
 end
