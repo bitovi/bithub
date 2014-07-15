@@ -2,7 +2,7 @@ class CreateConstraints < ActiveRecord::Migration
   def change
 
     # Users
-    add_foreign_key :users, :countries
+    #add_foreign_key :users, :countries
 
     # Entities
     add_foreign_key :entities, :tags, :column => 'feed_id', :name => 'entities_feed_tags_fk'
