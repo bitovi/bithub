@@ -21,6 +21,10 @@ module Identities
         @data[:oauth]
       end
 
+      def info
+        oauth[:info]
+      end
+
     end
   end
 end
