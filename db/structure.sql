@@ -309,6 +309,16 @@ ALTER SEQUENCE brands_id_seq OWNED BY brands.id;
 
 
 --
+-- Name: brands_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE brands_users (
+    user_id integer,
+    brand_id integer
+);
+
+
+--
 -- Name: category_determination_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -642,7 +652,8 @@ CREATE TABLE funnels (
     id integer NOT NULL,
     name character varying(255),
     display_name character varying(255),
-    tags character varying(255)[] DEFAULT '{}'::character varying[]
+    tags character varying(255)[] DEFAULT '{}'::character varying[],
+    props hstore DEFAULT ''::hstore
 );
 
 
@@ -797,6 +808,10 @@ CREATE MATERIALIZED VIEW leaderboard AS
            FROM (user_roles r
       LEFT JOIN users_user_roles ur ON ((ur.user_role_id = r.id)))
      WHERE (ur.user_id = users.id)) AS user_roles,
+    ARRAY( SELECT b.name
+           FROM (brands b
+      LEFT JOIN brands_users bu ON ((bu.brand_id = b.id)))
+     WHERE (bu.user_id = users.id)) AS user_brands,
     users.total_score AS user_score
    FROM users
   ORDER BY users.total_score DESC
@@ -1079,16 +1094,6 @@ CREATE VIEW user_total_score AS
            FROM internals i
           WHERE (i.receiver_id = users.id))) AS score_sum
    FROM users;
-
-
---
--- Name: users_brands; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users_brands (
-    user_id integer,
-    brand_id integer
-);
 
 
 --
@@ -1563,6 +1568,20 @@ CREATE INDEX index_awards_on_applies_to_id ON awards USING btree (applies_to_id)
 
 
 --
+-- Name: index_brands_users_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_brands_users_on_brand_id ON brands_users USING btree (brand_id);
+
+
+--
+-- Name: index_brands_users_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_brands_users_on_user_id ON brands_users USING btree (user_id);
+
+
+--
 -- Name: index_entities_on_feed_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1710,20 +1729,6 @@ CREATE INDEX index_user_roles_on_name_and_resource_type_and_resource_id ON user_
 
 
 --
--- Name: index_users_brands_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_users_brands_on_brand_id ON users_brands USING btree (brand_id);
-
-
---
--- Name: index_users_brands_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_users_brands_on_user_id ON users_brands USING btree (user_id);
-
-
---
 -- Name: index_users_on_country_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1796,6 +1801,22 @@ ALTER TABLE ONLY awards
 
 ALTER TABLE ONLY awards
     ADD CONSTRAINT awards_applies_to_id_fk FOREIGN KEY (applies_to_id) REFERENCES entities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: brands_users_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY brands_users
+    ADD CONSTRAINT brands_users_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE;
+
+
+--
+-- Name: brands_users_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY brands_users
+    ADD CONSTRAINT brands_users_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -1892,22 +1913,6 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY upvotes
     ADD CONSTRAINT upvotes_applies_to_id_fk FOREIGN KEY (applies_to_id) REFERENCES entities(id) ON DELETE CASCADE;
-
-
---
--- Name: users_brands_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY users_brands
-    ADD CONSTRAINT users_brands_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE;
-
-
---
--- Name: users_brands_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY users_brands
-    ADD CONSTRAINT users_brands_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
