@@ -49,7 +49,7 @@ Alter events.source_data back to json type
 
 Update imported tags
 
-1. `./bin/rake data:import_or_update_tags TENANT=bitovi`
+1. `TENANT=bitovi ./bin/rake data:import_or_update_tags`
 2. Connect brand identities and check tags!
 
 Check sequences!!!
