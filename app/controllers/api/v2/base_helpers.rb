@@ -45,4 +45,8 @@ module Api::V2::BaseHelpers
     obj.kind_of? ActiveRecord::Base
   end
 
+  def current_brand
+    Apartment::Database.current_tenant
+  end
+
 end
