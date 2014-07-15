@@ -4,7 +4,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   def index
     if params[:cached] == "true"
-      @users = Leaderboard.all
+      @users = Leaderboard.where("? = ANY(user_brands)", current_brand)
       render :index_cached
     else
       muster_query = request.env['muster.query']
