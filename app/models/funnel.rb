@@ -10,4 +10,8 @@ class Funnel < ActiveRecord::Base
     self.props_will_change!
     self.props['disabled'] = (!!value).to_s
   end
+
+  def disabled
+    !!self.props['disabled']
+  end
 end
