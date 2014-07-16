@@ -79,7 +79,7 @@ class FeedConfigDecorator < ::Draper::Decorator
   def stackexchange_config
     {
       token: @bids.first.data.andand[:access_token],
-      terms: terms || []
+      terms: (brand_keywords & feed_config_keywords) || []
     }
   end
 
