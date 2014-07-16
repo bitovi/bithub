@@ -7,13 +7,17 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      has :id, :event_url, :name, :description, :status
+      has :id, :event_url, :name, :status
       attr_reader :hosts, :venue
 
       def initialize(event)
         _event = symbolize_keys(event)
         @data = _event
         @hosts = _event.andand[:event_hosts].andand.map{|eh| Wrappers::Meetup::Member.new(eh)}
+      end
+
+      def description
+        @data[:description] || ""
       end
 
       def created
