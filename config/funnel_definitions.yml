@@ -1,6 +1,6 @@
 -
-  name: 'digests'
-  display_name: 'Digests'
+  name: 'digest'
+  display_name: 'Digest'
   tags: []
   constraints:
     -
