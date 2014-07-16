@@ -9,18 +9,23 @@ class Commander
     @rabbit = Bunny.new(rabbitmq_uri)
     @rabbit.start
     @chan = @rabbit.create_channel
-    @x = @chan.direct("x.crawler", :auto_delete => true)
+    @x = @chan.direct("x.crawler")
     listen
   end
 
   def listen
-    @q_config = @chan.queue("q.crawler.config", :auto_delete => true)
-                     .bind(@x, :routing_key => "config")
+    @q = @chan\
+      .queue("q.poller.notifications", :auto_delete => true)\
+      .bind(@x, :routing_key => "config")
 
-    @q_config.subscribe do |delivery_info, properties, payload|
+    @q.subscribe do |delivery_info, properties, payload|
       msg = MultiJson.load(payload).symbolize_keys
       dispatch_command(msg)
     end
+  end
+
+  def publish(msg, rk)
+    @x.publish(MultiJson.dump(msg), :routing_key => rk)
   end
 
   def dispatch_command(msg)

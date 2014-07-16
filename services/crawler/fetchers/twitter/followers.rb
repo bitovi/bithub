@@ -1,3 +1,5 @@
+require 'twitter'
+
 module Fetchers
   module Twitter
 

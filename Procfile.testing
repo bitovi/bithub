@@ -1,7 +1,5 @@
 web: ./bin/unicorn_rails -c ./config/unicorn.rb
 listener: ruby ./services/listener/listener.rb
 crawler: ruby ./services/crawler/crawler.rb
+streamer: ruby ./services/crawler/streamer.rb
 worker: ./bin/sidekiq
-
-# liveservice: node ./services/liveservice/app/app.js
-# xmpp_bot: ruby ./services/xmpp-bot/app/xmpp_bot.rb

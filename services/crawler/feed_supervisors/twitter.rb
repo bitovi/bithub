@@ -16,16 +16,12 @@ module FeedSupervisors
         # @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
       end
 
-      if Celluloid::Actor[:twitter_public_stream]
-        Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms))
-      end
+      Celluloid::Actor[:commander].publish(register_msg, :registration)
     end
 
     def reload
-      if Celluloid::Actor[:twitter_public_stream]
-        Celluloid::Actor[:twitter_public_stream].unregister(@brand_name, reloading: true)
-        Celluloid::Actor[:twitter_public_stream].register(Channel.new(@brand_name, terms), reloading: true)
-      end
+      Celluloid::Actor[:commander].publish(unregister_msg.merge({:reloading => true}), :registration)
+      Celluloid::Actor[:commander].publish(register_msg.merge({:reloading => true}), :registration)
     end
 
     def actor_name
@@ -58,6 +54,23 @@ module FeedSupervisors
 
     def static_config
       Celluloid::Actor[:configurator].static_config.fetch(:twitter)
+    end
+
+    def register_msg
+      {
+        :action => :register,
+        :feed_name => :twitter,
+        :brand_name => @brand_name,
+        :terms => terms
+      }
+    end
+
+    def unregister_msg
+      {
+        :action => :unregister,
+        :feed_name => :twitter,
+        :brand_name => @brand_name
+      }
     end
 
   end
