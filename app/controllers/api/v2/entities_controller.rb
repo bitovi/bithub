@@ -123,7 +123,8 @@ class Api::V2::EntitiesController < Api::V2::BaseController
       scope.from_funnel f
       scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
 
-      Entity.union_scope *scopes
+      scope = Entity.union_scope *scopes
+      scope.order(scope_applier(params, scope).orderings)
     else
       scope
     end

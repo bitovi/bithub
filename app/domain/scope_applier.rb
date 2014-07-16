@@ -8,11 +8,14 @@ class ScopeApplier
     apply_overrides
   end
 
-  def apply_muster_query_to_scope(muster_query)
+  def apply_muster_query_to_scope(muster_query, params = {})
+    @params = params if params
     @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-    @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
-    @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
+    unless params[:funnel_name] || params[:funnel_id]
+      @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
+      @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
+    end
     self
   end
 
@@ -59,7 +62,7 @@ class ScopeApplier
 
   def apply_order_to_scope
     if (orderings = @query.pluck_and_process_orderings)
-      @scope = @scope.order(orderings)
+      @scope = @scope.order(orderings) if @params && not(@params[:funnel_id] || @params[:funnel_name])
     end
     self
   end
@@ -69,6 +72,10 @@ class ScopeApplier
     unless thread_updated_ts.nil?
       @scope = override_thread_updated_date(thread_updated_ts.value)
     end
+  end
+
+  def orderings
+    @query.pluck_and_process_orderings || ""
   end
 
   def result
