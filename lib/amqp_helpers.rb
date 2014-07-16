@@ -8,7 +8,7 @@ module AmqpHelpers
 
     exchange_type = args.fetch(:exchange_type) { 'direct' }
     exchange_name = args.fetch(:exchange_name) { '' }
-    exchange_opts = args.fetch(:exchange_opts) { {:auto_delete => true, :durable => false} }
+    exchange_opts = args.fetch(:exchange_opts) { Hash.new }
 
     @x = ch.send(exchange_type, *[exchange_name, exchange_opts])
     self
