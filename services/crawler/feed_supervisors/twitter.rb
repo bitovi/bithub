@@ -16,12 +16,12 @@ module FeedSupervisors
         # @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
       end
 
-      Celluloid::Actor[:commander].publish(register_msg)
+      Celluloid::Actor[:commander].publish(register_msg, :registration)
     end
 
     def reload
-      Celluloid::Actor[:commander].publish(register_msg.merge {:reloading => true}, :registration)
-      Celluloid::Actor[:commander].publish(unregister_msg.merge {:reloading => true}, :registration)
+      Celluloid::Actor[:commander].publish(unregister_msg.merge({:reloading => true}), :registration)
+      Celluloid::Actor[:commander].publish(register_msg.merge({:reloading => true}), :registration)
     end
 
     def actor_name
@@ -59,7 +59,7 @@ module FeedSupervisors
     def register_msg
       {
         :action => :register,
-        :feed_name => :twitter
+        :feed_name => :twitter,
         :brand_name => @brand_name,
         :terms => terms
       }
