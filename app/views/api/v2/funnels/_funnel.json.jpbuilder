@@ -1,4 +1,4 @@
-json.(funnel, :id, :name, :display_name)
+json.(funnel, :id, :name, :display_name, :disabled)
 
 json.constraints do
 	json.array! funnel.constraints do |c|
