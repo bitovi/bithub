@@ -21,7 +21,7 @@ module FeedSupervisors
       @endpoints.supervise_as(
         actor_name,
         Poller,
-        *[@brand_name, fetcher, {interval: 300}])
+        *[@brand_name, fetcher, {interval: 60}])
     end
 
     private
