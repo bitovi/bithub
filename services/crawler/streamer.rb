@@ -22,30 +22,27 @@ require 'logger_factory'
 
 require 'events/dispatcher'
 
-require_relative 'main_supervisor'
-require_relative 'brand_supervisor'
+require_relative 'configurator'
 require_relative 'lock_manager'
 require_relative 'publisher'
-require_relative 'configurator'
-require_relative 'commander'
-require_relative 'poller'
-require_relative 'fetchers/all'
+require_relative 'streamer/channel'
+require_relative 'streamer/registrator'
+require_relative 'streamer/connectors/all'
+require_relative 'streamer/stream_supervisor'
 require_relative 'decorators/all'
-require_relative 'persistent/digest_set'
+require_relative 'http_server/listener'
 require_relative 'response_processor'
 
-# log4r logger
 $env = ENV.fetch('ENV') { 'development' }
 logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 
-Celluloid.logger = logger
-
-class Crawler < Celluloid::SupervisionGroup
+class Streamer < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
-  supervise Commander, as: :commander
+  supervise Registrator, as: :registrator
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
-  supervise MainSupervisor, as: :main_supervisor
+  supervise HttpServer::Listener, as: :http_listener
+  supervise StreamSupervisor, as: :stream_supervisor
 end
 
-Crawler.run
+Streamer.run

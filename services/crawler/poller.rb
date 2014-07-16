@@ -1,6 +1,5 @@
 require 'core_ext'
 require_relative 'decorators/all'
-require_relative 'polling_lock'
 
 class Poller
   include Celluloid
@@ -12,23 +11,12 @@ class Poller
 
     interval = opts.fetch(:interval) { 3600 }
     @timer = every(interval) { fetch }
-    @lock = PollingLock.new(@brand_name, fetcher_name, interval)
     fetch
   end
 
-  def interval
-    @timer.interval
-  end
-
-  def interval=(seconds)
-    @timer.cancel
-    @timer = every(seconds) { fetch }
-    @lock.interval = seconds-5
-  end
-
   def fetch
-    unless @lock.locked?
-      @lock.lock
+    unless locker.locked?(lock_name)
+      locker.lock(lock_name, lock_interval)
       if (events = @fetcher.fetch)
         Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
         publish events if events.count > 0
@@ -40,7 +28,25 @@ class Poller
 
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
-    Celluloid::Actor[:publisher].publish @brand_name, feed_name, data, decorator: @decorator
+    publisher.publish @brand_name, feed_name, data, decorator: @decorator
+  end
+  
+  def interval
+    @timer.interval
+  end
+
+  def lock_interval
+    interval - 5
+  end
+
+  def interval=(seconds)
+    @timer.cancel
+    @timer = every(seconds) { fetch }
+  end
+  
+  def lock_name
+    ln = fetcher_name.to_s.snake_case.gsub('fetchers','').split('/').reject{|x| x == ""}.join(':') 
+    "lock:polling:#{@brand_name}:#{ln}"
   end
 
   def fetcher_name
@@ -51,4 +57,11 @@ class Poller
     fetcher_name.split('::')[1].snake_case
   end
 
+  def locker
+    Celluloid::Actor[:lock_manager]
+  end
+
+  def publisher
+    Celluloid::Actor[:publisher]
+  end
 end

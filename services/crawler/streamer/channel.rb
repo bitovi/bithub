@@ -20,4 +20,8 @@ class Channel
       end
     end
   end
+
+  def hash
+    [@name, Channel].hash
+  end
 end

@@ -11,7 +11,7 @@ module Streamers
     end
 
     def unregister(channel_name, reloading: false)
-      channel_topics = channels.detect{|c| c.name == channel_name}.topics
+      channel_topics = channel_with_name(channel_name).andand.topics
       Celluloid.logger.info "Un-registering channel #{channel_name} with #{channel_topics}"
 
       if channels.reject!{|c| c.name == channel_name}
@@ -29,19 +29,24 @@ module Streamers
       Celluloid::Actor[:publisher].publish brand, feed, [object]
     end
 
+    def channel_with_name(name)
+      channels.detect{|c| c.name == name}
+    end
+
     def channels
-      @channels ||= Array.new
+      @channels ||= Set.new
     end
 
     def timed_connect(reloading)
-      @last_registration.cancel if @last_registration
-      @last_registration = after(registration_timeout) do
-        reloading ? reconnect : connect
+      if @last_registration
+        @last_registration.reset
+      else
+        @last_registration = after(registration_timeout) { reconnect }
       end
     end
 
     def registration_timeout
-      60
+      $env == 'development' ? 5 : 30
     end
 
   end
