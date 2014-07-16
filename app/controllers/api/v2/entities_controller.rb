@@ -103,7 +103,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
     scope = scope_applier(params, scope)
     .apply_negated_attrs_to_scope
-    .apply_muster_query_to_scope(muster_query)
+    .apply_muster_query_to_scope(muster_query, params)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
     .apply_order_to_scope
@@ -119,10 +119,14 @@ class Api::V2::EntitiesController < Api::V2::BaseController
       f = Funnel.find_by_name(params[:funnel_name])
     end
 
-    scope.from_funnel f
-    scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
+    if f
+      scope.from_funnel f
+      scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
 
-    Entity.union_scope *scopes
+      Entity.union_scope *scopes
+    else
+      scope
+    end
   end
 
   def query_logic(params)
