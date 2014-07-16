@@ -220,7 +220,7 @@ module Events
   module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::StackExchange::Question
+        Events::Stackexchange::Question
       end
     end
   end
