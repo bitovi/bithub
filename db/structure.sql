@@ -1729,6 +1729,13 @@ CREATE INDEX index_user_roles_on_name_and_resource_type_and_resource_id ON user_
 
 
 --
+-- Name: index_users_on_country_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_country_id ON users USING btree (country_id);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1906,6 +1913,14 @@ ALTER TABLE ONLY upvotes
 
 ALTER TABLE ONLY upvotes
     ADD CONSTRAINT upvotes_applies_to_id_fk FOREIGN KEY (applies_to_id) REFERENCES entities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: users_country_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_country_id_fk FOREIGN KEY (country_id) REFERENCES countries(id);
 
 
 --
