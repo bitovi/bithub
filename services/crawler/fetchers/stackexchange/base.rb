@@ -34,19 +34,24 @@ module Fetchers
       end
 
       def api_key
-        { :key => Celluloid::Actor[:configurator]
-          .static_config
-          .fetch(:stackexchange)
-          .fetch(:api_key) }
+        { :key => static_config.fetch(:api_key) }
       end
 
       def static
         {
           :site => 'stackoverflow',
-          :filter => '_GZ-2_GIz-dSc9CjKwGP4UEOutlPKHh*F)x8rj8B2kRb1dHxpaJFC5Upazs'
+          :filter => static_config.fetch(:filter)
         }
       end
+
+      private
+
+      def static_config
+        Celluloid::Actor[:configurator]
+          .static_config
+          .fetch(:stackexchange)
+      end
+
     end
   end
 end
-
