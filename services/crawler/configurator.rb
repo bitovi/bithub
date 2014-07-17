@@ -4,21 +4,16 @@ class Configurator
   include Celluloid
   include CoreHelpers
 
+  attr_reader :all_brands
+
   def initialize(opts)
     @env = opts.fetch(:environment)
     reload unless ENV['TRAVIS']
     Celluloid.logger.debug "All brands: #{@all_brands}"
   end
-  attr_reader :all_brands
-
-  def whole_config
-    reload unless @all_brands
-    all_brands.merge(static_config)
-  end
 
   def static_config
-    @static_config ||= YAML.load_file config_file_path
-    @static_config.fetch(:app_level)
+    @static_config ||= read_env_config
   end
 
   def brand(brand_name)
@@ -41,11 +36,30 @@ class Configurator
     HTTParty.get url
   end
 
-  def config_file_path
-    File.expand_path(File.join('config', 'services', 'crawler', "#{@env}.yml"))
+  private
+
+  def read_env_config
+    {
+      twitter: {
+        api_key: ENV.fetch('TWITTER_CONSUMER_KEY'),
+        api_secret: ENV.fetch('TWITTER_CONSUMER_SECRET')
+      },
+      disqus: {
+        api_key: ENV.fetch('DISQUS_KEY'),
+        api_secret: ENV.fetch('DISQUS_SECRET')
+      },
+      meetup: {
+        api_key: ENV.fetch('MEETUP_KEY'),
+        api_secret: ENV.fetch('MEETUP_SECRET')
+      },
+      stackexchange: {
+        api_key: ENV.fetch('STACKEXCHANGE_CLIENT_KEY'),
+        api_secret: ENV.fetch('STACKEXCHANGE_CLIENT_SECRET'),
+        filter: ENV.fetch('STACKEXCHANGE_FILTER')
+      }
+    }
   end
 
-  private
   def url
     ENV['CRAWLER_CONFIG']
   end

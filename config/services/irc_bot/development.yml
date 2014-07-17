@@ -1,4 +1,0 @@
-server:  'chat.freenode.org'
-nick:    'bithub-bot'
-channels:
-  - '#bithub-test'
