@@ -5,9 +5,9 @@ module Events
 
       def content_digest
         calc_digest(
-          title.to_s + 
-          project.to_s + 
-          category.to_s + 
+          title.to_s +
+          project.to_s +
+          category.to_s +
           body.to_s +
           image.to_s +
           url.to_s +

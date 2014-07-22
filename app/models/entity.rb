@@ -26,7 +26,6 @@ class Entity < ActiveRecord::Base
 
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
-  belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
@@ -34,8 +33,8 @@ class Entity < ActiveRecord::Base
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of  :title,
-    :feed_name, :type_name, :category_name,
-    :feed_id, :type_id, :category_id,
+    :feed_name, :type_name,
+    :feed_id, :type_id,
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 
@@ -44,8 +43,6 @@ class Entity < ActiveRecord::Base
   scope :no_feed, lambda {|f| where("feed_name <> ?", f) }
   scope :type, lambda {|t| where(type_name: t) }
   scope :no_type, lambda {|t| where("type_name <> ?", t) }
-  scope :category, lambda {|c| where(category_name: c) }
-  scope :no_category, lambda {|c| where("category_name <> ?", c) }
 
   scope :without_future, lambda { |clientTz|
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
@@ -249,7 +246,7 @@ class Entity < ActiveRecord::Base
   end
 
   def missing_critical_tags?
-    !self.type || !self.feed || !self.category
+    !self.type || !self.feed
   end
 
   def adopt_references_from_children
