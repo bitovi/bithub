@@ -57,28 +57,33 @@ module FeedSupervisors
     end
 
     private
-    def config
-      Celluloid::Actor[:configurator].feed_config(@brand_name, :meetup)
+
+    def brand_feed_config
+      configurator.feed_config(@brand_name, :meetup)
     end
 
     def group_ids
-      config.fetch(:groups)
+      brand_feed_config.fetch(:groups)
     end
 
     def terms
-      config.fetch(:terms)
+      brand_feed_config.fetch(:terms)
     end
 
     def token
-      config.fetch(:access_token)
+      brand_feed_config.fetch(:token)
     end
 
     def api_key
-      Celluloid::Actor[:configurator].static_config.fetch(:meetup).fetch(:api_key)
+      configurator.static_config.fetch(:meetup).fetch(:personal_key)
     end
 
     def actor_name(endpoint_type)
       "#{@brand_name}_meetup_#{endpoint_type}".to_sym
+    end
+
+    def configurator
+      Celluloid::Actor[:configurator]
     end
 
     def register_msg
