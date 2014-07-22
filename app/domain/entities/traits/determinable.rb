@@ -27,22 +27,9 @@ module Entities
       @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     end
 
-    def determine_category
-      tags = @instance.tag_list
-      rules = CategoryDeterminationRule.order('position DESC')
-      # rule checking is done in reverse order so that that 'highest'
-      # value with the same score is returned
-
-      if rule = Tagger::List.new(tags).best_match(rules)
-        @instance.tag_list.add rule.category_name.snake_case
-        @instance.category_name = rule.category_name.snake_case
-      end
-    end
-
     def determine_rule
       tags = @instance.tag_list
       rules = ScoringRule.order('position DESC')
-      # same as in #determine_category ^^^
 
       @instance.scoring_rule = Tagger::List.new(tags).best_match(rules)
     end

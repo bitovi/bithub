@@ -319,41 +319,6 @@ CREATE TABLE brands_users (
 
 
 --
--- Name: category_determination_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE category_determination_rules (
-    id integer NOT NULL,
-    name character varying(255),
-    required_tags hstore,
-    props hstore,
-    category_name character varying(255),
-    "position" integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: category_determination_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE category_determination_rules_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: category_determination_rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE category_determination_rules_id_seq OWNED BY category_determination_rules.id;
-
-
---
 -- Name: countries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -397,11 +362,9 @@ CREATE TABLE entities (
     origin_id character varying(255),
     feed_name character varying(255),
     type_name character varying(255),
-    category_name character varying(255),
     scoring_rule_id integer NOT NULL,
     feed_id integer NOT NULL,
     type_id integer NOT NULL,
-    category_id integer NOT NULL,
     parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
     thread_updated_ts timestamp without time zone NOT NULL,
@@ -1168,13 +1131,6 @@ ALTER TABLE ONLY brands ALTER COLUMN id SET DEFAULT nextval('brands_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextval('category_determination_rules_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
 
 
@@ -1344,14 +1300,6 @@ ALTER TABLE ONLY brand_identities
 
 ALTER TABLE ONLY brands
     ADD CONSTRAINT brands_pkey PRIMARY KEY (id);
-
-
---
--- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY category_determination_rules
-    ADD CONSTRAINT category_determination_rules_pkey PRIMARY KEY (id);
 
 
 --
@@ -2000,4 +1948,6 @@ INSERT INTO schema_migrations (version) VALUES ('14004');
 INSERT INTO schema_migrations (version) VALUES ('14005');
 
 INSERT INTO schema_migrations (version) VALUES ('14006');
+
+INSERT INTO schema_migrations (version) VALUES ('20140722110137');
 

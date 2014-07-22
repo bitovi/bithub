@@ -1,1 +1,0 @@
-json.(rule, :id, :name, :required_tags, :category_name, :position)

@@ -6,9 +6,7 @@ module QueryLogic
       'upvotes' => 'total_upvotes',
       'score' => 'total_score',
       'feed' => 'feed_name',
-      'type' => 'type_name',
-      'category' => 'category_name',
-      'categories' => "idx(array#{Tag.tagged_with('categories').order('id').pluck(:id)}, category_id)",
+      'type' => 'type_name'
     }
 
     def initialize(model, params)
@@ -160,10 +158,6 @@ module QueryLogic
         hash[qi_key] = qi_val
       end
       hash
-    end
-
-    def category_name_order
-      @name_order ||= YAML::load_file('config/categories_order.yml')['categories']
     end
 
     private
