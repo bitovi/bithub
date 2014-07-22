@@ -9,7 +9,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   helper_method :custom_cache_key
   helper_method :list_cache_key
 
-  CategoriesToSummarize = ['app', 'article', 'plugin', 'code', 'chat', 'twitter', 'issues_event', 'github', 'question']
   PossibleIssueStates = ['open', 'closed']
 
   def index
@@ -92,7 +91,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     scope = Entity.scoped_with_includes
 
     scope = scope.no_children if !counting?
-    scope = scope.no_feed('irc').no_category('digest') if on_greatest?
+    ###scope = scope.no_feed('irc').no_category('digest') if on_greatest?
     scope = scope.with_state(params[:state]) if PossibleIssueStates.include?(params[:state])
 
     scope = scope.without_future(params[:clientTz] || 'UTC') if params[:without_future].present?

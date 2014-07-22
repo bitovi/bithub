@@ -3,7 +3,6 @@ json.cache! ("v2" + custom_cache_key(entity)) do
 
   json.feed entity.feed_name
   json.type entity.type_name
-  json.category entity.category_name
   json.tags entity.cached_tags
 
   json.upvotes entity.upvotes
