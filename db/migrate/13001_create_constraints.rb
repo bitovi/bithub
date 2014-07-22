@@ -28,8 +28,11 @@ class CreateConstraints < ActiveRecord::Migration
     # Accounts
     add_foreign_key :accounts, :brands
 
-    # Feed configs
+    # Feed configs 
     add_foreign_key :feed_configs, :brands, :dependent => :delete
+
+    # Brand identities
+    add_foreign_key :brand_identities, :brands, :dependent => :delete
 
     # Funnels
     add_foreign_key :funnel_constraints_funnels, :funnels, :dependent => :delete
