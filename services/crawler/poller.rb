@@ -13,6 +13,7 @@ class Poller
     @timer = every(interval) { fetch }
     fetch
   end
+  attr_reader :fetcher
 
   def fetch
     unless locker.locked?(lock_name)
