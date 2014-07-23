@@ -16,11 +16,19 @@ class Api::V2::UserActivitiesController < Api::V2::BaseController
   end
 
 
-  def achievements
+  def activities
     @activities = User
       .find(params[:user_id])
       .activities
       .where("(model_name='Internal' or (string_to_array(tags, ', ') && '{watch,follow}'))")
+
+    render 'api/v2/activities/index'
+  end
+
+  def achievements
+    @achievements = User
+      .find(params[:user_id])
+      .achievements
 
     render 'api/v2/achievements/index'
   end
