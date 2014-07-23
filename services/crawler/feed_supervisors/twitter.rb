@@ -12,7 +12,7 @@ module FeedSupervisors
 
       @endpoints = SupervisionGroup.new
       user_tokens.each do |tokens|
-        @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 300}])
+        @endpoints.supervise_as(twitter_search_actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 30}])
         # @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
       end
 
@@ -20,12 +20,21 @@ module FeedSupervisors
     end
 
     def reload
-      Celluloid::Actor[:commander].publish(unregister_msg.merge({:reloading => true}), :registration)
-      Celluloid::Actor[:commander].publish(register_msg.merge({:reloading => true}), :registration)
+      Celluloid::Actor[twitter_search_actor_name].fetcher.set_terms(terms)
+      commander.publish(unregister_msg.merge({:reloading => true}), :registration)
+      commander.publish(register_msg.merge({:reloading => true}), :registration)
     end
 
-    def actor_name
+    def twitter_search_actor_name
       "#{@brand_name}_twitter_search".to_sym
+    end
+
+    def follow_actor_name
+      "#{@brand_name}_follows".to_sym
+    end
+
+    def commander
+      Celluloid::Actor[:commander]
     end
 
     private

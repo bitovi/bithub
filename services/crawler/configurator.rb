@@ -49,6 +49,7 @@ class Configurator
         api_secret: ENV.fetch('DISQUS_SECRET')
       },
       meetup: {
+        personal_key: ENV.fetch('MEETUP_PERSONAL_KEY'),
         api_key: ENV.fetch('MEETUP_KEY'),
         api_secret: ENV.fetch('MEETUP_SECRET')
       },
