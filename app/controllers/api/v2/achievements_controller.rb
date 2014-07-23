@@ -3,7 +3,8 @@ class Api::V2::AchievementsController < Api::V2::BaseController
   load_and_authorize_resource
 
   def index
-    @achievements = build_scope(request.env['muster.query']).result.all
+    @achievements = build_scope(request.env['muster.query']).all
+    @achievements_count = build_scope(request.env['muster.query']).offset(0).limit(100_000_000).count
     render :index
   end
 
@@ -57,6 +58,31 @@ class Api::V2::AchievementsController < Api::V2::BaseController
 
   def build_scope(muster_query)
     scope = Achievement
-    scope = scope_applier.apply_muster_query_to_scope(muster_query)
+    scope = profile_completed_or_not(scope)
+    scope_applier(scope)
+      .apply_muster_query_to_scope(muster_query)
+      .apply_negated_attrs_to_scope
+      .apply_existence_attrs_to_scope
+      .apply_regular_params_to_scope
+      .apply_order_to_scope
+      .result
   end
+
+  def profile_completed_or_not(scope)
+    scope = scope.joins(:user).order("users.name ASC").order("shipped_at DESC")
+
+    if params[:profile_completed]
+      scope = scope.where(CompletedProfileString)
+    elsif params[:profile_not_completed]
+      scope = scope.where(NotCompletedProfileString)
+    end
+
+    scope
+  end
+
+  Columns = %w(name email address city postal)
+
+  CompletedProfileString = (Columns.map{|c| "users.#{c} IS NOT NULL" } + Columns.map{|c| "users.#{c} <> ''"} + Columns.map {|c| "users.#{c} <> 'null'"}).join(" AND ")
+  NotCompletedProfileString = (Columns.map{|c| "users.#{c} IS NULL"} + Columns.map{|c| "users.#{c} = ''"}).join(" OR ")
+
 end

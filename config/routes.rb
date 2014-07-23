@@ -91,6 +91,9 @@ Bithub::Application.routes.draw do
         end
       end
 
+      # Achievements
+      resources :achievements, :only => [:index, :show, :update, :destroy]
+
       # Countries
       resources :countries, :only => :index
 

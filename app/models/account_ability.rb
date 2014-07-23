@@ -10,6 +10,7 @@ class AccountAbility
       can :read, Country
       can [:read, :update], ScoringRule
       can :manage, Reward
+      can :manage, Achievement
       can :manage, FeedConfig, brand_id: account.brand.id
       can :manage, Funnel
       can :read, User # check somehow if user is present in current tenant
