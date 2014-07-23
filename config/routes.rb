@@ -115,6 +115,9 @@ Bithub::Application.routes.draw do
       # Tags
       resources :tags
 
+      # Achievements
+      resources :achievements
+
       # Scoring rules
       resources :scoring_rules
 
