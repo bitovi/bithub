@@ -12,21 +12,8 @@ class EntityRelations
     @children_for || []
   end
 
-  def references
-    return
-    # if @references_for.nil?
-    #   @references_for = Entity.select("entities.*, entity_refs.to_id").joins(:references_to).where("entity_refs.to_id" => @ids).uniq.all
-    # end
-
-    # @references_for || []
-  end
-
   def children_for_entity(entity)
     children.select{|c| c.parent_id == entity.id}
-  end
-
-  def references_for_entity(entity)
-    #references.select{|r| r.to_id.to_i == entity.id}
   end
 
   def awards_for
@@ -38,6 +25,10 @@ class EntityRelations
     end
 
     @awards_for.all || []
+  end
+
+  def funnels_for(entity)
+    funnels.select{|f| f.covers?(entity)}.map{|f| f.name}
   end
 
   def awards_for_entity(entity)
@@ -71,6 +62,10 @@ class EntityRelations
     end
 
     awards_for.select {|a| children_ids.include? a.applies_to_id}.size > 0
+  end
+    
+  def funnels
+    @funnels ||= Funnel.includes(:constraints).all
   end
 
 end

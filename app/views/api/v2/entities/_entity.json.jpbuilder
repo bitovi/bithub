@@ -12,6 +12,8 @@ json.cache! ("v2" + custom_cache_key(entity)) do
   json.props entity.props(@ev_relations.thread_awarded(entity), @ev_relations.awards_for_entity(entity))
 
   json.has_parent entity.has_parent
+  
+  json.funnels @ev_relations.funnels_for(entity)
 
   json.image_url entity.image_url(params[:size])
   json.original_image_url entity.original_image_url

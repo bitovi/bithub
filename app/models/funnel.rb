@@ -14,4 +14,8 @@ class Funnel < ActiveRecord::Base
   def disabled
     !!self.props['disabled']
   end
+
+  def covers?(entity)
+    (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
+  end
 end
