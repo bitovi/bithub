@@ -13,15 +13,13 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
   def index
     set_params
-
-    muster_query = request.env['muster.query']
-    scope = build_scope(muster_query, params)
+    scope = build_scope
 
     if !muster_query[:count].blank?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
       @entities = EntityDecorator.decorate_collection(scope.all, {
-        context: { excluded_attributes: query_logic(params).exclusions }
+        context: { excluded_attributes: query_logic.exclusions }
       })
       @ev_relations = EntityRelations.new(@entities.map{|e| e.id })
       render 'api/v2/entities/index'
@@ -87,7 +85,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     end
   end
 
-  def build_scope(muster_query, params)
+  def build_scope
     scope = Entity.scoped_with_includes
 
     scope = scope.no_children if !counting?
@@ -100,13 +98,15 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     scope = scope.with_author(params[:author_id]) if params[:author_id].present?
     scope = scope.with_author(params[:host_id]) if params[:host_id].present?
 
-    scope = scope_applier(params, scope)
+    scope = scope_applier(scope)
     .apply_negated_attrs_to_scope
-    .apply_muster_query_to_scope(muster_query, params)
+    .apply_muster_query_to_scope(muster_query)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
     .apply_order_to_scope
     .result
+
+    funnels = Funnel.includes(:constraints).all
 
     (params[:funnel_id].present? || params[:funnel_name].present?) ? funnelize(scope) : scope
   end
@@ -123,21 +123,21 @@ class Api::V2::EntitiesController < Api::V2::BaseController
       scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
 
       scope = Entity.union_scope *scopes
-      scope.order(scope_applier(params, scope).orderings)
+      scope.order(scope_applier(scope).orderings)
     else
       scope
     end
   end
 
-  def query_logic(params)
+  def query_logic
     @query_logic ||= QueryLogic::Query.new(Entity, params)
   end
 
-  def scope_applier(params, current_scope = nil)
-    ScopeApplier.new((current_scope || Entity), query_logic(params))
+  def scope_applier(current_scope = nil)
+    ScopeApplier.new((current_scope || Entity), query_logic)
   end
 
-  def date_filtered_summary(tag, params)
+  def date_filtered_summary(tag)
     scope = Entity.tagged_with(tag)
 
     scope_applier(params, scope)
