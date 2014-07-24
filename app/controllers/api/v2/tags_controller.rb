@@ -11,6 +11,7 @@ class Api::V2::TagsController < Api::V2::BaseController
     scope = build_scope(mq, params)
     scope = scope.tagged_with(params[:type].pluralize) if params[:type]
     @tags = scope.all
+    @tags_count = build_scope_for_counting(mq).count
 
     render :index
   end
@@ -85,9 +86,17 @@ class Api::V2::TagsController < Api::V2::BaseController
   end
 
   def build_scope(muster_query, params)
-    scope = Tag
-    scope_applier(params, scope)
+    scope_applier(params, Tag)
     .apply_muster_query_to_scope(muster_query)
     .result
+  end
+
+  def build_scope_for_counting(muster_query)
+    scope_applier(Tag)\
+      .apply_muster_query_to_scope(muster_query, skip_limits: true)\
+      .apply_negated_attrs_to_scope\
+      .apply_existence_attrs_to_scope\
+      .apply_regular_params_to_scope\
+      .result.offset(0).limit(1_000_000_000)
   end
 end

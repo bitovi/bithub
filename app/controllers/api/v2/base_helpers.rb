@@ -7,6 +7,10 @@ module Api::V2::BaseHelpers
   def show_404(exception)
     render json: exception, status: 404
   end
+  
+  def muster_query
+    request.env['muster.query']
+  end
 
   def show_406(exception)
     render json: exception, status: 406

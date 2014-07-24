@@ -8,11 +8,11 @@ class ScopeApplier
     apply_overrides
   end
 
-  def apply_muster_query_to_scope(muster_query, params = {})
-    @params = params if params
+  def apply_muster_query_to_scope(muster_query, skip_limits: false)
     @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
     @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-    unless params[:funnel_name] || params[:funnel_id]
+
+    unless skip_limits
       @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
       @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
     end

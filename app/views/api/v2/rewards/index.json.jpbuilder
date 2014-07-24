@@ -1,3 +1,4 @@
+json.count @rewards_count
 json.set! :data do
   json.array! @rewards do |r|
     json.(r, :id, :title, :description, :point_minimum, :disabled_ts)
