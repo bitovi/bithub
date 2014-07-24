@@ -3,8 +3,8 @@ class Api::V2::AchievementsController < Api::V2::BaseController
   load_and_authorize_resource
 
   def index
-    @achievements = build_scope(request.env['muster.query']).all
-    @achievements_count = build_scope(request.env['muster.query']).offset(0).limit(100_000_000).count
+    @achievements = build_scope.all
+    @achievements_count = build_scope_for_counting.count
     render :index
   end
 
@@ -56,16 +56,26 @@ class Api::V2::AchievementsController < Api::V2::BaseController
     @scope_applier ||= ScopeApplier.new(current_scope || Achievement, logic_analyzer)
   end
 
-  def build_scope(muster_query)
+  def build_scope
     scope = Achievement
     scope = profile_completed_or_not(scope)
-    scope_applier(scope)
-      .apply_muster_query_to_scope(muster_query)
-      .apply_negated_attrs_to_scope
-      .apply_existence_attrs_to_scope
-      .apply_regular_params_to_scope
-      .apply_order_to_scope
+    scope_applier(scope)\
+      .apply_muster_query_to_scope(muster_query)\
+      .apply_negated_attrs_to_scope\
+      .apply_existence_attrs_to_scope\
+      .apply_regular_params_to_scope\
+      .apply_order_to_scope\
       .result
+  end
+
+  def build_scope_for_counting
+    scope = Achievement
+    scope_applier(scope)\
+      .apply_muster_query_to_scope(muster_query, skip_limits: true)\
+      .apply_negated_attrs_to_scope\
+      .apply_existence_attrs_to_scope\
+      .apply_regular_params_to_scope\
+      .result.offset(0).limit(1_000_000_000)
   end
 
   def profile_completed_or_not(scope)

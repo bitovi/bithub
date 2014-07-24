@@ -19,9 +19,7 @@ class Api::V2::CountriesController < Api::V2::BaseController
   end
 
   def build_scope(muster_query, params)
-    scope = Country
-
-    scope_applier(params, scope)
+    scope_applier(params, Country)
     .apply_order_to_scope
     .result
   end

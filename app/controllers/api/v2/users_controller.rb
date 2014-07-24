@@ -7,13 +7,13 @@ class Api::V2::UsersController < Api::V2::BaseController
       @users = Leaderboard.where("? = ANY(user_brands)", current_brand)
       render :index_cached
     else
-      muster_query = request.env['muster.query']
-      scope = build_scope(muster_query, params)
+      scope = build_scope
       if !muster_query[:count].blank?
         render :json => { :count => scope.count(muster_query[:count]) }
       else
         scope = scope_applier.apply_order_to_scope
         @users = UserDecorator.decorate_collection(scope.result.all)
+        @users_count = scope.result.offset(0).limit(1_000_000_000).count
         render :index
       end
     end
@@ -85,13 +85,13 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   private # SCOPE BUILDING
 
-  def build_scope(muster_query, params)
+  def build_scope
     scope = User
     scope = scope.only_not_null_names
     scope = scope_applier(scope).apply_muster_query_to_scope(muster_query)
     scope = scope_applier(scope).apply_regular_params_to_scope
   end
-
+  
   def logic_analyzer
     @logic_analyzer ||= QueryLogic::Query.new(User, params)
   end

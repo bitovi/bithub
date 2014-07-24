@@ -1,3 +1,4 @@
+json.count @tags_count
 json.set! :data do
   json.array! @tags do |t|
     json.partial! "api/v2/tags/tag", tag: t
