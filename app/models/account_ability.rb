@@ -1,7 +1,7 @@
 class AccountAbility
   include CanCan::Ability
 
-  def initialize(account)
+  def initialize(account, user)
     if account.has_role? :admin
       can :manage, :all
     else
@@ -19,6 +19,13 @@ class AccountAbility
       can :create_award, Award
       can :read_pagination, Pagination
       can :manage, Achievement
+
+      # abilities need by frontend
+      if user
+        can :create_upvote, Upvote
+        can :destroy_upvote, Upvote
+        can :update, User, id: user.id
+      end
     end
   end
 

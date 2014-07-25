@@ -14,9 +14,13 @@ class Api::V2::BaseController < ActionController::Base
   # CanCan override:
   # https://github.com/ryanb/cancan/wiki/changing-defaults
   def current_ability
+
+    # give user an admin role if account is already signed in
+    current_user.add_role :admin if account_signed_in? and user_signed_in?
+
     if account_signed_in? && on_subdomain?
       # Brand manager
-      @current_ability ||= AccountAbility.new current_account
+      @current_ability ||= AccountAbility.new current_account, current_user
     elsif user_signed_in?
       # Regular user
       @current_ability ||= UserAbility.new current_user
