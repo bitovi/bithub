@@ -15,7 +15,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     set_params
     scope = build_scope
 
-    if !muster_query[:count].blank?
+    if muster_query[:count].present?
       render :json => { :count => scope.count(muster_query[:count]) }
     else
       @entities = EntityDecorator.decorate_collection(scope.all, {
@@ -100,15 +100,17 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
     scope = scope_applier(scope)
     .apply_negated_attrs_to_scope
-    .apply_muster_query_to_scope(muster_query)
+    .apply_muster_query_to_scope(muster_query, skip_limits: funnel_params_present?)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
     .apply_order_to_scope
     .result
 
-    funnels = Funnel.includes(:constraints).all
-
-    (params[:funnel_id].present? || params[:funnel_name].present?) ? funnelize(scope) : scope
+    if funnel_params_present?
+      funnelize(scope)
+    else
+      scope
+    end
   end
 
   def funnelize(scope)
@@ -124,9 +126,9 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
       scope = Entity.union_scope *scopes
       scope.order(scope_applier(scope).orderings)
-    else
-      scope
     end
+
+    scope_applier(scope).apply_limit_offset_to_scope(muster_query)
   end
 
   def query_logic
@@ -167,6 +169,10 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
   def counting?
     params['count'] || request.env['muster.query']['count']
+  end
+
+  def funnel_params_present?
+    params[:funnel_id].present? || params[:funnel_name].present?
   end
 
   def on_greatest?
