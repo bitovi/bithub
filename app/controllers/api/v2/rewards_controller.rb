@@ -14,6 +14,7 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def create
+    puts "---- create"
     @reward = Reward.new(reward_params)
     if @reward.save
       render :show
@@ -43,8 +44,8 @@ class Api::V2::RewardsController < Api::V2::BaseController
   private
 
   def reward_params
-    if params[:reward].is_a? String
-      params[:reward] = Rack::Utils.parse_nested_query(params[:reward])
+    if params[:rewardData].is_a? String
+      params[:reward] = Rack::Utils.parse_nested_query(params[:rewardData])
     end
 
     if params[:files]
