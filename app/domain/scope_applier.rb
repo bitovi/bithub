@@ -9,14 +9,19 @@ class ScopeApplier
   end
 
   def apply_muster_query_to_scope(muster_query, skip_limits: false)
-    @scope = @scope.joins(muster_query[:joins]) if !muster_query[:joins].blank?
-    @scope = @scope.includes(muster_query[:includes]) if !muster_query[:includes].blank?
-
-    unless skip_limits
-      @scope = @scope.offset(muster_query[:offset]) if !muster_query[:offset].blank?
-      @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
-    end
+    apply_joins_includes_to_scope(muster_query)
+    apply_limit_offset_to_scope(muster_query) unless skip_limits
     self
+  end
+
+  def apply_limit_offset_to_scope(muster_query)
+    @scope = @scope.offset(muster_query[:offset]) if muster_query[:offset].present?
+    @scope = @scope.limit(muster_query[:limit] || DEFAULT_LIMIT) if muster_query[:count].blank?
+  end
+
+  def apply_joins_includes_to_scope(muster_query)
+    @scope = @scope.joins(muster_query[:joins]) if muster_query[:joins].present?
+    @scope = @scope.includes(muster_query[:includes]) if muster_query[:includes].present?
   end
 
   def apply_existence_attrs_to_scope
