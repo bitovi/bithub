@@ -91,7 +91,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     scope = scope_applier(scope).apply_muster_query_to_scope(muster_query)
     scope = scope_applier(scope).apply_regular_params_to_scope
   end
-  
+
   def logic_analyzer
     @logic_analyzer ||= QueryLogic::Query.new(User, params)
   end
@@ -105,12 +105,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   def user_params
-    if params[:countryISO]
-      country = Country.where({:iso => params[:countryISO]}).first
-      params[:country] = country ? country : nil
-    end
-
-    params.require(:user).permit(:name, :email, :address, :address2, :city, :postal, :state, :country)
+    params.require(:user).permit(:name, :email, :address, :address2, :city, :postal, :state, :countryISO)
   end
 
 end

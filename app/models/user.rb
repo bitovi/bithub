@@ -61,6 +61,10 @@ class User < ActiveRecord::Base
     internals.sum(:value)
   end
 
+  def countryISO=(iso)
+    self.country = Country.where({:iso => iso}).first
+  end
+
   def collect_authored_entities
     identities.each do |ident|
       Entity.origin_author(ident.uid).find_each do |entity|
