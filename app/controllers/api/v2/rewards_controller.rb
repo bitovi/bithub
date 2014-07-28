@@ -14,7 +14,6 @@ class Api::V2::RewardsController < Api::V2::BaseController
   end
 
   def create
-    puts "---- create"
     @reward = Reward.new(reward_params)
     if @reward.save
       render :show
