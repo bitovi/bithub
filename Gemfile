@@ -50,7 +50,6 @@ gem 'foreman', '~> 0.63.0'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
-gem 'multi_json'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
