@@ -44,9 +44,15 @@ Dump data and restore into tenant/bithub schema:
 5. (add entities.category_id and entities.category_name attrs)
 6. `psql bithub < tenant.sql`
 
-Alter events.source_data back to json type
+Revert changes from previous step
 
-1. `ALTER TABLE bitovi.events ALTER COLUMN source_data TYPE JSON USING source_data::JSON; ALTER TABLE bitovi.entities DROP COLUMN category_id; ALTER TABLE bitovi.entities DROP COLUMN category_name;`
+1. `ALTER TABLE bitovi.events ALTER COLUMN source_data TYPE JSON USING source_data::JSON;`
+2. `ALTER TABLE bitovi.entities DROP COLUMN category_id;`
+3. `ALTER TABLE bitovi.entities DROP COLUMN category_name;`
+
+Join users to bitovi brand
+
+1. `User.all.each {|u| u.join_brand(:bitovi); u.save}`
 
 Update imported tags
 
