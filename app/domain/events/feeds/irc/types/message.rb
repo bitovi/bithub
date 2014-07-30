@@ -1,7 +1,7 @@
 module Events
   module Irc
     class Message < Protocol
-      
+
       def digest_seed
         channel + nickname +  message + origin_ts.to_s + self.class.name
       end
@@ -15,7 +15,7 @@ module Events
       end
 
       def nickname
-        source_data.andand[:nickname]        
+        source_data.andand[:nickname]
       end
 
       def origin_ts
@@ -28,6 +28,10 @@ module Events
 
       def origin_id
         origin_ts.to_i
+      end
+
+      def title
+        message
       end
     end
   end
