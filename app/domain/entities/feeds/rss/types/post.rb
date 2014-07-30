@@ -22,8 +22,8 @@ module Entities
       end
 
       def taggify_by_url
-        if name = match_site_by_url(source_url)['name']
-          [ name.snake_case ]
+        if tags = match_site_by_url(source_url)['tags']
+          tags.map {|t| t.snake_case}
         else
           []
         end
