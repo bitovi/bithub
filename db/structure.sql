@@ -210,54 +210,6 @@ CREATE SEQUENCE brands_id_seq
 
 
 --
--- Name: category_determination_rules; Type: TABLE; Schema: bitovi; Owner: -; Tablespace: 
---
-
-CREATE TABLE category_determination_rules (
-    id integer NOT NULL,
-    name character varying(255),
-    required_tags public.hstore,
-    props public.hstore,
-    category_name character varying(255),
-    "position" integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: category_determination_rules_id_seq; Type: SEQUENCE; Schema: bitovi; Owner: -
---
-
-CREATE SEQUENCE category_determination_rules_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: category_determination_rules_id_seq; Type: SEQUENCE OWNED BY; Schema: bitovi; Owner: -
---
-
-ALTER SEQUENCE category_determination_rules_id_seq OWNED BY category_determination_rules.id;
-
-
---
--- Name: countries; Type: TABLE; Schema: bitovi; Owner: -; Tablespace: 
---
-
-CREATE TABLE countries (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    display_name character varying(255),
-    iso character varying(255) NOT NULL,
-    priority integer DEFAULT 0
-);
-
-
---
 -- Name: countries_id_seq; Type: SEQUENCE; Schema: bitovi; Owner: -
 --
 
@@ -267,13 +219,6 @@ CREATE SEQUENCE countries_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
---
--- Name: countries_id_seq; Type: SEQUENCE OWNED BY; Schema: bitovi; Owner: -
---
-
-ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
@@ -288,11 +233,9 @@ CREATE TABLE entities (
     origin_id character varying(255),
     feed_name character varying(255),
     type_name character varying(255),
-    category_name character varying(255),
     scoring_rule_id integer NOT NULL,
     feed_id integer NOT NULL,
     type_id integer NOT NULL,
-    category_id integer NOT NULL,
     parent_id integer,
     origin_ts timestamp without time zone NOT NULL,
     thread_updated_ts timestamp without time zone NOT NULL,
@@ -435,10 +378,10 @@ CREATE TABLE events (
     feed_name character varying(255),
     content_digest character varying(255),
     props public.hstore DEFAULT ''::public.hstore,
-    source_data json,
     entity_id integer,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    source_data json
 );
 
 
@@ -631,7 +574,8 @@ CREATE TABLE brands (
     keywords character varying(255)[] DEFAULT '{}'::character varying[],
     props hstore DEFAULT ''::hstore,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    tenant_name character varying(255)
 );
 
 
@@ -1417,7 +1361,7 @@ CREATE TABLE events (
     entity_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    source_data text
+    source_data json
 );
 
 
@@ -1523,7 +1467,8 @@ CREATE TABLE funnels (
     name character varying(255),
     display_name character varying(255),
     tags character varying(255)[] DEFAULT '{}'::character varying[],
-    props hstore DEFAULT ''::hstore
+    props hstore DEFAULT ''::hstore,
+    "position" integer
 );
 
 
@@ -1985,20 +1930,6 @@ ALTER TABLE ONLY awards ALTER COLUMN id SET DEFAULT nextval('awards_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: bitovi; Owner: -
 --
 
-ALTER TABLE ONLY category_determination_rules ALTER COLUMN id SET DEFAULT nextval('category_determination_rules_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: bitovi; Owner: -
---
-
-ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: bitovi; Owner: -
---
-
 ALTER TABLE ONLY entities ALTER COLUMN id SET DEFAULT nextval('entities_id_seq'::regclass);
 
 
@@ -2280,22 +2211,6 @@ ALTER TABLE ONLY api_cache
 
 ALTER TABLE ONLY awards
     ADD CONSTRAINT awards_pkey PRIMARY KEY (id);
-
-
---
--- Name: category_determination_rules_pkey; Type: CONSTRAINT; Schema: bitovi; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY category_determination_rules
-    ADD CONSTRAINT category_determination_rules_pkey PRIMARY KEY (id);
-
-
---
--- Name: countries_pkey; Type: CONSTRAINT; Schema: bitovi; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY countries
-    ADD CONSTRAINT countries_pkey PRIMARY KEY (id);
 
 
 --
@@ -2860,6 +2775,27 @@ CREATE INDEX index_awards_on_applies_to_id ON awards USING btree (applies_to_id)
 
 
 --
+-- Name: index_brand_identities_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_brand_identities_on_brand_id ON brand_identities USING btree (brand_id);
+
+
+--
+-- Name: index_brands_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_brands_on_name ON brands USING btree (name);
+
+
+--
+-- Name: index_brands_on_tenant_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_brands_on_tenant_name ON brands USING btree (tenant_name);
+
+
+--
 -- Name: index_brands_users_on_brand_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3220,6 +3156,14 @@ ALTER TABLE ONLY awards
 
 
 --
+-- Name: brand_identities_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY brand_identities
+    ADD CONSTRAINT brand_identities_brand_id_fk FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE;
+
+
+--
 -- Name: brands_users_brand_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3332,6 +3276,14 @@ ALTER TABLE ONLY upvotes
 
 
 --
+-- Name: users_country_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_country_id_fk FOREIGN KEY (country_id) REFERENCES countries(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -3397,6 +3349,8 @@ INSERT INTO schema_migrations (version) VALUES ('12004');
 
 INSERT INTO schema_migrations (version) VALUES ('13001');
 
+INSERT INTO schema_migrations (version) VALUES ('13002');
+
 INSERT INTO schema_migrations (version) VALUES ('14001');
 
 INSERT INTO schema_migrations (version) VALUES ('14002');
@@ -3410,4 +3364,8 @@ INSERT INTO schema_migrations (version) VALUES ('14005');
 INSERT INTO schema_migrations (version) VALUES ('14006');
 
 INSERT INTO schema_migrations (version) VALUES ('20140722110137');
+
+INSERT INTO schema_migrations (version) VALUES ('20140728140956');
+
+INSERT INTO schema_migrations (version) VALUES ('20140728141259');
 

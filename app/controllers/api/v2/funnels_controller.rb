@@ -3,7 +3,7 @@ class Api::V2::FunnelsController < Api::V2::BaseController
   # load_and_authorize_resource
 
   def index
-    @funnels = Funnel.all
+    @funnels = Funnel.rank(:position).all
     render :index
   end
 
@@ -55,7 +55,7 @@ class Api::V2::FunnelsController < Api::V2::BaseController
 
   def only_funnel
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:funnel).permit(:id, :name, :display_name, :disabled, {:tags => []})
+    @json.require(:funnel).permit(:id, :name, :display_name, :disabled, :position_position, {:tags => []})
   end
 
   def constraints
