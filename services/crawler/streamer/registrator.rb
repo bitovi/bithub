@@ -19,7 +19,7 @@ class Registrator
       .bind(@x, :routing_key => "registration")
 
     @q_config.subscribe do |delivery_info, properties, payload|
-      msg = MultiJson.load(payload).symbolize_keys
+      msg = JSON.parse(payload).symbolize_keys
       send("dispatch_#{message_action(msg)}".to_sym, msg)
     end
   end
@@ -40,7 +40,7 @@ class Registrator
       reloading: msg.fetch(:reloading) { false }
     )
   end
-  
+
   def message_action(msg)
     msg.fetch(:action)
   end

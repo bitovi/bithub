@@ -507,7 +507,6 @@ DEPENDENCIES
   koala
   levenshtein-ffi
   log4r (~> 1.1)
-  multi_json
   muster!
   newrelic_rpm
   nokogiri

@@ -6,7 +6,7 @@ class Brand < ActiveRecord::Base
 
   has_and_belongs_to_many :users
 
-  validates :name, format: { with: /\A[-_0-9a-zA-Z]+\z/, message: "invalid characters" }
+  validates :tenant_name, format: { with: /\A[-0-9a-zA-Z]+\z/, message: "invalid characters" }
 
   after_create :create_tenant
   after_save :update_tenant
@@ -15,8 +15,8 @@ class Brand < ActiveRecord::Base
   private
 
   def create_tenant
-    Apartment::Database.create(name)
-    Apartment::Database.switch name
+    Apartment::Database.create tenant_name
+    Apartment::Database.switch tenant_name
 
     # run seed tasks
     Bithub::Application.load_tasks
@@ -39,24 +39,20 @@ class Brand < ActiveRecord::Base
   end
 
   def destroy_tenant
-    Apartment::Database.drop(name)
+    Apartment::Database.drop tenant_name
   end
 
   def update_tenant
-    rename_tenant if self.changes['name']
+    rename_tenant if self.changes['tenant_name']
     update_keywords if self.changes['keywords']
   end
 
   private
 
   def rename_tenant
-    old_name, new_name = self.changes['name']
-
-    Tag.register new_name, 'keywords'
+    old_name, new_name = self.changes['tenant_name']
 
     return unless old_name
-
-    Tag.remove_group old_name, 'keywords'
 
     sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
     ActiveRecord::Base.connection.execute(sql)

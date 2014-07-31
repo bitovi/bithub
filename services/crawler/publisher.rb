@@ -34,7 +34,7 @@ class Publisher
   end
 
   def send_one(event, brand)
-    @x.publish MultiJson.dump(event)
+    @x.publish event.to_json
   end
 
   private
