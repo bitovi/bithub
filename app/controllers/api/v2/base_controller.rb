@@ -47,7 +47,7 @@ class Api::V2::BaseController < ActionController::Base
     if is_admin?
       true
     else
-      current_account.brand && (current_account.brand.name == request.subdomain)
+      current_account.brand && (current_account.brand.tenant_name == request.subdomain)
     end
   end
 

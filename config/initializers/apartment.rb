@@ -12,7 +12,7 @@ Apartment.configure do |config|
   config.excluded_models = %w{ Brand BrandIdentity Account AccountRole AccountsAccountRole FeedConfig User Identity BrandsUser Country }
   config.use_schemas = true
   config.use_sql = true
-  config.tenant_names = lambda{ Brand.pluck :name }
+  config.tenant_names = lambda{ Brand.pluck :tenant_name }
 
   # functions created by extensions are in public schema so keep it in search path
   config.persistent_schemas = %w{ public }

@@ -71,7 +71,7 @@ class FeedConfig < ActiveRecord::Base
   end
 
   def valid_irc?
-    has?('server') && has?('channels')
+    has?('chats')
   end
 
   def valid_disqus?

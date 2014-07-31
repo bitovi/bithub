@@ -4,9 +4,6 @@ class Account < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :rememberable, :trackable, :validatable
 
-  # :token_authenticatable, :confirmable, :recoverable
-  # :lockable, :timeoutable, :omniauthable
-
   belongs_to :brand
 
   before_create :create_brand
@@ -15,7 +12,7 @@ class Account < ActiveRecord::Base
 
   def create_brand
     brand_name = self.email.split('@').first.gsub(/[^\w-]/,'-')
-    self.brand = Brand.new({name: brand_name})
+    self.brand = Brand.new({name: brand_name, tenant_name: brand_name})
   end
 
 end

@@ -88,9 +88,6 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       foursquare: 'Foursquare'
     })
 
-    # hotfix: user and account cannot be logged in simultaneously
-    # sign_out current_account if current_account
-
     @identity = Identity.find_or_init_with_oauth_data(oauth_data)
     @manager = Accounts::AccountManager.new(kind, @identity, current_user)
     @manager.linker.determine_state
@@ -145,7 +142,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   end
 
   def current_brand
-    @brand ||= Brand.where({name: request.subdomain}).first
+    @brand ||= Brand.where({tenant_name: request.subdomain}).first
   end
 
 end

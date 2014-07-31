@@ -3,7 +3,7 @@ class CreateEvents < ActiveRecord::Migration
     create_table :events do |t|
       t.string :type_name, :null => true
       t.string :feed_name, :null => true
-      t.string :content_digest, :unique => true
+      t.string :content_digest
       t.hstore :props, default: ''
       t.json   :source_data
 

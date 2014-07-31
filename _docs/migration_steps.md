@@ -22,30 +22,37 @@ Create new tenant named `bitovi`!
 
 Delete prepopulated tables:
 
-1. `SET search_path=bitovi; DELETE FROM countries; DELETE FROM taggings; DELETE FROM tags; DELETE FROM scoring_rules; DELETE FROM category_determination_rules;`
+1. `SET search_path=bitovi; DELETE FROM taggings; DELETE FROM tags; DELETE FROM scoring_rules;`
+2. `SET search_path=public; DELETE FROM countries;`
 
 Dump data and restore into public:
 
-1. `pg_dump -a -x -O -n public -t users -t identities bithub2 > public.sql`
+1. `pg_dump -a -x -O -n public -t users -t identities -t countries bithub2 > public.sql`
 2. `psql bithub < public.sql`
 
 Migrate some tables manually because of changes in db model:
 
 1. Update search_path to tenant name
 2. `psql bithub < scoring_rules.sql`
-3. `psql bithub < category_determination_rules.sql`
-4. `psql bithub < rewards.sql`
+3. `psql bithub < rewards.sql`
 
 Dump data and restore into tenant/bithub schema:
 
-1. `pg_dump -a -x -O -n public -t tags -t events -t entities -t upvotes -t ownerships -t awards -t internals -t taggings -t user_roles -t countries -t achievements bithub2 > tenant.sql`
+1. `pg_dump -a -x -O -n public -t tags -t events -t entities -t upvotes -t ownerships -t awards -t internals -t taggings -t user_roles -t achievements bithub2 > tenant.sql`
 3. Update search_path to tenant name!!!
 4. (change events.source_data type to text)
-5. `psql bithub < tenant.sql`
+5. (add entities.category_id and entities.category_name attrs)
+6. `psql bithub < tenant.sql`
 
-Alter events.source_data back to json type
+Revert changes from previous step
 
 1. `ALTER TABLE bitovi.events ALTER COLUMN source_data TYPE JSON USING source_data::JSON;`
+2. `ALTER TABLE bitovi.entities DROP COLUMN category_id;`
+3. `ALTER TABLE bitovi.entities DROP COLUMN category_name;`
+
+Join users to bitovi brand
+
+1. `User.all.each {|u| u.join_brand(:bitovi); u.save}`
 
 Update imported tags
 
