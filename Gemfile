@@ -28,7 +28,7 @@ gem 'enumerize'
 gem 'sinatra'
 gem 'sidekiq'
 gem 'acts-as-taggable-on'
-gem 'acts-as-list'
+gem 'ranked-model'
 gem 'jbuilder', '~> 1.3.0'
 gem 'jpbuilder', '~> 0.2'
 

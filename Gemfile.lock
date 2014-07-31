@@ -80,7 +80,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
-    acts-as-list (0.1.2)
     acts-as-taggable-on (3.2.6)
       activerecord (>= 3, < 5)
     addressable (2.3.6)
@@ -326,6 +325,8 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.13.0)
     rake (10.3.2)
+    ranked-model (0.4.0)
+      activerecord (>= 3.1.12)
     rb-fsevent (0.9.4)
     redcarpet (3.1.2)
     redis (3.1.0)
@@ -470,7 +471,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  acts-as-list
   acts-as-taggable-on
   amqp
   andand
@@ -529,6 +529,7 @@ DEPENDENCIES
   railroady
   rails (~> 4.1)
   rake
+  ranked-model
   rb-fsevent (~> 0.9)
   redcarpet
   redis
