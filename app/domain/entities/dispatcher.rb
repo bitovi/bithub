@@ -122,7 +122,7 @@ module Entities
 
       Mappings = {
         :CustomFollow => :Follow,
-        # :FakeFollow => :Follow,
+        :FakeFollow => :Follow,
       }
 
       def initialize(event)

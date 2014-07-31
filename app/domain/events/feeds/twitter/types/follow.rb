@@ -31,6 +31,7 @@ module Events
         @target ||= Wrappers::Twitter::User.new(source_data.andand[:target])
         self
       end
+      attr_reader :source, :target
 
       private
 

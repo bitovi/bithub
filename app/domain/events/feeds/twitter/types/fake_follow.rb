@@ -1,26 +1,30 @@
 module Events
   module Twitter
-
     class FakeFollow < Protocol
+      extend Forwardable
+
+      def_delegator :@source, :id, :source_id
+      def_delegator :@source, :screen_name, :source_screen_name
+
+      def_delegator :@target, :id, :target_id
+      def_delegator :@target, :screen_name, :target_screen_name
 
       def digest_seed
         source_id.to_s + target_id.to_s + self.class.name
       end
 
-      def source_id
-        source_data.fetch(:source).fetch(:id)
+      def created_at
+        Time.parse(source_data.fetch(:created_at)).utc
       end
 
-      def target_id
-        source_data.fetch(:target).fetch(:id)
+      def wrap_response
+        @source ||= Wrappers::Twitter::User.new(source_data.andand[:source])
+        @target ||= Wrappers::Twitter::User.new(source_data.andand[:target])
+        self
       end
-
-      def origin_timestamp
-        Time.parse(source_data.fetch(:created))
-      end
+      attr_reader :source, :target
 
       alias_method :origin_author_id, :source_id
     end
-
   end
 end
