@@ -28,7 +28,7 @@ class EntityRelations
   end
 
   def funnels_for(entity)
-    funnels.select{|f| f.covers?(entity)}.map{|f| f.name}
+    funnels.select{|f| f.covers?(entity)}.sort{|x,y| y.weight <=> x.weight}.map{|f| f.name}
   end
 
   def awards_for_entity(entity)
