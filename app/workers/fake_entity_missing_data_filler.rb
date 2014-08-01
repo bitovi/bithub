@@ -10,7 +10,7 @@ module Workers
         Apartment::Database.switch(name)
         fff = Entities::Services::FakeFollowFiller.new
 
-        if fff.follows_with_missing_name.count >= 50
+        if fff.user_ids_with_missing_names.count >= 50
           fff.fill_missing
         else
           Rails.logger.info "Not enough empty Follow entities to init processing"
