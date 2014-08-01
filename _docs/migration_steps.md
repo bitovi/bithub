@@ -58,6 +58,7 @@ Update imported tags
 
 1. `TENANT=bitovi ./bin/rake data:import_or_update_tags`
 2. Connect brand identities and check tags!
+3. Change feed_name on forum entites to rss
 
 Check sequences!!!
 
