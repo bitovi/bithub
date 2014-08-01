@@ -21,7 +21,7 @@ module Fetchers
               id: @user_id,
             },
             event: "fake_follow",
-            created: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
+            created_at: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
           }
         end
       end
