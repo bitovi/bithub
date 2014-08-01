@@ -60,7 +60,7 @@ module Events
     end
 
     def ==(other)
-      @data == other
+      @source_data == other
     end
 
     def origin_timestamp_iso

@@ -7,13 +7,17 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      has :id, :screen_name, :profile_image_url
-      alias_method :name, :screen_name
+      has :id, :profile_image_url
 
       def initialize(user)
         @data = symbolize_keys(user)
       end
 
+      def screen_name
+        @data[:screen_name] || ""
+      end
+
+      alias_method :name, :screen_name
     end
   end
 end
