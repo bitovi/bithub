@@ -69,6 +69,8 @@ gem 'feedjira'
 gem 'twitter-text'
 gem 'reel', '~> 0.5.0'
 
+gem 'activesupport-json_encoder'
+
 
 group :test do
   gem 'codeclimate-test-reporter', require: false
