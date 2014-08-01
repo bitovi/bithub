@@ -12,8 +12,8 @@ module FeedSupervisors
 
       @endpoints = SupervisionGroup.new
       user_tokens.each do |tokens|
-        @endpoints.supervise_as(twitter_search_actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 30}])
-        # @endpoints.supervise_as(actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 21600}])
+        @endpoints.supervise_as(twitter_search_actor_name, Poller, *[@brand_name, Fetchers::Twitter::TweetSearch.new(client(tokens), {terms: terms}), {interval: 60}])
+        @endpoints.supervise_as(follow_actor_name, Poller, *[@brand_name, Fetchers::Twitter::Followers.new(client(tokens)), {interval: 600}])
       end
 
       Celluloid::Actor[:commander].publish(register_msg, :registration)

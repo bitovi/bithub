@@ -8,13 +8,15 @@ module Accounts
 
     GITHUB_USERNAME = 'neektza'
     GITHUB_PASSWORD = 'U92C8CXrJRx3'
+    TWITTER_ACCESS_TOKEN = '55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw'
+    TWITTER_ACCESS_TOKEN_SECRET = 'XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE'
 
     def initialize
       @twitter = Twitter::REST::Client.new do |config|
         config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
         config.consumer_secret = ENV['TWITTER_CONSUMER_SECRET']
-        config.oauth_token = ENV['TWITTER_OAUTH_TOKEN']
-        config.oauth_token_secret = ENV['TWITTER_OAUTH_TOKEN_SECRET']
+        config.access_token = TWITTER_ACCESS_TOKEN
+        config.access_token_secret = TWITTER_ACCESS_TOKEN_SECRET
       end
 
       @github = Github.new do |config|
