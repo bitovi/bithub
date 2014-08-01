@@ -59,6 +59,8 @@ Update imported tags
 1. `TENANT=bitovi ./bin/rake data:import_or_update_tags`
 2. Connect brand identities and check tags!
 3. Change feed_name on forum entites to rss
+4. bitovian.user_ids = [3, 33, 2, 14, 298, 94, 144, 59, 30, 214, 37, 168, 142, 309, 64, 47, 141, 60, 66, 25, 61, 589, 35]
+=> [3, 33, 2, 14, 298, 94, 144, 59, 30, 214, 37, 168, 142, 309, 64, 47, 141, 60, 66, 25, 61, 589, 35]
 
 Check sequences!!!
 
