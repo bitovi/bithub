@@ -63,6 +63,9 @@ class Api::V2::EntitiesController < Api::V2::BaseController
   end
 
   def create_or_update
+
+    puts "-------------------------------> #{params}"
+
     method        = params[:id].nil?? 'create' : 'update'
     event, entity = Entities::Bithub::Post.forge(params, current_user)
 
