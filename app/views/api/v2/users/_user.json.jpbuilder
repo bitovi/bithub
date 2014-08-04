@@ -1,6 +1,6 @@
-json.(user, :id, :name)
+json.(user, :id, :name, :identities)
 
-json.identities user.reduced_identities
+json.reduced_identities user.reduced_identities
 json.score user.total_score
 
 json.avatar_url user.props['avatar_url']
