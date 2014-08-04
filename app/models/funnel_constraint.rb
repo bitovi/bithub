@@ -3,7 +3,9 @@ class FunnelConstraint < ActiveRecord::Base
 
   has_and_belongs_to_many :funnels
 
-  def constraints
+  def as_hash
     { :type_name => type_name, :feed_name => feed_name }
   end
+  alias_method :constraints, :as_hash
+  
 end
