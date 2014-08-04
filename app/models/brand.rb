@@ -32,7 +32,6 @@ class Brand < ActiveRecord::Base
 
     # repopulate matviews upon creation
     Pagination.refresh
-    Leaderboard.refresh
     UserActivity.refresh
 
     Apartment::Database.switch
