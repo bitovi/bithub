@@ -25,7 +25,7 @@ module FeedSupervisors
             @client,
             terms: terms
         )]
-      )
+      ) if not(terms.nil?) && not(terms.empty?)
 
       @endpoints.supervise_as(
         actor_name('events'),
@@ -36,7 +36,7 @@ module FeedSupervisors
             group_ids: group_ids,
             event_set: event_set
         )]
-      )
+      ) if not(group_ids.nil?) && not(group_ids.empty?)
       
       @endpoints.supervise_as(
         actor_name('rsvps'),
@@ -46,7 +46,7 @@ module FeedSupervisors
             @client,
             event_set: event_set
         )]
-      )
+      ) if not(event_set.nil?) && not(event_set.empty?)
       
       Celluloid::Actor[:commander].publish(register_msg, :registration)
     end

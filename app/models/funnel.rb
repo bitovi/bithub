@@ -17,7 +17,9 @@ class Funnel < ActiveRecord::Base
   end
 
   def disabled
-    !!self.props['disabled']
+    disabled = self.props['disabled']
+    return true if disabled == true or disabled == 'true'
+    return false
   end
 
   def covers?(entity)

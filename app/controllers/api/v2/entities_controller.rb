@@ -122,11 +122,14 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     end
 
     if f
-      scope.from_funnel f
-      scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
-
-      scope = Entity.union_scope *scopes
-      scope.order(scope_applier(scope).orderings)
+      scope = scope.from_funnel f
+      if f.constraints.length > 1
+        scopes = f.constraints.map {|c| scope.from_funnel_constraint(c)}
+        scope = Entity.union_scope *scopes
+      elsif f.constraints.length == 1
+        scope = scope.from_funnel_constraint(f.constraints.first)
+      end
+      scope = scope.order(scope_applier(scope).orderings)
     end
 
     scope_applier(scope).apply_limit_offset_to_scope(muster_query)

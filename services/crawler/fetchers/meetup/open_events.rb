@@ -10,12 +10,14 @@ module Fetchers
       end
 
       def fetch
-        events = @client.fetch :open_events, text: search_params
+        Celluloid.logger.info "Searching Meetup open_events with #{search_params}"
+        events = @client.fetch :open_events, { text: search_params, fields: "event_hosts" }
+
         events.map {|e| e.to_h}
       end
 
       def search_params
-        @terms.join ','
+        @terms.join ', '
       end
     end
   end

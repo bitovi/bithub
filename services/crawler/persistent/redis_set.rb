@@ -25,6 +25,10 @@ class RedisSet
     @redis.smembers key
   end
 
+  def empty?(key)
+    @redis.smembers(key).empty?
+  end
+
   def add(data_elem)
     (r = @redis.sadd key(data_elem), value(data_elem)) == 0 ? false : r
   end

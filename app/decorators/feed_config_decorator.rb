@@ -58,7 +58,7 @@ class FeedConfigDecorator < ::Draper::Decorator
       token: @bids.first.data.andand[:access_token],
       groups: source.config
       .andand['groups']
-      .map do |group|
+      .andand.map do |group|
         group['id']
       end || []
     }
