@@ -52,16 +52,14 @@ Revert changes from previous step
 
 Join users to bitovi brand
 
-1. `User.all.each {|u| u.join_brand(:bitovi); u.save}`
+1. `User.all.each {|u| BrandsUser.create({user_id: u.id, brand_id: 1, total_score: u[:total_score]}) }`
 
 Update imported tags
 
 1. `TENANT=bitovi ./bin/rake data:import_or_update_tags`
 2. Connect brand identities and check tags!
-3. Change feed_name on forum entites to rss
-4. bitovian.user_ids = [3, 33, 2, 14, 298, 94, 144, 59, 30, 214, 37, 168, 142, 309, 64, 47, 141, 60, 66, 25, 61, 589, 35]
-=> [3, 33, 2, 14, 298, 94, 144, 59, 30, 214, 37, 168, 142, 309, 64, 47, 141, 60, 66, 25, 61, 589, 35]
-
+3. `UPDATE entities SET feed_name='rss' WHERE feed_name = 'forum'`
+4. `[3, 33, 2, 14, 298, 94, 144, 59, 30, 214, 37, 168, 142, 309, 64, 47, 141, 60, 66, 25, 61, 589, 35].each {|id| u = User.find(id).add_role :bitovian; u.save}`
 Check sequences!!!
 
 Flush redis!!!
