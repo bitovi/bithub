@@ -47,6 +47,14 @@ class Brand < ActiveRecord::Base
     update_keywords if self.changes['keywords']
   end
 
+  def self.find_by_tenant_name(tenant)
+    self.where(tenant_name: tenant).first
+  end
+
+  def self.current
+    self.where(tenant_name: Apartment::Database.current_tenant).first
+  end
+
   private
 
   def rename_tenant
