@@ -73,7 +73,7 @@ class Entity < ActiveRecord::Base
 
   scope :scoped_with_includes, lambda { includes(:owners).includes(:parent) }
 
-  scope :from_funnel, lambda { |funnel| tagged_with funnel.tags, :any => true }
+  scope :from_funnel, lambda { |funnel| tagged_with funnel.tags, :any => true if funnel.tags && funnel.tags.present?}
   scope :from_funnel_constraint, lambda { |constraint| where constraint.as_hash }
 
   after_create :reward_user_if_eligible
