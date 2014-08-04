@@ -18,6 +18,10 @@ class IdSet < RedisSet
   def members
     super(key)
   end
+
+  def empty?
+    super(key)
+  end
   
   def prefix
     "ids"

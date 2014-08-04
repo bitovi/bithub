@@ -73,6 +73,9 @@ class Entity < ActiveRecord::Base
 
   scope :scoped_with_includes, lambda { includes(:owners).includes(:parent) }
 
+  scope :from_funnel, lambda { |funnel| tagged_with funnel.tags, :any => true if funnel.tags && funnel.tags.present?}
+  scope :from_funnel_constraint, lambda { |constraint| where constraint.as_hash }
+
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_create :adopt_references_from_children
@@ -83,13 +86,6 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.from_funnel(f)
-    tagged_with f.tags, :any => true if f.tags
-  end
-
-  def self.from_funnel_constraint(fc)
-    where fc.constraints
-  end
 
   def self.with_author(author_id)
     joins(:ownerships)\

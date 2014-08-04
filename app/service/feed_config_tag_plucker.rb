@@ -23,7 +23,9 @@ class FeedConfigTagPlucker
   end
 
   def tags_from_meetup
-    taggify config['groups'].map {|el| el['name']}
+    if config['groups']
+      taggify config['groups'].map {|el| el['name']}
+    end
   end
 
   def tags_from_facebook
@@ -49,7 +51,7 @@ class FeedConfigTagPlucker
   private
 
   def taggify(tags)
-    tags.map {|t| t.snake_case} unless tags.nil?
+    tags.compact.map {|t| t.snake_case} if tags
   end
 
   def config

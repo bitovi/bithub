@@ -16,12 +16,12 @@ module Entities
           origin_ts: @event.created_at,
           origin_id: @event.url,
           props: {
-            location: @event.venue.composite_location,
+            location: "", #@event.venue.composite_location,
             status: @event.status,
             venue: @event.venue,
             scheduled_at: @event.scheduled_at,
-            latitude: @event.venue.lat,
-            longitude: @event.venue.lon,
+            latitude: "", #@event.venue.lat,
+            longitude: "", #@event.venue.lon,
             event_hosts: ActiveSupport::JSON.encode(@event.hosts),
             event_host_ids: @event.host_ids_csv,
           }
@@ -32,10 +32,10 @@ module Entities
         @instance.title = @event.name
         @instance.body = @event.description
         @instance.props[:status] = @event.status
-        @instance.props[:location] = @event.composite_location
+        @instance.props[:location] = "" #@event.composite_location
         @instance.props[:scheduled_at] = @event.scheduled_at
-        @instance.props[:latitude] = @event.lat
-        @instance.props[:longitude] = @event.lon
+        @instance.props[:latitude] = "" #@event.lat
+        @instance.props[:longitude] = "" #@event.lon
         @instance.props[:event_host_ids] = @event.host_ids_csv
         @instance.props[:event_hosts] = ActiveSupport::JSON.encode(@event.hosts)
       end
