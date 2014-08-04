@@ -123,9 +123,12 @@ class Api::V2::EntitiesController < Api::V2::BaseController
 
     if f
       scope.from_funnel f
-      scopes = f.constraints.map {|fc| scope.from_funnel_constraint fc}
-
-      scope = Entity.union_scope *scopes
+      if f.constraints.length > 1
+        scopes = f.constraints.map {|c| scope.from_funnel_constraint(c)}
+        scope = Entity.union_scope *scopes
+      elsif f.constraints.length == 1
+        scope.from_funnel_constraint(f.constraints.first)
+      end
       scope.order(scope_applier(scope).orderings)
     end
 
