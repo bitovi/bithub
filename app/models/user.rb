@@ -28,7 +28,8 @@ class User < ActiveRecord::Base
 
   belongs_to :country
 
-  scope :only_not_null_names, lambda { where("name <> '' and name IS NOT NULL") }
+  scope :only_not_null_names, -> { where("name <> '' and name IS NOT NULL") }
+  scope :from_tenant, ->(brand_name) { joins(:brands).where("brands.tenant_name = ?", brand_name) }
 
   before_save :calculate_avatar_url
   after_save :award_points_for_completing_profile
@@ -82,8 +83,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def total_score
+    if brand_user = BrandsUser.find_by_user(self.id)
+      brand_user.total_score
+    end
+  end
+
   def update_total_score
-    update_attribute(:total_score, self.score)
+    if brand_user = BrandsUser.find_by_user(self.id)
+      brand_user.total_score = self.score
+      brand_user.save
+    end
   end
 
   def update_blank_attrs(ident)

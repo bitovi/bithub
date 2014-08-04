@@ -4,7 +4,18 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   def index
     if params[:cached] == "true"
-      @users = Leaderboard.where("? = ANY(user_brands)", current_brand)
+
+      # attributes are named differenty than methods on User model
+      # to take precendence in template
+      select_attrs = [
+        'users.id AS user_id',
+        'users.name AS user_name',
+        "users.props -> 'avatar_url'::text AS user_gravatar_url",
+        'brands_users.total_score AS user_total_score',
+        'ARRAY( SELECT r.name FROM user_roles r LEFT JOIN users_user_roles ur ON ur.user_role_id = r.id WHERE ur.user_id = users.id) AS user_roles'
+      ]
+
+      @users = User.from_tenant(current_brand).select(select_attrs).order('user_total_score DESC')
       render :index_cached
     else
       scope = build_scope
