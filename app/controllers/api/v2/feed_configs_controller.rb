@@ -18,7 +18,6 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def create
-    #@config = FeedConfig.new actual_params
     @config.brand = current_account.brand
     FeedConfigTagPlucker.new(actual_params).create_tags
 
