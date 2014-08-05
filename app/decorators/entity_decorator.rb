@@ -83,6 +83,13 @@ class EntityDecorator < Draper::Decorator
   def props(thread_awarded = false, awarded_value = nil)
     source.props[:thread_awarded] = thread_awarded
     source.props[:awarded_value] = awarded_value
+    source.props[:target] = if not(source.props['target_name'].blank?)
+                              source.props['target_name']
+                            elsif not(source.props['target'].blank?)
+                              source.props['target']
+                            elsif not(source.props['target_screen_name'].blank?)
+                              source.props['target_screen_name']
+                            end
     #source.props[:thread_awarded] = source.thread_awarded?
     #source.props[:awarded_value] = source.awards.first.value if source.awards.first
     source.props
