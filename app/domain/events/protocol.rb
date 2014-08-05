@@ -43,8 +43,13 @@ module Events
       end
     end
 
+    # FIXME FIXME FIXME FIXME FIXME FIXME
     def calc_digest(seed)
-      @digest ||= (seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
+      @digest ||= if (self.class == Events::Twitter::Follow) || (self.class == Events::Twitter::FakeFollow)
+        Digest::MD5.hexdigest(seed + "Events::Twitter::Follow")
+      else
+        Digest::MD5.hexdigest(seed + self.class.name)
+      end
     end
 
     def feed_name
