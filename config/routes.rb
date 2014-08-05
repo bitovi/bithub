@@ -103,7 +103,7 @@ Bithub::Application.routes.draw do
       resources :brands, :only => [:index, :show, :update]
 
       # Brand identities
-      resources :brand_identities, :only => [:index, :show]
+      resources :brand_identities, :only => [:index, :show, :destroy]
 
       # Accounts
       resources :accounts do
