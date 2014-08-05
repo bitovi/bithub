@@ -17,4 +17,15 @@ class Api::V2::BrandIdentitiesController < Api::V2::BaseController
       render :json => msg_hash(@brand_identity, 'show'), :status => 406
     end
   end
+
+  def destroy
+    @bi = BrandIdentity.find(params[:id])
+
+    if @bi.destroy
+      render :json => msg_hash(@bi, 'destroy', 'success')
+    else
+      render :json => msg_hash(@bi, 'destroy'), :status => 406
+    end
+  end
+
 end
