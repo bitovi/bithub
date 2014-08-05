@@ -23,7 +23,13 @@ class Funnel < ActiveRecord::Base
   end
 
   def covers?(entity)
-    (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
+    check = (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
+
+    if !self.tags.blank?
+      check = check && !(self.tags & entity.tag_list).empty?
+    end
+
+    check
   end
 
   def weight
