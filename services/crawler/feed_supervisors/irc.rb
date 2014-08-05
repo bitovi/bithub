@@ -30,7 +30,7 @@ module FeedSupervisors
         end
       end
 
-      @bots.each {|b| b.connect}
+      @bots.each {|b| b.async.connect}
 
       Celluloid.logger.info "IRCbot connected for brand '#{@brand_name}'"
     end
@@ -58,6 +58,9 @@ module FeedSupervisors
         # turn on logging
         c.logger = Celluloid.logger
         c.logging = true
+
+        # keep console quite
+        c.verbose = false
       end
     end
 
