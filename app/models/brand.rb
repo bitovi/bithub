@@ -32,7 +32,6 @@ class Brand < ActiveRecord::Base
 
     # repopulate matviews upon creation
     Pagination.refresh
-    Leaderboard.refresh
     UserActivity.refresh
 
     Apartment::Database.switch
@@ -45,6 +44,14 @@ class Brand < ActiveRecord::Base
   def update_tenant
     rename_tenant if self.changes['tenant_name']
     update_keywords if self.changes['keywords']
+  end
+
+  def self.find_by_tenant_name(tenant)
+    self.where(tenant_name: tenant).first
+  end
+
+  def self.current
+    self.where(tenant_name: Apartment::Database.current_tenant).first
   end
 
   private
