@@ -10,6 +10,7 @@ class Funnel < ActiveRecord::Base
     foreign_key: "funnel_id",
     association_foreign_key: "funnel_constraint_id"
 
+  after_save :update_pagination_table
 
   def disabled=(value)
     self.props_will_change!
@@ -35,4 +36,9 @@ class Funnel < ActiveRecord::Base
   def weight
     (constraints.count * 1) + (tags.count * 10)
   end
+
+  def update_pagination_table
+    Pagination.refresh
+  end
+  
 end
