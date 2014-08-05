@@ -18,7 +18,7 @@ module Entities
 
       # Finders
       def find_by_link
-        Entity.feed('blog').type('post').where(url: @event.link)
+        Entity.feed('rss').type('post').where(url: @event.link)
       end
 
       def taggify_by_url
@@ -29,6 +29,20 @@ module Entities
         end
       end
 
+      # legacy from forums
+      def find_parent
+        if @event.link and for_bitovi?
+          find_by_thread_prefix.where("origin_ts < ?", @event.published).order("origin_ts ASC").first
+        end
+      end
+
+      # legacy from forums
+      def find_children
+        if @event.link and for_bitovi?
+          find_by_thread_prefix.where("origin_ts > ?", @event.published).all
+        end
+      end
+
       private
 
       def match_site_by_url(url)
@@ -36,6 +50,20 @@ module Entities
           .fetch('sites')
           .select {|s| s.fetch('url') == url}
           .first
+      end
+
+      # legacy from forums
+      def find_by_thread_prefix
+        thread_url, _ = @event.link.split('#')
+
+        scope = Entity.feed('rss').where("url LIKE '#{thread_url}%'")
+        scope = scope.where("#{Entity.table_name}.id <> #{@instance.id}") if @instance.id
+        scope
+      end
+
+      # legacy from forums
+      def for_bitovi?
+        @event.link.starts_with? 'http://forum.javascriptmvc.com'
       end
 
       def sites
