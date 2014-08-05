@@ -7,6 +7,7 @@ class AccountAbility
     else
       can [:read, :read_tags_tree], Tag
       can [:read, :update], Brand, id: account.brand.id
+      can [:destroy], BrandIdentity, brand_id: account.brand.id
       can :read, Country
       can [:read, :update], ScoringRule
       can :manage, Reward
