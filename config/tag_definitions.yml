@@ -153,7 +153,7 @@ post:
 
 app: {}
 article: {}
-event: {}
+#event: {} # below at meetup
 plugin: {}
 
 ### Meetup
@@ -162,6 +162,9 @@ confirmed: {}
 waitlist: {}
 rsvp:
   display_name: "RVSP"
+  group_list: "types,meetup"
+event:
+  display_name: "Event"
   group_list: "types,meetup"
 
 ### StackExchange
