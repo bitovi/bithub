@@ -310,7 +310,6 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    railroady (1.1.1)
     rails (4.1.4)
       actionmailer (= 4.1.4)
       actionpack (= 4.1.4)
@@ -533,7 +532,6 @@ DEPENDENCIES
   pry
   pry-rails
   rMeetup!
-  railroady
   rails (~> 4.1)
   rake
   ranked-model
