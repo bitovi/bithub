@@ -94,7 +94,8 @@ class FeedConfigDecorator < ::Draper::Decorator
   private
 
   def terms
-    ([source.brand.name] + (brand_keywords & feed_config_keywords)).uniq
+    #([source.brand.name] + (brand_keywords & feed_config_keywords)).uniq
+    feed_config_keywords.uniq
   end
 
   def brand_keywords
