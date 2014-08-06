@@ -50,7 +50,7 @@ module Entities
     end
 
     def taggify_content
-      tags = Tag.tagged_with('keyword')
+      tags = Tag.tagged_with('keywords')
       input = ATTRS_FOR_TAGGING.map {|attr| @instance.send(attr)}.compact
 
       Tagger::List.new(tags).taggify(input)
