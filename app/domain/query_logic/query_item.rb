@@ -57,7 +57,7 @@ module QueryLogic
     end
 
     def ordering?
-      (@name =~ /order/) && ((@value.include? ':desc') || (@value.include? ':asc'))
+      (@name =~ /order/) && ((@value.include? 'desc') || (@value.include? 'asc'))
     end
 
     def tag_based?
