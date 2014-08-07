@@ -2,7 +2,6 @@ module Tagger
   class Tag
     #class InvalidTagDefinitionException < Exception; end
 
-    DEFAULT_TOLERANCE = 1
     DEFAULT_WEIGHT    = 1
 
     attr_reader :name, :tolerance, :aliases, :weight
@@ -13,7 +12,7 @@ module Tagger
 
       @name      = tag[:name]
       @aliases   = tag[:aliases] || []
-      @tolerance = tag[:tolerance].to_i || DEFAULT_TOLERANCE
+      @tolerance = tag[:tolerance].to_i # nil.to_i --> 0
       @weight    = tag[:weight].to_i || DEFAULT_WEIGHT
     end
 

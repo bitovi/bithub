@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe User, :type => :model do
   describe "#score" do
@@ -24,21 +24,27 @@ RSpec.describe User, :type => :model do
     end
 
     it "should calculate total upvote points" do
-      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, author: @author, title: "Event in user_spec, testing #score from upvotes")
+      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, title: "Event in user_spec, testing #score from upvotes")
+      entity.author = @author # overwrite one created by trait
+
       Upvote.create actor: @actor, applies_to: entity, value: 5
       Award.create actor: @actor, applies_to: entity, value: 10
       expect(@author.upvotes_total).to eq 5
     end
 
     it "should calculate total award points" do
-      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, author: @author, title: "Event in user_spec, testing #score from awards")
+      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, title: "Event in user_spec, testing #score from awards")
+      entity.author = @author # overwrite one created by trait
+
       Upvote.create actor: @actor, applies_to: entity, value: 5
       Award.create actor: @actor, applies_to: entity, value: 10
       expect(@author.awards_total).to eq 10
     end
 
     it "should calculate total points" do
-      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, author: @author, title: "Event in user_spec, testing total #score")
+      entity = FactoryGirl.create(:determined_entity, scoring_rule: @rule, title: "Event in user_spec, testing total #score")
+      entity.author = @author # overwrite one created by trait
+
       Upvote.create actor: @actor, applies_to: entity, value: 5
       Award.create actor: @actor, applies_to: entity, value: 10
       expect(@author.reload.score).to eq (30+10+5)
