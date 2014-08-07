@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe Identity, :type => :model do
   describe "#update_source_data_if_blank" do

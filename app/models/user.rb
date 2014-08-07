@@ -89,9 +89,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  def update_total_score
+  def total_score=(val)
+    update_total_score(val)
+  end
+
+  def update_total_score(val=nil)
     if brand_user = BrandsUser.find_by_user(self.id)
-      brand_user.total_score = self.score
+      brand_user.total_score = (val || self.score)
       brand_user.save
     end
   end

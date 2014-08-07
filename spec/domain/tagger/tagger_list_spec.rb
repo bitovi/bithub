@@ -4,10 +4,10 @@ RSpec.describe Tagger::List, :typo => :tagger do
 
   subject(:tagger) do
     tags = [
-            {name: 'canjs'},
-            {name: 'documentjs',    aliases: ['document_js']},
-            {name: 'funcunit',      aliases: ['func_unit']},
-            {name: 'javascriptmvc', aliases: ['jmvc','java_script_mvc']},
+            {name: 'canjs', tolerance: 1},
+            {name: 'documentjs',    aliases: ['document_js'], tolerance: 1},
+            {name: 'funcunit',      aliases: ['func_unit'], tolerance: 1},
+            {name: 'javascriptmvc', aliases: ['jmvc','java_script_mvc'], tolerance: 1},
             {name: 'jquerypp',      aliases: ['j_querypp','j_query++','jquery++']},
             {name: 'stealjs',       aliases: ['steal','steal_js']},
            ]

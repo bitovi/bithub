@@ -1,4 +1,4 @@
-require 'no_rails_spec_helper'
+require 'spec_helper'
 require 'services/crawler/persistent/digest_set'
 
 class DummySet < RedisSet
@@ -45,14 +45,14 @@ describe DummySet do
       expect(set.add(data_set.first)).to be_falsey
     end
   end
-  
+
   describe "#key" do
     it "determines the key-path for a dispatched event" do
       set = DummySet.new
       expect(set.key(data_set.first)).to eq "first"
     end
   end
-  
+
   describe "#all" do
     it "returns all elements of an event" do
       set = DummySet.new

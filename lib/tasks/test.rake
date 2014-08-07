@@ -1,7 +1,7 @@
 require 'rspec/core/rake_task'
 
-ENV['RAILS_ENV'] = "test"
-
+ENV['RAILS_ENV'] ||= "test"
+ActiveRecord::Migration.maintain_test_schema!
 namespace :test do
 
   RSpec::Core::RakeTask.new(:domain) do |t|

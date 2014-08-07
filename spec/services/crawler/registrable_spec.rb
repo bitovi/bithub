@@ -1,6 +1,6 @@
-require 'no_rails_spec_helper'
-require 'services/crawler/streamers/all'
-require 'services/crawler/streamers/registrable'
+require 'spec_helper'
+#require 'services/crawler/streamers/all'
+require 'services/crawler/streamer/registrable'
 
 
 describe Streamers::Registrable do
@@ -26,7 +26,7 @@ describe Streamers::Registrable do
       attr_reader :restarted
     end
   end
-  
+
   before { Celluloid.boot }
   after { Celluloid.shutdown }
 
@@ -73,7 +73,7 @@ describe Streamers::Registrable do
       sleep 2
       expect(s.restarted).to be_truthy
     end
-    
+
   end
 
 end

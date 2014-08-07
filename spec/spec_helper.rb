@@ -1,38 +1,34 @@
-ENV["RAILS_ENV"] ||= 'test'
-
-require 'rubygems'
-require 'spork'
-
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 $:.unshift PROJECT_ROOT
 
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
-
+require 'rspec'
 require 'rspec/mocks'
-require 'rspec/rails'
 
-ActiveRecord::Migration.maintain_test_schema! if defined?(ActiveRecord::Migration)
+require 'celluloid'
+require 'celluloid/io'
 
-# ----------
-# VCR config
-# ----------
+require 'lib/core_helpers'
 
-# VCR.configure do |c|
-#   c.cassette_library_dir = 'fixtures/vcr_cassettes'
-#   c.hook_into :webmock
-# end
+Celluloid.logger.level = Logger::ERROR
 
-require_relative 'test_helper_methods'
+RSpec.configure do |config|
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
 
-Spork.prefork do
-  require 'rspec/mocks'
-  require 'rspec/rails'
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
-end
+  if config.files_to_run.one?
+    config.default_formatter = 'doc'
+  end
 
-Spork.each_run do
-  # This code will be run each time you run your specs.
+  config.profile_examples = 10
+  config.order = :random
+  Kernel.srand config.seed
+
+  config.expect_with :rspec do |expectations|
+    expectations.syntax = :expect
+  end
+
+  config.mock_with :rspec do |mocks|
+    mocks.syntax = :expect
+    mocks.verify_partial_doubles = true
+  end
 end
