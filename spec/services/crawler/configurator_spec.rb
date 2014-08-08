@@ -1,5 +1,5 @@
 require 'celluloid/test'
-require 'no_rails_spec_helper'
+require 'spec_helper'
 require 'services/crawler/configurator'
 
 describe Configurator do
@@ -20,7 +20,7 @@ describe Configurator do
   describe "brand" do
     it "fetches config for a brand (all feeds)"
   end
-  
+
   describe "feed" do
     it "fetches config for a brand's feed"
   end

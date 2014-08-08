@@ -314,11 +314,31 @@ ALTER SEQUENCE brands_id_seq OWNED BY brands.id;
 --
 
 CREATE TABLE brands_users (
+    id integer NOT NULL,
     user_id integer,
     brand_id integer,
     total_score integer DEFAULT 0,
     props hstore DEFAULT ''::hstore
 );
+
+
+--
+-- Name: brands_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE brands_users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: brands_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE brands_users_id_seq OWNED BY brands_users.id;
 
 
 --
@@ -1112,6 +1132,13 @@ ALTER TABLE ONLY brands ALTER COLUMN id SET DEFAULT nextval('brands_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY brands_users ALTER COLUMN id SET DEFAULT nextval('brands_users_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
 
 
@@ -1281,6 +1308,14 @@ ALTER TABLE ONLY brand_identities
 
 ALTER TABLE ONLY brands
     ADD CONSTRAINT brands_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: brands_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY brands_users
+    ADD CONSTRAINT brands_users_pkey PRIMARY KEY (id);
 
 
 --

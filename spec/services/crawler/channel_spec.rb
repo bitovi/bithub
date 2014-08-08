@@ -1,5 +1,5 @@
-require 'no_rails_spec_helper'
-require 'services/crawler/channel'
+require 'spec_helper'
+require 'services/crawler/streamer/channel'
 
 describe Channel do
   Message = Struct.new(:title, :body)
@@ -7,7 +7,7 @@ describe Channel do
   let(:channel) do
     Channel.new('nikica', %w(canjs))
   end
-  
+
   describe "#interested?" do
     it "tells the caller if the current channel is interested in an incoming message" do
       dummy_msg_obj = Message.new((t = 'new tweet'), (b = 'with canjs body'))

@@ -1,5 +1,5 @@
 require 'celluloid/test'
-require 'no_rails_spec_helper'
+require 'spec_helper'
 require 'services/crawler/poller'
 
 module Fetchers

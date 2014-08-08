@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 # Domain logic is in app/domain
 $:.unshift(File.expand_path(File.join('app', 'domain')))

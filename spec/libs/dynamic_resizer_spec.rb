@@ -1,10 +1,10 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe DynamicResizer, :type => :libs do
-  
+
   let(:origin_filename) { "foo_bar.jpg" }
   let(:width) { 400 }
-  let(:height) { 300 }  
+  let(:height) { 300 }
   let(:width_limit) { 1024 }
   let(:height_limit) { 768 }
   let(:filename) { width.to_s + "x" + height.to_s + "_" + origin_filename }
@@ -13,11 +13,9 @@ RSpec.describe DynamicResizer, :type => :libs do
   subject(:image) do
     DynamicResizer.new(req_path, {:width_limit => width_limit, :height_limit => height_limit})
   end
-  
+
   describe "#parse_filename" do
     it "extract correct values from filename to props" do
-      image.stub(:is_filepath_valid? => true)
-      #props = image.parse_filename(image.filename)
       props = image.send(:parse_filename, image.filename)
 
       expect(props[:filename]).to eq filename
@@ -39,4 +37,4 @@ RSpec.describe DynamicResizer, :type => :libs do
     end
   end
 
-end  
+end

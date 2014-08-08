@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe Entity, :type => :model do
 
@@ -14,7 +14,7 @@ RSpec.describe Entity, :type => :model do
   context "upon creation" do
 
     describe "#save" do
-      it "raises an error on save! b/c there is no feed / category / tags / rules applied" do
+      it "raises an error on save! b/c there is no feed / tags / rules applied" do
         generic_entity = FactoryGirl.build(:entity)
         expect{generic_entity.save!}.to raise_error
       end
@@ -23,14 +23,14 @@ RSpec.describe Entity, :type => :model do
     describe "#thread" do
       it "fetches the entity itself wrapped in an array if there is no thread" do
         e = FactoryGirl.create(:github_issue, title: "Why is this happening?")
-        e.thread.should =~ [e]
+        expect(e.thread).to include(e)
       end
 
       it "fetches the whole thread" do
         pe = FactoryGirl.create(:github_issue, title: "Why is this happening?")
         ce1 = FactoryGirl.create(:github_issue_comment, title: "I don't care.", parent: pe)
         ce2 = FactoryGirl.create(:github_issue_comment, title: "Wat? Qua?", parent: pe)
-        pe.thread.should =~ ce1.thread
+        expect(pe.thread).to match_array(ce1.thread)
         expect(pe.thread.length).to eql(3)
       end
     end
@@ -42,9 +42,9 @@ RSpec.describe Entity, :type => :model do
         ce2 = FactoryGirl.create(:github_issue_comment, title: "Wat? Qua?", parent: pe, origin_ts: Time.now+15)
 
         ce2.bump_thread
-        pe.reload.thread_updated_ts.should > pe.origin_ts
-        ce1.reload.thread_updated_ts.should > ce1.origin_ts
-        ce2.reload.thread_updated_ts.should == ce2.origin_ts
+        expect(pe.reload.thread_updated_ts).to be > pe.origin_ts
+        expect(ce1.reload.thread_updated_ts).to be > ce1.origin_ts
+        expect(ce2.reload.thread_updated_ts).to eq(ce2.origin_ts)
       end
     end
 
