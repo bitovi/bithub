@@ -5,8 +5,8 @@ gem 'unicorn'
 gem 'rails', '~> 4.1'
 
 gem 'rake'
-gem 'rspec', '~> 2.14'
-gem 'rspec-rails'
+gem 'rspec', '~> 3.0.0'
+gem 'rspec-rails', '~> 3.0.0'
 gem 'pry'
 gem 'pry-rails'
 

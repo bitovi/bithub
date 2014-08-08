@@ -31,7 +31,7 @@ FactoryGirl.define do
         user.identities << FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
       end
     end
-    
+
     trait :with_twitter_ident do
       after :build do |user|
         user.identities << FactoryGirl.build(:identity, user: user, provider: 'twitter', uid: 987654321)
@@ -41,7 +41,7 @@ FactoryGirl.define do
         user.identities << FactoryGirl.create(:identity, user: user, provider: 'twitter', uid: 987654321)
       end
     end
-    
+
     trait :with_github_ident do
       after :build do |user|
         user.identities << FactoryGirl.build(:identity, user: user, provider: 'github', uid: 123456789)

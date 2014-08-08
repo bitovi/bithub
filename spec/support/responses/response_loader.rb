@@ -1,4 +1,3 @@
-require 'yajl'
 require 'nokogiri'
 require 'nori'
 
@@ -28,11 +27,11 @@ class ResponseLoader
     if %w(blog forums).include? feed
       Nori.new(:parser => :nokogiri).parse(raw).first
     else
-      Yajl::Parser.parse(raw)
+      JSON.parse(raw)
     end
   end
 
-  def raw(type, feed)    
+  def raw(type, feed)
     if %w(blog forums).include? feed
       path = File.join(ROOT, feed, type.snake_case + '.rss')
     elsif feed == 'github'
@@ -49,4 +48,3 @@ class ResponseLoader
   alias_method :pr, :parsed_response
   alias_method :r, :response
 end
-
