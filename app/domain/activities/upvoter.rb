@@ -15,8 +15,10 @@ module Activities
 
     def unvote
       @upvote = @actor.upvotes_as_actor.where(applies_to: @applies_to).first
+
       if @upvote.destroy
         async_exec_post_unvote_actions
+        @upvote
       end
     end
 
