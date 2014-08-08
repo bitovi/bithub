@@ -8,7 +8,7 @@ module Workers
     def perform
       Brand.pluck(:name).each do |name| 
         Apartment::Database.switch(name)
-        fff = Entities::Services::FakeFollowFiller.new
+        fff = ::Entities::Services::FakeFollowFiller.new
 
         if fff.user_ids_with_missing_names.count >= 50
           fff.fill_missing
