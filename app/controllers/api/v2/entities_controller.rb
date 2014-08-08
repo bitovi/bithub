@@ -104,7 +104,7 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     .apply_muster_query_to_scope(muster_query, skip_limits: funnel_params_present?)
     .apply_regular_params_to_scope
     .apply_tag_based_params_to_scope
-    .apply_order_to_scope
+    .apply_order_to_scope(skip_order: funnel_params_present?)
     .result
 
     if funnel_params_present?
