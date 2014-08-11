@@ -58,3 +58,10 @@ end
 def raw_data(opts = {})
   load_and_parse File.join('spec/support/responses', opts[:response_path])
 end
+
+# ----------------
+# Oauth dummy data
+# ----------------
+def oauth_data_hash(provider = 'github', uid = 123456789, email = 'neektza@gmail.com', name = 'Nikica Jokic')
+  Hash['omniauth.auth', Hash['provider', provider, 'uid', uid, 'info', Hash['email', email, 'name', name]]]
+end
