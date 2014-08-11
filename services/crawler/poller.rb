@@ -16,14 +16,16 @@ class Poller
   attr_reader :fetcher
 
   def fetch
-    unless locker.locked?(lock_name)
-      locker.lock(lock_name, lock_interval)
-      if (events = @fetcher.fetch)
-        Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
-        publish events if events.count > 0
+    if not(locker.nil?)
+      if locker.locked?(lock_name)
+        Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}' LOCKED!"
+      else
+        locker.lock(lock_name, lock_interval)
+        if (events = @fetcher.fetch)
+          Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
+          publish events if events.count > 0
+        end
       end
-    else
-      Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}' LOCKED!"
     end
   end
 
