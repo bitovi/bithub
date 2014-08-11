@@ -157,8 +157,13 @@ class Entity < ActiveRecord::Base
     activities.concat(self.upvotes)
   end
 
+  # FIXME, should be delegated to a proper type from Entities
   def bump_thread
-    latest_origin_ts = self.thread.pluck(:origin_ts).max
+    if self.feed_name == 'meetup' && self.type_name == 'event'
+      latest_origin_ts = self.thread.pluck(:props).map{|p| p['scheduled_at']}.compact.map {|t| Time.parse t}.max
+    else
+      latest_origin_ts = self.thread.pluck(:origin_ts).max
+    end
     self.thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
   end
 
