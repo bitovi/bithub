@@ -6,22 +6,19 @@ describe Configurator do
   before { Celluloid.boot }
   after { Celluloid.shutdown }
 
-  describe "#config_file_path" do
-    it "tells the Configurator where to look for static config file" do
-      expect(Configurator.new(:environment => 'development').config_file_path).to\
-        eq File.expand_path('config/services/crawler/development.yml')
-    end
+  describe "#static_config" do
+    it "reads config from ENV"
   end
 
   describe "#all_brands" do
-    it "should fetch all feed configs from the web component"
+    it "fetches all feed configs from the web component"
   end
 
   describe "brand" do
-    it "fetches config for a brand (all feeds)"
+    it "filters by brand from data fetched by #all_brands"
   end
 
   describe "feed" do
-    it "fetches config for a brand's feed"
+    it "filters by brand and feed from data fetched by #all_brands"
   end
 end

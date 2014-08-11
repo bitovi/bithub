@@ -13,6 +13,7 @@ FactoryGirl.define do
   end
 
   factory :internal do
+    value 10
   end
 
 end
