@@ -1,6 +1,6 @@
 module QueryLogic
   class QueryItem
-    TAG_FIELD_NAMES = ['tag', 'feed', 'project']
+    TAG_FIELD_NAMES = ['tag']
 
     DELIMITERS = { :and => ',', :or => '|', :between => ':' }
     OPTIONAL_LOGIC = { :exclude => 'exclude' }
