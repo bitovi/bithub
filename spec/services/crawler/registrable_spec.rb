@@ -1,47 +1,36 @@
 require 'spec_helper'
-#require 'services/crawler/streamers/all'
 require 'services/crawler/streamer/registrable'
 
+module Streamers
+  class GetMyData
+    include Celluloid
+    include Registrable
+    def initialize
+      @restarted = false
+    end
+    def connect
+      @restarted = true
+    end
+    def reconnect
+      @restarted = true
+    end
+    def registration_timeout
+      1
+    end
+    attr_reader :restarted
+  end
+end
 
 describe Streamers::Registrable do
-
-  module Streamers
-    class GetMyData
-      include Celluloid
-      include Registrable
-
-      def initialize
-        @restarted = false
-      end
-
-      def connect
-        @restarted = true
-      end
-      def reconnect
-        @restarted = true
-      end
-      def registration_timeout
-        1
-      end
-      attr_reader :restarted
-    end
-  end
-
   before { Celluloid.boot }
   after { Celluloid.shutdown }
 
   let(:channel) do
-    channel = double()
-    channel.stub(:name) { "nikica" }
-    channel.stub(:topics) { %w(canjs jquery) }
-    channel
+    double("channel", :name => "nikica", :topics => %w(canjs jquery))
   end
 
   let(:channel2) do
-    channel = double()
-    channel.stub(:name) { "veljko" }
-    channel.stub(:topics) { %w(javascriptmvc what) }
-    channel
+    double("channel2", :name =>"veljko", :topics => %w(javascriptmvc what))
   end
 
   describe "#register" do
@@ -67,12 +56,14 @@ describe Streamers::Registrable do
       expect(s.restarted).to be_falsey
     end
 
-    it "restarts the connection after the specified period" do
-      s = Streamers::GetMyData.new
-      s.register channel
-      sleep 2
-      expect(s.restarted).to be_truthy
-    end
+    # Slows down the test suite, will need to figure out how to avoid this
+    #
+    # it "restarts the connection after the specified period" do
+    #   s = Streamers::GetMyData.new
+    #   s.register channel
+    #   sleep 2
+    #   expect(s.restarted).to be_truthy
+    # end
 
   end
 
