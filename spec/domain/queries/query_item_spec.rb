@@ -1,9 +1,8 @@
 require 'domain/queries/spec_helper'
 
 RSpec.describe QueryLogic::QueryItem, :type => :domain do
-  let(:model) do
-    double("Entity", :has_an_attribute? => true )
-  end
+
+  let(:model) { double("Entity", :has_an_attribute? => true )}
 
   describe "#value" do
     it "should cast query values to appropriate type (which it has to read from column info)"
@@ -21,7 +20,7 @@ RSpec.describe QueryLogic::QueryItem, :type => :domain do
     end
 
     it "denies that tag_based items are regular" do
-      expect(QueryLogic::QueryItem.new(model, ["feed", "github"]).regular_and_valid?).to eq(false)
+      expect(QueryLogic::QueryItem.new(model, ["tag", "github"]).regular_and_valid?).to eq(false)
     end
   end
 
@@ -49,6 +48,7 @@ RSpec.describe QueryLogic::QueryItem, :type => :domain do
     end
 
     it "denies that non existent query items are native" do
+      model = double("Entity", :has_an_attribute? => false)
       expect(QueryLogic::QueryItem.new(model, ["not_existing", "non_existent_value"]).native?).to eq(false)
     end
   end

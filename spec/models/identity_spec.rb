@@ -1,14 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe Identity, :type => :model do
+
   describe "#update_source_data_if_blank" do
-    before (:all) { Identity.delete_all }
-    let(:oauth_data) { oauth_data_hash }
+    before { Identity.delete_all }
+    let(:oauth_data) { oauth_data_hash['omniauth.auth'] }
 
     it "should update the source_data with oauth_data" do
-      identity = FactoryGirl.create(:identity, uid: oauth_data['uid'], provider: oauth_data['provider'] )
+
+      identity = FactoryGirl.create(
+        :identity,
+        uid: oauth_data['uid'],
+        provider: oauth_data['provider']
+      )
+
       identity.update_source_data_if_blank(oauth_data['info'])
-      expect(identity.source_data).to eq(oauth_data['info'])
+      expect(identity.reload.source_data).to eq(oauth_data['info'])
     end
   end
 
