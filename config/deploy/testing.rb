@@ -1,4 +1,4 @@
-server 'testing.bithub.com', user: fetch(:user), roles: %w{app db} #, my_property: :my_value
+server 'testing.bithub.com', user: fetch(:user), roles: %w{app db}
 set :branch, 'testing'
 
 set :log_level, :debug
