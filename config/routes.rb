@@ -27,6 +27,7 @@ Bithub::Application.routes.draw do
   # Dynamic image resizer
 
   post '/uploads/*other' => "uploads#index"
+  get '/uploads/*other' => "uploads#index"
 
 
   # SERVICE API Routes
