@@ -3,7 +3,7 @@ class Api::V2::RewardsController < Api::V2::BaseController
   load_and_authorize_resource
 
   def index
-    @rewards = build_scope.all
+    @rewards = build_scope.order('point_minimum asc').all
     @rewards_count = build_scope_for_counting.count
     render :index
   end
