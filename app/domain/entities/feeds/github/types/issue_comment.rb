@@ -57,8 +57,8 @@ module Entities
       def update_parent
         @instance.parent.title = @payload.issue_or_pull_req_title
         @instance.parent.body = @payload.issue_or_pull_req_body
-        @instance.parent.props[:state] = @payload.issue_or_pull_req_state
-        @instance.parent.props[:labels_names] = @payload.issue_or_pull_req_label_names
+        @instance.parent.props['state'] = @payload.issue_or_pull_req_state
+        @instance.parent.props['labels_names'] = @payload.issue_or_pull_req_label_names
       end
 
       # Finders
