@@ -20,7 +20,7 @@ module Entities
         @instance.children += build_children
       end
 
-      if @instance.children
+      if @instance.children && (@instance.latest_child_ts > @payload.origin_ts)
         update_from_children if self.respond_to? :update_from_children
       end
 

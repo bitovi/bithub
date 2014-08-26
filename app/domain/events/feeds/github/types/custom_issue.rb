@@ -4,7 +4,7 @@ module Events
     class CustomIssue < Protocol
 
       DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
-      
+
       def content_digest
         seed = DIGEST_ATTRS.reduce("") {|accumul, attr| accumul += self.send(attr).to_s}
         Digest::MD5.hexdigest(seed)
@@ -13,7 +13,7 @@ module Events
       def issue_id
         source_data.andand[:id]
       end
-      
+
       def title
         source_data.andand[:title]
       end
@@ -59,18 +59,16 @@ module Events
       end
 
       def origin_timestamp
-        source_data.andand[:created_at]
+        ts_str = source_data.andand[:updated_at]
+        Time.parse(ts_str).utc
       end
+      alias_method :updated_at, :origin_timestamp
 
-      def updated_at
-        source_data.andand[:updated_at]
-      end
-      
       def repo_name
         url = source_data.andand[:url]
         url.match(/repos\/(.*)\/issues/).andand[1]
       end
-        
+
       def referenced_issue_numbers
         body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
       end
