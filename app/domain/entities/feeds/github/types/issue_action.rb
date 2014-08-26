@@ -12,7 +12,7 @@ module Entities
       def find
         nil
       end
-      
+
       def find_parent
         if @payload.repo_name && @payload.number
           matches = relationships[:upstream].reduce([]) do |acc, rl|
@@ -47,9 +47,9 @@ module Entities
       def update_parent
         @instance.parent.title = @payload.title
         @instance.parent.body = @payload.body
-        @instance.parent.props[:state] = @payload.state
+        @instance.parent.props['state'] = @payload.state
         if @payload.respond_to? :label_names
-          @instance.parent.props[:label_names] = @payload.label_names
+          @instance.parent.props['label_names'] = @payload.label_names
         end
       end
 
@@ -78,7 +78,7 @@ module Entities
       def relationships
         Entities::Github::IssueAction::Relationships
       end
-      
+
     end
 
     PullRequestAction = IssueAction
