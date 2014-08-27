@@ -58,20 +58,19 @@ module Entities
       end
 
       def update_from_children
-        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+        if most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
 
-        return if most_recent_child.nil?
+          most_recent_child.props.symbolize_keys!
+          most_recent_child.source_data.symbolize_keys!
 
-        most_recent_child.props.symbolize_keys!
-        most_recent_child.source_data.symbolize_keys!
+          data = most_recent_child.last_modified_by.source_data
+          event = Events::Dispatcher.dispatch(data, 'github')
 
-        data = most_recent_child.last_modified_by.source_data
-        event = Events::Dispatcher.dispatch(data, 'github')
-
-        @instance.title = (t = event.issue.andand[:title]) ? t : @instance.title
-        @instance.body = (b = event.issue.andand[:body]) ? b: @instance.body
-        @instance.props[:state] = event.state
-        @instance.props[:label_names] = event.label_names
+          @instance.title = (t = event.issue.andand[:title]) ? t : @instance.title
+          @instance.body = (b = event.issue.andand[:body]) ? b: @instance.body
+          @instance.props[:state] = event.state
+          @instance.props[:label_names] = event.label_names
+        end
       end
 
       # Finders
