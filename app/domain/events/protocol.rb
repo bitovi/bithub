@@ -2,6 +2,7 @@ require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
 require_relative 'traits/validatable'
+require_relative 'traits/normalizable'
 
 Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
   require f.gsub('app/domain/', '')
@@ -24,6 +25,7 @@ module Events
   class Protocol
     include CoreHelpers
     include Persistable
+    include Normalizable
     include Serializable
     include Validatable
 
@@ -34,6 +36,15 @@ module Events
       @source_data = _raw[:source_data] || _raw
       @meta = opts[:meta]
       wrap_response if self.respond_to? :wrap_response
+    end
+
+    def build
+      @instance = ::Event.new({
+        content_digest: content_digest,
+        source_data: source_data,
+        props: meta || {}
+      })
+      self
     end
 
     def content_digest
@@ -54,11 +65,11 @@ module Events
     end
 
     def feed_name
-      @feed_name ||= module_and_class_names[0]
+      @feed_name ||= feed_and_type_name[0]
     end
 
     def type_name
-      @type_name ||= module_and_class_names[1]
+      @type_name ||= feed_and_type_name[1]
     end
 
     def type_name_sym
@@ -87,7 +98,8 @@ module Events
         .uniq
     end
 
-    def module_and_class_names
+    private
+    def feed_and_type_name
       _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
       [@feed_name, @type_name]
     end
