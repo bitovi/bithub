@@ -60,7 +60,7 @@ gem 'muster', :github => 'neektza/muster'
 # API client libs
 gem 'octokit', '~> 2.0'
 gem 'koala'
-
+gem 'instagram'
 gem 'github_api'
 gem 'twitter'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
