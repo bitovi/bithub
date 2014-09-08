@@ -11,6 +11,7 @@ Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
 end
 
 module Entities
+  
   module Bithub; end
   module Blog; end
   module Disqus; end

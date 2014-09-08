@@ -8,6 +8,7 @@ Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
 end
 
 module Events
+
   module Github; end
   module Twitter; end
   module Forum; end
