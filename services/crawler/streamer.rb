@@ -1,95 +1,48 @@
-require 'digest/md5'
-require 'em-twitter'
+#!/usr/bin/env ruby
+RootDir = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
 
-require 'events/processor'
+$:.unshift(File.join(RootDir, 'app'))
+$:.unshift(File.join(RootDir, 'app', 'domain'))
+$:.unshift(File.join(RootDir, 'lib'))
+$:.unshift(File.join(RootDir, 'services'))
+$:.unshift(File.join(RootDir, 'services', 'crawler'))
 
-class Streamer
-  include Loggable
+require 'bundler/setup'
+require 'rubygems'
+require 'celluloid'
+require 'celluloid/io'
+require 'bunny'
+require 'redis'
 
-  class Configuration
-    attr_accessor :user_stream, :connected_as
-    def user_stream?; @user_stream; end
-  end
+require 'pry'
+require 'core_ext'
+require 'core_helpers'
+require 'amqp_helpers'
+require 'logger_factory'
 
-  ERRBACKS = [
-    "on_unauthorized", "on_forbidden",
-    "on_not_found", "on_not_acceptable",
-    "on_too_long", "on_no_data_received",
-    "on_close", "on_max_reconnects",
-    "on_enhance_your_calm", "on_service_unavailable", 
-    "on_range_unacceptable", "on_reconnect",
-  ]
+require 'events/dispatcher'
 
-  def self.connect(exchange, stream_config, &blk)
-    self.new(exchange, stream_config, &blk).setup_handlers
-  end
+require_relative 'configurator'
+require_relative 'lock_manager'
+require_relative 'publisher'
+require_relative 'streamer/channel'
+require_relative 'streamer/registrator'
+require_relative 'streamer/connectors/all'
+require_relative 'streamer/stream_supervisor'
+require_relative 'decorators/all'
+require_relative 'http_server/listener'
+require_relative 'response_processor'
 
-  def initialize(exchange, stream_config, &blk)
-    initialize_logger("INFO")
-    @exchange = exchange
+$env = ENV.fetch('ENV') { 'development' }
+logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 
-    @config = Configuration.new
-    blk.(@config) if blk
-
-    @feed = 'twitter'
-    @stream = EM::Twitter::Client.connect(stream_config)
-  end
-
-  def setup_handlers
-    @stream.each do |result|
-      handle_event(result)
-    end
-
-    @stream.on_error do |message|
-      @logger.error "#{base_log_format} | error: #{message}"
-    end
-
-    # dynamically assign the rest of the errbacks
-    ERRBACKS.each do |errback|
-      @stream.send(errback.to_sym) do
-        @logger.warn "#{base_log_format} | #{errback}"
-      end
-    end
-  end
-
-  def handle_event(event_json)
-    event = processor(event_json).parse.extract.decorate.result
-    publish(event)
-  rescue Events::DispatchError => err
-    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
-  rescue Events::BuildingError=> err
-    @logger.error "#{base_log_format} | #{err} | #{err.context} | #{event_json}"
-  end
-
-  def processor(response)
-    Events::Processor.new(response) do |config| 
-      config.feed = @feed
-      config.user_stream = @config.user_stream?
-    end
-  end
-
-  def publish(events)
-    log_publishing(events)
-    pack_and_publish = lambda do
-      events.each do |e|
-        @exchange.publish(Yajl::Encoder.encode(e))
-      end
-    end
-    EM.defer(pack_and_publish) if events.length > 0
-  end
-
-  def log_publishing(event)
-    @logger.info "#{base_log_format} | Publishing #{event.size} tweets"
-    @logger.debug event.inspect
-  end
-
-  private
-
-  def user
-    @config.connected_as
-  end
-
-  def base_log_format
-    "Feed: #{@feed} | User: @#{user}"
-  end
+class Streamer < Celluloid::SupervisionGroup
+  supervise Publisher, as: :publisher
+  supervise Registrator, as: :registrator
+  supervise Configurator, as: :configurator, args: [{environment: $env}]
+  supervise LockManager, as: :lock_manager
+  supervise HttpServer::Listener, as: :http_listener
+  supervise StreamSupervisor, as: :stream_supervisor
 end
+
+Streamer.run

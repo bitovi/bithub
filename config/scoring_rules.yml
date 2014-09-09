@@ -1,121 +1,234 @@
 -
-  required_tags: []
+  name: 'Default'
+  required_tags: {}
   authorship_value: 0
   award_value: 0
   upvote_value: 1
 
--
-  required_tags:
-    - article
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
+### Twitter
 
 -
+  name: 'Posting a Tweet'
   required_tags:
     - twitter
-  authorship_value: 1
-  award_value: 0
-  upvote_value: 1
+    - tweet
 
 -
+  name: 'Follow'
   required_tags:
-    - plugin
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
+    - twitter
+    - follow
+
+### Github
 
 -
+  name: 'Pushing to a repo'
   required_tags:
-    - example
-  authorship_value: 0
-  award_value: 0
-  upvote_value: 1
+    - github
+    - push
 
 -
+  name: 'Commiting to a repo'
   required_tags:
+    - github
+    - commit
+
+-
+  name: 'Forking a repo'
+  required_tags:
+    - github
+    - fork
+
+-
+  name: 'Making pull request'
+  required_tags:
+    - github
+    - pull_request
+
+-
+  name: 'Creating a repo'
+  required_tags:
+    - github
+    - create
+
+-
+  name: 'Raising an issue'
+  required_tags:
+    - github
+    - issue
+
+-
+  name: 'Raising a bug issue'
+  required_tags:
+    - github
+    - issue
     - bug
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
 
 -
+  name: 'Raising a feature issue'
   required_tags:
+    - github
+    - issue
     - feature
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
 
 -
+  name: 'Closing an issue'
   required_tags:
+    - github
+    - issue_action
+    - closed
+
+### merging pull request ?
+
+-
+  name: 'Commenting on an issue'
+  required_tags:
+    - github
+    - issue_comment
+    - feature # prevent matching feature issue
+    - bug # prevent matching bug issue
+
+-
+  name: 'Commenting on a commit'
+  required_tags:
+    - github
+    - commit_comment
+
+-
+  name: 'Starring a repo'
+  required_tags:
+    - github
+    - watch
+
+# -
+#   name: 'Github pull request review comment'
+#   required_tags:
+#     - github
+#     - push
+
+-
+  name: 'Open sourcing a repo'
+  required_tags:
+    - github
+    - public
+
+### Forum
+
+### Meetup
+
+-
+  name: 'RSVPing'
+  required_tags:
+    - meetup
+    - rsvp
+
+# hosting, confirmed, waitlist
+
+### StackExchange
+
+-
+  name: 'Asking a question'
+  required_tags:
+    - stackexchange
+    - question
+
+-
+  name: 'Answering a question'
+  required_tags:
+    - stackexchange
+    - answer
+
+-
+  name: 'Commenting a question or an answer'
+  required_tags:
+    - stackexchange
+    - comment
+
+### Facebook
+
+-
+  name: 'Posting a status'
+  required_tags:
+    - facebook
+    - status
+
+-
+  name: 'Like'
+  required_tags:
+    - facebook
+    - like
+
+-
+  name: 'Commenting'
+  required_tags:
+    - facebook
+    - comment
+
+-
+  name: 'Check-in'
+  required_tags:
+    - facebook
+    - checkin
+
+### Foursquare
+
+-
+  name: 'Check-in'
+  required_tags:
+    - foursquare
+    - checkin
+
+-
+  name: 'Like'
+  required_tags:
+    - foursquare
+    - like
+
+-
+  name: 'Leaving a tip'
+  required_tags:
+    - foursquare
+    - tip
+
+### IRC
+
+-
+  name: 'Message'
+  required_tags:
+    - irc
+    - message
+
+### Bithub
+
+-
+  name: 'Submitting an app'
+  required_tags:
+    - bithub
     - app
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
 
 -
+  name: 'Submitting an article'
   required_tags:
-    - code
-  authorship_value: 0
-  award_value: 0
-  upvote_value: 1
+    - bithub
+    - article
 
 -
+  name: 'Submitting a plugin'
+  required_tags:
+    - bithub
+    - plugin
+
+-
+  name: 'Organizing an event'
+  required_tags:
+    - bithub
+    - meetup
+    - event
+
+### Disqus
+
+-
+  name: 'Commenting'
   required_tags:
     - comment
-  authorship_value: 0
-  award_value: 0
-  upvote_value: 1
-
--
-  required_tags:
-    - issue_comment
-    - bug
-  authorship_value: 0
-  award_value: 0
-  upvote_value: 1
-
--
-  required_tags:
-    - fork
-    - digest
-  authorship_value: 1
-  award_value: 0
-  upvote_value: 1
-
--
-  required_tags:
-    - watch
-    - digest
-  authorship_value: 1
-  award_value: 0
-  upvote_value: 1
-
--
-  required_tags:
-    - follow
-    - twitter
-  authorship_value: 1
-  award_value: 0
-  upvote_value: 1
-
--
-  required_tags:
-    - event
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 1
-
-- required_tags:
-    - rsvp
-    - confirmed
-  authorship_value: 2
-  award_value: 0
-  upvote_value: 0
-
-- required_tags:
-    - rsvp
-    - waitlist
-  authorship_value: 1
-  award_value: 0
-  upvote_value: 0
+    - disqus

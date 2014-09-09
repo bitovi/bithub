@@ -1,0 +1,32 @@
+namespace :deploy do
+
+  desc "Export upstart scripts"
+  task :export do
+    on roles(:all) do |host|
+
+      options = []
+      options << "--app bithub"
+      options << "--log #{fetch(:log_path)}"
+      options << "--user #{fetch(:user)}"
+      options << "--env #{fetch(:current_path)}/.env_#{fetch(:stage)}"
+      options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
+      dst = '/etc/init'
+
+      within fetch(:release_path) do
+        capture :foreman, :export, options, :upstart, dst
+      end
+    end
+  end
+
+  desc "Symlink uploads"
+  task :symlink_uploads do
+    on roles(:all) do |host|
+
+      execute :ln, '-s', '/home/bithub/web/shared/uploads/', release_path.join('public/uploads')
+
+    end
+  end
+
+  after :finishing, 'deploy:export'
+  after :finishing, 'deploy:symlink_uploads'
+end

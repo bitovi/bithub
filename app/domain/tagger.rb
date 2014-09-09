@@ -1,40 +1,12 @@
-require 'andand'
-require 'levenshtein'
+require_relative 'tagger/tag'
+require_relative 'tagger/rule'
 
-require 'core_ext'
-require 'core_helpers'
-require 'loggable'
+module Tagger
 
-class Tagger
-  include CoreHelpers
-  include Loggable
   DEFAULT_DELIMITERS = /[ ,.!?;\/]/
-  DEFAULT_THRESHOLD = 1
+  DEFAULT_WEIGHT = 10
 
-  class NoTagsProvided < Exception; end
-  class Tag
-    attr_reader :name, :threshold
-
-    def initialize(t, opts={})
-      @name = t[:name]
-      @aliases = t[:aliases] || []
-      @threshold = t.props.andand['levenshtein_treshold'].andand.to_i || opts.andand[:threshold].andand
-    end
-
-    def names
-      [@name] + @aliases
-    end
-  end
-
-  def initialize(tags, opts={})
-    fail NoTagsProvided, "tagger must have tags to search for" if (tags.nil? || tags.empty?)
-
-    @delimiters = opts[:delimiters] || DEFAULT_DELIMITERS
-    @threshold = opts[:threshold] || DEFAULT_THRESHOLD
-    @tags = tags.map{|t| Tag.new(t, {threshold: @threshold})} || []
-  end
-
-  def textualize(input)
+  def self.textualize(input)
     text = []
 
     if input.is_a?(Array)
@@ -48,24 +20,23 @@ class Tagger
     text.join(' ')
   end
 
-  def tokenize(text)
-    text.downcase.split(@delimiters).reject(&:empty?)
+  def self.tokenize(text, delimiters=DEFAULT_DELIMITERS)
+    text.downcase.split(delimiters).reject(&:empty?)
   end
 
-  def find_tags(input)
-    text = textualize(input)
+  def self.list_to_name_weight_hash(tags, args={})
+    tags   = tags.split(',').map {|t| t.strip} if tags.kind_of? String
+    weight = args[:weight] || DEFAULT_WEIGHT || 10
 
-    tokenize(text).reduce([]) do |result, word|
-      @tags.each do |t|
-        t.names.each do |name|
-          if (Levenshtein.distance(word, name) <= (t.threshold || @threshold))
-            (result << t.name) unless result.include?(t.name)
-            break
-          end
-        end
+    tags.inject(Hash.new) do |acc, name|
+      if name.starts_with? '!'
+        name = name[1..-1]
+        weight = -1 * weight
       end
 
-      result
+      acc[name] = weight
+      acc
     end
   end
+
 end

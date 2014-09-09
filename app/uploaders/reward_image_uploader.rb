@@ -2,7 +2,6 @@ require 'carrierwave/processing/rmagick'
 
 class RewardImageUploader < CarrierWave::Uploader::Base
   include CarrierWave::RMagick
-  include Sprockets::Helpers::RailsHelper
 
   storage :file
 
@@ -18,7 +17,7 @@ class RewardImageUploader < CarrierWave::Uploader::Base
   def extension_white_list
     %w(jpg jpeg gif png)
   end
-  
+
   version :thumb do
     process :resize_to_fit => [60, 60]
   end

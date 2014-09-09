@@ -1,0 +1,25 @@
+json.cache! ("v2" + custom_cache_key(entity)) do
+	json.(entity, :id, :title, :body, :url, :source_body, :parent_id, :origin_ts, :thread_updated_ts, :created_at, :updated_at)
+
+  json.feed entity.feed_name
+  json.type entity.type_name
+  json.tags entity.cached_tags
+
+  json.upvotes entity.upvotes
+
+  json.author entity.author
+  json.actor entity.actor
+  json.props entity.props(@ev_relations.thread_awarded(entity), @ev_relations.awards_for_entity(entity))
+
+  json.has_parent entity.has_parent
+  
+  json.funnels @ev_relations.funnels_for(entity)
+
+  json.image_url entity.image_url(params[:size])
+  json.original_image_url entity.original_image_url
+
+  json.children @ev_relations.children_for_entity(entity) do |c|
+    json.partial! "api/v2/entities/entity", entity: EntityDecorator.decorate(c), second_level: true
+  end
+
+end

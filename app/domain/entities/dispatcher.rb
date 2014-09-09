@@ -99,7 +99,7 @@ module Entities
 
       def issue_action?
         ((@event.class.name =~ /Issue/) || (@event.class.name =~ /PullRequest/)) &&
-         (not(@event.class.name =~ /IssueComment/)) &&
+         not(@event.class.name =~ /IssueComment/) &&
           has_state? && has_action? && not(just_opened?)
       end
 
@@ -112,7 +112,7 @@ module Entities
       end
 
       def just_opened?
-         @event.action == 'opened'
+        @event.action == 'opened'
       end
     end
   end
@@ -122,6 +122,7 @@ module Entities
 
       Mappings = {
         :CustomFollow => :Follow,
+        :FakeFollow => :Follow,
       }
 
       def initialize(event)
@@ -180,6 +181,14 @@ module Entities
     end
   end
 
+  module Rss
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Rss::Post
+      end
+    end
+  end
+
   module Irc
     class Dispatcher < BasicTypeDispatcher
       def type
@@ -192,6 +201,23 @@ module Entities
     class Dispatcher < BasicTypeDispatcher
       def type
         Entities::Disqus::Post
+      end
+    end
+  end
+
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Facebook::Status
+      end
+    end
+  end
+
+  module Foursquare
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        ### TODO,
+        Entities::Foursquare::Checkin
       end
     end
   end

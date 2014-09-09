@@ -8,17 +8,15 @@ $:.unshift(DOMAIN_DIR)
 # Theirs
 require 'bundler/setup'
 require 'rubygems'
-require 'log4r'
 require 'amqp'
 require 'yaml'
 require 'yajl'
 require 'cinch'
+require 'logger_factory'
 
-# Logging
-$logger = Log4r::Logger.new('IRC-bot')
-$logger.add(Log4r::StdoutOutputter.new('console', {
-  :formatter => Log4r::PatternFormatter.new(:pattern => "[#{Process.pid}:%l] %d :: %m")
-}))
+# Loggers
+logger = LoggerFactory.new('irc_bot', ENV['ENV']).component_logger
+$logger = logger
 
 # paths to config files based on env
 config_path = File.join(ROOT_DIR, 'config', 'services', 'irc_bot', "#{ENV['ENV']}.yml")
@@ -26,7 +24,6 @@ config_path = File.join(ROOT_DIR, 'config', 'services', 'irc_bot', "#{ENV['ENV']
 # Load config
 $mq_cs = ENV['RABBITMQ_URI']
 $config = YAML::load_file(config_path)
-
 
 ### Helpers
 

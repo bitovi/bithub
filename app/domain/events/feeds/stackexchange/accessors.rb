@@ -3,11 +3,6 @@ module Events
     module Accessors
 
       module Standard
-
-        def title
-          source_data.andand[:title] || body
-        end
-
         def link
           source_data.andand[:link]
         end
@@ -48,17 +43,6 @@ module Events
           creation_date
         end
 
-        def last_activity_date
-          unix_ts_to_time source_data.andand[:last_activity_date]
-        end
-
-        def creation_date
-          unix_ts_to_time source_data.andand[:creation_date]
-        end
-
-        def digest_seed
-          id.to_s + (last_activity_date || creation_date).to_s
-        end
 
         private
 

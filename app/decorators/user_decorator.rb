@@ -10,7 +10,7 @@ class UserDecorator < Draper::Decorator
   end
 
   def reduced_identities
-    user.identities.map do |i|
+    source.identities.map do |i|
       {
         provider: i.provider,
         uid: i.uid,

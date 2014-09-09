@@ -18,7 +18,7 @@ class Api::Auth::IdentitiesController < Api::V1::BaseController
   def oauth_data
     env["omniauth.auth"] || session["current_oauth_data"]
   end
-  
+
   def show_auth_error
     render :template => 'oauth/auth_error.html.erb'
   end

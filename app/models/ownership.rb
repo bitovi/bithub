@@ -1,10 +1,8 @@
 class Ownership < ActiveRecord::Base
   extend Enumerize
 
-  attr_accessible :entity, :owner, :ownership_type, :value
-
   belongs_to :owner, class_name: "User"
-  belongs_to :host, conditions: { ownership_type: 'host' }, class_name: "User"
+  belongs_to :host, lambda { where(ownership_type: 'host') }, class_name: "User"
   belongs_to :entity
 
   enumerize :ownership_type, in: [:author, :host, :organizer]
@@ -17,7 +15,7 @@ class Ownership < ActiveRecord::Base
   after_destroy :update_total_score_in_owner
 
   def determine_value
-    if self.is_authorship?
+    if self.is_authorship? && !self.value
       self.value = self.entity.scoring_rule.authorship_value
     elsif self.is_hostship?
       self.value = 5

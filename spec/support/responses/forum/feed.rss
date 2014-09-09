@@ -1,0 +1,165 @@
+<rss version="2.0"
+ 	 xmlns:dc="http://purl.org/dc/elements/1.1/"
+ 	 xmlns:atom="http://www.w3.org/2005/Atom">
+
+	<channel>
+		<title>JavaScriptMVC Forum</title>
+		<atom:link href="http://forum.javascriptmvc.com/ForumRss.do?forumGroupId=32525000000003001" rel="self" type="application/rss+xml"/>
+		<link>http://forum.javascriptmvc.com</link>
+		<description><![CDATA[A place to ask and answer all things JavaScriptMVC]]></description>
+		<pubDate>Wed, 26 Feb 2014 01:40:18 -0800</pubDate>
+
+		<item>
+			<title>Re : Stealing Can with MooTools</title>
+			<link>http://forum.javascriptmvc.com/topic/stealing-can-with-mootools#32525000001574151</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[Have you tried with the latest CanJS?]]></description>
+			<category>StealJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/stealing-can-with-mootools#32525000001574151</guid>
+			<pubDate>Tue, 25 Feb 2014 17:40:15 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Stealing Can with MooTools</title>
+			<link>http://forum.javascriptmvc.com/topic/stealing-can-with-mootools#32525000001574146</link>
+			<dc:creator>tracer_ca</dc:creator>
+			<description><![CDATA[Hi,<div>We deployed our product using CanJS 1.1.8 and Steal.</div><div>We never properly set things up with steal and launched it in production mode (building never worked).</div><div><br></div><div>Now that the bug torrent has settled down, I've gone back to trying to get steal working properly. For starters, getting stealconfig.js to do the right thing. My biggest issue is with mootools.&nbsp;</div><div><br></div><div>Currently, we loaded all the external dependencies in our index.html file and only used steal for our application. This "works" but does not build. No stealconfig.</div><div><br></div><div><div>steal.config({</div><div>&nbsp; &nbsp; map: {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "*": {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "can/util/util.js": "can/util/mootools/mootools.js"</div><div>&nbsp; &nbsp; &nbsp; &nbsp; }</div><div>&nbsp; &nbsp; },</div><div>&nbsp; &nbsp; paths: {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootools/mootools.js" : "/mootools-core-1.4.5-full-nocompat-tucows.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootoolsMore/mootoolsMore.js" : "/mootools-more-1.4.0.1-tucows.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootools-datepicker/mootools-datepicker.js" : "/arian-mootools-datepicker-2.2.0-0/Source/Picker.js",</div><div>&nbsp; &nbsp; },</div><div>&nbsp; &nbsp; shim : {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootools": {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; exports: "MooTools"</div><div>&nbsp; &nbsp; &nbsp; &nbsp; },</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootoolsMore": {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; deps: "mootools",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; exports: ["Class", "Hash"]</div><div>&nbsp; &nbsp; &nbsp; &nbsp; },</div><div>&nbsp; &nbsp; &nbsp; &nbsp; "mootools-datepicker": {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; deps: [</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "mootools",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "/arian-mootools-datepicker-2.2.0-0/Source/Picker.Attach.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "/arian-mootools-datepicker-2.2.0-0/Source/Picker.Date.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "/arian-mootools-datepicker-2.2.0-0/Source/Picker.Date.Range.js"</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ]</div><div>&nbsp; &nbsp; &nbsp; &nbsp; }</div><div>&nbsp; &nbsp; },</div><div>&nbsp; &nbsp; ext: {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; js: "js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; css: "css",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; less: "steal/less/less.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; ejs: "can/view/ejs/ejs.js",</div><div>&nbsp; &nbsp; &nbsp; &nbsp; mustache: "can/view/mustache/mustache.js"</div><div>&nbsp; &nbsp; }</div></div><div>})</div><div><br></div><div>Running in dev mode:</div><div>Routing no longer works. I haven't had a chance to look into this yet, but it may be the version of Can that comes with JSMVC is older than the one that fixes all the MooTools routing issues I found last year.</div><div>Including mootoolsMore produces a bunch of 404s to single letter js files&nbsp;</div><div>ie. s/s.js t/t.s etc.</div><div><br></div><div>When trying to build, the compiler dies on the fact that none of the classes that mootools creates exist. ie. Class and Hash.</div><div><br></div><div>Can someone help me out with how to construct this config properly for MooTools More?</div>]]></description>
+			<category>StealJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/stealing-can-with-mootools#32525000001574146</guid>
+			<pubDate>Tue, 25 Feb 2014 16:58:44 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Download/export documentation?</title>
+			<link>http://forum.javascriptmvc.com/topic/download-export-documentation#32525000001574143</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[Clone:<div><br></div><div><a href='https://github.com/bitovi/canjs.com/tree/gh-pages' target='_blank'>https://github.com/bitovi/canjs.com/tree/gh-pages</a></div><div><br></div><div>Install all submodules.</div><div><br></div><div>Follow the readme.markdown.</div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/download-export-documentation#32525000001574143</guid>
+			<pubDate>Tue, 25 Feb 2014 13:34:43 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>CanJS Community Hangouts</title>
+			<link>http://forum.javascriptmvc.com/topic/canjs-community-hangouts#32525000001574136</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[CanJSers,<div><br></div><div>We will be having a weekly meeting to discuss the latest CanJS news and bugs we are fixing and features we are going to add. &nbsp;Each hangout will end with an open Q &amp; A for anyone to ask questions, propose ideas, etc.</div><div><br></div><div>The first hangout is Friday at noon CST:&nbsp;<a href='https://plus.google.com/events/c6gnkogubpgh1jljd16km5u6744' target='_blank'>https://plus.google.com/events/c6gnkogubpgh1jljd16km5u6744</a></div><div><br></div><div><br></div><div><br></div><div>I hope to see you there!</div>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/canjs-community-hangouts#32525000001574136</guid>
+			<pubDate>Tue, 25 Feb 2014 13:25:26 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574133</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[Components don't work well outside of Mustache. &nbsp;However, you could bootstrap "mustache-scope-less" components relatively easily, especially with 2.1. &nbsp;This will be made easier in future releases.<div><br></div><div><br></div><div>By "mustache-scope-less", I am talking about components who do not read from mustache's scope. &nbsp;Their scope values derive from attribute values on their custom element. &nbsp;Tabs / Panel is a good example of this.</div><div><br></div><div><br></div><div>To make something like this work, you'd have to find all custom elements in the page, and create new instances of them with the data found in:</div><div><br></div><div><a href='http://canjs.com/2.1/docs/can.view.tagData.html' target='_blank'>http://canjs.com/2.1/docs/can.view.tagData.html</a></div><div><br></div><div><br></div><div>For example:</div><div><br></div><div>Tabs = can.Component.extend({ ... })</div><div><br></div><div>$(function(){</div><div><br></div><div>&nbsp; $("tabs").each(function(el){</div><div>&nbsp; &nbsp; &nbsp;new Tabs(el, {</div><div>&nbsp; &nbsp; &nbsp; &nbsp; scope: new can.view.Scope({}),</div><div>&nbsp; &nbsp; &nbsp; &nbsp; subtemplate: can.view.mustache(el.innerHTML),</div><div>&nbsp; &nbsp; &nbsp; &nbsp; options: new can.view.Options({})</div><div>&nbsp; &nbsp; &nbsp;}</div><div>&nbsp; })</div><div><br></div><div>})</div><div><br></div><div>However, this will not work if someone wants to .append("&lt;tabs&gt;&lt;panel&gt;...&lt;/tabs&gt;") later. &nbsp;For this to work, we need hook into document.registerElement AND hook into jQuery's buildFragment for older browsers.</div><div><br></div><div>This is on our roadmap. &nbsp;If you're interested in seeing it land soon, join us on Friday's meeting:</div><div><br></div><div><a href='https://plus.google.com/events/c6gnkogubpgh1jljd16km5u6744' target='_blank'>https://plus.google.com/events/c6gnkogubpgh1jljd16km5u6744</a></div><div><br></div><div><br></div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574133</guid>
+			<pubDate>Tue, 25 Feb 2014 13:21:57 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Download/export documentation?</title>
+			<link>http://forum.javascriptmvc.com/topic/download-export-documentation#32525000001574126</link>
+			<dc:creator>gigline</dc:creator>
+			<description><![CDATA[I've been asked to put the JSMVC documentation on our wiki. Since our system cannot connect to the Intertubes, is there a way to download/export the docs and reconstitute them on the wiki machine?<div><br></div><div>Thanks,</div><div><br></div><div>Ken</div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/download-export-documentation#32525000001574126</guid>
+			<pubDate>Tue, 25 Feb 2014 12:06:20 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574121</link>
+			<dc:creator>thecountofzero</dc:creator>
+			<description><![CDATA[Well what if I want to create a reusable piece of code that anyone else can plug into their site/app?<div><br></div><div>I used jQuery UI tabs as an example and matthew pointed me at the can.Component tabs example. However that example seems more tailored for the specific web app as opposed to a generic tabs widget that anyone can easily plug into their site.<br><div><br></div><div>Are can.Controls better suited for this?</div><div><br></div><div>Is there a way to create a can.Component that others can use and not have to have knowledge of mustache, can.Components or even CanJS at that?</div></div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574121</guid>
+			<pubDate>Tue, 25 Feb 2014 10:48:57 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001578025</link>
+			<dc:creator>spautz</dc:creator>
+			<description><![CDATA[When you define a component, the resulting constructor has a Control property -- there <i>might</i> be some way to make this work on its own.<br><br>As a rough test, this snipped seemed to give me a control instance with the same event listeners as the component, when invoked on an already-existing element:<br><ol class="code"><li>var MyComponent = can.Component.extend({ /* ... */ });</li><li>new MyComponent.Control('#foo', {});</li></ol><p>I wasn't able to get the scope to work, though: the component had some event listeners for different scope properties, but those bindings were not set up on the control. Passing a 'scope' property in the control's options didn't seem to do anything. I haven't dug into it in any depth, though.<br></p><p>Edit: This is using a recent version of the minor (2.1-pre) branch. I haven't tested any other versions.<br></p>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001578025</guid>
+			<pubDate>Tue, 25 Feb 2014 07:51:16 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Re: Data-Driven Javascript Controls -- What about checking checkboxes?</title>
+			<link>http://forum.javascriptmvc.com/topic/re-data-driven-javascript-controls-what-about-checking-checkboxes#32525000001578023</link>
+			<dc:creator>spautz</dc:creator>
+			<description><![CDATA[<div style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">Thanks for the replies. I spent some time playing around with can.Component and using its scope as a makeshift/implicit ViewModel -- I think I have a much better grasp of this as a whole now.</div><br>I ended up making a (rough) demo of a tri-state "select all" checkbox, using components: <span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255);"><a target="_blank" href="http://jsfiddle.net/spautz/wKz9g/">http://jsfiddle.net/spautz/wKz9g/</a>.<br><br>I suspect that fiddle has a lot of room for improvement, but overall I think I'm sold on can.Component and the use of live-binding even for 'intermediate' form values. Thanks for the ideas and suggestions.<br><br><br>--<br>If anybody's curious, here's a walkthrough of how I went through things:<br></span><ol><li><span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">Simple case: a checkbox two-way-bound to a 'selectAll' property, which is in turn live-bound to the "checked" attribute of each checkbox. If you manipulate the individual checkboxes, though, it gets out of sync.<br></span><a href="http://jsfiddle.net/spautz/wKz9g/7/">http://jsfiddle.net/spautz/</a><wbr><a href="http://jsfiddle.net/spautz/wKz9g/7/">wKz9g/7/</a><br><br></li><li><span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">Failed attempt to make things stay in sync: this can handle a<span class="Apple-converted-space">&nbsp;</span></span><i style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255);">little</i><span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">&nbsp;bit of manipulation, but it still breaks if you mess with it enough. I was trying to come up with a solution that had no dom event listeners, but that was a mistake.<br></span><a href="http://jsfiddle.net/spautz/wKz9g/9/">http://jsfiddle.net/spautz/</a><wbr><a href="http://jsfiddle.net/spautz/wKz9g/9/">wKz9g/9/</a><br><br></li><li><span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">Staying in sync: this uses a can.compute and dom event listener for the "select all" event, instead of trying to use the scope directly. Things stay in sync now, although everything is smushed messily into one component.<br></span><a href="http://jsfiddle.net/spautz/wKz9g/10/">http://jsfiddle.net/spautz/</a><wbr><a href="http://jsfiddle.net/spautz/wKz9g/10/">wKz9g/10/</a><br><br></li><li>Final (for now)<span style="color: rgb(34, 34, 34); font-family: arial; font-size: small; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">: instead of making checkbox-list do all the work, things are now spread across checkbox-list, checkbox-selectall, and checkbox-items. Putting the behavior into one component and the view/template work into the others seemed to work rather well, at least to my eyes.</span><br><a target="_blank" href="http://jsfiddle.net/spautz/wKz9g/16/">http://jsfiddle.net/spautz/wKz9g/16/</a></li></ol><p><br></p>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/re-data-driven-javascript-controls-what-about-checking-checkboxes#32525000001578023</guid>
+			<pubDate>Tue, 25 Feb 2014 07:19:11 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001577103</link>
+			<dc:creator>alex</dc:creator>
+			<description><![CDATA[Depends on what you want to create and where to use it. I thin can.js components is better to use in can.js web apps or big widgets. You can create self-sufficient components users of which will not have to know about internal structure.]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001577103</guid>
+			<pubDate>Tue, 25 Feb 2014 06:34:44 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Using a compute as a property of a Map</title>
+			<link>http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001576055</link>
+			<dc:creator>largo.eks</dc:creator>
+			<description><![CDATA[Thank you.<br><br>We're using JavascriptMVC 3.3 but want to take advantage of the new CanJS features. Would you recommend we upgrade to CanJS 2.0.5? Looking at the migrating documentation the process doesn't look very difficult. <br><br>We also use FuncUnit and DocumentJS will upgrading CanJS have side effects on them? <br><br>Largo<br>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001576055</guid>
+			<pubDate>Mon, 24 Feb 2014 13:59:47 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Using a compute as a property of a Map</title>
+			<link>http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001574119</link>
+			<dc:creator>Justin Meyer</dc:creator>
+			<description><![CDATA[This is only possible in 2.0]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001574119</guid>
+			<pubDate>Mon, 24 Feb 2014 12:35:47 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574117</link>
+			<dc:creator>thecountofzero</dc:creator>
+			<description><![CDATA[Is there a way to create a simple, reusable widget from a can.Component?<div><br></div><div>People use jQuery UI widgets because they are pretty easy to use. Set up some DOM content and then instantiate the widget on a containing DOM element with some options and you're done.</div><div><br></div><div>The can.Component example requires a lot of mustache use and knowledge.</div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574117</guid>
+			<pubDate>Mon, 24 Feb 2014 12:28:39 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Re : Component, Control or Both</title>
+			<link>http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574115</link>
+			<dc:creator>matthew</dc:creator>
+			<description><![CDATA[The can.Component documentation includes a tabs widget example:&nbsp;<a href='http://canjs.com/docs/can.Component.html' target='_blank'>http://canjs.com/docs/can.Component.html</a><div><br></div><div>I don't understand what you mean by modifying existing DOM... can you give an example of what the HTML looks like?</div>]]></description>
+			<category>General JavaScriptMVC</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/component-control-or-both#32525000001574115</guid>
+			<pubDate>Mon, 24 Feb 2014 11:45:13 -0800</pubDate>
+		</item>
+
+		<item>
+			<title>Using a compute as a property of a Map</title>
+			<link>http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001576050</link>
+			<dc:creator>largo.eks</dc:creator>
+			<description><![CDATA[Hi <br><br>I'm trying to create a compute as a property of a Map. But I've been unable to correctly combine the two. Any guidance would be appreciated. We're using version canjs 1.1.8 with jquery. <br><br><br>
+ <p class="MsoPlainText"><span>var Contact = can.Map.extend({<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp; </span>first: "Largo",<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp; </span>last: "Elks",<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp; </span>email: null,<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp; </span>ready: can.compute(function() {<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>if (this.attr("first") &amp;&amp; this.attr("last") &amp;&amp; this.attr("email")) {<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>return "ready";<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>} <br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>return "invalid";<br> <span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp; </span>})<br> });<br> <br> contact = new Contact();<br> </span></p><p class="MsoPlainText">...<br><span> </span></p><p class="MsoPlainText"><span>contact.ready();</span><span>&nbsp; // TypeError: this.attr is not a function</span></p> 
+
+contact.attr("ready") // undefined<br><br><br>]]></description>
+			<category>CanJS</category>
+			<guid isPermaLink="true">http://forum.javascriptmvc.com/topic/using-a-compute-as-a-property-of-a-map#32525000001576050</guid>
+			<pubDate>Mon, 24 Feb 2014 11:19:59 -0800</pubDate>
+		</item>
+	</channel>
+</rss>

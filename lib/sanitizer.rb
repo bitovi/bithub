@@ -3,13 +3,9 @@ require 'htmlentities'
 
 class Sanitizer
 
-  CUSTOM_RULESET = Sanitize::Config::RELAXED
-  CUSTOM_RULESET[:elements] << "div"
-
-  def sanitize(html)
-    #decode(cleanup(encode(html)))
-    Sanitize.clean(html, CUSTOM_RULESET)
-  end
+  CUSTOM_RULESET = Sanitize::Config.merge \
+    Sanitize::Config::RELAXED,
+    :elements => Sanitize::Config::RELAXED[:elements] + ['div']
 
   def encode(text)
     @htmlEscaper ||= HTMLEntities.new
@@ -21,12 +17,12 @@ class Sanitizer
     @htmlEscaper.decode(text)
   end
 
-  def cleanup(text)
-    Sanitize.clean(@htmlEscaper.encode(text), CUSTOM_RULESET)
+
+  def self.sanitize(html)
+    Sanitize.fragment(html, CUSTOM_RULESET)
   end
 
-  # TODO: extract this to separate file
-  def sanitize_forum_post(html)
+  def self.sanitize_forum_post(html)
     doc = Nokogiri::HTML(html)
     doc.css('ol.code').each do |code|
       new_code = doc.create_element "pre"

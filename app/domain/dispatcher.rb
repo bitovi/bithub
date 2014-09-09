@@ -1,16 +1,15 @@
 require 'andand'
 require 'core_ext'
 require 'core_helpers'
-require 'loggable'
+require 'logger_factory'
 
 require_relative 'events/dispatcher'
 require_relative 'entities/dispatcher'
 
 class Dispatcher
-  include Loggable
 
-  def initialize
-    initialize_logger("DEBUG")
+  def initialize(args={})
+    @logger = args[:logger] || LoggerFactory.new('dispatcher', :environment => ENV['ENV']).component_logger
   end
 
   def dispatch(response, hint=nil)
@@ -19,7 +18,7 @@ class Dispatcher
 
     ActiveRecord::Base.transaction do
       event.build.validate.persist!
-      entity.procure.update_if_found.determine.group.normalize.persist!
+      entity.procure.update_if_found.validate.determine.group.normalize.persist!
     end
 
     [event.instance, entity.instance]

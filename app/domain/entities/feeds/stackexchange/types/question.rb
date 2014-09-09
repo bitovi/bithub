@@ -4,33 +4,33 @@ module Entities
     class Question < Protocol
 
       def find
-        @payload.question_id && find_by_question_id
+        @event.question_id && find_by_question_id
       end
 
       def build
         Entity.new({
-          title: @payload.title,
-          body: @payload.body_markdown,
-          url: @payload.link,
-          origin_ts: @payload.creation_date,
-          origin_id: @payload.question_id.to_s,
+          title: @event.title,
+          body: @event.body_markdown,
+          url: @event.link,
+          origin_ts: @event.creation_date,
+          origin_id: @event.question_id.to_s,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            origin_author_avatar_url: @payload.origin_author_avatar_url,
-            score: @payload.score,
-            accepted_answer_id: @payload.accepted_answer_id,
-            upvote_count: @payload.upvote_count,
+            origin_author_id: @event.owner.id,
+            origin_author_name: @event.owner.name,
+            origin_author_avatar_url: @event.owner.profile_image,
+            score: @event.score,
+            accepted_answer_id: @event.accepted_answer_id,
+            upvote_count: @event.upvote_count,
           }
         })
       end
 
       def update
-        @instance.title = @payload.title
-        @instance.body = @payload.body_markdown || @payload.body
-        @instance.props[:score] = @payload.score
-        @instance.props[:upvote_count] = @payload.upvote_count
-        @instance.props[:accepted_answer_id] = @payload.accepted_answer_id
+        @instance.title = @event.title
+        @instance.body = @event.body_markdown || @event.body
+        @instance.props[:score] = @event.score
+        @instance.props[:upvote_count] = @event.upvote_count
+        @instance.props[:accepted_answer_id] = @event.accepted_answer_id
 
         # ?!?!
         update_children
@@ -48,37 +48,37 @@ module Entities
       private
 
       def build_answers
-        @payload.answers.map do |a| # Wrappers
+        @event.answers.map do |a| # Wrappers
           Events::Stackexchange::Answer.new(a.raw)
         end.map do |a_e| # Events
           Entities::Stackexchange::Answer.new(a_e)
           .procure.determine.group.normalize.instance
-        end if @payload.answers
+        end if @event.answers
       end
 
       def build_comments
-        @payload.comments.map do |c| # Wrappers
+        @event.comments.map do |c| # Wrappers
           Events::Stackexchange::Comment.new(c.raw)
         end.map do |c_e| # Events
           Entities::Stackexchange::Comment.new(c_e)
           .procure.determine.group.normalize.instance
-        end if @payload.comments
+        end if @event.comments
       end
 
       def update_answers
-        @payload.answers.map do |a| # Wrappers
+        @event.answers.map do |a| # Wrappers
           Events::Stackexchange::Answer.new(a.raw)
         end.map do |a_e| # Events
           Entities::Stackexchange::Answer.new(a_e)
           .procure.update.determine.group.normalize.persist
-        end if @payload.answers
+        end if @event.answers
       end
 
       def find_by_question_id
         Entity
           .feed('stackexchange')
           .type('question')
-          .where(origin_id: @payload.question_id.to_s)
+          .where(origin_id: @event.question_id.to_s)
           .first
       end
 

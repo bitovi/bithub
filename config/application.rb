@@ -3,26 +3,21 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
-
-  # for Muster to be available at the time of loading
+  Bundler.require(:default, Rails.env)
   Bundler.setup
 end
 
 module Bithub
   class Application < Rails::Application
+
     config.encoding = "utf-8"
     config.filter_parameters += [:password]
     config.active_support.escape_html_entities_in_json = true
-    config.active_record.whitelist_attributes = true
     config.active_record.schema_format = :sql
     config.i18n.enforce_available_locales = false
 
     # Autoload 'lib' and 'domain' folders
-    config.autoload_paths += %W(#{Rails.root}/app/domain #{Rails.root}/lib)
+    config.autoload_paths += %W(#{Rails.root}/app #{Rails.root}/lib #{Rails.root}/app/domain)
 
     # Enable the asset pipeline
     config.assets.enabled = true

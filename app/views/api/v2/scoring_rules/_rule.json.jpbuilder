@@ -1,0 +1,1 @@
+json.(rule, :id, :name, :required_tags, :authorship_value, :upvote_value, :award_value, :position, :valid_until)

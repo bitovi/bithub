@@ -1,61 +1,38 @@
 module Events
   module Github
 
+    class FakeRepo
+      attr_reader :repo_name
+      def initialize(name)
+        @repo_name = name
+      end
+    end
+
     class CustomIssue < Protocol
+      extend Forwardable
+      DigestAttrs = [:id, :title, :body, :label_names_csv, :state, :updated_at]
 
-      DIGEST_ATTRS = [:issue_id, :title, :body, :labels, :state, :updated_at]
+      def_delegators :@issue,
+        :id, :title, :body, :html_url,
+        :labels, :number, :state
 
-      def content_digest
-        seed = DIGEST_ATTRS.reduce("") {|accumul, attr| accumul += self.send(attr).to_s}
-        Digest::MD5.hexdigest(seed)
+      attr_reader :user, :issue, :repo
+
+      alias_method :actor, :user
+      alias_method :ipr, :issue
+
+      def digest_seed
+        DigestAttrs.reduce("") do |accumul, attr|
+          accumul + self.send(attr).to_s
+        end + self.class.name
       end
 
-      def issue_id
-        source_data.andand[:id]
+      def label_names_csv
+        @issue.labels.names_csv
       end
 
-      def title
-        source_data.andand[:title]
-      end
-
-      def body
-        source_data.andand[:body]
-      end
-
-      def html_url
-        source_data.andand[:html_url]
-      end
-
-      def labels
-        source_data.andand[:labels]
-      end
-
-      def label_names
-        labels.map {|l| l[:name] }.join(',')
-      end
-
-      def state
-        source_data.andand[:state]
-      end
-
-      def number
-        source_data.andand[:number]
-      end
-
-      def user
-        source_data.andand[:user]
-      end
-
-      def origin_author_id
-        user.andand[:id]
-      end
-
-      def origin_author_avatar_url
-        user.andand[:avatar_url]
-      end
-
-      def origin_author_name
-        user.andand[:login]
+      def origin_id
+        @issue.id
       end
 
       def origin_timestamp
@@ -69,20 +46,13 @@ module Events
         url.match(/repos\/(.*)\/issues/).andand[1]
       end
 
-      def referenced_issue_numbers
-        body.scan(/#\d+/).map {|m| m.gsub('#','').to_s}
+      def wrap_response
+        @issue = Wrappers::Github::Issue.new(source_data)
+        @user = Wrappers::Github::User.new(source_data[:user])
+        @repo = FakeRepo.new(repo_name)
+        self
       end
-
-      def referenced_issue_numbers_csv
-        referenced_issue_numbers.join(',')
-      end
-
-      alias_method :origin_id, :issue_id
-      alias_method :actor, :user
-      alias_method :actor_id, :origin_author_id
-      alias_method :actor_login, :origin_author_name
-      alias_method :actor_avatar_url, :origin_author_avatar_url
     end
-
+    
   end
 end

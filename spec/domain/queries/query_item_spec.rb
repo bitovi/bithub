@@ -1,7 +1,8 @@
 require 'domain/queries/spec_helper'
 
-describe QueryLogic::QueryItem do
-  let(:model) { double() }
+RSpec.describe QueryLogic::QueryItem, :type => :domain do
+
+  let(:model) { double("Entity", :has_an_attribute? => true )}
 
   describe "#value" do
     it "should cast query values to appropriate type (which it has to read from column info)"
@@ -9,38 +10,35 @@ describe QueryLogic::QueryItem do
 
   describe "#negation?" do
     it "asserts that the query item is negated and is native" do
-      model = double(); model.stub(:has_an_attribute?) { true }
       expect(QueryLogic::QueryItem.new(model, ["title", "!Some title"]).negation?).to eq(true)
     end
   end
 
   describe "#regular_and_valid?" do
     it "confirms that non-tag-based items are regular" do
-      model = double(); model.stub(:has_an_attribute?) { true }
       expect(QueryLogic::QueryItem.new(model, ["title", "Some title"]).regular_and_valid?).to eq(true)
     end
 
     it "denies that tag_based items are regular" do
-      model = double(); model.stub(:has_an_attribute?) { false }
-      expect(QueryLogic::QueryItem.new(model, ["feed", "github"]).regular_and_valid?).to eq(false)
+      expect(QueryLogic::QueryItem.new(model, ["tag", "github"]).regular_and_valid?).to eq(false)
     end
   end
 
   describe "#tag_based?" do
-    let(:model) { m = double(); m.stub(:tag_based_attrs) { %w(feed type category project) }; m }
+    let(:tag_model) do
+      double("Entity", :tag_based_attrs => %w(feed type category project))
+    end
 
-    it "confrims that attributes that are stored as tags are of the taggable type" do
-      expect(QueryLogic::QueryItem.new(model, ["feed", "twitter,github"]).tag_based?).to eq(true)
+    it "confirms that attributes that are stored as tags are of the taggable type" do
+      expect(QueryLogic::QueryItem.new(tag_model, ["feed", "twitter,github"]).tag_based?).to eq(true)
     end
 
     it "denies that regular attributes are of the taggable type" do
-      expect(QueryLogic::QueryItem.new(model, ["title", "Some title"]).tag_based?).to eq(false)
+      expect(QueryLogic::QueryItem.new(tag_model, ["title", "Some title"]).tag_based?).to eq(false)
     end
   end
 
   describe "#native?" do
-    let(:model) { m = double(); m.stub(:has_an_attribute?) { true }; m }
-
     it "confirms that regular items are indeed native" do
       expect(QueryLogic::QueryItem.new(model, ["title", "Some title"]).native?).to eq(true)
     end
@@ -50,7 +48,7 @@ describe QueryLogic::QueryItem do
     end
 
     it "denies that non existent query items are native" do
-      model = double(); model.stub(:has_an_attribute?) { false }
+      model = double("Entity", :has_an_attribute? => false)
       expect(QueryLogic::QueryItem.new(model, ["not_existing", "non_existent_value"]).native?).to eq(false)
     end
   end
@@ -87,17 +85,19 @@ describe QueryLogic::QueryItem do
     let(:lower_date_limit_str) { "2013-1-1" }
     let(:higher_date_limit_str) { "2013-5-1" }
     let(:date_range) { DateTime.parse(lower_date_limit_str)..DateTime.parse(higher_date_limit_str) }
-  
-    it "constructs a date range when given dates" do
-      column_info = double("column"); column_info.stub(:type) { :datetime }
-      model = double("model"); model.stub(:columns_hash => {"origin_date" => column_info})
-      expect(QueryLogic::QueryItem.new(model, ["origin_date", "#{lower_date_limit_str}:#{higher_date_limit_str}"]).extract_range).to eq(date_range)
-    end
-    
+
     it "constructs an integer range when given integers" do
-      column_info = double("column"); column_info.stub(:type) { :integer }
-      model = double("model"); model.stub(:columns_hash => {"id" => column_info})
+      column_info = double("id", :type => :integer)
+      model = double("Entity", :columns_hash => {"id" => column_info})
+
       expect(QueryLogic::QueryItem.new(model, ["id", "1:10"]).extract_range).to eq(1..10)
+    end
+
+    it "constructs a date range when given dates" do
+      column_info = double("origin_date", :type => :datetime)
+      model = double("Entity", :columns_hash => {"origin_date" => column_info})
+
+      expect(QueryLogic::QueryItem.new(model, ["origin_date", "#{lower_date_limit_str}:#{higher_date_limit_str}"]).extract_range).to eq(date_range)
     end
   end
 

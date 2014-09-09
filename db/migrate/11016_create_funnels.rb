@@ -1,0 +1,10 @@
+class CreateFunnels < ActiveRecord::Migration
+  def change
+    create_table :funnels do |t|
+      t.string :name
+      t.string :display_name
+      t.string :tags, array: true, default: []
+      t.hstore :props, default: ''
+    end
+  end
+end

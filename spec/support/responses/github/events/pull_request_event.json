@@ -14,7 +14,7 @@
 		"url": "https://api.github.com/repos/bitovi/canjs"
     },
     "payload": {
-		"action": "closed",
+		"action": "opened",
 		"number": 445,
 		"pull_request": {
 			"url": "https://api.github.com/repos/bitovi/canjs/pulls/445",

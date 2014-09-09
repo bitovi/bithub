@@ -1,0 +1,2 @@
+json.(config, :id, :feed_name, :config)
+json.brand_name config.brand.name

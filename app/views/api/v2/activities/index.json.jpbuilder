@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @activities do |act|
+    json.partial! "api/v1/activities/activity", activity: act
+  end
+end

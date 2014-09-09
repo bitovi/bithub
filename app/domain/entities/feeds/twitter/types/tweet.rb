@@ -2,41 +2,34 @@ module Entities
   module Twitter
 
     class Tweet < Protocol
-      
-      Relationships = {
-        upstream: [],
-        downstream: [],
-        references: [],
-      }
 
       def find
-        @payload.tweet_id && find_by_tweet_id.first
+        @event.id && find_by_tweet_id.first
       end
 
       def build
-        e = Entity.new({
-          title: @payload.text,
-          url: @payload.html_url,
-          origin_ts: @payload.origin_ts,
-          origin_id: @payload.tweet_id_str,
+        built = Entity.new({
+          title: @event.text,
+          url: @event.html_url,
+          origin_ts: @event.created_at,
+          origin_id: @event.id_str,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            retweeted_id: @payload.original_tweet_id_str,
-            entities_urls: ActiveSupport::JSON.encode(@payload.entities_urls),
-            origin_author_avatar_url: @payload.user_profile_image_url,
+            origin_author_id: @event.user.id,
+            origin_author_name: @event.user.screen_name,
+            origin_author_avatar_url: @event.user.profile_image_url,
+            entities_urls: ActiveSupport::JSON.encode(@event.entities.urls),
           }
         })
-        e[:props][:retweeted_id] = @payload.original_tweet_id if @payload.retweet?
-        e
+        built[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
+        built
       end
-      
+
       def find_parent
-        @payload.original_tweet_id && find_original_tweet.first
+        (@event.retweet.id_str && find_original_tweet.first) if @event.retweet?
       end
 
       def find_children
-        @payload.tweet_id && find_retweets.all
+        @event.id_str && find_retweets.all
       end
 
       # Finders
@@ -44,21 +37,21 @@ module Entities
         Entity
         .feed('twitter')
         .type('tweet')
-        .where(origin_id: @payload.tweet_id_str)
+        .where(origin_id: @event.id_str)
       end
-      
+
       def find_original_tweet
         Entity
         .feed('twitter')
         .type('tweet')
-        .where(origin_id: @payload.original_tweet_id_str)
+        .where(origin_id: @event.retweet.id_str)
       end
 
       def find_retweets
         Entity
         .feed('twitter')
         .type('tweet')
-        .where("props -> 'retweeted_id' = '#{@payload.tweet_id_str}'")
+        .where("props -> 'retweeted_id' = '#{@event.id_str}'")
       end
     end
 

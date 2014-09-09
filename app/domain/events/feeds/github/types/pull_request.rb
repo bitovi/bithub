@@ -2,26 +2,35 @@ module Events
   module Github
 
     class PullRequest < Protocol
-      include Events::Github::Accessors::Standard
-      include Events::Github::Accessors::Labels
-      include Events::Github::Accessors::IssuesPullRequests
+      extend Forwardable
+      include Events::Github::Accessors
 
-      def pull_request
-        payload.andand[:pull_request]
-      end
-      
-      def pull_request_id
-        pull_request.andand[:id]
-      end
+      def_delegators :@pull_request, :id, :state, :title, :body, :number, :labels
+      attr_reader :pull_request, :repo, :actor
 
-      def issue_or_pull_req
-        pull_request
+      def digest_seed
+        event_id + self.class.name
       end
 
       def origin_id
-        pull_request_id
+        @pull_request.id
+      end
+      
+      def action
+        payload.fetch(:action)
+      end
+      
+      def ipr
+        @pull_request
       end
 
+      def wrap_response
+        @actor ||= Wrappers::Github::User.new(source_data[:actor])
+        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        @pull_request ||= Wrappers::Github::PullRequest.new(payload[:pull_request])
+        self
+      end
+      
     end
   end
 end

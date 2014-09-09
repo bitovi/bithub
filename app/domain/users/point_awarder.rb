@@ -14,7 +14,7 @@ module Users
     end
 
     def award_points_for_completing_profile
-      @user.internals.build({
+      @user.internals.create({
         receiver: @user,
         variant: :completed_profile,
         comment: CompletedProfileComment,
@@ -24,7 +24,7 @@ module Users
     end
 
     def award_points_for_linking(provider)
-      @user.internals.build({
+      @user.internals.create({
         receiver: @user,
         variant: "linked_#{provider.downcase}".to_sym,
         comment: "Logged in with #{provider.capitalize}.",

@@ -1,0 +1,6 @@
+json.count @achievements_count
+json.set! :data do
+  json.array! @achievements do |a|
+    json.partial! "api/v2/achievements/achievement", achievement: a
+  end
+end

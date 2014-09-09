@@ -3,30 +3,21 @@ module Entities
 
     class Follow < Protocol
 
-      Relationships = {
-        upstream: [],
-        downstream: [],
-        references: [],
-      }
-
       def find
         nil
       end
 
       def build
         Entity.new({
-          title: "followed @#{@payload.target_screen_name}",
-          origin_ts: @payload.origin_ts,
+          title: "followed user #{@event.target.id}",
+          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @payload.origin_author_id,
-            origin_author_name: @payload.origin_author_name,
-            target: @payload.target_screen_name,
+            origin_author_id: @event.source.id.to_s,
+            origin_author_name: @event.source.screen_name,
+            target_id: @event.target.id,
+            target_name: @event.target.screen_name,
           }
         })
-      end
-
-      def relationships
-        Entities::Twitter::Follow::Relationships
       end
 
     end

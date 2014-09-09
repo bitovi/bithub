@@ -10,7 +10,7 @@ Bithub::Application.configure do
 
   # Enable serving static files because of Rack::Cache (HTTP
   # cache invalidation is possible this way)
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -20,20 +20,20 @@ Bithub::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
-  # Use a different cache store in production
-  config.cache_store = :dalli_store
 
-  # Set up Rack::Cache to use Memcached store
-  config.action_dispatch.rack_cache = {
-    :metastore    => Dalli::Client.new,
-    :entitystore  => 'file:/var/cache/rack/body',
-    :allow_reload => false
-  }
+  # Use a different cache store
+  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
+  config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
+
+  # Set up Rack::Cache to use Redis store
+  # config.action_dispatch.rack_cache = {
+  #   metastore:    "#{ENV['REDIS_URL']}/metastore",
+  #   entitystore:  "#{ENV['REDIS_URL']}/entitystore",
+  #   allow_reload: false
+  # }
 
   # Set the Cache-Control header
   config.static_cache_control = "public, max-age=2592000"
-
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
@@ -80,4 +80,6 @@ Bithub::Application.configure do
 
   # required by heroku: http://guides.rubyonrails.org/asset_pipeline.html#precompiling-assets
   config.assets.initialize_on_precompile = false
+
+  config.eager_load = true
 end

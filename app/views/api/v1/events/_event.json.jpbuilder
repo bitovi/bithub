@@ -12,20 +12,20 @@ json.cache! ("v1" + custom_cache_key(event)) do
 
 		json.author event.author
 		json.actor event.actor
-		json.props event.props(@ev_relations.thread_awarded(event), @ev_relations.awards_for_event(event))
+		json.props event.props(@ev_relations.thread_awarded(event), @ev_relations.awards_for_entity(event))
 
 		json.has_parent event.has_parent
 
 		json.image_url event.image_url(params[:size])
 		json.original_image_url event.original_image_url
 
-	
 
-		json.children @ev_relations.children_for_event(event) do |c|
+
+		json.children @ev_relations.children_for_entity(event) do |c|
 			json.partial! "api/v1/events/event", event: EntityDecorator.decorate(c), second_level: true
 		end
 
-		#json.references @ev_relations.references_for_event(event) do |r|
+		#json.references @ev_relations.references_for_entity(event) do |r|
 		#	json.partial! "api/v1/events/event", event: EntityDecorator.decorate(r), second_level: true
 		#end
 

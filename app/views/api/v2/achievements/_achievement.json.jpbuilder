@@ -1,0 +1,5 @@
+json.(achievement, :id, :user, :reward, :shipped_at, :achieved_at)
+
+json.user do
+  json.partial! "api/v2/achievements/user", user: UserDecorator.decorate(achievement.user)
+end

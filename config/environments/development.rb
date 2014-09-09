@@ -1,3 +1,5 @@
+require './lib/logger_factory'
+
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -12,7 +14,13 @@ Bithub::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
-  # config.cache_store = :dalli_store
+
+  # Logging
+  lf = LoggerFactory.new 'rails', :environment => Rails.env
+  config.logger = lf.component_logger
+  config.action_controller.logger = lf.ac_logger
+  config.active_record.logger = lf.ar_logger
+  config.log_level = :unknown
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
@@ -23,12 +31,7 @@ Bithub::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Raise exception on mass assignment protection for Active Record models
-  config.active_record.mass_assignment_sanitizer = :strict
-
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  config.active_record.auto_explain_threshold_in_seconds = 0.5
+  config.eager_load = false
 
   config.assets.precompile += ['admin.js', 'admin.css']
   config.assets.initialize_on_precompile = false
@@ -36,10 +39,4 @@ Bithub::Application.configure do
   config.assets.compress = true
   config.assets.compile = false
   config.assets.debug = false
-
-  config.after_initialize do
-    Bullet.enable = false
-    Bullet.rails_logger = true
-  end
-
 end

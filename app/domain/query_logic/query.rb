@@ -6,19 +6,17 @@ module QueryLogic
       'upvotes' => 'total_upvotes',
       'score' => 'total_score',
       'feed' => 'feed_name',
-      'type' => 'type_name',
-      'category' => 'category_name',
-      'categories' => "idx(array#{Tag.categories_order}, category_id)",
+      'type' => 'type_name'
     }
 
     def initialize(model, params)
       @model = model
-      @qis = params.map do |kv| 
+      @qis = params.map do |kv|
         key, value = kv
         if value.is_a? Array
-          value.map{|v| QueryItem.new(model, [key, v]) }
+          value.map{|v| QueryItem.new(@model, [key, v]) }
         else
-          QueryItem.new(model, kv)
+          QueryItem.new(@model, kv)
         end
       end.flatten
       @raw = params
@@ -33,7 +31,7 @@ module QueryLogic
     end
 
     # --- Filters ---
-    
+
     def existences
       after(@qis.select{|qi| qi.existence?}) do
         @qis.reject!{|qi| qi.existence?}
@@ -71,11 +69,11 @@ module QueryLogic
     end
 
     # --- API ---
-    
+
     def pluck_and_process_existence_attributes
       existences.collect{|qi| qi.name}
     end
-    
+
     def pluck_and_process_nonexistence_attributes
       nonexistences.collect{|qi| qi.name}
     end
@@ -142,7 +140,7 @@ module QueryLogic
         o = [o]
       end
     end
-  
+
     def replace_attr_if_virt(pair)
       attribute, direction = pair.split
       if VIRT_ATTRS[attribute]
@@ -160,10 +158,6 @@ module QueryLogic
         hash[qi_key] = qi_val
       end
       hash
-    end
-
-    def category_name_order
-      @name_order ||= YAML::load_file('config/categories_order.yml')['categories']
     end
 
     private
