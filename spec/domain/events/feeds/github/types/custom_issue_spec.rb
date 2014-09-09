@@ -17,7 +17,7 @@ describe Events::Github::CustomIssue do
       seed += raw_custom_issue['body']
       seed += raw_custom_issue['labels'].map{|l| l['name']}.join(',')
       seed += raw_custom_issue['state']
-      seed += raw_custom_issue['updated_at']
+      seed += Time.parse(raw_custom_issue['updated_at']).utc.to_s
       seed += "Events::Github::CustomIssue"
 
       expect(custom_issue_event.digest_seed).to eq seed
