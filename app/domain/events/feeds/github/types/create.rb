@@ -2,14 +2,22 @@ module Events
   module Github
 
     class Create < Protocol
-      include Events::Github::Accessors::Standard
+      extend Forwardable
+      include Events::Github::Accessors
       include Events::Github::Accessors::Refs
 
-      def content_digest
-        seed = actor_login + repo_name + ref_type + ref.to_s
-        calc_digest(seed)
-      end
-    end
+      attr_reader :actor, :repo
 
+      def digest_seed
+        @actor.login + @repo.name + ref_type + ref + self.class.name
+      end
+
+      def wrap_response
+        @actor = Wrappers::Github::User.new(source_data[:actor])
+        @repo = Wrappers::Github::Repo.new(source_data[:repo])
+        self
+      end
+
+    end
   end
 end

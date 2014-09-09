@@ -6,12 +6,14 @@ module Users
     end
 
     def duplicates
-      @user.internals - @user.internals.uniq_by {|i| i.comment}
+      @user.internals.order("id asc").all.to_a\
+        - @user.internals.order("id asc").all.to_a.uniq {|i| i.variant}
     end
 
-    def execute
-      duplicates.andand.each { |i| i.destroy }
+    def clean
+      is = duplicates.andand.map {|i| i.destroy }
       @user.update_total_score
+      not(is.empty?)
     end
 
   end

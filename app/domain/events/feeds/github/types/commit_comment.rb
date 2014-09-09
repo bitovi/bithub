@@ -2,27 +2,24 @@ module Events
   module Github
 
     class CommitComment < Protocol
-      include Events::Github::Accessors::Standard
-      include Events::Github::Accessors::Comments
+      extend Forwardable
+      include Events::Github::Accessors
 
-      def comment_id
-        payload.andand[:comment].andand[:id]
+      def_delegators :@comment, :id, :body, :title,
+        :commit_id, :references_to
+
+      attr_reader :comment, :actor, :repo
+      
+      def digest_seed
+        event_id + self.class.name
       end
-
-      def commit_id
-        payload.andand[:comment].andand[:commit_id]
-      end
-
-      def origin_id
-        comment_id
-      end
-
-      def content_digest
-        seed = "#{actor_login}#{repo_name}#{commit_id}#{comment_id}"
-        calc_digest(seed)
+      
+      def wrap_response
+        @actor ||= Wrappers::Github::User.new(source_data[:actor])
+        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        @comment ||= Wrappers::Github::Comment.new(payload[:comment])
       end
 
     end
-
   end
 end

@@ -9,7 +9,6 @@ module Events
 
   class Dispatcher
     include CoreHelpers
-    include Loggable
 
     Mappings = {
       :Forums => :Forum,
@@ -47,11 +46,15 @@ module Events
     end
 
     def dispatch
-      type.new(source_data)
+      type.new source_data, meta: meta
     end
 
     def source_data
       @source_data ||= extracted_source_data(@_raw)
+    end
+
+    def meta
+      @meta ||= @_raw[:meta]
     end
 
     private
@@ -182,6 +185,8 @@ module Events
       def type_name
         if is_follow_event?
           :Follow
+        elsif is_fake_follow_event?
+          :FakeFollow
         elsif is_status_event?
           :Tweet
         elsif source_data[:custom_follow]
@@ -193,10 +198,22 @@ module Events
         (@source_data[:event].andand == 'follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
       end
 
+      def is_fake_follow_event?
+        (@source_data[:event].andand == 'fake_follow') && not(@source_data[:source].nil?) && not(@source_data[:target].nil?)
+      end
+
       def is_status_event?
         not(@source_data[:text].nil?) && not(@source_data[:user].andand[:screen_name].nil?)
       end
 
+    end
+  end
+
+  module Facebook
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Facebook::Status
+      end
     end
   end
 
@@ -212,6 +229,14 @@ module Events
     class Dispatcher < BasicTypeDispatcher
       def type
         Events::Blog::Post
+      end
+    end
+  end
+
+  module Rss
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Rss::Post
       end
     end
   end
@@ -239,4 +264,14 @@ module Events
       end
     end
   end
+
+  module Foursquare
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        ### add some logic
+        Events::Foursquare::Checkin
+      end
+    end
+  end
+
 end

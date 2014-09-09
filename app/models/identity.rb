@@ -1,10 +1,11 @@
 class Identity < ActiveRecord::Base
-  attr_accessible :provider, :uid, :source_data
   belongs_to :user
-  serialize :source_data, JSON
+
   validates_uniqueness_of :uid, scope: :provider
 
   after_destroy :remove_internal
+
+  scope :provider, lambda {|p_name| where(provider: p_name)}
 
   class Processor
     def twitter(sd)
@@ -49,6 +50,12 @@ class Identity < ActiveRecord::Base
 
   def name
     source_data['name']
+  end
+
+  def profile_url
+    if urls = source_data['urls']
+      urls['GitHub'] || urls['Twitter'] || urls['public_profile']
+    end
   end
 
   def identifier

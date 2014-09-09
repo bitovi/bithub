@@ -1,63 +1,82 @@
 source 'https://rubygems.org'
-ruby '1.9.3'
+ruby '2.1.1'
 
-gem 'rails', '~> 3.2'
-gem 'rolify', '~> 3.2'
-gem 'devise', '~> 2.2'
-gem 'amqp'
-gem 'pg'
-gem 'dalli'
 gem 'unicorn'
-gem 'log4r'
-gem 'jquery-rails'
+gem 'rails', '~> 4.1'
+
+gem 'rake'
+gem 'rspec', '~> 3.0.0'
+gem 'rspec-rails', '~> 3.0.0'
+gem 'pry'
+gem 'pry-rails'
+
+gem 'amqp'
+gem 'bunny'
+gem 'pg', '~> 0.17.1'
+gem 'pg_power'
+
+gem 'redis'
+gem 'redis-rails'
 gem 'cancan'
-gem 'rmagick'
+gem 'rmagick', :require => false
+gem 'draper'
 gem 'carrierwave'
+
+gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
+gem 'apartment-sidekiq'
+gem 'enumerize'
+gem 'sinatra'
+gem 'sidekiq'
+gem 'sidetiq'
+gem 'acts-as-taggable-on'
+gem 'ranked-model'
+gem 'jbuilder', '~> 1.3.0'
+gem 'jpbuilder', '~> 0.2'
+
+gem 'devise', '~> 3.2'
+gem 'rolify', '~> 3.2'
+
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
 gem 'omniauth-meetup'
 gem 'omniauth-stackexchange', :github => 'nashby/omniauth-stackexchange'
-gem 'activerecord-postgres-hstore'
-gem 'activerecord-postgres-array', '0.0.9'
-gem 'activerecord-postgresql-extensions'
-gem 'acts-as-taggable-on'
-gem 'daemons'
-gem 'delayed_job'
-gem 'delayed_job_web'
-gem 'delayed_job_active_record'
-gem 'jbuilder', '1.3.0'
-gem 'jpbuilder', '0.2.2'
-gem 'draper'
-gem 'enumerize'
+gem 'omniauth-facebook'
+gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
+gem 'omniauth-foursquare'
+
 gem 'redcarpet'
-gem 'foreman'
+
+gem 'foreman', '~> 0.63.0'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'
-gem 'oj'
-gem 'yajl-ruby'
-gem 'awesome_print'
-gem 'twitter-text'
 gem 'dotenv-rails'
+gem 'log4r', '~> 1.1'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
-gem 'muster', :git => "git://github.com/neektza/muster.git"
+gem 'muster', :github => 'neektza/muster'
 
-# gem 'jpbuilder', :git => "git://github.com/neektza/jpbuilder.git"
-
-# Gems for ThirdPartyInformer
-gem 'twitter'
-gem 'github_api'
+# API client libs
 gem 'octokit', '~> 2.0'
+gem 'koala'
 
-group :test, :testing, :development do
+gem 'github_api'
+gem 'twitter'
+gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'
+gem 'rMeetup'     , github: 'neektza/rmeetup'        , branch: 'master'
+gem 'httparty'
+gem 'feedjira'
+gem 'twitter-text'
+gem 'reel', '~> 0.5.0'
+
+gem 'activesupport-json_encoder'
+
+
+group :test do
+  gem 'codeclimate-test-reporter', require: false
   gem 'factory_girl_rails'
-  gem 'rspec', '~> 2.14'
-  gem 'rspec-rails'
-  gem 'guard-rspec', '~> 4.0', require: false
   gem 'database_cleaner'
-  gem 'pry-rails'
   gem 'better_errors'
   gem 'evented-spec'
   gem 'git'
@@ -65,34 +84,22 @@ group :test, :testing, :development do
 end
 
 group :development do
-  gem 'capistrano', '~> 2.14'
-  gem 'capistrano-ext'
+  gem 'capistrano', '~> 3.1'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-rbenv', '~> 2.0'
+  gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
   gem 'ruby_gntp'
+  gem 'spork'
 end
 
-# ----------------
-# services/crawler
-# ----------------
-gem 'em-http-request'
-gem 'em-twitter'
+# --------
+# services
+# --------
+gem 'celluloid', '~> 0.15.0'
+gem 'celluloid-io'
 gem 'nokogiri'
-gem 'nori', '~>2.3.0'
-
-# ----------------
-# services/irc-bot
-# ----------------
-gem 'cinch'
-
-# -----------------
-# services/xmpp-bot
-# -----------------
-gem 'blather'
-
-# ------------------
-# 3rd party services
-# ------------------
-
-gem "codeclimate-test-reporter", require: false
+gem 'nori', '~> 2.3.0'
+gem 'vetinari'
 gem 'newrelic_rpm'

@@ -2,27 +2,23 @@ module Events
   module Stackexchange
 
     class Comment < Protocol
-      include Events::Stackexchange::Accessors::Standard
+      extend Forwardable
+      
+      def_delegators :@comment, :comment_id, :post_id, :post_type,
+        :body, :body_markdown, :link, :score, :edited?, :creation_date
 
-      def id
-        comment_id
+      attr_reader :owner
+
+      def digest_seed
+        @comment.comment_id.to_s + creation_date.to_s + self.class.name
       end
 
-      def post_type
-        source_data.andand[:post_type]
+      def wrap_response
+        @comment = Wrappers::Stackexchange::Comment.new(source_data)
+        @owner = Wrappers::Stackexchange::User.new(source_data[:owner])
+        self
       end
 
-      def post_id
-        source_data.andand[:post_id]
-      end
-
-      def comment_id
-        source_data.andand[:comment_id]
-      end
-
-      def owner
-        source_data.andand[:owner]
-      end
     end
 
   end

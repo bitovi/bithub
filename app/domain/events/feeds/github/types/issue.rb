@@ -2,24 +2,29 @@ module Events
   module Github
 
     class Issue < Protocol
-      include Events::Github::Accessors::Standard
-      include Events::Github::Accessors::Labels
-      include Events::Github::Accessors::IssuesPullRequests
+      extend Forwardable
+      include Events::Github::Accessors
 
-      def issue
-        payload.andand[:issue]
+      def_delegators :@issue, :id, :state, :title, :body, :number, :labels
+      attr_reader :issue, :repo, :actor
+
+      def digest_seed
+        event_id + self.class.name
       end
 
-      def issue_id
-        issue.andand[:id]
-      end
-      
-      def issue_or_pull_req
-        issue
+      def action
+        payload.fetch(:action)
       end
 
-      def origin_id
-        issue_id
+      def ipr
+        @issue
+      end
+
+      def wrap_response
+        @actor ||= Wrappers::Github::User.new(source_data[:actor])
+        @repo ||= Wrappers::Github::Repo.new(source_data[:repo])
+        @issue ||= Wrappers::Github::Issue.new(payload[:issue])
+        self
       end
 
     end

@@ -1,0 +1,151 @@
+namespace :db do
+
+  desc "Backup database"
+  task :backup do
+    on roles(:db) do |host|
+
+      backup_path  = fetch(:backup_path)
+      backup_ext   = fetch(:backup_ext)
+
+      backup_file  = gen_backup_version + backup_ext
+      backup_dest  = File.join(backup_path, backup_file)
+
+      db_config = read_db_config
+
+      execute :pg_dump, "-w --format=c #{db_config['database']} > #{backup_dest}"
+    end
+  end
+
+  desc "Download backup"
+  task :download do
+    on roles(:db) do |host|
+
+      backup_path = fetch(:backup_path)
+      backup_ext = fetch(:backup_ext)
+
+      list = capture :ls, '-1tr', File.join(backup_path, '*' + backup_ext)
+      versions = list.split(/\r?\n/).map {|f| File.basename(f, backup_ext)}
+
+      ask :version, versions.last
+      version = fetch(:version)
+
+      if versions.include? version
+        remote  = File.join(backup_path, version + backup_ext)
+        local = version + backup_ext
+        download! remote, local
+      else
+        error "Given version does not exists!"
+      end
+
+    end
+  end
+
+  desc "List backups"
+  task :list_backups do
+    on roles(:db) do |host|
+
+      backup_path = fetch(:backup_path)
+      backup_ext = fetch(:backup_ext)
+
+      list = capture :ls, '-lhtr', '--time-style=long-iso', File.join(backup_path, '*' + backup_ext)
+
+      list.split(/\r?\n/).each do |line|
+        _, _, _, _, size, date, time, filename = line.split
+        basename = File.basename(filename, backup_ext)
+
+        info "Version: #{basename} \t[#{size}] \t[#{date} #{time}]"
+      end
+    end
+  end
+
+  desc "Pull database"
+  task :pull do
+    on roles(:db) do |host|
+
+      backup_ext = fetch(:backup_ext)
+
+      db_config = read_db_config
+
+      backup_file = gen_backup_version + backup_ext
+      backup_dest = File.join('/', 'tmp', backup_file)
+
+      # dump & download & cleanup
+      execute :pg_dump, "-w --format=c #{db_config['database']} > #{backup_dest}"
+      download! backup_dest, backup_file
+      execute :rm, backup_dest
+    end
+  end
+
+  desc "Upload backup"
+  task :upload do
+    on roles(:db) do |host|
+
+      backup_path = fetch(:backup_path)
+      backup_ext = fetch(:backup_ext)
+
+      ask :src, nil
+      src = fetch(:src).to_s
+
+      (error "Not a #{backup_ext} file!" and exit) unless File.extname(src) == backup_ext
+      (error "File '#{src}' does not exists!" and exit) unless File.exist?(src)
+
+      upload! src, backup_path
+    end
+  end
+
+  desc "Restore database"
+  task :restore do
+    on roles(:db) do |host|
+
+      backup_path = fetch(:backup_path)
+      backup_ext = fetch(:backup_ext)
+
+      list = capture :ls, '-1tr', File.join(backup_path, '*' + backup_ext)
+      versions = list.split(/\r?\n/).map {|f| File.basename(f, backup_ext)}
+
+      ask :version, versions.last
+      version = fetch(:version)
+
+      (error "Given backup does not exists!" and exit) unless versions.include? version
+
+      db_config = read_db_config
+
+      restore_path = File.join(backup_path, version + backup_ext)
+      execute :pg_restore, '--format=c', '--clean', '--schema=public', "--dbname=#{db_config['database']}", restore_path
+    end
+  end
+
+  desc "Sync with production database"
+  task :sync_with_prod do
+    on roles(:db) do |host|
+
+      (info "Not available on production enviroment" and exit) if fetch(:stage) == :production
+
+      exit_upon_active_db_sessions
+
+      dbname = read_db_config['database']
+      dbname_prod = read_db_config(:production)['database']
+
+      within './web/current' do
+        rake 'db:recreate'
+        execute "pg_dump --format=c --no-password --host=69.164.216.88 #{dbname_prod} | pg_restore --format=c --clean --schema=public --dbname=#{dbname}"
+      end
+
+    end
+  end
+
+  desc "Recreate database"
+  task :recreate do
+    on roles(:db) do |host|
+
+      (info "Not available on production enviroment" and exit) if fetch(:stage) == :production
+
+      exit_upon_active_db_sessions
+
+      within './web/current' do
+        rake 'db:recreate'
+      end
+    end
+  end
+
+end

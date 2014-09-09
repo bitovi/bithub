@@ -1,60 +1,18 @@
-# --------
-# Projects
-# --------
+# ----------
+# Groups
+# ----------
 
-canjs:
-  display_name: "CanJS"
-  group_list: "projects, req_favourites, req_friends"
-  aliases:
-    - "can_js"
+funnels: {}
+feeds: {}
+types: {}
+feed_specifics: {}
+keywords: {}
 
-canui:
-  display_name: "CanUI"
-  group_list: "projects"
+# default funnel
 
-javascriptmvc:
-  display_name: "JavascriptMVC"
-  group_list: "projects, req_favourites, req_friends"
-  aliases:
-    - "jmvc"
-    - "java_script_mvc"
-
-stealjs:
-  display_name: "StealJS"
-  group_list: "projects, req_friends"
-  aliases:
-    - "steal"
-    - "steal_js"
-
-funcunit:
-  display_name: "FuncUnit"
-  group_list: "projects, req_favourites, req_friends"
-  aliases:
-    - "func_unit"
-
-jquerypp:
-  display_name: "jQuery++"
-  group_list: "projects, req_favourites, req_friends"
-  aliases:
-    - "j_querypp"
-    - "jquery++"
-    - "j_query++"
-
-documentjs:
-  display_name: "DocumentJS"
-  group_list: "projects, req_favourites, req_friends"
-  aliases:
-    - "document_js"
-
-testee:
-  display_name: "Testee.js"
-  group_list: "projects, req_friends"
-  props:
-    levenshtein_treshold: "0"
-  aliases:
-    - "testeejs"
-    - "testee_js"
-    - "testee.js"
+# uncategorized:
+#   group_list: "funnels"
+#   display_name: "Uncategorized"
 
 # --------
 # Feeds
@@ -62,24 +20,14 @@ testee:
 
 twitter:
   display_name: "Twitter"
-  group_list: "feeds, categories"
-  props:
-    order_on_page: "02"
+  group_list: "feeds"
 
 github:
   display_name: "Github"
   group_list: "feeds"
 
-forum:
-  display_name: "Forum"
-  group_list: "feeds"
-
 irc:
   display_name: "IRC"
-  group_list: "feeds"
-
-blog:
-  display_name: "Blog"
   group_list: "feeds"
 
 disqus:
@@ -100,161 +48,180 @@ stackexchange:
   display_name: "StackExchange"
   group_list: "feeds"
 
-# ----------
-# Categories
-# ----------
+facebook:
+  display_name: "Facebook"
+  group_list: "feeds"
 
-app:
-  display_name: "App"
-  group_list: "categories"
-  props:
-    order_on_page: "09"
-    priority: "100"
+foursquare:
+  display_name: "Foursquare"
+  group_list: "feeds"
 
-article:
-  display_name: "Article"
-  group_list: "categories"
-  props:
-    order_on_page: "07"
-    priority: "99"
+rss:
+  display_name: "RSS"
+  group_list: "feeds"
 
-bug:
-  display_name: "Bug"
-  group_list: "categories, labels"
-  props:
-    order_on_page: "03"
+# --------
+# Types
+# --------
 
-chat:
-  display_name: "Chat"
-  group_list: "categories"
-  props:
-    order_on_page: "99"
+### Twitter
 
-code:
-  display_name: "Code"
-  group_list: "categories"
-  props:
-    order_on_page: "10"
+tweet:
+  display_name: "Tweet"
+  group_list: "types,twitter"
 
-comment:
-  display_name: "Comment"
-  group_list: "categories"
-  props:
-    order_on_page: "04"
+follow:
+  display_name: "Follow"
+  group_list: "types,twitter"
 
-github_comment:
-  display_name: "Github Comment"
-  group_list: "categories"
+### Github
 
-github_comment:
-  display_name: "Github Comment"
-  group_list: "categories"
+push:
+  display_name: "Push"
+  group_list: "types,github"
 
-digest:
-  display_name: "Digest"
-  group_list: "categories"
-  props:
-    order_on_page: "01"
+commit:
+  display_name: "Commit"
+  group_list: "types,github"
 
-event:
-  display_name: "Event"
-  group_list: "categories"
-  props:
-    order_on_page: "11"
+fork:
+  display_name: "Fork"
+  group_list: "types,github"
 
-feature:
-  display_name: "Feature"
-  group_list: "categories, labels"
-  aliases:
-    - "enhancement"
-    - "feature-request"
-  props:
-    order_on_page: "05"
-    priority: "99"
+pull_request:
+  display_name: "Pull request"
+  group_list: "types,github"
+
+create:
+  display_name: "Create"
+  group_list: "types,github"
 
 issue:
   display_name: "Issue"
-  group_list: "categories"
+  group_list: "types,github"
 
-plugin:
-  group_list: "categories"
-  display_name: "Plugin"
-  props:
-    order_on_page: "08"
+issue_comment:
+  display_name: "Issue comment"
+  group_list: "types,github"
 
-question:
-  group_list: "categories"
-  display_name: "Question"
-  props:
-    order_on_page: "06"
+issue_action:
+  display_name: "Issue action"
+  group_list: "types,github"
 
+commit_comment:
+  display_name: "Commit comment"
+  group_list: "types,github"
 
-### Twitter specific
+watch:
+  display_name: "Watch"
+  group_list: "types,github"
 
-tweet: {}
+gollum:
+  display_name: "Gollum"
+  group_list: "types,github"
 
-follow: {}
+pull_request_review_comment:
+  display_name: "Pull request review comment"
+  group_list: "types,github"
 
-### Github specific
+public:
+  display_name: "Public"
+  group_list: "types,github"
 
-push: {}
-
-commit: {}
-
-fork: {}
-
-pull_request: {}
-
-create_event: {}
-
-issue: {}
-
-issue_comment: {}
-
-issue_action: {}
-
-commit_comment: {}
-
-watch: {}
-
-gollum_event: {}
-
-pull_request_review_comment: {}
-
-commit: {}
-
-public: {}
-
-create: {}
+create:
+  display_name: "Create"
+  group_list: "types,github"
 
 # issues states
 
-open: {}
+open:
+  display_name: "Open"
+  group_list: "github,issue,feed_specifics"
 
-closed: {}
+closed:
+  display_name: "Closed"
+  group_list: "github,issue,feed_specifics"
 
-### Forum specific
+### RSS
 
-post: {}
+post:
+  display_name: "Post"
+  group_list: "types,rss,disqus,bithub"
 
-### Meetup specific
 
-rsvp: {}
+### Bithub
 
-### IRC specific
+app: {}
+article: {}
+#event: {} # below at meetup
+plugin: {}
 
-message: {}
+### Meetup
 
-### StackExchange specific
+confirmed: {}
+waitlist: {}
+rsvp:
+  display_name: "RVSP"
+  group_list: "types,meetup"
+event:
+  display_name: "Event"
+  group_list: "types,meetup"
 
-#question: {}
-answer: {}
-#comment: {}
+### StackExchange
 
-### Others
+question:
+  display_name: "Question"
+  group_list: "types,stackexchange"
 
-bitovi:
-  display_name: "Bitovi"
-  group_list: "req_friends"
+answer:
+  display_name: "Answer"
+  group_list: "types,stackexchange"
 
-uncategorized: {}
+comment:
+  display_name: "Comment"
+  group_list: "types,stackexchange,facebook"
+
+### Facebook
+
+status:
+  display_name: "Status"
+  group_list: "types,facebook"
+
+like:
+  display_name: "Like"
+  group_list: "types,facebook,foursquare"
+
+# comment:
+#   display_name: "Comment"
+#   group_list: "types,facebook"
+
+# checkin:
+#   display_name: "Checkin"
+#   group_list: "types,facebook"
+
+### FourSquare
+
+checkin:
+  display_name: "Checkin"
+  group_list: "types,foursquare,facebook"
+
+tip:
+  display_name: "Tip"
+  group_list: "types,foursquare"
+
+# like:
+#   display_name: "Like"
+#   group_list: "types,foursquare"
+
+### IRC
+
+message:
+  display_name: "Message"
+  group_list: "types,irc"
+
+
+### Disqus
+
+# post:
+#   display_name: "Post"
+#   group_list: "types,disqus"

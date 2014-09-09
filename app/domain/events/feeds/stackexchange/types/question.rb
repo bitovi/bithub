@@ -2,38 +2,25 @@ module Events
   module Stackexchange
 
     class Question < Protocol
-      include Events::Stackexchange::Accessors::Standard
+      extend Forwardable
 
-      def id
-        question_id
+      def_delegators :@question, :question_id, :accepted_answer_id,
+        :title, :body, :body_markdown, :link, :score, :answered?,
+        :upvote_count, :last_activity_date, :creation_date
+
+      attr_reader :question, :answers, :comments, :owner
+
+      def digest_seed
+        @question.question_id.to_s +
+          (last_activity_date || creation_date).to_s +
+          self.class.name
       end
 
-      def question_id
-        source_data.andand[:question_id]
-      end
-
-      def answers
-        (source_data.andand[:answers] || []).map do |a|
-          Events::Stackexchange::Answer.new(a)
-        end
-      end
-
-      def comments
-        (source_data.andand[:comments] || []).map do |c|
-          Events::Stackexchange::Comment.new(c)
-        end
-      end
-
-      def accepted_answer_id
-        source_data.andand[:accepted_answer_id]
-      end
-
-      def upvote_count
-        source_data.andand[:upvote_count]
-      end
-
-      def owner
-        source_data.andand[:owner]
+      def wrap_response
+        @question = Wrappers::Stackexchange::Question.new(source_data)
+        @answers = source_data[:answers].andand.map{|a| Wrappers::Stackexchange::Answer.new(a)}
+        @comments = source_data[:comments].andand.map{|c| Wrappers::Stackexchange::Comment.new(c)}
+        @owner = Wrappers::Stackexchange::User.new(source_data[:owner])
       end
     end
 

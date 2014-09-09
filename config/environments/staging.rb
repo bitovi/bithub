@@ -7,7 +7,7 @@ Bithub::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -17,10 +17,10 @@ Bithub::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
-  # Use a different cache store in production
-  config.cache_store = :dalli_store
-  config.session_store :dalli_store
+
+  # Use a different cache store
+  config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
+  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
@@ -67,4 +67,6 @@ Bithub::Application.configure do
 
   # required by heroku: http://guides.rubyonrails.org/asset_pipeline.html#precompiling-assets
   config.assets.initialize_on_precompile = false
+
+  config.eager_load = true
 end

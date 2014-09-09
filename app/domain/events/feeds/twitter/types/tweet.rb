@@ -2,73 +2,26 @@ module Events
   module Twitter
 
     class Tweet < Protocol
+      extend Forwardable
 
-      def content_digest
-        Digest::MD5.hexdigest(origin_id.to_s + self.class.name)
-      end
+      def_delegators :@tweet, :id, :id_str,
+        :text, :retweet, :retweeted_status,
+        :entities, :retweet?, :created_at
 
-      def origin_id
-        tweet_id_str
-      end
+      attr_accessor :tweet, :user
 
-      def tweet_id
-        source_data.andand[:id]
-      end
-
-      def tweet_id_str
-        source_data.andand[:id_str]
-      end
-
-      def text
-        source_data.andand[:text]
-      end
-
-      def user
-        source_data.andand[:user]
-      end
-
-      def origin_author_id
-        user.andand[:id]
-      end
-
-      def origin_author_name
-        user.andand[:screen_name]
-      end
-
-      def user_profile_image_url
-        user.andand[:profile_image_url]
-      end
-
-      def origin_ts
-        Time.parse(source_data.andand[:created_at]).utc
+      def digest_seed
+        id_str + self.class.name
       end
 
       def html_url
-        "https://twitter.com/#{origin_author_name}/status/#{origin_id}"
+        "https://twitter.com/#{@user.screen_name}/status/#{@tweet.id_str}"
       end
-
-      def retweeted_status
-        source_data.andand[:retweeted_status]
-      end
-
-      def original_tweet_id
-        retweeted_status.andand[:id]
-      end
-
-      def original_tweet_id_str
-        retweeted_status.andand[:id_str]
-      end
-
-      def entities
-        source_data.andand[:entities]
-      end
-
-      def entities_urls
-        entities.andand[:urls]
-      end
-
-      def retweet?
-        !!retweeted_status
+      
+      def wrap_response
+        @tweet ||= Wrappers::Twitter::Tweet.new(source_data)
+        @user ||= Wrappers::Twitter::User.new(source_data[:user])
+        self
       end
     end
 

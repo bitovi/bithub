@@ -2,7 +2,6 @@ require 'carrierwave/processing/rmagick'
 
 class EventImageUploader < CarrierWave::Uploader::Base
   include CarrierWave::RMagick
-  include Sprockets::Helpers::RailsHelper
 
   storage :file
 
@@ -18,11 +17,11 @@ class EventImageUploader < CarrierWave::Uploader::Base
   def extension_white_list
     %w(jpg jpeg gif png)
   end
-  
+
   version :thumb do
     process :resize_to_fit => [60, 60]
   end
-  
+
   version :canjscom do
     process :resize_and_pad => [158, 110, "#ffffff"]
   end

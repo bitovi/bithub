@@ -3,37 +3,38 @@ namespace :data do
   task :import_scoring_rules => :environment do
 
     puts "---"
-    puts "Importing/updating scoring rules"
+    puts "Importing scoring rules"
 
-    rules = YAML::load_file('config/scoring_rules.yml')
-    existing_rules = ScoringRule.all.each
-
-    updated = []
-    imported = []
-    failed = []
-
-    rules.each do |rule|
-      rule_tags = rule['required_tags']
-      attrs = {
-        required_tags: rule['required_tags'],
-        authorship_value: rule['authorship_value'],
-        award_value: rule['award_value'],
-        upvote_value: rule['upvote_value']
-      }
-
-      if existing = ScoringRule.all.select {|r| r.required_tags.sort == rule_tags.sort}.first
-        existing.assign_attributes(attrs)
-        existing.save ? updated.push(rule_tags) : failed.push(rule_tags)
-      else
-        t = ScoringRule.new(attrs)
-        t.save ? imported.push(rule_tags) : failed.push(rule_tags)
-      end
+    if tenant = ENV['TENANT']
+      Apartment::Database.switch tenant
+      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
     end
 
-    puts "Summary:"
-    puts "  #{imported.length} rules imported"
-    puts "  #{updated.length} rules updated"
-    puts "  #{failed.length} rules failed: #{failed.to_s}"
+    rules = YAML::load_file('config/scoring_rules.yml')
+
+    def exists?(required_tags)
+      ScoringRule
+        .pluck(:required_tags)
+        .select {|r| r.keys.sort == required_tags.keys.sort}
+        .count > 0
+    end
+
+    rules.each do |rule|
+      required_tags = Tagger.list_to_name_weight_hash rule['required_tags']
+      rule['authorship_value'] ||= 0
+      rule['award_value'] ||= 0
+      rule['upvote_value'] ||= 1
+
+      if exists? required_tags
+        puts "Rule '#{rule['name']}' already exists!"
+      else
+        if ar_rule = ScoringRule.create(rule)
+          puts "Rule '#{rule['name']}' created"
+        else
+          puts "Rule '#{rule['name']}' failed"
+        end
+      end
+    end
 
   end
 end

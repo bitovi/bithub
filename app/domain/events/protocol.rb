@@ -3,6 +3,10 @@ require_relative 'traits/persistable'
 require_relative 'traits/serializable'
 require_relative 'traits/validatable'
 
+Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
+  require f.gsub('app/domain/', '')
+end
+
 module Events
   module Github; end
   module Twitter; end
@@ -13,40 +17,39 @@ module Events
   module Meetup; end
   module Irc; end
   module Stackexchange; end
+  module Facebook; end
+  module Foursquare; end
 
   class Protocol
     include CoreHelpers
     include Persistable
     include Serializable
     include Validatable
-    include Loggable
 
     attr_reader :instance, :source_data, :meta
 
-    def initialize(payload)
+    def initialize(payload, opts={})
       _raw = symbolize_keys(payload)
       @source_data = _raw[:source_data] || _raw
-      @meta = _raw[:meta] || nil
-    end
-
-    def raw
-      @source_data
+      @meta = opts[:meta]
+      wrap_response if self.respond_to? :wrap_response
     end
 
     def content_digest
-      if respond_to?(:event_id)
-        calc_digest(event_id.to_s)
-      elsif respond_to?(:origin_id)
-        calc_digest(origin_id.to_s)
-      elsif respond_to?(:digest_seed)
+      if respond_to?(:digest_seed)
         calc_digest(digest_seed)
       else
-        fail BuildingError.new("Couldn't calculate digest. Probably missing a seed.", nice_name)
+        fail BuildingError.new("Don't know how to build a digest seed.", nice_name)
       end
     end
 
+    # FIXME FIXME FIXME FIXME FIXME FIXME
     def calc_digest(seed)
-      @digest ||= (seed.nil?) ? nil : Digest::MD5.hexdigest(seed + self.class.name)
+      @digest ||= if (self.class == Events::Twitter::Follow) || (self.class == Events::Twitter::FakeFollow)
+        Digest::MD5.hexdigest(seed + "Events::Twitter::Follow")
+      else
+        Digest::MD5.hexdigest(seed + self.class.name)
+      end
     end
 
     def feed_name
@@ -62,11 +65,7 @@ module Events
     end
 
     def ==(other)
-      @data == other
-    end
-
-    def origin_ts
-      origin_timestamp
+      @source_data == other
     end
 
     def origin_timestamp_iso
@@ -103,3 +102,6 @@ require 'events/feeds/blog/blog'
 require 'events/feeds/irc/irc'
 require 'events/feeds/meetup/meetup'
 require 'events/feeds/stackexchange/stackexchange'
+require 'events/feeds/facebook/facebook'
+require 'events/feeds/rss/rss'
+require 'events/feeds/foursquare/foursquare'

@@ -22,6 +22,7 @@ module Accounts
       end
       self
     end
+    attr_reader :state
 
     def link
       return nil if (@state == :undecided) || (@state == :already_linked)
@@ -54,7 +55,8 @@ module Accounts
 
     def unlink
       if user_is_owner? && user_has_more_than_one?
-        Users::EntitiesUnlinker.new(@identity.uid, @identity.user_id, @identity.provider).async_unlink
+        ident_data = Users::IdentData.new(@identity.uid, @identity.provider)
+        Users::EntitiesUnlinker.new(ident_data, @identity.user_id).async_unlink
         @identity.destroy
       else
         nil
@@ -93,10 +95,6 @@ module Accounts
       @state == :invalid_merge
     end
     
-    def merging_state
-      @state
-    end
-
     def merging_user
       @identity.user
     end
@@ -107,6 +105,7 @@ module Accounts
       end
     end
 
+    alias_method :merging_state, :state
     alias_method :only_linking?, :not_merging?
     alias_method :merging?, :valid_merge?
 

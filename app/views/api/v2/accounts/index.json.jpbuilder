@@ -1,0 +1,6 @@
+json.set! :data do
+  json.array! @accounts do |a|
+    json.partial! "api/v2/accounts/account", account: a
+  end
+end
+json.count @accounts_count

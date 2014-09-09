@@ -1,12 +1,12 @@
 module Entities
   module Normalizable
-    ARGS_TO_PROPS = ['category', 'project', 'type', 'feed', 'tags', 'origin_author_id', 'origin_author_feed', 'location']
+    ARGS_TO_PROPS = ['project', 'type', 'feed', 'tags', 'origin_author_id', 'origin_author_feed', 'location']
 
     def normalize
       set_thread_ts
       set_total_upvotes
       set_feed_and_type_names
-      set_ids_for_category_feed_and_type
+      set_ids_for_feed_and_type
       clean_junk_from_props
       self
     end
@@ -24,8 +24,7 @@ module Entities
       @instance.type_name = type_name.snake_case
     end
 
-    def set_ids_for_category_feed_and_type
-      @instance.category = Tag.find_by_name(@instance.category_name)
+    def set_ids_for_feed_and_type
       @instance.feed = Tag.find_by_name(@instance.feed_name)
       @instance.type = Tag.find_by_name(@instance.type_name)
       if @instance.missing_critical_tags?
@@ -40,8 +39,8 @@ module Entities
 
     private
     def report_missing_tags
-      missing_tags = %w(feed type category).select{|an| self.instance.send(an).nil?}
-      fail NormalizationError.new('Must have type, feed and category tags assigned to persist', missing_tags)
+      missing_tags = %w(feed type).select{|an| self.instance.send(an).nil?}
+      fail NormalizationError.new('Must have type, feed and tags assigned to persist', missing_tags)
     end
 
     # def to_props_and_clean(args)

@@ -1,34 +1,20 @@
 class ScoringRule < ActiveRecord::Base
-  attr_accessible :required_tags, :authorship_value, :upvote_value, :award_value, :priority
+
+  validates_presence_of :authorship_value
+
   has_many :entities
 
-  def self.best_match(tags = [])
-    return self.default_rule unless tags && tags.count > 0
+  def required_tags=(tags)
+    tags = Tagger.list_to_name_weight_hash tags
+    write_attribute(:required_tags, tags)
+  end
 
-    # Try to find exact match
-    match = self.exact_match(tags)
-
-    # otherwise try to find best match
-    if match.nil?
-      score = -1 # will match default rule created by migrations
-
-      self.find_each do |rule|
-        count = (tags & rule.required_tags).count
-        if count > score
-          match = rule
-          score = count
-        end
-      end
+  def invalidate
+    if entities.count == 0
+      destroy
+    else
+      valid_until = Time.now
+      save
     end
-
-    return match
-  end
-
-  def self.default_rule
-    self.where("required_tags = ?", [].to_postgres_array(true)).first
-  end
-
-  def self.exact_match(tags)
-    self.where("required_tags = ?", tags.to_postgres_array(true)).first
   end
 end

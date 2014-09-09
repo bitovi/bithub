@@ -2,56 +2,23 @@ module Events
   module Meetup
 
     class Rsvp < Protocol
+      extend Forwardable
 
-      def origin_id
-        source_data.andand[:rsvp_id]
-      end
+      def_delegators :@rsvp, :id, :rsvp_id,
+        :comment, :response, :created_at
 
-      def rsvp_id
-        origin_id.to_s
-      end
+      attr_reader :member, :event
 
-      def comment
-        source_data.andand[:comments]
+      def digest_seed
+        @rsvp.id.to_s + self.class.name
       end
 
-      def member
-        source_data.andand[:member]
+      def wrap_response
+        @rsvp = Wrappers::Meetup::Rsvp.new(source_data)
+        @event = Wrappers::Meetup::Event.new(source_data[:event])
+        @member = Wrappers::Meetup::Member.new(source_data[:member], source_data[:member_photo])
       end
 
-      def origin_author_id
-        member.andand[:member_id]
-      end
-
-      def response
-        source_data.andand[:response]
-      end
-
-      def origin_author_name
-        member.andand[:name]
-      end
-
-      def parent_event
-        source_data.andand[:event]
-      end
-
-      def parent_event_id
-        parent_event.andand[:id]
-      end
-      
-      def parent_event_url
-        parent_event.andand[:url]
-      end
-
-      def origin_timestamp
-        unix_epoch = source_data.andand[:created].to_i / 1000
-        Time.at(unix_epoch).utc
-      end
-
-      def origin_author_avatar_url
-        source_data.andand[:member_photo].andand[:thumb_link]
-      end
-      
     end
   end
 end

@@ -1,20 +1,28 @@
-require_relative 'support/spec_helper'
+require 'rails_helper'
 
-describe Identity do
+RSpec.describe Identity, :type => :model do
+
   describe "#update_source_data_if_blank" do
-    let(:oauth_data) { oauth_data_hash }
+    before { Identity.delete_all }
+    let(:oauth_data) { oauth_data_hash['omniauth.auth'] }
 
     it "should update the source_data with oauth_data" do
-      identity = create(:identity, uid: oauth_data['uid'], provider: oauth_data['provider'] )
+
+      identity = FactoryGirl.create(
+        :identity,
+        uid: oauth_data['uid'],
+        provider: oauth_data['provider']
+      )
+
       identity.update_source_data_if_blank(oauth_data['info'])
-      expect(identity.source_data).to eq(oauth_data['info'])
+      expect(identity.reload.source_data).to eq(oauth_data['info'])
     end
   end
 
   describe ".find_or_create_with_provider_and_uid" do
     context "when identity exists" do
       it "should find an existing identity" do
-        existing_identity = create(:identity, uid: 123456789, provider: 'twitter')
+        existing_identity = FactoryGirl.create(:identity, uid: 123456789, provider: 'twitter')
         identity = Identity.find_or_create_with_provider_and_uid('twitter', 123456789)
         expect(identity).to eq(existing_identity)
       end

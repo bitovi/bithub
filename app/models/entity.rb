@@ -1,27 +1,10 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
 
-  class TotalVotesUpdater < Struct.new(:id)
-    def perform
-      entity = Entity.find_by_id(id)
-      unless entity.nil?
-        entity.update_total_upvotes
-      end
-    end
-  end
-
-  attr_accessible :id,
-    :body, :title, :url, :origin_id,
-    :tag_list, :owners, :ownerships,
-    :feed_name, :type_name, :category_name,
-    :feed_id, :type_id, :category_id,
-    :origin_ts, :thread_updated_ts,
-    :created_at, :updated_at,
-    :props, :image, :total_upvotes
+  store_accessor :props
 
   acts_as_taggable
   mount_uploader :image, EventImageUploader
-  serialize :props, ActiveRecord::Coders::Hstore
 
   has_and_belongs_to_many :references_to,
   :class_name => 'Entity',
@@ -43,17 +26,15 @@ class Entity < ActiveRecord::Base
 
   belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
   belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
-  belongs_to :category, :foreign_key => "category_id", :class_name => "Tag"
   belongs_to :parent, :class_name => "Entity"
   belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
   has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
-  has_many :anteups, :foreign_key => "applies_to_id", :dependent => :destroy
   has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of  :title,
-    :feed_name, :type_name, :category_name,
-    :feed_id, :type_id, :category_id,
+    :feed_name, :type_name,
+    :feed_id, :type_id,
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 
@@ -62,13 +43,6 @@ class Entity < ActiveRecord::Base
   scope :no_feed, lambda {|f| where("feed_name <> ?", f) }
   scope :type, lambda {|t| where(type_name: t) }
   scope :no_type, lambda {|t| where("type_name <> ?", t) }
-  scope :category, lambda {|c| where(category_name: c) }
-  scope :no_category, lambda {|c| where("category_name <> ?", c) }
-
-  # Time/date
-  scope :this_week, lambda { where(:origin_date => Date.today.beginning_of_week..Date.today.end_of_week) }
-  scope :last_week, lambda { where(:origin_date => 1.weeks.ago.to_date.beginning_of_week..1.week.ago.to_date.end_of_week) }
-  scope :x_weeks_ago, lambda {|x| where(:origin_date => x.weeks.ago.to_date.beginning_of_week..x.weeks.ago.to_date.end_of_week) }
 
   scope :without_future, lambda { |clientTz|
     where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
@@ -97,6 +71,11 @@ class Entity < ActiveRecord::Base
   scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
 
+  scope :scoped_with_includes, lambda { includes(:owners).includes(:parent) }
+
+  scope :from_funnel, lambda { |funnel| tagged_with funnel.tags, :any => true if funnel.tags && funnel.tags.present?}
+  scope :from_funnel_constraint, lambda { |constraint| where constraint.as_hash }
+
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
   after_create :adopt_references_from_children
@@ -107,11 +86,17 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.scoped_with_includes
-    scope = Entity.scoped
-    scope = scope.includes(:owners)
-    scope = scope.includes(:parent)
-    scope
+
+  def self.with_author(author_id)
+    joins(:ownerships)\
+      .where("ownerships.ownership_type = 'author'")\
+      .where("ownerships.owner_id = ?", author_id) if author_id
+  end
+
+  def self.with_host(host_id)
+    joins(:ownerships)\
+      .where("ownerships.ownership_type = 'host'")\
+      .where("ownerships.owner_id = ?", host_id) if host_id
   end
 
   def author=(user)
@@ -170,11 +155,15 @@ class Entity < ActiveRecord::Base
     activities = []
     activities.concat(self.awards)
     activities.concat(self.upvotes)
-    activities.concat(self.anteups)
   end
 
+  # FIXME, should be delegated to a proper type from Entities
   def bump_thread
-    latest_origin_ts = self.thread.pluck(:origin_ts).max
+    if self.feed_name == 'meetup' && self.type_name == 'event'
+      latest_origin_ts = self.thread.pluck(:props).map{|p| p['scheduled_at']}.compact.map {|t| Time.parse t}.max
+    else
+      latest_origin_ts = self.thread.pluck(:origin_ts).max
+    end
     self.thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
   end
 
@@ -199,7 +188,7 @@ class Entity < ActiveRecord::Base
   end
 
   def sum_upvotes
-    self.upvotes.sum('value')
+    self.upvotes.sum(:value)
   end
 
   def update_total_upvotes
@@ -207,7 +196,7 @@ class Entity < ActiveRecord::Base
   end
 
   def async_update_total_upvotes
-    Delayed::Job.enqueue TotalVotesUpdater.new(self.id)
+    Workers::EntitiesTotalVotesUpdater.perform_async self.id
   end
 
   def increase_score_in_author
@@ -266,7 +255,7 @@ class Entity < ActiveRecord::Base
   end
 
   def missing_critical_tags?
-    !self.type || !self.feed || !self.category
+    !self.type || !self.feed
   end
 
   def adopt_references_from_children
@@ -302,9 +291,9 @@ class Entity < ActiveRecord::Base
     end
   end
 
-  private
+  alias_method :upvotes_sum, :sum_upvotes
 
-  # Helper methods
+  private
 
   def reformat_uniqueness_validation
     if errors[:hash_key]

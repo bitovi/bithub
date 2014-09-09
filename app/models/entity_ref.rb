@@ -13,8 +13,6 @@ class EntityRef < ActiveRecord::Base
     ref.from_id = opts[:from_id]
     ref.to_id   = opts[:to_id]
 
-    Rails.logger.info "%%%%%%%%%%%%%%%%%%%%%%%%%%%% CREATING REF from: #{ref.from_id} to: #{ref.to_id}"
-
     ref.save
   end
 

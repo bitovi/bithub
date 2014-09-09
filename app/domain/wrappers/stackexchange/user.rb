@@ -1,0 +1,25 @@
+require 'wrappers/data_accessible'
+
+module Wrappers
+  module Stackexchange
+
+    class User
+      include DataAccessible
+      include CoreHelpers
+
+      has :user_id,
+        :display_name,
+        :link,
+        :reputation,
+        :profile_image
+
+      alias_method :name, :display_name
+      alias_method :id, :user_id
+
+      def initialize(user)
+        @data = symbolize_keys(user)
+      end
+
+    end
+  end
+end

@@ -1,0 +1,5 @@
+json.set! :data do
+	json.array! @funnels do |f|
+		json.partial! "api/v2/funnels/funnel", funnel: f
+	end
+end

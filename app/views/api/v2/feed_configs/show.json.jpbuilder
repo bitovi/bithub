@@ -1,0 +1,1 @@
+json.partial! "api/v2/feed_configs/config", config: @config

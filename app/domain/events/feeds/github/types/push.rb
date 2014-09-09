@@ -2,48 +2,43 @@ module Events
   module Github
 
     class Push < Protocol
-      include Events::Github::Accessors::Standard
+      include Events::Github::Accessors
+
+      attr_reader :actor, :repo, :commits
+
+      def digest_seed
+        event_id + self.class.name
+      end
 
       def push_id
-        payload.andand[:push_id]
+        payload.fetch(:push_id)
       end
 
-      def origin_id
-        push_id
-      end
-
-      def commits
-        payload.andand[:commits]
-      end
-
-      def commit_shas
-        commits.map {|c| c.andand[:sha]}.compact
+      def head
+        payload.fetch(:head)
       end
 
       def commit_messages
-        commits.map {|c| c.andand[:message]}.compact
+        @commits.map(&:message)
+      end
+
+      def commit_shas
+        @commits.map(&:sha)
       end
 
       def commit_shas_csv
         commit_shas.join(',')
       end
 
-      def referenced_issue_numbers
-        commit_messages.join(' ').scan(/#\d+/).uniq.map {|m| m.gsub('#','').to_s}
-      end
-
-      def referenced_repo_name
-        repo_name
-      end
-
-      def head
-        payload.andand[:head]
-      end
-
       def commit_by_sha(sha)
-        if commit_shas.include?(sha)
-          commits.select {|c| c.andand[:sha] == sha}.first
-        end
+        @commits.select{|c| c.sha == sha}.andand.first
+      end
+
+      def wrap_response
+        @actor ||= Wrappers::Github::User.new(source_data.fetch(:actor))
+        @repo ||= Wrappers::Github::Repo.new(source_data.fetch(:repo))
+        @commits = payload.fetch(:commits).map{|c| Wrappers::Github::Commit.new(c)}
+        self
       end
 
     end

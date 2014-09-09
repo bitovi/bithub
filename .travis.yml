@@ -1,19 +1,28 @@
 language: ruby
+cache: bundler
+env:
+  - RABBITMQ_URI=amqp://guest:guest@localhost/ REDIS_URL=redis://127.0.0.1:6379/15
 script:
-  - bundle exec rake db:migrate
-  - bundle exec rake db:test:prepare
-  - bundle exec rake test:domain
+  - "bundle exec rake db:migrate"
+  - "bundle exec rake db:test:prepare"
+  - "bundle exec rake test"
 notifications:
+  slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4
+  webhooks:
+    - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
     - veljko@kset.org
     - neektza@gmail.com
     - konjevic@gmail.com
+services:
+  - redis-server
+  - rabbitmq
 addons:
   postgresql: 9.3
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
 rvm:
-  - 1.9.3
+  - 2.1.1
 before_script:
   - psql -c 'create database bithub_test;' -U postgres
   - "cp ./.travis_database.yml ./config/database.yml"

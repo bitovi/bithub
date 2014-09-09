@@ -12,7 +12,13 @@ module Entities
     def adopt
       if self.respond_to? :find_children
         if (c = find_children)
-          @instance.children += c.is_a?(Array) ? c : [c]
+          @instance.children += if c.is_a?(Array)
+                                  c
+                                elsif c.is_a?(ActiveRecord::Relation)
+                                  c.where(true)
+                                else
+                                  [c]
+                                end
         end
       end
 
@@ -46,7 +52,7 @@ module Entities
     end
 
     def write_history
-      @instance.events << @payload.instance if @payload.instance
+      @instance.events << @event.instance if @event.instance
     end
 
     def bump_thread

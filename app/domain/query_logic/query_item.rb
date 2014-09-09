@@ -1,6 +1,6 @@
 module QueryLogic
   class QueryItem
-    TAG_FIELD_NAMES = ['tag', 'feed', 'category', 'project']
+    TAG_FIELD_NAMES = ['tag']
 
     DELIMITERS = { :and => ',', :or => '|', :between => ':' }
     OPTIONAL_LOGIC = { :exclude => 'exclude' }
@@ -15,7 +15,7 @@ module QueryLogic
     attr_reader :name, :value
 
     def value
-      if negation? 
+      if negation?
         @value.gsub(/^!(.*)$/, '\1')
       elsif ordering?
         @value.gsub(':', ' ')
@@ -51,13 +51,13 @@ module QueryLogic
     def nonexistence?
       native? && @value == NONEXISTENCE_QUALIFIER
     end
-    
+
     def exclusion?
       OPTIONAL_LOGIC[:exclude] == @name || OPTIONAL_LOGIC[:exclude] == @name.to_s
     end
 
     def ordering?
-      (@name =~ /order/) && ((@value.include? ':desc') || (@value.include? ':asc'))
+      (@name =~ /order/) && ((@value.include? 'desc') || (@value.include? 'asc'))
     end
 
     def tag_based?
@@ -99,7 +99,7 @@ module QueryLogic
     end
 
     def native?
-      @model.has_an_attribute?(@name)
+      @model.respond_to?(:has_an_attribute?) && @model.has_an_attribute?(@name)
     end
   end
 end

@@ -1,0 +1,5 @@
+json.(activity, :id, :ownership_type, :title, :value)
+
+# kept for backward compability
+json.type activity.model_name == 'Entity' ? 'author' : activity.model_name.downcase
+json.created_at activity.ts

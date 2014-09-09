@@ -2,8 +2,8 @@ module Events
   module Irc
     class Message < Protocol
 
-      def title
-        message
+      def digest_seed
+        channel + nickname +  message + origin_ts.to_s + self.class.name
       end
 
       def message
@@ -14,12 +14,8 @@ module Events
         "http://webchat.freenode.net/?channels=#{channel}"
       end
 
-      def origin_author_name
-        nickname
-      end
-
       def nickname
-        source_data.andand[:nickname]        
+        source_data.andand[:nickname]
       end
 
       def origin_ts
@@ -34,10 +30,9 @@ module Events
         origin_ts.to_i
       end
 
-      def content_digest
-        calc_digest(channel + origin_author_name + origin_ts.to_s)
+      def title
+        message
       end
-      
     end
   end
 end

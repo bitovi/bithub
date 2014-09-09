@@ -4,4 +4,3 @@ json.upvoted_events user.upvotes_as_actor.map {|u| u.applies_to_id}
   
 json.score user.score
 json.avatar_url user.props['avatar_url']
-json.size user.props['size']

@@ -1,0 +1,164 @@
+-
+  name: 'digest'
+  display_name: 'Digest'
+  tags: []
+  constraints:
+    -
+      feed_name: 'twitter'
+      type_name: 'follow'
+    -
+      feed_name: 'github'
+      type_name: 'fork'
+    -
+      feed_name: 'github'
+      type_name: 'watch'
+
+-
+  name: 'twitter'
+  display_name: 'Twitter'
+  tags: []
+  constraints:
+    -
+      feed_name: 'twitter'
+      type_name: 'tweet'
+
+-
+  name: 'comment'
+  display_name: 'Comment'
+  tags: []
+  constraints:
+    -
+      feed_name: 'disqus'
+      type_name: 'comment'
+
+-
+  name: 'github_comment'
+  display_name: 'Github comment'
+  tags: []
+  constraints:
+    -
+      feed_name: 'github'
+      type_name: 'commit_comment'
+    -
+      feed_name: 'github'
+      type_name: 'commit_comment'
+    -
+      feed_name: 'github'
+      type_name: 'issue_comment'
+    -
+      feed_name: 'github'
+      type_name: 'pull_request_review_comment'
+
+-
+  name: 'code'
+  display_name: 'Code'
+  tags: []
+  constraints:
+    -
+      feed_name: 'github'
+      type_name: 'commit'
+    -
+      feed_name: 'github'
+      type_name: 'push'
+    -
+      feed_name: 'github'
+      type_name: 'pull_request'
+    -
+      feed_name: 'github'
+      type_name: 'create'
+    -
+      feed_name: 'github'
+      type_name: 'public'
+
+# -
+#   name: 'question'
+#   display_name: 'Question'
+#   tags: []
+#   constraints:
+#     -
+#       feed_name: 'twitter'
+#       type_name: 'follow'
+
+-
+  name: 'chat'
+  display_name: 'Chat'
+  tags: []
+  constraints:
+    -
+      feed_name: 'irc'
+      type_name: 'message'
+
+-
+  name: 'article'
+  display_name: 'Article'
+  tags: []
+  constraints:
+    -
+      feed_name: 'rss'
+      type_name: 'post'
+    -
+      feed_name: 'bithub'
+      type_name: 'post'
+    -
+      feed_name: 'disqus'
+      type_name: 'post'
+
+-
+  name: 'issue'
+  display_name: 'Issue'
+  tags: []
+  constraints:
+    -
+      feed_name: 'github'
+      type_name: 'issue'
+    -
+      feed_name: 'github'
+      type_name: 'issue_action'
+
+-
+  name: 'bug'
+  display_name: 'Bug'
+  tags: ['bug']
+  constraints:
+    -
+      feed_name: 'github'
+      type_name: 'issue'
+
+-
+  name: 'feature'
+  display_name: 'Feature'
+  tags: ['feature', 'feature_request', 'enhancement']
+  constraints:
+    -
+      feed_name: 'github'
+      type_name: 'issue'
+
+-
+  name: 'event'
+  display_name: 'Event'
+  tags: ['event']
+  constraints:
+    -
+      feed_name: 'meetup'
+      type_name: 'event'
+    -
+      feed_name: 'bithub'
+      type_name: 'post'
+
+-
+  name: 'app'
+  display_name: 'App'
+  tags: ['app']
+  constraints:
+    -
+      feed_name: 'bithub'
+      type_name: 'post'
+
+-
+  name: 'plugin'
+  display_name: 'Plugin'
+  tags: ['plugin']
+  constraints:
+    -
+      feed_name: 'bithub'
+      type_name: 'post'

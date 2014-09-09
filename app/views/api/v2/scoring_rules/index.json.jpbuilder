@@ -1,0 +1,6 @@
+json.count @scoring_rules_count
+json.set! :data do
+  json.array! @rules do |r|
+    json.partial! "api/v2/scoring_rules/rule", rule: r
+  end
+end
