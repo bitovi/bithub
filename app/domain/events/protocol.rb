@@ -72,10 +72,6 @@ module Events
       @type_name ||= feed_and_type_name[1]
     end
 
-    def type_name_sym
-      type_name.to_sym
-    end
-
     def ==(other)
       @source_data == other
     end
@@ -105,16 +101,3 @@ module Events
     end
   end
 end
-
-require 'events/feeds/bithub/bithub'
-require 'events/feeds/github/github'
-require 'events/feeds/twitter/twitter'
-require 'events/feeds/disqus/disqus'
-require 'events/feeds/forum/forum'
-require 'events/feeds/blog/blog'
-require 'events/feeds/irc/irc'
-require 'events/feeds/meetup/meetup'
-require 'events/feeds/stackexchange/stackexchange'
-require 'events/feeds/facebook/facebook'
-require 'events/feeds/rss/rss'
-require 'events/feeds/foursquare/foursquare'

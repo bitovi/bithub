@@ -1,0 +1,23 @@
+require 'domain/events/spec_helper'
+
+describe Events::Twitter::FollowEvent do
+
+  let(:raw_follow) do
+    raw_data(response_path: 'twitter/follow_event.json')
+  end
+
+  subject(:follow) do
+    Events::Twitter::FollowEvent.new(raw_follow)
+  end
+
+  describe "#content_digest" do
+    it "should calculate the content_digest based on source_id, target_id and class name" do
+      seed =  raw_follow['source']['id'].to_s
+      seed += raw_follow['target']['id'].to_s
+
+      # commented out for a reason, see https://trello.com/c/bp838B0l/57-digest-calculation-is-broken-for-all-feeds
+      # seed += "Events::Twitter::Follow"
+      expect(follow.digest_seed).to eq seed
+    end
+  end
+end

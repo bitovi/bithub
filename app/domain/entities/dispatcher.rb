@@ -74,19 +74,28 @@ module Entities
     class Dispatcher
 
       Mappings = {
-        :CustomIssue => :Issue,
-        :CustomWatch => :Watch,
-        :CustomIssueComment => :IssueComment,
+        :IssueEvent => :Issue,
+        :IssueCommentEvent => :IssueComment,
+        :PullRequestEvent => :PullRequest,
+        :PullRequestReviewEvent => :PullRequestReview,
+        :WatchEvent => :Watch,
+        :ForkEvent => :Fork,
+        :PushEvent => :Push,
+        :CreateEvent => :Create,
+        :DeleteEvent => :Delete,
+        :CustomIssueEvent => :Issue,
+        :CustomWatchEvent => :Watch,
+        :CustomIssueCommentEvent => :IssueComment,
       }
 
       def initialize(event)
         @event = event
-        @mappings = Hash.new(@event.type_name_sym)
+        @mappings = Hash.new(@event.type_name)
         @mappings.merge!(Mappings)
       end
 
       def remapped_type
-        @mappings[@event.type_name_sym]
+        @mappings[@event.type_name.to_sym]
       end
 
       def type
@@ -121,22 +130,26 @@ module Entities
     class Dispatcher
 
       Mappings = {
-        :CustomFollow => :Follow,
-        :FakeFollow => :Follow,
+        :TweetEvent => :Tweet,
+        :FollowEvent => :Follow,
+        :CustomFollowEvent => :Follow,
+        :FakeFollowEvent => :Follow,
       }
 
       def initialize(event)
         @event = event
-        @mappings = Hash.new(@event.type_name_sym)
+        @mappings = Hash.new(@event.type_name)
         @mappings.merge!(Mappings)
       end
 
       def remapped_type
-        @mappings[@event.type_name_sym]
+        @mappings[@event.type_name.to_sym]
       end
 
       def type
-        Twitter.const_get(remapped_type) if Twitter.constants.include?(remapped_type)
+        if Twitter.constants.include?(remapped_type)
+          Twitter.const_get(remapped_type)
+        end
       end
     end
   end
@@ -144,7 +157,7 @@ module Entities
   module Bithub
     class Dispatcher < BasicTypeDispatcher
       def type
-        Bithub.const_get(@event.type_name_sym) if Bithub.constants.include?(@event.type_name_sym)
+        Bithub.const_get(@event.type_name) if Bithub.constants.include?(@event.type_name)
       end
     end
   end
@@ -152,7 +165,7 @@ module Entities
   module Meetup
     class Dispatcher < BasicTypeDispatcher
       def type
-        Meetup.const_get(@event.type_name_sym) if Meetup.constants.include?(@event.type_name_sym)
+        Meetup.const_get(@event.type_name) if Meetup.constants.include?(@event.type_name)
       end
     end
   end
@@ -160,7 +173,7 @@ module Entities
   module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
-        Stackexchange.const_get(@event.type_name_sym)
+        Stackexchange.const_get(@event.type_name)
       end
     end
   end
@@ -216,7 +229,6 @@ module Entities
   module Foursquare
     class Dispatcher < BasicTypeDispatcher
       def type
-        ### TODO,
         Entities::Foursquare::Checkin
       end
     end

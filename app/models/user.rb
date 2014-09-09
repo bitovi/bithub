@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
   def collect_authored_entities
     identities.each do |ident|
       Entity.origin_author(ident.uid).find_each do |entity|
-        entity.author = self # TODO better way of changing owners?
+        entity.author = self
       end
     end
   end
