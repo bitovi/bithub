@@ -1,0 +1,49 @@
+module Events
+  module Twitter
+
+    class FollowEvent < Protocol
+      extend Forwardable
+
+      def_delegator :@source, :id, :source_id
+      def_delegator :@source, :screen_name, :source_screen_name
+
+      def_delegator :@target, :id, :target_id
+      def_delegator :@target, :screen_name, :target_screen_name
+
+      # FIXME should append class name
+      def digest_seed
+        source_id.to_s + target_id.to_s #+ self.class.name
+      end
+
+      def created_at
+        Time.parse(@data.andand[:created_at]).utc
+      end
+
+      def validate_source_and_target
+        if we_are_source? and not(we_are_target?)
+          @errors += "Follow event - we should be the target, not the source"
+          @context = [ { source: source }, { target: target } ]
+          false
+        end
+      end
+
+      def wrap_response
+        @source ||= Wrappers::Twitter::User.new(source_data.andand[:source])
+        @target ||= Wrappers::Twitter::User.new(source_data.andand[:target])
+        self
+      end
+      attr_reader :source, :target
+
+      private
+
+      def we_are_target?
+        %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? target_screen_name
+      end
+
+      def we_are_source?
+        %w(bitovi canjs javascriptmvc jquerypp stealjs funcunit bitovi_bithub).include? source_screen_name
+      end
+    end
+
+  end
+end

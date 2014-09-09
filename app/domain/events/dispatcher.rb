@@ -100,9 +100,9 @@ module Events
 
       def type
         unless @source_data[:scheduled_at].blank?
-          Events::Bithub::Event
+          Events::Bithub::EventEvent
         else
-          Events::Bithub::Post
+          Events::Bithub::PostEvent
         end
       end
 
@@ -114,7 +114,7 @@ module Events
       attr_accessor :source_data
 
       Mappings = {
-        :Issues => :Issue,
+        :IssuesEvent => :IssueEvent
       }
 
       def initialize(sd)
@@ -137,11 +137,11 @@ module Events
 
       def type_name
         if github_event?
-          @source_data[:type].camel_case.gsub(/Event/,'').camel_case.to_sym
+          @source_data[:type].camel_case.to_sym
         elsif github_issue?
-          :CustomIssue
+          :CustomIssueEvent
         elsif @source_data[:custom_watch]
-          :CustomWatch
+          :CustomWatchEvent
         end
       end
 
@@ -164,9 +164,9 @@ module Events
 
       def type
         if @source_data[:rsvp_id]
-          Events::Meetup::Rsvp
+          Events::Meetup::RsvpEvent
         elsif @source_data[:event_url]
-          Events::Meetup::Event
+          Events::Meetup::EventEvent
         end
       end
     end
@@ -188,13 +188,13 @@ module Events
 
       def type_name
         if is_follow_event?
-          :Follow
+          :FollowEvent
         elsif is_fake_follow_event?
-          :FakeFollow
+          :FakeFollowEvent
         elsif is_status_event?
-          :Tweet
+          :TweetEvent
         elsif source_data[:custom_follow]
-          :CustomFollow
+          :CustomFollowEvent
         end
       end
 
@@ -216,7 +216,7 @@ module Events
   module Facebook
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Facebook::Status
+        Events::Facebook::StatusEvent
       end
     end
   end
@@ -224,15 +224,7 @@ module Events
   module Stackexchange
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Stackexchange::Question
-      end
-    end
-  end
-
-  module Blog
-    class Dispatcher < BasicTypeDispatcher
-      def type
-        Events::Blog::Post
+        Events::Stackexchange::QuestionEvent
       end
     end
   end
@@ -240,7 +232,7 @@ module Events
   module Rss
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Rss::Post
+        Events::Rss::PostEvent
       end
     end
   end
@@ -248,15 +240,7 @@ module Events
   module Disqus
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Disqus::Post
-      end
-    end
-  end
-
-  module Forum
-    class Dispatcher < BasicTypeDispatcher
-      def type
-        Events::Forum::Post
+        Events::Disqus::PostEvent
       end
     end
   end
@@ -264,7 +248,7 @@ module Events
   module Irc
     class Dispatcher < BasicTypeDispatcher
       def type
-        Events::Irc::Message
+        Events::Irc::MessageEvent
       end
     end
   end
@@ -273,7 +257,7 @@ module Events
     class Dispatcher < BasicTypeDispatcher
       def type
         ### add some logic
-        Events::Foursquare::Checkin
+        Events::Foursquare::CheckinEvent
       end
     end
   end
