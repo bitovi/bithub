@@ -1,15 +1,4 @@
 GIT
-  remote: git://github.com/neektza/rmeetup.git
-  revision: 1d290142eb3a5ee329111620ecefe0140c6b2da8
-  branch: master
-  specs:
-    rMeetup (2.0.0)
-      buftok (~> 0.2)
-      http (~> 0.6)
-      http_parser.rb (~> 0.6)
-      json (~> 1.8)
-
-GIT
   remote: git://github.com/RKushnir/foursquare2.git
   revision: eeeb63b84611b1c4294cabf66209f9caae9a8cbd
   branch: master
@@ -17,14 +6,6 @@ GIT
     foursquare2 (1.9.8)
       faraday (~> 0.9)
       hashie (>= 1.0, < 3.0.0)
-
-GIT
-  remote: git://github.com/neektza/muster.git
-  revision: 7a9a58c62f81db0339db8984340d9706c18bc7cd
-  specs:
-    muster (0.0.9)
-      activesupport (>= 3.0)
-      rack (~> 1.4)
 
 GIT
   remote: git://github.com/influitive/omniauth-disqus.git
@@ -41,6 +22,25 @@ GIT
     omniauth-stackexchange (0.2.0)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
+
+GIT
+  remote: git://github.com/neektza/muster.git
+  revision: 7a9a58c62f81db0339db8984340d9706c18bc7cd
+  specs:
+    muster (0.0.9)
+      activesupport (>= 3.0)
+      rack (~> 1.4)
+
+GIT
+  remote: git://github.com/neektza/rmeetup.git
+  revision: 1d290142eb3a5ee329111620ecefe0140c6b2da8
+  branch: master
+  specs:
+    rMeetup (2.0.0)
+      buftok (~> 0.2)
+      http (~> 0.6)
+      http_parser.rb (~> 0.6)
+      json (~> 1.8)
 
 GIT
   remote: git://github.com/vdragsic/apartment.git
