@@ -14,6 +14,10 @@ module Events
       :Forums => :Forum,
     }
 
+    def self.deserialize(event)
+      self.dispatch(event.source_data, event.feed_name)
+    end
+
     def self.dispatch(data, hint = nil)
       self.new(data, hint).dispatch
     end
