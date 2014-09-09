@@ -293,6 +293,10 @@ class Entity < ActiveRecord::Base
 
   alias_method :upvotes_sum, :sum_upvotes
 
+  def deserialize
+    Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)
+  end
+
   private
 
   def reformat_uniqueness_validation
