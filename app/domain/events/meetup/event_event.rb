@@ -12,10 +12,13 @@ module Events
       attr_reader :venue
 
       def digest_seed
-        id + url + name +
-        description + status +
-        host_ids_csv.to_s +
-        self.class.name
+        id\
+          + url\
+          + name\
+          + description\
+          + status\
+          + host_ids_csv.to_s\
+          + self.class.name
       end
 
       def scheduled_at

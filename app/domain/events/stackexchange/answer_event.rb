@@ -13,9 +13,9 @@ module Events
       attr_reader :comments, :owner
 
       def digest_seed
-        @answer.answer_id.to_s +
-          (last_activity_date || creation_date).to_s +
-          self.class.name
+        @answer.answer_id.to_s\
+          + (last_activity_date || creation_date).to_s\
+          + self.class.name
       end
 
       def wrap_response

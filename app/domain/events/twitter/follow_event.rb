@@ -10,9 +10,8 @@ module Events
       def_delegator :@target, :id, :target_id
       def_delegator :@target, :screen_name, :target_screen_name
 
-      # FIXME should append class name
       def digest_seed
-        source_id.to_s + target_id.to_s #+ self.class.name
+        source_id.to_s + target_id.to_s + self.class.name
       end
 
       def created_at
