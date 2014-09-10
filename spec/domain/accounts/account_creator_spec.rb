@@ -7,8 +7,7 @@ RSpec.describe Accounts::AccountCreator, :type => :domain do
 
   describe "#create" do
     it "creates intializes and saves user along with assigning the identity to it"
-    it "delegates creation of missing stars and repos to FakeDigestsCreator"
-    it "invokes calculation of appropriate avatar_url"
     it "invokes point calculation for linking identities"
+    it "invokes calculation of appropriate avatar_url"
   end
 end
