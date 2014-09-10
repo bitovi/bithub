@@ -49,18 +49,9 @@ module Events
 
     def content_digest
       if respond_to?(:digest_seed)
-        calc_digest(digest_seed)
+        Digest::MD5.hexdigest(digest_seed)
       else
         fail BuildingError.new("Don't know how to build a digest seed.", nice_name)
-      end
-    end
-
-    # FIXME FIXME FIXME FIXME FIXME FIXME
-    def calc_digest(seed)
-      @digest ||= if (self.class == Events::Twitter::Follow) || (self.class == Events::Twitter::FakeFollow)
-        Digest::MD5.hexdigest(seed + "Events::Twitter::Follow")
-      else
-        Digest::MD5.hexdigest(seed + self.class.name)
       end
     end
 
