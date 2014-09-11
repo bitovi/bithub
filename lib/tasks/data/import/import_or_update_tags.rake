@@ -2,12 +2,12 @@ namespace :data do
   desc "Imports/updates tags from YAML file"
   task :import_or_update_tags => :environment do
 
-    puts "---"
-    puts "Importing/updating tags"
+    Rails.logger.info "---"
+    Rails.logger.info "Importing/updating tags"
 
     if tenant = ENV['TENANT']
       Apartment::Database.switch tenant
-      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
+      Rails.logger.info "Tenant switched to '#{Apartment::Database.current_tenant}'"
     end
 
     tags = YAML::load_file('config/tag_definitions.yml')
@@ -33,10 +33,10 @@ namespace :data do
       end
     end
 
-    puts "Summary:"
-    puts "  #{imported.length} tags imported"
-    puts "  #{updated.length} tags updated"
-    puts "  #{failed.length} tags failed: #{failed.to_s}"
+    Rails.logger.info "Summary:"
+    Rails.logger.info "  #{imported.length} tags imported"
+    Rails.logger.info "  #{updated.length} tags updated"
+    Rails.logger.info "  #{failed.length} tags failed: #{failed.to_s}"
 
   end
 end
