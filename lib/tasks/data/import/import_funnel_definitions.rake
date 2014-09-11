@@ -2,12 +2,12 @@ namespace :data do
   desc "Imports funnel determinations from YAML file"
   task :import_funnel_definitions => :environment do
 
-    puts "---"
-    puts "Importing funnel definitions"
+    Rails.logger.info "---"
+    Rails.logger.info "Importing funnel definitions"
 
     if tenant = ENV['TENANT']
       Apartment::Database.switch tenant
-      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
+      Rails.logger.info "Tenant switched to '#{Apartment::Database.current_tenant}'"
     end
 
     definitions = YAML::load_file('config/funnel_definitions.yml')
@@ -23,9 +23,9 @@ namespace :data do
       end
 
       if funnel.save
-        puts "Importing funnel '#{d['name']}' successful"
+        Rails.logger.info "Importing funnel '#{d['name']}' successful"
       else
-        puts "Importing funnel '#{d['name']}' failed"
+        Rails.logger.info "Importing funnel '#{d['name']}' failed"
       end
     end
 
