@@ -9,6 +9,7 @@ FactoryGirl.define do
   factory :user do
     name "Nikica"
     email "neektza@gmail.com"
+    total_score 0
 
     trait :with_completed_profile do
       address "Vukovarska"
@@ -19,6 +20,10 @@ FactoryGirl.define do
     end
 
     props Hash.new
+
+    after :create do |user|
+      user.join_brand('testy')
+    end
 
     trait :with_both_idents do
       after :build do |user|
