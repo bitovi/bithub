@@ -1,0 +1,29 @@
+- name: "Clone ruby-build repo"
+  git: repo=https://github.com/sstephenson/ruby-build.git dest=/tmp/ruby-build
+
+- name: "Install ruby-build"
+  shell: ./install.sh
+  args:
+    chdir: /tmp/ruby-build
+
+- name: "Build ruby"
+  shell: "ruby-build {{ ruby.version }} /opt/ruby-{{ ruby.version }}"
+
+- name: "Symlink ruby executables"
+  file: src=/opt/ruby-{{ ruby.version }}/bin/{{ item }} dest=/usr/local/bin/{{ item }} state=link
+  with_items:
+    - ruby
+    - irb
+    - gem
+    - rake
+
+- name: "Install bundler"
+  shell: gem install bundler
+  # installation via 'gem' module does local install for 'root'
+
+- name: "Symlink bundler executables"
+  file: src=/opt/ruby-{{ ruby.version }}/bin/{{ item }} dest=/usr/local/bin/{{ item }} state=link
+  with_items:
+    - bundle
+    - bundler
+

@@ -1,0 +1,37 @@
+- name: Install PostgreSQL
+  apt: name={{ item }} state=installed force=yes
+  with_items:
+    - postgresql-{{ pg.version }}
+    - postgresql-contrib-{{ pg.version }}
+  notify:
+    - restart postgresql
+
+- name: Install psycopg2, used by postgresql_* modules
+  apt: name=python-psycopg2 state=installed
+
+- name: Copy postgresql.conf
+  copy: src=postgresql.conf dest=/etc/postgresql/{{ pg.version }}/main/postgresql.conf
+  notify:
+    - restart postgresql
+
+- name: Copy pg_ident.conf
+  copy: src=pg_ident.conf dest=/etc/postgresql/{{ pg.version }}/main/pg_ident.conf
+  notify:
+    - restart postgresql
+
+- name: Copy pg_hba.conf
+  copy: src=pg_hba.conf dest=/etc/postgresql/{{ pg.version }}/main/pg_hba.conf
+  notify:
+    - restart postgresql
+
+- name: Restart PostgreSQL
+  service: name=postgresql state=restarted
+
+- name: Create db
+  postgresql_db: name={{ pg.dbname }}
+                 encoding='UTF-8'
+
+- name: Create user
+  postgresql_user: name={{ pg.username }} 
+                   db={{ pg.dbname }}
+                   role_attr_flags=CREATEDB,NOSUPERUSER
