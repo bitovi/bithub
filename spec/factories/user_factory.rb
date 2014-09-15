@@ -19,6 +19,11 @@ FactoryGirl.define do
       association :country, factory: :country
     end
 
+    trait :without_email do
+      email nil
+    end
+
+
     props Hash.new
 
     after :create do |user|
