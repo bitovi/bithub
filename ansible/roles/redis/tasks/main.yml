@@ -2,6 +2,5 @@
   apt: name={{ item }} state=installed
   with_items:
     - redis-server
-    - redis-tools
   notify:
     - restart redis

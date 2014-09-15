@@ -4,8 +4,11 @@
     - python-apt
     - aptitude
 
-- name: Point apt sources to Debian unstable repos
+- name: Update apt sources.list
   copy: src=sources.list dest=/etc/apt/sources.list
+
+- name: Add postgresql repo keys
+  shell: "wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -"
 
 - name: Run apt-get update
   apt: update_cache=yes
@@ -13,8 +16,8 @@
 - name: Run aptitude safe-upgrade
   apt: upgrade=safe
 
-- name: Install grub
-  shell: grub-install /dev/sda
+# - name: Install grub
+#   shell: grub-install /dev/sda
 
 - name: Install common deps
   apt: name={{ item }} state=installed
@@ -29,4 +32,7 @@
     - wget
     - ca-certificates
     - curl
+    - libcurl4-openssl-dev
     - unzip
+    - imagemagick
+    - libmagickwand-dev

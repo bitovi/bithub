@@ -6,7 +6,7 @@ timeout 30
 preload_app true
 
 # Unix socket
-listen "unix:./tmp/sockets/unicorn.sock", :backlog => 64
+listen "unix:/tmp/bithub_unicorn.sock", :backlog => 64
 
 # PID
 pid "./tmp/pids/unicorn.pid"

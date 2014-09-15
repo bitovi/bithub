@@ -1,22 +1,22 @@
 development:
   adapter: postgresql
-  host: localhost
   encoding: utf8
   database: bithub_development
   username: bithub
-  host: localhost
+  password: ainie/h8Mie6
+  socket: /var/run/postgresql/.s.PGSQL.5432
 
 test:
   adapter: postgresql
   host: localhost
-  encoding: unicode
+  encoding: utf8
   database: bithub_test
   username: bithub
-  host: localhost
+  socket: /var/run/postgresql/.s.PGSQL.5432
 
 testing:
   adapter: postgresql
-  encoding: unicode
+  encoding: utf8
   database: bithub2
   pool: 5
   username: bithub
@@ -25,7 +25,7 @@ testing:
 
 staging:
   adapter: postgresql
-  encoding: unicode
+  encoding: utf8
   database: bithub2
   pool: 5
   username: bithub
@@ -34,7 +34,7 @@ staging:
 
 production:
   adapter: postgresql
-  encoding: unicode
+  encoding: utf8
   database: bithub2
   pool: 5
   username: bithub

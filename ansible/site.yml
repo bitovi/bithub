@@ -6,17 +6,21 @@
     rabbitmq:
       username: "bithub"
       vhost: "/bithub"
-      password: "foobar"
+      password: "ainie/h8Mie6"
     pg:
       version: "9.3"
       dbname: "bithub"
+      username: "bithub_development"
+      password: "ainie/h8Mie6"
+    bithub:
       username: "bithub"
-    ruby:
-      version: "2.1.1"
+      password: "ainie/h8Mie6"
+      project_path: "/vagrant"
+      ruby_version: "2.1.1"
   roles:
     - { role: common,     tags: ["common"] }
     - { role: nginx,      tags: ["nginx"] }
     - { role: postgresql, tags: ["postgresql"] }
     - { role: rabbitmq,   tags: ["rabbitmq"] }
     - { role: redis,      tags: ["redis"] }
-    - { role: ruby,       tags: ["ruby"] }
+    - { role: bithub,     tags: ["bithub"] }
