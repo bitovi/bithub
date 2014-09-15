@@ -2,8 +2,8 @@ require 'domain/spec_helper'
 
 RSpec.describe Activities::Awarder, :type => :domain do
 
-  let(:actor) { FactoryGirl.create(:user) }
-  let(:entity) { FactoryGirl.create(:determined_entity) }
+  let(:actor) { FactoryGirl.create(:user, name: "Nikica") }
+  let(:entity) { FactoryGirl.create(:determined_entity, title: "Entity in Awarder specs") }
   subject(:awarder) { Activities::Awarder.new(actor, entity) }
 
   describe "#provided_strategy" do
@@ -31,16 +31,28 @@ RSpec.describe Activities::Awarder, :type => :domain do
   end
 
   describe "#award" do
-    it "responds with a created award based on strategy and provided actor and entity"
-    it "responds with nil if the award could not be provided"
+    it "responds with a created award based on strategy and provided actor and entity" do
+      e = FactoryGirl.create(:determined_entity)
+      FactoryGirl.create(:upvote, actor: actor, value: 5, applies_to: e)
+      award = Activities::Awarder.new(actor, e).award
+
+      expect(award).to be
+      expect(award).to be_an_instance_of(Award)
+    end
+
+    it "responds with nil if the award could not be provided" do
+      e = FactoryGirl.create(:determined_entity)
+      award = Activities::Awarder.new(actor, e).award(strategy: :wrong_strategy)
+
+      expect(award).to be_nil
+    end
   end
 
   describe "#double_upvote_value" do
     it "responds with an award value that is equal to doubled total upvotes" do
       e = FactoryGirl.create(:determined_entity)
-      FactoryGirl.create(:upvote, actor: actor, value: 7, applies_to: e)
-
-      expect(Activities::Awarder.new(actor, e).double_upvote_value).to eq 14
+      FactoryGirl.create(:upvote, actor: actor, value: 5, applies_to: e)
+      expect(Activities::Awarder.new(actor, e).double_upvote_value).to eq 10
     end
   end
 
@@ -57,6 +69,12 @@ RSpec.describe Activities::Awarder, :type => :domain do
   end
 
   describe "#rule_based_value" do
-    it "responds with an award value that is specified by a scoring rule that is associated to the entity"
+    it "responds with an award value that is specified by a scoring rule that is associated to the entity" do
+      r = FactoryGirl.create(:scoring_rule)
+      e = FactoryGirl.create(:determined_entity, scoring_rule: r)
+
+      awarder = Activities::Awarder.new(actor, e)
+      expect(awarder.rule_based_value).to eq(r.award_value)
+    end
   end
 end
