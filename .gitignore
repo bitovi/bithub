@@ -1,7 +1,8 @@
-/db/*.sqlite3
+db/*.sqlite3
 log/*.log
 tmp/
-.bundle
+bin/
+.bundle/
 .DS_Store
 public/uploads
 .vagrant/
