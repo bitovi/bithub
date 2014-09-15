@@ -2,8 +2,8 @@ namespace :data do
   desc "Create/update countries"
   task :import_or_update_countries => :environment do
 
-    puts "---"
-    puts "Importing/updating countries"
+    Rails.logger.info "---"
+    Rails.logger.info "Importing/updating countries"
 
     countries = YAML::load_file('config/countries.yml')
     updated = []
@@ -18,10 +18,10 @@ namespace :data do
       end      
     end
 
-    puts "Summary:"
-    puts "  #{imported.length} countries imported"
-    puts "  #{updated.length} countries updated"
-    puts "  #{failed.length} countries failed: #{failed.to_s}"
+    Rails.logger.info "Summary:"
+    Rails.logger.info "  #{imported.length} countries imported"
+    Rails.logger.info "  #{updated.length} countries updated"
+    Rails.logger.info "  #{failed.length} countries failed: #{failed.to_s}"
 
   end
 end

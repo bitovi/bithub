@@ -4,7 +4,10 @@ require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 require 'spec_helper'
 require 'rspec/rails'
 
-CodeClimate::TestReporter.start if ENV['RAILS_ENV'] == 'test'
+if ENV['RAILS_ENV'] == 'testing'
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+end
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 

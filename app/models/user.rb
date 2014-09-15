@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
   end
 
   def calculate_avatar_url
-    props['avatar_url'] = Users::AvatarCalculator.new(self).execute
+    props['avatar_url'] = Users::AvatarCalculator.new(self).calculate
   end
 
   def async_collect_authored_entities

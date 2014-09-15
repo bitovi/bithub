@@ -1,8 +1,6 @@
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $:.unshift PROJECT_ROOT
 
-require 'codeclimate-test-reporter'
-
 require 'rspec'
 require 'rspec/mocks'
 
@@ -15,7 +13,26 @@ require 'spec/test_helper_methods'
 Celluloid.logger.level = Logger::ERROR
 
 RSpec.configure do |config|
-  config.after(:suite) { Celluloid.shutdown }
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with :truncation, {
+      :except => %w(tags scoring_rules funnels funnel_constraints funnel_constraints_funnels)
+    }
+
+    DatabaseCleaner.strategy = :transaction
+
+    Apartment::Database.drop('testy') rescue nil
+    Brand.create :name => 'testy', :tenant_name =>'testy'
+  end
+
+  config.after(:suite) do
+    Apartment::Database.drop 'testy' rescue nil
+    Celluloid.shutdown
+  end
+
+  config.before(:each) do
+    Apartment::Database.switch 'testy'
+  end
 
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
