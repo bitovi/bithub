@@ -3,6 +3,7 @@
   with_items:
     - postgresql-{{ pg.version }}
     - postgresql-contrib-{{ pg.version }}
+    - postgresql-server-dev-{{ pg.version }}
   notify:
     - restart postgresql
 
@@ -27,6 +28,14 @@
 - name: Restart PostgreSQL
   service: name=postgresql state=restarted
 
+- name: Create hstore,intarray extensions in template1 database
+  command: psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS {{ item }}"
+  with_items:
+    - "hstore"
+    - "intarray"
+  sudo: True
+  sudo_user: postgres
+
 - name: Create db
   postgresql_db: name={{ pg.dbname }}
                  encoding='UTF-8'
@@ -34,4 +43,5 @@
 - name: Create user
   postgresql_user: name={{ pg.username }} 
                    db={{ pg.dbname }}
+                   password={{ pg.password }}
                    role_attr_flags=CREATEDB,NOSUPERUSER

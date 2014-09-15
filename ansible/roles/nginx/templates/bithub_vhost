@@ -19,7 +19,7 @@ server {
     }
 
     location @api {
-        proxy_pass          http://unix:/vagrant/tmp/sockets/unicorn.sock;
+        proxy_pass          http://unix:/tmp/bithub_unicorn.sock;
     	proxy_redirect      off;
 
         proxy_set_header    Host             $host;

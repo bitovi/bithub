@@ -1,0 +1,77 @@
+- name: "Create bithub user"
+  user: name={{ bithub.username }} password={{ bithub.password }} shell=/bin/bash group=vagrant append=yes
+
+- name: "Check if ruby is already installed"
+  stat: path=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/ruby
+  register: st_ruby
+
+- name: "Clone ruby-build repo"
+  git: repo=https://github.com/sstephenson/ruby-build.git dest=/tmp/ruby-build
+
+- name: "Install ruby-build"
+  shell: ./install.sh
+  args:
+    chdir: /tmp/ruby-build
+
+- name: "Build ruby"
+  shell: ruby-build {{ bithub.ruby_version }} /home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+  when: not st_ruby.stat.exists
+    
+
+- name: "Create user bin dir"
+  file: dest=/home/{{ bithub.username }}/bin state=directory
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: "Symlink ruby executables"
+  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/{{ item }} dest=/home/{{ bithub.username}}/bin/{{ item }} state=link
+  with_items:
+    - ruby
+    - irb
+    - gem
+    - rake
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: "Install bundler"
+  command: gem install bundler
+  environment:
+    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: "Symlink ruby executables"
+  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/{{ item }} dest=/home/{{ bithub.username}}/bin/{{ item }} state=link
+  with_items:
+    - bundle
+    - bundler
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: Run bundle install
+  command: bundle install
+  args:
+    chdir: "{{ bithub.project_path }}"
+  environment:
+    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: "Symlink foreman"
+  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/foreman dest=/home/{{ bithub.username}}/bin/foreman state=link
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+
+- name: "Run rake tasks for db creating and migrating"
+  command: rake {{ item }}
+  args:
+    chdir: "{{ bithub.project_path }}"
+  environment:
+    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
+  sudo: True
+  sudo_user: "{{ bithub.username }}"
+  with_items:
+    - "db:create"
+    - "db:migrate"
