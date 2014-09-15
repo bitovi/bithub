@@ -7,7 +7,7 @@ module Users
       @user = user
     end
 
-    def execute
+    def calculate
       maybe_gravatar || maybe_source_data || DefaultUrl
     end
 
@@ -23,8 +23,7 @@ module Users
       if @user.email.present?
         gravatar = "http://gravatar.com/avatar/#{Digest::MD5.hexdigest(@user.email)}"
 
-        # skip making HTTP request in tests
-        return gravatar if Rails.env == "test"
+        return gravatar if (Rails.env == "test" && ENV['TRAVIS'].nil?)
 
         begin
           response = Net::HTTP.get_response(URI.parse(gravatar + '?d=404'))
