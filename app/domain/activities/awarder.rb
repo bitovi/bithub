@@ -7,8 +7,8 @@ module Activities
       @applies_to = applies_to
     end
 
-    def award(opts)
-      if (valid_strategy?(provided_strategy(opts)) && (@award = Award.create(actor: actor, applies_to: applies_to, value: self.send(@strategy))))
+    def award(opts = {})
+      if (valid_strategy?(provided_strategy(opts)) && (@award = Award.create(actor: @actor, applies_to: @applies_to, value: self.send(@strategy))))
         async_exec_post_award_actions
         @award
       end
@@ -22,13 +22,13 @@ module Activities
     end
 
     def async_exec_post_award_actions
-      @applies_to.author.async_update_total_score if self.applies_to.author
-      @applies_to.author.async_reward_if_eligible if self.applies_to.author
+      @applies_to.author.async_update_total_score if @applies_to.author
+      @applies_to.author.async_reward_if_eligible if @applies_to.author
     end
 
     def async_exec_post_unaward_actions
-      @applies_to.author.async_update_total_score if self.applies_to.author
-      @applies_to.author.async_unreward_if_uneligible if self.applies_to.author
+      @applies_to.author.async_update_total_score if @applies_to.author
+      @applies_to.author.async_unreward_if_uneligible if @applies_to.author
     end
 
     # Strategies
