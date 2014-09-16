@@ -8,6 +8,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
 
+  config.ssh.forward_agent = true
+
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/site.yml"
     ansible.sudo = true

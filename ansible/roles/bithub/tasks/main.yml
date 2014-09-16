@@ -1,6 +1,13 @@
 - name: "Create bithub user"
   user: name={{ bithub.username }} password={{ bithub.password }} shell=/bin/bash group=vagrant append=yes
 
+- name: "Copying yours id_rsa.pub to bithub's authorized_keys"
+  authorized_key: user=bithub key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  ignore_errors: True
+
+- name: "Upon login chdir bithub user to the shared dir /vagrant"
+  template: src=.bash_profile dest=/home/{{ bithub.username }}/.bash_profile owner={{ bithub.username }} group=vagrant
+
 - name: "Check if ruby is already installed"
   stat: path=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/ruby
   register: st_ruby
