@@ -1,5 +1,8 @@
 - name: Install RabbitMQ
-  apt: name=rabbitmq-server state=installed
+  apt: name={{ item }} state=installed
+  with_items:
+    - rabbitmq-server
+    - amqp-tools
   notify:
     - restart rabbitmq
 
