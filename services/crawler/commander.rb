@@ -42,7 +42,7 @@ class Commander
   end
 
   def rabbitmq_uri
-    ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/bithub" }
+    ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/%2Fbithub" }
   end
 
 end

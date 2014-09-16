@@ -6,7 +6,7 @@
     rabbitmq:
       username: "bithub"
       vhost: "/bithub"
-      password: "ainie/h8Mie6"
+      password: "Ei7PhaaH"
     pg:
       version: "9.3"
       dbname: "bithub"
