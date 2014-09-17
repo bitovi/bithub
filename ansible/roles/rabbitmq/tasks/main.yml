@@ -1,0 +1,25 @@
+- name: Install RabbitMQ
+  apt: name={{ item }} state=installed
+  with_items:
+    - rabbitmq-server
+    - amqp-tools
+  notify:
+    - restart rabbitmq
+
+- name: Enable RabbitMQ management plugin
+  rabbitmq_plugin: names=rabbitmq_management state=enabled
+  notify:
+    - restart rabbitmq
+
+- name: Create vhost
+  rabbitmq_vhost: name={{ rabbitmq.vhost }} state=present
+
+- name: Create user
+  rabbitmq_user: user={{ rabbitmq.username }}
+                 password={{ rabbitmq.password }}
+                 force=yes
+                 vhost={{ rabbitmq.vhost }}
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present                 
