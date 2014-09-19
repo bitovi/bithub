@@ -335,6 +335,7 @@ GEM
     ranked-model (0.4.0)
       activerecord (>= 3.1.12)
     rb-fsevent (0.9.4)
+    rb-readline (0.5.1)
     redcarpet (3.1.2)
     redis (3.1.0)
     redis-actionpack (4.0.0)
@@ -543,6 +544,7 @@ DEPENDENCIES
   rake
   ranked-model
   rb-fsevent (~> 0.9)
+  rb-readline
   redcarpet
   redis
   redis-rails
