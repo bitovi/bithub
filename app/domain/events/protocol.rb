@@ -2,12 +2,14 @@ require_relative 'errors'
 require_relative 'traits/persistable'
 require_relative 'traits/serializable'
 require_relative 'traits/validatable'
+require_relative 'traits/normalizable'
 
 Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
   require f.gsub('app/domain/', '')
 end
 
 module Events
+
   module Github; end
   module Twitter; end
   module Forum; end
@@ -23,6 +25,7 @@ module Events
   class Protocol
     include CoreHelpers
     include Persistable
+    include Normalizable
     include Serializable
     include Validatable
 
@@ -35,33 +38,29 @@ module Events
       wrap_response if self.respond_to? :wrap_response
     end
 
+    def build
+      @instance = ::Event.new({
+        content_digest: content_digest,
+        source_data: source_data,
+        props: meta || {}
+      })
+      self
+    end
+
     def content_digest
       if respond_to?(:digest_seed)
-        calc_digest(digest_seed)
+        Digest::MD5.hexdigest(digest_seed)
       else
         fail BuildingError.new("Don't know how to build a digest seed.", nice_name)
       end
     end
 
-    # FIXME FIXME FIXME FIXME FIXME FIXME
-    def calc_digest(seed)
-      @digest ||= if (self.class == Events::Twitter::Follow) || (self.class == Events::Twitter::FakeFollow)
-        Digest::MD5.hexdigest(seed + "Events::Twitter::Follow")
-      else
-        Digest::MD5.hexdigest(seed + self.class.name)
-      end
-    end
-
     def feed_name
-      @feed_name ||= module_and_class_names[0]
+      @feed_name ||= feed_and_type_name[0]
     end
 
     def type_name
-      @type_name ||= module_and_class_names[1]
-    end
-
-    def type_name_sym
-      type_name.to_sym
+      @type_name ||= feed_and_type_name[1]
     end
 
     def ==(other)
@@ -86,22 +85,10 @@ module Events
         .uniq
     end
 
-    def module_and_class_names
+    private
+    def feed_and_type_name
       _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
       [@feed_name, @type_name]
     end
   end
 end
-
-require 'events/feeds/bithub/bithub'
-require 'events/feeds/github/github'
-require 'events/feeds/twitter/twitter'
-require 'events/feeds/disqus/disqus'
-require 'events/feeds/forum/forum'
-require 'events/feeds/blog/blog'
-require 'events/feeds/irc/irc'
-require 'events/feeds/meetup/meetup'
-require 'events/feeds/stackexchange/stackexchange'
-require 'events/feeds/facebook/facebook'
-require 'events/feeds/rss/rss'
-require 'events/feeds/foursquare/foursquare'

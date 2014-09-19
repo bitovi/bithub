@@ -40,8 +40,8 @@ module Entities
       def update_parent
         @instance.parent.title = @event.title
         @instance.parent.body = @event.body
-        @instance.parent.props[:state] = @event.state
-        @instance.parent.props[:label_names] = @event.labels.andand.names_csv
+        @instance.parent.props['state'] = @event.state
+        @instance.parent.props['label_names'] = @event.labels.andand.names_csv
       end
 
       # Finders
@@ -65,7 +65,6 @@ module Entities
           'issue_action'
         end
       end
-
     end
   end
 end

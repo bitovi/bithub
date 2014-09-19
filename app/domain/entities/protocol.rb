@@ -11,6 +11,7 @@ Dir[File.join('app', 'domain', 'wrappers', '**', '*.rb')].each do |f|
 end
 
 module Entities
+  
   module Bithub; end
   module Blog; end
   module Disqus; end
@@ -61,17 +62,23 @@ module Entities
     end
 
     def feed_name
-      self.class.name.match(/::(.+)::/).to_a[1]
+      @feed_name ||= feed_and_type_name[0]
     end
 
     def type_name
-      self.class.name.match(/::.*::(.+)$/).to_a[1]
+      @type_name ||= feed_and_type_name[1]
     end
 
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
         .uniq
+    end
+
+    private
+    def feed_and_type_name
+      _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
+      [@feed_name, @type_name]
     end
 
   end

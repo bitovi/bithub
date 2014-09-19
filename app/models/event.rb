@@ -6,4 +6,8 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :content_digest
   validates_uniqueness_of :content_digest
+
+  def deserialize
+    Events::Dispatcher.deserialize(self)
+  end
 end

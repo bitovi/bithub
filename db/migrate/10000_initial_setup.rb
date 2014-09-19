@@ -1,11 +1,15 @@
 class InitialSetup < ActiveRecord::Migration
   def up
-    execute "CREATE EXTENSION IF NOT EXISTS hstore"
-    execute "CREATE EXTENSION IF NOT EXISTS intarray"
+    unless ENV['VAGRANT'].present?
+      execute "CREATE EXTENSION IF NOT EXISTS hstore"
+      execute "CREATE EXTENSION IF NOT EXISTS intarray"
+    end
   end
 
   def down
-    execute "DROP EXTENSION IF EXISTS hstore"
-    execute "DROP EXTENSION IF EXISTS intarray"
+    unless ENV['VAGRANT'].present?
+      execute "DROP EXTENSION IF EXISTS hstore"
+      execute "DROP EXTENSION IF EXISTS intarray"
+    end
   end
 end

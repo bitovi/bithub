@@ -22,10 +22,6 @@ module Accounts
       self
     end
 
-    def async_create_fake_digests
-      Accounts::FakeDigestsCreator.new(@identity).async_execute
-      self
-    end
 
   end
 end

@@ -17,6 +17,13 @@ Bithub::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
+  
+  # Logging with log4r
+  lf = LoggerFactory.new 'rails', :environment => Rails.env
+  config.logger = lf.component_logger
+  config.action_controller.logger = lf.ac_logger
+  config.active_record.logger = lf.ar_logger
+  config.log_level = :info
 
   # Raise exceptions instead of rendering exception templates
   config.action_dispatch.show_exceptions = false

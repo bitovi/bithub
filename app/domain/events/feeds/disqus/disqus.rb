@@ -1,5 +1,0 @@
-require_relative 'types/post'
-require 'wrappers/disqus/author'
-require 'wrappers/disqus/forum'
-require 'wrappers/disqus/post'
-require 'wrappers/disqus/thread'

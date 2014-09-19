@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
   def collect_authored_entities
     identities.each do |ident|
       Entity.origin_author(ident.uid).find_each do |entity|
-        entity.author = self # TODO better way of changing owners?
+        entity.author = self
       end
     end
   end
@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
   end
 
   def calculate_avatar_url
-    props['avatar_url'] = Users::AvatarCalculator.new(self).execute
+    props['avatar_url'] = Users::AvatarCalculator.new(self).calculate
   end
 
   def async_collect_authored_entities
