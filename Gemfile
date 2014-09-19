@@ -9,6 +9,7 @@ gem 'rspec', '~> 3.1.0'
 gem 'rspec-rails', '~> 3.1.0'
 gem 'pry'
 gem 'pry-rails'
+gem 'rb-readline'
 
 gem 'amqp'
 gem 'bunny'
