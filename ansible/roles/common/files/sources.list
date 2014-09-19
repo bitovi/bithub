@@ -1,0 +1,9 @@
+deb http://ftp.hr.debian.org/debian wheezy main contrib non-free
+deb-src http://ftp.hr.debian.org/debian wheezy main contrib non-free
+
+deb http://security.debian.org/ wheezy/updates main
+deb-src http://security.debian.org/ wheezy/updates main
+
+deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main
+
+deb http://www.rabbitmq.com/debian/ testing main

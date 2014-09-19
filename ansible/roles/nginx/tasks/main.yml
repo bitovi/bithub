@@ -1,0 +1,22 @@
+- name: Install nginx
+  apt: name=nginx state=installed force=yes
+
+- name: Disable default nginx site
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify:
+    - restart nginx
+
+- name: Copy bithub vhost
+  template: src=bithub_vhost dest=/etc/nginx/sites-available/bithub
+  notify:
+    - restart nginx
+  with_items: domains
+
+- name: Enable bithub vhost
+  file: src=/etc/nginx/sites-available/bithub dest=/etc/nginx/sites-enabled/bithub state=link
+  notify:
+    - restart nginx
+  with_items: domains
+
+- name: Start nginx
+  service: name=nginx state=started

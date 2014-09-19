@@ -2,12 +2,12 @@ namespace :data do
   desc "Imports/updates scoring rules from YAML file"
   task :import_scoring_rules => :environment do
 
-    puts "---"
-    puts "Importing scoring rules"
+    Rails.logger.info "---"
+    Rails.logger.info "Importing scoring rules"
 
     if tenant = ENV['TENANT']
       Apartment::Database.switch tenant
-      puts "Tenant switched to '#{Apartment::Database.current_tenant}'"
+      Rails.logger.info "Tenant switched to '#{Apartment::Database.current_tenant}'"
     end
 
     rules = YAML::load_file('config/scoring_rules.yml')
@@ -20,18 +20,18 @@ namespace :data do
     end
 
     rules.each do |rule|
-      required_tags = Tagger.list_to_name_weight_hash rule['required_tags']
       rule['authorship_value'] ||= 0
       rule['award_value'] ||= 0
       rule['upvote_value'] ||= 1
 
+      required_tags = Tagger.list_to_name_weight_hash rule['required_tags']
       if exists? required_tags
-        puts "Rule '#{rule['name']}' already exists!"
+        Rails.logger.info "Rule '#{rule['name']}' already exists!"
       else
         if ar_rule = ScoringRule.create(rule)
-          puts "Rule '#{rule['name']}' created"
+          Rails.logger.info "Rule '#{rule['name']}' created"
         else
-          puts "Rule '#{rule['name']}' failed"
+          Rails.logger.info "Rule '#{rule['name']}' failed"
         end
       end
     end

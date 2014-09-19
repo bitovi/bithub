@@ -171,6 +171,14 @@ class Entity < ActiveRecord::Base
     self.update_attribute(:thread_updated_ts, ts)
   end
 
+  def latest_thread_ts
+    self.thread.pluck(:origin_ts).max
+  end
+
+  def latest_child_ts
+    self.children.order("origin_ts DESC").first.andand.origin_ts
+  end
+
   def awarded?
     self.awards.length > 0
   end
@@ -284,6 +292,10 @@ class Entity < ActiveRecord::Base
   end
 
   alias_method :upvotes_sum, :sum_upvotes
+
+  def deserialize
+    Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)
+  end
 
   private
 
