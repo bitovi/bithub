@@ -9,8 +9,8 @@
       password: "Ei7PhaaH"
     pg:
       version: "9.3"
-      dbname: "bithub"
-      username: "bithub_development"
+      dbname: "bithub_development"
+      username: "bithub"
       password: "ainie/h8Mie6"
     bithub:
       username: "bithub"
