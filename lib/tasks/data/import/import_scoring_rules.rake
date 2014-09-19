@@ -15,7 +15,8 @@ namespace :data do
     def exists?(required_tags)
       ScoringRule
         .pluck(:required_tags)
-        .select {|r| r.keys.sort == required_tags.keys.sort}
+        .map {|r| (r.is_a?(String)) ? HstoreDeserializer.new(r).parse : r}
+        .select{|r| r.keys.sort == required_tags.keys.sort}
         .count > 0
     end
 
@@ -25,6 +26,7 @@ namespace :data do
       rule['upvote_value'] ||= 1
 
       required_tags = Tagger.list_to_name_weight_hash rule['required_tags']
+
       if exists? required_tags
         Rails.logger.info "Rule '#{rule['name']}' already exists!"
       else
