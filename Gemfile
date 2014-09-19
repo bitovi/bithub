@@ -22,6 +22,7 @@ gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
 
+gem 'textacular'
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'apartment-sidekiq'
 gem 'enumerize'
