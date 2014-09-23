@@ -42,7 +42,18 @@ module OmniAuth::Strategies
     end
   end
 
+  class InstagramBrand < Instagram
+    def name
+      :instagram_brand
+    end
+  end
+
 end
+
+# use OmniAuth::Builder do
+#   provider :instagram, ENV['INSTAGRAM_CLIENT_ID'], ENV['INSTAGRAM_CLIENT_SECRET']
+# end
+
 
 OmniAuth.config.add_camelization 'github_brand', 'GitHubBrand'
 OmniAuth.config.add_camelization 'stackexchange_brand', 'StackexchangeBrand'

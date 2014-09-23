@@ -59,6 +59,10 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     oauthorize_brand "foursquare"
   end
 
+  def instagram_brand
+    oauthorize_brand "instagram"
+  end
+
   ###
 
   def show_auth_error
@@ -85,7 +89,8 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
       stackexchange: 'StackExchange',
       facebook: 'Facebook',
       disqus: 'Disqus',
-      foursquare: 'Foursquare'
+      foursquare: 'Foursquare',
+      instagram: 'Instagram'
     })
 
     @identity = Identity.find_or_init_with_oauth_data(oauth_data)
