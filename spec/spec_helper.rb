@@ -4,6 +4,11 @@ $:.unshift File.join(PROJECT_ROOT, 'app')
 $:.unshift File.join(PROJECT_ROOT, 'app', 'models')
 $:.unshift File.join(PROJECT_ROOT, 'app', 'domain')
 
+if ENV['RAILS_ENV'] == 'testing'
+  require 'codeclimate-test-reporter'
+  CodeClimate::TestReporter.start
+end
+
 require 'rspec'
 require 'rspec/mocks'
 
@@ -16,7 +21,6 @@ require 'spec/test_helper_methods'
 Celluloid.logger.level = Logger::ERROR
 
 RSpec.configure do |config|
-
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 
