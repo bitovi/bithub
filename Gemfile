@@ -45,6 +45,7 @@ gem 'omniauth-stackexchange', :github => 'nashby/omniauth-stackexchange'
 gem 'omniauth-facebook'
 gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
+gem 'omniauth-instagram'
 
 gem 'redcarpet'
 
