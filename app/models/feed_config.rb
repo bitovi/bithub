@@ -82,6 +82,10 @@ class FeedConfig < ActiveRecord::Base
     has?('tags')
   end
 
+  def valid_instagram?
+    has?('users') || has?('tags') || has?('locations') || has?('geographies')
+  end
+
   def has?(key)
     returning(config\
               && config.instance_of?(Hash)\

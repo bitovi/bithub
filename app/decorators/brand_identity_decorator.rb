@@ -68,4 +68,12 @@ class BrandIdentityDecorator < ::Draper::Decorator
       access_token: @builder.access_token
     }
   end
+
+  def provider_instagram
+    {
+      info: @builder.info,
+      access_token: @builder.access_token
+    }
+  end
+
 end
