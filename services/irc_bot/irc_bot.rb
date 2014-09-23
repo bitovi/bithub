@@ -1,11 +1,8 @@
-IRCBOT_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
-ROOT_DIR = File.expand_path(File.join(IRCBOT_DIR, '..', '..'))
-DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
+ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 
 $:.unshift(ROOT_DIR)
-$:.unshift(DOMAIN_DIR)
+$:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
-# Theirs
 require 'bundler/setup'
 require 'rubygems'
 require 'amqp'

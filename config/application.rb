@@ -17,7 +17,7 @@ module Bithub
     config.i18n.enforce_available_locales = false
 
     # Autoload 'lib' and 'domain' folders
-    config.autoload_paths += %W(#{Rails.root}/app #{Rails.root}/lib #{Rails.root}/app/domain)
+    config.autoload_paths += %W(#{Rails.root}/app #{Rails.root}/lib)
 
     # Enable the asset pipeline
     config.assets.enabled = true

@@ -1,19 +1,15 @@
-LISTENER_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
-ROOT_DIR = File.expand_path(File.join(LISTENER_DIR, '..', '..'))
-DOMAIN_DIR = File.join(ROOT_DIR, 'app', 'domain')
+ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
 
 $:.unshift(ROOT_DIR)
-$:.unshift(DOMAIN_DIR)
+$:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
 require 'bundler/setup'
 require 'rubygems'
-
 require 'bunny'
-
 require 'config/environment'
-require_relative 'helpers'
 require 'dispatcher'
 require 'logger_factory'
+require_relative 'helpers'
 
 class Listener
   def initialize(uri=ENV['RABBITMQ_URI'])

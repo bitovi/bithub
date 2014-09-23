@@ -4,7 +4,6 @@ log4r_config:
       level         : DEBUG
       trace         : 'true'
       outputters    :
-        - console
         - component_logfile
 
     - name          : active_record
