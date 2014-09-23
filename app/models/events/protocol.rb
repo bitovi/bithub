@@ -1,0 +1,94 @@
+require_relative 'errors'
+require_relative 'traits/persistable'
+require_relative 'traits/serializable'
+require_relative 'traits/validatable'
+require_relative 'traits/normalizable'
+
+Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
+  require f.gsub('app/models/', '')
+end
+
+module Events
+
+  module Github; end
+  module Twitter; end
+  module Forum; end
+  module Blog; end
+  module Disqus; end
+  module Bithub; end
+  module Meetup; end
+  module Irc; end
+  module Stackexchange; end
+  module Facebook; end
+  module Foursquare; end
+
+  class Protocol
+    include CoreHelpers
+    include Persistable
+    include Normalizable
+    include Serializable
+    include Validatable
+
+    attr_reader :instance, :source_data, :meta
+
+    def initialize(payload, opts={})
+      _raw = symbolize_keys(payload)
+      @source_data = _raw[:source_data] || _raw
+      @meta = opts[:meta]
+      wrap_response if self.respond_to? :wrap_response
+    end
+
+    def build
+      @instance = ::Event.new({
+        content_digest: content_digest,
+        source_data: source_data,
+        props: meta || {}
+      })
+      self
+    end
+
+    def content_digest
+      if respond_to?(:digest_seed)
+        Digest::MD5.hexdigest(digest_seed)
+      else
+        fail BuildingError.new("Don't know how to build a digest seed.", nice_name)
+      end
+    end
+
+    def feed_name
+      @feed_name ||= feed_and_type_name[0]
+    end
+
+    def type_name
+      @type_name ||= feed_and_type_name[1]
+    end
+
+    def ==(other)
+      @source_data == other
+    end
+
+    def origin_timestamp_iso
+      origin_timestamp.iso8601
+    end
+
+    def referenced_issue_numbers
+      []
+    end
+
+    def nice_name
+      self.class.name.gsub(/^Events::.*::/, '')
+    end
+
+    def collect_methods(regexp)
+      (self.private_methods + self.methods + self.class.instance_methods(false))
+        .select {|m| m.match(regexp)}
+        .uniq
+    end
+
+    private
+    def feed_and_type_name
+      _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
+      [@feed_name, @type_name]
+    end
+  end
+end
