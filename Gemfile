@@ -74,25 +74,24 @@ gem 'reel', '~> 0.5.0'
 gem 'activesupport-json_encoder'
 
 
-group :test do
-  gem 'codeclimate-test-reporter', require: false
-  gem 'factory_girl_rails'
-  gem 'database_cleaner'
-  gem 'better_errors'
+group :development, :test do
   gem 'evented-spec'
-  gem 'git'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'codeclimate-test-reporter', require: false
   gem 'travis', require: false
+  gem 'git'
 end
 
 group :development do
+  gem 'spring-commands-rspec'
+  gem 'better_errors'
   gem 'capistrano', '~> 3.1'
   gem 'capistrano-rails', '~> 1.1'
   gem 'capistrano-rbenv', '~> 2.0'
   gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
-  gem 'ruby_gntp'
-  gem 'spork'
 end
 
 # --------
