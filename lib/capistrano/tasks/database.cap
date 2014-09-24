@@ -63,17 +63,31 @@ namespace :db do
     on roles(:db) do |host|
 
       backup_ext = fetch(:backup_ext)
-
       db_config = read_db_config
 
-      backup_file = gen_backup_version + backup_ext
-      backup_dest = File.join('/', 'tmp', backup_file)
+      backup_filename = gen_backup_version + backup_ext
+      local_backup_dest = File.join('.', 'tmp', backup_filename)
+      remote_backup_dest = File.join('/', 'tmp', backup_filename)
 
       # dump & download & cleanup
-      execute :pg_dump, "-w --format=c #{db_config['database']} > #{backup_dest}"
-      download! backup_dest, backup_file
-      execute :rm, backup_dest
+      execute :pg_dump, "-w --format=c #{db_config['database']} > #{remote_backup_dest}"
+      download! remote_backup_dest, local_backup_dest
+      execute :rm, remote_backup_dest
+
+      # load the database with: pg_restore -d bithub_development {local_backup_dest}
+      # must have a 'postgres' user in the database with admin privileges (don't know why, don't ask)
     end
+  end
+
+  desc "Load the downloaded database into bithub_development"
+  task :load do
+      run_locally do
+        with rails_env: :development do
+          rake 'db:drop'
+          rake 'db:create'
+          sh "pg_restore -d bithub_development #{backup_file}"
+        end
+      end
   end
 
   desc "Upload backup"
