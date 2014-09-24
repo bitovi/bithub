@@ -81,9 +81,6 @@ class Entity < ActiveRecord::Base
   after_create :adopt_references_from_children
   after_destroy :decrease_score_in_author
 
-  after_save :update_pagination_table
-  after_destroy :update_pagination_table
-
   after_validation :reformat_uniqueness_validation
 
 
@@ -235,10 +232,6 @@ class Entity < ActiveRecord::Base
 
   def source_data
     last_modified_by.andand.source_data
-  end
-
-  def update_pagination_table
-    Pagination.refresh
   end
 
   def cache_key
