@@ -1,4 +1,4 @@
-class NaturalLanguageQueryTranslator
+class NatlangQueryTranslator
 
   def initialize(query, klass = Entity)
     @q = query
