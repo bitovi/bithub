@@ -18,7 +18,6 @@ class AccountAbility
       can :manage_roles_on_user, User
       can :manage, Entity
       can :create_award, Award
-      can :read_pagination, Pagination
       can :manage, Achievement
 
       # abilities need by frontend

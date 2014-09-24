@@ -24,14 +24,11 @@ class Brand < ActiveRecord::Base
     # http://stackoverflow.com/questions/577944/how-to-run-rake-tasks-from-within-rake-tasks
     Rake::Task['data:import_or_update_tags'].reenable
     Rake::Task['data:import_scoring_rules'].reenable
-    Rake::Task['data:import_funnel_definitions'].reenable
 
     Rake::Task['data:import_or_update_tags'].invoke
     Rake::Task['data:import_scoring_rules'].invoke
-    Rake::Task['data:import_funnel_definitions'].invoke
 
     # repopulate matviews upon creation
-    Pagination.refresh
     UserActivity.refresh
 
     Apartment::Database.switch
