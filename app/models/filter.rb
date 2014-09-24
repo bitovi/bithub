@@ -1,16 +1,17 @@
-class Funnel < ActiveRecord::Base
+class Filter < ActiveRecord::Base
 
   include RankedModel
   ranks :position
 
-  validates_presence_of :name
+  validates_presence_of :name, :is_conjunctive
 
-  has_and_belongs_to_many :constraints,
-    class_name: "FunnelConstraint",
-    foreign_key: "funnel_id",
-    association_foreign_key: "funnel_constraint_id"
+  has_one :embed_filter, :dependent => :destroy
+  has_one :embed, :through => :embed_filter
 
-  after_save :update_pagination_table
+  has_and_belongs_to_many :queries,
+    class_name: "NaturalLanguageQuery",
+    foreign_key: "filter_id",
+    association_foreign_key: "natural_language_query_id"
 
   def disabled=(value)
     self.props_will_change!
@@ -19,8 +20,11 @@ class Funnel < ActiveRecord::Base
 
   def disabled
     disabled = self.props['disabled']
-    return true if disabled == true or disabled == 'true'
-    return false
+    if disabled == true or disabled == 'true'
+      return true
+    else
+      return false
+    end
   end
 
   def covers?(entity)
@@ -33,12 +37,16 @@ class Funnel < ActiveRecord::Base
     check
   end
 
+  def all?
+    is_conjunctive
+  end
+
+  def any?
+    not(is_conjunctive)
+  end
+
   def weight
     (constraints.count * 1) + (tags.count * 10)
   end
 
-  def update_pagination_table
-    Pagination.refresh
-  end
-  
 end
