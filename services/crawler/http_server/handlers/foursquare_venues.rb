@@ -11,8 +11,8 @@ module HttpServer
         @channels = {}
       end
 
-      def handle(body)
-        parsed  = CGI.parse body.to_s
+      def handle(req)
+        parsed  = CGI.parse req.body.to_s
         secret  = parsed['secret']
         payload = parsed['checkin'] || parsed['like'] || parsed['tip'] || []
 
@@ -23,6 +23,8 @@ module HttpServer
             publish brand, payload if ids.include? venue_id(payload)
           end
         end
+
+        [200, 'OK']
       end
 
       def register(brand, venue_ids)
