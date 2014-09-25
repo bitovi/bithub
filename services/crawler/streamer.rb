@@ -30,7 +30,6 @@ require_relative 'streamer/registrator'
 require_relative 'streamer/connectors/all'
 require_relative 'streamer/stream_supervisor'
 require_relative 'decorators/all'
-require_relative 'http_server/listener'
 require_relative 'response_processor'
 
 $env = ENV.fetch('ENV') { 'development' }
@@ -41,7 +40,6 @@ class Streamer < Celluloid::SupervisionGroup
   supervise Registrator, as: :registrator
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
-  supervise HttpServer::Listener, as: :http_listener
   supervise StreamSupervisor, as: :stream_supervisor
 end
 
