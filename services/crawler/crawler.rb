@@ -33,6 +33,7 @@ require_relative 'fetchers/all'
 require_relative 'decorators/all'
 require_relative 'persistent/digest_set'
 require_relative 'response_processor'
+require_relative 'http_server/listener'
 
 # log4r logger
 $env = ENV.fetch('ENV') { 'development' }
@@ -45,6 +46,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Commander, as: :commander
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
+  supervise HttpServer::Listener, as: :http_listener
   supervise MainSupervisor, as: :main_supervisor
 end
 
