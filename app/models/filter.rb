@@ -15,7 +15,7 @@ class Filter < ActiveRecord::Base
   end
 
   def all?
-    is_con
+    is_conj
   end
 
   def any?
