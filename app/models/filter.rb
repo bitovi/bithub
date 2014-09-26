@@ -2,8 +2,8 @@ class Filter < ActiveRecord::Base
 
   validates_presence_of :is_conj
 
-  has_one :embed_filter, :dependent => :destroy
-  has_one :embed, :through => :embed_filter
+  has_many :embed_filter, :dependent => :destroy
+  has_many :embed, :through => :embed_filter
 
   has_and_belongs_to_many :queries,
     class_name: "NaturalLanguageQuery",
