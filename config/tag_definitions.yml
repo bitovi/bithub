@@ -60,6 +60,10 @@ rss:
   display_name: "RSS"
   group_list: "feeds"
 
+instagram:
+  display_name: "Instagram"
+  group_list: "feeds"
+
 # --------
 # Types
 # --------
@@ -225,3 +229,9 @@ message:
 # post:
 #   display_name: "Post"
 #   group_list: "types,disqus"
+
+### Instagram
+
+media:
+  display_name: "Media"
+  group_list: "types,instagram"

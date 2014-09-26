@@ -234,4 +234,12 @@ module Entities
     end
   end
 
+  module Instagram
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Instagram::Media
+      end
+    end
+  end
+
 end
