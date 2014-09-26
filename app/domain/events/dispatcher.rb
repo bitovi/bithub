@@ -256,8 +256,15 @@ module Events
   module Foursquare
     class Dispatcher < BasicTypeDispatcher
       def type
-        ### add some logic
         Events::Foursquare::CheckinEvent
+      end
+    end
+  end
+
+  module Instagram
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Instagram::MediaEvent
       end
     end
   end
