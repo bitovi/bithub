@@ -7,10 +7,7 @@ class NatlangQueryTranslator
 
   def to_ar_query
     if @q.op == 'is' 
-      {
-        :method => verb,
-        :arg => { subject => object }
-      }
+      { :method => verb, :arg => { subject => object } }
     else
       { :method => verb, :arg => object }
     end
@@ -36,8 +33,10 @@ class NatlangQueryTranslator
 
   def object
     if @q.op == 'contains'
+      @q.val
+    elsif @q.op == 'tagged_with'
       @q.val.split(',')
-    else #if @q.op == 'tagged_with'
+    else
       @q.val
     end
   end
