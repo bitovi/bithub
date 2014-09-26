@@ -15,20 +15,12 @@ class Embed < ActiveRecord::Base
     :class_name => 'EmbedEntity',
     :source => :entity
 
-  def build_filter(classification = 'blocking', filter_data = {})
-    self.embed_filters << EmbedFilter.new({
-      :filter => Filter.new(filter_data),
-      :classification => classification
-    })
-    self
-  end
-
   def blocking_filter
-    self.filters.where(:classification => 'blocking').first
+    self.embed_filters.where(:classification => 'blocking').first.andand.filter
   end
 
   def moderating_filter
-    self.filters.where(:classification => 'moderating').first
+    self.embed_filters.where(:classification => 'moderating').first.andand.filter
   end
 
   def make_link_to(entity)
