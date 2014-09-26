@@ -13,7 +13,7 @@ end
 describe NatlangQueryCombinator do
 
   describe "#combine" do
-    it 'combines?' do
+    it 'sequentially combines the queries' do
 
       nlqs = [
         NatlangQueryTranslator.new(
@@ -32,7 +32,11 @@ describe NatlangQueryCombinator do
 
       nlqc = NatlangQueryCombinator.new(nlqs, true)
 
-      expect(nlqc.combine).to eq []
+      expect(nlqc.combine).to eq [
+        {:method=>:where, :arg=>["title = ?", "canjs"]},
+        {:method=>:basic_search, :arg=>"found this error"},
+        {:method=>:tagged_with, :arg=>["canjs", "jquerypp"]}
+      ]
 
     end
   end

@@ -10,11 +10,6 @@ end
 RSpec.describe NatlangQueryTranslator, :type => :model do
 
   describe '#to_ar_query' do
-    it 'transforms the "is" verb to a plain AR hash query' do
-      nlq = double(:natlang_query, :attr => 'title', :op => 'is', :val  => 'canjs')
-      nlqt = NatlangQueryTranslator.new(nlq, DummyARClass)
-      expect(nlqt.to_ar_query).to eq({:method => :where, :arg => {:title => 'canjs'}})
-    end
   end
 
   describe '#verb' do
@@ -62,6 +57,12 @@ RSpec.describe NatlangQueryTranslator, :type => :model do
       nlq = double(:natlang_query, :attr => 'title', :op => 'tagged_with', :val  => 'canjs,jquerypp')
       nlqt = NatlangQueryTranslator.new(nlq, DummyARClass)
       expect(nlqt.object).to eq(%w(canjs jquerypp))
+    end
+    
+    it 'transforms the "is" verb to a plain AR array query' do
+      nlq = double(:natlang_query, :attr => 'title', :op => 'is', :val  => 'canjs')
+      nlqt = NatlangQueryTranslator.new(nlq, DummyARClass)
+      expect(nlqt.to_ar_query).to eq({:method => :where, :arg => ["title = ?", 'canjs']})
     end
   end
 
