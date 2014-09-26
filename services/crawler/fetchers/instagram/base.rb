@@ -1,3 +1,5 @@
+require 'instagram'
+
 module Fetchers
   module Instagram
 
