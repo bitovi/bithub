@@ -10,14 +10,8 @@ class Filter < ActiveRecord::Base
     foreign_key: "filter_id",
     association_foreign_key: "natural_language_query_id"
 
-  def covers?(entity)
-    check = (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
-
-    if !self.tags.blank?
-      check = check && !(self.tags & entity.tag_list).empty?
-    end
-
-    check
+  def combined_queries
+    QueryCombinator.new(self.queries.all, is_conj).combine
   end
 
   def all?
@@ -28,4 +22,13 @@ class Filter < ActiveRecord::Base
     not(is_conj)
   end
 
+  def covers?(entity)
+    check = (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
+
+    if !self.tags.blank?
+      check = check && !(self.tags & entity.tag_list).empty?
+    end
+
+    check
+  end
 end
