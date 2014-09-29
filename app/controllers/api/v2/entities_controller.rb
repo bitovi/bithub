@@ -45,15 +45,6 @@ class Api::V2::EntitiesController < Api::V2::BaseController
     render :json => { error: t('api.entities.destroy.success') }
   end
 
-  def pagination
-    authorize! :read_pagination, Pagination
-
-    params[:clientTz] = request.headers['clientTz'] unless params[:clientTz]
-    @dates = Pagination.grouped(params)
-
-    render :pagination_index
-  end
-
   private # SCOPE BUILDING
 
   def set_params

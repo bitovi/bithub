@@ -1,11 +1,10 @@
-#!/usr/bin/env ruby
-RootDir = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
+ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
 
-$:.unshift(File.join(RootDir, 'app'))
-$:.unshift(File.join(RootDir, 'app', 'domain'))
-$:.unshift(File.join(RootDir, 'lib'))
-$:.unshift(File.join(RootDir, 'services'))
-$:.unshift(File.join(RootDir, 'services', 'crawler'))
+$:.unshift(File.join(ROOT_DIR, 'app'))
+$:.unshift(File.join(ROOT_DIR, 'app', 'models'))
+$:.unshift(File.join(ROOT_DIR, 'lib'))
+$:.unshift(File.join(ROOT_DIR, 'services'))
+$:.unshift(File.join(ROOT_DIR, 'services', 'crawler'))
 
 require 'bundler/setup'
 require 'rubygems'
@@ -13,7 +12,6 @@ require 'celluloid'
 require 'celluloid/io'
 require 'bunny'
 require 'redis'
-
 require 'pry'
 require 'core_ext'
 require 'core_helpers'
