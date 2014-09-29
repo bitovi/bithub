@@ -5,6 +5,7 @@ class CreateNatlangQueries < ActiveRecord::Migration
       t.string :op
       t.string :val
       t.boolean :is_negated, :default => false
+      t.references :filter
     end
   end
 end
