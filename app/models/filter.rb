@@ -24,4 +24,8 @@ class Filter < ActiveRecord::Base
       errors.add(:classification, 'must be either "blocking" or "moderating"')
     end
   end
+
+  def detects?
+    true
+  end
 end

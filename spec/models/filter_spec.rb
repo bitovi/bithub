@@ -29,10 +29,4 @@ RSpec.describe Filter, :type => :model do
       expect(f.all?).to be_falsey
     end
   end
-
-  describe "#detects?" do
-    it 'tells whether it, when applied to entities, finds the provided entity' do
-      pending 'todo'
-    end
-  end
 end
