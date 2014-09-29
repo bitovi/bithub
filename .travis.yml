@@ -22,5 +22,6 @@ addons:
 rvm:
   - 2.1.1
 before_script:
+  - "cp ./.travis_database.yml ./config/database.yml"
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
