@@ -1,7 +1,6 @@
 class Embed < ActiveRecord::Base
 
-  has_many :embed_filters, :dependent => :destroy
-  has_many :filters, :through => :embed_filters
+  has_many :filters, :dependent => :destroy
 
   has_many :embed_entities
 
@@ -16,11 +15,11 @@ class Embed < ActiveRecord::Base
     :source => :entity
 
   def blocking_filter
-    self.embed_filters.where(:classification => 'blocking').first.andand.filter
+    self.filters.where(:classification => 'blocking').first
   end
 
   def moderating_filter
-    self.embed_filters.where(:classification => 'moderating').first.andand.filter
+    self.filters.where(:classification => 'moderating').first
   end
 
   def make_link_to(entity)

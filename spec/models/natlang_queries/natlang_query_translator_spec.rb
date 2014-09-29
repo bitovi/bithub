@@ -9,9 +9,6 @@ end
 
 RSpec.describe NatlangQueryTranslator, :type => :model do
 
-  describe '#to_ar_query' do
-  end
-
   describe '#verb' do
     it 'transforms the "contains" operator to PG full text search invocation' do
       nlq = double(:natlang_query, :attr => 'content', :op => 'contains', :val  => 'canjs,jquerypp')

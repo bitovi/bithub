@@ -1,6 +1,6 @@
 class NatlangQuery < ActiveRecord::Base
 
-  has_and_belongs_to_many :filters
+  belongs_to :filter
   validates_presence_of :val, :op
 
   def to_ar_query
