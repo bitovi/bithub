@@ -3,8 +3,8 @@ cache: bundler
 env:
   - RABBITMQ_URI=amqp://guest:guest@localhost/ REDIS_URL=redis://127.0.0.1:6379/15
 script:
+  - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
-  - "bundle exec rake db:test:prepare"
   - "bundle exec rake test"
 notifications:
   slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4

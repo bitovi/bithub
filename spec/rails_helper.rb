@@ -11,7 +11,7 @@ ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean_with :truncation, {
-      :except => %w(tags scoring_rules funnels funnel_constraints funnel_constraints_funnels)
+      :except => %w(tags scoring_rules)
     }
 
     DatabaseCleaner.strategy = :transaction
