@@ -3,7 +3,6 @@ cache: bundler
 env:
   - RABBITMQ_URI=amqp://guest:guest@localhost/ REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
 script:
-  - "bundle exec rake db:migrate"
   - "bundle exec rake spec"
 notifications:
   slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4
@@ -23,5 +22,5 @@ addons:
 rvm:
   - 2.1.1
 before_script:
-  - psql -c 'create database bithub_test;' -U postgres
-  - "cp ./.travis_database.yml ./config/database.yml"
+  - "bundle exec rake db:create"
+  - "bundle exec rake db:migrate"
