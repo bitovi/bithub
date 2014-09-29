@@ -17,14 +17,17 @@ module FeedSupervisors
     def boot
       Celluloid.logger.info "Booting Instagram supervisor for #{@brand_name}"
 
-      # TODO: cleanup existing subscriptions
+      # cleanup existing subscriptions
+      delete_subscriptions
 
+      # make new subscriptions
       config[:subscriptions].andand.each do |key, value|
         object        = key.to_s.singularize
         subscriptions = value
 
         if VALID_OBJECTS.include? object
           subscriptions.each do |params|
+            Celluloid.logger.info "Creating Instagram subscription for #{object}, #{params}"
             self.send "subscribe_#{object}", params
           end
         end
@@ -46,8 +49,15 @@ module FeedSupervisors
 
     private
 
+    def delete_subscriptions
+      client.subscriptions.each do |sub|
+        Celluloid.logger.info "Deleting Instagram subscription #{sub.id}"
+        client.delete_subscription sub.id
+      end
+    end
+
     def subscribe_user(params=nil)
-      client.create_subscription object: "user", callback_url: cb_url, aspect: "media"
+      client.create_subscription object: "user", callback_url: callback_url, aspect: "media"
     end
 
     def subscribe_tag(object_id)
