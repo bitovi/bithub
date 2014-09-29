@@ -2,6 +2,8 @@ class ScoringRule < ActiveRecord::Base
 
   validates_presence_of :authorship_value
 
+  store_accessor :required_tags, :props
+
   has_many :entities
 
   def required_tags=(tags)

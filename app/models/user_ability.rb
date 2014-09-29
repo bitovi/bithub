@@ -12,7 +12,6 @@ class UserAbility
     can [:update, :destroy], Entity # check current_user entities, rewrite Entity::Bithub::Post
     can :create_upvote, Upvote
     can :destroy_upvote, Upvote
-    can :read_pagination, Pagination
     # can :read, Achievement # embed this into user session?
   end
 end

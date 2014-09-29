@@ -1,1 +1,0 @@
-Spring.watch "app/domain"

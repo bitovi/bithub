@@ -7,3 +7,4 @@ bin/
 public/uploads
 .vagrant/
 bithub-client/
+tags
