@@ -18,12 +18,10 @@ FactoryGirl.define do
 
     trait :with_determined_feed do
       feed_name 'some_feed'
-      association :feed, factory: :tag, name: "some_feed"
     end
 
     trait :with_determined_type do
       type_name 'some_type'
-      association :type, factory: :tag, name: "some_type"
     end
 
     trait :with_determined_rule do
@@ -46,32 +44,6 @@ FactoryGirl.define do
     factory :entity_wo_rule, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_author]
     factory :entity_wo_author, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_rule]
     factory :determined_entity, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_rule, :with_determined_author]
-
-    # Forum entity
-
-    factory :forum_entity do
-      feed_name 'forums'
-      type_name 'post'
-
-      tag_list %w(forum post question canjs)
-
-      trait :forum_question do
-        title "How do you do this?"
-        body "I need help about an issue, and what to do ?"
-        url "http://forums.com/some-question"
-        origin_ts Time.now
-      end
-
-      trait :forum_reply do
-        title "Re: How do you do this?"
-        sequence(:body) {|n| "#{n}. way to do this..." }
-        sequence(:url) {|n| "http://forums.com/some-question##{n}" }
-        sequence(:origin_ts) {|n| Time.now + (n+1).hour}
-      end
-
-      factory :forum_thread_starter, traits: [:forum_question, :with_determined_rule]
-      factory :forum_child, traits: [:forum_reply, :with_determined_rule]
-    end
 
     # Twitter entity
 
@@ -114,12 +86,10 @@ FactoryGirl.define do
 
     factory :github_entity do
       feed_name 'github'
-      association :feed, factory: :tag, name: "github"
       with_determined_rule
 
       factory :github_issue do
         type_name 'issue'
-        association :type, factory: :tag, name: "issue"
         tag_list %w(github issue bug canjs)
 
         title "raised issue #1"
@@ -131,7 +101,6 @@ FactoryGirl.define do
 
       factory :github_push do
         type_name 'push'
-        association :type, factory: :tag, name: "push"
         tag_list %w(github push code canjs)
 
         trait :with_push_entity_source_data do
@@ -141,7 +110,6 @@ FactoryGirl.define do
 
       factory :github_pull_request do
         type_name 'pull_request'
-        association :type, factory: :tag, name: "pull_request"
         tag_list %w(github pull_request code canjs)
 
         title "requested a pull"
@@ -149,7 +117,6 @@ FactoryGirl.define do
 
       factory :github_issue_comment do
         type_name 'issue_comment'
-        association :type, factory: :tag, name: "issue_comment"
         tag_list %w(github issue_comment github_comment canjs)
 
         title "commented on issue #1"
@@ -161,7 +128,6 @@ FactoryGirl.define do
 
       factory :github_watch_entity do
         type_name 'watch'
-        association :type, factory: :tag, name: "watch"
         tag_list %w(github watch digest canjs)
 
         title "started watching bitovi/canjs"
@@ -169,7 +135,6 @@ FactoryGirl.define do
 
       factory :github_commit_comment do
         type_name 'commit_comment'
-        association :type, factory: :tag, name: "commit_comment"
         tag_list %w(github commit_comment comment canjs)
 
         title "commented on a commit 4b2342hh"
