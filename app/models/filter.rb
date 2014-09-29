@@ -1,17 +1,14 @@
 class Filter < ActiveRecord::Base
 
-  validates_presence_of :is_conj
+  belongs_to :embed
+  has_many :natlang_queries, :dependent => :destroy
 
-  has_many :embed_filter, :dependent => :destroy
-  has_many :embed, :through => :embed_filter
-
-  has_and_belongs_to_many :queries,
-    class_name: "NaturalLanguageQuery",
-    foreign_key: "filter_id",
-    association_foreign_key: "natural_language_query_id"
+  validates_presence_of :is_conj, :classification
+  validates_uniqueness_of :classification, scope: :embed_id
+  validate :classification_must_be_either_blocking_or_moderating
 
   def combined_queries
-    QueryCombinator.new(self.queries.all, is_conj).combine
+    QueryCombinator.new(self.natlang_queries.all, is_conj).combine
   end
 
   def all?
@@ -22,13 +19,9 @@ class Filter < ActiveRecord::Base
     not(is_conj)
   end
 
-  def covers?(entity)
-    check = (constraints.map{|c| c.feed_name}.include?(entity.feed_name)) && (constraints.map {|c| c.type_name}.include?(entity.type_name))
-
-    if !self.tags.blank?
-      check = check && !(self.tags & entity.tag_list).empty?
+  def classification_must_be_either_blocking_or_moderating
+    if classification != 'blocking' && classification != 'moderating'
+      errors.add(:classification, 'must be either "blocking" or "moderating"')
     end
-
-    check
   end
 end
