@@ -34,8 +34,6 @@ describe HttpServer::Handlers::Instagram  do
 
     @x = @chan.direct("x.events")
     @q = @chan.queue("q.events").bind(@x)
-
-    WebMock.disable_net_connect!(:allow_localhost => true)
   end
 
   after do

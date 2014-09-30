@@ -19,3 +19,6 @@ require 'decorators/all'
 
 # conn params for services like rabbitmq
 Dotenv.load
+
+# otherwise all net connects will fail
+WebMock.allow_net_connect!
