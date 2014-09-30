@@ -9,8 +9,10 @@ module HttpServer
         @channels = {}
       end
 
-      def handle(body)
+      def handle(req)
         puts "==== Facebook handling something"
+
+        [200, 'OK']
       end
 
       def register(brand, page_ids)

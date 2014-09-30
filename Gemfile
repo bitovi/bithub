@@ -9,6 +9,7 @@ gem 'rspec', '~> 3.1.0'
 gem 'rspec-rails', '~> 3.1.0'
 gem 'pry'
 gem 'pry-rails'
+gem 'rb-readline'
 
 gem 'amqp'
 gem 'bunny'
@@ -45,6 +46,7 @@ gem 'omniauth-stackexchange', :github => 'nashby/omniauth-stackexchange'
 gem 'omniauth-facebook'
 gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
+gem 'omniauth-instagram'
 
 gem 'redcarpet'
 
@@ -61,7 +63,7 @@ gem 'muster', :github => 'neektza/muster'
 # API client libs
 gem 'octokit', '~> 2.0'
 gem 'koala'
-
+gem 'instagram'
 gem 'github_api'
 gem 'twitter'
 gem 'foursquare2' , github: 'RKushnir/foursquare2'   , branch: 'master'

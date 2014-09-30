@@ -34,7 +34,6 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of  :title,
     :feed_name, :type_name,
-    :feed_id, :type_id,
     :origin_ts, :thread_updated_ts,
     :scoring_rule_id, :tag_list
 

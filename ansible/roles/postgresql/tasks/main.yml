@@ -25,6 +25,9 @@
   notify:
     - restart postgresql
 
+- name: Set password for postgres role
+  postgresql_user: name=postgres password={{ pg.password }}
+
 - name: Restart PostgreSQL
   service: name=postgresql state=restarted
 
@@ -36,12 +39,13 @@
   sudo: True
   sudo_user: postgres
 
-- name: Create db
-  postgresql_db: name={{ pg.dbname }}
-                 encoding='UTF-8'
-
 - name: Create user
   postgresql_user: name={{ pg.username }} 
-                   db={{ pg.dbname }}
                    password={{ pg.password }}
                    role_attr_flags=CREATEDB,NOSUPERUSER
+
+- name: Create db
+  postgresql_db: name={{ pg.dbname }}
+                 owner={{ pg.username }}
+                 encoding='UTF-8'
+

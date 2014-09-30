@@ -83,6 +83,12 @@ class FeedConfigDecorator < ::Draper::Decorator
     }
   end
 
+  def instagram_config
+    {
+      subscriptions: source.config
+    }.merge(@bids.first.data)
+  end
+
   def rss_config
     { sites: source.config.andand['sites'] || [] }
   end

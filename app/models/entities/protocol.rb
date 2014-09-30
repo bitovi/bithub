@@ -11,7 +11,7 @@ Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
 end
 
 module Entities
-  
+
   module Bithub; end
   module Blog; end
   module Disqus; end
@@ -23,6 +23,7 @@ module Entities
   module Stackexchange; end
   module Facebook; end
   module Foursquare; end
+  module Instagram; end
 
   class Protocol
     include Validatable
@@ -34,7 +35,7 @@ module Entities
     attr_reader :instance
 
     def initialize(payload)
-      @payload = payload 
+      @payload = payload
       @event = @payload
     end
 
@@ -96,3 +97,4 @@ require_relative 'feeds/stackexchange/stackexchange'
 require_relative 'feeds/facebook/facebook'
 require_relative 'feeds/rss/rss'
 require_relative 'feeds/foursquare/foursquare'
+require_relative 'feeds/instagram/instagram'

@@ -11,7 +11,7 @@ server {
 
     server_name *.bithub.loc;
 
-    root /vagrant/;
+    root /vagrant/bithub-client/;
     index index.html;
 
     location / {
