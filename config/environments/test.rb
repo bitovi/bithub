@@ -39,8 +39,8 @@ Bithub::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
-  # Drop schema to sql (because of hstore)
-  config.active_record.schema_format = :sql
+  # Drop schema to Ruby
+  config.active_record.schema_format = :ruby
 
   config.eager_load = false
 end
