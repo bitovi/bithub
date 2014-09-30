@@ -37,7 +37,9 @@ Devise.setup do |config|
   config.omniauth :foursquare, ENV['FOURSQUARE_CLIENT_ID'], ENV['FOURSQUARE_SECRET']
   config.omniauth :foursquare_brand, ENV['FOURSQUARE_CLIENT_ID'], ENV['FOURSQUARE_SECRET']
 
-  # yelp
+  # instagram
+  config.omniauth :instagram, ENV['INSTAGRAM_CLIENT_ID'], ENV['INSTAGRAM_CLIENT_SECRET']
+  config.omniauth :instagram_brand, ENV['INSTAGRAM_CLIENT_ID'], ENV['INSTAGRAM_CLIENT_SECRET']
 
   config.sign_out_via = [:delete, :get]
 end

@@ -23,7 +23,9 @@ module HttpServer
       Handlers.constants.each do |handler_name|
         handler    = HttpServer::Handlers.const_get(handler_name)
         actor_name = build_actor_name(handler_name)
-        path       = File.join @path_prefix, handler.path
+
+        # make regexps of given paths so that wildchars can work
+        path       = Regexp.new File.join(@path_prefix, handler.path)
 
         # start actor and register route
         @handlers.supervise_as actor_name, handler
@@ -38,21 +40,27 @@ module HttpServer
         Celluloid.logger.info "HTTP Listener: #{request.method} #{request.path}"
 
         # route request to appropiate handler
-        route request
-
-        # always respond with 200
-        request.respond :ok, "OK"
+        if handler_future = route(request)
+          code, msg = handler_future.value
+          request.respond code, msg
+        else
+          request.respond :ok, 'nothing to do'
+        end
       end
     end
 
     private
 
     def route(req)
-      if actor_name = @routes[req.path]
+      if actor_name = @routes[match_route(req.path)]
         if actor = Celluloid::Actor[actor_name]
-          actor.handle req.body
+          actor.future.handle req
         end
       end
+    end
+
+    def match_route(path)
+      @routes.keys.select {|r| r.match path}.first
     end
 
     def add_route(path, actor_name)

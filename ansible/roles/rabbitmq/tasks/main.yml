@@ -19,7 +19,8 @@
                  password={{ rabbitmq.password }}
                  force=yes
                  vhost={{ rabbitmq.vhost }}
+                 tags=administrator
                  configure_priv=.*
                  read_priv=.*
                  write_priv=.*
-                 state=present                 
+                 state=present
