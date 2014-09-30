@@ -4,6 +4,8 @@ class CreateFilters < ActiveRecord::Migration
       t.references :embed
       t.boolean :is_conj
       t.string :classification
+      t.integer :filterable_id
+      t.string  :filterable_type
     end
   end
 end

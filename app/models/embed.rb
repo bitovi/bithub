@@ -1,6 +1,7 @@
 class Embed < ActiveRecord::Base
 
-  has_many :filters, :dependent => :destroy
+  has_many :filters, :as => :filterable, :dependent => :destroy
+  has_many :services, :dependent => :destroy
 
   has_many :embed_entities
 
@@ -20,6 +21,9 @@ class Embed < ActiveRecord::Base
 
   def moderating_filter
     self.filters.where(:classification => 'moderating').first
+  end
+
+  def linking_filter
   end
 
   def make_link_to(entity)
