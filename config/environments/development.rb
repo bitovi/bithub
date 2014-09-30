@@ -31,6 +31,9 @@ Bithub::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  # Drop schema to Ruby
+  config.active_record.schema_format = :ruby
+
   config.eager_load = false
 
   config.assets.precompile += ['admin.js', 'admin.css']
