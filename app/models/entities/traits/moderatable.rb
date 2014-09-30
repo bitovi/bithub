@@ -1,10 +1,10 @@
 module Moderatable
 
-  def moderate
+  def moderate_and_link
 
     Embed.all.each do |e|
 
-      if not e.blocking_filter.blocks? self
+      if not(e.blocking_filter.blocks? self)
         link = e.make_link_to self
 
         if e.moderating_filter.approves? self

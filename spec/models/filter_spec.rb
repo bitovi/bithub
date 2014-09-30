@@ -3,13 +3,28 @@ require 'models/filter'
 
 RSpec.describe Filter, :type => :model do
 
-  describe '#classification_must_be_either_blocking_or_moderating' do
-    it 'validates the two possible states of the filter' do
-
+  describe '#classification_type validator' do
+    it 'validates the three possible states of the filter' do
       e = FactoryGirl.create(:embed)
-
       expect do
         e.filters.create!(:classification => 'non_existent', :is_conj => true)
+      end.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+  
+  describe '#classification_filterable_combination validator' do
+
+      it 'validates that a moderating/blocking filter can only be associated to an embed' do
+      s = FactoryGirl.create(:service)
+      expect do
+        s.create_filter!(:classification => 'moderating', :is_conj => true)
+      end.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'validates that a linking filter can only be associated to a service' do
+      e = FactoryGirl.create(:embed)
+      expect do
+        e.filters.create!(:classification => 'linking', :is_conj => true)
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
