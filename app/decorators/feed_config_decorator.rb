@@ -89,6 +89,10 @@ class FeedConfigDecorator < ::Draper::Decorator
     }.merge(@bids.first.data)
   end
 
+  def tumblr_config
+    source.config.merge @bids.first.data
+  end
+
   def rss_config
     { sites: source.config.andand['sites'] || [] }
   end

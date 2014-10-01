@@ -76,4 +76,10 @@ class BrandIdentityDecorator < ::Draper::Decorator
     }
   end
 
+  def provider_tumblr
+    {
+      info: @builder.info,
+      access_token: @builder.access_token
+    }
+  end
 end
