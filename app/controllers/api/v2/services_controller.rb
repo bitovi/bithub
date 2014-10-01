@@ -1,4 +1,4 @@
-class Api::V2::FeedConfigsController < Api::V2::BaseController
+class Api::V2::ServicesController < Api::V2::BaseController
   before_filter :authenticate!
 
   # CanCan vs Rails4 bug, see:
@@ -8,18 +8,18 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   load_and_authorize_resource except: [:tree]
 
   def index
-    @configs = current_account.brand.feed_configs.all
+    @services = current_account.services.all
     render :index
   end
 
   def show
-    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
+    @config = current_account.brand.services.find_by_id actual_params[:id]
     render :show
   end
 
   def create
     @config.brand = current_account.brand
-    FeedConfigTagPlucker.new(actual_params).create_tags
+    create_tags(FeedConfigTagPlucker.new(actual_params).tags)
 
     if @config.save
       render :show
@@ -29,23 +29,23 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
   end
 
   def update
-    @config = current_account.brand.feed_configs.find_by_id params[:id]
-    FeedConfigTagPlucker.new(actual_params).create_tags
+    @service = current_account.brand.services.find_by_id params[:id]
+    create_tags(FeedConfigTagPlucker.new(actual_params).tags)
 
-    if @config && @config.update_attributes(actual_params)
+    if @service && @service.update_attributes(actual_params)
       render :show
     else
-      render :json => msg_hash(@config, 'update'), :status => 406
+      render :json => msg_hash(@service, 'update'), :status => 406
     end
   end
 
   def destroy
-    @config = current_account.brand.feed_configs.find_by_id actual_params[:id]
+    @config = current_account.brand.services.find_by_id actual_params[:id]
 
-    if @config.destroy
-      render :json => msg_hash(@config, 'destroy', 'success')
+    if @service.destroy
+      render :json => msg_hash(@service, 'destroy', 'success')
     else
-      render :json => msg_hash(@config, 'destroy'), :status => 406
+      render :json => msg_hash(@service, 'destroy'), :status => 406
     end
   end
 
@@ -53,15 +53,26 @@ class Api::V2::FeedConfigsController < Api::V2::BaseController
     # used by crawler!
     authorize! :read, FeedConfig if request.ip != '127.0.0.1'
 
-    @tree = Hash[Brand.all.map do |b|
-      fcs = FeedConfigDecorator.decorate_collection(b.feed_configs)
-      [b.name, Hash[fcs.select{|fc| not(fc.config.nil?)}.map {|fc| [fc.feed_name, fc.config]}]]
+    @tree = Hash[Brand.all.map do |brand|
+      services = ServiceDecorator.decorate_collection(brand.services)
+      [b.name, Hash[
+        services.reject do |s|
+          s.config.empty?
+        end.map do |fc|
+          [s.feed_name, s.config.to_h]
+      end]]
     end]
 
     render :json => @tree
   end
 
   private
+
+  def create_tags(tags)
+    tags.andand.each do |t|
+      Tag.register t, 'keywords'
+    end
+  end
 
   def actual_params
     @actual ||= params.require(:feed_config).permit! #permit(:feed_name, :brand_name, :config)
