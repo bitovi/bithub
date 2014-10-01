@@ -86,6 +86,10 @@ class FeedConfig < ActiveRecord::Base
     has?('users') || has?('tags') || has?('locations') || has?('geographies')
   end
 
+  def valid_tumblr?
+    has?('blogs') || has?('tags')
+  end
+
   def has?(key)
     returning(config\
               && config.instance_of?(Hash)\
