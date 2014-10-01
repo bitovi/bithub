@@ -1,11 +1,12 @@
 class ServiceConfigValidator
 
-  def initialize(data)
+  def initialize(data, feed_name)
     @data = data
+    @feed_name = feed_name
   end
 
   def valid?
-    send("valid_#{feed_name}?")
+    send("valid_#{@feed_name}?")
   end
 
   def valid_github?
