@@ -83,7 +83,6 @@ group :development, :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'travis', require: false
   gem 'git'
-  gem 'webmock'
 end
 
 group :development do
@@ -95,6 +94,10 @@ group :development do
   gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
+end
+
+group :test do
+  gem 'webmock'
 end
 
 # --------
