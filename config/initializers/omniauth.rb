@@ -48,6 +48,12 @@ module OmniAuth::Strategies
     end
   end
 
+  class TumblrBrand < Tumblr
+    def name
+      :tumblr_brand
+    end
+  end
+
 end
 
 # use OmniAuth::Builder do

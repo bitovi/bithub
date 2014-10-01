@@ -47,6 +47,7 @@ gem 'omniauth-facebook'
 gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
 gem 'omniauth-instagram'
+gem 'omniauth-tumblr'
 
 gem 'redcarpet'
 
