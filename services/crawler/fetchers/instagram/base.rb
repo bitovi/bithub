@@ -5,16 +5,10 @@ module Fetchers
 
     class Base
 
+      attr_reader :result, :client
+
       def initialize
         @client = create_client
-      end
-
-      def result
-        @result
-      end
-
-      def client
-        @client
       end
 
       private
