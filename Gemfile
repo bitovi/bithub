@@ -73,6 +73,8 @@ gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
 gem 'reel', '~> 0.5.0'
+gem 'tumblr_client'
+
 
 gem 'activesupport-json_encoder'
 
