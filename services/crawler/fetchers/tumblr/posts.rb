@@ -34,6 +34,10 @@ module Fetchers
         @offset <= @result['total_posts']
       end
 
+      def self.fetch(hostname, opts={})
+        self.new(hostname, opts).fetch
+      end
+
     end
 
   end

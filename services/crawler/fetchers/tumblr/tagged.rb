@@ -15,6 +15,10 @@ module Fetchers
         @result = @client.tagged @tag
       end
 
+      def self.fetch(tag, opts={})
+        self.new(tag, opts).fetch
+      end
+
     end
 
   end
