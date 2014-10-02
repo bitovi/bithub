@@ -15,11 +15,10 @@ class Dispatcher
   def dispatch(response, hint=nil)
     event = Events::Dispatcher.dispatch(response, hint)
     entity = Entities::Dispatcher.dispatch(event)
-    
+
     ActiveRecord::Base.transaction do
       event.build.normalize.validate.persist!
       entity.procure.update_if_found.validate.determine.group.normalize.persist!
-      entity.moderate_and_link!
     end
 
     [event.instance, entity.instance]
