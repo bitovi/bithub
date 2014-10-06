@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140930115830) do
+ActiveRecord::Schema.define(version: 20141005093020) do
 
 
   create_extension "hstore", :version => "1.2"
@@ -140,10 +140,13 @@ ActiveRecord::Schema.define(version: 20140930115830) do
   end
 
   create_table "embeds", force: true do |t|
-    t.string "name"
-    t.string "colorscheme"
-    t.string "layout"
+    t.string  "name"
+    t.string  "colorscheme"
+    t.string  "layout"
+    t.integer "brand_id"
   end
+
+  add_index "embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
 
   create_table "entities", force: true do |t|
     t.text     "title"
@@ -187,16 +190,6 @@ ActiveRecord::Schema.define(version: 20140930115830) do
   end
 
   add_index "events", ["content_digest"], :name => "index_events_on_content_digest"
-
-  create_table "feed_configs", force: true do |t|
-    t.integer  "brand_id"
-    t.string   "feed_name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "feed_configs", ["brand_id"], :name => "index_feed_configs_on_brand_id"
 
   create_table "filters", force: true do |t|
     t.integer "embed_id"
@@ -275,9 +268,14 @@ ActiveRecord::Schema.define(version: 20140930115830) do
   end
 
   create_table "services", force: true do |t|
-    t.string "name"
-    t.json   "source_data", default: {}
+    t.integer  "embed_id"
+    t.string   "feed_name"
+    t.json     "json_config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+
+  add_index "services", ["embed_id"], :name => "index_services_on_embed_id"
 
   create_table "taggings", force: true do |t|
     t.integer  "tag_id"
@@ -403,15 +401,17 @@ ActiveRecord::Schema.define(version: 20140930115830) do
   add_foreign_key "brands_users", "public.brands", :name => "brands_users_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "brands_users", "public.users", :name => "brands_users_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
 
-  add_foreign_key "entities", "public.scoring_rules", :name => "entities_scoring_rule_id_fk", :column => "scoring_rule_id", :exclude_index => true
+  add_foreign_key "embeds", "public.brands", :name => "embeds_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
 
-  add_foreign_key "feed_configs", "public.brands", :name => "feed_configs_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
+  add_foreign_key "entities", "public.scoring_rules", :name => "entities_scoring_rule_id_fk", :column => "scoring_rule_id", :exclude_index => true
 
   add_foreign_key "internals", "public.users", :name => "internals_actor_id_fk", :column => "actor_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "internals", "public.users", :name => "internals_receiver_id_fk", :column => "receiver_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "ownerships", "public.entities", :name => "ownerships_entity_id_fk", :column => "entity_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
+
+  add_foreign_key "services", "public.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "upvotes", "public.entities", :name => "upvotes_applies_to_id_fk", :column => "applies_to_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "upvotes", "public.users", :name => "upvotes_actor_id_fk", :column => "actor_id", :dependent => :delete, :exclude_index => true
