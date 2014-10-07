@@ -3,6 +3,8 @@ class Brand < ActiveRecord::Base
   has_many :accounts, :dependent => :nullify
   has_many :identities, :class_name => 'BrandIdentity', :dependent => :destroy
 
+  scope :identity_from, lambda {|feed_name| where(:feed_name => feed_name)}
+
   has_many :embeds, :dependent => :destroy
   has_many :services, :through => :embeds
 
@@ -10,8 +12,7 @@ class Brand < ActiveRecord::Base
 
   validates :tenant_name, format: { with: /\A[-0-9a-zA-Z]+\z/, message: "invalid characters" }
 
-  after_create :create_tenant
-  after_save :update_tenant
+  after_update :rename_tenant_schema
   after_destroy :destroy_tenant
 
   private
@@ -30,19 +31,11 @@ class Brand < ActiveRecord::Base
     Rake::Task['data:import_or_update_tags'].invoke
     Rake::Task['data:import_scoring_rules'].invoke
 
-    # repopulate matviews upon creation
-    UserActivity.refresh
-
     Apartment::Database.switch
   end
 
   def destroy_tenant
     Apartment::Database.drop tenant_name
-  end
-
-  def update_tenant
-    rename_tenant if self.changes['tenant_name']
-    update_keywords if self.changes['keywords']
   end
 
   def self.find_by_tenant_name(tenant)
@@ -55,27 +48,11 @@ class Brand < ActiveRecord::Base
 
   private
 
-  def rename_tenant
-    old_name, new_name = self.changes['tenant_name']
-
-    return unless old_name
-
-    sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
-    ActiveRecord::Base.connection.execute(sql)
-  end
-
-  def update_keywords
-    old_keywords = self.changes['keywords'].first || []
-    new_keywords = self.changes['keywords'].second || []
-
-    # remove old tags from keywords
-    old_keywords.each do |k|
-      Tag.remove_group k, 'keywords'
-    end
-
-    # register new keywords as tags
-    new_keywords.each do |k|
-      Tag.register k, 'keywords'
+  def rename_tenant_schema
+    if self.changes['tenant_name'] && self.changes['tenant_name'][0]
+      old_name, new_name = self.changes['tenant_name']
+      sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
+      ActiveRecord::Base.connection.execute(sql)
     end
   end
 end
