@@ -6,6 +6,5 @@ class AnonAbility
     can :read, Tag
     can :read, Reward
     can :read, User
-    can :read, Funnel
   end
 end
