@@ -6,7 +6,11 @@ class Service < ActiveRecord::Base
   has_one :filter, as: :filterable, :dependent => :destroy
 
   def brand_identities
-    self.embed.brand.identities.where(:provider => feed_name).all
+    self.brand.identities.where(:provider => feed_name).all
+  end
+
+  def brand
+    self.embed.brand
   end
 
   def config
@@ -25,5 +29,5 @@ class Service < ActiveRecord::Base
 
 end
 
-  # after_update :notify_crawler
-  # after_create :notify_crawler
+# after_update :notify_crawler
+# after_create :notify_crawler
