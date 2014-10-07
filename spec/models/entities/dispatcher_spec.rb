@@ -1,5 +1,5 @@
 require 'rake'
-require 'models/spec_helper'
+require 'rails_helper'
 require 'models/entities/protocol'
 
 describe Entities::Dispatcher do

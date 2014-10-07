@@ -1,4 +1,4 @@
-require 'models/spec_helper'
+require 'rails_helper'
 
 RSpec.describe Users::Rewarder, :type => :domain do
 
