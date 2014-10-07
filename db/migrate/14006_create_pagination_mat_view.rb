@@ -1,4 +1,4 @@
-class CreatePaginationMatview < ActiveRecord::Migration
+class CreatePaginationMatView < ActiveRecord::Migration
   def up
     execute <<-SQL
 DROP MATERIALIZED VIEW IF EXISTS pagination;
