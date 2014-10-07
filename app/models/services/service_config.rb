@@ -17,6 +17,10 @@ module Services
     def terms
       (@data.andand['terms'] && not(@data['terms'].empty?)) ? @data['terms'] : []
     end
+
+    def tags
+      ConfigTagPlucker.new(@data).tags if valid?
+    end
     
     Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss irc)
     Feeds.each do |feed|
