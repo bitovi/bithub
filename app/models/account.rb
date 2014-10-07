@@ -5,14 +5,4 @@ class Account < ActiveRecord::Base
          :rememberable, :trackable, :validatable
 
   belongs_to :brand
-
-  before_create :create_brand
-
-  private
-
-  def create_brand
-    brand_name = self.email.split('@').first.gsub(/[^\w-]/,'-')
-    self.brand = Brand.new({name: brand_name, tenant_name: brand_name})
-  end
-
 end
