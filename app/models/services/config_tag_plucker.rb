@@ -1,4 +1,4 @@
-class FeedConfigTagPlucker
+class ConfigTagPlucker
   def initialize(params)
     @params = params
   end
