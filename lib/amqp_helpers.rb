@@ -1,6 +1,8 @@
 require 'multi_json'
 
 module AmqpHelpers
+  attr_reader :x
+  alias_method :exchange, :x
 
   def rabbit(args = {})
     @conn = Bunny.new(rabbitmq_uri).start
@@ -15,17 +17,13 @@ module AmqpHelpers
   end
 
   def publish(msg, rk)
-    returning @x.publish(MultiJson.dump(msg), :routing_key => rk) do
+    returning @x.publish(MultiJson.dump(msg), routing_key: rk) do
       @conn.close
     end
   end
 
-  def exchange
-    @x
-  end
-
   def rabbitmq_uri
-    ENV.fetch('RABBITMQ_URI') { "amqp://bithub:Ei7PhaaH@localhost/bithub" }
+    ENV.fetch('RABBITMQ_URI') { 'amqp://bithub:Ei7PhaaH@localhost/bithub' }
   end
 
   def returning(exp)
