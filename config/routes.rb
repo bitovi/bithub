@@ -9,10 +9,6 @@ Bithub::Application.routes.draw do
 
   # Devise
 
-  devise_for :users,
-    path: '/api',
-    controllers: { omniauth_callbacks: "api/auth/omniauth_callbacks" }
-
   devise_for :accounts,
     path: '/',
     controllers: {
@@ -35,17 +31,6 @@ Bithub::Application.routes.draw do
   # SERVICE API Routes
 
   namespace :api, :defaults => { :format => 'json' } do
-
-    # Auth
-
-    namespace :auth do
-      get    :session, :to => 'sessions#current'
-      get    :logout, :to => 'sessions#destroy', :as => :destroy_user_session
-      post   :link_identity, :to => 'identities#link'
-      delete 'unlink_identity/:uid', :to => 'identities#unlink'
-    end
-
-    # API v2
 
     namespace :v2 do
 
