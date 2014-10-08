@@ -1,8 +1,8 @@
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$:.unshift PROJECT_ROOT
-$:.unshift File.join(PROJECT_ROOT, 'app')
-$:.unshift File.join(PROJECT_ROOT, 'app', 'models')
-$:.unshift File.join(PROJECT_ROOT, 'app', 'domain')
+$LOAD_PATH.unshift PROJECT_ROOT
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'models')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'domain')
 
 if ENV['RAILS_ENV'] == 'testing'
   require 'codeclimate-test-reporter'
@@ -24,9 +24,7 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 
-  if config.files_to_run.one?
-    config.default_formatter = 'doc'
-  end
+  config.default_formatter = 'doc' if config.files_to_run.one?
 
   config.profile_examples = 10
   config.order = :random
