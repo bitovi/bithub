@@ -2,5 +2,4 @@
 Bithub::Application.config.session_store \
   :redis_store,
   :redis_server => "#{ENV['REDIS_URL']}/session",
-  :expire_after => 1.month,
-  :domain => ".#{ENV['DOMAIN']}"
+  :expire_after => 1.month
