@@ -8,6 +8,7 @@ class Brand < ActiveRecord::Base
   has_many :embeds, dependent: :destroy
   has_many :services, through: :embeds
 
+  has_and_belongs_to_many :accounts
   has_and_belongs_to_many :users
 
   validates :tenant_name, format: {
