@@ -12,7 +12,7 @@ module Brands
     end
 
     def save
-      @brand.create_tenant if @brand.save
+      @brand.save
     end
     
     def brand_name
