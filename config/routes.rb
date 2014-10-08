@@ -2,8 +2,10 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
-  root "kickstart#frontend"
-  get "/admin", :to => "kickstart#admin"
+  root "frontend#index"
+
+  get "/admin", :to => "admin#index"
+  get "/admin/choose_brand", :to => "admin#choose_brand"
 
   # Devise
 
@@ -148,5 +150,5 @@ Bithub::Application.routes.draw do
   # end
   mount Sidekiq::Web => '/sidekiq'
 
-  get '*path', :controller => 'kickstart', :action => 'frontend'
+  get '*path', :controller => 'frontend', :action => 'index'
 end
