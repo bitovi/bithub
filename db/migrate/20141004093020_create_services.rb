@@ -1,8 +1,10 @@
 class CreateServices < ActiveRecord::Migration
   def change
     create_table :services do |t|
-      t.string :name
-      t.json :source_data, default: '{}'
+      t.references :embed
+      t.string  :feed_name
+      t.column  :json_config, :json
+      t.timestamps
     end
   end
 end

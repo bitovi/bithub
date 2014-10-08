@@ -1,4 +1,4 @@
-require 'models/spec_helper'
+require 'rails_helper'
 
 RSpec.describe Tagger::List, :typo => :tagger do
 

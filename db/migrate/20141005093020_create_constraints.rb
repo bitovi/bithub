@@ -5,8 +5,6 @@ class CreateConstraints < ActiveRecord::Migration
     add_foreign_key :users, :countries
 
     # Entities
-    add_foreign_key :entities, :tags, :column => 'feed_id', :name => 'entities_feed_tags_fk'
-    add_foreign_key :entities, :tags, :column => 'type_id', :name => 'entities_type_tags_fk'
     add_foreign_key :entities, :scoring_rules
 
     # Ownerships
@@ -28,15 +26,12 @@ class CreateConstraints < ActiveRecord::Migration
     # Accounts
     add_foreign_key :accounts, :brands
 
-    # Feed configs 
-    add_foreign_key :feed_configs, :brands, :dependent => :delete
+    # Brands -> Embeds, Embeds -> Services
+    add_foreign_key :embeds, :brands, :dependent => :delete
+    add_foreign_key :services, :embeds, :dependent => :delete
 
     # Brand identities
     add_foreign_key :brand_identities, :brands, :dependent => :delete
-
-    # Funnels
-    add_foreign_key :funnel_constraints_funnels, :funnels, :dependent => :delete
-    add_foreign_key :funnel_constraints_funnels, :funnel_constraints
 
     # Brands
     add_foreign_key :brands_users, :users,  :dependent => :delete
@@ -44,3 +39,4 @@ class CreateConstraints < ActiveRecord::Migration
 
   end
 end
+

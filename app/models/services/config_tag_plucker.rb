@@ -1,13 +1,6 @@
-class FeedConfigTagPlucker
-
+class ConfigTagPlucker
   def initialize(params)
     @params = params
-  end
-
-  def create_tags
-    tags.andand.each do |t|
-      Tag.register t, 'keywords'
-    end
   end
 
   def tags
