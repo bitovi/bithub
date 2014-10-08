@@ -242,4 +242,21 @@ module Entities
     end
   end
 
+  module Tumblr
+    class Dispatcher < BasicTypeDispatcher
+
+      def type
+        if Entities::Tumblr.constants.include?(type_name)
+          Entities::Tumblr.const_get(type_name)
+        else
+          fail DispatchError.new("Failed to dispatch to a type in Entities::Tumblr::#{type_name}")
+        end
+      end
+
+      def type_name
+        @event.source_data.fetch(:type).capitalize.to_sym
+      end
+    end
+  end
+
 end

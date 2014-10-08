@@ -28,7 +28,12 @@ module FeedSupervisors
         if VALID_OBJECTS.include? object
           subscriptions.each do |params|
             Celluloid.logger.info "Creating Instagram subscription for #{object}, #{params}"
-            self.send "subscribe_#{object}", params
+
+            begin
+              self.send "subscribe_#{object}", params
+            rescue ::Instagram::Error => e
+              Celluloid.logger.info "Instagram subscription failed for #{object}, #{params} with #{e.message}"
+            end
           end
         end
       end

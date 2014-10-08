@@ -41,5 +41,8 @@ Devise.setup do |config|
   config.omniauth :instagram, ENV['INSTAGRAM_CLIENT_ID'], ENV['INSTAGRAM_CLIENT_SECRET']
   config.omniauth :instagram_brand, ENV['INSTAGRAM_CLIENT_ID'], ENV['INSTAGRAM_CLIENT_SECRET']
 
+  # tumblr
+  config.omniauth :tumblr_brand, ENV['TUMBLR_CONSUMER_KEY'], ENV['TUMBLR_CONSUMER_SECRET']
+
   config.sign_out_via = [:delete, :get]
 end

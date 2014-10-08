@@ -47,6 +47,7 @@ gem 'omniauth-facebook'
 gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
 gem 'omniauth-instagram'
+gem 'omniauth-tumblr'
 
 gem 'redcarpet'
 
@@ -72,6 +73,8 @@ gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
 gem 'reel', '~> 0.5.0'
+gem 'tumblr_client'
+
 
 gem 'activesupport-json_encoder'
 
@@ -94,6 +97,10 @@ group :development do
   gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
+end
+
+group :test do
+  gem 'webmock'
 end
 
 # --------

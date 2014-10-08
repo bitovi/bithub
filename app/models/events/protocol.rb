@@ -22,6 +22,7 @@ module Events
   module Facebook; end
   module Foursquare; end
   module Instagram; end
+  module Tumblr; end
 
   class Protocol
     include CoreHelpers
