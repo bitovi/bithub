@@ -4,5 +4,6 @@ class Account < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :rememberable, :trackable, :validatable
 
-  belongs_to :brand
+  has_and_belongs_to_many :brands
+
 end

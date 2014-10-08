@@ -24,7 +24,8 @@ class CreateConstraints < ActiveRecord::Migration
     add_foreign_key :achievements, :rewards, :dependent => :delete
 
     # Accounts
-    add_foreign_key :accounts, :brands
+    add_foreign_key :accounts_brands, :brands, :dependent => :delete
+    add_foreign_key :accounts_brands, :accounts, :dependent => :delete
 
     # Brands -> Embeds, Embeds -> Services
     add_foreign_key :embeds, :brands, :dependent => :delete
@@ -39,4 +40,3 @@ class CreateConstraints < ActiveRecord::Migration
 
   end
 end
-

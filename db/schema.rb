@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141005093020) do
+ActiveRecord::Schema.define(version: 20141007111224) do
 
 
   create_extension "hstore", :version => "1.2"
@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(version: 20141005093020) do
   create_table "accounts", force: true do |t|
     t.string   "name"
     t.hstore   "props",                  default: {}
-    t.integer  "brand_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email",                  default: "", null: false
@@ -51,7 +50,6 @@ ActiveRecord::Schema.define(version: 20141005093020) do
     t.string   "last_sign_in_ip"
   end
 
-  add_index "accounts", ["brand_id"], :name => "index_accounts_on_brand_id"
   add_index "accounts", ["email"], :name => "index_accounts_on_email", :unique => true
   add_index "accounts", ["reset_password_token"], :name => "index_accounts_on_reset_password_token", :unique => true
 
@@ -61,6 +59,16 @@ ActiveRecord::Schema.define(version: 20141005093020) do
   end
 
   add_index "accounts_account_roles", ["account_id", "account_role_id"], :name => "index_accounts_account_roles_on_account_id_and_account_role_id"
+
+  create_table "accounts_brands", id: false, force: true do |t|
+    t.integer "brand_id",   null: false
+    t.integer "account_id", null: false
+  end
+
+  add_index "accounts_brands", ["account_id", "brand_id"], :name => "index_accounts_brands_on_account_id_and_brand_id"
+  add_index "accounts_brands", ["account_id"], :name => "index_accounts_brands_on_account_id"
+  add_index "accounts_brands", ["brand_id", "account_id"], :name => "index_accounts_brands_on_brand_id_and_account_id"
+  add_index "accounts_brands", ["brand_id"], :name => "index_accounts_brands_on_brand_id"
 
   create_table "achievements", force: true do |t|
     t.integer  "user_id",     null: false
@@ -105,12 +113,10 @@ ActiveRecord::Schema.define(version: 20141005093020) do
 
   create_table "brands", force: true do |t|
     t.string   "name"
-    t.string   "description"
-    t.string   "keywords",    default: [], array: true
+    t.string   "tenant_name"
     t.hstore   "props",       default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "tenant_name"
   end
 
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
@@ -388,7 +394,8 @@ ActiveRecord::Schema.define(version: 20141005093020) do
   GROUP BY e.id;
   SQL
 
-  add_foreign_key "accounts", "public.brands", :name => "accounts_brand_id_fk", :column => "brand_id", :exclude_index => true
+  add_foreign_key "accounts_brands", "public.accounts", :name => "accounts_brands_account_id_fk", :column => "account_id", :dependent => :delete, :exclude_index => true
+  add_foreign_key "accounts_brands", "public.brands", :name => "accounts_brands_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "achievements", "public.rewards", :name => "achievements_reward_id_fk", :column => "reward_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "achievements", "public.users", :name => "achievements_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
