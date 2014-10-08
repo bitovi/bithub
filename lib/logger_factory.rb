@@ -35,15 +35,12 @@ class LoggerFactory
   private
 
   def config_path
-    path = config_path_builder(@env)
-
-    # return path for current environmet or default one
-    return File.exists?(path) ? path : config_path_builder
-  end
-
-  def config_path_builder(env = nil)
-    filename = env ? "log4r_#{env}.yml" : 'log4r.yml'
-    File.join($root_dir, 'config', filename)
+    path = File.join($root_dir, 'config', 'log4r', "#{@env}.yml")
+    if File.exists?(path)
+      path
+    else
+      raise "log4r config file not found"
+    end
   end
 
 end
