@@ -1,21 +1,22 @@
 class Brand < ActiveRecord::Base
 
-  has_many :accounts, :dependent => :nullify
-  has_many :identities, :class_name => 'BrandIdentity', :dependent => :destroy
+  has_many :accounts, dependent: :nullify
+  has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
-  scope :identity_from, lambda {|feed_name| where(:feed_name => feed_name)}
+  scope :identity_from, ->(feed_name) { where(feed_name: feed_name) }
 
-  has_many :embeds, :dependent => :destroy
-  has_many :services, :through => :embeds
+  has_many :embeds, dependent: :destroy
+  has_many :services, through: :embeds
 
   has_and_belongs_to_many :users
 
-  validates :tenant_name, format: { with: /\A[-0-9a-zA-Z]+\z/, message: "invalid characters" }
+  validates :tenant_name, format: {
+    with: /\A[-0-9a-zA-Z]+\z/, message: 'invalid characters'
+  }
 
+  after_create :create_tenant
   after_update :rename_tenant_schema
   after_destroy :destroy_tenant
-
-  private
 
   def create_tenant
     Apartment::Database.create tenant_name
@@ -39,20 +40,20 @@ class Brand < ActiveRecord::Base
   end
 
   def self.find_by_tenant_name(tenant)
-    self.where(tenant_name: tenant).first
+    where(tenant_name: tenant).first
   end
 
   def self.current
-    self.where(tenant_name: Apartment::Database.current_tenant).first
+    where(tenant_name: Apartment::Database.current_tenant).first
   end
 
   private
 
   def rename_tenant_schema
-    if self.changes['tenant_name'] && self.changes['tenant_name'][0]
-      old_name, new_name = self.changes['tenant_name']
-      sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
-      ActiveRecord::Base.connection.execute(sql)
-    end
+    return if !changes['tenant_name'] || !changes['tenant_name'][0]
+
+    old_name, new_name = changes['tenant_name']
+    sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
+    ActiveRecord::Base.connection.execute(sql)
   end
 end
