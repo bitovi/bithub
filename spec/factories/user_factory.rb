@@ -23,7 +23,6 @@ FactoryGirl.define do
       email nil
     end
 
-
     props Hash.new
 
     after :create do |user|

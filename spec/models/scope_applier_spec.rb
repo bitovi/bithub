@@ -1,4 +1,4 @@
-require 'models/spec_helper'
+require 'rails_helper'
 require 'models/scope_applier'
 require 'models/query_logic/query'
 

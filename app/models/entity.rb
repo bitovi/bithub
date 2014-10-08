@@ -7,16 +7,16 @@ class Entity < ActiveRecord::Base
   mount_uploader :image, EventImageUploader
 
   has_and_belongs_to_many :references_to,
-  :class_name => 'Entity',
-  :join_table => 'entity_refs',
-  :foreign_key => 'from_id',
-  :association_foreign_key => "to_id"
+    :class_name => 'Entity',
+    :join_table => 'entity_refs',
+    :foreign_key => 'from_id',
+    :association_foreign_key => "to_id"
 
   has_and_belongs_to_many :referenced_from,
-  :class_name => 'Entity',
-  :join_table => 'entity_refs',
-  :foreign_key => 'to_id',
-  :association_foreign_key => "from_id"
+    :class_name => 'Entity',
+    :join_table => 'entity_refs',
+    :foreign_key => 'to_id',
+    :association_foreign_key => "from_id"
 
   has_many :events
 
@@ -38,42 +38,44 @@ class Entity < ActiveRecord::Base
     :scoring_rule_id, :tag_list
 
   # Basic
-  scope :feed, lambda {|f| where(feed_name: f) }
-  scope :no_feed, lambda {|f| where("feed_name <> ?", f) }
-  scope :type, lambda {|t| where(type_name: t) }
-  scope :no_type, lambda {|t| where("type_name <> ?", t) }
+  scope :feed, ->(f) { where(feed_name: f) }
+  scope :no_feed, ->(f) { where('feed_name <> ?', f) }
+  scope :type, ->(t) { where(type_name: t) }
+  scope :no_type, ->(t) { where('type_name <> ?', t) }
 
-  scope :without_future, lambda { |clientTz|
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", clientTz, clientTz)
-  }
+  scope :without_future, ->(client_tz) do
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? < date_trunc('day', now() AT TIME ZONE ?) + interval '1 day'", client_tz, client_tz)
+  end
 
-  scope :in_future, lambda { |clientTz|
-    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > date_trunc('day', now() AT TIME ZONE ?)", clientTz, clientTz)
-  }
+  scope :in_future, ->(client_tz) do
+    where("thread_updated_ts AT TIME ZONE 'UTC' AT TIME ZONE ? > date_trunc('day', now() AT TIME ZONE ?)", client_tz, client_tz)
+  end
 
   # Thread belonging
-  scope :belong_to_a_thread, lambda { where("parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)") }
-  scope :have_no_thread, lambda { where("parent_id IS NULL AND id NOT IN (SELECT parent_id from entities)") }
+  scope :belong_to_a_thread, -> do
+    where 'parent_id IS NOT NULL OR id IN (SELECT parent_id from entities)'
+  end
+
+  scope :have_no_thread, -> do
+    where 'parent_id IS NULL AND id NOT IN (SELECT parent_id from entities)'
+  end
 
   # Parent/child
-  scope :only_parents, lambda { where("id IN (SELECT parent_id from entities WHERE parent_id IS NOT NULL)") }
-  scope :only_children, lambda { where("parent_id IS NOT NULL") }
-  scope :no_parents, lambda { where("id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)") }
-  scope :no_children, lambda { where("parent_id IS NULL") }
+  scope :only_parents, -> { where('id IN (SELECT parent_id from entities WHERE parent_id IS NOT NULL)') }
+  scope :only_children, -> { where('parent_id IS NOT NULL') }
+  scope :no_parents, -> { where('id NOT IN (SELECT parent_id FROM entities WHERE parent_id IS NOT NULL)') }
+  scope :no_children, -> { where('parent_id IS NULL') }
 
   # Authorship
   scope :origin_author, lambda {|uid| where("props -> 'origin_author_id' = :uid", uid: uid.to_s) }
   scope :origin_host, lambda {|uid| where("string_to_array(props -> 'event_host_ids_csv', ',') @> string_to_array(:uid, ',') OR string_to_array(props -> 'event_host_ids', ',') @> string_to_array(:uid, ',')", uid: uid.to_s) }
 
   # Issues
-  scope :number, lambda {|n| where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
-  scope :repo_name, lambda {|rn| where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
-  scope :with_state, lambda {|state| where("props ? 'state'").where("props -> 'state' = :val", val: state) }
+  scope :number, ->(n) { where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
+  scope :repo_name, ->(rn) { where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
+  scope :with_state, ->(s) { where("props ? 'state'").where("props -> 'state' = :val", val: s) }
 
-  scope :scoped_with_includes, lambda { includes(:owners).includes(:parent) }
-
-  scope :from_funnel, lambda { |funnel| tagged_with funnel.tags, :any => true if funnel.tags && funnel.tags.present?}
-  scope :from_funnel_constraint, lambda { |constraint| where constraint.as_hash }
+  scope :scoped_with_includes, -> { includes(:owners).includes(:parent) }
 
   after_create :reward_user_if_eligible
   after_create :increase_score_in_author
@@ -81,7 +83,6 @@ class Entity < ActiveRecord::Base
   after_destroy :decrease_score_in_author
 
   after_validation :reformat_uniqueness_validation
-
 
   def self.with_author(author_id)
     joins(:ownerships)\
@@ -196,33 +197,31 @@ class Entity < ActiveRecord::Base
   end
 
   def increase_score_in_author
-    if self.author
-      self.author.total_score += self.scoring_rule.authorship_value
-      self.author.save!
-    end
+    return unless author
+    author.total_score += scoring_rule.authorship_value
+    author.save!
   end
 
   def decrease_score_in_author
-    if self.author
-      self.author.total_score -= self.scoring_rule.authorship_value
-      self.author.save!
-    end
+    return unless author
+    author.total_score -= scoring_rule.authorship_value
+    author.save!
   end
 
   def reward_user_if_eligible
-    self.author.reward_if_eligible if self.author
+    author.reward_if_eligible if author
   end
 
   def top_level_parent
-    if self.parent
-      self.parent.top_level_parent
+    if parent
+      parent.top_level_parent
     else
       self
     end
   end
 
   def cached_tags
-    self.cached_tag_list.split(',').map {|t| t.strip}
+    cached_tag_list.split(',').map { |t| t.strip }
   end
 
   def last_modified_by
