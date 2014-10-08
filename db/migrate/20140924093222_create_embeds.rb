@@ -4,6 +4,7 @@ class CreateEmbeds < ActiveRecord::Migration
       t.string :name
       t.string :colorscheme
       t.string :layout
+      t.references :brand
     end
   end
 end

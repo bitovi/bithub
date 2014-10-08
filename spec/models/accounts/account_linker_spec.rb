@@ -1,4 +1,4 @@
-require 'models/spec_helper'
+require 'rails_helper'
 
 RSpec.describe Accounts::AccountLinker, :type => :domain do
   
@@ -11,8 +11,8 @@ RSpec.describe Accounts::AccountLinker, :type => :domain do
 
     context "linking with a new, unclaimed identity" do
       it "should claim the identity to the existing user" do
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter')
+        identity_github = FactoryGirl.create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = FactoryGirl.create(:identity, uid: 123456789, provider: 'twitter')
 
         al = Accounts::AccountLinker.new(@nikica, identity_twitter)
         expect(al.determine_state.state).to eq :only_linking
@@ -21,8 +21,8 @@ RSpec.describe Accounts::AccountLinker, :type => :domain do
 
     context "linking with a claimed identity whose user has no more identities assigned" do
       it "should claim that identity and merge users into one user" do
-        identity_github = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
+        identity_github = FactoryGirl.create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = FactoryGirl.create(:identity, uid: 123456789, provider: 'twitter', user: @veljko)
 
         al = Accounts::AccountLinker.new(@nikica, identity_twitter)
         expect(al.determine_state.state).to eq :valid_merge
@@ -31,11 +31,11 @@ RSpec.describe Accounts::AccountLinker, :type => :domain do
 
     context "when there is already another user that owns the identity being merged and has an identity of same provider" do
       it "should destroy the other user and snatches it's identity" do
-        identity_github_n = create(:identity, uid: 987654321, provider: 'github', user: @nikica)
-        identity_twitter = create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
+        identity_github_n = FactoryGirl.create(:identity, uid: 987654321, provider: 'github', user: @nikica)
+        identity_twitter = FactoryGirl.create(:identity, uid: 123456789, provider: 'twitter', user: @nikica)
 
-        identity_github_v = create(:identity, uid: 12849234, provider: 'github', user: @veljko)
-        identity_meetup = create(:identity, uid: 456712345, provider: 'meethup', user: @veljko)
+        identity_github_v = FactoryGirl.create(:identity, uid: 12849234, provider: 'github', user: @veljko)
+        identity_meetup = FactoryGirl.create(:identity, uid: 456712345, provider: 'meethup', user: @veljko)
 
         al = Accounts::AccountLinker.new(@nikica, identity_meetup)
         expect(al.determine_state.state).to eq :invalid_merge

@@ -1,5 +1,5 @@
 require 'yaml'
-require 'models/spec_helper'
+require 'rails_helper'
 
 RSpec.describe Tagger, :type => :tagger do
 

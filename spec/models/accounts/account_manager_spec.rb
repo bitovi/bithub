@@ -1,4 +1,4 @@
-require 'models/spec_helper'
+require 'rails_helper'
 
 describe Accounts::AccountManager, :type => :domain do
   describe "#only_logging_in?" do

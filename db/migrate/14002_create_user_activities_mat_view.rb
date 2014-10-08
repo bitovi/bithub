@@ -1,4 +1,4 @@
-class CreateUserActivitiesMatview < ActiveRecord::Migration
+class CreateUserActivitiesMatView < ActiveRecord::Migration
   def up
     execute <<-SQL
 CREATE MATERIALIZED VIEW user_activities AS
@@ -15,14 +15,10 @@ SELECT 'Upvote' AS model_name, upvotes.id AS id, upvotes.actor_id AS user_id, NU
 		JOIN entities ON upvotes.applies_to_id = entities.id
 SQL
 
-    execute <<-SQL
-REFRESH MATERIALIZED VIEW user_activities;
-    SQL
+    execute 'REFRESH MATERIALIZED VIEW user_activities;'
   end
 
   def down
-    execute <<-SQL
-DROP MATERIALIZED VIEW IF EXISTS user_activities;
-SQL
+    execute 'DROP MATERIALIZED VIEW IF EXISTS user_activities;'
   end
 end
