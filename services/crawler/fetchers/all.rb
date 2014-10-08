@@ -27,3 +27,6 @@ require_relative 'disqus/comments'
 require_relative 'instagram/base'
 require_relative 'instagram/media'
 require_relative 'instagram/user_recent_media'
+
+require_relative 'tumblr/posts'
+require_relative 'tumblr/tagged'

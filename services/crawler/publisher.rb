@@ -1,12 +1,14 @@
 require 'bunny'
-require 'persistent/digest_set'
+require_relative 'persistent/digest_set'
 
 class Publisher
   include Celluloid
   include AmqpHelpers
 
-  def initialize
+  def initialize(opts={})
     Celluloid.logger.info "Initializing Publisher"
+
+    @reject_old = opts.fetch(:reject_old) { true }
 
     @rabbit = Bunny.new(rabbitmq_uri)
     @rabbit.start
@@ -22,7 +24,8 @@ class Publisher
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
-    new_events  = reject_old processed events, brand, feed, decorator
+    new_events = processed events, brand, feed, decorator
+    new_events = reject_old new_events if @reject_old == true
 
     # finally send events to MQ
     send new_events, brand

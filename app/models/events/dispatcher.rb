@@ -269,4 +269,12 @@ module Events
     end
   end
 
+  module Tumblr
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Tumblr::Post
+      end
+    end
+  end
+
 end
