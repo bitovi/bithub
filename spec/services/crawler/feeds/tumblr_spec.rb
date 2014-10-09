@@ -37,17 +37,12 @@ describe Fetchers::Tumblr::Posts  do
   describe "#fetch" do
     it "queries Tumblr API, dispatches and publishes events" do
 
-      text_post_raw = load_response 'tumblr/text.json'
-      text_post     = JSON.parse text_post_raw
-      brand_name    = 'bitovi'
+      brand_name = 'bitovi'
 
-      # stub request to Instagram API media endpoint
-      # stub_request(:get, /.*api\.tumblr\.com.*/).to_return do |req|
-      #   { body: text_post_raw }
-      # end
-
-      response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
-      Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
+      VCR.use_cassette('tumblr_posts') do
+        response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
+        Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
+      end
 
       # wait for an event on MQ
       c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
@@ -58,8 +53,6 @@ describe Fetchers::Tumblr::Posts  do
         expect(parsed['meta']['feed_name']).to eq('tumblr')
         expect(parsed['meta']['type_name']).to eq('post')
         expect(parsed['meta']['brand_name']).to eq(brand_name)
-
-        # expect(parsed['source_data']).to eq(text_post)
 
         @rabbit.close
       end
