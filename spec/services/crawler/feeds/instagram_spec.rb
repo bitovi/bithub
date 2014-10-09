@@ -46,21 +46,13 @@ describe HttpServer::Handlers::Instagram  do
   describe "#handle" do
     it "listens for postback notifs, queries API and publishes events" do
 
-      media_raw = load_response 'instagram/media.json'
       notif_raw = load_response 'instagram/notif.json'
-
-      media = JSON.parse media_raw
-      notif = JSON.parse notif_raw
-
       brand_name = 'bitovi'
 
-      # stub request to Instagram API media endpoint
-      stub_request(:get, /.*api\.instagram\.com.*/).to_return do |req|
-        { body: media_raw }
-      end
-
       # fake postback notification to the crawler
-      HTTParty.post build_instagram_endpoint(brand_name), body: notif_raw
+      VCR.use_cassette('instagram_media') do
+        HTTParty.post build_instagram_endpoint(brand_name), body: notif_raw
+      end
 
       # wait for an event on MQ
       c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
@@ -71,8 +63,6 @@ describe HttpServer::Handlers::Instagram  do
         expect(parsed['meta']['feed_name']).to eq('instagram')
         expect(parsed['meta']['type_name']).to eq('media_event')
         expect(parsed['meta']['brand_name']).to eq(brand_name)
-
-        expect(parsed['source_data']).to eq(media)
 
         @rabbit.close
       end
