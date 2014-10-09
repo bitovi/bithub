@@ -16,8 +16,8 @@ module Fetchers
       private
 
       def create_client(opts={})
-        key    = opts[:consumer_key] || ENV['TUMBLR_CONSUMER_KEY']
-        secret = opts[:consumer_secret] || ENV['TUMBLR_CONSUMER_SECRET']
+        key    = opts[:consumer_key] || ENV['TUMBLR_CLIENT_ID']
+        secret = opts[:consumer_secret] || ENV['TUMBLR_CLIENT_SECRET']
 
         ::Tumblr::Client.new consumer_key: key, consumer_secret: secret
       end
