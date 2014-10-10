@@ -33,7 +33,7 @@ Bithub::Application.routes.draw do
     end
 
     namespace :v2 do
-      resources :entities, except: [:new, :edit] do
+      resources :entities, except: %i(new edit) do
         get :summary, on: :collection
         get :pagination, on: :collection
         get :activities, to: 'entity_activities#index'
@@ -43,13 +43,7 @@ Bithub::Application.routes.draw do
         delete :award, to: 'entity_activities#destory_award'
       end
 
-      resources :tags, except: [:new, :edit] do
-        collection do
-          get :tree, to: 'tags#tree'
-        end
-      end
-
-      resources :users, except: [:new, :edit] do
+      resources :users, except: %i(new edit) do
         get 'activities', to: 'user_activities#index'
         get 'achievements', to: 'user_activities#achievements'
 
@@ -59,33 +53,26 @@ Bithub::Application.routes.draw do
         end
       end
 
-      resources :rewards do
-        member do
-          post '', to: 'rewards#update'
-        end
-      end
+      resources :brands, only: %i(show update)
+      get 'brands/current/services', to: 'brand#services'
+      get 'brands/current/embeds', to: 'brand#embeds'
+      get 'brands/current', to: 'brands#show'
+      put 'brands/current', to: 'brands#update'
 
-      resources :accounts do
-        member do
-          put 'password', to: 'accounts#update_password'
-        end
-      end
+      resources :services, except: %i(new edit)
+      get 'services/tree', to: 'services#tree'
 
-      resources :services do
-        collection do
-          get 'tree', to: 'feed_configs#tree'
-        end
-      end
+      resources :tags, except: %i(new edit)
+      get 'tags/tree', to: 'tags#tree'
 
-      get 'brands/brand', to: 'brands#show'
-      put 'brands/brand', to: 'brands#update'
-      resources :brands, only: [:index, :show, :update]
-      resources :brand_identities, only: [:index, :show, :destroy]
-      resources :tags
-      resources :achievements
-      resources :scoring_rules
-      resources :funnels
-      resources :achievements, only: [:index, :show, :update, :destroy]
+      resources :accounts, except: %i(new edit)
+      resources :brand_identities, only: %i(index show destroy)
+      resources :tags, except: %i(new edit)
+      resources :achievements, except: %i(new edit)
+      resources :rewards, except: %i(new edit)
+      resources :scoring_rules, except: %i(new edit)
+      resources :funnels, except: %i(new edit)
+      resources :achievements, except: %i(new create edit)
       resources :countries, only: :index
 
       get '*path', to: redirect('/api/v2')
@@ -93,7 +80,7 @@ Bithub::Application.routes.draw do
     end
   end
 
-  # TODO add auth
+  # TODO; add auth
   mount Sidekiq::Web => '/sidekiq'
 
   get '*path', controller: 'kickstart', action: 'frontend'
