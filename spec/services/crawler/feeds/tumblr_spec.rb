@@ -5,12 +5,6 @@ require 'fetchers/tumblr/posts'
 
 describe Fetchers::Tumblr::Posts  do
 
-  ### Helper methods
-
-  def load_response(path)
-    File.new("spec/support/responses/#{path}").read.gsub(/\s+/, "")
-  end
-
   ### Init / cleanup
 
   before do
