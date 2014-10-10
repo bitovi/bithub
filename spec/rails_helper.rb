@@ -11,9 +11,7 @@ ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
   config.before(:suite) do
     Celluloid.boot
-
     Apartment::Database.drop('testy') rescue nil
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with :truncation, except: %w(tags scoring_rules)
     Brand.create name: 'testy', tenant_name: 'testy'
   end
