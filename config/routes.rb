@@ -12,7 +12,7 @@ Bithub::Application.routes.draw do
     controllers: {
       sessions: 'api/auth/account_sessions',
       registrations: 'api/auth/account_registrations',
-      omniauth_callbacks: 'api/auth/omniauth_callbacks'
+      # omniauth_callbacks: 'api/auth/omniauth_callbacks'
     },
     path_names: {
       sign_up: 'register',
