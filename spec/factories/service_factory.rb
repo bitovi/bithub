@@ -1,6 +1,8 @@
 FactoryGirl.define do
 
   factory :service do
+    embed
+
     factory :twitter_service do
       feed_name 'twitter'
       config Hash['terms', %w(canjs javascriptmvc)]
@@ -44,6 +46,5 @@ FactoryGirl.define do
         ['KSET']
       ]
     end
-
   end
 end
