@@ -2,40 +2,46 @@ class Api::V2::BrandsController < Api::V2::BaseController
   before_filter :authenticate!
   load_and_authorize_resource
 
-  def index
-    @brands = Brand.all
-    @brands_count = build_scope_for_counting.count
-    render :index
-  end
-
   def show
     if (@brand = current_account.brand)
       render :show
     else
-      render :json => msg_hash(@brand, 'update'), :status => 406
+      render json: msg_hash(@brand, 'update'), status: 406
     end
   end
 
   def update
     if (@brand = current_account.brand)
-      @brand.update_attributes(brand_params)
+      @brand.update_attributes(processed_brand_params)
       render :show
     else
-      render :json => msg_hash(@brand, 'update'), :status => 406
+      render json: msg_hash(@brand, 'update'), status: 406
     end
+  end
+
+  def services
+    render text: 'error', status: 406 unless current_account.services
+    @services = current_account.brand.services
+    render :show_with_services
+  end
+
+  def embeds
+    render text: 'error', status: 406 unless current_account.brand
+    @services = current_account.brand.embeds
+    render :show_with_embeds
   end
 
   private
 
-  def brand_params
-    unless brand = params.andand[:brand]
-      params[:brand] = {}
-    end
-    unless keywords = brand.andand[:keywords]
-      params[:brand][:keywords] = []
-    end
-
-    params.require(:brand).permit(:description, :name, :tenant_name, :keywords => [])
+  def processed_brand_params
+    params[:brand] = {} unless params.andand[:brand]
+    params[:brand][:keywords] = [] unless brand.andand[:keywords]
+    params.require(:brand).permit(
+      :name,
+      :description,
+      :tenant_name,
+      keywords: []
+    )
   end
 
   def logic_analyzer
@@ -54,5 +60,4 @@ class Api::V2::BrandsController < Api::V2::BaseController
       .apply_regular_params_to_scope\
       .result.offset(0).limit(1_000_000_000)
   end
-
 end
