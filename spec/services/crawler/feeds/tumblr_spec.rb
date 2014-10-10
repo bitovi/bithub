@@ -5,12 +5,6 @@ require 'fetchers/tumblr/posts'
 
 describe Fetchers::Tumblr::Posts  do
 
-  ### Helper methods
-
-  def load_response(path)
-    File.new("spec/support/responses/#{path}").read.gsub(/\s+/, "")
-  end
-
   ### Init / cleanup
 
   before do
@@ -37,14 +31,10 @@ describe Fetchers::Tumblr::Posts  do
   describe "#fetch" do
     it "queries Tumblr API, dispatches and publishes events" do
 
-      text_post_raw = load_response 'tumblr/text.json'
-      text_post     = JSON.parse text_post_raw
+      posts_raw = File.new("spec/support/responses/tumblr/posts_raw_http")
       brand_name    = 'bitovi'
 
-      # stub request to Instagram API media endpoint
-      # stub_request(:get, /.*api\.tumblr\.com.*/).to_return do |req|
-      #   { body: text_post_raw }
-      # end
+      stub_request(:get, /.*api\.tumblr\.com.*/).to_return posts_raw
 
       response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
       Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
