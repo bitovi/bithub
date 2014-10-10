@@ -24,6 +24,10 @@ FactoryGirl.define do
     end
 
     props Hash.new
+    
+    after :build do |user|
+      user.join_brand('testy')
+    end
 
     after :create do |user|
       user.join_brand('testy')
