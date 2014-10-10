@@ -1,4 +1,9 @@
 class Api::Auth::AccountRegistrationsController < Devise::RegistrationsController
+  def create
+    super do |acc|
+      Brands::BrandBuilder.new(acc).build.save
+    end
+  end
 
   protected
 

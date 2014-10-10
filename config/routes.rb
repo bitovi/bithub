@@ -8,12 +8,11 @@ Bithub::Application.routes.draw do
   get "/admin/choose_brand", :to => "admin#choose_brand"
 
   # Devise
-
-  devise_for :accounts,
-    path: '/',
+  devise_for :accounts, path: '/',
     controllers: {
       sessions: 'api/auth/account_sessions',
-      registrations: 'api/auth/account_registrations'
+      registrations: 'api/auth/account_registrations',
+      omniauth_callbacks: 'api/auth/omniauth_callbacks'
     },
     path_names: {
       sign_up: 'register',
@@ -21,118 +20,64 @@ Bithub::Application.routes.draw do
       sign_out: 'logout'
     }
 
-
   # Dynamic image resizer
 
   post '/uploads/*other' => "uploads#index"
   get '/uploads/*other' => "uploads#index"
 
-
   # SERVICE API Routes
 
-  namespace :api, :defaults => { :format => 'json' } do
+  namespace :api, defaults: { format: 'json' } do
 
     namespace :v2 do
-
-      # Entities
-      resources :entities, :except => [:new, :edit] do
-        get :summary, :on => :collection
-        get :pagination, :on => :collection
-
-        get :activities, :to => 'entity_activities#index'
-
-        post   :upvote, :to => 'entity_activities#create_upvote'
-        delete :upvote, :to => 'entity_activities#destroy_upvote'
-
-        post   :award, :to => 'entity_activities#create_award'
-        delete :award, :to => 'entity_activities#destory_award'
+      resources :entities, except: %i(new edit) do
+        get :summary, on: :collection
+        get :pagination, on: :collection
+        get :activities, to: 'entity_activities#index'
+        post :upvote, to: 'entity_activities#create_upvote'
+        post :award, to: 'entity_activities#create_award'
+        delete :upvote, to: 'entity_activities#destroy_upvote'
+        delete :award, to: 'entity_activities#destory_award'
       end
 
-      # Tags
-      resources :tags, :except => [:new, :edit] do
-        collection do
-          get :tree, :to => 'tags#tree'
-        end
-      end
-
-      # Users
-      resources :users, :except => [:new, :edit] do
-        get 'activities', :to => 'user_activities#index'
-        get 'achievements', :to => 'user_activities#achievements'
-        #get 'entities', :to => 'user_activities#entities'
+      resources :users, except: %i(new edit) do
+        get 'activities', to: 'user_activities#index'
+        get 'achievements', to: 'user_activities#achievements'
 
         member do
-          put 'role', :to => 'users#add_role'
-          delete 'role', :to => 'users#remove_role'
-        end
-
-        # collection do
-        #   get 'twitter', :to => 'users#from_twitter'
-        #   get 'github', :to => 'users#from_github'
-        # end
-      end
-
-      # Rewards
-      resources :rewards do
-        member do
-          post "", :to => 'rewards#update'
+          put 'role', to: 'users#add_role'
+          delete 'role', to: 'users#remove_role'
         end
       end
 
-      # Achievements
-      resources :achievements, :only => [:index, :show, :update, :destroy]
+      resources :brands, only: %i(show update)
+      get 'brands/current/services', to: 'brand#services'
+      get 'brands/current/embeds', to: 'brand#embeds'
+      get 'brands/current', to: 'brands#show'
+      put 'brands/current', to: 'brands#update'
 
-      # Countries
-      resources :countries, :only => :index
+      resources :services, except: %i(new edit)
+      get 'services/tree', to: 'services#tree'
 
-      # Brands
-      get 'brands/brand', :to => 'brands#show'
-      put 'brands/brand', :to => 'brands#update'
-      resources :brands, :only => [:index, :show, :update]
+      resources :tags, except: %i(new edit)
+      get 'tags/tree', to: 'tags#tree'
 
-      # Brand identities
-      resources :brand_identities, :only => [:index, :show, :destroy]
+      resources :accounts, except: %i(new edit)
+      resources :brand_identities, only: %i(index show destroy)
+      resources :tags, except: %i(new edit)
+      resources :achievements, except: %i(new edit)
+      resources :rewards, except: %i(new edit)
+      resources :scoring_rules, except: %i(new edit)
+      resources :funnels, except: %i(new edit)
+      resources :achievements, except: %i(new create edit)
+      resources :countries, only: :index
 
-      # Accounts
-      resources :accounts do
-        member do
-          put 'password', :to => 'accounts#update_password'
-        end
-      end
-
-      # Tags
-      resources :tags
-
-      # Achievements
-      resources :achievements
-
-      # Scoring rules
-      resources :scoring_rules
-
-      # Category determination rules
-      #resources :category_determination_rules
-
-      # Funnelsj
-      resources :funnels
-
-      # Feed config
-      resources :feed_configs do
-        collection do
-          get 'tree', :to => 'feed_configs#tree'
-        end
-      end
-
-      # Non-matched redirect to root
-      get '*path', :to => redirect("/api/v2")
-
-      # Homepage
-      root :to => "base#home"
+      get '*path', to: redirect('/api/v2')
+      root to: 'base#home'
     end
   end
 
-  # authenticate :account, lambda {|a| a.has_role? :admin } do
-  #   mount Sidekiq::Web => '/sidekiq'
-  # end
+  # TODO; add auth
   mount Sidekiq::Web => '/sidekiq'
 
   get '*path', :controller => 'frontend', :action => 'index'

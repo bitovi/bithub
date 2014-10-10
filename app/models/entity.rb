@@ -86,61 +86,61 @@ class Entity < ActiveRecord::Base
 
   def self.with_author(author_id)
     joins(:ownerships)\
-      .where("ownerships.ownership_type = 'author'")\
-      .where("ownerships.owner_id = ?", author_id) if author_id
+      .where('ownerships.ownership_type = \'author\'')
+      .where('ownerships.owner_id = ?', author_id) if author_id
   end
 
   def self.with_host(host_id)
     joins(:ownerships)\
-      .where("ownerships.ownership_type = 'host'")\
-      .where("ownerships.owner_id = ?", host_id) if host_id
+      .where('ownerships.ownership_type = \'host\'')
+      .where('ownerships.owner_id = ?', host_id) if host_id
   end
 
   def author=(user)
-    self.remove_author
-    self.ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
+    remove_author
+    ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
   end
 
   def event_hosts=(users)
-    self.remove_hosts
+    remove_hosts
     users.each do |u|
-      self.ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host).determine_value
+      ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host).determine_value
     end
   end
 
   def remove_author
-    self.ownerships.where(ownership_type: :author).destroy_all
+    ownerships.where(ownership_type: :author).destroy_all
   end
 
   def remove_hosts
-    self.ownerships.where(ownership_type: :host).destroy_all
+    ownerships.where(ownership_type: :host).destroy_all
   end
 
   def author
-    self.ownerships.select{|a| a.is_authorship? }.first.andand.owner
+    ownerships.select(&:is_authorship?).first.andand.owner
   end
 
   def state
-    self.props.andand["state"]
+    props.andand['state']
   end
 
   def label_names
-    self.props.andand["label_names"]
+    props.andand['label_names']
   end
 
   def children_with_includes
-    self.children.merge(Entity.scoped_with_includes)
+    children.merge(Entity.scoped_with_includes)
   end
 
   def references_with_includes()
-    self.referenced_from.merge(Entity.scoped_with_includes)
+    referenced_from.merge(Entity.scoped_with_includes)
   end
 
   def thread
-    if self.parent_id # When an event is a child
-      Entity.where("id = ? OR parent_id = ?", self.parent_id, self.parent_id)
+    if parent_id # When an event is a child
+      Entity.where('id = ? OR parent_id = ?', parent_id, parent_id)
     else # When an event is a parent
-      Entity.where("id = ? OR parent_id = ?", self.id, self.id)
+      Entity.where('id = ? OR parent_id = ?', id, id)
     end
   end
 
@@ -150,46 +150,49 @@ class Entity < ActiveRecord::Base
 
   def activities
     activities = []
-    activities.concat(self.awards)
-    activities.concat(self.upvotes)
+    activities.concat(awards)
+    activities.concat(upvotes)
   end
 
   # FIXME, should be delegated to a proper type from Entities
   def bump_thread
-    if self.feed_name == 'meetup' && self.type_name == 'event'
-      latest_origin_ts = self.thread.pluck(:props).map{|p| p['scheduled_at']}.compact.map {|t| Time.parse t}.max
+    if feed_name == 'meetup' && type_name == 'event'
+      latest_origin_ts = thread.pluck(:props)
+        .map { |p| p['scheduled_at'] }
+        .compact
+        .map { |t| Time.parse t }.max
     else
-      latest_origin_ts = self.thread.pluck(:origin_ts).max
+      latest_origin_ts = thread.pluck(:origin_ts).max
     end
-    self.thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
+    thread.each { |te| te.update_thread_attrs(latest_origin_ts) }
   end
 
   def update_thread_attrs(ts)
-    self.update_attribute(:thread_updated_ts, ts)
+    update_attribute(:thread_updated_ts, ts)
   end
 
   def latest_thread_ts
-    self.thread.pluck(:origin_ts).max
+    thread.pluck(:origin_ts).max
   end
 
   def latest_child_ts
-    self.children.order("origin_ts DESC").first.andand.origin_ts
+    children.order("origin_ts DESC").first.andand.origin_ts
   end
 
   def awarded?
-    self.awards.length > 0
+    awards.length > 0
   end
 
   def thread_awarded?
-    !self.thread.select{|e| e.awarded?}.blank?
+    !(thread.select(&:awarded?).blank?)
   end
 
   def sum_upvotes
-    self.upvotes.sum(:value)
+    upvotes.sum(:value)
   end
 
   def update_total_upvotes
-    self.update_attribute(:total_upvotes, sum_upvotes)
+    update_attribute(:total_upvotes, sum_upvotes)
   end
 
   def async_update_total_upvotes
