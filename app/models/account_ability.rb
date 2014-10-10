@@ -1,30 +1,23 @@
 class AccountAbility
   include CanCan::Ability
 
-  def initialize(account, user)
+  def initialize(account)
     if account.has_role? :admin
       can :manage, :all
     else
       can [:read, :read_tags_tree], Tag
-      can [:read, :update], Brand, id: account.brand.id
-      can [:destroy], BrandIdentity, brand_id: account.brand.id
+      can [:read, :update], Brand #, id: account.brand.id
+      can [:destroy], BrandIdentity #, brand_id: account.brand.id
       can :read, Country
       can [:read, :update], ScoringRule
       can :manage, Reward
       can :manage, Achievement
-      can :manage, Service, brand_id: account.brand.id
+      can :manage, Service #, brand_id: account.brand.id
       can :read, User # check somehow if user is present in current tenant
       can :manage_roles_on_user, User
       can :manage, Entity
       can :create_award, Award
       can :manage, Achievement
-
-      # abilities need by frontend
-      if user
-        can :create_upvote, Upvote
-        can :destroy_upvote, Upvote
-        can :update, User, id: user.id
-      end
     end
   end
 
