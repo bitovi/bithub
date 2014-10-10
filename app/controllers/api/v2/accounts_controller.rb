@@ -18,7 +18,7 @@ class Api::V2::AccountsController < Api::V2::BaseController
       @account = AccountDecorator.decorate account
       render :show
     else
-      render :json => msg_hash(account, 'create'), :status => 406
+      render json: msg_hash(account, 'create'), status: 406
     end
   end
 
@@ -28,29 +28,13 @@ class Api::V2::AccountsController < Api::V2::BaseController
       @account = AccountDecorator.decorate account
       render :show
     else
-      render :json => msg_hash(account, 'update'), :status => 406
+      render json: msg_hash(account, 'update'), status: 406
     end
   end
-
-  # Should be handled by Devise
-  # Define security before enabling!
-  #
-  # def update_password
-  #   account = Account.find(params[:id])
-  #   password_params = params.require(:account).permit(:password, :password_confirmation, :current_password)
-
-  #   if account.update_with_password(password_params)
-  #     @account = AccountDecorator.decorate account
-  #     render :show
-  #   else
-  #     render :json => msg_hash(account, 'update'), :status => 406
-  #   end
-  # end
 
   private
 
   def account_params
     params.require(:account).permit(:email, :name, :props)
   end
-
 end
