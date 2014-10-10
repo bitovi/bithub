@@ -50,9 +50,9 @@ Bithub::Application.routes.draw do
         end
       end
 
-      resources :brands, only: %i(show update)
-      get 'brands/current/services', to: 'brand#services'
-      get 'brands/current/embeds', to: 'brand#embeds'
+      # resources :brands, only: %i(show update)
+      get 'brands/current/services', to: 'brands#services'
+      get 'brands/current/embeds', to: 'brands#embeds'
       get 'brands/current', to: 'brands#show'
       put 'brands/current', to: 'brands#update'
 
