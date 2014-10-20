@@ -1,4 +1,5 @@
 require 'devise/orm/active_record'
+
 require 'omniauth-twitter'
 require 'omniauth-github'
 require 'omniauth-meetup'
@@ -8,6 +9,8 @@ require 'omniauth-disqus'
 
 Devise.setup do |config|
   config.secret_key = '2aa637d41eb2b387b2bb19211702de5bafd653317bc8df921ffa1279c6f73c81418e49aa1fea745a22f322439311b9cd4b92320a12cadab54a6069b4763272f5'
+
+  # OmniAuth
 
   config.omniauth :meetup,
     ENV['MEETUP_CLIENT_ID'],
@@ -50,4 +53,48 @@ Devise.setup do |config|
     ENV['TUMBLR_CLIENT_SECRET']
 
   config.sign_out_via = [:delete, :get]
+
+  # Mailer
+
+  config.mailer_sender = 'password.verifier@bithub.com'
+
+  # config.case_insensitive_keys = [ :email ]
+  # config.strip_whitespace_keys = [ :email ]
+
+  # Http authenticatable
+
+  # config.http_authenticatable = false
+  # config.http_authenticatable_on_xhr = true
+  # config.http_authentication_realm = 'Application'
+  # config.paranoid = true
+
+  config.skip_session_storage = [:http_auth]
+  # config.clean_up_csrf_token_on_authentication = true
+
+  # Database authenticatable
+
+  config.stretches = Rails.env.test? ? 1 : 10
+  # config.pepper = 'd24d63b39b2fa66d34fd6d2916110f8caae21c6ec502fe23254ff3abfc7a2e75cbbbbbdc67cb05c61361ae9913cecd1dd1bd014dc99683665eb47959c0860e83'
+
+  # Confirmable
+
+  config.reconfirmable = true
+  config.allow_unconfirmed_access_for = 1.day
+  # config.confirm_within = 3.days
+
+  # Rememberable
+
+  # config.remember_for = 2.weeks
+  # config.extend_remember_period = false
+  # config.rememberable_options = {}
+
+  # Validatable
+
+  config.password_length = 8..128
+
+  # Recoverable
+
+  config.reset_password_keys = [ :email ]
+  config.reset_password_within = 6.hours
+
 end
