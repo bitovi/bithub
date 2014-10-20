@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.1'
+ruby '2.1.2'
 
 gem 'unicorn'
 gem 'rails', '~> 4.1'
@@ -108,7 +108,7 @@ end
 # --------
 gem 'celluloid', '~> 0.15.0'
 gem 'celluloid-io'
-gem 'nokogiri'
+gem 'nokogiri', '1.6.1'
 gem 'nori', '~> 2.3.0'
 gem 'vetinari'
 gem 'newrelic_rpm'
