@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.instagram.com/v1/media/9820112.json?client_id=57f1f8efac48444a951fea94fcff89d0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Instagram Ruby Gem 1.1.3
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 09 Oct 2014 23:20:27 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Ratelimit-Remaining:
+      - '4999'
+      Content-Language:
+      - en
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Vary:
+      - Cookie, Accept-Language, Accept-Encoding
+      X-Ratelimit-Limit:
+      - '5000'
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Set-Cookie:
+      - ccode=HR; Path=/
+      - csrftoken=454ed05cc4ce05aa7244a0d789d98c31; expires=Thu, 08-Oct-2015 23:20:27
+        GMT; Max-Age=31449600; Path=/
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '516'
+    body:
+      encoding: UTF-8
+      string: '{"meta":{"code":200},"data":{"attribution":null,"tags":[],"location":null,"comments":{"count":0,"data":[]},"filter":"X-Pro
+        II","created_time":"1292542793","link":"http:\/\/instagram.com\/p\/ldfQ\/","likes":{"count":0,"data":[]},"images":{"low_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_6.jpg","width":306,"height":306},"thumbnail":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_5.jpg","width":150,"height":150},"standard_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_7.jpg","width":612,"height":612}},"users_in_photo":[],"caption":{"created_time":"1292542793","text":"She''s
+        home!","from":{"username":"sbradford","profile_picture":"http:\/\/images.ak.instagram.com\/profiles\/profile_558546_75sq_1289233190.jpg","id":"558546","full_name":"sbradford"},"id":"9867134"},"type":"image","id":"9820112_558546","user":{"username":"sbradford","website":"","profile_picture":"http:\/\/images.ak.instagram.com\/profiles\/profile_558546_75sq_1289233190.jpg","full_name":"sbradford","bio":"","id":"558546"}}}'
+    http_version: 
+  recorded_at: Thu, 09 Oct 2014 23:20:27 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:3001/api/postback/instagram/media/bitovi
+    body:
+      encoding: UTF-8
+      string: '[{"changed_aspect":"media","object":"geography","object_id":"9820112","time":1411667117,"subscription_id":13261146,"data":{}}]'
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '2'
+    body:
+      encoding: UTF-8
+      string: OK
+    http_version: 
+  recorded_at: Thu, 09 Oct 2014 23:20:27 GMT
+recorded_with: VCR 2.9.3
