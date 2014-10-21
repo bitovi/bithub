@@ -40,6 +40,8 @@ After all that is over you should be able to ssh into guest machine, your projec
 ssh -p 2222 bithub@127.0.0.1
 ```
 
+Also, guest machine should be accessable on IP 192.168.99.99, so you can point your local DNS record for bithub to that address.
+
 You should be able now to run bithub service within guest `foreman start [web|listener|crawler]`!
 
 Here are the port mappings, check `Vagrantfile` and `ansible/site.yml` for additional info.
