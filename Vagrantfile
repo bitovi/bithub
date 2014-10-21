@@ -10,8 +10,6 @@ Vagrant.configure(2) do |config|
 
   config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
 
-  config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
-
   config.ssh.forward_agent = true
 
   config.vm.provider "virtualbox" do |v|
