@@ -6,6 +6,10 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 15672, host: 15673  # rabbitmq admin
   config.vm.network "forwarded_port", guest: 6379,  host: 6380   # redis
 
+  config.vm.network "private_network", ip: "192.168.99.99"
+
+  config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
+
   config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
 
   config.ssh.forward_agent = true
@@ -22,7 +26,7 @@ Vagrant.configure(2) do |config|
     ansible.sudo = true
     ansible.host_key_checking = false
     # ansible.verbose = "vvvv"
-    ansible.tags = ["run_only_this"]
+    # ansible.tags = ["run_only_this"]
     ansible.extra_vars = {
       ansible_ssh_user: "vagrant",
       vagrantvm: true

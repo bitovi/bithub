@@ -25,11 +25,11 @@
   notify:
     - restart postgresql
 
-- name: Set password for postgres role
-  postgresql_user: name=postgres password={{ pg.password }}
-
 - name: Restart PostgreSQL
   service: name=postgresql state=restarted
+
+- name: Set password for postgres role
+  postgresql_user: name=postgres password={{ pg.password }}
 
 - name: Create hstore,intarray extensions in template1 database
   command: psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS {{ item }}"
@@ -40,7 +40,7 @@
   sudo_user: postgres
 
 - name: Create user
-  postgresql_user: name={{ pg.username }} 
+  postgresql_user: name={{ pg.username }}
                    password={{ pg.password }}
                    role_attr_flags=CREATEDB,NOSUPERUSER
 
@@ -48,4 +48,3 @@
   postgresql_db: name={{ pg.dbname }}
                  owner={{ pg.username }}
                  encoding='UTF-8'
-
