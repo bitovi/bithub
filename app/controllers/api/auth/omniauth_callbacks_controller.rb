@@ -3,10 +3,14 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   # rescue_from Exception, :with => :show_auth_error
   # rescue_from RuntimeError, :with => :show_auth_error
 
-  PROVIDERS = %w(github, twitter, meetup, stackexchange, facebook, disqus, foursquare, instagram, tumbler)
+  def github
+    puts "------------------> MOJA KITA GITHUB #{request}"
+    oauthorize(provider)
+  end
 
-  PROVIDERS.each do |provider|
-    define_method(provider) { oauthorize(provider) }
+  def twitter
+    puts "------------------> MOJA KITA TWITTER #{request}"
+    oauthorize(provider)
   end
 
   def show_auth_error
@@ -37,13 +41,13 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
     if identity.save
       render :template => 'special/close_oauth_popup.html'
     else
-      # return some reasonable error
+      # TODO return some reasonable error
       render :json => { message: 'error'}, :status => 406
     end
   end
 
   def oauth_data
-    env["omniauth.auth"] # || session["current_oauth_data"]
+    env["omniauth.auth"]
   end
 
 end

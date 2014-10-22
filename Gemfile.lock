@@ -121,6 +121,12 @@ GEM
     capistrano-rbenv (2.0.2)
       capistrano (~> 3.1)
       sshkit (~> 1.3)
+    capybara (2.4.4)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -485,6 +491,8 @@ GEM
       crack (>= 0.3.2)
     websocket (1.2.1)
     websocket_parser (0.1.6)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
@@ -504,6 +512,7 @@ DEPENDENCIES
   capistrano-bundler (~> 1.1)
   capistrano-rails (~> 1.1)
   capistrano-rbenv (~> 2.0)
+  capybara
   carrierwave
   celluloid (~> 0.15.0)
   celluloid-io

@@ -8,4 +8,7 @@ class Account < ActiveRecord::Base
 
   has_and_belongs_to_many :brands
 
+  def current_brand
+    brands.first
+  end
 end

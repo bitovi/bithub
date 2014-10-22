@@ -3,7 +3,7 @@ class Api::V2::BrandsController < Api::V2::BaseController
   load_and_authorize_resource
 
   def show
-    if (@brand = current_account.brand)
+    if (@brand = current_brand)
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 406
@@ -11,24 +11,12 @@ class Api::V2::BrandsController < Api::V2::BaseController
   end
 
   def update
-    if (@brand = current_account.brand)
+    if (@brand = current_brand)
       @brand.update_attributes(processed_brand_params)
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 406
     end
-  end
-
-  def services
-    render text: 'error', status: 406 unless current_account.services
-    @services = current_account.brand.services
-    render :show_with_services
-  end
-
-  def embeds
-    render text: 'error', status: 406 unless current_account.brand
-    @services = current_account.brand.embeds
-    render :show_with_embeds
   end
 
   private
