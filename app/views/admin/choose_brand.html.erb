@@ -3,6 +3,8 @@
 	Choose brand
   </div>
   <div class="panel-body">
-	Here goes the list of available brands for current account
+	<% @brands.each do |brand| %>
+	<p><%= link_to brand.name, admin_choose_brand_path(tenant_name: brand.tenant_name) %></p>
+	<% end %>
   </div>
 </div>

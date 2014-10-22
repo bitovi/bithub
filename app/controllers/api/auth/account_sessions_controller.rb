@@ -6,15 +6,15 @@ class Api::Auth::AccountSessionsController < Devise::SessionsController
     # find brand, if there is more than one display options
     if account.brands.count == 1
       session['tenant_name'] = account.brands.first.tenant_name
-      '/admin'
-    else
-      '/admin/choose_brand'
-    end
 
+      admin_path
+    else
+      admin_choose_brand_path
+    end
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    '/login'
+    new_account_session_path
   end
 
 end

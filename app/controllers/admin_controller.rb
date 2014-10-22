@@ -1,7 +1,17 @@
 class AdminController < ApplicationController
 
   def choose_brand
-    render 'admin/choose_brand', layout: 'devise'
+    if current_account
+      if tenant_name = params['tenant_name']
+        session['tenant_name'] = tenant_name
+        redirect_to :admin
+      else
+        @brands = current_account.brands
+        render 'admin/choose_brand', layout: 'devise'
+      end
+    else
+      redirect_to :new_account_session
+    end
   end
 
 end
