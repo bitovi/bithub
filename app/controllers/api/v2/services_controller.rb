@@ -8,12 +8,12 @@ class Api::V2::ServicesController < Api::V2::BaseController
   load_and_authorize_resource except: [:tree]
 
   def index
-    @services = current_account.services.all
+    @services = current_brand.services.all
     render :index
   end
 
   def show
-    @config = current_account.brand.services.find_by_id actual_params[:id]
+    @config = current_brand.services.find_by_id actual_params[:id]
     render :show
   end
 

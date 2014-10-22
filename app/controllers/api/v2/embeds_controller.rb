@@ -2,13 +2,21 @@ class Api::V2::EmbedsController < Api::V2::BaseController
   before_filter :authenticate!
 
   def index
-    @embeds = current_account.brand.embeds
+    @embeds = current_brand.embeds.all
     render :index
   end
-
+  
   def show
-    @config = current_account.brand.embeds.find_by_id(params[:id])
+    @embed = current_brand.embeds.where(id: params[:id]).first
     render :show
   end
 
+  def create
+  end
+
+  def update
+  end
+
+  def destroy
+  end
 end

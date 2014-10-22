@@ -8,6 +8,9 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
+OmniAuth.config.add_mock(:twitter, {:uid => '12345'})
+OmniAuth.config.add_mock(:github, {:uid => '54321'})
+
 RSpec.configure do |config|
   config.before(:suite) do
     Celluloid.boot
@@ -25,6 +28,19 @@ RSpec.configure do |config|
     Apartment::Database.switch 'testy'
   end
 
+  config.include Capybara::DSL, type: :request
+  config.include Requests::JsonHelpers, type: :request
+
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
+end
+
+# Assert that a hash has keys,
+# used mainly for testing json responses
+RSpec::Matchers.define :have_keys do |keys|
+  match do |actual|
+    keys.inject(true) do |accumul, k|
+      accumul && actual.has_key?(k.to_s)
+    end
+  end
 end
