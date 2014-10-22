@@ -7,7 +7,6 @@ module Identities
       def initialize(args)
         super
         @conn = create_github_client
-        self
       end
 
       def build

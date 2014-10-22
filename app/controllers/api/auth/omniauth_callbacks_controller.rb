@@ -1,12 +1,53 @@
 class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
+  # force autoload
+  Identities::Builders::Github
+  Identities::Builders::Twitter
+  Identities::Builders::Tumblr
+  Identities::Builders::Instagram
+  Identities::Builders::Facebook
+  Identities::Builders::Foursquare
+  Identities::Builders::Meetup
+  Identities::Builders::Disqus
+  Identities::Builders::Stackexchange
+
   # rescue_from Exception, :with => :show_auth_error
   # rescue_from RuntimeError, :with => :show_auth_error
 
-  PROVIDERS = %w(github, twitter, meetup, stackexchange, facebook, disqus, foursquare, instagram, tumbler)
+  def github
+    oauthorize "github"
+  end
 
-  PROVIDERS.each do |provider|
-    define_method(provider) { oauthorize(provider) }
+  def twitter
+    oauthorize "twitter"
+  end
+
+  def meetup
+    oauthorize "meetup"
+  end
+
+  def stackexchange
+    oauthorize "stackexchange"
+  end
+
+  def facebook
+    oauthorize "facebook"
+  end
+
+  def disqus
+    oauthorize "disqus"
+  end
+
+  def foursquare
+    oauthorize "foursquare"
+  end
+
+  def instagram
+    oauthorize "instagram"
+  end
+
+  def tumblr
+    oauthorize "tumblr"
   end
 
   def show_auth_error
@@ -20,8 +61,7 @@ class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksControll
   private
 
   def oauthorize(provider)
-    account = Account.find(current_account[:id])
-    brand = account.brand
+    brand = Brand.where(:tenant_name => session['tenant_name']).first
     uid = oauth_data[:uid].to_s
 
     # Build identity source_data
