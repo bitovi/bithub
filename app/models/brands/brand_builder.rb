@@ -1,6 +1,8 @@
 module Brands
   class BrandBuilder
 
+    attr_reader :account, :brand
+
     def initialize(account)
       @account = account
     end
