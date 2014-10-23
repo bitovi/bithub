@@ -10,19 +10,19 @@ Bithub::Application.routes.draw do
   # Devise
   devise_for :accounts, path: '/',
     controllers: {
-      sessions: 'api/auth/account_sessions',
-      registrations: 'api/auth/account_registrations',
-      omniauth_callbacks: 'api/auth/omniauth_callbacks'
-    },
-    path_names: {
-      sign_in: 'login',
-      sign_out: 'logout',
-      registration: 'register',
-      sign_up: '', # points to '/register'
-      password: 'secret',
-      confirmation: 'verification',
-      # unlock: 'unblock',
-    }
+    sessions: 'api/auth/account_sessions',
+    registrations: 'api/auth/account_registrations',
+    omniauth_callbacks: 'api/auth/omniauth_callbacks'
+  },
+  path_names: {
+    sign_in: 'login',
+    sign_out: 'logout',
+    registration: 'register',
+    sign_up: '', # points to '/register'
+    password: 'secret',
+    confirmation: 'verification',
+    # unlock: 'unblock',
+  }
 
   # Dynamic image resizer
 
@@ -33,15 +33,21 @@ Bithub::Application.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
 
-    namespace :v2 do
-
+    namespace :v3 do
       resources :embeds, except: %i(new edit) do
-		resources :entities, except: %i(new create edit update) do
-			get :approved, on: :collection
-			get :waitlisted, on: :collection
-		end
+        resources :entities, to: 'embed_entities', only: %i(index destroy) do
+          get :approved, on: :collection
+          get :waitlisted, on: :collection
+        end
       end
+      
+      resources :brands,  except: %i(new edit) do
+        get 'current', on: :collection, to: 'brands#show'
+        put 'current', on: :collection, to: 'brands#update'
+      end
+    end
 
+    namespace :v2 do
       resources :entities, only: %i(create update destroy)
 
       resources :filters, except: %i(new edit)

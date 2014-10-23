@@ -1,4 +1,4 @@
-class Api::V2::BrandsController < Api::V2::BaseController
+class Api::V3::BrandsController < Api::V2::BaseController
   before_filter :authenticate!
   load_and_authorize_resource
 

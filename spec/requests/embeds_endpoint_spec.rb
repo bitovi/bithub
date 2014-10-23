@@ -10,6 +10,8 @@ RSpec.describe 'Embed endpoints', type: :request do
     }
   }
 
+  let(:api_version) { 'v3' }
+
   before(:each) do
     post '/register', { account: account_registration_data }
     post '/login', { account: account_login_data }
@@ -21,7 +23,7 @@ RSpec.describe 'Embed endpoints', type: :request do
       Apartment::Database.switch('neektza')
       embeds = FactoryGirl.create_list(:embed, 10, brand: @current_brand)
 
-      get '/api/v2/embeds'
+      get "/api/#{api_version}/embeds"
       expect(response).to be_success
       expect(json.length).to eq(embeds.length)
     end
@@ -32,7 +34,7 @@ RSpec.describe 'Embed endpoints', type: :request do
       Apartment::Database.switch('neektza')
       FactoryGirl.create(:embed, brand: @current_brand)
 
-      get '/api/v2/embeds/1'
+      get "/api/#{api_version}/embeds/1"
       expect(response).to be_success
       expect(json).to have_keys(%w(name colorscheme layout))
     end
@@ -40,7 +42,7 @@ RSpec.describe 'Embed endpoints', type: :request do
 
   describe 'POST /embeds' do
     it 'creates a new embed for the current brand' do
-      post '/api/v2/embeds', { embed: embed_creation_data }
+      post "/api/#{api_version}/embeds", { embed: embed_creation_data }
       expect(response).to be_success
       expect(json).to have_keys(%w(name colorscheme layout))
     end
