@@ -12,11 +12,12 @@ class Api::V2::EmbedsController < Api::V2::BaseController
   end
 
   def create
+    @embed = current_brand.embeds.create(embed_params)
+    render :show
   end
 
-  def update
-  end
-
-  def destroy
+  private
+  def embed_params
+    params.require(:embed).permit(:name, :colorscheme, :layout)
   end
 end
