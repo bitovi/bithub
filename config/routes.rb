@@ -70,10 +70,10 @@ Bithub::Application.routes.draw do
       resources :achievements, except: %i(new edit)
       resources :rewards, except: %i(new edit)
       resources :scoring_rules, except: %i(new edit)
-      resources :funnels, except: %i(new edit)
+      resources :filters, except: %i(new edit)
       resources :achievements, except: %i(new create edit)
       resources :countries, only: :index
-      resources :embeds, except: %i(new create edit)
+      resources :embeds, except: %i(new edit)
 
       get '*path', to: redirect('/api/v2')
       root to: 'base#home'
