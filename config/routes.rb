@@ -55,8 +55,6 @@ Bithub::Application.routes.draw do
       end
 
       # resources :brands, only: %i(show update)
-      get 'brands/current/services', to: 'brands#services'
-      get 'brands/current/embeds', to: 'brands#embeds'
       get 'brands/current', to: 'brands#show'
       put 'brands/current', to: 'brands#update'
 
@@ -72,9 +70,10 @@ Bithub::Application.routes.draw do
       resources :achievements, except: %i(new edit)
       resources :rewards, except: %i(new edit)
       resources :scoring_rules, except: %i(new edit)
-      resources :funnels, except: %i(new edit)
+      resources :filters, except: %i(new edit)
       resources :achievements, except: %i(new create edit)
       resources :countries, only: :index
+      resources :embeds, except: %i(new edit)
 
       get '*path', to: redirect('/api/v2')
       root to: 'base#home'
