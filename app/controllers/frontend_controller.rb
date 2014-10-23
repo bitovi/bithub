@@ -1,16 +1,13 @@
-class KickstartController < ApplicationController
+class FrontendController < ApplicationController
 
-  def admin
-  end
-
-  def frontend
-
-    template = 'kickstart/forward'
-
+  def index
     @domain = request.domain
 
+    ###
+    template = 'frontend/index'
+
     if request.subdomain.present? && request.subdomain != "www"
-      template = 'kickstart/frontend'
+      template = 'frontend/index'
     end
 
     respond_to do |format|

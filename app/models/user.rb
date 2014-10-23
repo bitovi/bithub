@@ -4,7 +4,6 @@ class User < ActiveRecord::Base
   store_accessor :props
 
   rolify :role_cname => 'UserRole'
-  devise :rememberable, :trackable, :omniauthable
 
   has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
   has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
