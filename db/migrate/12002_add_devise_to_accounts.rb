@@ -1,6 +1,7 @@
 class AddDeviseToAccounts < ActiveRecord::Migration
   def self.up
     change_table(:accounts) do |t|
+
       ## Database authenticatable
       t.string :email,              :null => false, :default => ""
       t.string :encrypted_password, :null => false, :default => ""
@@ -20,10 +21,10 @@ class AddDeviseToAccounts < ActiveRecord::Migration
       t.string   :last_sign_in_ip
 
       ## Confirmable
-      # t.string   :confirmation_token
-      # t.datetime :confirmed_at
-      # t.datetime :confirmation_sent_at
-      # t.string   :unconfirmed_email # Only if using reconfirmable
+      t.string   :confirmation_token
+      t.datetime :confirmed_at
+      t.datetime :confirmation_sent_at
+      t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
       # t.integer  :failed_attempts, :default => 0 # Only if lock strategy is :failed_attempts
@@ -32,7 +33,6 @@ class AddDeviseToAccounts < ActiveRecord::Migration
 
       ## Token authenticatable
       # t.string :authentication_token
-
 
       # Uncomment below if timestamps were not included in your original model.
       # t.timestamps
@@ -46,8 +46,6 @@ class AddDeviseToAccounts < ActiveRecord::Migration
   end
 
   def self.down
-    # By default, we don't want to make any assumption about how to roll back a migration when your
-    # model already existed. Please edit below which fields you would like to remove in this migration.
     raise ActiveRecord::IrreversibleMigration
   end
 end

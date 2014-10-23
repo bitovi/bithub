@@ -10,7 +10,6 @@ module Identities
         raise InvalidArguments unless args.include? :oauth
 
         @data = args
-        self
       end
 
       def build

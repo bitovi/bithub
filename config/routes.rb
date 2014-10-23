@@ -2,35 +2,36 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
-  root 'kickstart#frontend'
-  get '/admin', to: 'kickstart#admin'
+  root "frontend#index"
 
-  devise_for :users, path: '/api',
-    controllers: {
-      omniauth_callbacks: 'api/auth/omniauth_callbacks'
-    }
+  get "/admin", :to => "admin#index"
+  get "/admin/choose_brand", :to => "admin#choose_brand"
 
+  # Devise
   devise_for :accounts, path: '/',
     controllers: {
       sessions: 'api/auth/account_sessions',
-      registrations: 'api/auth/account_registrations'
+      registrations: 'api/auth/account_registrations',
+      omniauth_callbacks: 'api/auth/omniauth_callbacks'
     },
     path_names: {
-      sign_up: 'register',
       sign_in: 'login',
-      sign_out: 'logout'
+      sign_out: 'logout',
+      registration: 'register',
+      sign_up: '', # points to '/register'
+      password: 'secret',
+      confirmation: 'verification',
+      # unlock: 'unblock',
     }
 
-  post '/uploads/*other' => 'uploads#index'
-  get '/uploads/*other' => 'uploads#index'
+  # Dynamic image resizer
+
+  post '/uploads/*other' => "uploads#index"
+  get '/uploads/*other' => "uploads#index"
+
+  # SERVICE API Routes
 
   namespace :api, defaults: { format: 'json' } do
-    namespace :auth do
-      get :session, to: 'sessions#current'
-      get :logout, to: 'sessions#destroy', as: :destroy_user_session
-      post :link_identity, to: 'identities#link'
-      delete 'unlink_identity/:uid', to: 'identities#unlink'
-    end
 
     namespace :v2 do
       resources :entities, except: %i(new edit) do
@@ -53,9 +54,9 @@ Bithub::Application.routes.draw do
         end
       end
 
-      resources :brands, only: %i(show update)
-      get 'brands/current/services', to: 'brand#services'
-      get 'brands/current/embeds', to: 'brand#embeds'
+      # resources :brands, only: %i(show update)
+      get 'brands/current/services', to: 'brands#services'
+      get 'brands/current/embeds', to: 'brands#embeds'
       get 'brands/current', to: 'brands#show'
       put 'brands/current', to: 'brands#update'
 
@@ -83,5 +84,5 @@ Bithub::Application.routes.draw do
   # TODO; add auth
   mount Sidekiq::Web => '/sidekiq'
 
-  get '*path', controller: 'kickstart', action: 'frontend'
+  get '*path', :controller => 'frontend', :action => 'index'
 end

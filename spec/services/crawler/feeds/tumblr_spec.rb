@@ -31,13 +31,12 @@ describe Fetchers::Tumblr::Posts  do
   describe "#fetch" do
     it "queries Tumblr API, dispatches and publishes events" do
 
-      posts_raw = File.new("spec/support/responses/tumblr/posts_raw_http")
-      brand_name    = 'bitovi'
+      brand_name = 'bitovi'
 
-      stub_request(:get, /.*api\.tumblr\.com.*/).to_return posts_raw
-
-      response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
-      Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
+      VCR.use_cassette('tumblr_posts') do
+        response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
+        Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
+      end
 
       # wait for an event on MQ
       c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
@@ -48,8 +47,6 @@ describe Fetchers::Tumblr::Posts  do
         expect(parsed['meta']['feed_name']).to eq('tumblr')
         expect(parsed['meta']['type_name']).to eq('post')
         expect(parsed['meta']['brand_name']).to eq(brand_name)
-
-        # expect(parsed['source_data']).to eq(text_post)
 
         @rabbit.close
       end

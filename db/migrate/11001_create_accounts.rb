@@ -4,9 +4,12 @@ class CreateAccounts < ActiveRecord::Migration
       t.string :name
       t.hstore :props, default: ''
 
-      t.references :brand
-
       t.timestamps
+    end
+
+    create_join_table :brands, :accounts do |t|
+      t.index [:account_id, :brand_id]
+      t.index [:brand_id, :account_id]
     end
   end
 end

@@ -1,13 +1,10 @@
 # require rake manually, otherwise migrations will fail :/
 require 'rake'
 
-# require 'apartment/elevators/generic'
+require 'apartment/elevators/generic'
 # require 'apartment/elevators/domain'
-require 'apartment/elevators/subdomain'
+# require 'apartment/elevators/subdomain'
 
-#
-# Apartment Configuration
-#
 Apartment.configure do |config|
   config.excluded_models = %w(Brand BrandIdentity Account AccountRole AccountsAccountRole User Identity BrandsUser Country)
   config.use_schemas = true
@@ -19,9 +16,9 @@ Apartment.configure do |config|
   config.persistent_schemas = %w( public )
 end
 
-# Rails.application.config.middleware.use 'Apartment::Elevators::Generic', lambda { |request|
-#   # TODO: supply generic implementation
-# }
-# Rails.application.config.middleware.use 'Apartment::Elevators::Domain'
+Rails.application.config.middleware.use 'Apartment::Elevators::Generic', lambda { |request|
+  request.session['tenant_name']
+}
 
-Rails.application.config.middleware.use 'Apartment::Elevators::Subdomain'
+# Rails.application.config.middleware.use 'Apartment::Elevators::Domain'
+# Rails.application.config.middleware.use 'Apartment::Elevators::Subdomain'

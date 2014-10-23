@@ -1,8 +1,11 @@
 class Account < ActiveRecord::Base
+
+  devise :database_authenticatable, :registerable, :confirmable,
+         :recoverable, :rememberable, :trackable, :validatable,
+         :omniauthable
+
   rolify :role_cname => 'AccountRole'
 
-  devise :database_authenticatable, :registerable,
-         :rememberable, :trackable, :validatable
+  has_and_belongs_to_many :brands
 
-  belongs_to :brand
 end
