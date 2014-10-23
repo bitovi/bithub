@@ -1,2 +1,0 @@
-REFRESH MATERIALIZED VIEW "leaderboard";
-REFRESH MATERIALIZED VIEW "user_activities";

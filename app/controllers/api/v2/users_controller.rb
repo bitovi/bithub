@@ -60,16 +60,6 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
   end
 
-  # def from_github
-  #   res = user_apis.from_github(params[:user])
-  #   render :json => res
-  # end
-
-  # def from_twitter
-  #   res = user_apis.from_twitter(params[:user])
-  #   render :json => res
-  # end
-
   def add_role
     user = User.find(params[:id])
     authorize! :manage_roles_on_user, user

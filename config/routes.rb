@@ -34,46 +34,30 @@ Bithub::Application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
 
     namespace :v2 do
-      resources :entities, except: %i(new edit) do
-        get :summary, on: :collection
-        get :pagination, on: :collection
-        get :activities, to: 'entity_activities#index'
-        post :upvote, to: 'entity_activities#create_upvote'
-        post :award, to: 'entity_activities#create_award'
-        delete :upvote, to: 'entity_activities#destroy_upvote'
-        delete :award, to: 'entity_activities#destory_award'
+
+      resources :embeds, except: %i(new edit) do
+		resources :entities, except: %i(new create edit update) do
+			get :approved, on: :collection
+			get :waitlisted, on: :collection
+		end
       end
 
-      resources :users, except: %i(new edit) do
-        get 'activities', to: 'user_activities#index'
-        get 'achievements', to: 'user_activities#achievements'
+      resources :entities, only: %i(create update destroy)
 
-        member do
-          put 'role', to: 'users#add_role'
-          delete 'role', to: 'users#remove_role'
-        end
-      end
-
-      # resources :brands, only: %i(show update)
-      get 'brands/current', to: 'brands#show'
-      put 'brands/current', to: 'brands#update'
+      resources :filters, except: %i(new edit)
 
       resources :services, except: %i(new edit)
       get 'services/tree', to: 'services#tree'
+
+      resources :brands,  except: %i(new edit)
+      get 'brands/current', to: 'brands#show'
+      put 'brands/current', to: 'brands#update'
 
       resources :tags, except: %i(new edit)
       get 'tags/tree', to: 'tags#tree'
 
       resources :accounts, except: %i(new edit)
       resources :brand_identities, only: %i(index show destroy)
-      resources :tags, except: %i(new edit)
-      resources :achievements, except: %i(new edit)
-      resources :rewards, except: %i(new edit)
-      resources :scoring_rules, except: %i(new edit)
-      resources :filters, except: %i(new edit)
-      resources :achievements, except: %i(new create edit)
-      resources :countries, only: :index
-      resources :embeds, except: %i(new edit)
 
       get '*path', to: redirect('/api/v2')
       root to: 'base#home'

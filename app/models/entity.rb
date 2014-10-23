@@ -4,19 +4,6 @@ class Entity < ActiveRecord::Base
   store_accessor :props
 
   acts_as_taggable
-  mount_uploader :image, EventImageUploader
-
-  has_and_belongs_to_many :references_to,
-    :class_name => 'Entity',
-    :join_table => 'entity_refs',
-    :foreign_key => 'from_id',
-    :association_foreign_key => "to_id"
-
-  has_and_belongs_to_many :referenced_from,
-    :class_name => 'Entity',
-    :join_table => 'entity_refs',
-    :foreign_key => 'to_id',
-    :association_foreign_key => "from_id"
 
   has_many :events
 
@@ -24,18 +11,13 @@ class Entity < ActiveRecord::Base
   has_many :owners, through: :ownerships, source: :owner
   has_many :hosts, through: :ownerships, source: :host
 
-  belongs_to :feed, :foreign_key => "feed_id", :class_name => "Tag"
-  belongs_to :type, :foreign_key => "type_id", :class_name => "Tag"
   belongs_to :parent, :class_name => "Entity"
-  belongs_to :scoring_rule, :foreign_key => "scoring_rule_id", :class_name => "ScoringRule"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
-  has_many :upvotes, :foreign_key => "applies_to_id", :dependent => :destroy
-  has_many :awards, :foreign_key => "applies_to_id", :dependent => :destroy
 
   validates_presence_of  :title,
     :feed_name, :type_name,
     :origin_ts, :thread_updated_ts,
-    :scoring_rule_id, :tag_list
+    :tag_list
 
   # Basic
   scope :feed, ->(f) { where(feed_name: f) }
@@ -77,11 +59,6 @@ class Entity < ActiveRecord::Base
 
   scope :scoped_with_includes, -> { includes(:owners).includes(:parent) }
 
-  after_create :reward_user_if_eligible
-  after_create :increase_score_in_author
-  after_create :adopt_references_from_children
-  after_destroy :decrease_score_in_author
-
   after_validation :reformat_uniqueness_validation
 
   def self.with_author(author_id)
@@ -98,13 +75,13 @@ class Entity < ActiveRecord::Base
 
   def author=(user)
     remove_author
-    ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author).determine_value
+    ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author)
   end
 
   def event_hosts=(users)
     remove_hosts
     users.each do |u|
-      ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host).determine_value
+      ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host)
     end
   end
 
@@ -132,10 +109,6 @@ class Entity < ActiveRecord::Base
     children.merge(Entity.scoped_with_includes)
   end
 
-  def references_with_includes()
-    referenced_from.merge(Entity.scoped_with_includes)
-  end
-
   def thread
     if parent_id # When an event is a child
       Entity.where('id = ? OR parent_id = ?', parent_id, parent_id)
@@ -146,12 +119,6 @@ class Entity < ActiveRecord::Base
 
   def siblings
     parent.children
-  end
-
-  def activities
-    activities = []
-    activities.concat(awards)
-    activities.concat(upvotes)
   end
 
   # FIXME, should be delegated to a proper type from Entities
@@ -177,42 +144,6 @@ class Entity < ActiveRecord::Base
 
   def latest_child_ts
     children.order("origin_ts DESC").first.andand.origin_ts
-  end
-
-  def awarded?
-    awards.length > 0
-  end
-
-  def thread_awarded?
-    !(thread.select(&:awarded?).blank?)
-  end
-
-  def sum_upvotes
-    upvotes.sum(:value)
-  end
-
-  def update_total_upvotes
-    update_attribute(:total_upvotes, sum_upvotes)
-  end
-
-  def async_update_total_upvotes
-    Workers::EntitiesTotalVotesUpdater.perform_async self.id
-  end
-
-  def increase_score_in_author
-    return unless author
-    author.total_score += scoring_rule.authorship_value
-    author.save!
-  end
-
-  def decrease_score_in_author
-    return unless author
-    author.total_score -= scoring_rule.authorship_value
-    author.save!
-  end
-
-  def reward_user_if_eligible
-    author.reward_if_eligible if author
   end
 
   def top_level_parent
@@ -247,45 +178,6 @@ class Entity < ActiveRecord::Base
       "#{self.class.model_name.cache_key}/#{id}"
     end
   end
-
-  def missing_critical_tags?
-    !self.type || !self.feed
-  end
-
-  def adopt_references_from_children
-    #return
-    children = self.children.pluck(:id)
-
-    unless children.empty?
-      references_to   = EntityRef.where(to_id: children).all
-      references_from = EntityRef.where(from_id: children).all
-
-      references_to_ids   = Entity.where(id: references_to.pluck(:from_id).uniq).map { |e|
-        e.parent ? e.parent_id : e.id
-      }.uniq.compact
-
-      references_from_ids = Entity.where(id: references_from.pluck(:to_id).uniq).map { |e|
-        e.parent ? e.parent_id : e.id
-      }.uniq.compact
-
-      references_to.map(&:destroy)
-      references_from.map(&:destroy)
-
-      references_to_ids.map do |from_id|
-        EntityRef.create_reference({from_id: from_id, to_id: self.id}) if from_id != self.id
-      end
-
-      references_from_ids.map do |to_id|
-        EntityRef.create_reference({to_id: to_id, from_id: self.id}) if to_id != self.id
-      end
-
-      EntityRef.where(from_id: self.id).joins(:target).where('COALESCE(entities.parent_id, 0) <> 0').destroy_all
-      EntityRef.where(to_id: self.id).joins(:source).where('COALESCE(entities.parent_id, 0) <> 0').destroy_all
-
-    end
-  end
-
-  alias_method :upvotes_sum, :sum_upvotes
 
   def deserialize
     Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)

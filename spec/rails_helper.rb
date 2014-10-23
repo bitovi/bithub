@@ -15,7 +15,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     Celluloid.boot
     Apartment::Database.drop('testy') rescue nil
-    DatabaseCleaner.clean_with :truncation, except: %w(tags scoring_rules)
+    DatabaseCleaner.clean_with :truncation, except: %w(tags)
     Brand.create name: 'testy', tenant_name: 'testy'
   end
 

@@ -24,10 +24,6 @@ FactoryGirl.define do
       type_name 'some_type'
     end
 
-    trait :with_determined_rule do
-      association :scoring_rule, factory: :scoring_rule
-    end
-
     trait :with_determined_tags do
       tag_list ['some_feed','some_content_tag']
     end
@@ -38,12 +34,11 @@ FactoryGirl.define do
       end
     end
 
-    factory :entity_wo_type, traits: [:with_determined_tags, :with_determined_feed, :with_determined_rule, :with_determined_author]
-    factory :entity_wo_feed, traits: [:with_determined_type, :with_determined_tags, :with_determined_rule, :with_determined_author]
-    factory :entity_wo_tags, traits: [:with_determined_type, :with_determined_feed, :with_determined_rule, :with_determined_author]
-    factory :entity_wo_rule, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_author]
-    factory :entity_wo_author, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_rule]
-    factory :determined_entity, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_rule, :with_determined_author]
+    factory :entity_wo_type, traits: [:with_determined_tags, :with_determined_feed, :with_determined_author]
+    factory :entity_wo_feed, traits: [:with_determined_type, :with_determined_tags, :with_determined_author]
+    factory :entity_wo_tags, traits: [:with_determined_type, :with_determined_feed, :with_determined_author]
+    factory :entity_wo_author, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed]
+    factory :determined_entity, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_author]
 
     # Twitter entity
 
@@ -51,11 +46,8 @@ FactoryGirl.define do
       feed_name 'twitter'
       type_name 'tweet'
 
-      association :feed, factory: :tag, name: "twitter"
-
       trait :tweet do
         type_name 'tweet'
-        association :type, factory: :tag, name: "tweet"
         tag_list %w(twitter tweet canjs)
 
         title "A hashtag #canjs and a @canjs mention."
@@ -63,7 +55,6 @@ FactoryGirl.define do
 
       trait :retweet do
         type_name 'tweet'
-        association :type, factory: :tag, name: "tweet"
         tag_list %w(twitter tweet canjs)
 
         title "RT: A hashtag #canjs and a @canjs mention."
@@ -71,22 +62,20 @@ FactoryGirl.define do
 
       trait :follow do
         type_name 'tweet'
-        association :type, factory: :tag, name: "tweet"
         tag_list %w(twitter follow canjs)
 
         title "followed @canjs"
       end
 
-      factory :twitter_tweet, traits: [:with_determined_rule, :tweet]
-      factory :twitter_retweet, traits: [:with_determined_rule, :retweet]
-      factory :twitter_follow, traits: [:with_determined_rule, :follow]
+      factory :twitter_tweet, traits: [:tweet]
+      factory :twitter_retweet, traits: [:retweet]
+      factory :twitter_follow, traits: [:follow]
     end
 
     # Github event
 
     factory :github_entity do
       feed_name 'github'
-      with_determined_rule
 
       factory :github_issue do
         type_name 'issue'
