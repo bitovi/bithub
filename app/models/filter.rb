@@ -19,13 +19,15 @@ class Filter < ActiveRecord::Base
   def any?
     not(is_conj)
   end
-  
+
   def classification_filterable_combination
-    if (classification == 'blocking' && filterable_type.match(/service/i))\
-        || (classification == 'moderating' && filterable_type.match(/service/i))
+    if (filterable_id && filterable_type)
+      if (classification == 'blocking' && filterable_type.match(/service/i))\
+          || (classification == 'moderating' && filterable_type.match(/service/i))
         errors.add(:classification, 'blocking/moderating filter can only belong to an embed')
-    elsif (classification == 'linking' && not(filterable_type.match(/service/i)))
-      errors.add(:classification, 'linking filter can only belong to a service')
+      elsif (classification == 'linking' && not(filterable_type.match(/service/i)))
+        errors.add(:classification, 'linking filter can only belong to a service')
+      end
     end
   end
 
