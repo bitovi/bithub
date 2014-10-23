@@ -8,7 +8,7 @@ class Api::V2::BaseController < ActionController::Base
   include Api::V2::BaseHelpers
 
   def home
-    render :text => "Bithub API v2"
+    render :text => "Bithub API v2", content_type: "text/plain"
   end
 
   # CanCan override:

@@ -3,13 +3,9 @@
 # ---------------
 
 TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
-CATEGORY_RULES_PATH = File.join(PROJECT_ROOT, 'config', 'category_determination_rules.yml')
-SCORING_RULES_PATH = File.join(PROJECT_ROOT, 'config', 'scoring_rules.yml')
 
 def import_all
   import_tags
-  import_category_rules
-  import_scoring_rules
 end
 
 def import_tags
@@ -23,20 +19,6 @@ def import_tags
     })
     t.group_list = opts['group_list']
     t.save
-  end
-end
-
-def import_category_rules
-  rules = YAML::load_file(CATEGORY_RULES_PATH)
-  rules.each do |category, scorings|
-    CategoryDeterminationRule.create({:name => category, :scorings => scorings})
-  end
-end
-
-def import_scoring_rules
-  rules = YAML::load_file(SCORING_RULES_PATH)
-  rules.each do |rule_config|
-    ScoringRule.create(rule_config)
   end
 end
 

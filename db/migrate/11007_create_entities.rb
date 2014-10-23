@@ -7,12 +7,7 @@ class CreateEntities < ActiveRecord::Migration
       t.string :origin_id
       t.string :feed_name
       t.string :type_name
-      t.string :category_name
 
-      t.references :scoring_rule, :null => false
-      t.references :feed, :null => false
-      t.references :type, :null => false
-      t.references :category, :null => false
       t.references :parent
 
       t.datetime :origin_ts, :null => false
@@ -25,14 +20,5 @@ class CreateEntities < ActiveRecord::Migration
       t.hstore :props, default: ''
       t.timestamps
     end
-
-    create_table :entity_refs do |t|
-      t.references :from, :null => false
-      t.references :to, :null => false
-    end
-
-    add_index :entity_refs, :from_id
-    add_index :entity_refs, :to_id
-    add_index :entity_refs, [:from_id, :to_id], :unique => true
   end
 end

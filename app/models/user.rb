@@ -3,67 +3,13 @@ class User < ActiveRecord::Base
 
   store_accessor :props
 
-  rolify :role_cname => 'UserRole'
-
-  has_many :upvotes_as_actor, :foreign_key => "actor_id", :class_name => "Upvote", :dependent => :destroy
-  has_many :awards_as_actor, :foreign_key => "actor_id", :class_name => "Award", :dependent => :destroy
-  has_many :internals_as_actor, :foreign_key => "actor_id", :class_name => "Internal", :dependent => :nullify
-
   has_many :ownerships, foreign_key: 'owner_id', :dependent => :destroy
   has_many :entities, through: :ownerships, source: 'entity'
 
-  has_many :activities, :foreign_key => "user_id", :class_name => "UserActivity"
-
-  has_many :internals, :foreign_key => "receiver_id", :dependent => :destroy
-  has_many :upvotes, :through => :entities
-  has_many :awards, :through => :entities
-
-  has_many :achievements, :dependent => :destroy
-  has_many :rewards, :through => :achievements
-
-  has_many :identities, :dependent => :nullify
-
   has_and_belongs_to_many :brands
-
-  belongs_to :country
 
   scope :only_not_null_names, -> { where("name <> '' and name IS NOT NULL") }
   scope :from_tenant, ->(brand_name) { joins(:brands).where("brands.tenant_name = ?", brand_name) }
-
-  before_save :calculate_avatar_url
-  after_save :award_points_for_completing_profile
-
-  def actions
-    actions = []
-    actions += self.awards_as_actor.all
-    actions += self.upvotes_as_actor.all
-    actions += self.internals_as_actor.all
-    actions
-  end
-
-  def score
-    authored_entities_total + upvotes_total + awards_total + internals_total
-  end
-
-  def authored_entities_total
-    ownerships.sum(:value)
-  end
-
-  def upvotes_total
-    upvotes.sum(:value)
-  end
-
-  def awards_total
-    awards.sum(:value)
-  end
-
-  def internals_total
-    internals.sum(:value)
-  end
-
-  def countryISO=(iso)
-    self.country = Country.where({:iso => iso}).first
-  end
 
   def collect_authored_entities
     identities.each do |ident|
@@ -82,67 +28,14 @@ class User < ActiveRecord::Base
     end
   end
 
-  def total_score
-    if brand_user = BrandsUser.find_by_user(self.id)
-      brand_user.total_score
-    end
-  end
-
-  def total_score=(val)
-    update_total_score(val)
-  end
-
-  def update_total_score(val=nil)
-    if brand_user = BrandsUser.find_by_user(self.id)
-      brand_user.total_score = (val || self.score)
-      brand_user.save
-    end
-  end
-
   def update_blank_attrs(ident)
     self.name = ident.name if self.name.blank? && ident.name.present?
     self.email = ident.email if self.email.blank? && ident.email.present?
   end
 
-  def comleted_profile?
-    Users::PointAwarder.new(self).completed_profile?
-  end
-
-  def award_points_for_completing_profile
-    Users::PointAwarder.new(self).award_points_for_completing_profile
-  end
-
-  def award_points_for_linking(ident)
-    Users::PointAwarder.new(self).award_points_for_linking(ident.provider)
-  end
-
-  def reward_if_eligible
-    Users::Rewarder.new(user: self).reward_if_eligible
-  end
-
-  def unreward_if_uneligible
-    Users::Rewarder.new(user: self).unreward_if_uneligible
-  end
-
-  def calculate_avatar_url
-    props['avatar_url'] = Users::AvatarCalculator.new(self).calculate
-  end
-
   def async_collect_authored_entities
     Workers::UserUpdater.perform_async self.id, :collect_authored_entities
     Workers::UserUpdater.perform_async self.id, :collect_hosted_entities
-  end
-
-  def async_update_total_score
-    Workers::UserUpdater.perform_async self.id, :update_total_score
-  end
-
-  def async_reward_if_eligible
-    Workers::UserUpdater.perform_async self.id, :reward_if_eligible
-  end
-
-  def async_unreward_if_uneligible
-    Workers::UserUpdater.perform_async self.id, :unreward_if_uneligible
   end
 
   def join_brand(brand_name)

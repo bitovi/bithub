@@ -1,3 +1,0 @@
-json.set! :data do
-  json.array! @dates
-end
