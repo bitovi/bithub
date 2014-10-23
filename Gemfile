@@ -80,6 +80,7 @@ gem 'activesupport-json_encoder'
 
 
 group :development, :test do
+  gem 'capybara'
   gem 'evented-spec'
   gem 'database_cleaner'
   gem 'factory_girl_rails'

@@ -21,6 +21,10 @@ class Api::V2::BaseController < ActionController::Base
     end
   end
 
+  def current_brand
+    Brand.where(tenant_name: session['tenant_name']).first
+  end
+
   # Handle mutiple devise models for auth
   def authenticate!
     if account_signed_in?
