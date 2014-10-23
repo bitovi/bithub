@@ -9,15 +9,11 @@ class AccountAbility
       can [:read, :update], Brand #, id: account.brand.id
       can [:destroy], BrandIdentity #, brand_id: account.brand.id
       can :read, Country
-      can [:read, :update], ScoringRule
-      can :manage, Reward
-      can :manage, Achievement
+      can :manage, Embed
+      can :read, User # TODO check somehow if user is present in current tenant
       can :manage, Service #, brand_id: account.brand.id
-      can :read, User # check somehow if user is present in current tenant
       can :manage_roles_on_user, User
       can :manage, Entity
-      can :create_award, Award
-      can :manage, Achievement
     end
   end
 
