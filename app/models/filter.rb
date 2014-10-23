@@ -9,7 +9,7 @@ class Filter < ActiveRecord::Base
   validate :classification_filterable_combination
 
   def combined_queries
-    QueryCombinator.new(self.natlang_queries.all, is_conj).combine
+    NatlangQueryCombinator.new(self.natlang_queries.all, is_conj).combine
   end
 
   def all?
