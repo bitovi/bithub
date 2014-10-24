@@ -9,7 +9,7 @@ FactoryGirl.define do
     initialize_with { attributes }
   end
 
-  factory :entity
+  factory :entity do
     title "Title"
     body "A body that has many many words in it."
     origin_ts Time.now
