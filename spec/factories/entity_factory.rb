@@ -9,7 +9,7 @@ FactoryGirl.define do
     initialize_with { attributes }
   end
 
-  factory :entity do |e|
+  factory :entity
     title "Title"
     body "A body that has many many words in it."
     origin_ts Time.now
@@ -115,7 +115,7 @@ FactoryGirl.define do
         end
       end
 
-      factory :github_watch_entity do
+      factory :github_watch do
         type_name 'watch'
         tag_list %w(github watch digest canjs)
 
