@@ -1,6 +1,6 @@
 require 'digest/md5'
 
-class Api::V3::EmbedEntitiesController < Api::V2::BaseController
+class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   before_filter :authenticate!
 
   helper_method :custom_cache_key
@@ -16,7 +16,7 @@ class Api::V3::EmbedEntitiesController < Api::V2::BaseController
     Entity.find(params[:id]).destroy
     render :json => { error: t('api.entities.destroy.success') }
   end
-  
+
   private
   def embed_id
     params.require(:embed_id)
