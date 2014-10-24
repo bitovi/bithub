@@ -3,13 +3,13 @@ class Filter < ActiveRecord::Base
   belongs_to :filterable, polymorphic: true
   has_many :natlang_queries, :dependent => :destroy
 
-  validates_presence_of :is_conj, :classification
+  validates_presence_of :classification #, :is_conj ? acts weird
   validates_uniqueness_of :classification, scope: :filterable_id
   validate :classification_type
   validate :classification_filterable_combination
 
   def combined_queries
-    NatlangQueryCombinator.new(self.natlang_queries.all, is_conj).combine
+    NatlangQueries::Combinator.new(natlang_queries.all, is_conj).combine
   end
 
   def all?
@@ -38,7 +38,7 @@ class Filter < ActiveRecord::Base
   end
 
   def detects?
-    true
+    true # TODO
   end
   alias_method :blocks?, :detects?
   alias_method :approves?, :detects?
