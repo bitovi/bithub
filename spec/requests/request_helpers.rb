@@ -1,3 +1,9 @@
+def post_headers
+  {
+    'CONTENT_TYPE' => 'application/json'
+  }
+end
+
 def account_registration_data
   {
     name: 'neektza',
@@ -12,5 +18,12 @@ def account_login_data
     name: 'neektza',
     password: 'foobar123',
     remember_me: '0'
+  }
+end
+
+def brand_data
+  {
+   name: 'brand new Brand',
+   tenant_name: 'brandnewbrand'
   }
 end
