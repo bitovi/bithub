@@ -27,6 +27,16 @@ class Embed < ActiveRecord::Base
     self.filters.where(classification: 'moderating').first
   end
 
+  def moderate
+    self.entities
+      .satisfying(moderating_filter)
+      .each do |entity|
+        entity.embed_entities
+          .select { |ee| ee.embed == self }
+          .each { |ee| ee.is_approved = true ; ee.save }
+      end
+  end
+
   def make_link_to(entity)
     self.embed_entities.create(entity: entity, is_approved: false)
   end
