@@ -1,16 +1,27 @@
 FactoryGirl.define do
 
   factory :natlang_query do
+    
     trait :contains_canjs do
       attr 'content'
       op 'contains'
       val 'canjs'
     end
 
-    trait :is_from_github do
+    trait :tagged_with_canjs do
+      attr ''
+      op 'tagged_with'
+      val 'canjs'
+    end
+
+    trait :is_from_twitter do
       attr 'feed_name'
       op 'is'
-      val 'github'
+      val 'twitter'
+    end
+
+    trait :negated do
+      is_negated true
     end
   end
 

@@ -14,7 +14,7 @@ class Service < ActiveRecord::Base
   end
 
   def config
-    ServiceConfig.new(json_config, feed_name)
+    Services::ServiceConfig.new(json_config, feed_name)
   end
 
   def notify_crawler

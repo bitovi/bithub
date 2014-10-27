@@ -6,6 +6,9 @@ class Entity < ActiveRecord::Base
   acts_as_taggable
 
   has_many :events
+  
+  has_many :embed_entities
+  has_many :embeds, through: :embed_entities
 
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
   has_many :owners, through: :ownerships, source: :owner
@@ -60,6 +63,10 @@ class Entity < ActiveRecord::Base
   scope :scoped_with_includes, -> { includes(:owners).includes(:parent) }
 
   after_validation :reformat_uniqueness_validation
+
+  def self.satisfying(filter)
+    NatlangQueries::Applier.new(filter, Entity).scope
+  end
 
   def self.with_author(author_id)
     joins(:ownerships)\

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :embed do
-    name "what?"
+    name "Embed that embeds"
     colorscheme "peaksea"
     layout "up and down"
   end

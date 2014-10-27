@@ -2,7 +2,15 @@ FactoryGirl.define do
 
   factory :filter do
     is_conj true
-    classification 'blocking'
+    classification 'moderating'
+
+    trait :disjunctive do
+      is_conj false
+    end
+    
+    trait :conjunctive do
+      is_conj true
+    end
   end
 
 end

@@ -48,6 +48,8 @@ Bithub::Application.routes.draw do
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
+      
+      resources :services, except: %i(new edit)
     end
 
     namespace :v2 do
@@ -55,7 +57,6 @@ Bithub::Application.routes.draw do
 
       resources :filters, except: %i(new edit)
 
-      resources :services, except: %i(new edit)
       get 'services/tree', to: 'services#tree'
 
       resources :brands,  except: %i(new edit)
