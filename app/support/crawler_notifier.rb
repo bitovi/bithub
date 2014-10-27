@@ -1,7 +1,6 @@
 module Support
   class CrawlerNotifier
     include AmqpHelpers
-    include Literate
 
     def notif
       Rails.logger.info "Publishing command #{msg}"

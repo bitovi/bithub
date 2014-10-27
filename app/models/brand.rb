@@ -1,9 +1,8 @@
 class Brand < ActiveRecord::Base
 
-  has_many :accounts, dependent: :nullify
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
-  scope :identity_from, ->(feed_name) { where(feed_name: feed_name) }
+  scope :identity_from, -> (feed_name) { where(feed_name: feed_name) }
 
   has_many :embeds, dependent: :destroy
   has_many :services, through: :embeds
