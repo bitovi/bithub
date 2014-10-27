@@ -45,6 +45,8 @@ Bithub::Application.routes.draw do
         get 'current', on: :collection, to: 'brands#show'
         put 'current', on: :collection, to: 'brands#update'
       end
+      
+      resources :services, except: %i(new edit)
     end
 
     namespace :v2 do
@@ -52,7 +54,6 @@ Bithub::Application.routes.draw do
 
       resources :filters, except: %i(new edit)
 
-      resources :services, except: %i(new edit)
       get 'services/tree', to: 'services#tree'
 
       resources :brands,  except: %i(new edit)
