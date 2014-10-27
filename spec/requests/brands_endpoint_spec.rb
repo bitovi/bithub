@@ -16,7 +16,21 @@ RSpec.describe 'Brand endpoints', type: :request do
       get "/api/#{api_version}/brands/current"
 
       expect(response).to be_success
-      expect(json['data']).to have_keys(%w(id name))
+      expect(json['data'].keys).to include('id', 'name', 'identities', 'tenant_name')
     end
   end
+
+  describe 'POST and DELETE /brands' do
+    it 'creates new brand and deletes it afterwards' do
+      post "/api/#{api_version}/brands", { brand: brand_data }.to_json, post_headers
+
+      expect(response).to be_success
+      expect(json['data'].keys).to include('id', 'name', 'identities', 'tenant_name')
+
+      delete "/api/#{api_version}/brands/#{json['data']['id']}"
+
+      expect(response).to be_success
+    end
+  end
+
 end

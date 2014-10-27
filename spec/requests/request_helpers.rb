@@ -27,6 +27,10 @@ OmniAuth.config.mock_auth[:instagram] = OmniAuth::AuthHash.new({
 })
 
 module AuthTestData
+  POST_HEADERS = {
+    'CONTENT_TYPE' => 'application/json'
+  }
+
   ACCOUNT_REGISTRATION_DATA = {
     name: 'neektza',
     email: 'neektza@gmail.com',
@@ -39,5 +43,9 @@ module AuthTestData
     password: 'foobar123',
     remember_me: '0'
   }
-end
 
+  BRAND_DATA = {
+    name: 'brand new Brand',
+    tenant_name: 'brandnewbrand'
+  }
+end
