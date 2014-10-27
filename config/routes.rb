@@ -40,10 +40,13 @@ Bithub::Application.routes.draw do
           get :waitlisted, on: :collection
         end
       end
-      
+
       resources :brands,  except: %i(new edit) do
-        get 'current', on: :collection, to: 'brands#show'
-        put 'current', on: :collection, to: 'brands#update'
+        collection do
+          get 'current', to: 'brands#show'
+          put 'current', to: 'brands#update'
+          delete 'current/identities/:id', to: 'brand_identities#destroy'
+        end
       end
     end
 
@@ -63,7 +66,6 @@ Bithub::Application.routes.draw do
       get 'tags/tree', to: 'tags#tree'
 
       resources :accounts, except: %i(new edit)
-      resources :brand_identities, only: %i(index show destroy)
 
       get '*path', to: redirect('/api/v2')
       root to: 'base#home'
