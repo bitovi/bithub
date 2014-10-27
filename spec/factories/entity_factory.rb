@@ -41,28 +41,38 @@ FactoryGirl.define do
     factory :determined_entity, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_author]
 
     # Twitter entity
+    
+    factory :meetup_entity do
+      feed_name 'meetup'
+
+      trait :event do
+        type_name 'event'
+        tag_list %w(haskell)
+        
+        title "We're organizing a new Haskell meetup this week"
+      end
+    end
 
     factory :twitter_entity do
       feed_name 'twitter'
-      type_name 'tweet'
 
       trait :tweet do
         type_name 'tweet'
-        tag_list %w(twitter tweet canjs)
+        tag_list %w(canjs)
 
         title "A hashtag #canjs and a @canjs mention."
       end
 
       trait :retweet do
         type_name 'tweet'
-        tag_list %w(twitter tweet canjs)
+        tag_list %w(canjs)
 
         title "RT: A hashtag #canjs and a @canjs mention."
       end
 
       trait :follow do
         type_name 'tweet'
-        tag_list %w(twitter follow canjs)
+        tag_list %w(canjs)
 
         title "followed @canjs"
       end
@@ -79,7 +89,7 @@ FactoryGirl.define do
 
       factory :github_issue do
         type_name 'issue'
-        tag_list %w(github issue bug canjs)
+        tag_list %w(bug canjs)
 
         title "raised issue #1"
 
@@ -90,7 +100,7 @@ FactoryGirl.define do
 
       factory :github_push do
         type_name 'push'
-        tag_list %w(github push code canjs)
+        tag_list %w(canjs)
 
         trait :with_push_entity_source_data do
           source_data(push_entity_source_data)
@@ -99,14 +109,14 @@ FactoryGirl.define do
 
       factory :github_pull_request do
         type_name 'pull_request'
-        tag_list %w(github pull_request code canjs)
+        tag_list %w(canjs)
 
         title "requested a pull"
       end
 
       factory :github_issue_comment do
         type_name 'issue_comment'
-        tag_list %w(github issue_comment github_comment canjs)
+        tag_list %w(canjs)
 
         title "commented on issue #1"
 
@@ -117,14 +127,14 @@ FactoryGirl.define do
 
       factory :github_watch do
         type_name 'watch'
-        tag_list %w(github watch digest canjs)
+        tag_list %w(canjs)
 
         title "started watching bitovi/canjs"
       end
 
       factory :github_commit_comment do
         type_name 'commit_comment'
-        tag_list %w(github commit_comment comment canjs)
+        tag_list %w(canjs)
 
         title "commented on a commit 4b2342hh"
       end
