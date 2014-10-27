@@ -17,14 +17,14 @@ RSpec.describe 'Account registration', type: :request do
   describe 'POST /register' do
     it 'creates an account, and a new brand for that account' do
       expect do
-        post '/register', { account: account_registration_data }
+        post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
       end.to change(Account, :count).by (1)
       expect(Account.first.confirmed?).to be_falsey
     end
 
     it 'creates the brand along with the account if account is being registered' do
       expect do
-        post '/register', { account:  account_registration_data }
+        post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
       end.to change(Brand, :count).by (1)
     end
 

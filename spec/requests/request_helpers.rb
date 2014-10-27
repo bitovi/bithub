@@ -13,8 +13,8 @@ OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({
   }
 })
 
-OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new({
-  'provider' => 'github',
+OmniAuth.config.mock_auth[:instagram] = OmniAuth::AuthHash.new({
+  'provider' => 'instagram',
   'uid' => '545123',
   'user_info' => {
     'name' => 'mockuser',
