@@ -13,8 +13,8 @@ RSpec.describe 'Embed endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before(:each) do
-    post '/register', { account: account_registration_data }
-    post '/login', { account: account_login_data }
+    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
   end
 
