@@ -24,11 +24,6 @@ Bithub::Application.routes.draw do
     # unlock: 'unblock',
   }
 
-  # Dynamic image resizer
-
-  post '/uploads/*other' => "uploads#index"
-  get '/uploads/*other' => "uploads#index"
-
   # SERVICE API Routes
 
   namespace :api, defaults: { format: 'json' } do
@@ -48,7 +43,7 @@ Bithub::Application.routes.draw do
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
-      
+
       resources :services, except: %i(new edit)
     end
 
