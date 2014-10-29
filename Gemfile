@@ -75,9 +75,11 @@ gem 'twitter-text'
 gem 'reel', '~> 0.5.0'
 gem 'tumblr_client'
 
+# Payments
+gem 'stripe', '~> 1.16'
+gem 'stripe-rails', '~> 0.3'
 
 gem 'activesupport-json_encoder'
-
 
 group :development, :test do
   gem 'capybara'

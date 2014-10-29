@@ -27,5 +27,9 @@ module Bithub
 
     # The query parsing middleware
     config.middleware.use Muster::Rack, Muster::Strategies::ActiveRecord
+
+    # Stripe
+    # secret key is red from env directly
+    config.stripe.publishable_key = ENV['STRIPE_PUBLISHABLE_KEY']
   end
 end

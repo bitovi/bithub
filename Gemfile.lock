@@ -256,6 +256,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
+    netrc (0.8.0)
     newrelic_rpm (3.9.5.251)
     nio4r (1.0.1)
     nokogiri (1.6.1)
@@ -371,6 +372,9 @@ GEM
     request_store (1.1.0)
     responders (1.1.1)
       railties (>= 3.2, < 4.2)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rmagick (2.13.3)
     rolify (3.4.1)
     rspec (3.1.0)
@@ -439,6 +443,13 @@ GEM
       colorize
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    stripe (1.16.0)
+      json (~> 1.8.1)
+      mime-types (>= 1.25, < 3.0)
+      rest-client (~> 1.4)
+    stripe-rails (0.3.1)
+      rails (>= 3)
+      stripe
     textacular (3.2.0)
       activerecord (>= 3.0, < 4.2)
     thor (0.19.1)
@@ -575,6 +586,8 @@ DEPENDENCIES
   sidetiq
   sinatra
   spring-commands-rspec
+  stripe (~> 1.16)
+  stripe-rails (~> 0.3)
   textacular
   travis
   tumblr_client
