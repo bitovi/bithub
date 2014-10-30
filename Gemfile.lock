@@ -398,6 +398,7 @@ GEM
       crass (~> 0.2.0)
       nokogiri (>= 1.4.4)
       nokogumbo (= 1.1.12)
+    sass (3.4.6)
     sawyer (0.5.5)
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
@@ -571,6 +572,7 @@ DEPENDENCIES
   rspec (~> 3.1.0)
   rspec-rails (~> 3.1.0)
   sanitize
+  sass
   sidekiq
   sidetiq
   sinatra

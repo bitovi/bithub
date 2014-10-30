@@ -1,0 +1,170 @@
+body {
+  background: url(/images/background.png);
+  background-repeat: repeat-x; }
+
+html, body {
+  height: 100%; }
+
+#wrapper {
+  min-height: 100%;
+  position: relative; }
+
+.header {
+  padding: 20px 0;
+  position: relative; }
+  .header ul {
+    float: right;
+    position: relative;
+    top: 5px; }
+    .header ul li {
+      float: left;
+      border-right: 1px solid #999;
+      padding: 0 10px;
+      font-weight: bold; }
+      .header ul li:last-child {
+        padding-right: 0;
+        border-right: none; }
+  .header .logo {
+    float: left;
+    width: 100px;
+    position: relative;
+    top: 3px; }
+
+.punchline {
+  position: relative;
+  margin-top: 0px; }
+  .punchline h1 {
+    float: left;
+    font-size: 247%; }
+  .punchline .btn {
+    float: right;
+    position: relative;
+    top: 17px; }
+
+.widget-wrap {
+  margin-top: 40px;
+  overflow: hidden;
+  height: 250px; }
+  .widget-wrap img {
+    width: 100%; }
+
+.content {
+  padding-bottom: 70px; }
+
+.bottom-part {
+  border-top: 1px solid #e5e5e5;
+  -webkit-box-shadow: 0px -5px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px -5px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px -5px 20px 0px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10;
+  padding-bottom: 70px; }
+  .bottom-part .expand-widget {
+    display: block;
+    height: 45px;
+    width: 90px;
+    border-radius: 0 0 90px 90px;
+    -moz-border-radius: 0 0 90px 90px;
+    -webkit-border-radius: 0 0 90px 90px;
+    background: #e5e5e5;
+    margin: 0 auto;
+    color: white;
+    text-align: center;
+    line-height: 45px;
+    font-size: 200%; }
+  .bottom-part .marketing-line {
+    font-size: 150%;
+    text-align: center;
+    margin: 30px 0 40px 0; }
+  .bottom-part .steps {
+    margin-bottom: 40px; }
+    .bottom-part .steps .step {
+      float: left;
+      width: 30%;
+      margin-right: 5%; }
+      .bottom-part .steps .step .counter {
+        color: white;
+        background: #fe3500;
+        text-align: center;
+        line-height: 80px;
+        height: 80px;
+        width: 80px;
+        font-size: 400%;
+        display: block;
+        margin: 0 auto;
+        border-radius: 40px;
+        -moz-border-radius: 40px;
+        -webkit-border-radius: 40px; }
+      .bottom-part .steps .step p {
+        margin-top: 15px;
+        font-size: 150%;
+        text-align: center; }
+      .bottom-part .steps .step:last-child {
+        margin-right: 0;
+        float: right; }
+  .bottom-part .cta {
+    text-align: center;
+    margin-bottom: 40px; }
+    .bottom-part .cta .btn {
+      font-size: 250%;
+      padding: 10px 30px;
+      font-weight: bold; }
+    .bottom-part .cta span {
+      color: #888;
+      font-style: oblique; }
+  .bottom-part .features {
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 60px;
+    margin-bottom: 40px; }
+    .bottom-part .features .feature-left, .bottom-part .features .feature-right {
+      margin-top: 60px; }
+      .bottom-part .features .feature-left h2, .bottom-part .features .feature-right h2 {
+        margin-top: 0; }
+      .bottom-part .features .feature-left p, .bottom-part .features .feature-right p {
+        font-size: 130%; }
+      .bottom-part .features .feature-left .image-wrap, .bottom-part .features .feature-right .image-wrap {
+        float: left;
+        background: #ccc;
+        height: 350px;
+        width: 61.8%; }
+      .bottom-part .features .feature-left .content, .bottom-part .features .feature-right .content {
+        float: right;
+        width: 35.2%;
+        margin-left: 3%; }
+    .bottom-part .features .feature-right .image-wrap {
+      float: right; }
+    .bottom-part .features .feature-right .content {
+      float: left;
+      margin-right: 3%;
+      margin-left: 0; }
+
+.footer {
+  position: absolute;
+  z-index: 11;
+  background: #777777;
+  height: 70px;
+  color: white;
+  border-top: 1px solid #666;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+  .footer .copyright {
+    float: left;
+    line-height: 70px; }
+  .footer .service-pages-menu {
+    float: right;
+    padding-top: 25px; }
+    .footer .service-pages-menu li {
+      float: left;
+      border-right: 1px solid #999;
+      padding: 0 10px;
+      height: 20px;
+      line-height: 20px; }
+      .footer .service-pages-menu li:last-child {
+        border-right: none;
+        padding-right: 0; }
+      .footer .service-pages-menu li a {
+        color: #ccc; }
+
+/*# sourceMappingURL=app.css.map */
