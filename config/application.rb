@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'sass/plugin/rack'
 
 if defined?(Bundler)
   Bundler.require(:default, Rails.env)
@@ -27,5 +28,6 @@ module Bithub
 
     # The query parsing middleware
     config.middleware.use Muster::Rack, Muster::Strategies::ActiveRecord
+    config.middleware.use Sass::Plugin::Rack
   end
 end
