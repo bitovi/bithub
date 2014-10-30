@@ -6,7 +6,7 @@ require 'apartment/elevators/generic'
 # require 'apartment/elevators/subdomain'
 
 Apartment.configure do |config|
-  config.excluded_models = %w(Brand BrandIdentity Account AccountRole AccountsAccountRole User BrandsUser Country)
+  config.excluded_models = %w(Brand BrandIdentity Account AccountsBrand AccountRole AccountsAccountRole User BrandsUser Country)
   config.use_schemas = true
   config.use_sql = true
   config.tenant_names = -> { Brand.pluck :tenant_name }

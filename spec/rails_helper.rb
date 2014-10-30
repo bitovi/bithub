@@ -3,13 +3,12 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 require 'spec_helper'
 require 'rspec/rails'
+require 'webmock/rspec'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
-OmniAuth.config.add_mock(:twitter, {:uid => '12345'})
-OmniAuth.config.add_mock(:github, {:uid => '54321'})
 
 RSpec.configure do |config|
   config.before(:suite) do

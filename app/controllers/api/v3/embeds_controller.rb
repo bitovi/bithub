@@ -1,11 +1,11 @@
-class Api::V3::EmbedsController < Api::V2::BaseController
+class Api::V3::EmbedsController < Api::V3::BaseController
   before_filter :authenticate!
 
   def index
     @embeds = Embed.all
     render :index
   end
-  
+
   def show
     @embed = current_brand.embeds.where(id: params[:id]).first
     render :show

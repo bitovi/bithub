@@ -1,0 +1,1 @@
+json.partial! 'api/v3/services/service', service: @service
