@@ -4,20 +4,18 @@ class Api::V3::ServicesController < Api::V3::BaseController
   # CanCan vs Rails4 bug, see:
   # https://github.com/ryanb/cancan/issues/835#issuecomment-21321676
 
-  load_and_authorize_resource except: [:tree]
-
   def index
     @services = current_brand.services.all
     render :index
   end
 
   def show
-    @config = current_brand.services.find_by_id actual_params[:id]
+    @service = current_brand.services.find_by_id params[:id]
     render :show
   end
 
   def create
-    @service = Service.new(service_params)
+    @service = current_brand.services.build(service_params)
 
     if @service.save
       render :show
@@ -27,7 +25,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def destroy
-    @service = Service.find(params[:id])
+    @service = current_brand.services.find(params[:id])
 
     if @service.destroy
       render :json => { 'msg' => 'destroyed' }
