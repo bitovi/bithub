@@ -8,6 +8,7 @@ SERVICE_POST_DATA = {
 
 RSpec.describe 'Service creation', type: :request do
   let(:api_version) { 'v3' }
+
   before(:each) do
     post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
@@ -22,6 +23,16 @@ RSpec.describe 'Service creation', type: :request do
 
       get '/api/v3/services'
       expect(json.length).to eq 2
+    end
+  end
+  
+  describe 'GET /services/1' do
+    it 'gets a specific service for the current brand' do
+      embed = FactoryGirl.create(:embed, brand: @current_brand)
+      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
+
+      get '/api/v3/services/1'
+      expect(json.keys).to include('feed_name', 'config')
     end
   end
 

@@ -1,5 +1,6 @@
 class Api::V3::ServicesController < Api::V3::BaseController
   before_filter :authenticate!
+  load_and_authorize_resource
 
   # CanCan vs Rails4 bug, see:
   # https://github.com/ryanb/cancan/issues/835#issuecomment-21321676
