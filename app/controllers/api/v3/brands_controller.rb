@@ -1,35 +1,46 @@
-class Api::V3::BrandsController < Api::V2::BaseController
+class Api::V3::BrandsController < Api::V3::BaseController
   before_filter :authenticate!
   load_and_authorize_resource
 
   def show
-    if (@brand = current_brand)
+    if @brand = current_brand
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 406
     end
   end
 
+  def create
+    @brand = Brand.new brand_params
+    if @brand.save
+      render :show
+    else
+      render :json => msg_hash(@brand, 'create'), :status => 406
+    end
+  end
+
   def update
-    if (@brand = current_brand)
-      @brand.update_attributes(processed_brand_params)
+    if @brand = current_brand
+      @brand.update_attributes brand_params
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 406
+    end
+  end
+
+  def destroy
+    @brand = Brand.find(params[:id])
+    if @brand.destroy
+      render :json => msg_hash(@brand, 'destroy', 'success'), :status => 200
+    else
+      render :json => msg_hash(@brand, 'destroy'), :status => 406
     end
   end
 
   private
 
-  def processed_brand_params
-    params[:brand] = {} unless params.andand[:brand]
-    params[:brand][:keywords] = [] unless brand.andand[:keywords]
-    params.require(:brand).permit(
-      :name,
-      :description,
-      :tenant_name,
-      keywords: []
-    )
+  def brand_params
+    params.require(:brand).permit(:name, :tenant_name)
   end
 
   def logic_analyzer

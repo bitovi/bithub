@@ -1,21 +1,39 @@
 require 'rails_helper'
+require_relative 'request_helpers'
+
+SERVICE_POST_DATA = {
+  feed_name: 'twitter',
+  embed_id: 1
+}
 
 RSpec.describe 'Service creation', type: :request do
+  let(:api_version) { 'v3' }
   before(:each) do
-    post '/register', { account: account_registration_data }
-    post '/login', { account: account_login_data }
+    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
   end
 
-  describe 'GET /brands/current/services' do
-    it 'gets all services for the current brand' do
-      account_data = { email: 'neektza@gmail.com', password: 'foobar123' }
+  describe 'POST /services' do
+    it 'creates a new service for the current brand' do
+      get_via_redirect '/auth/twitter'
+      e = FactoryGirl.create(:embed)
 
-      post '/register', { account: account_data.merge({password_confirmation: 'foobar123'}) }
-      post '/login', { account: account_data.merge({remember_me: 0}) }
-      get '/auth/github'
-      get '/auth/twitter'
+      post "/api/v3/services", {
+        service: {
+          embed_id: e.id,
+          feed_name: 'twitter'
+        }
+      }.to_json, AuthTestData::POST_HEADERS
 
-      pending('TODO')
+      expect(Service.count).to eq 1
+    end
+  end
+
+  describe 'DELETE /services/:id' do
+    it 'destroys an existing service' do
+      FactoryGirl.create(:service, feed_name: 'twitter')
+      delete '/api/v3/services/1'
+      expect(Service.count).to eq 0
     end
   end
 end
