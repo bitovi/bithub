@@ -11,14 +11,26 @@ RSpec.describe 'Service creation', type: :request do
   before(:each) do
     post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    @current_brand = Brand.where(name: 'neektza').first
+  end
+  
+  describe 'GET /services' do
+    it 'gets all services for the current brand' do
+      embed = FactoryGirl.create(:embed, brand: @current_brand)
+      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
+      FactoryGirl.create(:service, embed: embed, feed_name: 'github')
+
+      get '/api/v3/services'
+      expect(json.length).to eq 2
+    end
   end
 
   describe 'POST /services' do
     it 'creates a new service for the current brand' do
       get_via_redirect '/auth/twitter'
-      e = FactoryGirl.create(:embed)
+      e = FactoryGirl.create(:embed, brand: @current_brand)
 
-      post "/api/v3/services", {
+      post '/api/v3/services', {
         service: {
           embed_id: e.id,
           feed_name: 'twitter'
@@ -31,7 +43,8 @@ RSpec.describe 'Service creation', type: :request do
 
   describe 'DELETE /services/:id' do
     it 'destroys an existing service' do
-      FactoryGirl.create(:service, feed_name: 'twitter')
+      embed = FactoryGirl.create(:embed, brand: @current_brand)
+      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
       delete '/api/v3/services/1'
       expect(Service.count).to eq 0
     end
