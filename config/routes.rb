@@ -39,6 +39,8 @@ Bithub::Application.routes.draw do
           get :approved, on: :collection
           get :waitlisted, on: :collection
         end
+
+        resources :filters, except: %i(new edit)
       end
 
       resources :brands,  except: %i(new edit) do
@@ -50,12 +52,13 @@ Bithub::Application.routes.draw do
       end
       
       resources :services, except: %i(new edit)
+      resources :filters, except: %i(new edit)
+      resources :tags, except: %i(new edit)
     end
 
     namespace :v2 do
       resources :entities, only: %i(create update destroy)
 
-      resources :filters, except: %i(new edit)
 
       get 'services/tree', to: 'services#tree'
 
@@ -63,7 +66,6 @@ Bithub::Application.routes.draw do
       get 'brands/current', to: 'brands#show'
       put 'brands/current', to: 'brands#update'
 
-      resources :tags, except: %i(new edit)
       get 'tags/tree', to: 'tags#tree'
 
       resources :accounts, except: %i(new edit)
