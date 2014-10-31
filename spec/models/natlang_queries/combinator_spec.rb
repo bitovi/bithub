@@ -16,15 +16,15 @@ describe NatlangQueries::Combinator do
 
       nlqs = [
         NatlangQueries::Translator.new(
-          double(:natlang_query, :attr => 'title', :op => 'is', :val  => 'canjs'),
+          double(:natlang_query, attr: 'title', op: 'is', val: 'canjs', negated?: false),
           DummyARClass
         ),
         NatlangQueries::Translator.new(
-          double(:natlang_query, :attr => 'content', :op => 'contains', :val  => 'found this error'),
+          double(:natlang_query, attr: 'content', op: 'contains', val: 'found this error', negated?: false),
           DummyARClass
         ),
         NatlangQueries::Translator.new(
-          double(:natlang_query, :attr => 'itself', :op => 'tagged_with', :val  => 'canjs,jquerypp'),
+          double(:natlang_query, attr: 'itself', op: 'tagged_with', val: 'canjs,jquerypp', negated?: false),
           DummyARClass
         )
       ]
