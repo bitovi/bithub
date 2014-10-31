@@ -2,10 +2,10 @@ FactoryGirl.define do
 
   factory :natlang_query do
     
-    trait :contains_canjs do
+    trait :contains_haskell do
       attr 'content'
       op 'contains'
-      val 'canjs'
+      val 'haskell'
     end
 
     trait :tagged_with_canjs do
