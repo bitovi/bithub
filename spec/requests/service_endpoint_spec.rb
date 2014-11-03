@@ -13,51 +13,73 @@ RSpec.describe 'Service creation', type: :request do
     post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
+    @embed = FactoryGirl.create(:embed, brand: @current_brand)
+    get_via_redirect '/auth/twitter'
   end
   
-  describe 'GET /services' do
-    it 'gets all services for the current brand' do
-      embed = FactoryGirl.create(:embed, brand: @current_brand)
-      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
-      FactoryGirl.create(:service, embed: embed, feed_name: 'github')
+  context 'given the account is logged in and the brand is determined' do
+    describe 'GET /services' do
+      it 'gets all services' do
+        FactoryGirl.create(:twitter_service, embed: @embed)
+        FactoryGirl.create(:twitter_service, embed: @embed)
 
-      get '/api/v3/services'
-      expect(json.length).to eq 2
+        get '/api/v3/services'
+        expect(json.length).to eq 2
+      end
     end
-  end
-  
-  describe 'GET /services/1' do
-    it 'gets a specific service for the current brand' do
-      embed = FactoryGirl.create(:embed, brand: @current_brand)
-      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
 
-      get '/api/v3/services/1'
-      expect(json.keys).to include('feed_name', 'config')
+    describe 'GET /services/1' do
+      it 'gets a specific service' do
+        FactoryGirl.create(:twitter_service, embed: @embed)
+
+        get '/api/v3/services/1'
+        expect(json.keys).to include('feed_name', 'config')
+      end
     end
-  end
 
-  describe 'POST /services' do
-    it 'creates a new service for the current brand' do
-      get_via_redirect '/auth/twitter'
-      e = FactoryGirl.create(:embed, brand: @current_brand)
+    describe 'POST /services' do
+      context 'provided with well defined service data' do
+        it 'creates a new service' do
 
-      post '/api/v3/services', {
-        service: {
-          embed_id: e.id,
-          feed_name: 'twitter'
-        }
-      }.to_json, AuthTestData::POST_HEADERS
+          post '/api/v3/services', {
+            service: {
+              embed_id: @embed.id,
+              feed_name: 'twitter',
+              json_config: {
+                :terms => %w(canjs bitovi)
+              }
+            }
+          }.to_json, AuthTestData::POST_HEADERS
 
-      expect(Service.count).to eq 1
+          expect(response).to be_success
+          expect(Service.count).to eq 1
+        end
+      end
+
+      context 'provided ill defined service data' do
+        it 'refuses to create a service' do
+
+          post '/api/v3/services', {
+            service: {
+              embed_id: @embed.id,
+              feed_name: 'foosbal',
+              json_config: {
+                terms: %w(wat are these)
+              }
+            }
+          }.to_json, AuthTestData::POST_HEADERS
+
+          expect(response).not_to be_success
+        end
+      end
     end
-  end
 
-  describe 'DELETE /services/:id' do
-    it 'destroys an existing service' do
-      embed = FactoryGirl.create(:embed, brand: @current_brand)
-      FactoryGirl.create(:service, embed: embed, feed_name: 'twitter')
-      delete '/api/v3/services/1'
-      expect(Service.count).to eq 0
+    describe 'DELETE /services/:id' do
+      it 'destroys an existing service' do
+        FactoryGirl.create(:twitter_service, embed: @embed)
+        delete '/api/v3/services/1'
+        expect(Service.count).to eq 0
+      end
     end
   end
 end
