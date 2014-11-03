@@ -50,9 +50,16 @@ en:
       destroy:
         success: "Reward deleted."
         error: "Error during reward deletion."
-    event_activities:
-      errors:
-        already_upvoted: "Already upvoted"
-        already_anteuped: "Anteup already placed"
-        already_awarded: "Already awarded"
-        has_no_parent: "Event has no parent!"
+    services:
+      create:
+        success: "Service created."
+        error: "Error during service creation."
+      update:
+        success: "Service created."
+        error: "Error during service creation"
+      update:
+        success: "Service updated."
+        error: "Error during service update"
+      destroy:
+        success: "Service deleted."
+        error: "Error during service deletion."
