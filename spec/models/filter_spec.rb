@@ -17,7 +17,7 @@ RSpec.describe Filter, type: :model do
     it 'validates that a moderating/blocking filter\
       can only be associated to an embed' do
       e = FactoryGirl.create(:embed)
-      s = FactoryGirl.create(:service, feed_name: 'twitter', embed: e)
+      s = FactoryGirl.create(:service, embed: e)
       expect do
         s.create_filter!(classification: 'moderating', is_conj: true)
       end.to raise_error(ActiveRecord::RecordInvalid)

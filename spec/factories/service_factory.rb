@@ -4,13 +4,7 @@ FactoryGirl.define do
     embed
     feed_name 'rss'
     json_config Hash[
-      'orgs', {},
-      'repos', {},
-      'terms', {},
-      'groups', {},
-      'tags', {},
-      'forums', {},
-      'sites', {}
+      'sites', %w(pltconfusion.com)
     ]
 
 
