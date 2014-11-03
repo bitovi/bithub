@@ -1,4 +1,6 @@
 module NatlangQueries
+  POSSIBLE_VERBS = %w(tagged_with contains is)
+
   class Translator
     def initialize(query, klass = Entity)
       @q = query

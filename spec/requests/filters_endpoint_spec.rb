@@ -38,28 +38,52 @@ RSpec.describe 'Filter endpoints', type: :request do
       end
 
       describe 'POST /embeds/1/filters' do
-        it 'creates a filter' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+        context 'provided well defined filter data' do
+          it 'creates a filter' do
+            embed = FactoryGirl.create(:embed, brand: @current_brand)
 
-          post "/api/#{api_version}/embeds/#{embed.id}/filters", {
-            filter: {
-              is_conj: true,
-              classification: 'moderating',
-              natlang_queries: [{
-                is_negated: false,
-                attr: 'content',
-                op: 'contains',
-                val: 'canjs'
-              }, {
-                is_negated: true,
-                attr: '',
-                op: 'tagged_with',
-                val: 'canjs'
-              }]
-            }
-          }.to_json, AuthTestData::POST_HEADERS
+            post "/api/#{api_version}/embeds/#{embed.id}/filters", {
+              filter: {
+                is_conj: true,
+                classification: 'moderating',
+                natlang_queries: [{
+                  is_negated: false,
+                  attr: 'content',
+                  op: 'contains',
+                  val: 'canjs'
+                }, {
+                  is_negated: true,
+                  attr: '',
+                  op: 'tagged_with',
+                  val: 'canjs'
+                }]
+              }
+            }.to_json, AuthTestData::POST_HEADERS
 
-          expect(json.keys).to include('is_conj', 'classification', 'queries')
+            expect(response).to be_success
+            expect(json.keys).to include('is_conj', 'classification', 'queries')
+          end
+        end
+
+        context 'provided ill defined filter data' do
+          it 'refuses to create the filter' do
+            embed = FactoryGirl.create(:embed, brand: @current_brand)
+
+            post "/api/#{api_version}/embeds/#{embed.id}/filters", {
+              filter: {
+                is_conj: true,
+                classification: 'moderating',
+                natlang_queries: [{
+                  is_negated: false,
+                  attr: 'is',
+                  op: 'wat',
+                  val: 'dat'
+                }]
+              }
+            }.to_json, AuthTestData::POST_HEADERS
+
+            expect(response).not_to be_success
+          end
         end
       end
 
