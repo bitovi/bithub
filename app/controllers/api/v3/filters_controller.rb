@@ -25,7 +25,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
     if @filter.save
       render :show
     else
-      render :json => msg_hash(:filter, 'create'), :status => 406
+      render :json => msg_hash(@filter, 'create'), :status => 406
     end
   end
 
