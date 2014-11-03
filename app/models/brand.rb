@@ -1,6 +1,8 @@
 class Brand < ActiveRecord::Base
-
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
+
+  has_one  :subscription
+  has_many :payments
 
   scope :identity_from, -> (feed_name) { where(feed_name: feed_name) }
 
@@ -14,8 +16,8 @@ class Brand < ActiveRecord::Base
     with: /\A[-0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
-  after_create :create_tenant
-  after_update :rename_tenant_schema
+  after_create  :create_tenant
+  after_update  :rename_tenant_schema
   after_destroy :destroy_tenant
 
   def create_tenant
