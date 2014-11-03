@@ -8,10 +8,3 @@ Stripe.plan :primo do |plan|
   plan.interval_count = 1
   plan.trial_period_days = 30
 end
-
-# charge.succeded
-
-# customer.created
-# customer.card.created/updated/deleted
-# customer.subscription.created/updated
-# invoice.created/updated/payment_succeeded/payment_failed

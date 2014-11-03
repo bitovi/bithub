@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141005093020) do
+ActiveRecord::Schema.define(version: 20141103220333) do
 
 
   create_extension "hstore", :version => "1.2"
@@ -187,6 +187,22 @@ ActiveRecord::Schema.define(version: 20141005093020) do
   add_index "ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
   add_index "ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
 
+  create_table "payments", force: true do |t|
+    t.integer  "total"
+    t.string   "currency",               limit: 3
+    t.datetime "period_start"
+    t.datetime "period_end"
+    t.string   "plan_id"
+    t.string   "stripe_event_id"
+    t.string   "stripe_invoice_id"
+    t.string   "stripe_customer_id"
+    t.string   "stripe_subscription_id"
+    t.hstore   "props"
+    t.integer  "brand_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "services", force: true do |t|
     t.integer  "embed_id"
     t.string   "feed_name"
@@ -196,6 +212,30 @@ ActiveRecord::Schema.define(version: 20141005093020) do
   end
 
   add_index "services", ["embed_id"], :name => "index_services_on_embed_id"
+
+  create_table "stripe_webhooks_log", force: true do |t|
+    t.string   "event_id"
+    t.json     "target"
+    t.json     "event"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "subscriptions", force: true do |t|
+    t.integer  "brand_id"
+    t.string   "plan_id"
+    t.string   "stripe_event_id"
+    t.string   "stripe_customer_id"
+    t.string   "stripe_subscription_id"
+    t.string   "stripe_subscription_status"
+    t.string   "card_token"
+    t.string   "card_exp_month"
+    t.string   "card_exp_year"
+    t.string   "card_type"
+    t.string   "card_last4",                 limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "taggings", force: true do |t|
     t.integer  "tag_id"
