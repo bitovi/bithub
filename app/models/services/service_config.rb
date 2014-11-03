@@ -7,7 +7,7 @@ module Services
     end
 
     def valid?
-      @validator ||= ServiceConfigValidator.new(@data, @feed_name)
+      @validator = ServiceConfigValidator.new(@data, @feed_name)
       @validator.valid?
     end
     
@@ -16,7 +16,7 @@ module Services
     end
 
     def error_msg
-      "missing keys: #{@validator.errors[:missing].join(' ')}"
+      "missing keys: #{@validator.errors[:missing].join(',')}"
     end
 
     def data
