@@ -63,6 +63,7 @@ Bithub::Application.routes.draw do
       resources :services, except: %i(new edit)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
+      resources :payments, only: %i(index)
     end
 
     namespace :v2 do
