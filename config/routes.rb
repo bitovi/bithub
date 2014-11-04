@@ -2,27 +2,41 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
+  # Frontend
   root "frontend#index"
 
-  get "/admin", :to => "admin#index"
-  get "/admin/choose_brand", :to => "admin#choose_brand"
+  # Admin
+  # get  'admin', to: 'admin#index'
+  # get  'admin/choose_brand', to: 'admin#choose_brand'
+  # get  'admin/subscriptions', to: 'subscriptions#new'
+  # post 'admin/subscriptions', to: 'subscriptions#create'
+
+  resources :admin, only: %i(index) do
+    collection do
+      get 'choose_brand', to: 'admin#choose_brand'
+      resources :subscriptions, only: %i(new create)
+    end
+  end
 
   # Devise
   devise_for :accounts, path: '/',
     controllers: {
-    sessions: 'api/auth/account_sessions',
-    registrations: 'api/auth/account_registrations',
-    omniauth_callbacks: 'api/auth/omniauth_callbacks'
-  },
-  path_names: {
-    sign_in: 'login',
-    sign_out: 'logout',
-    registration: 'register',
-    sign_up: '', # points to '/register'
-    password: 'secret',
-    confirmation: 'verification',
-    # unlock: 'unblock',
-  }
+      sessions: 'api/auth/account_sessions',
+      registrations: 'api/auth/account_registrations',
+      omniauth_callbacks: 'api/auth/omniauth_callbacks'
+    },
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout',
+      registration: 'register',
+      sign_up: '', # points to '/register'
+      password: 'secret',
+      confirmation: 'verification',
+      # unlock: 'unblock',
+    }
+
+  # Stripe
+  mount Stripe::Engine => "/stripe"
 
   # SERVICE API Routes
 
