@@ -6,15 +6,14 @@ Bithub::Application.routes.draw do
   root "frontend#index"
 
   # Admin
-  # get  'admin', to: 'admin#index'
-  # get  'admin/choose_brand', to: 'admin#choose_brand'
-  # get  'admin/subscriptions', to: 'subscriptions#new'
-  # post 'admin/subscriptions', to: 'subscriptions#create'
-
   resources :admin, only: %i(index) do
     collection do
       get 'choose_brand', to: 'admin#choose_brand'
-      resources :subscriptions, only: %i(new create)
+      resources :subscriptions, only: %i(create) do
+        collection do
+          get 'new/:plan', to: 'subscriptions#new'
+        end
+      end
     end
   end
 
@@ -63,6 +62,7 @@ Bithub::Application.routes.draw do
       resources :services, except: %i(new edit)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
+
       resources :payments, only: %i(index)
     end
 
