@@ -1,3 +1,0 @@
-json.array! @services do |c|
-  json.partial! "api/v2/services/_service", service: s
-end

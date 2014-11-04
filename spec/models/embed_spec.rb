@@ -40,6 +40,13 @@ RSpec.describe Embed, :type => :model do
         )
       end
 
+      it 'filters by a doing full text search' do
+        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
+
+        @embed.moderate
+        expect(@embed.approved_entities.length).to eq 1
+      end
+
       it 'filters by a regular attribute (feed_name, type_name, etc.)' do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
@@ -70,7 +77,7 @@ RSpec.describe Embed, :type => :model do
     end
 
     context 'given a filter with multiple conjunctive predicates' do
-      it 'filters by tying all predicates with a logical AND' do
+      it 'filters by tying :tagged_with and :is_a predicates with a logical AND' do
         @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
 
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
@@ -78,6 +85,26 @@ RSpec.describe Embed, :type => :model do
 
         @embed.moderate
         expect(@embed.approved_entities.length).to eq 2
+      end
+
+      it 'filters by tying :tagged_with and :contains predicates with a logical AND' do
+        @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
+
+        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
+        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
+
+        @embed.moderate
+        expect(@embed.approved_entities.length).to eq 0
+      end
+
+      it 'filters by tying :contains and :is_a predicates with a logical AND' do
+        @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
+
+        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
+        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
+
+        @embed.moderate
+        expect(@embed.approved_entities.length).to eq 1
       end
     end
     

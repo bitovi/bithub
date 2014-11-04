@@ -1,14 +1,20 @@
+require 'literate_ruby'
+
 module Services
 
   class ServiceConfigValidator
+    include LiterateRuby
 
     def initialize(data, feed_name)
       @data = data
       @feed_name = feed_name
+      @errors = { missing: [] }
     end
+    attr_reader :errors
 
     def valid?
-      send("valid_#{@feed_name}?")
+      return unless respond_to? (mff = "valid_#{@feed_name}?")
+      send(mff)
     end
 
     def valid_github?
@@ -52,14 +58,20 @@ module Services
     end
 
     def pages_have_tokens?
-      @data.fetch('pages').all?{|page| page.has_key?('access_token')}
+      returning(@data.fetch('pages').all?{|page| page.has_key?('access_token')}) do
+        @errors[:missing] << 'pages -> access_token'
+      end
     end
 
     def has?(key)
-      @data\
+      returning (
+        @data\
         && @data.instance_of?(Hash)\
         && @data.has_key?(key)\
         && not(@data[key].empty?)
+      ) do |it_has|
+        @errors[:missing] << key unless it_has
+      end
     end
   end
 end

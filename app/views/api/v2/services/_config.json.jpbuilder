@@ -1,2 +1,0 @@
-json.(service, :id, :feed_name, :config)
-json.brand_name service.brand.name

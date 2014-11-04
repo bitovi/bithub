@@ -1,6 +1,7 @@
 class Service < ActiveRecord::Base
 
   validates_presence_of :embed_id, :feed_name
+  validate :json_config_what
 
   belongs_to :embed
   has_one :filter, as: :filterable, :dependent => :destroy
@@ -14,11 +15,17 @@ class Service < ActiveRecord::Base
   end
 
   def config
-    Services::ServiceConfig.new(json_config, feed_name)
+    @config ||= Services::ServiceConfig.new(json_config, feed_name)
+  end
+
+  def json_config_what
+    unless config.valid?
+      errors.add(:json_config, config.error_msg)
+    end
   end
 
   def notify_crawler
-    if service_config.valid?
+    if config.valid?
       Support::CrawlerNotifier.new.notif({
         brand_name: brand.name,
         feed_name: feed_name,

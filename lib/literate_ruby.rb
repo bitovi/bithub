@@ -1,8 +1,8 @@
 module LiterateRuby
 
   def returning(exp)
-    yield
+    yield exp
     exp
   end
-    
+
 end
