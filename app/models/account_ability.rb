@@ -10,6 +10,7 @@ class AccountAbility
       can [:destroy], BrandIdentity #, brand_id: account.brand.id
       can :read, Country
       can :read, User # TODO check somehow if user is present in current tenant
+      can :read, Payment
       can :manage, Embed
       can :manage, Filter
       can :manage, Service #, brand_id: account.brand.id
