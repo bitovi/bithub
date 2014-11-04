@@ -12,8 +12,11 @@ class Payment < ActiveRecord::Base
   end
 
   def self.new_from_invoice(invoice, opts={})
-    brand = Subscription.find_by_customer_id(invoice.customer).brand
+    subscription = Subscription.find_by_customer_id(invoice.customer)
+    brand = subscription.andand.brand
     plan  = invoice.lines.data.first.plan
+
+    Rails.logger.warn "[Stripe Webhook] Unmatched brand for customer #{invoice.customer}" unless brand
 
     attrs = {
       total: invoice.total,
