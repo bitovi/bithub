@@ -1,3 +1,3 @@
-json.array! @services do |c|
-  json.partial! 'api/v3/services/_service', service: s
+json.array! @services do |s|
+  json.partial! 'api/v3/services/service', service: s
 end

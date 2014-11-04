@@ -1,5 +1,6 @@
 class Api::V3::EmbedsController < Api::V3::BaseController
   before_filter :authenticate!
+  load_and_authorize_resource
 
   def index
     @embeds = Embed.all
@@ -7,13 +8,23 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def show
-    @embed = current_brand.embeds.where(id: params[:id]).first
+    @embed = current_brand.embeds.find(params[:id])
     render :show
   end
 
   def create
     @embed = current_brand.embeds.create(embed_params)
     render :show
+  end
+
+  def destroy
+    @embed = current_brand.embeds.find(params[:id])
+
+    if @embed.destroy
+      render :json => msg_hash(@filter, 'destroy', 'success')
+    else
+      render :json => msg_hash(@filter, 'destroy'), :status => 406
+    end
   end
 
   private

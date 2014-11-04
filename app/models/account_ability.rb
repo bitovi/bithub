@@ -9,8 +9,9 @@ class AccountAbility
       can [:read, :update], Brand #, id: account.brand.id
       can [:destroy], BrandIdentity #, brand_id: account.brand.id
       can :read, Country
-      can :manage, Embed
       can :read, User # TODO check somehow if user is present in current tenant
+      can :manage, Embed
+      can :manage, Filter
       can :manage, Service #, brand_id: account.brand.id
       can :manage_roles_on_user, User
       can :manage, Entity
