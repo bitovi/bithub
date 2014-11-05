@@ -1,4 +1,4 @@
-class Api::Auth::AccountRegistrationsController < Devise::RegistrationsController
+class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     super do |account|
