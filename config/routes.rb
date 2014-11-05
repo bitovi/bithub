@@ -55,6 +55,7 @@ Bithub::Application.routes.draw do
         collection do
           get 'current', to: 'brands#show'
           put 'current', to: 'brands#update'
+          get 'current/payments', to: 'payments#index'
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
@@ -62,8 +63,6 @@ Bithub::Application.routes.draw do
       resources :services, except: %i(new edit)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
-
-      resources :payments, only: %i(index)
     end
 
     namespace :v2 do
