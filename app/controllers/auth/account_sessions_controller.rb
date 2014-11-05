@@ -1,4 +1,4 @@
-class Api::Auth::AccountSessionsController < Devise::SessionsController
+class Auth::AccountSessionsController < Devise::SessionsController
 
   protected
 

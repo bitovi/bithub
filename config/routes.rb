@@ -20,9 +20,9 @@ Bithub::Application.routes.draw do
   # Devise
   devise_for :accounts, path: '/',
     controllers: {
-      sessions: 'api/auth/account_sessions',
-      registrations: 'api/auth/account_registrations',
-      omniauth_callbacks: 'api/auth/omniauth_callbacks'
+      sessions: 'auth/account_sessions',
+      registrations: 'auth/account_registrations',
+      omniauth_callbacks: 'auth/omniauth_callbacks'
     },
     path_names: {
       sign_in: 'login',
