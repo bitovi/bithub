@@ -1,46 +1,67 @@
 class Api::V3::EmbedFiltersController < Api::V3::BaseController
-  include Helpers::FilterParams
-
   before_filter :authenticate!
   # load_and_authorize_resource
 
   def index
-    embed = current_brand.embeds.find(params[:embed_id])
+    embed = current_brand.embeds.find(embed_id)
     @filters = embed.filters
-    render :index
+    render 'api/v3/filters/index'
   end
 
   def show
-    embed = current_brand.embeds.find(params[:embed_id])
-    @filter = embed.filters.find(params[:id])
+    embed = current_brand.embeds.find(embed_id)
+    @filter = embed.filters.find(filter_id)
     if @filter
-      render :show
+      render 'api/v3/filters/show'
+    else
+      render :json => msg_hash(@filter, 'show'), :status => 404
     end
   end
 
   def create
-    embed = current_brand.embeds.find(params[:embed_id])
+    embed = current_brand.embeds.find(embed_id)
+    @filter = embed.filters.build(filter_params)
+    @filter.natlang_queries.build(queries_params)
 
-    @filter = embed.filters.build(params_filter)
-    @filter.natlang_queries.build(params_queries)
-
-    if @filter.save
-      render :show
+    if embed.save && @filter.save
+      render 'api/v3/filters/show'
     else
       render :json => msg_hash(@filter, 'create'), :status => 406
     end
   end
 
   def update
+    # TODO
   end
 
   def destroy
-    @filter = Filter.find_by_id params[:id]
+    embed = current_brand.embeds.find(embed_id)
+    @filter = embed.filters.find(filter_id)
 
-    if @filter && @filter.destroy
+    if @filter.destroy
       render :json => msg_hash(@filter, 'destroy', 'success')
     else
       render :json => msg_hash(@filter, 'destroy'), :status => 406
     end
+  end
+
+  private
+
+  def embed_id
+    params.require(:embed_id)
+  end
+
+  def filter_id
+    params[:filter_id] || params[:id]
+  end
+    
+  def filter_params
+    @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
+    @json.require(:filter).permit(:id, :is_conj, :classification)
+  end
+
+  def queries_params
+    @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
+    @json.require(:filter).permit(natlang_queries: %i(is_negated attr op val)).require(:natlang_queries)
   end
 end

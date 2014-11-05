@@ -1,6 +1,4 @@
 class Api::V3::EmbedServicesController < Api::V3::BaseController
-  include Api::V3::Helpers::EmbedServiceFilterParams
-
   before_filter :authenticate!
   # load_and_authorize_resource
 
@@ -13,7 +11,12 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
   def show
     embed = current_brand.embeds.find(embed_id)
     @service = embed.services.find(service_id)
-    render 'api/v3/services/show'
+
+    if @service
+      render 'api/v3/services/show'
+    else
+      render :json => msg_hash(@service, 'show'), :status => 404
+    end
   end
 
   def create
@@ -38,7 +41,7 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
     if @service.destroy
       render :json => msg_hash(@service, 'destroy', 'success')
     else
-      render :json => msg_hash(@config, 'destroy'), :status => 406
+      render :json => msg_hash(@service, 'destroy'), :status => 406
     end
   end
 
