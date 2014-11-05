@@ -46,7 +46,7 @@ class Subscription < ActiveRecord::Base
 
     if stripe_subscription.save
       # should be updated via webhook as well, but let's make it immediately
-      update_attribute('plan_id', plan_id)
+      update_attribute('plan_id', plan)
     end
   end
 
