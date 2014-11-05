@@ -23,7 +23,7 @@ RSpec.describe 'Service creation', type: :request do
         FactoryGirl.create(:twitter_service, embed: @embed)
         FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get '/api/v3/services'
+        get '/api/v3/services', { embed_id: @embed.id }
         expect(json.length).to eq 2
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe 'Service creation', type: :request do
       it 'gets a specific service' do
         FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get '/api/v3/services/1'
+        get "/api/v3/services/1", { embed_id: @embed.id }
         expect(json.keys).to include('feed_name', 'config')
       end
     end
@@ -42,8 +42,8 @@ RSpec.describe 'Service creation', type: :request do
         it 'creates a new service' do
 
           post '/api/v3/services', {
+            embed_id: @embed.id,
             service: {
-              embed_id: @embed.id,
               feed_name: 'twitter',
               json_config: {
                 :terms => %w(canjs bitovi)
@@ -60,8 +60,8 @@ RSpec.describe 'Service creation', type: :request do
         it 'refuses to create a service' do
 
           post '/api/v3/services', {
+            embed_id: @embed.id,
             service: {
-              embed_id: @embed.id,
               feed_name: 'foosbal',
               json_config: {
                 terms: %w(wat are these)
@@ -74,10 +74,10 @@ RSpec.describe 'Service creation', type: :request do
       end
     end
 
-    describe 'DELETE /services/:id' do
+    describe 'DELETE /services/1' do
       it 'destroys an existing service' do
         FactoryGirl.create(:twitter_service, embed: @embed)
-        delete '/api/v3/services/1'
+        delete '/api/v3/services/1', { embed_id: @embed.id }
         expect(Service.count).to eq 0
       end
     end
