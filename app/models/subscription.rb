@@ -3,8 +3,7 @@ class Subscription < ActiveRecord::Base
 
   belongs_to :brand
 
-  validates :plan_id, :presence => true
-  validates :brand_id, :presence => true
+  validates :brand_id, :plan_id, :presence => true
 
   before_destroy :delete_stripe_customer
 
@@ -68,6 +67,10 @@ class Subscription < ActiveRecord::Base
 
   def self.find_by_customer_id(id)
     where(stripe_customer_id: id).order(:created_at).last
+  end
+
+  def self.available_plans
+    Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
   end
 
   private
