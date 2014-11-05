@@ -36,12 +36,18 @@ Bithub::Application.routes.draw do
     namespace :v3 do
       resources :embeds, except: %i(new edit) do
         resources :entities, to: 'embed_entities', only: %i(index destroy) do
+          put :approve, on: :member
+          put :disapprove, on: :member
           get :approved, on: :collection
           get :waitlisted, on: :collection
         end
 
-        resources :filters, except: %i(new edit)
+        resources :filters, except: %i(new edit), controller: 'embed_filters'
+        resources :services, except: %i(new edit), controller: 'embed_services'
       end
+      
+      resources :embed_services, except: %i(new edit), controller: 'embed_services'
+      resources :embed_filters, except: %i(new edit), controller: 'embed_filters'
 
       resources :brands,  except: %i(new edit) do
         collection do
@@ -50,9 +56,7 @@ Bithub::Application.routes.draw do
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
-      
-      resources :services, except: %i(new edit)
-      resources :filters, except: %i(new edit)
+
       resources :tags, except: %i(new edit)
     end
 

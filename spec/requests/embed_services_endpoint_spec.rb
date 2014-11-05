@@ -18,30 +18,30 @@ RSpec.describe 'Service creation', type: :request do
   end
   
   context 'given the account is logged in and the brand is determined' do
-    describe 'GET /services' do
+    describe 'GET /embed_services' do
       it 'gets all services' do
         FactoryGirl.create(:twitter_service, embed: @embed)
         FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get '/api/v3/services', { embed_id: @embed.id }
+        get "/api/#{api_version}/embed_services", { embed_id: @embed.id }
         expect(json.length).to eq 2
       end
     end
 
-    describe 'GET /services/1' do
+    describe 'GET /embed_services/1' do
       it 'gets a specific service' do
-        FactoryGirl.create(:twitter_service, embed: @embed)
+        s = FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get "/api/v3/services/1", { embed_id: @embed.id }
+        get "/api/#{api_version}/embed_services/#{s.id}", { embed_id: @embed.id }
         expect(json.keys).to include('feed_name', 'config')
       end
     end
 
     describe 'POST /services' do
-      context 'provided with well defined service data' do
+      context 'given well defined service data' do
         it 'creates a new service' do
 
-          post '/api/v3/services', {
+          post "/api/#{api_version}/embed_services", {
             embed_id: @embed.id,
             service: {
               feed_name: 'twitter',
@@ -59,7 +59,7 @@ RSpec.describe 'Service creation', type: :request do
       context 'provided ill defined service data' do
         it 'refuses to create a service' do
 
-          post '/api/v3/services', {
+          post "/api/#{api_version}/embed_services", {
             embed_id: @embed.id,
             service: {
               feed_name: 'foosbal',
@@ -74,10 +74,10 @@ RSpec.describe 'Service creation', type: :request do
       end
     end
 
-    describe 'DELETE /services/1' do
+    describe 'DELETE /embed_services/1' do
       it 'destroys an existing service' do
         FactoryGirl.create(:twitter_service, embed: @embed)
-        delete '/api/v3/services/1', { embed_id: @embed.id }
+        delete "/api/#{api_version}/embed_services/1", { embed_id: @embed.id }
         expect(Service.count).to eq 0
       end
     end
