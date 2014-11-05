@@ -5,7 +5,7 @@ class SubscriptionsController < ApplicationController
     subscription = current_brand.subscription
 
     @plan = subscription.plan_id
-    @plans = Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
+    @plans = Subscription.available_plans
 
     render :edit_plan, layout: 'admin'
   end
