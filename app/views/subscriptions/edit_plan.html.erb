@@ -1,0 +1,31 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+	Choose New Plan
+  </div>
+  <div class="panel-body">
+
+	<form action="/admin/subscriptions/update" method="POST" id="choose-plan-form">
+	  <span class="choose-plan-errors"></span>
+
+	  <div class="form-row">
+		<label>
+		  <span>Current plan: <%= @plan %></span>
+		</label>
+	  </div>
+
+	  <div class="form-row">
+		<label>
+		  <span>Available plans:</span>
+		  <select name="plan">
+			<% @plans.each do |p| %>
+			<option value="<%= p %>"><%= p %></option>
+			<% end %>
+		  </select>
+		</label>
+	  </div>
+
+	  <button type="submit">Submit</button>
+	</form>
+
+  </div>
+</div>

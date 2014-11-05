@@ -1,18 +1,11 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-	Credit card info
+	Update Credit Card Info
   </div>
   <div class="panel-body">
 
-	<form action="" method="POST" id="payment-form">
+	<form action="/admin/subscriptions/update" method="POST" id="payment-form">
 	  <span class="payment-errors"></span>
-
-	  <div class="form-row">
-		<label>
-		  <span>Selected plan: <%= @plan %></span>
-		  <input type="hidden" name="plan" value="<%= @plan %>" />
-		</label>
-	  </div>
 
 	  <div class="form-row">
 		<label>

@@ -9,9 +9,12 @@ Bithub::Application.routes.draw do
   resources :admin, only: %i(index) do
     collection do
       get 'choose_brand', to: 'admin#choose_brand'
-      resources :subscriptions, only: %i(create) do
+
+      resources :subscriptions, only: %i() do
         collection do
-          get 'new/:plan', to: 'subscriptions#new'
+          get 'edit/plan', to: 'subscriptions#edit_plan'
+          get 'edit/cc', to: 'subscriptions#edit_cc'
+          post 'update', to: 'subscriptions#update'
         end
       end
     end
