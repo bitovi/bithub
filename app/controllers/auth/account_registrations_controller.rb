@@ -2,7 +2,9 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     super do |account|
-      brand_builder = Brands::BrandBuilder.new(account)
+      plan = params.fetch(:plan)
+
+      brand_builder = Brands::BrandBuilder.new(account, plan)
       brand_builder.build.save
 
       session['tenant_name'] = brand_builder.brand.tenant_name

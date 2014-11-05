@@ -3,31 +3,51 @@ class Subscription < ActiveRecord::Base
 
   belongs_to :brand
 
+  validates :plan_id, :presence => true
+  validates :brand_id, :presence => true
+
+  before_destroy :delete_stripe_customer
+
   after_customer_subscription_updated! do |subscription, event|
     self.update_from_subscription(subscription, event_id: event.id)
   end
 
-  def self.new_from_customer(customer, brand, opts)
-    card = customer.cards.data.first
+  def initialize(attrs={})
+    super
+
+    customer = Stripe::Customer.create plan: self.plan_id
     subscription = customer.subscriptions.data.first
-    plan = subscription.plan
 
-    attrs = {
-      brand_id: brand.id,
-      plan_id: plan.id,
+    self.stripe_customer_id = customer.id
+    self.stripe_subscription_id = subscription.id
+    self.stripe_subscription_status = subscription.status
+  end
 
-      stripe_customer_id: customer.id,
-      stripe_subscription_id: subscription.id,
-      stripe_subscription_status: subscription.status,
+  def update_card(stripe_token)
+    stripe_customer = Stripe::Customer.retrieve self.stripe_customer_id
+    stripe_customer.card = stripe_token
 
-      # card_token: opts[:card_token], # do we need this?
-      card_exp_month: card.exp_month,
-      card_exp_year: card.exp_year,
-      card_type: card.brand,
-      card_last4: card.last4
-    }
+    if stripe_customer.save
+      card = stripe_customer.cards.data.first
 
-    self.new(attrs)
+      self.update_attributes({
+        card_exp_month: card.exp_month,
+        card_exp_year: card.exp_year,
+        card_type: card.brand,
+        card_last4: card.last4
+      })
+    end
+  end
+
+  def update_plan(plan)
+    stripe_customer = Stripe::Customer.retrieve self.stripe_customer_id
+    stripe_subscription = stripe_customer.subscriptions.retrieve self.stripe_subscription_id
+    stripe_subscription.plan = plan
+
+    if stripe_subscription.save
+      # should be updated via webhook as well, but let's make it immediately
+      update_attribute('plan_id', plan_id)
+    end
   end
 
   def self.update_from_subscription(subscription, opts={})
@@ -48,6 +68,15 @@ class Subscription < ActiveRecord::Base
 
   def self.find_by_customer_id(id)
     where(stripe_customer_id: id).order(:created_at).last
+  end
+
+  private
+
+  def delete_stripe_customer
+    Rails.logger.info "Deleting subscription #{self}"
+
+    stripe_customer = Stripe::Customer.retrieve stripe_customer_id
+    stripe_customer.delete
   end
 
 end

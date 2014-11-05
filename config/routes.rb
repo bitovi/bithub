@@ -27,7 +27,7 @@ Bithub::Application.routes.draw do
     path_names: {
       sign_in: 'login',
       sign_out: 'logout',
-      registration: 'register',
+      registration: 'register/:plan',
       sign_up: '', # points to '/register'
       password: 'secret',
       confirmation: 'verification',
