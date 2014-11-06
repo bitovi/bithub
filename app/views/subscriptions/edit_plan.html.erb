@@ -4,7 +4,7 @@
   </div>
   <div class="panel-body">
 
-	<form action="/admin/subscriptions/update" method="POST" id="choose-plan-form">
+	<form action="/admin/subscriptions/update" method="POST" id="edit_plan">
 	  <span class="choose-plan-errors"></span>
 
 	  <div class="form-row">
@@ -16,7 +16,7 @@
 	  <div class="form-row">
 		<label>
 		  <span>Available plans:</span>
-		  <select name="plan">
+		  <select id="plan_id" name="plan">
 			<% @plans.each do |p| %>
 			<option value="<%= p %>"><%= p %></option>
 			<% end %>
