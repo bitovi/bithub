@@ -73,11 +73,14 @@ gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
 gem 'reel', '~> 0.5.0'
-gem 'tumblr_client'
 
 # Payments
 gem 'stripe', '~> 1.16'
 gem 'stripe-rails', '~> 0.3'
+
+# https://github.com/tumblr/tumblr_client/issues/39
+gem 'simple_oauth', '~> 0.2.0'
+gem 'tumblr_client' # , github: 'vdragsic/tumblr_client'
 
 gem 'activesupport-json_encoder'
 
