@@ -1,3 +1,5 @@
+require 'stripe_mock'
+
 OmniAuth.config.test_mode = true
 
 OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({

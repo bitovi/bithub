@@ -2,8 +2,17 @@ require 'rails_helper'
 require_relative 'request_helpers'
 
 RSpec.describe 'Entities endpoints', type: :request do
+
+  before do
+    StripeMock.start
+    StripeMock.create_test_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
+  end
+  after do
+    StripeMock.stop
+  end
+
   before(:each) do
-    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
   end
