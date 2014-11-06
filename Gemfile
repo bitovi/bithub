@@ -89,6 +89,8 @@ group :development, :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'travis', require: false
   gem 'git'
+  gem 'thin' # used by stripe-ruby-mock
+  gem 'stripe-ruby-mock', '~> 2.0'
 end
 
 group :development do

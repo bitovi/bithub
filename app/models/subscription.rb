@@ -3,7 +3,7 @@ class Subscription < ActiveRecord::Base
 
   belongs_to :brand
 
-  validates :brand_id, :plan_id, :presence => true
+  validates :brand_id, :plan_id, :stripe_customer_id, :stripe_subscription_id, :presence => true
 
   before_destroy :delete_stripe_customer
 
