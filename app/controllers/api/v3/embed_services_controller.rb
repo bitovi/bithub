@@ -21,7 +21,7 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
 
   def create
     embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.build(merged_params)
+    @service = embed.services.build(service_params)
 
     if embed.save
       render 'api/v3/services/show'
@@ -37,6 +37,7 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
   def destroy
     embed = current_brand.embeds.find(embed_id)
     @service = embed.services.find(service_id)
+    @service.build_filter
 
     if @service.destroy
       render :json => msg_hash(@service, 'destroy', 'success')
@@ -46,6 +47,7 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
   end
 
   private
+
   def embed_id
     params.require(:embed_id)
   end
@@ -54,16 +56,16 @@ class Api::V3::EmbedServicesController < Api::V3::BaseController
     params[:service_id] || params[:id]
   end
 
-  def merged_params
-    service_params.merge({json_config: json_config})
-  end
-
   def service_params
-    params.require(:service).permit(:feed_name)
+    feed_name.merge({json_config: service_config})
   end
 
-  def json_config
+  def feed_name
+    params.require(:service).permit(:feed_name, :type_name)
+  end
+
+  def service_config
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:service).require(:json_config).permit!
+    @json.require(:service).require(:config).permit!
   end
 end
