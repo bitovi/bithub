@@ -45,8 +45,9 @@ RSpec.describe 'Service creation', type: :request do
             embed_id: @embed.id,
             service: {
               feed_name: 'twitter',
-              json_config: {
-                :terms => %w(canjs bitovi)
+              config: {
+                :type => 'user_timeline',
+                :terms => %w(@canjs)
               }
             }
           }.to_json, AuthTestData::POST_HEADERS
@@ -63,7 +64,8 @@ RSpec.describe 'Service creation', type: :request do
             embed_id: @embed.id,
             service: {
               feed_name: 'foosbal',
-              json_config: {
+              service_type: 'nonexistent',
+              config: {
                 terms: %w(wat are these)
               }
             }
