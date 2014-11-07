@@ -21,6 +21,11 @@ class Payment < ActiveRecord::Base
       return false
     end
 
+    unless plan
+      Rails.logger.warn "[Stripe Webhook] Updating subscription from invoice without plan for customer #{invoice.customer}"
+      return false
+    end
+
     attrs = {
       total: invoice.total,
       currency: invoice.currency,

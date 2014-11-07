@@ -1,5 +1,7 @@
 require 'stripe_mock'
 
+StripeMock.webhook_fixture_path = './spec/support/fixtures/stripe_webhooks'
+
 OmniAuth.config.test_mode = true
 
 OmniAuth.config.mock_auth[:twitter] = OmniAuth::AuthHash.new({
