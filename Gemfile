@@ -87,6 +87,7 @@ group :development, :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'travis', require: false
   gem 'git'
+  gem 'yard'
 end
 
 group :development do
