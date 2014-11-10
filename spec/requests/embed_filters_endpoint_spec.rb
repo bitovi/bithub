@@ -13,36 +13,37 @@ RSpec.describe 'Filter endpoints', type: :request do
   context 'given the account is logged in and the brand is determined' do
     context 'and given a certain embed the filter belongs to' do
 
-      describe 'GET /embed/1/filters' do
+      describe 'GET /embed_filters' do
         it 'gets all filters' do
           embed = FactoryGirl.create(:embed, brand: @current_brand)
           embed.filters.create!(classification: 'moderating')
           embed.filters.create!(classification: 'blocking')
 
-          get "/api/#{api_version}/embeds/#{embed.id}/filters"
+          get "/api/#{api_version}/embed_filters", { embed_id: embed.id }
           expect(response).to be_success
           expect(json['data'].length).to eq(2)
         end
       end
 
-      describe 'GET /embeds/1/filters/1' do
+      describe 'GET /embed_filters/1' do
         it 'gets a specific filter' do
           embed = FactoryGirl.create(:embed, brand: @current_brand)
-          embed.filters.create(classification: 'moderating')
+          f1 = embed.filters.create(classification: 'moderating')
           embed.filters.create(classification: 'blocking')
 
-          get "/api/#{api_version}/embeds/#{embed.id}/filters/1"
+          get "/api/#{api_version}/embed_filters/#{f1.id}", { embed_id: embed.id }
           expect(response).to be_success
           expect(json.keys).to include('is_conj', 'classification')
         end
       end
 
-      describe 'POST /embeds/1/filters' do
+      describe 'POST /embed_filters' do
         context 'provided well defined filter data' do
           it 'creates a filter' do
             embed = FactoryGirl.create(:embed, brand: @current_brand)
 
-            post "/api/#{api_version}/embeds/#{embed.id}/filters", {
+            post "/api/#{api_version}/embed_filters", {
+              embed_id: embed.id,
               filter: {
                 is_conj: true,
                 classification: 'moderating',
@@ -69,14 +70,15 @@ RSpec.describe 'Filter endpoints', type: :request do
           it 'refuses to create the filter' do
             embed = FactoryGirl.create(:embed, brand: @current_brand)
 
-            post "/api/#{api_version}/embeds/#{embed.id}/filters", {
+            post "/api/#{api_version}/embed_filters", {
+              embed_id: embed.id,
               filter: {
                 is_conj: true,
                 classification: 'moderating',
                 natlang_queries: [{
                   is_negated: false,
-                  attr: 'is',
-                  op: 'wat',
+                  attr: 'what',
+                  op: 'even',
                   val: 'dat'
                 }]
               }
@@ -87,12 +89,12 @@ RSpec.describe 'Filter endpoints', type: :request do
         end
       end
 
-      describe 'DELETE /filters/:id' do
-        it 'destroys an existing embed' do
+      describe 'DELETE /embed_filters/1' do
+        it 'destroys an existing filter' do
           embed = FactoryGirl.create(:embed, brand: @current_brand)
           filter = embed.filters.create(classification: 'moderating')
 
-          delete "/api/#{api_version}/embeds/#{embed.id}/filters/#{filter.id}"
+          delete "/api/#{api_version}/embed_filters/#{filter.id}", { embed_id: embed.id }
           expect(Filter.count).to eq 0
         end
       end
