@@ -14,7 +14,7 @@ Bithub::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
-  
+
   # Logging with log4r
   lf = LoggerFactory.new 'rails', :environment => Rails.env
   config.logger = lf.component_logger
@@ -37,6 +37,7 @@ Bithub::Application.configure do
   config.active_record.schema_format = :ruby
 
   config.eager_load = false
+  config.stripe.eager_load = ['brand', 'subscription', 'payment', 'stripe_webhooks_log']
 
   config.assets.precompile += ['admin.js', 'admin.css']
   config.assets.initialize_on_precompile = false

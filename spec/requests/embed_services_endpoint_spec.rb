@@ -9,14 +9,22 @@ SERVICE_POST_DATA = {
 RSpec.describe 'Service creation', type: :request do
   let(:api_version) { 'v3' }
 
+  before do
+    StripeMock.start
+    StripeMock.create_test_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
+  end
+  after do
+    StripeMock.stop
+  end
+
   before(:each) do
-    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post "/register/starter", { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
     @embed = FactoryGirl.create(:embed, brand: @current_brand)
     get_via_redirect '/auth/twitter'
   end
-  
+
   context 'given the account is logged in and the brand is determined' do
     describe 'GET /embed_services' do
       it 'gets all services' do

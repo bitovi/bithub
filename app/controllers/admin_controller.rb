@@ -4,10 +4,10 @@ class AdminController < ApplicationController
     if current_account
       if tenant_name = params['tenant_name']
         session['tenant_name'] = tenant_name
-        redirect_to :admin
+        redirect_to :admin_index
       else
         @brands = current_account.brands
-        render 'admin/choose_brand', layout: 'devise'
+        render 'admin/choose_brand', layout: 'admin'
       end
     else
       redirect_to :new_account_session

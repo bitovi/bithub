@@ -2,32 +2,43 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
+  # Frontend
   root "frontend#index"
 
-  get "/admin", :to => "admin#index"
-  get "/admin/choose_brand", :to => "admin#choose_brand"
+  # Admin
+  resources :admin, only: %i(index) do
+    collection do
+      get 'choose_brand', to: 'admin#choose_brand'
+
+      resources :subscriptions, only: %i() do
+        collection do
+          get 'edit/plan', to: 'subscriptions#edit_plan'
+          get 'edit/cc', to: 'subscriptions#edit_cc'
+          post 'update', to: 'subscriptions#update'
+        end
+      end
+    end
+  end
 
   # Devise
   devise_for :accounts, path: '/',
     controllers: {
-    sessions: 'api/auth/account_sessions',
-    registrations: 'api/auth/account_registrations',
-    omniauth_callbacks: 'api/auth/omniauth_callbacks'
-  },
-  path_names: {
-    sign_in: 'login',
-    sign_out: 'logout',
-    registration: 'register',
-    sign_up: '', # points to '/register'
-    password: 'secret',
-    confirmation: 'verification',
-    # unlock: 'unblock',
-  }
+      sessions: 'auth/account_sessions',
+      registrations: 'auth/account_registrations',
+      omniauth_callbacks: 'auth/omniauth_callbacks'
+    },
+    path_names: {
+      sign_in: 'login',
+      sign_out: 'logout',
+      registration: 'register/:plan',
+      sign_up: '', # points to '/register'
+      password: 'secret',
+      confirmation: 'verification',
+      # unlock: 'unblock',
+    }
 
-  # Dynamic image resizer
-
-  post '/uploads/*other' => "uploads#index"
-  get '/uploads/*other' => "uploads#index"
+  # Stripe
+  mount Stripe::Engine => "/stripe"
 
   # SERVICE API Routes
 
@@ -45,7 +56,7 @@ Bithub::Application.routes.draw do
         resources :filters, except: %i(new edit), controller: 'embed_filters'
         resources :services, except: %i(new edit), controller: 'embed_services'
       end
-      
+
       resources :embed_services, except: %i(new edit), controller: 'embed_services'
       resources :embed_filters, except: %i(new edit), controller: 'embed_filters'
 
@@ -53,10 +64,13 @@ Bithub::Application.routes.draw do
         collection do
           get 'current', to: 'brands#show'
           put 'current', to: 'brands#update'
+          get 'current/payments', to: 'payments#index'
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
 
+      resources :services, except: %i(new edit)
+      resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
     end
 

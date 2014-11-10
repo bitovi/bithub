@@ -12,8 +12,16 @@ RSpec.describe 'Embed endpoints', type: :request do
 
   let(:api_version) { 'v3' }
 
+  before do
+    StripeMock.start
+    StripeMock.create_test_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
+  end
+  after do
+    StripeMock.stop
+  end
+
   before(:each) do
-    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
   end
@@ -37,7 +45,7 @@ RSpec.describe 'Embed endpoints', type: :request do
 
         get "/api/#{api_version}/embeds/1"
         expect(response).to be_success
-        expect(json).to have_keys(%w(name colorscheme layout))
+        expect(json.keys).to include('name', 'colorscheme', 'layout')
       end
     end
 
@@ -45,7 +53,7 @@ RSpec.describe 'Embed endpoints', type: :request do
       it 'creates a new embed' do
         post "/api/#{api_version}/embeds", { embed: embed_creation_data }
         expect(response).to be_success
-        expect(json).to have_keys(%w(name colorscheme layout))
+        expect(json.keys).to include('name', 'colorscheme', 'layout')
       end
     end
 

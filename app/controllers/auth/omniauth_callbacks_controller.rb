@@ -1,4 +1,4 @@
-class Api::Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # force autoload
   Identities::Builders::Github

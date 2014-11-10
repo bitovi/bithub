@@ -8,3 +8,4 @@ public/uploads
 .vagrant/
 bithub-client/
 tags
+stripe-mock-server.log
