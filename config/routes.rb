@@ -37,7 +37,7 @@ Bithub::Application.routes.draw do
       resources :embeds, except: %i(new edit) do
         resources :entities, to: 'embed_entities', only: %i(index destroy) do
           put :approve, on: :member
-          put :disapprove, on: :member
+          put :disaprove, on: :member
           get :approved, on: :collection
           get :waitlisted, on: :collection
         end

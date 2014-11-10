@@ -30,9 +30,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     render :show
   end
   
-  def approved
+  def approve
     if embed_entity_relation.approve
-      render text: "ok"
+      render json: embed_entity_relation
     else
       render text: "error", status: 406
     end
@@ -40,7 +40,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def disaprove
     if embed_entity_relation.disaprove
-      render text: "ok"
+      render json: embed_entity_relation
     else
       render text: "error", status: 406
     end
@@ -62,7 +62,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def entity_id
-    params.require(:id)
+    params[:entity_id] || params[:id]
   end
 
   def embed_id
