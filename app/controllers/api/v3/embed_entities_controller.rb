@@ -7,37 +7,65 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    @embed = current_brand.embeds.find_by_id(embed_id)
-    @entities = @embed.entities
+    embed = current_brand.embeds.find(embed_id)
+    @entities = embed.embed_entities.all.map(&:entity)
     render :index
   end
 
+  def approved
+    embed = current_brand.embeds.find(embed_id)
+    @entities = embed.embed_entities.approved.map(&:entity)
+    render :index
+  end
+
+  def waitlisted
+    embed = current_brand.embeds.find(embed_id)
+    @entities = embed.embed_entities.waitlisted.map(&:entity)
+    render :index
+  end
+
+  def show
+    embed = current_brand.embeds.find(embed_id)
+    @entity = embed.embed_entities.find(entity_id)
+    render :show
+  end
+  
+  def approve
+    if embed_entity_relation.approve
+      render json: embed_entity_relation
+    else
+      render text: "error", status: 406
+    end
+  end
+
+  def disaprove
+    if embed_entity_relation.disaprove
+      render json: embed_entity_relation
+    else
+      render text: "error", status: 406
+    end
+  end
+
   def destroy
-    Entity.find(params[:id]).destroy
-    render :json => { error: t('api.entities.destroy.success') }
+    if embed_entity_relation.destroy
+      render text: "ok"
+    else
+      render text: "error", status: 406
+    end
   end
 
   private
+
+  def embed_entity_relation
+    embed = current_brand.embeds.find(embed_id)
+    embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
+  end
+
+  def entity_id
+    params[:entity_id] || params[:id]
+  end
+
   def embed_id
     params.require(:embed_id)
-  end
-
-  def custom_cache_key(event)
-    qs  = CGI.parse(request.query_string)
-    key = [event.cache_key]
-    if !qs.blank?
-      event_params = qs.reject{|k, v| !['exclude', 'include'].include?(k)}
-      key << fragment_cache_key(event_params.sort) unless event_params.blank?
-    end
-    key.join('/')
-  end
-
-  def list_cache_key(events)
-    qs  = CGI.parse(request.query_string)
-    key = [events.map{|ev| ev.cache_key}.join("|")]
-    if !qs.blank?
-      key.unshift(fragment_cache_key(qs.sort))
-    end
-    Digest::MD5.hexdigest(key.join(':'))
   end
 end

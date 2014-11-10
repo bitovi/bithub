@@ -14,6 +14,11 @@ class Service < ActiveRecord::Base
     self.embed.brand
   end
 
+  def build_filter
+    # TODO build filter based on feed/type and constraints
+    self
+  end
+
   def config
     @config ||= Services::ServiceConfig.new(json_config, feed_name)
   end

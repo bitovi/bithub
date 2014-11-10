@@ -1,6 +1,6 @@
 class Api::V3::BaseController < ActionController::Base
+  include Helpers::Common
 
-  # https://github.com/ryanb/cancan/issues/835a
   before_filter do
     resource = controller_path.split('/').last.singularize.to_sym
     method = "#{resource}_params"
@@ -13,7 +13,6 @@ class Api::V3::BaseController < ActionController::Base
 
   respond_to :json
 
-  include Api::V3::BaseHelpers
 
   def home
     render :text => "Bithub API v3", content_type: "text/plain"
