@@ -1,0 +1,5 @@
+json.set! :data do
+  json.array! @payments do |p|
+    json.partial! "api/v3/payments/payment", payment: p
+  end
+end

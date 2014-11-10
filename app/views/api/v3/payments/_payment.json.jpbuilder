@@ -1,0 +1,2 @@
+json.(payment, :period_start, :period_end, :total, :currency)
+json.plan payment.plan_id

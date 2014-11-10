@@ -1,4 +1,4 @@
-class Api::Auth::AccountSessionsController < Devise::SessionsController
+class Auth::AccountSessionsController < Devise::SessionsController
 
   protected
 
@@ -7,9 +7,9 @@ class Api::Auth::AccountSessionsController < Devise::SessionsController
     if account.brands.count == 1
       session['tenant_name'] = account.brands.first.tenant_name
 
-      admin_path
+      admin_index_path
     else
-      admin_choose_brand_path
+      choose_brand_admin_index_path
     end
   end
 
