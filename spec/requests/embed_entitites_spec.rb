@@ -5,7 +5,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before(:each) do
-    post '/register', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
   end
