@@ -18,7 +18,7 @@ RSpec.describe 'Service creation', type: :request do
   end
 
   before(:each) do
-    post "/register/starter", { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @current_brand = Brand.where(name: 'neektza').first
     @embed = FactoryGirl.create(:embed, brand: @current_brand)
