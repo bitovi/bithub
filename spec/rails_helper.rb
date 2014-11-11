@@ -29,7 +29,6 @@ RSpec.configure do |config|
     Apartment::Database.switch 'testy'
   end
 
-  config.include Capybara::DSL, type: :request
   config.include Requests::JsonHelpers, type: :request
 
   config.use_transactional_fixtures = true
