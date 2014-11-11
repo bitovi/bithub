@@ -26,21 +26,21 @@ RSpec.describe 'Service creation', type: :request do
   end
 
   context 'given the account is logged in and the brand is determined' do
-    describe 'GET /embed_services' do
+    describe 'GET /embed/1/services' do
       it 'gets all services' do
         FactoryGirl.create(:twitter_service, embed: @embed)
         FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get "/api/#{api_version}/embed_services", { embed_id: @embed.id }
+        get "/api/#{api_version}/embeds/#{@embed.id}/services"
         expect(json.length).to eq 2
       end
     end
 
-    describe 'GET /embed_services/1' do
+    describe 'GET /embed/1/services/1' do
       it 'gets a specific service' do
         s = FactoryGirl.create(:twitter_service, embed: @embed)
 
-        get "/api/#{api_version}/embed_services/#{s.id}", { embed_id: @embed.id }
+        get "/api/#{api_version}/embeds/#{@embed.id}/services/#{s.id}"
         expect(json.keys).to include('feed_name', 'config')
       end
     end
@@ -49,8 +49,7 @@ RSpec.describe 'Service creation', type: :request do
       context 'given well defined service data' do
         it 'creates a new service' do
 
-          post "/api/#{api_version}/embed_services", {
-            embed_id: @embed.id,
+          post "/api/#{api_version}/embeds/#{@embed.id}/services", {
             service: {
               feed_name: 'twitter',
               config: {
@@ -68,8 +67,7 @@ RSpec.describe 'Service creation', type: :request do
       context 'provided ill defined service data' do
         it 'refuses to create a service' do
 
-          post "/api/#{api_version}/embed_services", {
-            embed_id: @embed.id,
+          post "/api/#{api_version}/embeds/#{@embed.id}/services", {
             service: {
               feed_name: 'foosbal',
               service_type: 'nonexistent',
@@ -86,8 +84,8 @@ RSpec.describe 'Service creation', type: :request do
 
     describe 'DELETE /embed_services/1' do
       it 'destroys an existing service' do
-        FactoryGirl.create(:twitter_service, embed: @embed)
-        delete "/api/#{api_version}/embed_services/1", { embed_id: @embed.id }
+        s = FactoryGirl.create(:twitter_service, embed: @embed)
+        delete "/api/#{api_version}/embeds/#{@embed.id}/services/#{s.id}"
         expect(Service.count).to eq 0
       end
     end
