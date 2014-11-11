@@ -96,5 +96,6 @@ Bithub::Application.routes.draw do
   # TODO; add auth
   mount Sidekiq::Web => '/sidekiq'
 
-  get '*path', :controller => 'frontend', :action => 'index'
+  get '/:page', :controller => 'frontend', :action => 'render_page'
+  get '/', :controller => 'frontend', :action => 'index'
 end
