@@ -58,6 +58,8 @@ gem 'andand'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
+gem 'sass'
+
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
 

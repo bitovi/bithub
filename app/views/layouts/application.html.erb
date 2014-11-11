@@ -1,0 +1,21 @@
+<%= render partial: "layouts/head" %>
+
+<div class="container page-content">
+	<div class="row">
+		<div class="col-xs-2">
+			<ul class="list-unstyled sidebar-menu">
+				<% static_pages.each do |page, name| %>
+					<li class="<%= 'active' if current_page?(controller: 'frontend', action: 'render_page', page: page)%>">
+						<%= link_to name, controller: "frontend", action: 'render_page', page: page %>
+					</li>
+				<% end %>
+			</ul>
+		</div>
+		<div class="col-xs-10 static-page-content">
+			<h2 class="static-page-heading"><%= @current_page_title %></h2>
+			<%= yield %>
+		</div>
+	</div>
+</div>
+
+<%= render partial: "layouts/footer" %>
