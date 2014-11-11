@@ -1,6 +1,5 @@
 module Entities
   module Github
-
     class IssueComment < Protocol
       include Entities::Github::Referencable
 
@@ -9,17 +8,17 @@ module Entities
       end
 
       def find_parent
-        upstream =[Entities::Github::Issue, Entities::Github::PullRequest]
-        if @event.repo.name && @event.ipr.number
-          upstream.reduce([]) do |acc, rl|
-            acc << rl.new(@event).find_by_repo_name_and_number.first
-          end.compact.first
-        end
+        return unless @event.repo.name && @event.ipr.number
+
+        upstream = [Entities::Github::Issue, Entities::Github::PullRequest]
+        upstream.reduce([]) do |acc, rl|
+          acc << rl.new(@event).find_by_repo_name_and_number.first
+        end.compact.first
       end
 
       # Builder
       def build
-        built = Entity.new({
+        built = Entity.new(
           title: "Comment on issue ##{@event.ipr.number}",
           body: @event.comment.body,
           url: @event.comment.html_url,
@@ -30,17 +29,17 @@ module Entities
             origin_author_name: @event.actor.login,
             origin_author_avatar_url: @event.actor.avatar_url,
             repo_name: @event.repo.name,
-            number: @event.ipr.number,
+            number: @event.ipr.number
           }
-        })
+        )
 
-        built.props[:references_to] = ""
+        built.props[:references_to] = ''
         built
       end
 
       def update
         @instance.body = @event.comment.body
-        @instance.props[:references_to] = ""
+        @instance.props[:references_to] = ''
         super
       end
 
@@ -55,20 +54,18 @@ module Entities
 
       def find_by_comment_id
         Entity
-        .feed('github')
-        .type('issue_comment')
-        .where(origin_id: @event.comment.id.to_s)
+          .feed('github')
+          .type('issue_comment')
+          .where(origin_id: @event.comment.id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
-        .feed('github')
-        .type('issue_comment')
-        .where("props -> 'repo_name' = '#{@event.repo.name}'")
-        .where("props -> 'number' = '#{@event.ipr.number}'")
+          .feed('github')
+          .type('issue_comment')
+          .where("props -> 'repo_name' = :repo_name", repo_name: @event.repo.name)
+          .where("props -> 'number' = :ipr_number", ipr_number: @event.ipr.number)
       end
-
     end
-
   end
 end
