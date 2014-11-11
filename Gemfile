@@ -110,6 +110,7 @@ group :development do
   gem 'capistrano-npm'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
+  gem 'rubocop'
 end
 
 group :test do
