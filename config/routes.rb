@@ -53,12 +53,12 @@ Bithub::Application.routes.draw do
           get :waitlisted, on: :collection
         end
 
-        resources :filters, except: %i(new edit), controller: 'embed_filters'
-        resources :services, except: %i(new edit), controller: 'embed_services'
+        resources :filters, except: %i(new edit)
+        resources :services, except: %i(new edit)
       end
 
-      resources :embed_services, except: %i(new edit), controller: 'embed_services'
-      resources :embed_filters, except: %i(new edit), controller: 'embed_filters'
+      resources :embed_services, except: %i(new edit), controller: 'services'
+      resources :embed_filters, except: %i(new edit), controller: 'filters'
 
       resources :brands,  except: %i(new edit) do
         collection do

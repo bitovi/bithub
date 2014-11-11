@@ -1,4 +1,4 @@
-class Api::V3::EmbedServicesController < Api::V3::BaseController
+class Api::V3::ServicesController < Api::V3::BaseController
   before_filter :authenticate!
   # load_and_authorize_resource
 
