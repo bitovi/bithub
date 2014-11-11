@@ -16,8 +16,7 @@ test:
 testing:
   adapter: postgresql
   encoding: utf8
-  database: bithub2
-  pool: 5
+  database: bithub
   username: bithub
   password: Oof4laed
   socket: /var/run/postgresql/.s.PGSQL.5432
@@ -25,8 +24,7 @@ testing:
 staging:
   adapter: postgresql
   encoding: utf8
-  database: bithub2
-  pool: 5
+  database: bithub
   username: bithub
   password: Ahc5eish
   socket: /var/run/postgresql/.s.PGSQL.5432
@@ -34,8 +32,7 @@ staging:
 production:
   adapter: postgresql
   encoding: utf8
-  database: bithub2
-  pool: 5
+  database: bithub
   username: bithub
   password: Chooth5z
   socket: /var/run/postgresql/.s.PGSQL.5432
