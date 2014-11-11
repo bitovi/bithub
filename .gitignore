@@ -7,5 +7,6 @@ bin/
 public/uploads
 .vagrant/
 bithub-client/
+public/bower_components/
 tags
 stripe-mock-server.log
