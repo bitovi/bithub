@@ -1,25 +1,22 @@
 module Entities
   module Github
-
     class IssueAction < Protocol
-
       def find
         nil
       end
 
       def find_parent
+        return unless @event.repo.name && @event.number
+
         upstream = [Entities::Github::Issue, Entities::Github::PullRequest]
-        if @event.repo.name && @event.number
-          matches = upstream.reduce([]) do |acc, rl|
-            acc << rl.new(@event).find_by_repo_name_and_number.first
-          end
-          parent = matches.compact.first
-        end
+        upstream.reduce([]) do |acc, rl|
+          acc << rl.new(@event).find_by_repo_name_and_number.first
+        end.compact.first
       end
 
       # Builder
       def build
-        built = Entity.new({
+        built = Entity.new(
           title: "#{@event.nice_name} ##{@event.number} #{@event.action}",
           origin_ts: @event.created_at,
           props: {
@@ -29,9 +26,9 @@ module Entities
             repo_name: @event.repo.name,
             number: @event.number,
             state: @event.state,
-            action: @event.action,
+            action: @event.action
           }
-        })
+        )
 
         built.props[:label_names] = @event.labels.andand.names_csv
         built
@@ -46,24 +43,21 @@ module Entities
 
       # Finders
       def find_by_origin_id
-        scope = Entity.feed('github')
-        .type(my_type_tag)
-        .where(origin_id: @event.id.to_s)
+        Entity.feed('github')
+          .type(my_type_tag)
+          .where(origin_id: @event.id.to_s)
       end
 
       def find_by_repo_name_and_number
         Entity
-        .feed('github')
-        .type(my_type_tag)
-        .where("props -> 'repo_name' = '#{@event.repo.name}'")
-        .where("props -> 'number' = '#{@event.number}'")
-
+          .feed('github')
+          .type(my_type_tag)
+          .where("props -> 'repo_name' = :repo_name", repo_name: @event.repo.name)
+          .where("props -> 'number' = :number", number: @event.number)
       end
 
       def my_type_tag
-        if self.class.name =~ /Issue/
-          'issue_action'
-        end
+        'issue_action' if self.class.name =~ /Issue/
       end
     end
   end
