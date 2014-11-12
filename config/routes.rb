@@ -69,6 +69,12 @@ Bithub::Application.routes.draw do
         end
       end
 
+      resources :accounts, only: %i() do
+        collection do
+          get 'current', to: 'accounts#current'
+        end
+      end
+
       resources :services, except: %i(new edit)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
