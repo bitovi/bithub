@@ -2,8 +2,7 @@ class Embed < ActiveRecord::Base
 
   belongs_to :brand
 
-  has_many :filters, as: :filterable, dependent: :destroy
-
+  has_many :filters, dependent: :destroy
   has_many :services, dependent: :destroy
 
   has_many :embed_entities

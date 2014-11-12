@@ -4,7 +4,6 @@ class Service < ActiveRecord::Base
   validate :json_config_what
 
   belongs_to :embed
-  has_one :filter, as: :filterable, :dependent => :destroy
 
   def brand_identities
     self.brand.identities.where(:provider => feed_name).all
