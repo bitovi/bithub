@@ -2,14 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Entity, :type => :model do
 
-  before(:all) do
-    import_tags
-  end
-
-  after(:all) do
-    Entity.destroy_all
-    Tag.destroy_all
-  end
+  before(:all) { import_tags }
+  after(:all) { DatabaseCleaner.clean_with :truncation }
 
   context "upon creation" do
 

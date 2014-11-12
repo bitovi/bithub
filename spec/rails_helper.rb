@@ -15,9 +15,11 @@ WebMock.allow_net_connect!
 RSpec.configure do |config|
   config.before(:suite) do
     Celluloid.boot
+    DatabaseCleaner.clean_with :truncation
+
     Apartment::Database.drop('testy') rescue nil
-    DatabaseCleaner.clean_with :truncation, except: %w(tags)
     Brand.create name: 'testy', tenant_name: 'testy'
+    Apartment::Database.switch 'testy'
   end
 
   config.after(:suite) do
