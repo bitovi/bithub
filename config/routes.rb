@@ -57,8 +57,11 @@ Bithub::Application.routes.draw do
         resources :services, except: %i(new edit)
       end
 
-      resources :embed_services, except: %i(new edit), controller: 'services'
-      resources :embed_filters, except: %i(new edit), controller: 'filters'
+      resources :services, except: %i(new edit) do
+        get :tree, on: :collection
+      end
+
+      resources :filters, except: %i(new edit)
 
       resources :brands,  except: %i(new edit) do
         collection do

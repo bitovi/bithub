@@ -19,6 +19,16 @@ class Api::V3::ServicesController < Api::V3::BaseController
     end
   end
 
+  def tree
+    if !test_acc?
+      @tree = Hash[ brands_with_nested_service_pairs ]
+      render json: @tree
+    else
+      yaml = YAML.load_file('config/test_account.yml')
+      render json: ActiveSupport::JSON.encode(yaml)
+    end
+  end
+
   def create
     embed = current_brand.embeds.find(embed_id)
     @service = embed.services.build(service_params)
@@ -47,6 +57,24 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   private
+
+  def brands_with_nested_service_pairs
+    Brand.all.map do |b|
+      [b.name, Hash[ feed_name_config_pairs ]]
+    end
+  end
+
+  def feed_name_config_pairs
+    Service.all do |s|
+      !s.config.data.present?
+    end.map do |s|
+      [s.feed_name, s.config.data]
+    end
+  end
+
+  def test_acc?
+    !params[:test_acc].nil?
+  end
 
   def embed_id
     params.require(:embed_id)
