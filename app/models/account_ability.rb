@@ -8,6 +8,7 @@ class AccountAbility
       can [:read, :read_tags_tree], Tag
       can [:read, :update], Brand #, id: account.brand.id
       can [:destroy], BrandIdentity #, brand_id: account.brand.id
+      can :manage, Account, id: account.id
       can :read, Country
       can :read, User # TODO check somehow if user is present in current tenant
       can :read, Payment
