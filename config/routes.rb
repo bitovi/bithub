@@ -86,8 +86,6 @@ Bithub::Application.routes.draw do
 
       get 'tags/tree', to: 'tags#tree'
 
-      resources :accounts, except: %i(new edit)
-
       get '*path', to: redirect('/api/v2')
       root to: 'base#home'
     end

@@ -1,3 +1,0 @@
-json.cache! account do
-	json.(account, :id, :email, :name, :brand)
-end
