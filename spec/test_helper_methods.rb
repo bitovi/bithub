@@ -2,14 +2,8 @@
 # Tag definitions
 # ---------------
 
-TAG_DEFINITIONS_PATH = File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml')
-
-def import_all
-  import_tags
-end
-
 def import_tags
-  tags = YAML::load_file(TAG_DEFINITIONS_PATH)
+  tags = YAML::load_file(File.join(PROJECT_ROOT, 'config', 'tag_definitions.yml'))
   tags.each do |tag_name, opts|
     t = Tag.new({
       name: tag_name,
