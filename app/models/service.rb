@@ -1,7 +1,7 @@
 class Service < ActiveRecord::Base
 
   validates_presence_of :embed_id, :feed_name
-  validate :json_config_what
+  validate :json_config_valid
 
   belongs_to :embed
 
@@ -13,16 +13,11 @@ class Service < ActiveRecord::Base
     self.embed.brand
   end
 
-  def build_filter
-    # TODO build filter based on feed/type and constraints
-    self
-  end
-
   def config
     @config ||= Services::ServiceConfig.new(json_config, feed_name)
   end
 
-  def json_config_what
+  def json_config_valid
     unless config.valid?
       errors.add(:json_config, config.error_msg)
     end
@@ -37,7 +32,6 @@ class Service < ActiveRecord::Base
       })
     end
   end
-
 end
 
 # after_update :notify_crawler
