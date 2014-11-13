@@ -37,11 +37,17 @@ Bithub::Application.routes.draw do
       # unlock: 'unblock',
     }
 
+  # RESTify some of Devise methods
+  as :account do
+    post 'api/auth/login', to: 'api/auth/account_sessions#create'
+    delete 'api/auth/logout', to: 'api/auth/account_sessions#destroy'
+    post 'api/auth/register', to: 'api/auth/account_registrations#create'
+  end
+
   # Stripe
   mount Stripe::Engine => "/stripe"
 
   # SERVICE API Routes
-
   namespace :api, defaults: { format: 'json' } do
 
     namespace :v3 do
