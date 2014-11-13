@@ -47,7 +47,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def destroy
     embed = current_brand.embeds.find(embed_id)
     @service = embed.services.find(service_id)
-    @service.build_filter
 
     if @service.destroy
       render :json => msg_hash(@service, 'destroy', 'success')
