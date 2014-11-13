@@ -24,8 +24,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
       @tree = Hash[ brands_with_nested_service_pairs ]
       render json: @tree
     else
-      yaml = YAML.load_file('config/test_account.yml')
-      render json: ActiveSupport::JSON.encode(yaml)
+      render json: JSON.parse(File.read('config/test_account.json'))
     end
   end
 
