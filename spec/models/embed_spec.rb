@@ -5,30 +5,34 @@ RSpec.describe Embed, :type => :model do
 
   describe '#moderating_filter' do
     it 'finds the associated moderating filter among all filters' do
-      e = Embed.create(:name => 'test embed')
-      f = (e.filters.create(is_conj: true, classification: 'moderating'))
+      e = FactoryGirl.create(:embed, name: 'test embed')
+      f = FactoryGirl.create(:filter, is_conj: true, classification: 'moderating', embed: e)
       expect(e.moderating_filter).to eq f
     end
   end
   
   describe '#blocking_filter' do
     it 'finds the associated blocking filter among all filters' do
-      e = Embed.create(:name => 'test embed')
-      f = (e.filters.create(:is_conj => true, :classification => 'blocking'))
+      e = FactoryGirl.create(:embed, name: 'test embed')
+      f = FactoryGirl.create(:filter, is_conj: true, classification: 'blocking', embed: e)
       expect(e.blocking_filter).to eq f
     end
   end
 
   describe '#moderate' do
-    before(:each) do
-      @embed = FactoryGirl.create(:embed)
 
-      @embed.make_link_to(FactoryGirl.create(:github_pull_request))
-      @embed.make_link_to(FactoryGirl.create(:github_push))
-      @embed.make_link_to(FactoryGirl.create(:github_watch))
-      @embed.make_link_to(FactoryGirl.create(:twitter_tweet))
-      @embed.make_link_to(FactoryGirl.create(:twitter_follow))
-      @embed.make_link_to(FactoryGirl.create(:meetup_entity, :event))
+    before do
+      @embed = FactoryGirl.create(:embed)
+      entities = []
+      entities << FactoryGirl.create(:github_pull_request)
+      entities << FactoryGirl.create(:github_push)
+      entities << FactoryGirl.create(:github_watch)
+      entities << FactoryGirl.create(:twitter_tweet)
+      entities << FactoryGirl.create(:twitter_follow)
+      entities << FactoryGirl.create(:meetup_entity, :event)
+      entities.each do |e|
+        EmbedEntity.create(embed: @embed, entity: e, is_approved: false)
+      end
     end
 
     context 'given a filter with a single query' do
@@ -36,7 +40,7 @@ RSpec.describe Embed, :type => :model do
         @filter = FactoryGirl.create(:filter,
           is_conj: true,
           classification: 'moderating',
-          filterable: @embed
+          embed: @embed
         )
       end
 
@@ -78,7 +82,7 @@ RSpec.describe Embed, :type => :model do
 
     context 'given a filter with multiple conjunctive predicates' do
       it 'filters by tying :tagged_with and :is_a predicates with a logical AND' do
-        @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
+        @filter = FactoryGirl.create(:filter, :conjunctive, embed: @embed)
 
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
@@ -88,7 +92,7 @@ RSpec.describe Embed, :type => :model do
       end
 
       it 'filters by tying :tagged_with and :contains predicates with a logical AND' do
-        @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
+        @filter = FactoryGirl.create(:filter, :conjunctive, embed: @embed)
 
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
@@ -98,7 +102,7 @@ RSpec.describe Embed, :type => :model do
       end
 
       it 'filters by tying :contains and :is_a predicates with a logical AND' do
-        @filter = FactoryGirl.create(:filter, :conjunctive, filterable: @embed)
+        @filter = FactoryGirl.create(:filter, :conjunctive, embed: @embed)
 
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
@@ -109,8 +113,10 @@ RSpec.describe Embed, :type => :model do
     end
     
     context 'given a filter with multiple disjunctive predicates' do
+      after { Filter.delete_all; NatlangQuery.delete_all }
+
       it 'filters by tying all predicates with a logical OR' do
-        @filter = FactoryGirl.create(:filter, :disjunctive, filterable: @embed)
+        @filter = FactoryGirl.create(:filter, :disjunctive, embed: @embed)
 
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)

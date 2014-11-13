@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'sass/plugin/rack'
 
 if defined?(Bundler)
   Bundler.require(:default, Rails.env)
@@ -33,5 +34,7 @@ module Bithub
     config.stripe.publishable_key = ENV['STRIPE_PUBLISHABLE_KEY']
     # stripe webhook endpoint is manually mounted in routes.rb
     config.stripe.auto_mount = false
+
+    config.middleware.use Sass::Plugin::Rack
   end
 end

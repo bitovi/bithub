@@ -3,7 +3,7 @@ require 'sidekiq/web'
 Bithub::Application.routes.draw do
 
   # Frontend
-  root "frontend#index"
+  root 'frontend#index'
 
   # Admin
   resources :admin, only: %i(index) do
@@ -59,12 +59,12 @@ Bithub::Application.routes.draw do
           get :waitlisted, on: :collection
         end
 
-        resources :filters, except: %i(new edit), controller: 'embed_filters'
-        resources :services, except: %i(new edit), controller: 'embed_services'
+        resources :filters, except: %i(new edit)
+        resources :services, except: %i(new edit)
       end
 
-      resources :embed_services, except: %i(new edit), controller: 'embed_services'
-      resources :embed_filters, except: %i(new edit), controller: 'embed_filters'
+      resources :embed_services, except: %i(new edit), controller: 'services'
+      resources :embed_filters, except: %i(new edit), controller: 'filters'
 
       resources :brands,  except: %i(new edit) do
         collection do
@@ -85,26 +85,11 @@ Bithub::Application.routes.draw do
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
     end
-
-    namespace :v2 do
-      resources :entities, only: %i(create update destroy)
-
-
-      get 'services/tree', to: 'services#tree'
-
-      resources :brands,  except: %i(new edit)
-      get 'brands/current', to: 'brands#show'
-      put 'brands/current', to: 'brands#update'
-
-      get 'tags/tree', to: 'tags#tree'
-
-      get '*path', to: redirect('/api/v2')
-      root to: 'base#home'
-    end
   end
 
   # TODO; add auth
   mount Sidekiq::Web => '/sidekiq'
 
-  get '*path', :controller => 'frontend', :action => 'index'
+  get '/:page', controller: 'frontend', action: 'render_page'
+  get '/', controller: 'frontend', action: 'index'
 end

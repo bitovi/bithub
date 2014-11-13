@@ -58,6 +58,8 @@ gem 'andand'
 gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
+gem 'sass'
+
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
 
@@ -104,8 +106,11 @@ group :development do
   gem 'capistrano-rails', '~> 1.1'
   gem 'capistrano-rbenv', '~> 2.0'
   gem 'capistrano-bundler', '~> 1.1'
+  gem 'capistrano-bower'
+  gem 'capistrano-npm'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
+  gem 'rubocop'
 end
 
 group :test do
