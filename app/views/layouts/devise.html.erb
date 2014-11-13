@@ -1,20 +1,11 @@
-<!DOCTYPE HTML>
-<html lang="en">
-	<head>
-		<title>Bithub Admin</title>
+<%= render partial: "layouts/head" %>
 
-		<link href="/admin/styles/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
-		<link href="/admin/styles/bootstrap/css/bootstrap-theme.css" rel="stylesheet" type="text/css">
-		<link href="/admin/bower_components/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
-	</head>
-	<body>
-		<div id="content" class="container" style="margin-top: 50px;">
-			<div class="row">
-				<div class="col-xs-6 col-xs-offset-3">
-					<%= yield %>
-				</div>
-			</div>
+<div class="container page-content">
+	<div class="row">
+		<div class="col-xs-6 col-xs-offset-3">
+			<%= yield %>
 		</div>
-		
-	</body>
-</html>
+	</div>
+</div>
+
+<%= render partial: "layouts/footer" %>

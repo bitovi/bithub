@@ -163,8 +163,6 @@ ActiveRecord::Schema.define(version: 20141103220333) do
     t.integer "embed_id"
     t.boolean "is_conj"
     t.string  "classification"
-    t.integer "filterable_id"
-    t.string  "filterable_type"
   end
 
   create_table "natlang_queries", force: true do |t|
