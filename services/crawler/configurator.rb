@@ -4,7 +4,7 @@ class Configurator
   include Celluloid
   include CoreHelpers
 
-  attr_reader :all_brands
+  attr_reader :config
 
   def initialize(opts)
     @env = opts.fetch(:environment)
@@ -17,19 +17,25 @@ class Configurator
   end
 
   def brand(brand_name)
-    reload unless @all_brands
-    all_brands.fetch(brand_name.to_sym)
+    reload unless @config
+    config.fetch(:brands).select {|b| b[:name] == brand_name}.first
   end
   alias_method :brand_config, :brand
 
-  def feed(brand_name, feed_name)
-    reload unless @all_brands
-    all_brands.fetch(brand_name.to_sym).fetch(feed_name.to_sym)
+  def embed(brand_name, embed_id)
+    reload unless @config
+    brand(brand_name).fetch(:embeds).select {|e| e[:id] == embed_id}.first
   end
-  alias_method :feed_config, :feed
+  alias_method :embed_config, :embed
+
+  def service(brand_name, embed_id, feed_name)
+    reload unless @config
+    embed(brand_name, embed_id).fetch(:services).select {|s| s[:feed_name] == feed_name}.first
+  end
+  alias_method :service_config, :service
 
   def reload
-    @all_brands = symbolize_keys(remote_config)
+    @config = symbolize_keys(remote_config)
   end
 
   def remote_config
