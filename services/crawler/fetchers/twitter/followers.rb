@@ -8,7 +8,6 @@ module Fetchers
 
       def initialize(client)
         @client = client
-        @user_id = client.user.id
       end
 
       def fetch
@@ -18,12 +17,19 @@ module Fetchers
               id: uid,
             },
             target: {
-              id: @user_id,
+              id: user_id,
             },
             event: "fake_follow",
             created_at: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
           }
         end
+      rescue ::Twitter::Error::Unauthorized => e
+        Celluloid.logger.error "#{e.class.name} -> #{e.to_s}"
+        nil
+      end
+
+      def user_id
+        @user_id ||= client.user.id
       end
     end
   end
