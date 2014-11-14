@@ -4,8 +4,9 @@ require_relative 'decorators/all'
 class Poller
   include Celluloid
 
-  def initialize(brand_name, fetcher, opts = {})
+  def initialize(brand_name, embed_name, fetcher, opts = {})
     @brand_name = brand_name
+    @embed_name = embed_name
     @fetcher = fetcher
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
@@ -31,7 +32,7 @@ class Poller
 
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
-    publisher.publish @brand_name, feed_name, data, decorator: @decorator
+    publisher.publish @brand_name, @embed_name, feed_name, data, decorator: @decorator
   end
   
   def interval

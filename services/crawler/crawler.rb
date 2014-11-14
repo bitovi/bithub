@@ -20,8 +20,7 @@ require 'logger_factory'
 
 require 'events/dispatcher'
 
-require_relative 'main_supervisor'
-require_relative 'brand_supervisor'
+require_relative 'supervisors/main'
 require_relative 'lock_manager'
 require_relative 'publisher'
 require_relative 'configurator'
@@ -45,7 +44,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
   supervise HttpServer::Listener, as: :http_listener
-  supervise MainSupervisor, as: :main_supervisor
+  supervise Supervisors::Main, as: :main_supervisor
 end
 
 Crawler.run

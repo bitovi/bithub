@@ -1,51 +1,55 @@
 require 'rmeetup'
 require 'persistent/id_set'
 
-module FeedSupervisors
-  class Meetup
-    include Celluloid
-
-    def initialize(brand_name)
-      @brand_name = brand_name
-      @client = ::RMeetup::Client.new api_key: api_key
-      boot
-    end
-
+module Supervisors::Services
+  class Meetup < Supervisors::Service
     def boot
-      Celluloid.logger.info "Booting Meetup supervisor for #{@brand_name}"
+      @client = ::RMeetup::Client.new api_key: api_key
       @endpoints = SupervisionGroup.new
 
       event_set = IdSet.new(@brand_name, "meetup", "rsvp")
 
+      oe_fetcher = Fetchers::Meetup::OpenEvents.new(
+        @client,
+        terms: terms
+      )
+
       @endpoints.supervise_as(
         actor_name('open_events'),
-        Poller,
-        *[@brand_name,
-          Fetchers::Meetup::OpenEvents.new(
-            @client,
-            terms: terms
-        )]
+        Poller, *[
+          @brand_name,
+          @embed_name,
+          oe_fetcher
+        ]
       ) if not(terms.nil?) && not(terms.empty?)
+
+      e_fetcher = Fetchers::Meetup::Events.new(
+        @client,
+        group_ids: group_ids,
+        event_set: event_set
+      )
 
       @endpoints.supervise_as(
         actor_name('events'),
-        Poller,
-        *[@brand_name,
-          Fetchers::Meetup::Events.new(
-            @client,
-            group_ids: group_ids,
-            event_set: event_set
-        )]
+        Poller, *[
+          @brand_name,
+          @embed_name,
+          e_fetcher
+        ]
       ) if not(group_ids.nil?) && not(group_ids.empty?)
       
+      rsvp_fetcher = Fetchers::Meetup::Rsvps.new(
+        @client,
+        event_set: event_set
+      )
+
       @endpoints.supervise_as(
         actor_name('rsvps'),
-        Poller,
-        *[@brand_name,
-          Fetchers::Meetup::Rsvps.new(
-            @client,
-            event_set: event_set
-        )]
+        Poller, *[
+          @brand_name,
+          @embed_name,
+          rsvp_fetcher
+        ]
       ) if not(event_set.nil?) && not(event_set.empty?)
       
       Celluloid::Actor[:commander].publish(register_msg, :registration)
@@ -58,20 +62,16 @@ module FeedSupervisors
 
     private
 
-    def brand_feed_config
-      configurator.feed_config(@brand_name, :meetup)
-    end
-
     def group_ids
-      brand_feed_config.fetch(:groups)
+      service_config.fetch(:groups)
     end
 
     def terms
-      brand_feed_config.fetch(:terms)
+      service_config.fetch(:terms)
     end
 
     def token
-      brand_feed_config.fetch(:token)
+      service_config.fetch(:token)
     end
 
     def api_key

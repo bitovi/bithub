@@ -9,7 +9,7 @@ class Configurator
   def initialize(opts)
     @env = opts.fetch(:environment)
     reload unless ENV['TRAVIS']
-    Celluloid.logger.debug "All brands: #{@all_brands}"
+    Celluloid.logger.debug "Config: #{@config}"
   end
 
   def static_config
@@ -22,15 +22,15 @@ class Configurator
   end
   alias_method :brand_config, :brand
 
-  def embed(brand_name, embed_id)
+  def embed(brand_name, embed_name)
     reload unless @config
-    brand(brand_name).fetch(:embeds).select {|e| e[:id] == embed_id}.first
+    brand(brand_name).fetch(:embeds).select {|e| e[:name] == embed_name}.first
   end
   alias_method :embed_config, :embed
 
-  def service(brand_name, embed_id, feed_name)
+  def service(brand_name, embed_name, service_name)
     reload unless @config
-    embed(brand_name, embed_id).fetch(:services).select {|s| s[:feed_name] == feed_name}.first
+    embed(brand_name, embed_name).fetch(:services).select {|s| s[:feed_name] == service_name}.first
   end
   alias_method :service_config, :service
 
@@ -47,17 +47,17 @@ class Configurator
   def read_env_config
     {
       twitter: {
-        api_key: ENV.fetch('TWITTER_CONSUMER_KEY'),
-        api_secret: ENV.fetch('TWITTER_CONSUMER_SECRET')
+        api_key: ENV.fetch('TWITTER_CLIENT_ID'),
+        api_secret: ENV.fetch('TWITTER_CLIENT_SECRET')
       },
       disqus: {
-        api_key: ENV.fetch('DISQUS_KEY'),
-        api_secret: ENV.fetch('DISQUS_SECRET')
+        api_key: ENV.fetch('DISQUS_CLIENT_ID'),
+        api_secret: ENV.fetch('DISQUS_CLIENT_SECRET')
       },
       meetup: {
         personal_key: ENV.fetch('MEETUP_PERSONAL_KEY'),
-        api_key: ENV.fetch('MEETUP_KEY'),
-        api_secret: ENV.fetch('MEETUP_SECRET')
+        api_key: ENV.fetch('MEETUP_CLIENT_ID'),
+        api_secret: ENV.fetch('MEETUP_CLIENT_SECRET')
       },
       stackexchange: {
         api_key: ENV.fetch('STACKEXCHANGE_CLIENT_KEY'),
