@@ -1,18 +1,11 @@
 require 'vetinari'
 
-module FeedSupervisors
-  class Irc
+module Supervisors::Services
+  class Irc < Supervisors::Service
     include Celluloid
 
-    def initialize(brand_name)
-      @brand_name = brand_name
-      @bots = []
-
-      boot
-    end
-
     def boot
-      Celluloid.logger.info "Booting IRC supervisor for brand '#{@brand_name}'"
+      @bots = []
 
       chats.each do |c|
         server = c.fetch(:server) { 'chat.freenode.net' }
@@ -41,19 +34,15 @@ module FeedSupervisors
       @bots.select {|b| b.config.server == server}.first
     end
 
-    def config
-      Celluloid::Actor[:configurator].feed_config(@brand_name, :irc)
-    end
-
     def chats
-      config.fetch(:chats) { [] }
+      service_config.fetch(:chats) { [] }
     end
 
     def init_bot(server, opts = {})
       Vetinari::Bot.new do |c|
         c.server = server
-        c.port = config.fetch(:port) { 6667 }
-        c.nick = config.fetch(:nick) { "BithubBot#{rand(10_000)}" }
+        c.port = service_config.fetch(:port) { 6667 }
+        c.nick = service_config.fetch(:nick) { "BithubBot#{rand(10_000)}" }
 
         # turn on logging
         c.logger = Celluloid.logger
@@ -71,10 +60,6 @@ module FeedSupervisors
 
     def feed_name
       'irc'
-    end
-
-    def actor_name
-      "#{@brand_name}_irc_#{server.snake_case}".to_sym
     end
 
     def build_event(env)

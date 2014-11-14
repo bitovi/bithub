@@ -1,22 +1,11 @@
 require 'instagram'
-
-# String#singularize
 require 'active_support/core_ext/string'
 
-module FeedSupervisors
-  class Instagram
-    include Celluloid
-
+module Supervisors::Services
+  class Instagram < Supervisors::Service
     VALID_OBJECTS = %w(user tag location geography)
 
-    def initialize(brand_name)
-      @brand_name = brand_name
-      boot
-    end
-
     def boot
-      Celluloid.logger.info "Booting Instagram supervisor for #{@brand_name}"
-
       # cleanup existing subscriptions
       delete_subscriptions
 
@@ -40,16 +29,8 @@ module FeedSupervisors
 
     end
 
-    def config
-      Celluloid::Actor[:configurator].feed_config(@brand_name, :instagram)
-    end
-
     def token
-      config.fetch(:token)
-    end
-
-    def actor_name
-      "#{@brand_name}_instagram".to_sym
+      service_config.fetch(:token)
     end
 
     private

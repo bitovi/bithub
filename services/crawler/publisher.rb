@@ -20,11 +20,11 @@ class Publisher
     @filter = DigestSet.new
   end
 
-  def publish(brand, embed_id, feed, events, opts={})
+  def publish(brand, embed, feed, events, opts={})
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
-    new_events = processed events, brand, embed_id, feed, decorator
+    new_events = processed events, brand, embed, feed, decorator
     new_events = reject_old new_events if @reject_old == true
 
     # finally send events to MQ
@@ -33,7 +33,7 @@ class Publisher
 
   def send(events, brand)
     Celluloid.logger.info "Publishing #{events.size} messages!"
-    events.each {|e| send_one e,brand}
+    events.each {|e| send_one e, brand}
   end
 
   def send_one(event, brand)
@@ -46,17 +46,17 @@ class Publisher
     @filter.reject_old events
   end
 
-  def processed(events, brand, embed_id, feed, decorator)
+  def processed(events, brand, embed, feed, decorator)
     events.map do |e|
-      process_one e, brand, embed_id, feed, decorator
+      process_one e, brand, embed, feed, decorator
     end.compact
   end
 
-  def process_one(event, brand, embed_id, feed, decorator)
+  def process_one(event, brand, embed, feed, decorator)
     event     = event.to_h
     feed      = feed.to_s
     brand     = brand.to_s
-    embed_id  = embed_id.to_i
+    embed     =  embed.to_s
     processed = nil
 
     begin
@@ -68,7 +68,7 @@ class Publisher
           feed_name: feed,
           type_name: dispatched.type_name.snake_case,
           brand_name: brand,
-          embed_id: embed_id
+          embed_name: embed
         },
         content_digest: dispatched.content_digest,
         source_data: event
