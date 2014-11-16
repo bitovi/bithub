@@ -37,8 +37,10 @@ Bithub::Application.routes.draw do
       # unlock: 'unblock',
     }
 
-  # RESTify some of Devise methods
   as :account do
+    get 'register', to: redirect('register/starter')
+
+    # RESTify some of Devise methods
     post 'api/auth/login', to: 'api/auth/account_sessions#create'
     delete 'api/auth/logout', to: 'api/auth/account_sessions#destroy'
     post 'api/auth/register', to: 'api/auth/account_registrations#create'
