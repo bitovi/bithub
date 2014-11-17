@@ -24,7 +24,7 @@ Vagrant.configure(2) do |config|
     ansible.sudo = true
     ansible.host_key_checking = false
     # ansible.verbose = "vvvv"
-    # ansible.tags = ["nodejs"]
+    # ansible.tags = ["run_this"]
     ansible.extra_vars = {
       ansible_ssh_user: "vagrant",
       vagrantvm: true
