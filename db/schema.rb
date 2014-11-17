@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141103220333) do
+ActiveRecord::Schema.define(version: 20141114153920) do
 
 
   create_extension "hstore", :version => "1.2"
@@ -199,6 +199,17 @@ ActiveRecord::Schema.define(version: 20141103220333) do
     t.integer  "brand_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "plans", force: true do |t|
+    t.string  "stripe_id",                           null: false
+    t.string  "name",                                null: false
+    t.text    "description"
+    t.integer "amount",                              null: false
+    t.string  "currency",          default: "usd",   null: false
+    t.string  "interval",          default: "month", null: false
+    t.integer "interval_count",    default: 1,       null: false
+    t.integer "trail_period_days", default: 30,      null: false
   end
 
   create_table "services", force: true do |t|

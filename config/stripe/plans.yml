@@ -1,0 +1,17 @@
+-
+  stripe_id: "starter"
+  name: "Starter"
+  amount: 1000
+  currency: 'usd'
+  interval: 'month'
+  interval_count: 1
+  trail_period_days: 45
+
+-
+  stripe_id: "advanced"
+  name: "Advanced"
+  amount: 4500
+  currency: 'usd'
+  interval: 'month'
+  interval_count: 1
+  trail_period_days: 45

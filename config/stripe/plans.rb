@@ -1,19 +1,12 @@
 # Run `rake stripe:prepare` to update plans on stripe.com
 
-Stripe.plan :starter do |plan|
-  plan.name = 'Starter'
-  plan.amount = 1000 # in cents
-  plan.currency = 'usd'
-  plan.interval = 'month'
-  plan.interval_count = 1
-  plan.trial_period_days = 45
-end
-
-Stripe.plan :advanced do |plan|
-  plan.name = 'Advanced'
-  plan.amount = 4500
-  plan.currency = 'usd'
-  plan.interval = 'month'
-  plan.interval_count = 1
-  plan.trial_period_days = 45
+Plan.table_exists? && Plan.all.each do |p|
+  Stripe.plan p.stripe_id.to_sym do |plan|
+    plan.name = p.name
+    plan.amount = p.amount
+    plan.currency = p.currency
+    plan.interval = p.interval
+    plan.interval_count = p.interval_count
+    plan.trial_period_days = p.trail_period_days
+  end
 end
