@@ -12,3 +12,5 @@ tags
 stripe-mock-server.log
 .sass-cache
 .yardoc
+node_modules
+npm-debug.log
