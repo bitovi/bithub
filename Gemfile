@@ -18,6 +18,7 @@ gem 'pg_power'
 
 gem 'redis'
 gem 'redis-rails'
+gem 'redis-session-store'
 gem 'cancan'
 gem 'rmagick', :require => false
 gem 'draper'

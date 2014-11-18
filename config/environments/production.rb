@@ -22,7 +22,6 @@ Bithub::Application.configure do
   config.assets.digest = true
 
   # Use a different cache store
-  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
   config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
 
   # Set up Rack::Cache to use Redis store
