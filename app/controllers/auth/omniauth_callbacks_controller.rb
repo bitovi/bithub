@@ -61,7 +61,7 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def oauthorize(provider)
-    brand = Brand.where(:tenant_name => session['tenant_name']).first
+    raise 'Unknown tenant' unless brand = Brand.find_by_tenant_name(session['tenant_name'])
     uid = oauth_data[:uid].to_s
 
     # Build identity source_data
