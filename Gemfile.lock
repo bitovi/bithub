@@ -1,13 +1,4 @@
 GIT
-  remote: git://github.com/RKushnir/foursquare2.git
-  revision: eeeb63b84611b1c4294cabf66209f9caae9a8cbd
-  branch: master
-  specs:
-    foursquare2 (1.9.8)
-      faraday (~> 0.9)
-      hashie (>= 1.0, < 3.0.0)
-
-GIT
   remote: git://github.com/influitive/omniauth-disqus.git
   revision: f26d69e690e51d4ccacc98a722490083e36c3989
   specs:
@@ -30,17 +21,6 @@ GIT
     muster (0.0.9)
       activesupport (>= 3.0)
       rack (~> 1.4)
-
-GIT
-  remote: git://github.com/neektza/rmeetup.git
-  revision: 07b0309cf24a281d8a42756895221f88eb7d3b34
-  branch: master
-  specs:
-    rMeetup (2.0.1)
-      buftok (~> 0.2)
-      http (~> 0.6)
-      http_parser.rb (~> 0.6)
-      json (~> 1.8)
 
 GIT
   remote: git://github.com/vdragsic/apartment.git
@@ -201,6 +181,10 @@ GEM
     foreman (0.63.0)
       dotenv (>= 0.7)
       thor (>= 0.13.6)
+    foursquare2 (2.0.1)
+      faraday (~> 0.8)
+      faraday_middleware (>= 0.8)
+      hashie (>= 1.0, < 3.0.0)
     gh (0.13.2)
       addressable
       backports
@@ -340,6 +324,11 @@ GEM
     pusher-client (0.6.0)
       json
       websocket (~> 1.0)
+    rMeetup (2.0.1)
+      buftok (~> 0.2)
+      http (~> 0.6)
+      http_parser.rb (~> 0.6)
+      json (~> 1.8)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -587,7 +576,7 @@ DEPENDENCIES
   factory_girl_rails
   feedjira
   foreman (~> 0.63.0)
-  foursquare2!
+  foursquare2
   git
   github_api
   htmlentities
@@ -617,7 +606,7 @@ DEPENDENCIES
   pg_power
   pry
   pry-rails
-  rMeetup!
+  rMeetup
   rails (~> 4.1)
   rake
   ranked-model
