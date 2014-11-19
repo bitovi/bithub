@@ -32,6 +32,7 @@ module Identities
         @data[:groups] = fetch_groups.map do |g|
           {
             id: g.id,
+            name: g.name,
             link: g.link,
             urlname: g.urlname,
             timezone: g.timezone
