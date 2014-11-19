@@ -74,7 +74,7 @@ module Identities
         params = {
           limit: 100,
           user: oauth[:uid], #access_token: access_token,
-          api_key: ENV['DISQUS_KEY']
+          api_key: ENV['DISQUS_CLIENT_ID']
         }
         path = "/api/3.0/users/listForums.json?" + URI.encode_www_form(params)
 

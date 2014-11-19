@@ -8,8 +8,8 @@ module Identities
         super
         @conn_rest  = create_facebook_client
         @conn_oauth = create_facebook_oauth_client \
-          args[:facebook_key] || ENV['FACEBOOK_KEY'],
-          args[:facebook_secret] || ENV['FACEBOOK_SECRET']
+          args[:facebook_key] || ENV['FACEBOOK_CLIENT_ID'],
+          args[:facebook_secret] || ENV['FACEBOOK_CLIENT_SECRET']
 
         self
       end
