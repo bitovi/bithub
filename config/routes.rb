@@ -63,10 +63,12 @@ Bithub::Application.routes.draw do
 
         resources :filters, except: %i(new edit)
         resources :services, except: %i(new edit)
+
       end
 
       resources :services, except: %i(new edit) do
         get :tree, on: :collection
+        get :suggestions, on: :collection
       end
 
       resources :filters, except: %i(new edit)

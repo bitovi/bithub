@@ -19,6 +19,17 @@ class Api::V3::ServicesController < Api::V3::BaseController
     end
   end
 
+  def create
+    embed = current_brand.embeds.find(embed_id)
+    @service = embed.services.build(service_definition)
+
+    if embed.save
+      render 'api/v3/services/show'
+    else
+      render :json => msg_hash(@service, 'create'), :status => 406
+    end
+  end
+
   def tree
     if !test_acc?
       @tree = Hash[ brands_with_nested_service_pairs ]
@@ -28,15 +39,9 @@ class Api::V3::ServicesController < Api::V3::BaseController
     end
   end
 
-  def create
-    embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.build(service_params)
-
-    if embed.save
-      render 'api/v3/services/show'
-    else
-      render :json => msg_hash(@service, 'create'), :status => 406
-    end
+  def suggestions
+    bi = current_brand.identities.find_by_provider(params[:feed_name])
+    render json: Identities::SuggestionNormalizer.new(bi).normalize(params[:type_name])
   end
 
   def update
@@ -82,11 +87,11 @@ class Api::V3::ServicesController < Api::V3::BaseController
     params[:service_id] || params[:id]
   end
 
-  def service_params
-    feed_name.merge({json_config: service_config})
+  def service_definition
+    service_kind.merge({json_config: service_config})
   end
 
-  def feed_name
+  def service_kind
     params.require(:service).permit(:feed_name, :type_name)
   end
 
