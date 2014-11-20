@@ -10,11 +10,11 @@ module Fetchers
       end
 
       def fetch
-        @client.fetch :rsvps, event_id: event_ids
+        @client.fetch(:rsvps, event_id: event_ids) if event_ids && event_ids.length > 0
       end
 
       def event_ids
-        @event_set.members.join ','
+        @event_set.members.andand.join ','
       end
     end
   end
