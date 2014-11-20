@@ -59,5 +59,6 @@ Client.prototype.onReady = function() {
 module.exports = {
 	createClient: function( url, opts ) {
 		return new Client( url, opts );
-	}
+	},
+	parseUrl: parseUrl
 };
