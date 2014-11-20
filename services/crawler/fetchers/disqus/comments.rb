@@ -7,12 +7,12 @@ module Fetchers
       include Protocol
 
       def initialize(opts)
-        @forums = opts.fetch(:forums)
+        @forum = opts.fetch(:forum)
         @api_key = opts.fetch(:api_key)
       end
 
       def fetch
-        resp = HTTParty.get url, :query => related.merge(forums).merge(auth)
+        resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
         pluck(resp)
       end
 
@@ -22,8 +22,8 @@ module Fetchers
         response['response'] || []
       end
 
-      def forums
-        { :forum => @forums }
+      def forum
+        { :forum => @forum }
       end
 
       def related
