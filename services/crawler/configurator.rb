@@ -1,4 +1,5 @@
 require 'httparty'
+require 'supervisors/support/service_info'
 
 class Configurator
   include Celluloid
@@ -9,7 +10,7 @@ class Configurator
   def initialize(opts)
     @env = opts.fetch(:environment)
     reload unless ENV['TRAVIS']
-    Celluloid.logger.debug "Config: #{@config}"
+    Celluloid.logger.info "Config: #{@config.to_yaml}"
   end
 
   def static_config
@@ -28,9 +29,13 @@ class Configurator
   end
   alias_method :embed_config, :embed
 
-  def service(brand_name, embed_name, service_name)
+  def service(brand_name, embed_name, service_feed, service_type)
     reload unless @config
-    embed(brand_name, embed_name).fetch(:services).select {|s| s[:feed_name] == service_name}.first
+    embed(brand_name, embed_name)\
+      .fetch(:services)\
+      .select do |s|
+        s[:feed_name] == service_feed && s[:type_name] == service_type
+      end.first
   end
   alias_method :service_config, :service
 
