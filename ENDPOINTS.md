@@ -288,10 +288,8 @@ Repo:
 	config: {
 		name: "retro/apitizer",
 		tracking: {
-			activity: true,
 			issues: true,
-			pull_req: false,
-			code: true
+			pull_req: false
 		}
 	}
 }
