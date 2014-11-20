@@ -12,6 +12,8 @@ var	LISTEN_HOST  = process.env.LIVESERVICE_HOST || '127.0.0.1',
 	RABBITMQ_URI = process.env.RABBITMQ_URI,
 	REDIS_URL    = process.env.REDIS_URL;
 
+var ENDPOINTS = ['entities', 'services', 'moderation'];
+
 app.listen(3002);
 
 function handler(req, res) {
@@ -44,27 +46,30 @@ var sessions = sessionStore.createClient( REDIS_URL ),
 	router   = new messageRouter();
 
 listener.onReady( function(l) {
-	l.bindConsumer('entities', function( data ) {
-		console.info( 'New message from MQ', data );
+	_.each( ENDPOINTS, function( endpoint ) {
+		l.bindConsumer(endpoint, function( data ) {
+			console.info( 'New message from MQ', data );
 
-		//var key = ['entities', data.meta.brand_name, data.meta.embed_name].join('.');
-		var key = ['entities', data.meta.brand_name].join('.');
-		router.publish( key, data.payload );
+			var key = [endpoint, data.meta.brand_name, data.meta.embed_name].join('.');
+			router.publish( key, data.payload );
+		});
 	});
 });
 
 io.on('connection', function (socket) {
-	var cookies = parseCookie( socket.conn.request.headers.cookie );
+	var cookies = parseCookie( socket.conn.request.headers.cookie ),
+		params = socket.handshake.query;
 
 	sessions.read( cookies._session_id, function( err, result ) {
 		if( err ) {
 			console.error( err );
 		} else {
-			var key = ['entities', result.tenant_name].join('.');
+			_.each( ENDPOINTS, function( endpoint ) {
+				var key = [endpoint, result.tenant_name, params.embed_name].join('.');
 
-			// subscribe/register on router
-			router.subscribe( key, function( message ) {
-				socket.emit( 'entities', message );
+				router.subscribe( key, function( message ) {
+					socket.emit( endpoint, message );
+				});
 			});
 		}
 	});

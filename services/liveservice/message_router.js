@@ -1,4 +1,4 @@
-var _   = require('lodash');
+var _ = require('lodash');
 
 var Router = function() {
 	this.channels = [];
@@ -27,6 +27,10 @@ Router.prototype.publish = function( key, message ) {
 			});
 		}
 	});
+};
+
+Router.prototype.channels = function() {
+	return this.channels;
 };
 
 module.exports = Router;
