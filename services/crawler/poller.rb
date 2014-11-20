@@ -4,9 +4,8 @@ require_relative 'decorators/all'
 class Poller
   include Celluloid
 
-  def initialize(brand_name, embed_name, fetcher, opts = {})
-    @brand_name = brand_name
-    @embed_name = embed_name
+  def initialize(path, fetcher, opts = {})
+    @path = path
     @fetcher = fetcher
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
@@ -19,11 +18,11 @@ class Poller
   def fetch
     if not(locker.nil?)
       if locker.locked?(lock_name)
-        Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}' LOCKED!"
+        Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand_name}' LOCKED!"
       else
         locker.lock(lock_name, lock_interval)
         if (events = @fetcher.fetch)
-          Celluloid.logger.info "#{fetcher_name} for brand '#{@brand_name}', fetched #{events.count} events"
+          Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand_name}', fetched #{events.count} events"
           publish events if events.count > 0
         end
       end
@@ -31,8 +30,8 @@ class Poller
   end
 
   def publish(data)
-    Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
-    publisher.publish @brand_name, @embed_name, feed_name, data, decorator: @decorator
+    Celluloid.logger.info "Publishing with brand: #{@path.brand_name}, embed: #{@path.embed_name}, and service type: #{@path.service_name}"
+    publisher.publish @path, data, decorator: @decorator
   end
   
   def interval
@@ -50,15 +49,11 @@ class Poller
   
   def lock_name
     ln = fetcher_name.to_s.snake_case.gsub('fetchers','').split('/').reject{|x| x == ""}.join(':') 
-    "lock:polling:#{@brand_name}:#{ln}"
+    "lock:polling:#{@path.brand_name}:#{ln}"
   end
 
   def fetcher_name
     @fetcher.class.name
-  end
-
-  def feed_name
-    fetcher_name.split('::')[1].snake_case
   end
 
   def locker
