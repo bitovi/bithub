@@ -1,4 +1,5 @@
 var redis = require('redis');
+var Q     = require('q');
 
 var parseUrl = function( url ) {
 	var re = /redis:\/\/([\d\.]+):(\d+)\/(\d+)/g;
@@ -12,19 +13,32 @@ var parseUrl = function( url ) {
 };
 
 var Client = function( url, opts ) {
-	var params = parseUrl( url );
-	var client = redis.createClient( params.port, params.host );
+	opts = opts || {};
 
-	client.select( params.db, function( err, status ) {
-		if( err ) {
-			console.error( 'Redis error: ' + err );
-		} else {
-			console.info( 'Redis using database ' + params.db );
-		}
-	});
+	var self = this,
+		params = parseUrl( url ),
+		client = redis.createClient( params.port, params.host );
+
+	this.ready   = Q.defer();
+	this.verbose = opts.verbose;
+	this.timeout = opts.timeout || 5000;
 
 	client.on('connect', function() {
-		console.info('Connected to redis on ' + params.host + ':' + params.port);
+		self.verbose && console.info('Connected to redis on ' + params.host + ':' + params.port);
+
+		client.select( params.db, function( err, status ) {
+			if( err ) {
+				console.error( 'Redis error: ' + err );
+				self.ready.reject( err );
+			} else {
+				self.verbose && console.info( 'Redis using database ' + params.db );
+				self.ready.resolve( status );
+			}
+		});
+	});
+
+	client.on('error', function( err ) {
+		self.ready.reject( err );
 	});
 
 	this.client = client;
@@ -36,6 +50,11 @@ Client.prototype.read = function( session_id, cb ) {
 		cb( err, JSON.parse( result ) );
 	});
 };
+
+Client.prototype.onReady = function() {
+	return Q.timeout(this.ready.promise, this.timeout);
+};
+
 
 module.exports = {
 	createClient: function( url, opts ) {
