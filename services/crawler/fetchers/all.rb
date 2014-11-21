@@ -9,8 +9,10 @@ require_relative 'github/repo_issues_comments'
 require_relative 'github/repo_pull_requests'
 require_relative 'github/repo_pull_requests_comments'
 
-require_relative 'twitter/tweet_search'
+require_relative 'twitter/hashtags'
 require_relative 'twitter/followers'
+require_relative 'twitter/mentions_timeline'
+require_relative 'twitter/user_timeline'
 
 require_relative 'facebook/page_feed'
 

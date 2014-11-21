@@ -1,17 +1,13 @@
-module Supervisors::Services
-  class Foursquare < Supervisors::Service
+module Supervisors::Services::Foursquare
+  class Venue < Supervisors::Service
     def boot
       venues_handler.register @brand_name, venue_ids
     end
 
     private
 
-    def venues
-      service_config.fetch(:venues)
-    end
-
     def venue_ids
-      venues.map {|v| v.fetch(:id)}
+      [ service_config.fetch(:id) ]
     end
 
     def venues_handler

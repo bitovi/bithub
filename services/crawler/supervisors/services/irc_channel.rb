@@ -1,7 +1,7 @@
 require 'vetinari'
 
-module Supervisors::Services
-  class Irc < Supervisors::Service
+module Supervisors::Services::Irc
+  class Channel < Supervisors::Service
     include Celluloid
 
     def boot

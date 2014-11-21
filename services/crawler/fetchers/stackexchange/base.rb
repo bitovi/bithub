@@ -5,7 +5,7 @@ module Fetchers
       include Protocol
 
       def initialize(opts)
-        @terms = opts.fetch(:terms)
+        @tags = opts.fetch(:tags)
         @token = opts.fetch(:token)
       end
 
@@ -26,7 +26,7 @@ module Fetchers
       end
 
       def tagged
-        { :tagged => @terms.join(';') }
+        { :tagged => @tags.join(';') }
       end
 
       def token

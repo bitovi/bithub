@@ -3,11 +3,10 @@ require_relative 'embed'
 module Supervisors
   class Brand
     include Celluloid
-    include Common
 
-    def initialize(bn)
-      @current_level = [@brand_name = bn]
-      Celluloid.logger.info "Booting #{@current_level}"
+    def initialize(path, bn)
+      @path = TreePath.new(path, @brand_name = bn, :brand_name)
+      Celluloid.logger.info "Booting #{@path.actor_name}"
       boot
     end
 
@@ -24,16 +23,15 @@ module Supervisors
     end
 
     def start_embed_supervisor(embed_name)
-      Celluloid.logger.info "Starting #{child_name(embed_name)}"
       @embeds.supervise_as(
-        child_name(embed_name),
+        @path.child_actor_name(embed_name),
         Supervisors::Embed,
-        *[@brand_name, embed_name]
+        *[@path, embed_name]
       )
     end
 
     def stop_embed_supervisor(embed_name)
-      if (a = Celluloid::Actor[child_name(embed_name)])
+      if (a = Celluloid::Actor[@path.child_actor_name(embed_name)])
         a.terminate
       end
     end
@@ -41,7 +39,7 @@ module Supervisors
     private
 
     def brand_config
-      Celluloid::Actor[:configurator].brand_config(@brand_name)
+      Celluloid::Actor[:configurator].brand_config(*@path.rootles_path)
     end
   end
 end
