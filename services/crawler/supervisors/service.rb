@@ -24,4 +24,8 @@ module Supervisors
   end
 end
 
+module Supervisors
+  module Services; end
+end
+
 require_relative 'services/all'

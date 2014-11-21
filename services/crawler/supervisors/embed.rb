@@ -26,7 +26,7 @@ module Supervisors
     def start_service_supervisor(si)
       @services.supervise_as(
         @path.child_actor_name(si.name),
-        service_supervisor(si.name),
+        service_supervisor(si),
         *[@path, si]
       )
     end
@@ -43,9 +43,10 @@ module Supervisors
       Celluloid::Actor[:configurator].embed_config(*@path.rootles_path)
     end
 
-    def service_supervisor(sn)
-      const_name = sn.camel_case.to_sym
-      Supervisors::Services.const_get(const_name)
+    def service_supervisor(si)
+      Supervisors::Services
+        .const_get(si.feed_name.camel_case.to_sym)
+        .const_get(si.type_name.camel_case.to_sym)
     end
   end
 end
