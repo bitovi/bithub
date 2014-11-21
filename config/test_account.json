@@ -35,6 +35,7 @@
 			}
 			]
 		},
+
 		{
 			"id":24,
 			"name":"community",
@@ -65,21 +66,21 @@
 				"feed_name":"twitter",
 				"type_name":"hashtag",
 				"hashtags":["canjs", "jquerypp"],
-				"access_token":"123763453-Ulq82K5A8tnQlNfibSES4E13nhQpE5epYbpwLYMq",
-				"access_secret":"T5UbuGMkiWDYSM5j6ldWCNNT7oPmSGqfziouhGDNllOix"
+				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
+				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
 			},
 			{
 				"feed_name":"twitter",
 				"type_name":"user_timeline",
 				"handle":"bitovi",
-				"access_token":"1114748720-AfkSiVp4daFN4iJ7oupy6lyV6eyb5NW76UdKGK5",
-				"access_secret":"al2UNiMrfpIzT8k5KUxOGO5MaC69l258Tiz5YbpeXdLM8"
+				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
+				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
 			},
 			{
 				"feed_name":"twitter",
 				"type_name":"followers",
-				"access_token":"56956664-4IPusjU3I9FCkc8hoevZHjKD3nX8eIuxMdl18XNUP",
-				"access_secret":"Z8b8PziFZ49PMenPpr5l6CiZ8Kb5yQ0LQYtBADSY"
+				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
+				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
 			}
 			]
 		}
