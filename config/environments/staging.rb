@@ -20,7 +20,6 @@ Bithub::Application.configure do
 
   # Use a different cache store
   config.cache_store   = :redis_store, "#{ENV['REDIS_URL']}/cache", { expires_in: 7.days }
-  config.session_store = :redis_store, "#{ENV['REDIS_URL']}/session"
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH

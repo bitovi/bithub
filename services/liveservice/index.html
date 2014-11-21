@@ -1,0 +1,34 @@
+<html>
+  <head>
+	<title>WsServer test</title>
+	<script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+
+	<h1>WsServer test</h1>
+
+	<script>
+	  var socket = io('/?embed_name=foobar');
+	  socket.on('connect', function() {
+	    console.log('CONNECTED!');
+	  });
+	  socket.on('connect_error', function() {
+	    console.log('CONNECTION ERROR!');
+	  });
+
+	  socket.on('entities', function( msg ) {
+        console.log( 'New message from entities', msg );
+	  });
+
+	  socket.on('services', function( msg ) {
+        console.log( 'New message from services', msg );
+	  });
+
+	  socket.on('moderation', function( msg ) {
+        console.log( 'New message from moderation', msg );
+	  });
+
+	</script>
+
+  </body>
+</html>

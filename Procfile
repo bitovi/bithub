@@ -3,3 +3,4 @@ listener: ruby ./services/listener/listener.rb
 crawler: ruby ./services/crawler/crawler.rb
 streamer: ruby ./services/crawler/streamer.rb
 worker: ./bin/sidekiq
+liveservice: nodejs ./services/liveservice/server.js
