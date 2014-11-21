@@ -25,7 +25,7 @@
   sudo: True
   sudo_user: "{{ bithub.username }}"
   when: not st_ruby.stat.exists
-    
+
 
 - name: "Create user bin dir"
   file: dest=/home/{{ bithub.username }}/bin state=directory
@@ -82,3 +82,8 @@
   with_items:
     - "db:create"
     - "db:migrate"
+
+- name: "Install npm packages for liveservice"
+  npm: path=/vagrant/services/liveservice
+  sudo: True
+  sudo_user: "{{ bithub.username }}"

@@ -23,4 +23,5 @@
     - { role: postgresql, tags: ["postgresql"] }
     - { role: rabbitmq,   tags: ["rabbitmq"] }
     - { role: redis,      tags: ["redis"] }
+    - { role: nodejs,     tags: ["nodejs"] }
     - { role: bithub,     tags: ["bithub"] }
