@@ -3,37 +3,36 @@ require_relative 'service'
 module Supervisors
   class Embed
     include Celluloid
-    include Common
 
-    def initialize(bn, en)
-      @current_level = [@brand_name=bn, @embed_name=en]
-      Celluloid.logger.info "Booting #{@current_level}"
+    def initialize(path, en)
+      @path = TreePath.new(path, @embed_name = en, :embed_name)
+      Celluloid.logger.info "Booting #{@path.actor_name}"
       boot
     end
 
     def boot
       @services = SupervisionGroup.new
       embed_config.fetch(:services).each do |s|
-        start_service_supervisor(s.fetch(:feed_name))
+        si = ServiceInfo.new(s[:feed_name], s[:type_name])
+        start_service_supervisor(si);
       end
     end
     
-    def restart_service_supervisor(service_name)
-      stop_embed_supervisor(service_name)
-      start_embed_supervisor(service_name)
+    def restart_service_supervisor(si)
+      stop_embed_supervisor(si)
+      start_embed_supervisor(si)
     end
 
-    def start_service_supervisor(service_name)
-      Celluloid.logger.info "Starting #{child_name(service_name)}"
+    def start_service_supervisor(si)
       @services.supervise_as(
-        child_name(service_name),
-        service_supervisor(service_name),
-        *[@brand_name, @embed_name, service_name]
+        @path.child_actor_name(si.name),
+        service_supervisor(si),
+        *[@path, si]
       )
     end
 
-    def stop_service_supervisor(service_name)
-      if (a = Celluloid::Actor[child_name(service_name)])
+    def stop_service_supervisor(si)
+      if (a = Celluloid::Actor[@path.child_actor_name(si.name)])
         a.terminate
       end
     end
@@ -41,13 +40,13 @@ module Supervisors
     private
 
     def embed_config
-      Celluloid::Actor[:configurator].embed_config(@brand_name, @embed_name)
+      Celluloid::Actor[:configurator].embed_config(*@path.rootles_path)
     end
 
-    def service_supervisor(service_name)
-      const_name = service_name.to_s.camel_case.to_sym
-      Supervisors::Services.const_get(const_name)
+    def service_supervisor(si)
+      Supervisors::Services
+        .const_get(si.feed_name.camel_case.to_sym)
+        .const_get(si.type_name.camel_case.to_sym)
     end
-
   end
 end

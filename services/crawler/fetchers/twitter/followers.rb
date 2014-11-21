@@ -29,7 +29,7 @@ module Fetchers
       end
 
       def user_id
-        @user_id ||= client.user.id
+        @user_id ||= @client.user.id
       end
     end
   end

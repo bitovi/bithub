@@ -3,24 +3,21 @@ require 'twitter'
 module Fetchers
   module Twitter
 
-    class TweetSearch
+    class UserTimeline
       include Protocol
 
       def initialize(client, opts)
         @client = client
-        @terms = opts.fetch(:terms)
+        @handle = opts.fetch(:user_handle)
       end
 
-      def set_terms(new_terms)
-        @terms = new_terms
-      end
-      
       def fetch
-        @client.search(@terms.join(' OR '), :count => 100).take(100)
+        @client.user_timeline(@handle)
       rescue ::Twitter::Error::Unauthorized => e
         Celluloid.logger.error "#{e.class.name} -> #{e.to_s}"
         nil
       end
+
     end
   end
 end

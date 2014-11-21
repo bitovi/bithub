@@ -20,15 +20,15 @@ class Publisher
     @filter = DigestSet.new
   end
 
-  def publish(brand, embed, feed, events, opts={})
+  def publish(owner_data, events, opts={})
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
-    new_events = processed events, brand, embed, feed, decorator
+    new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
     # finally send events to MQ
-    send new_events, brand
+    send new_events, owner_data.brand
   end
 
   def send(events, brand)
@@ -46,17 +46,17 @@ class Publisher
     @filter.reject_old events
   end
 
-  def processed(events, brand, embed, feed, decorator)
+  def processed(events, owner_data, decorator)
     events.map do |e|
-      process_one e, brand, embed, feed, decorator
+      process_one e, owner_data, decorator
     end.compact
   end
 
-  def process_one(event, brand, embed, feed, decorator)
+  def process_one(event, owner_data, decorator)
     event     = event.to_h
-    feed      = feed.to_s
-    brand     = brand.to_s
-    embed     =  embed.to_s
+    brand     = owner_data.brand_name
+    embed     = owner_data.embed_name
+    feed      = owner_data.service_feed
     processed = nil
 
     begin
@@ -79,6 +79,7 @@ class Publisher
     rescue Events::DispatchError => e
       Celluloid.logger.info "Failed to dispatch event from feed #{feed} for brand #{brand}"
       Celluloid.logger.debug "Failed to dispatch event #{event.inspect}"
+      Celluloid.logger.error e
     end
 
     decorator.decorate processed
