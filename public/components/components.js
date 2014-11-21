@@ -1,0 +1,1 @@
+steal('components/hub-list', 'components/payments', 'components/settings', 'components/sidebar');
