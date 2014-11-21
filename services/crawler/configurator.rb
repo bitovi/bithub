@@ -44,7 +44,9 @@ class Configurator
   end
 
   def remote_config
-    HTTParty.get url
+    res = HTTParty.get url
+    raise 'Web component not running' unless res.code == 200
+    res
   end
 
   private
