@@ -1,0 +1,23 @@
+<bh-services-list></bh-services-list>
+<h2>Add a service</h2>
+<p>Select a service to connect content and update your feed.</p>
+
+<div class="service-slider-outer-wrap">
+	<div class="service-slider-wrap">
+		<ul class="list-unstyled new-service-picker clearfix">
+			{{#each feeds}}
+				<li can-click="toggleNewService" data-feed="{{@key}}" {{#currentServiceIsNewAndHasFeedName @key}}class="active"{{/currentServiceIsNewAndHasFeedName}}>
+					<i class="fa fa-{{iconFeedMapping @key}}"></i>
+					{{ . }}
+				</li>
+			{{/each}}
+		</ul>
+	</div>
+	<i class="scroll-left fa fa-chevron-left"></i>
+	<i class="scroll-right fa fa-chevron-right"></i>
+</div>
+
+{{#if currentService.isNew}}
+	<h4>Add {{currentServiceFeedName}}</h4>
+	<bh-service-form service="{currentService}"></bh-service-form>
+{{/if}}
