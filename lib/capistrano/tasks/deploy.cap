@@ -29,7 +29,7 @@ namespace :deploy do
   task :steal_build do
     on roles(:all) do |host|
       within release_path.join('public') do
-        execute './node_modules/steal-tools/bin/steal', '--config=stealconfig.js', '--main=bithub-social'
+        execute './node_modules/steal-tools/bin/steal', 'build', '--config=stealconfig.js', '--main=bithub-social'
       end
     end
   end
