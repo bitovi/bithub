@@ -25,6 +25,24 @@ namespace :deploy do
     end
   end
 
+  desc "NPM install"
+  task :npm_install do
+    on roles(:all) do |host|
+      within release_path.join('public') do
+        execute :npm, 'install', '--production', '--silent'
+      end
+    end
+  end
+
+  desc "Bower install"
+  task :bower_install do
+    on roles(:all) do |host|
+      within release_path.join('public') do
+        execute :bower, 'install', '--quite', '--config.interactive=false'
+      end
+    end
+  end
+
   desc "Steal build"
   task :steal_build do
     on roles(:all) do |host|
@@ -36,5 +54,7 @@ namespace :deploy do
 
   after :finishing, 'deploy:export'
   after :finishing, 'deploy:symlink_uploads'
+  after :finishing, 'deploy:npm_install'
+  after :finishing, 'deploy:bower_install'
   after :finishing, 'deploy:steal_build'
 end
