@@ -22,5 +22,5 @@ set :npm_roles, :all
 
 require 'capistrano/bower'
 set :bower_flags, '--quiet --config.interactive=false'
-set :bower_roles, :web
+set :bower_roles, :all
 set :bower_target_path, -> { release_path.join('public') }
