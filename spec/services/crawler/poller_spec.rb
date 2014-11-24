@@ -23,11 +23,4 @@ describe Poller do
       expect{ poller.interval=35 }.to change{ poller.interval }.from(30).to(35)
     end
   end
-
-  describe "#feed_name" do
-    it "extracts the feed_name from the fetcher name" do
-      fetcher = Fetchers::Github::RepoIssues.new
-      expect(Poller.new("nikica", fetcher).feed_name).to eq "github"
-    end
-  end
 end
