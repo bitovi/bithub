@@ -1,0 +1,15 @@
+<h2>Payments</h2>
+<p>You are currently on the </p>
+<h4>Brand plan</h4>
+<hr>
+<h3>Account Actions</h3>
+<ul class="list-unstyled">
+	<li><a href="">Change Billing info</a></li>
+	<li><a href="">Change Account Plan</a></li>
+</ul>
+<hr>
+<h3>Past invoices</h3>
+<div class="alert alert-info">There are no post invoices</div>
+<hr>
+<h3>Upcoming invoices</h3>
+<div class="alert alert-info">There are no upcoming invoices</div>

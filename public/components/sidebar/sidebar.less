@@ -1,0 +1,69 @@
+bh-sidebar {
+	display: block;
+	background: #f1efef;
+	border-right: 1px solid #ced2d3;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	.header {
+		height: 50px;
+		line-height: 20px;
+		padding: 15px;
+		.close-sidebar {
+			float: right;
+		}
+		.back-to-admin {
+			float: left;
+		}
+		.close-sidebar, .back-to-admin {
+			height: 20px;
+			line-height: 20px;
+			margin-top: -20px;
+		}
+		h1 {
+			text-align: center;
+			margin: 0;
+			height: 20px;
+			line-height: 20px;
+			font-size: 20px;
+		}
+	}
+	.hub-name-wrap {
+		margin: 0 15px 29px;
+		border-bottom: 1px solid #d3d3d3;
+		padding: 0 15px;
+		height: 36px;
+		line-height: 36px;
+		h2 {
+			display: inline-block;
+			margin: 0;
+			font-size: 20px;
+			line-height: 36px;
+			height: 36px;
+
+		}
+		b {
+			color: #727272;
+			float: left;
+			margin: 0px 10px 0 0;
+		}
+	}
+	.panel-link {
+		border-top: 1px solid #cecdcd;
+		background: #e4e3e3;
+		height: 37px;
+		display: block;
+		line-height: 37px;
+		padding: 0 15px;
+		color: #727272;
+		text-transform: uppercase;
+		font-size: 12px;
+		&.active {
+			background: #2c2c2c;
+			border-top-color: #2c2c2c;
+			color: white;
+		}
+	}
+	.panel-container {
+		padding: 25px;
+		overflow-y: auto;
+	}
+}

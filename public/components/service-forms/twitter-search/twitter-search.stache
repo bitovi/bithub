@@ -1,0 +1,4 @@
+<div class="form-group">
+	<label>Search Term</label>
+	<input type="text" can-value="map.config.term" class="form-control">
+</div>

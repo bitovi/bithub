@@ -1,0 +1,14 @@
+{
+  "name": "public",
+  "version": "0.0.0",
+  "description": "",
+  "main": "bithub-social.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "steal-tools": "^0.5.0"
+  }
+}
