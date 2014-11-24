@@ -21,12 +21,20 @@ namespace :deploy do
   desc "Symlink uploads"
   task :symlink_uploads do
     on roles(:all) do |host|
-
       execute :ln, '-s', '/home/bithub/web/shared/uploads/', release_path.join('public/uploads')
+    end
+  end
 
+  desc "Steal build"
+  taks :steal_build do
+    on roles(:all) do |host|
+      within release_path.join('public') do
+        execute './node_modules/steal-tools/bin/steal', '--config=stealconfig.js', '--main=bithub-social'
+      end
     end
   end
 
   after :finishing, 'deploy:export'
   after :finishing, 'deploy:symlink_uploads'
+  after :finishing, 'deploy:steal_build'
 end
