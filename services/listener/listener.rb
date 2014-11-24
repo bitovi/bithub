@@ -20,8 +20,6 @@ class Listener
     @chan = @conn.create_channel
 
     @logger.info 'Listener connected to AMQP'
-
-    self
   end
 
   def listen(queue_name, args={})
@@ -38,12 +36,13 @@ Listener
   .new(ENV['RABBITMQ_URI'])
   .listen('q.events') do |payload, logger|
     meta           = payload.fetch('meta')
-    brand_name     = meta.fetch('brand_name').to_s
+    brand_name     = meta.fetch('brand_name')
+    embed_name     = meta.fetch('embed_name')
     feed_name      = meta.fetch('feed_name')
     type_name      = meta.fetch('type_name')
     content_digest = payload.fetch('content_digest')
 
-    logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', feed: '#{feed_name}', type: '#{type_name}'"
+    logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
 
     Apartment::Database.switch brand_name
     logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Database.current_tenant}"
