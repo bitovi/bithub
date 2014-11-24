@@ -19,7 +19,9 @@ module Brands
     def save
       # subscription creates Stripe's customer,
       # so call it after the brand itself is successfully cerated
-      create_subscription if @brand.save
+      if @brand.save && !ENV['STRIPE_DISABLE'].to_bool
+        create_subscription
+      end
     end
 
     def brand_name
