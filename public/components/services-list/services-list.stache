@@ -1,0 +1,14 @@
+{{#if services.isPending}}
+
+{{else}}
+	<table class="table">
+		<tbody>
+			{{#each services}}
+				<tr>
+					<td>{{ feed_name }}</td>
+				</tr>
+			{{/each}}
+		</tbody>
+	</table>
+
+{{/if}}

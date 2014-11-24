@@ -1,11 +1,11 @@
 {
-  "name": "bithub-site",
+  "name": "bithub-social",
   "version": "0.0.0",
-  "homepage": "https://github.com/bitovi/bithub",
+  "homepage": "https://github.com/bitovi/bithub-social",
   "authors": [
     "Mihael Konjevic <konjevic@gmail.com>"
   ],
-  "license": "Private",
+  "license": "-",
   "private": true,
   "ignore": [
     "**/.*",
@@ -15,6 +15,11 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.2.0"
+    "steal": "~0.3.0",
+    "CanJS": "git@github.com:bitovi/canjs.git#minor",
+    "bootstrap": "~3.3.0",
+    "can-form": "retro/can-form",
+    "lodash": "~2.4.1",
+    "fontawesome": "~4.2.0"
   }
 }

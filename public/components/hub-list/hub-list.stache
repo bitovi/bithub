@@ -1,0 +1,47 @@
+<h2>Bitovi Hubs</h2>
+{{#if hubs.isPending}}
+	<div class="alert alert-info">Loading...</div>
+{{else}}
+	{{#if hubs.length}}
+		<a class="btn btn-primary btn-add-hub" href="{{pageUrl 'sidebar'}}">Add Hub</a>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Color Scheme</th>
+					<th>Layout</th>
+					<th>Connected Services</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#hubs}}
+					<tr>
+						<td>
+							{{ name }}
+						</td>
+						<td>
+							{{ colorscheme }}
+						</td>
+						<td>
+							{{ layout}}
+						</td>
+						<td>
+							<button class="btn btn-default btn-xs">Expand</button>
+							{{formatConnectedServices services}}
+						</td>
+						<td>
+							<div class="btn-group">
+								<button class="btn btn-xs btn-default">Edit</button>
+								<button class="btn btn-xs btn-default">Delete</button>
+								<button class="btn btn-xs btn-default">Clone</button>
+							</div>
+						</td>
+					</tr>
+				{{/hubs}}
+			</tbody>
+		</table>
+	{{else}}
+		<div class="alert alert-info">You haven't created any hubs yet. <a href="#">Create your first Hub &raquo;</a></div>
+	{{/if}}
+{{/if}}

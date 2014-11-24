@@ -1,0 +1,4 @@
+<div class="form-group">
+	<label>Group ID</label>
+	<input type="text" can-value="map.config.id" class="form-control">
+</div>

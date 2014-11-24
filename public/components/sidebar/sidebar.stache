@@ -1,0 +1,38 @@
+<div class="header">
+	<h1>Hub Settings</h1>
+	<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
+		<span class="fa fa-arrow-left"></span>
+		Admin
+	</a>
+	<span class="fa fa-close close-sidebar"></span>
+</div>
+<div class="hub-name-wrap">
+	<b>Hub Name</b>
+	<h2>Bithub</h2>
+</div>
+<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
+	Services
+</a>
+{{#isPanel 'services'}}
+	<div class="panel-container">
+		<bh-services></bh-services>
+	</div>
+{{/isPanel}}
+<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
+	Moderation
+</a>
+	{{#isPanel 'moderation'}}
+		<div class="panel-container">Moderation Panel</div>
+	{{/isPanel}}
+<a href="{{linkToPanel 'design'}}" class="panel-link {{#isPanel 'design'}}active{{/isPanel}}">
+	Design
+</a>
+{{#isPanel 'design'}}
+		<div class="panel-container">Design Panel</div>
+	{{/isPanel}}
+<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
+	Integration
+</a>
+{{#isPanel 'integration'}}
+	<div class="panel-container">Integration Panel</div>
+{{/isPanel}}

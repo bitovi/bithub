@@ -1,0 +1,22 @@
+{{#service}}
+
+	<form can-submit="saveService">
+		
+		{{#if hasMultipleTypes}}
+			<label>Type</label>
+			<div class="form-group">
+				<select can-value="type_name" class="form-control">
+					<option value="">Select Type</option>
+					{{#each typesForFeed}}
+					<option value="{{ @key }}">{{ . }}</option>
+					{{/each}}
+				</select>
+			</div>
+		{{/if}}
+
+		{{{renderForm}}}
+
+		<button class="btn btn-primary">Save Service</button>
+	</form>
+
+{{/service}}

@@ -1,0 +1,37 @@
+<h2>Settings</h2>
+<div class="alert alert-info">
+	Your email: <b>mihael@bitovi.com</b>
+</div>
+<h3>Change Password</h3>
+<form action="">
+	<div class="form-group">
+		<label>Old Password</label>
+		<input type="text" class="form-control">
+	</div>
+	<div class="form-group">
+		<label>New Password</label>
+		<input type="text" class="form-control">
+	</div>
+	<div class="form-group">
+		<label>Confirm New Password</label>
+		<input type="text" class="form-control">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-primary">Change Password</button>
+	</div>
+</form>
+<hr>
+<h3>Delete account</h3>
+<div class="alert alert-danger">
+	<b>Warning:</b> This will delete your account and all your content from the system!
+	<b>This is not a reversible action!</b>
+</div>
+<form action="">
+	<div class="form-group">
+		<label>Enter your password</label>
+		<input type="text" class="form-control">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-danger">Delete My account</button>
+	</div>
+</form>

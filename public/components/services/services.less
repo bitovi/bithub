@@ -1,0 +1,67 @@
+bh-services {
+	display: block;
+	.service-slider-outer-wrap {
+		position: relative;
+		margin-bottom: 20px;
+	}
+	.service-slider-wrap {
+		overflow: hidden;
+		height: 77px;
+		border-left: 1px solid #dad9d9;
+		border-right: 1px solid #dad9d9;
+		.new-service-picker {
+			width: 711px;
+			li {
+				float: left;
+				width: 72px;
+				height: 77px;
+				border: 1px solid #dad9d9;
+				text-align: center;
+				font-size: 9px;
+				margin-right: -1px;
+				cursor: pointer;
+				.fa {
+					font-size: 400%;
+					display: block;
+					margin: 10px 0;
+				}
+				&.active {
+					background: white;
+					color: #249cb8;
+				}
+				&:last-child {
+					border-right: none;
+				}
+				&:first-child {
+					border-left: none;
+				}
+			}
+		}
+	}
+	.scroll-left, .scroll-right {
+		background: #dad9d9;
+		color: white;
+		margin-top: -48px;
+		display: block;
+		width: 21px;
+		height: 21px;
+		position: absolute;
+		line-height: 21px;
+		text-align: center;
+		border-radius: 11px;
+		font-size: 90%;
+		&:hover {
+			background: #db4222;
+		}
+	}
+	.scroll-left {
+		left: 0;
+		margin-left: -10px;
+		padding-right: 2px;
+	}
+	.scroll-right {
+		padding-left: 2px;
+		right: 0;
+		margin-right: -10px;
+	}
+}

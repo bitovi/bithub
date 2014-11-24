@@ -2,7 +2,7 @@
 
 <div class="container page-content">
 	<div class="row">
-		<div class="col-xs-2">
+		<div class="col-xs-3">
 			<ul class="list-unstyled sidebar-menu">
 				<% static_pages.each do |page, name| %>
 					<li class="<%= 'active' if current_page?(controller: 'frontend', action: 'render_page', page: page)%>">
@@ -11,7 +11,7 @@
 				<% end %>
 			</ul>
 		</div>
-		<div class="col-xs-10 static-page-content">
+		<div class="col-xs-9 static-page-content">
 			<h2 class="static-page-heading"><%= @current_page_title %></h2>
 			<%= yield %>
 		</div>

@@ -1,0 +1,27 @@
+{{#if state.isSidebar}}
+
+<div class="sidebar-wrap">
+	<bh-sidebar></bh-sidebar>
+</div>
+
+{{else}}
+
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-2"><h1>BitHub</h1></div>
+			<div class="col-xs-10">
+				<ul class="list-unstyled menu">
+					<li>{{{pageLink 'hub-list' 'Hubs'}}}</li>
+					<li>{{{pageLink 'payments' 'Payments'}}}</li>
+					<li>{{{pageLink 'settings' 'Settings'}}}</li>
+					<li>{{{pageLink 'users' 'Users'}}}</li>
+				</ul>
+			</div>
+		</div>
+		<hr>
+		<div class="content">
+			{{{renderPage}}}
+		</div>
+	</div>
+
+{{/if}}
