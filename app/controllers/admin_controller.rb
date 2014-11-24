@@ -1,5 +1,7 @@
 class AdminController < ApplicationController
 
+  layout false, only: [:index]
+
   def choose_brand
     if current_account
       if tenant_name = params['tenant_name']

@@ -1,12 +1,14 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" class="site">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 	<title>BitHub</title>
-	<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="/stylesheets/theme.css" rel="stylesheet" type="text/css">
-	<link href="/stylesheets/app.css" rel="stylesheet" type="text/css">
+	<%if Rails.env == 'development'%>
+		<script src='/bower_components/steal/steal.js' data-main='style/style'></script>
+	<% else %>
+		<link rel="stylesheet" href="/dist/bundles/bithub-social.js">
+	<% end %>
 </head>
 <body>
 	<div id="wrapper">

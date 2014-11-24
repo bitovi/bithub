@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "steal": "~0.3.0",
-    "CanJS": "git@github.com:bitovi/canjs.git#system-steal-domless",
+    "CanJS": "git@github.com:bitovi/canjs.git#minor",
     "bootstrap": "~3.3.0",
     "can-form": "retro/can-form",
     "lodash": "~2.4.1",
