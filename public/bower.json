@@ -15,15 +15,17 @@
     "tests"
   ],
   "dependencies": {
-    "steal": "~0.3.0",
-    "CanJS": "git@github.com:bitovi/canjs.git#minor",
+    "steal": "~0.4.0",
+    "canjs": "git@github.com:bitovi/canjs.git#minor",
     "bootstrap": "~3.3.0",
     "can-form": "retro/can-form",
     "lodash": "~2.4.1",
     "fontawesome": "~4.2.0"
   },
   "resolutions": {
-    "steal": "~0.3.0",
-    "jquery": ">= 1.9.1"
+    "steal": "~0.4.0",
+    "jquery": ">= 1.9.1",
+    "canjs": "minor",
+    "traceur": "0.0.58"
   }
 }
