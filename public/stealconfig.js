@@ -31,7 +31,7 @@
 			'can-form/can-form' : 'can-form'
 		},
 		paths: {
-			"jquery": "bower_components/jquery/dist/jquery.js",
+			"jquery": "bower_components/jquery/jquery.js",
 			"can/*": "bower_components/canjs/*.js",
 			"lodash/*": "bower_components/lodash-amd/modern/*.js",
 			"can-form" : "bower_components/can-form/can-form.js",
