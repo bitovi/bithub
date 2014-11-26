@@ -41,15 +41,15 @@ var LiveService = function( opts ) {
 	this.port        = opts.port        || process.env.LIVESERVICE_PORT || 3002;
 	this.rabbitmqUri = opts.rabbitmqUri || process.env.RABBITMQ_URI;
 	this.redisUrl    = opts.redisUrl    || process.env.REDIS_URL;
-	this.verbose     = opts.verbose     || true;
 	this.endpoints   = opts.endpoints   || ENDPOINTS;
+	this.quite       = opts.quite       || false;
 
 	this.app = http.createServer( indexHandler );
 	this.io  = IO( this.app );
 
-	this.sessions = sessionStore.createClient( this.redisUrl, {verbose: this.verbose} ),
-	this.listener = amqpListener.createClient( this.rabbitmqUri, {verbose: this.verbose} ),
-	this.router   = new messageRouter( {verbose: this.verbose} );
+	this.sessions = sessionStore.createClient( this.redisUrl, {quite: this.quite} ),
+	this.listener = amqpListener.createClient( this.rabbitmqUri, {quite: this.quite} ),
+	this.router   = new messageRouter( {quite: this.quite} );
 };
 
 LiveService.prototype.listen = function() {
@@ -69,7 +69,7 @@ LiveService.prototype.registerEndpoints = function() {
 
 	_.each( self.endpoints, function( endpoint ) {
 		self.listener.bindConsumer(endpoint, function( data ) {
-			self.verbose && console.info( 'New message from MQ', data );
+			self.quite || console.info( 'New message from MQ', data );
 
 			var key = [endpoint, data.meta.brand_name, data.meta.embed_name].join('.');
 			self.router.publish( key, data.payload );
@@ -104,7 +104,7 @@ LiveService.prototype.onIoConnection = function() {
 };
 
 module.exports = {
-	createServer: function() {
-		return new LiveService( arguments );
+	createServer: function( opts ) {
+		return new LiveService( opts );
 	}
 };

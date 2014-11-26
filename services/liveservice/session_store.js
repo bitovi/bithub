@@ -20,18 +20,18 @@ var Client = function( url, opts ) {
 		client = redis.createClient( params.port, params.host );
 
 	this.ready   = Q.defer();
-	this.verbose = opts.verbose;
+	this.quite   = opts.quite || false;
 	this.timeout = opts.timeout || 5000;
 
 	client.on('connect', function() {
-		self.verbose && console.info('Connected to redis on ' + params.host + ':' + params.port);
+		self.quite || console.info('Connected to redis on ' + params.host + ':' + params.port);
 
 		client.select( params.db, function( err, status ) {
 			if( err ) {
 				console.error( 'Redis error: ' + err );
 				self.ready.reject( err );
 			} else {
-				self.verbose && console.info( 'Redis using database ' + params.db );
+				self.quite || console.info( 'Redis using database ' + params.db );
 				self.ready.resolve( status );
 			}
 		});
@@ -49,6 +49,16 @@ Client.prototype.read = function( session_id, cb ) {
 	this.client.get( 'session:' + session_id, function( err, result ) {
 		cb( err, JSON.parse( result ) );
 	});
+};
+
+Client.prototype.create = function( session_id, hash, cb, opts ) {
+	opts = opts || {};
+
+	if( opts.expire ) {
+		this.client.setex( 'session:' + session_id, opts.expire, JSON.stringify(hash), cb );
+	} else {
+		this.client.set( 'session:' + session_id, JSON.stringify(hash), cb );
+	}
 };
 
 Client.prototype.onReady = function() {
