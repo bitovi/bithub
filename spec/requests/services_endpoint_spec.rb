@@ -41,7 +41,7 @@ RSpec.describe 'Service creation', type: :request do
         s = FactoryGirl.create(:twitter_service, embed: @embed)
 
         get "/api/#{api_version}/embeds/#{@embed.id}/services/#{s.id}"
-        expect(json.keys).to include('feed_name', 'config')
+        expect(json.keys).to include('feed_name', 'type_name', 'config')
       end
     end
 
@@ -52,8 +52,8 @@ RSpec.describe 'Service creation', type: :request do
           post "/api/#{api_version}/embeds/#{@embed.id}/services", {
             service: {
               feed_name: 'twitter',
+              type_name: 'user_timeline',
               config: {
-                :type => 'user_timeline',
                 :terms => %w(@canjs)
               }
             }
@@ -70,7 +70,7 @@ RSpec.describe 'Service creation', type: :request do
           post "/api/#{api_version}/embeds/#{@embed.id}/services", {
             service: {
               feed_name: 'foosbal',
-              service_type: 'nonexistent',
+              type_name: 'nonexistent',
               config: {
                 terms: %w(wat are these)
               }
