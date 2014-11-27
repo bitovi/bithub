@@ -10,7 +10,12 @@
 						<li><a href="/register">Sign Up</a></li>
 						<li><a href="/login">Login</a></li>
 					<% else %>
-						<li><a href="/logout">Logout</a></li>
+						<li>
+							<a href="/logout">
+								Logout 
+								<span class="email"><%= current_account.email %></span>
+							</a>
+						</li>
 					<% end %>
 				</ul>
 			</div>
