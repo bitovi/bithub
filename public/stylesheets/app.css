@@ -295,7 +295,8 @@ html, body {
   position: relative;
   z-index: 2;
   background: #a9e3f0;
-  font-size: 150%; }
+  font-size: 150%;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1); }
   .plan-primary .pricing-wrap h3 {
     font-size: 200%; }
 
