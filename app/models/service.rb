@@ -1,6 +1,6 @@
 class Service < ActiveRecord::Base
 
-  validates_presence_of :embed_id, :feed_name
+  validates_presence_of :embed_id, :feed_name, :type_name
   validate :json_config_valid
 
   belongs_to :embed

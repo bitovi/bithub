@@ -215,6 +215,7 @@ ActiveRecord::Schema.define(version: 20141114153920) do
   create_table "services", force: true do |t|
     t.integer  "embed_id"
     t.string   "feed_name"
+    t.string   "type_name"
     t.json     "json_config"
     t.datetime "created_at"
     t.datetime "updated_at"

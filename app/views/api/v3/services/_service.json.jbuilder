@@ -1,1 +1,1 @@
-json.(service, :id, :feed_name, :config)
+json.(service, :id, :feed_name, :type_name, :config)
