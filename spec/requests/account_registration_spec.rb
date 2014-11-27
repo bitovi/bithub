@@ -11,17 +11,6 @@ RSpec.describe 'Account registration', type: :request do
     StripeMock.stop
   end
 
-  describe "GET /register/:plan" do
-    it 'renders the register page on /register' do
-      get '/register/starter'
-      assert_select '#new_account' do
-        assert_select '#account_email'
-        assert_select '#account_password'
-        assert_select '#account_password_confirmation'
-      end
-    end
-  end
-
   describe 'POST /register' do
     it 'creates an account, a new brand and subscription for that account' do
       expect do
