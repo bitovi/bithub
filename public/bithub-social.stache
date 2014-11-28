@@ -15,6 +15,7 @@
 					<li>{{{pageLink 'payments' 'Payments'}}}</li>
 					<li>{{{pageLink 'settings' 'Settings'}}}</li>
 					<li>{{{pageLink 'users' 'Users'}}}</li>
+					<li><a href="/logout" class="btn btn-link">Logout</a></li>
 				</ul>
 			</div>
 		</div>
