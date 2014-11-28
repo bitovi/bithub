@@ -64,7 +64,7 @@ Description
 **Used to definine moderation rules for incoming data.**
 
 Only one blocking and one moderating filter can be
-defined for each embed. 
+defined for each embed.
 
 The blocking filter prevents saving the incoming data,
 and the moderating filter automatically approves an entity
@@ -127,7 +127,7 @@ Embed > Services
 
 **Used to define configuration for a given feed.**
 
-Each feed, for example Github, Facebook and Twitter, has to be 
+Each feed, for example Github, Facebook and Twitter, has to be
 configured so as to enable the crawler fetch data from those
 feeds.
 
@@ -186,17 +186,7 @@ Hashtag:
 {
 	feed_name: "twitter",
 	type_name: "hashtag",
-	config: { hashtag: "canjs" }
-}
-```
-
-Hashtag:
-
-```
-{
-	feed_name: "twitter",
-	type_name: "search",
-	config: { term: "canjs is best" }
+	config: { hashtag: "bitovi" }
 }
 ```
 
@@ -217,7 +207,7 @@ Forum:
 Facebook:
 ---
 
-Page: 
+Page:
 
 ```
 {
@@ -243,7 +233,7 @@ Venue:
 Instagram
 ---
 
-User: 
+User:
 
 ```
 {
@@ -253,13 +243,13 @@ User:
 }
 ```
 
-Tag: 
+Tag:
 
 ```
 {
 	feed_name: "foursquare",
 	type_name: "tag",
-	config: { tag: "blago"}
+	config: { tag: "blago" }
 }
 ```
 
@@ -295,11 +285,7 @@ Repo:
 }
 ```
 
-<<<<<<< HEAD
-Org:
-=======
 Organization:
->>>>>>> crawler_fixes
 
 ```
 {
@@ -317,7 +303,7 @@ Tags (questions and answers):
 ```
 {
 	feed_name: "stackexchange",
-	type_name: "tags",
+	type_name: "tag",
 	config: { tags: ["canjs", "jquerypp", "javascriptmvc"] }
 }
 ```
@@ -335,13 +321,56 @@ Blog:
 }
 ```
 
-Tags:
+Tag:
 
 ```
 {
 	feed_name: "tumblr",
-	type_name: "tags",
-	config: { tags: ["braclets", "diy", "gosling"] }
+	type_name: "tag",
+	config: { tag: "braclets" }
+}
+```
+
+Instagram
+---
+
+User:
+
+```
+{
+	feed_name: "instagram",
+	type_name: "user",
+	config: {  }
+}
+```
+
+Tag:
+
+```
+{
+	feed_name: "instagram",
+	type_name: "tag",
+	config: { tag: "braclets" }
+}
+```
+
+Location:
+
+```
+{
+	feed_name: "instagram",
+	type_name: "location",
+	config: { id: "12345" }
+}
+```
+
+Geography:
+
+```
+{
+	feed_name: "instagram",
+	type_name: "geography",
+	config: { lat: "35.657872", lng: "139.70232", radius: "1000" }
 }
 ```
 
@@ -354,7 +383,9 @@ Site:
 {
 	feed_name: "rss",
 	type_name: "site",
-	config: { url: "pltconfusion.com/feed" }
+	config: {
+		tag_with: ["blog"],
+		url: "pltconfusion.com/feed"
+	}
 }
 ```
-
