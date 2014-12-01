@@ -3,10 +3,11 @@ steal(
 './bithub-social.stache!',
 'can/route',
 'can/view/stache',
+'lodash/collections/reduce.js',
 'can/map/define',
 'components',
 'fixtures',
-function(Map, initView, route, stache){
+function(Map, initView, route, stache, _reduce){
 
 	var AppState = Map.extend({
 		define : {
@@ -19,23 +20,30 @@ function(Map, initView, route, stache){
 		}
 	})
 
+	var getHash = function(optsHash){
+		return _reduce(optsHash || {}, function(acc, val, key){
+			acc[key] = can.isFunction(val) ? val() : val;
+			return acc;
+		}, {});
+	}
+
 	var appState = new AppState;
 
 	can.route.map(appState);
 
 	can.route.ready();
 
-	stache.registerHelper('pageUrl', function(page, title){
-		page = can.isFunction(page) ? page() : page;
-
-		return can.route.url({page: page}, false);
+	stache.registerHelper('pageUrl', function(page, opts){
+		var hash = getHash(opts.hash);
+		hash.page = can.isFunction(page) ? page() : page;
+		return can.route.url(hash, false);
 	});
 
 	$('#app').html(initView({
 		state: appState
 	}, {
 		renderPage : function(){
-			var page = can.route.attr('page'),
+			var page = can.route.attr('page') || "hub-list",
 				template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
 
 			return template(this)
