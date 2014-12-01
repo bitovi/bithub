@@ -15,7 +15,7 @@ steal(
 'components/service-forms/rss-site',
 'components/service-forms/stackexchange-tags',
 'components/service-forms/tumblr-blog',
-'components/service-forms/tumblr-tags',
+'components/service-forms/tumblr-tag',
 'components/service-forms/twitter-followers',
 'components/service-forms/twitter-hashtag',
 'components/service-forms/twitter-search',

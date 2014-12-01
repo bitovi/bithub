@@ -33,7 +33,7 @@ function(Model, _keys){
 		},
 		tumblr : {
 			blog : 'Blog',
-			tags : 'Tags'
+			tag : 'Tag'
 		},
 		twitter : {
 			followers : 'Followers',
