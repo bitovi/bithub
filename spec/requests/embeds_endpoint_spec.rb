@@ -56,6 +56,17 @@ RSpec.describe 'Embed endpoints', type: :request do
         expect(json.keys).to include('name', 'colorscheme', 'layout')
       end
     end
+    
+    describe 'PUT /embeds' do
+      it 'updates an existing embed' do
+        Apartment::Database.switch('neektza')
+        e = FactoryGirl.create(:embed, brand: @current_brand)
+
+        put "/api/#{api_version}/embeds/#{e.id}", { embed: { name: 'myname' } } 
+        expect(response).to be_success
+        expect(json['name']).to eq 'myname'
+      end
+    end
 
     describe 'DELETE /embeds/:id' do
       it 'destroys an existing embed' do
