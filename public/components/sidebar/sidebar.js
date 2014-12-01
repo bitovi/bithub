@@ -28,7 +28,7 @@ function(Component, initView, Models){
 					this.attr('hub', new Models.Hub);
 				}
 			},
-			toggleHubEditting : function(){
+			toggleHubEditing : function(){
 				var newVal = !this.attr('isEditing');
 				newVal && this.attr('hub').backup();
 				this.attr('isEditing', newVal);
@@ -37,6 +37,7 @@ function(Component, initView, Models){
 				var key = KEYMAP[ev.which];
 
 				if(key === 'ENTER'){
+					this.attr('hub').attr('name', el.val());
 					this.attr('hub').save();
 				} else {
 					this.attr('hub').restore();
@@ -66,7 +67,7 @@ function(Component, initView, Models){
 				var self = this;
 				if(newVal){
 					setTimeout(function(){
-						self.element.find('[can-value=name]').focus();
+						self.element.find('.hub-name').select().focus();
 					}, 100);
 				}
 			}
