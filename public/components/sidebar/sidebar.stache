@@ -7,13 +7,13 @@
 		</a>
 		<span class="fa fa-close close-sidebar"></span>
 	</div>
-	<div class="hub-name-wrap">
+	<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}">
 		{{#if isEditing}}
-			<input type="text" class="form-control" can-value="name" can-keydown="restoreOrSave">
+			<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}">
 		{{else}}
 			<b>Hub Name</b>
 			<h2>{{ name }}</h2>
-			<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditting"></i>
+			<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
 		{{/if}}
 	</div>
 	<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
