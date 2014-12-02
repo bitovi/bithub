@@ -14,7 +14,7 @@ class Service < ActiveRecord::Base
   end
 
   def config
-    @config ||= Services::ServiceConfig.new(json_config, feed_name)
+    @config ||= Services::ServiceConfig.new(feed_name, type_name, json_config)
   end
 
   def json_config_valid
