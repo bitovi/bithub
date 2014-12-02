@@ -1,41 +1,44 @@
 module Services
-
   class ServiceConfig
-    def initialize(data, feed_name)
-      @data = data
+
+    attr_reader :errors
+
+    def initialize(feed_name, type_name, json_config)
       @feed_name = feed_name
+      @type_name = type_name
+      @config    = json_config
+      @validator = get_validator
+      @errors    = []
     end
 
     def valid?
-      @validator = ServiceConfigValidator.new(@data, @feed_name)
-      @validator.valid?
-    end
-    
-    def errors
-      { missing_keys: @validator.errors[:missing] }
+      if @validator
+        @validator.new @config
+        true
+      else
+        @errors.push({ type: :validator, msg: "Feed: #{@feed_name}, Type: #{@type_name}" })
+        false
+      end
+    rescue Virtus::CoercionError => e
+      @errors.push({ type: :coercion, attr: e.attribute_name, msg: e.message })
+      false
     end
 
     def error_msg
-      "missing keys: #{@validator.errors[:missing].join(',')}"
+      @errors.map {|e| "#{e[:type]} error: #{e[:msg]}" }.join('\n')
     end
 
-    def data
-      @data if valid?
-    end
+    private
 
-    def terms
-      (@data.andand['terms'] && not(@data['terms'].empty?)) ? @data['terms'] : []
-    end
+    def get_validator
+      validators = Services::ConfigValidators
+      feed = @feed_name.to_s.camelize
+      type = @type_name.to_s.camelize
 
-    def tags
-      ConfigTagPlucker.new(@data).tags if valid?
-    end
-    
-    Feeds = %i(facebook twitter github meetup foursquare stackexchange disqus rss irc)
-    Feeds.each do |feed|
-      define_method("is_#{feed}?") do
-        @feed_name == feed.to_s
+      if validators.const_defined?(feed, false) && validators.const_get(feed).const_defined?(type, false)
+        validators.const_get(feed).const_get(type)
       end
     end
+
   end
 end
