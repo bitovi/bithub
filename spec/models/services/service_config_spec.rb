@@ -1,19 +1,35 @@
-require 'spec_helper'
-require 'andand'
-require 'models/services/service_config'
+require 'rails_helper'
 
 describe Services::ServiceConfig do
 
-  describe '#terms' do
-    it 'plucks terms out of @data if they\'re present' do
-      sc = Services::ServiceConfig.new({'terms' => %w(some terms)}, 'doesn_matter')
-      expect(sc.terms).to eq(%w(some terms))
+  describe '#valid?' do
+    it 'returns true if config is valid' do
+      config = {
+        name: 'foo/bar',
+        tracking: { issues: true, pull_requests: false }
+      }
+
+      sc = Services::ServiceConfig.new('github', 'repo', config)
+      expect(sc.valid?).to be true
     end
 
-    it 'returns an empty array if there are no terms in the config' do
-      sc = Services::ServiceConfig.new({'terms' => nil}, 'doesn_matter')
-      expect(sc.terms).to eq([])
+    it 'returns false and records errors if config is invalid' do
+      config = {
+        name: 'foo/bar',
+        tracking: { issues: true } # pull_req attr is missing
+      }
+
+      sc = Services::ServiceConfig.new('github', 'repo', config)
+      expect(sc.valid?).to eq false
+      expect(sc.errors.first[:type]).to eq(:coercion)
+      expect(sc.errors.first[:attr]).to eq(:pull_requests)
+    end
+
+    it 'returns false and records errors if validator is missing' do
+      sc = Services::ServiceConfig.new('unknown', 'feed/type', {})
+      expect(sc.valid?).to eq false
+      expect(sc.errors.first[:type]).to eq(:validator)
     end
   end
-  
+
 end
