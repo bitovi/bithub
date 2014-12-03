@@ -1,7 +1,7 @@
 {{#if state.isSidebar}}
 
 <div class="sidebar-wrap">
-	<bh-sidebar></bh-sidebar>
+	<bh-sidebar state="{state}"></bh-sidebar>
 </div>
 
 <main id="content" class="container-fluid">
@@ -22,7 +22,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -77,7 +77,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -132,7 +132,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -191,7 +191,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -243,7 +243,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -298,7 +298,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -354,7 +354,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -406,7 +406,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -458,7 +458,7 @@
               <div class="bit-authorHandle col-xs-12 no-gutter">
                 <a href="#">
                   @JJJS
-                </a>  
+                </a>
               </div>
             </figcaption>
             <div class="bit-origin col-xs-2 no-gutter text-right">
@@ -501,7 +501,7 @@
           </div>
         </article>
       <!-- Closing Container of Bits -->
-      </div>        
+      </div>
 
     </main>
 

@@ -16,16 +16,16 @@ function(Map, initView, route, stache, _reduce){
 			}
 		},
 		isSidebar : function(){
-			return this.attr('page') === 'sidebar'
+			return this.attr('page') === 'sidebar';
 		}
-	})
+	});
 
 	var getHash = function(optsHash){
 		return _reduce(optsHash || {}, function(acc, val, key){
 			acc[key] = can.isFunction(val) ? val() : val;
 			return acc;
 		}, {});
-	}
+	};
 
 	var appState = new AppState;
 
@@ -46,7 +46,7 @@ function(Map, initView, route, stache, _reduce){
 			var page = can.route.attr('page') || "hub-list",
 				template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
 
-			return template(this)
+			return template(this);
 		},
 		pageLink : function(page, title){
 			page = can.isFunction(page) ? page() : page;
