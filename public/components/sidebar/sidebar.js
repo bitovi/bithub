@@ -9,7 +9,7 @@ function(Component, initView, Models){
 	var KEYMAP = {
 		13 : 'ENTER',
 		27 : 'ESC'
-	}
+	};
 
 	return Component.extend({
 		tag : 'bh-sidebar',

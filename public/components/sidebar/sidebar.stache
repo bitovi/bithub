@@ -21,7 +21,7 @@
 	</a>
 	{{#isPanel 'services'}}
 		<div class="panel-container">
-			<bh-services></bh-services>
+			<bh-services state="{state}"></bh-services>
 		</div>
 	{{/isPanel}}
 	<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
