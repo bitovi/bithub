@@ -30,7 +30,7 @@ namespace :seed do
           service =  Service.new(embed: embed,
                                  feed_name: sc[:feed_name],
                                  type_name: sc[:type_name],
-                                 json_config: sc[:json_config])
+                                 config:    sc[:config])
 
           puts "\t\t --> Created new service ('#{service.feed_name}' '#{service.type_name}')." if service.save!
         end

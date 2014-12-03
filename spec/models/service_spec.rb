@@ -9,7 +9,7 @@ RSpec.describe Service, :type => :model do
         embed_id: 7,
         feed_name: 'twitter',
         type_name: 'followers',
-        json_config: { # rename to config
+        config: {
           fruit: %w(apple and banana)
         }
       })

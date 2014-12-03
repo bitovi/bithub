@@ -3,10 +3,10 @@ module Services
 
     attr_reader :errors
 
-    def initialize(feed_name, type_name, json_config)
+    def initialize(feed_name, type_name, config)
       @feed_name = feed_name
       @type_name = type_name
-      @config    = json_config
+      @config    = config
       @validator = get_validator
       @errors    = []
     end

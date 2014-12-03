@@ -4,7 +4,7 @@ class CreateServices < ActiveRecord::Migration
       t.references :embed
       t.string  :feed_name
       t.string  :type_name
-      t.column  :json_config, :json
+      t.column  :config, :json
       t.timestamps
     end
   end
