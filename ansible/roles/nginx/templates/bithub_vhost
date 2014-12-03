@@ -11,9 +11,6 @@ server {
 
     server_name *.bithub.loc;
 
-    root /vagrant/bithub-client/;
-    index index.html;
-
     location / {
          try_files $uri @api;
     }

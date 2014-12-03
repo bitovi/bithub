@@ -230,29 +230,6 @@ Venue:
 }
 ```
 
-Instagram
----
-
-User:
-
-```
-{
-	feed_name: "instagram",
-	type_name: "user",
-	config: { id: "id"}
-}
-```
-
-Tag:
-
-```
-{
-	feed_name: "foursquare",
-	type_name: "tag",
-	config: { tag: "blago" }
-}
-```
-
 Meetup
 ---
 
@@ -279,7 +256,7 @@ Repo:
 		name: "retro/apitizer",
 		tracking: {
 			issues: true,
-			pull_req: false
+			pull_requests: false
 		}
 	}
 }
@@ -303,7 +280,7 @@ Tags (questions and answers):
 ```
 {
 	feed_name: "stackexchange",
-	type_name: "tag",
+	type_name: "tags",
 	config: { tags: ["canjs", "jquerypp", "javascriptmvc"] }
 }
 ```
@@ -340,7 +317,7 @@ User:
 {
 	feed_name: "instagram",
 	type_name: "user",
-	config: {  }
+	config: { id: "id" }
 }
 ```
 
