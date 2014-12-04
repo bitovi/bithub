@@ -13,8 +13,8 @@ FactoryGirl.define do
 
     factory :twitter_service do
       feed_name 'twitter'
-      type_name 'timeline'
-      config Hash['terms', %w(canjs javascriptmvc)]
+      type_name 'user_timeline'
+      config Hash['handle', 'bitovi']
     end
 
     factory :facebook_service do

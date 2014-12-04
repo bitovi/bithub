@@ -3,16 +3,18 @@ class Api::V3::ServicesController < Api::V3::BaseController
   # load_and_authorize_resource
 
   def index
-    embed = current_brand.embeds.find(embed_id)
-    @services = embed.services
+    if params[:embed_id]
+      embed = current_brand.embeds.find params[:embed_id]
+      @services = embed.services
+    else
+      @services = Service.all
+    end
+
     render 'api/v3/services/index'
   end
 
   def show
-    embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.find(service_id)
-
-    if @service
+    if @service = Service.find(service_id)
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'show'), :status => 404
@@ -30,33 +32,24 @@ class Api::V3::ServicesController < Api::V3::BaseController
     end
   end
 
-  def tree
-    if !test_acc?
-      @tree = Hash[ brands_with_nested_service_pairs ]
-      render json: @tree
+  def destroy
+    @service = Service.find(service_id)
+
+    if @service && @service.destroy
+      render :json => msg_hash(@service, 'destroy', 'success')
     else
-      render json: JSON.parse(File.read('config/test_account.json'))
+      render :json => msg_hash(@service, 'destroy'), :status => 406
     end
+  end
+
+  def tree
+    @tree = Hash[ brands_with_nested_service_pairs ]
+    render json: @tree
   end
 
   def suggestions
     bi = current_brand.identities.find_by_provider(params[:feed_name])
     render json: Identities::SuggestionNormalizer.new(bi).normalize(params[:type_name])
-  end
-
-  def update
-    # TODO
-  end
-
-  def destroy
-    embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.find(service_id)
-
-    if @service.destroy
-      render :json => msg_hash(@service, 'destroy', 'success')
-    else
-      render :json => msg_hash(@service, 'destroy'), :status => 406
-    end
   end
 
   private
@@ -75,12 +68,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
     end
   end
 
-  def test_acc?
-    !params[:test_acc].nil?
-  end
-
   def embed_id
-    params.require(:embed_id)
+    params[:embed_id] || params.require(:service).require(:embed_id)
   end
 
   def service_id
@@ -88,7 +77,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def service_definition
-    service_kind.merge({json_config: service_config})
+    service_kind.merge({config: service_config})
   end
 
   def service_kind
