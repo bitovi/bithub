@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class Api::V3::EmbedsController < Api::V3::BaseController
   before_filter :authenticate!
   load_and_authorize_resource
@@ -14,7 +16,15 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
   def create
     @embed = current_brand.embeds.create(embed_params)
+    @embed.name = generated_name if params[:name].blank?
     render :show
+  end
+  
+  def update
+    @embed = current_brand.embeds.find(params[:id])
+    if @embed.update_attributes(embed_params)
+      render :show
+    end
   end
 
   def destroy
@@ -28,7 +38,12 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   private
+
   def embed_params
     params.require(:embed).permit(:name, :colorscheme, :layout)
+  end
+
+  def generated_name
+    SecureRandom.hex
   end
 end
