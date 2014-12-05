@@ -8,4 +8,4 @@ steal('can/model', 'can/list/promise', 'can/construct/super', 'can/map/backup', 
 			}
 		}
 	});
-})
+});

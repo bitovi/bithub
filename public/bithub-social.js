@@ -9,6 +9,13 @@ steal(
 'fixtures',
 function(Map, initView, route, stache, _reduce){
 
+	$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+		if(options.type.toLowerCase() !== 'get'){
+			options.data = JSON.stringify(originalOptions.data);
+			options.contentType = 'application/json';
+		}
+	});
+
 	var AppState = Map.extend({
 		define : {
 			page : {
