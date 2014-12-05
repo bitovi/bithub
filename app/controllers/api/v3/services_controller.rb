@@ -62,9 +62,9 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def feed_name_config_pairs
     Service.all do |s|
-      !s.config.data.present?
+      !s.service_config.data.present?
     end.map do |s|
-      [s.feed_name, s.config.data]
+      [s.feed_name, s.service_config.data]
     end
   end
 

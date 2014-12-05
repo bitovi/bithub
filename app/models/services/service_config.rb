@@ -24,6 +24,10 @@ module Services
       false
     end
 
+    def data
+      @config if valid?
+    end
+
     def error_msg
       @errors.map {|e| "#{e[:type]} error: #{e[:msg]}" }.join('\n')
     end
