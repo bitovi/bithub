@@ -2,19 +2,15 @@ require_relative 'service_info'
 
 class TreePath
   SEPARATOR = '->'
+  LEVELS = [:root, :brand_name, :embed_name, :service_info]
 
-  class Node
-    def initialize(content, type)
-      @content = content; @type = type
-    end
-    attr_reader :content, :type
-
-    def to_a
-      @content.respond_to?(:to_a) ? @content.to_a : [@content]
-    end
-
-    def to_s
-      @content.to_s
+  def self.from_message(nodes)
+    if (curr = nodes.pop) != nil
+      node = curr.include?('+') ? ServiceInfo.new(*curr.split('+')) : curr
+      lvl = LEVELS[nodes.length]
+      TreePath.new(from_message(nodes), node, lvl)
+    else
+      nil
     end
   end
 
@@ -29,6 +25,10 @@ class TreePath
   
   def path
     root? ? @node.to_a : @parent.path + @node.to_a
+  end
+
+  def ==(other)
+    path == other.path
   end
 
   def rootles_path
@@ -71,6 +71,10 @@ class TreePath
   end
   alias_method :embed, :embed_name
 
+  def service_info
+    find(:service_info)
+  end
+
   def service_name
     find(:service_info).to_s
   end
@@ -81,5 +85,20 @@ class TreePath
   
   def service_type
     find(:service_info).type_name
+  end
+  
+  class Node
+    def initialize(content, type)
+      @content = content; @type = type
+    end
+    attr_reader :content, :type
+
+    def to_a
+      @content.respond_to?(:to_a) ? @content.to_a : [@content]
+    end
+
+    def to_s
+      @content.to_s
+    end
   end
 end

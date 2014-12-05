@@ -26,7 +26,6 @@ require_relative 'publisher'
 require_relative 'configurator'
 require_relative 'commander'
 require_relative 'poller'
-require_relative 'fetchers/all'
 require_relative 'decorators/all'
 require_relative 'persistent/digest_set'
 require_relative 'response_processor'
@@ -44,7 +43,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
   supervise HttpServer::Listener, as: :http_listener
-  supervise Supervisors::Main, as: :main_supervisor
+  supervise Supervisors::Main, as: :main
 end
 
 Crawler.run
