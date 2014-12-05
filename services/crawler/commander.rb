@@ -29,16 +29,23 @@ class Commander
   end
 
   def dispatch_command(msg)
-    Celluloid.logger.info "Executing #{message_action(msg)} for #{message_scope(msg)}"
-    Celluloid::Actor[:main_supervisor].reload_brand_feed(*message_scope(msg))
+    path = TreePath.from_message(message_scope(msg))
+
+    Celluloid.logger.info "Executing #{message_action(msg)} for #{path}"
+    Celluloid::Actor[:main].handle_cmd(path, message_action(msg))
   end
 
   def message_action(msg)
-    msg.fetch(:action)
+    msg.fetch(:action).to_sym
   end
 
   def message_scope(msg)
-    [msg.fetch(:brand_name), msg.fetch(:feed_name)]
+    [
+      'main',
+      msg[:brand_name],
+      msg[:embed_name],
+      msg[:service_info],
+    ].compact
   end
 
   def rabbitmq_uri
