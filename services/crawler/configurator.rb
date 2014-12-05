@@ -44,9 +44,13 @@ class Configurator
   end
 
   def remote_config
-    res = HTTParty.get url
-    raise 'Web component not running' unless res.code == 200
-    res
+    if @env == 'test'
+      JSON.parse(File.read('config/test_account.json'))
+    else
+      res = HTTParty.get url
+      raise 'Web component not running' unless res.code == 200
+      res
+    end
   end
 
   private
