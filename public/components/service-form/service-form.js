@@ -30,17 +30,18 @@ function(Component, initView, Models){
 		tag : 'bh-service-form',
 		template: initView,
 		scope : {
-			saveService : function(service, el, ev){
+			saveService : function(formData, el, ev){
 				ev.preventDefault();
+
+				var self = this;
 
 				this.attr('service').attr('embed_id', this.state.attr('hubId'));
 
-				this.attr('service').save( function( model ) {
-					console.log( 'SAVED' );
-					console.log( arguments );
+				this.attr('service').save( function( newService ) {
+					console.log('Service saved!');
+					self.attr('services').push( newService );
 				}, function( error ) {
-					console.log( 'ERROR' );
-					console.log( arguments );
+					console.log('Error on creating service: ', error );
 				});
 
 				this.attr('service', null);

@@ -18,6 +18,15 @@ function(Component, Models, initView){
 		template : initView,
 		scope : {
 			currentService : null,
+			define : {
+				services : {
+					get : function() {
+						return new Models.Service.List({
+							embed_id: this.attr('state.hubId')
+						});
+					}
+				}
+			},
 			feeds : Models.Service.feeds,
 			toggleNewService : function(ctx, el){
 				var feed = el.data('feed'),

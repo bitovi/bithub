@@ -10,7 +10,6 @@
 				"feed_name":"stackexchange",
 				"type_name":"tags",
 				"config": {
-					"access_token":"owNlHljrKl3zIweUoFK7mQ))",
 					"tags":[ "canjs", "funcunit", "jquerypp", "javascriptmvc" ]
 				}
 			},
@@ -18,7 +17,6 @@
 				"feed_name":"github",
 				"type_name":"repo",
 				"config": {
-					"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
 					"name":"bitovi/canjs",
 					"tracking": { "issues":true, "pull_requests": false }
 				}
@@ -27,7 +25,6 @@
 				"feed_name":"github",
 				"type_name":"repo",
 				"config": {
-					"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
 					"name": "bitovi/funcunit",
 					"tracking": { "issues": false, "pull_requests": true }
 				}
@@ -36,7 +33,6 @@
 				"feed_name":"github",
 				"type_name":"org",
 				"config": {
-					"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
 					"name": "bitovi"
 				}
 			}
@@ -50,7 +46,6 @@
 				"feed_name":"meetup",
 				"type_name":"group",
 				"config": {
-					"access_token":"4c480e096c41f8adeeccd1ded37ce44c",
 					"id":"12312342"
 				}
 			},
@@ -80,27 +75,21 @@
 				"feed_name":"twitter",
 				"type_name":"hashtag",
 				"config": {
-					"hashtag": "31c3",
-					"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-					"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+					"hashtag": "31c3"
 				}
 			},
 			{
 				"feed_name":"twitter",
 				"type_name":"user_timeline",
 				"config": {
-					"handle":"bitovi",
-					"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-					"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+					"handle":"bitovi"
 				}
 			},
 			{
 				"feed_name":"twitter",
 				"type_name":"followers",
 				"config": {
-					"handle":"bitovi",
-					"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-					"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+					"handle":"bitovi"
 				}
 			}
 			]
