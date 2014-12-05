@@ -20,6 +20,8 @@ function(Model, _keys){
 		},
 		instagram : {
 			tag : 'Tag',
+			// location : 'Location',
+			// geography : 'Geography',
 			user : 'User'
 		},
 		meetup : {
@@ -33,13 +35,12 @@ function(Model, _keys){
 		},
 		tumblr : {
 			blog : 'Blog',
-			tags : 'Tags'
+			tag : 'Tag'
 		},
 		twitter : {
 			followers : 'Followers',
 			hashtag : 'Hashtag',
-			search : 'Search',
-			timeline : 'Timeline'
+			user_timeline : 'User Timeline'
 		}
 	};
 
@@ -69,6 +70,11 @@ function(Model, _keys){
 
 					return val;
 				}
+			}
+		},
+		serialize : function(){
+			return {
+				service : this._super.apply(this, arguments)
 			}
 		},
 		typesForFeed : function(){

@@ -81,5 +81,7 @@ steal('can/util/fixture', function(fixture){
 	can.fixture('POST /api/v3/services', serviceStore.create);
 	can.fixture('PUT /api/v3/services/{id}', serviceStore.update);
 	can.fixture('DELETE /api/v3/services/{id}', serviceStore.destroy);
+	
+	can.fixture.on = false;
 
 });

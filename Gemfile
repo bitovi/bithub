@@ -23,6 +23,7 @@ gem 'cancan'
 gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
+gem 'virtus'
 
 gem 'textacular'
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'

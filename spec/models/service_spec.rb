@@ -7,8 +7,9 @@ RSpec.describe Service, :type => :model do
     it 'delegates validation to the ServiceConfig model' do
       s = Service.new({
         embed_id: 7,
-        feed_name: 'fruitco',
-        json_config: {
+        feed_name: 'twitter',
+        type_name: 'followers',
+        config: {
           fruit: %w(apple and banana)
         }
       })

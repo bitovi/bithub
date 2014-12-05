@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 20141114153920) do
     t.integer  "embed_id"
     t.string   "feed_name"
     t.string   "type_name"
-    t.json     "json_config"
+    t.json     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

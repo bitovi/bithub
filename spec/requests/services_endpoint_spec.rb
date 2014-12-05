@@ -26,26 +26,32 @@ RSpec.describe 'Service creation', type: :request do
   end
 
   context 'given the account is logged in and the brand is determined' do
-    describe 'GET /embed/1/services' do
+    describe 'GET /embed/1/services | GET /services' do
       it 'gets all services' do
         FactoryGirl.create(:twitter_service, embed: @embed)
         FactoryGirl.create(:twitter_service, embed: @embed)
 
         get "/api/#{api_version}/embeds/#{@embed.id}/services"
         expect(json.length).to eq 2
+
+        get "/api/#{api_version}/services"
+        expect(json.length).to eq 2
       end
     end
 
-    describe 'GET /embed/1/services/1' do
+    describe 'GET /embed/1/services/1 | GET /services/1' do
       it 'gets a specific service' do
         s = FactoryGirl.create(:twitter_service, embed: @embed)
 
         get "/api/#{api_version}/embeds/#{@embed.id}/services/#{s.id}"
         expect(json.keys).to include('feed_name', 'type_name', 'config')
+
+        get "/api/#{api_version}/services/#{s.id}"
+        expect(json.keys).to include('feed_name', 'type_name', 'config')
       end
     end
 
-    describe 'POST /services' do
+    describe 'POST /embeds/1/services' do
       context 'given well defined service data' do
         it 'creates a new service' do
 
@@ -54,7 +60,7 @@ RSpec.describe 'Service creation', type: :request do
               feed_name: 'twitter',
               type_name: 'user_timeline',
               config: {
-                :terms => %w(@canjs)
+                :handle => 'canjs'
               }
             }
           }.to_json, AuthTestData::POST_HEADERS
@@ -82,12 +88,42 @@ RSpec.describe 'Service creation', type: :request do
       end
     end
 
-    describe 'DELETE /embed_services/1' do
+    describe 'POST /services' do
+      context 'given well defined service data' do
+        it 'creates a new service' do
+
+          post "/api/#{api_version}/services", {
+            service: {
+              feed_name: 'twitter',
+              type_name: 'user_timeline',
+              embed_id: @embed.id,
+              config: {
+                :handle => 'canjs'
+              }
+            }
+          }.to_json, AuthTestData::POST_HEADERS
+
+          expect(response).to be_success
+          expect(Service.count).to eq 1
+        end
+      end
+    end
+
+    describe 'DELETE /embed/1/services/1' do
       it 'destroys an existing service' do
         s = FactoryGirl.create(:twitter_service, embed: @embed)
         delete "/api/#{api_version}/embeds/#{@embed.id}/services/#{s.id}"
         expect(Service.count).to eq 0
       end
     end
+
+    describe 'DELETE /services/1' do
+      it 'destroys an existing service' do
+        s = FactoryGirl.create(:twitter_service, embed: @embed)
+        delete "/api/#{api_version}/services/#{s.id}"
+        expect(Service.count).to eq 0
+      end
+    end
+
   end
 end

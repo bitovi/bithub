@@ -2,7 +2,7 @@ bh-sidebar {
 	display: block;
 	background: #f1efef;
 	border-right: 1px solid #ced2d3;
-	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	box-shadow: 0 0 30px rgba(0,0,0,0.2);
 	.header {
 		height: 50px;
 		line-height: 20px;
@@ -32,6 +32,7 @@ bh-sidebar {
 		padding: 0 15px;
 		height: 36px;
 		line-height: 36px;
+		position: relative;
 		h2 {
 			display: inline-block;
 			margin: 0;
@@ -45,6 +46,10 @@ bh-sidebar {
 			float: left;
 			margin: 0px 10px 0 0;
 		}
+	}
+	.hub-name-is-editting {
+		border-bottom-color: transparent;
+		padding: 0;
 	}
 	.panel-link {
 		border-top: 1px solid #cecdcd;
@@ -65,5 +70,11 @@ bh-sidebar {
 	.panel-container {
 		padding: 25px;
 		overflow-y: auto;
+	}
+	.edit-hub-name {
+		position: absolute;
+		top: 10px;
+		right: 0;
+		cursor: pointer;
 	}
 }

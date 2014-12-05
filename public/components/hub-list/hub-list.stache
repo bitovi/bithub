@@ -3,7 +3,7 @@
 	<div class="alert alert-info">Loading...</div>
 {{else}}
 	{{#if hubs.length}}
-		<a class="btn btn-primary btn-add-hub" href="{{pageUrl 'sidebar'}}">Add Hub</a>
+		<button class="btn btn-primary btn-add-hub" can-click="createAndEditHub">Add Hub</button>
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -32,8 +32,8 @@
 						</td>
 						<td>
 							<div class="btn-group">
-								<button class="btn btn-xs btn-default">Edit</button>
-								<button class="btn btn-xs btn-default">Delete</button>
+								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default">Edit</button>
+								<button class="btn btn-xs btn-default" can-click="destroyHub">Delete</button>
 								<button class="btn btn-xs btn-default">Clone</button>
 							</div>
 						</td>
@@ -42,6 +42,6 @@
 			</tbody>
 		</table>
 	{{else}}
-		<div class="alert alert-info">You haven't created any hubs yet. <a href="#">Create your first Hub &raquo;</a></div>
+		<div class="alert alert-info">You haven't created any hubs yet. <a href="javascript://" can-click="createAndEditHub">Create your first Hub &raquo;</a></div>
 	{{/if}}
 {{/if}}

@@ -1,38 +1,45 @@
-<div class="header">
-	<h1>Hub Settings</h1>
-	<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
-		<span class="fa fa-arrow-left"></span>
-		Admin
-	</a>
-	<span class="fa fa-close close-sidebar"></span>
-</div>
-<div class="hub-name-wrap">
-	<b>Hub Name</b>
-	<h2>Bithub</h2>
-</div>
-<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
-	Services
-</a>
-{{#isPanel 'services'}}
-	<div class="panel-container">
-		<bh-services></bh-services>
+{{#hub}}
+	<div class="header">
+		<h1>Hub Settings</h1>
+		<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
+			<span class="fa fa-arrow-left"></span>
+			Admin
+		</a>
+		<span class="fa fa-close close-sidebar"></span>
 	</div>
-{{/isPanel}}
-<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
-	Moderation
-</a>
-	{{#isPanel 'moderation'}}
-		<div class="panel-container">Moderation Panel</div>
+	<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}">
+		{{#if isEditing}}
+			<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}">
+		{{else}}
+			<b>Hub Name</b>
+			<h2>{{ name }}</h2>
+			<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
+		{{/if}}
+	</div>
+	<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
+		Services
+	</a>
+	{{#isPanel 'services'}}
+		<div class="panel-container">
+			<bh-services state="{state}"></bh-services>
+		</div>
 	{{/isPanel}}
-<a href="{{linkToPanel 'design'}}" class="panel-link {{#isPanel 'design'}}active{{/isPanel}}">
-	Design
-</a>
-{{#isPanel 'design'}}
-		<div class="panel-container">Design Panel</div>
+	<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
+		Moderation
+	</a>
+		{{#isPanel 'moderation'}}
+			<div class="panel-container">Moderation Panel</div>
+		{{/isPanel}}
+	<a href="{{linkToPanel 'design'}}" class="panel-link {{#isPanel 'design'}}active{{/isPanel}}">
+		Design
+	</a>
+	{{#isPanel 'design'}}
+			<div class="panel-container">Design Panel</div>
+		{{/isPanel}}
+	<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
+		Integration
+	</a>
+	{{#isPanel 'integration'}}
+		<div class="panel-container">Integration Panel</div>
 	{{/isPanel}}
-<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
-	Integration
-</a>
-{{#isPanel 'integration'}}
-	<div class="panel-container">Integration Panel</div>
-{{/isPanel}}
+{{/hub}}
