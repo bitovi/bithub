@@ -1,6 +1,6 @@
 class Embed < ActiveRecord::Base
-
   belongs_to :brand
+  validates_uniqueness_of :name, :scope => [:brand_id]
 
   has_many :filters, dependent: :destroy
   has_many :services, dependent: :destroy
@@ -17,6 +17,8 @@ class Embed < ActiveRecord::Base
     through: :embed_entities,
     class_name: 'EmbedEntity',
     source: :entity
+
+  after_destroy :notify_embed_stop
 
   def blocking_filter
     self.filters.where(classification: 'blocking').first
@@ -39,5 +41,12 @@ class Embed < ActiveRecord::Base
   def make_link_to(entity)
     self.embed_entities.create(entity: entity, is_approved: false)
   end
+  
+  def notify_embed_stop
+    Support::CrawlerNotifier.new.notif({
+      brand_name: brand.name,
+      embed_name: name,
+      action: :stop
+    })
+  end
 end
-

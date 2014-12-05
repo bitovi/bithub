@@ -3,6 +3,7 @@ require_relative 'embed'
 module Supervisors
   class Brand
     include Celluloid
+    include Propagation
 
     def initialize(path, bn)
       @path = TreePath.new(path, @brand_name = bn, :brand_name)
@@ -17,11 +18,6 @@ module Supervisors
       end
     end
 
-    def restart_embed_supervisor(embed_name)
-      stop_embed_supervisor(embed_name)
-      start_embed_supervisor(embed_name)
-    end
-
     def start_embed_supervisor(embed_name)
       @embeds.supervise_as(
         @path.child_actor_name(embed_name),
@@ -31,12 +27,20 @@ module Supervisors
     end
 
     def stop_embed_supervisor(embed_name)
-      if (a = Celluloid::Actor[@path.child_actor_name(embed_name)])
+      if (a = Actor[@path.child_actor_name(embed_name)])
         a.terminate
       end
     end
-
+    
+    def execute_cmd(path, action)
+      if action == :stop
+        stop_embed_supervisor(path.embed_name)
+      end
+    end
+    
     private
+    
+    def _childs; @embeds; end
 
     def brand_config
       Celluloid::Actor[:configurator].brand_config(*@path.rootles_path)

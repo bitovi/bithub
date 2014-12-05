@@ -3,6 +3,7 @@ require_relative 'service'
 module Supervisors
   class Embed
     include Celluloid
+    include Propagation
 
     def initialize(path, en)
       @path = TreePath.new(path, @embed_name = en, :embed_name)
@@ -18,11 +19,6 @@ module Supervisors
       end
     end
     
-    def restart_service_supervisor(si)
-      stop_embed_supervisor(si)
-      start_embed_supervisor(si)
-    end
-
     def start_service_supervisor(si)
       @services.supervise_as(
         @path.child_actor_name(si.name),
@@ -36,8 +32,16 @@ module Supervisors
         a.terminate
       end
     end
+    
+    def execute_cmd(path, action)
+      if action == :stop
+        stop_service_supervisor(path.service_info)
+      end
+    end
 
     private
+
+    def _childs; @services; end
 
     def embed_config
       Celluloid::Actor[:configurator].embed_config(*@path.rootles_path)

@@ -5,7 +5,7 @@ class ServiceInfo
   attr_reader :feed_name, :type_name, :composed
 
   def to_s
-    [@feed_name, @type_name].join('_')
+    [@feed_name, @type_name].join('->')
   end
 
   def to_a

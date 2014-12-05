@@ -19,6 +19,7 @@ class Brand < ActiveRecord::Base
   after_create  :create_tenant
   after_update  :rename_tenant_schema
   after_destroy :destroy_tenant
+  after_destroy :notify_brand_stop
 
   def create_tenant
     Apartment::Database.create tenant_name
@@ -46,8 +47,13 @@ class Brand < ActiveRecord::Base
     where(tenant_name: Apartment::Database.current_tenant).first
   end
 
-  private
-
+  def notify_brand_stop
+    Support::CrawlerNotifier.new.notif({
+      brand_name: name,
+      action: :stop
+    })
+  end
+  
   def rename_tenant_schema
     return if !changes['tenant_name'] || !changes['tenant_name'][0]
 

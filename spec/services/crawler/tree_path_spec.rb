@@ -16,6 +16,19 @@ describe TreePath do
     )
   end
 
+  describe '.from_message' do
+    it 'recursively traverses the message scope, creating Tree nodes' do
+      msg = %w(main bitovi code github+repo)
+      tree = TreePath.from_message(msg)
+      expect(tree.path).to eq %w(main bitovi code github repo)
+      expect(tree.brand_name).to eq 'bitovi'
+      expect(tree.embed_name).to eq 'code'
+      expect(tree.service_feed).to eq 'github'
+      expect(tree.service_type).to eq 'repo'
+      expect(tree.actor_name).to eq 'main->bitovi->code->github->repo'
+    end
+  end
+
   describe '#path' do
     it 'recursively calculates the current path' do
       expect(sup_tree.path).to eq %w(main a_brand an_embed a_service_feed a_service_type)
