@@ -1,5 +1,4 @@
-<bh-services-list></bh-services-list>
-<h2>Add a service</h2>
+<bh-services-list state="{state}"></bh-services-list>
 <p>Select a service to connect content and update your feed.</p>
 
 <div class="service-slider-outer-wrap">
@@ -19,5 +18,5 @@
 
 {{#if currentService.isNew}}
 	<h4>Add {{currentServiceFeedName}}</h4>
-	<bh-service-form service="{currentService}"></bh-service-form>
+	<bh-service-form service="{currentService}" state="{state}"></bh-service-form>
 {{/if}}

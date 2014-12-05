@@ -3,10 +3,18 @@ steal(
 './bithub-social.stache!',
 'can/route',
 'can/view/stache',
+'lodash/collections/reduce.js',
 'can/map/define',
 'components',
 'fixtures',
-function(Map, initView, route, stache){
+function(Map, initView, route, stache, _reduce){
+
+	$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+		if(options.type.toLowerCase() !== 'get'){
+			options.data = JSON.stringify(originalOptions.data);
+			options.contentType = 'application/json';
+		}
+	});
 
 	var AppState = Map.extend({
 		define : {
@@ -15,9 +23,16 @@ function(Map, initView, route, stache){
 			}
 		},
 		isSidebar : function(){
-			return this.attr('page') === 'sidebar'
+			return this.attr('page') === 'sidebar';
 		}
-	})
+	});
+
+	var getHash = function(optsHash){
+		return _reduce(optsHash || {}, function(acc, val, key){
+			acc[key] = can.isFunction(val) ? val() : val;
+			return acc;
+		}, {});
+	};
 
 	var appState = new AppState;
 
@@ -25,20 +40,20 @@ function(Map, initView, route, stache){
 
 	can.route.ready();
 
-	stache.registerHelper('pageUrl', function(page, title){
-		page = can.isFunction(page) ? page() : page;
-
-		return can.route.url({page: page}, false);
+	stache.registerHelper('pageUrl', function(page, opts){
+		var hash = getHash(opts.hash);
+		hash.page = can.isFunction(page) ? page() : page;
+		return can.route.url(hash, false);
 	});
 
 	$('#app').html(initView({
 		state: appState
 	}, {
 		renderPage : function(){
-			var page = can.route.attr('page'),
+			var page = can.route.attr('page') || "hub-list",
 				template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
 
-			return template(this)
+			return template(this);
 		},
 		pageLink : function(page, title){
 			page = can.isFunction(page) ? page() : page;

@@ -1,0 +1,4 @@
+<div class="form-group">
+	<label>Tag</label>
+	<input type="text" can-value="map.config.tag" class="form-control">
+</div>

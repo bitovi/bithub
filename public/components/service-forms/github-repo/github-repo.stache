@@ -5,22 +5,12 @@
 <div class="class-group">
 	<div class="checkbox">
 		<label>
-			<input type="checkbox" can-value="map.config.tracking.activity"> Track Activity
-		</label>
-	</div>
-	<div class="checkbox">
-		<label>
 			<input type="checkbox" can-value="map.config.tracking.issues"> Track Issues
 		</label>
 	</div>
 	<div class="checkbox">
 		<label>
-			<input type="checkbox" can-value="map.config.tracking.pull_req"> Track Pull Requests
-		</label>
-	</div>
-	<div class="checkbox">
-		<label>
-			<input type="checkbox" can-value="map.config.tracking.code"> Track Code changes
+			<input type="checkbox" can-value="map.config.tracking.pull_requests"> Track Pull Requests
 		</label>
 	</div>
 </div>

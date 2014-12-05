@@ -1,6 +1,6 @@
 class Service < ActiveRecord::Base
   validates_presence_of :embed_id, :feed_name, :type_name
-  validate :json_config_valid
+  validate :config_valid
 
   belongs_to :embed
 
@@ -16,13 +16,13 @@ class Service < ActiveRecord::Base
     self.embed.brand
   end
 
-  def config
-    @config ||= Services::ServiceConfig.new(json_config, feed_name)
+  def service_config
+    @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
   end
 
-  def json_config_valid
-    unless config.valid?
-      errors.add(:json_config, config.error_msg)
+  def config_valid
+    unless service_config.valid?
+      errors.add(:config, service_config.error_msg)
     end
   end
 

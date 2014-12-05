@@ -22,12 +22,32 @@ function(Component, initView, Models, _map, _reduce){
 						return new Models.Hub.List({});
 					}
 				}
+			},
+			createAndEditHub : function(){
+				new Models.Hub({
+					name : 'Untitled Hub'
+				}).save(function(hub){
+					can.route.attr({
+						hubId : hub.id,
+						page : 'sidebar',
+						panel : 'services'
+					})
+				})
+			},
+			destroyHub : function(hub){
+				if(confirm('Are you sure?')){
+					hub.destroy();
+				}
 			}
 		},
 		helpers : {
 			formatConnectedServices : function(services){
 				var serviceNames;
 				services = can.isFunction(services) ? services() : services;
+
+				if(!services){
+					return;
+				}
 
 				serviceNames = can.map(services, function(service){
 					return service.attr('feed_name');

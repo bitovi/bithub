@@ -1,10 +1,10 @@
 steal(
 'can/component',
-'./twitter-timeline.stache!',
-'./twitter-timeline.less!',
+'./tumblr-tag.stache!',
+'./tumblr-tag.less!',
 function(Component, initView){
   return Component.extend({
-    tag : 'bh-twitter-timeline-service',
+    tag : 'bh-tumblr-tag-service',
     template : initView,
     scope : {
 

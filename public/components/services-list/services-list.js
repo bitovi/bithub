@@ -7,12 +7,14 @@ steal(
 function(Component, Models, initView){
 	return Component.extend({
 		tag : 'bh-services-list',
-		template : initView, 
+		template : initView,
 		scope: {
 			define : {
 				services : {
-					get : function(){
-						return new Models.Service.List({})
+					get : function() {
+						return new Models.Service.List({
+							embed_id: this.attr('state.hubId')
+						});
 					}
 				}
 			}

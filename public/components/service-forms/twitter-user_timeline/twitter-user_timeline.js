@@ -1,10 +1,10 @@
 steal(
 'can/component',
-'./twitter-search.stache!',
-'./twitter-search.less!',
+'./twitter-user_timeline.stache!',
+'./twitter-user_timeline.less!',
 function(Component, initView){
   return Component.extend({
-    tag : 'bh-twitter-search-service',
+    tag : 'bh-twitter-user_timeline-service',
     template : initView,
     scope : {
 

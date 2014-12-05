@@ -10,8 +10,8 @@ function(Component, Models, initView){
 	var ICON_MAPPINGS = {
 		stackexchange : 'stack-exchange',
 		meetup : 'plug',
-		disqus : 'plug',
-	}
+		disqus : 'plug'
+	};
 
 	return Component.extend({
 		tag : 'bh-services',
@@ -29,7 +29,8 @@ function(Component, Models, initView){
 				}
 
 				this.attr('currentService', new Models.Service({
-					feed_name : feed
+					feed_name : feed,
+					config: {}
 				}));
 			},
 			currentServiceFeedName : function(){

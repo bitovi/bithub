@@ -62,7 +62,7 @@ Bithub::Application.routes.draw do
         end
 
         resources :filters, except: %i(new edit)
-        resources :services, except: %i(new edit)
+        resources :services, except: %i(new edit update)
 
       end
 
@@ -88,7 +88,7 @@ Bithub::Application.routes.draw do
         end
       end
 
-      resources :services, except: %i(new edit)
+      resources :services, except: %i(new edit update)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
     end

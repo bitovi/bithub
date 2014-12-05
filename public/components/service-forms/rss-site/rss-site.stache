@@ -2,3 +2,7 @@
 	<label>URL</label>
 	<input type="text" can-value="map.config.url" class="form-control">
 </div>
+<div class="form-group">
+	<label>Tag with</label>
+	<input type="text" can-value="map.config.tag_with" class="form-control">
+</div>
