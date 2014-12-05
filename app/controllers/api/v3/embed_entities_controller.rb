@@ -29,6 +29,11 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     @entity = embed.embed_entities.find(entity_id)
     render :show
   end
+
+  def update
+    @embed = current_brand.embeds.find(embed_id)
+    render :show
+  end
   
   def approve
     if embed_entity_relation.approve
