@@ -4,6 +4,7 @@ $LOAD_PATH.unshift PROJECT_ROOT
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'models')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'domain')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'crawler')
 
 if ENV['RAILS_ENV'] == 'testing'
   require 'codeclimate-test-reporter'
