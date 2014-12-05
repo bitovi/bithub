@@ -1,0 +1,37 @@
+module Supervisors
+  module Propagation
+    def handle_cmd(path, action)
+      # puts "==============> Currently in (name): #{name}"
+      # puts "==============> Meant for (path.actor_name): #{path.actor_name}"
+
+      if target_among_children?(path)
+        execute_cmd(path, action)
+      else
+        propagate_cmd(path, action)
+      end
+    end
+
+    def target_among_children?(path)
+      !(children.select do |a|
+        path.actor_name == a.name
+      end).empty?
+      # puts "=============> Target among children #{x}"
+      # x
+    end
+
+    def propagate_cmd(path, action)
+      puts "branching factor in total: #{children.actors.count}"
+      children.each do |b|
+        b.handle_cmd(path, action)
+      end
+    end
+    
+    def children
+      _childs.actors.compact
+    end
+    
+    def children_names
+      children.map {|a| a.name}
+    end
+  end
+end

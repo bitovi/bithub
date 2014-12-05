@@ -1,10 +1,12 @@
-require_relative 'brand'
-require_relative 'support/tree_path'
+require_relative 'support/propagation'
 require_relative 'support/service_info'
+require_relative 'support/tree_path'
+require_relative 'brand'
 
 module Supervisors
   class Main
     include Celluloid
+    include Propagation
 
     def initialize
       @path = TreePath.new(nil, 'main', :root)
@@ -19,11 +21,6 @@ module Supervisors
       end
     end
 
-    def restart_brand_supervisor(brand_name)
-      stop_brand_supervisor(brand_name)
-      start_brand_supervisor(brand_name)
-    end
-
     def start_brand_supervisor(brand_name)
       @brands.supervise_as(
         @path.child_actor_name(brand_name),
@@ -33,25 +30,23 @@ module Supervisors
     end
 
     def stop_brand_supervisor(brand_name)
-      if (a = Celluloid::Actor[@path.child_actor_name(brand_name)])
+      if (a = Actor[@path.child_actor_name(brand_name)])
         a.terminate
       end
     end
 
-    def reload_brand_feed(brand_name, feed_name)
-      Celluloid::Actor[:configurator].reload
-
-      if Celluloid::Actor[@path.child_actor_name(brand_name)].respond_to? :reload_feed
-        Celluloid.logger.info "Reloading #{@path.child_actor_name(brand_name)}"
-        Celluloid::Actor[@path.child_actor_name(brand_name)].reload_feed(feed_name)
-      else
-        restart_brand(brand_name)
+    def execute_cmd(target, action)
+      if action == :stop
+        stop_brand_supervisor(target.brand_name)
       end
     end
-    
+
     private
+
+    def _childs; @brands; end
+
     def config
-      Celluloid::Actor[:configurator].config
+      Actor[:configurator].config
     end
   end
 end
