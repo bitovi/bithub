@@ -75,7 +75,7 @@ function(Model, _keys){
 		serialize : function(){
 			return {
 				service : this._super.apply(this, arguments)
-			}
+			};
 		},
 		typesForFeed : function(){
 			var currentFeed = this.attr('feed_name'),
@@ -86,6 +86,23 @@ function(Model, _keys){
 		hasMultipleTypes : function(){
 			var typesForFeed = this.typesForFeed();
 			return _keys(typesForFeed || {}).length > 1;
+		},
+		printFeed : function() {
+			return FEEDS[ this.attr('feed_name') ];
+		},
+		printType : function() {
+			return TYPES[ this.attr('feed_name') ][ this.attr('type_name') ];
+		},
+		printConfig: function() {
+			var output = '',
+				config = this.attr('config').attr();
+
+			for( var key in config ) {
+					output += key + ': ' + config[key] + ', ';
+			}
+
+			// remove last ', '
+			return output.substring(0, output.length -2);
 		}
 	});
-})
+});

@@ -9,13 +9,9 @@ function(Component, Models, initView){
 		tag : 'bh-services-list',
 		template : initView,
 		scope: {
-			define : {
-				services : {
-					get : function() {
-						return new Models.Service.List({
-							embed_id: this.attr('state.hubId')
-						});
-					}
+			destroyService: function( service, el, ev) {
+				if( confirm('Are you sure?') ) {
+					service.destroy();
 				}
 			}
 		}
