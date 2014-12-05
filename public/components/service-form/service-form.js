@@ -18,8 +18,7 @@ steal(
 'components/service-forms/tumblr-tag',
 'components/service-forms/twitter-followers',
 'components/service-forms/twitter-hashtag',
-'components/service-forms/twitter-search',
-'components/service-forms/twitter-timeline',
+'components/service-forms/twitter-user_timeline',
 function(Component, initView, Models){
 
 	var makeTemplate = function(feed, type){
@@ -31,7 +30,19 @@ function(Component, initView, Models){
 		tag : 'bh-service-form',
 		template: initView,
 		scope : {
-			saveService : function(){
+			saveService : function(service, el, ev){
+				ev.preventDefault();
+
+				this.attr('service').attr('embed_id', this.state.attr('hubId'));
+
+				this.attr('service').save( function( model ) {
+					console.log( 'SAVED' );
+					console.log( arguments );
+				}, function( error ) {
+					console.log( 'ERROR' );
+					console.log( arguments );
+				});
+
 				this.attr('service', null);
 			}
 		},
@@ -46,5 +57,5 @@ function(Component, initView, Models){
 				}
 			}
 		}
-	})
+	});
 });
