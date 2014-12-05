@@ -32,7 +32,7 @@ class Service < ActiveRecord::Base
       embed_name: embed.name,
       service_info: "#{feed_name}+#{type_name}",
       action: action
-    }) if config.valid?
+    }) if service_config.valid?
   end
 
   private
@@ -40,11 +40,11 @@ class Service < ActiveRecord::Base
   def notify_service_start
     notify_service_change(:start)
   end
-  
+
   def notify_service_stop
     notify_service_change(:stop)
   end
-  
+
   def notify_service_reload
     notify_service_change(:reload)
   end
