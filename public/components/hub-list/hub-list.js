@@ -14,8 +14,8 @@ function(Component, initView, Models, _map, _reduce){
 		template : initView,
 		scope : {
 			define : {
-				expandedHub : {
-					value : null
+				expandedRows : {
+					Value : Array
 				},
 				hubs : {
 					value : function(){
@@ -38,14 +38,35 @@ function(Component, initView, Models, _map, _reduce){
 				if(confirm('Are you sure?')){
 					hub.destroy();
 				}
+			},
+			toggleExpandedRow : function(hub){
+				var hubId = hub.attr('id'),
+					expandedRows = this.attr('expandedRows'),
+					index = expandedRows.indexOf(hubId);
+
+				if(index === -1){
+					expandedRows.push(hubId);
+				} else {
+					expandedRows.splice(index, 1);
+				}
 			}
 		},
 		helpers : {
+			isExpandedRow : function(hub, opts){
+				hub = can.isFunction(hub) ? hub() : hub;
+				console.log(this.attr('expandedRows').attr('length'), this.attr('expandedRows')) // bind to the length
+
+				return this.attr('expandedRows').indexOf(hub.attr('id')) > -1 ? opts.fn() : opts.inverse();
+			},
 			formatConnectedServices : function(services){
 				var serviceNames;
 				services = can.isFunction(services) ? services() : services;
 
 				if(!services){
+					return;
+				}
+
+				if(services.isPending()){
 					return;
 				}
 

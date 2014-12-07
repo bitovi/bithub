@@ -3,6 +3,7 @@ steal(
 'lodash/objects/keys.js',
 'can/list/promise',
 'can/map/define',
+'can/construct/super',
 function(Model, _keys){
 	var TYPES = {
 		disqus : {
@@ -95,7 +96,13 @@ function(Model, _keys){
 		},
 		printConfig: function() {
 			var output = '',
-				config = this.attr('config').attr();
+				config = this.attr('service_config');
+
+			config = config ? config.attr() : config;
+
+			if(!config){
+				return;
+			}
 
 			for( var key in config ) {
 					output += key + ': ' + config[key] + ', ';

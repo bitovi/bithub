@@ -27,8 +27,23 @@
 							{{ layout}}
 						</td>
 						<td>
-							<button class="btn btn-default btn-xs">Expand</button>
-							{{formatConnectedServices services}}
+							{{#if services.isPending}}
+								Loading...
+							{{else}}
+								{{#if services.length}}
+									{{#isExpandedRow this}}
+										<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Collapse</button>
+										{{#each services}}
+											<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small>
+										{{/each}}
+									{{/else}}
+										<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Expand</button>
+										{{formatConnectedServices services}}
+									{{/isExpandedRow}}
+								{{else}}
+									No connected services.
+								{{/if}}
+							{{/if}}
 						</td>
 						<td>
 							<div class="btn-group">
