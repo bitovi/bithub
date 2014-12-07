@@ -1,4 +1,4 @@
-json.array! @brands do |b|
+json.brands @brands do |b|
   json.name b.name
   json.embeds b.embeds do |e|
     json.name e.name
