@@ -43,8 +43,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def tree
-    @tree = Hash[ brands_with_nested_service_pairs ]
-    render json: @tree
+    @brands = Brand.all
+    render 'api/v3/services/tree'
   end
 
   def suggestions
@@ -53,20 +53,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   private
-
-  def brands_with_nested_service_pairs
-    Brand.all.map do |b|
-      [b.name, Hash[ feed_name_config_pairs ]]
-    end
-  end
-
-  def feed_name_config_pairs
-    Service.all do |s|
-      !s.service_config.data.present?
-    end.map do |s|
-      [s.feed_name, s.service_config.data]
-    end
-  end
 
   def embed_id
     params[:embed_id] || params.require(:service).require(:embed_id)
