@@ -9,11 +9,12 @@ module Entities
       end
 
       def build
-        built = Entity.new({
+        Entity.new({
           title: "pushed to #{@event.repo.name}",
           url: "https://github.com/#{@event.repo.name}/commit/#{@event.head}",
           origin_id: @event.push_id.to_s,
           origin_ts: @event.origin_timestamp,
+          body: format_body,
           props: {
             origin_author_id: @event.actor.id,
             origin_author_name: @event.actor.login,
@@ -22,25 +23,10 @@ module Entities
             commit_shas: @event.commit_shas_csv,
           }
         })
-
-        built.props[:references_to] = ""
-
-        built 
       end
 
-      def build_children
-        @event.commits.map do |c|
-          Entities::Github::Commit.new(@event, c)
-            .procure
-            .determine
-            .group
-            .normalize
-            .instance
-        end
-      end
-      
       # Finders
-      
+
       def find_by_push_id
         Entity
         .feed('github')
@@ -56,8 +42,15 @@ module Entities
       end
 
       private
+
       def url
         "https://github.com/#{@event.repo.name}/commit/#{@event.head}"
+      end
+
+      def format_body
+        @event.commits.map do |c|
+          ["<a href=\"#{c.url}\">#{c.sha}</a>", c.author_name, c.message].join(', ')
+        end.join('<br>')
       end
 
     end
