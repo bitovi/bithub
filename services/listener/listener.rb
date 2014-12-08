@@ -51,11 +51,10 @@ Listener
     # (errors inside bunny listen method won't be logged :/)
     begin
       Dispatcher.new(logger: logger).dispatch payload
+      logger.info "(#{content_digest}) Dispatching finished"
     rescue Exception => err
       logger.error "(#{content_digest}) Dispatching failed: #{err.message}"
       logger.error err.backtrace.join("\n")
-    else
-      logger.info "(#{content_digest}) Dispatching successful"
     end
 
     Apartment::Database.switch
