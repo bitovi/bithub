@@ -15,6 +15,19 @@ function(Component, initView, Models){
 						return new Models.Bit.List({hubId: can.route.attr('hubId')});
 					}
 				}
+			},
+			init : function(){
+				this.reload();
+			},
+			reload : function(){
+				console.log('RELOAD')
+				var self = this;
+				setTimeout(function(){
+					Models.Bit.findAll({hubId: can.route.attr('hubId')}).then(function(data){
+						self.attr('bits').replace(data);
+						self.reload();
+					});
+				}, 10000)
 			}
 		}
 	})
