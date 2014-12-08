@@ -18,6 +18,8 @@ class Embed < ActiveRecord::Base
     class_name: 'EmbedEntity',
     source: :entity
 
+  after_create :notify_embed_start
+  after_update :notify_embed_restart
   after_destroy :notify_embed_stop
 
   def blocking_filter
@@ -40,6 +42,23 @@ class Embed < ActiveRecord::Base
 
   def make_link_to(entity)
     self.embed_entities.create(entity: entity, is_approved: true)
+  end
+  
+
+  def notify_embed_start
+    Support::CrawlerNotifier.new.notif({
+      brand_name: brand.name,
+      embed_name: name,
+      action: :start
+    })
+  end
+  
+  def notify_embed_restart
+    Support::CrawlerNotifier.new.notif({
+      brand_name: brand.name,
+      embed_name: name,
+      action: :restart
+    })
   end
   
   def notify_embed_stop

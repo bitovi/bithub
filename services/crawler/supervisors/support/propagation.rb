@@ -15,7 +15,6 @@ module Supervisors
     end
 
     def propagate_cmd(path, action)
-      puts "branching factor in total: #{children.actors.count}"
       children.each do |b|
         b.handle_cmd(path, action)
       end

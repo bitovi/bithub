@@ -36,6 +36,8 @@ module Supervisors
     def execute_cmd(path, action)
       if action == :stop
         stop_service_supervisor(path.service_info)
+      elsif action == :start
+        start_service_supervisor(path.service_info)
       end
     end
 
