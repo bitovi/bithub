@@ -1,0 +1,56 @@
+{{#if bits.isPending}}
+{{else}}
+  {{#each bits}}
+    <article class="bit-container">
+      <div class="bit">
+        <header class="bit-header col-sm-12">
+          <figure class="bit-avatar col-xs-3 col-md-3 col-lg-2">
+            <a href="#">
+              <img class="bit-avatar--img img-responsive" src="http://gravatar.com/avatar/7c36e3920ea1fbeadd6c208c8d9be803" />
+            </a>
+          </figure>
+          <figcaption class="col-xs-7 col-md-7 col-lg-8 no-gutter">
+            <div class="bit-authorName col-xs-12 no-gutter">John Jacob Jingleheimer Schmidt</div>
+            <div class="bit-authorHandle col-xs-12 no-gutter">
+              <a href="#">
+                @JJJS
+              </a>
+            </div>
+          </figcaption>
+          <div class="bit-origin col-xs-2 no-gutter text-right">
+            <a href="#" class="bh-icon bh-icon-twitter"></a>
+          </div>
+        </header>
+        <div class="bit-content col-sm-12">
+          <figcaption class="bit-content--caption">
+            <p>Image Example - this is an <a href="#">image example with a whole bunch of text</a> that just goes on about nothing really.</p>
+            <p>Image Example - this is an image example with a whole bunch of text that just goes on about nothing really.</p>
+          </figcaption>
+        </div>
+        <footer class="bit-footer col-sm-12">
+          <!-- Twitter Button -->
+          <div class="share-tw pull-right">
+            <a class="twitter-share-button" href="https://twitter.com/share">
+              Tweet
+            </a>
+            <script type="text/javascript">
+            window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
+            </script>
+          </div>
+          <!-- Facebook Like Button -->
+          <div class="share-fb b_padding--lowHorz pull-right">
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=516064301835521&version=v2.0";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-action="like" data-show-faces="false" data-share="false"></div>
+          </div>
+        </footer>
+      </div>
+    </article>
+  {{/each}}
+{{/if}}

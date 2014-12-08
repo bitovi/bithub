@@ -17,5 +17,13 @@
 	bh-sidebar {
 		width: 550px;
 		height: 100%;
+		margin-left: -500px;
+		-webkit-transition: margin-left 0.3s ease-in-out;
+		-moz-transition: margin-left 0.3s ease-in-out;
+		-o-transition: margin-left 0.3s ease-in-out;
+		transition: margin-left 0.3s ease-in-out;
+		&.is-expanded {
+			margin-left: 0;
+		}
 	}
 }
