@@ -23,8 +23,8 @@
         </header>
         <div class="bit-content col-sm-12">
           <figcaption class="bit-content--caption">
-            <p>Image Example - this is an <a href="#">image example with a whole bunch of text</a> that just goes on about nothing really.</p>
-            <p>Image Example - this is an image example with a whole bunch of text that just goes on about nothing really.</p>
+            <p><a href="{{url}}">{{ title }}</a></p>
+            <p>{{ body }}</p>
           </figcaption>
         </div>
         <footer class="bit-footer col-sm-12">

@@ -61,8 +61,8 @@ function(Model, _keys){
 	return Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
-		createEmptyService : function(){
-			new Models.Service({
+		createEmptyService : function(feed){
+			return new this({
 				feed_name : feed,
 				config: {}
 			});
