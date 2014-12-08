@@ -38,6 +38,8 @@ module Supervisors
     def execute_cmd(target, action)
       if action == :stop
         stop_brand_supervisor(target.brand_name)
+      elsif action == :start
+        start_brand_supervisor(target.brand_name)
       end
     end
 

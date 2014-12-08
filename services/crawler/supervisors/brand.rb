@@ -35,6 +35,11 @@ module Supervisors
     def execute_cmd(path, action)
       if action == :stop
         stop_embed_supervisor(path.embed_name)
+      elsif action == :start
+        start_embed_supervisor(path.embed_name)
+      elsif action == :restart
+        stop_embed_supervisor(path.embed_name)
+        start_embed_supervisor(path.embed_name)
       end
     end
     
