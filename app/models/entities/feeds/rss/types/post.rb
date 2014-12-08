@@ -23,7 +23,7 @@ module Entities
 
       def taggify_by_tag_with
         if (t = service_config['tag_with'])
-          t.snake_case
+          [t.snake_case]
         else
           []
         end
