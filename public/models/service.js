@@ -62,9 +62,16 @@ function(Model, _keys){
 		resource : '/api/v3/services',
 		feeds : FEEDS,
 		createEmptyService : function(feed){
+			var config = {};
+
+
+			if(feed === 'github'){
+				config.tracking = {};
+			}
+
 			return new this({
 				feed_name : feed,
-				config: {}
+				config: config
 			});
 		}
 	}, {
