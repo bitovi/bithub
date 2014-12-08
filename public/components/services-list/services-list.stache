@@ -5,7 +5,7 @@
 		<tbody>
 			{{#each services}}
 				<tr>
-					<td>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small> <i can-click="destroyService" class="fa fa-close pull-right"></i></td>
+					<td>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small> <i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i></td>
 				</tr>
 			{{/each}}
 		</tbody>

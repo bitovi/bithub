@@ -60,7 +60,13 @@ function(Model, _keys){
 
 	return Model.extend({
 		resource : '/api/v3/services',
-		feeds : FEEDS
+		feeds : FEEDS,
+		createEmptyService : function(){
+			new Models.Service({
+				feed_name : feed,
+				config: {}
+			});
+		}
 	}, {
 		define : {
 			feed_name : {

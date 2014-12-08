@@ -44,6 +44,9 @@ function(Component, initView, Models){
 				}
 
 				key && this.attr('isEditing', false);
+			},
+			toggleSidebarPosition : function(ctx, el, ev){
+				el.closest('bh-sidebar').toggleClass('is-expanded');
 			}
 		},
 		events : {

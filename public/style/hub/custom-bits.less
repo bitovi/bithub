@@ -1,4 +1,5 @@
-.bit-feed {
+bh-bits {
+  display: block;
  -moz-column-width: 18em;
  -webkit-column-width: 18em;
  -moz-column-gap: 1em;
@@ -8,15 +9,12 @@
  display: inline-block;
  padding:  1rem;
  width:  100%;
- .animated;
- .zoomIn;
 }
 // Default "Clear" Theme
 .bit {
   .border-radius(10px);
   background-color: @white;
-  border: 1px solid @gray-lighter;
-  overflow: hidden;
+  border: 1px solid @gray-light;
   &:extend(.b_margin--lowVert all);
   .clearfix;
   .box-shadow(0 0 20px rgba(0,0,0,0));
@@ -190,19 +188,19 @@
 }
 
 @media (min-width: @screen-sm) {
-  .bit-feed {
+  bh-bits {
    -moz-column-width: 20em;
    -webkit-column-width: 20em;
   }
 }
 @media (min-width: @screen-md) {
-  .bit-feed {
+  bh-bits {
    -moz-column-width: 25em;
    -webkit-column-width: 25em;
   }
 }
 @media (min-width: @screen-lg) {
-  .bit-feed {
+  bh-bits {
    -moz-column-width: 30em;
    -webkit-column-width: 30em;
   }

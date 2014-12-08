@@ -37,10 +37,7 @@ function(Component, Models, initView){
 					return;
 				}
 
-				this.attr('currentService', new Models.Service({
-					feed_name : feed,
-					config: {}
-				}));
+				this.attr('currentService', Models.Service.createEmptyService());
 			},
 			currentServiceFeedName : function(){
 				var feed = this.attr('currentService').attr('feed_name');
