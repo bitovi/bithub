@@ -51,6 +51,10 @@ module Events
       @type_name ||= feed_and_type_name[1]
     end
 
+    def embed_name
+      @meta.fetch(:embed_name)
+    end
+
     def ==(other)
       @source_data == other
     end
