@@ -21,9 +21,9 @@ module Entities
         Entity.feed('rss').type('post').where(url: @event.link)
       end
 
-      def taggify_by_url
-        if tags = match_site_by_url(source_url)['tags']
-          tags.map {|t| t.snake_case}
+      def taggify_by_tag_with
+        if (t = service_config['tag_with'])
+          t.snake_case
         else
           []
         end
@@ -45,13 +45,6 @@ module Entities
 
       private
 
-      def match_site_by_url(url)
-        feed_config
-          .fetch('sites')
-          .select {|s| s.fetch('url') == url}
-          .first
-      end
-
       # legacy from forums
       def find_by_thread_prefix
         thread_url, _ = @event.link.split('#')
@@ -66,16 +59,13 @@ module Entities
         @event.link.starts_with? 'http://forum.javascriptmvc.com'
       end
 
-      def sites
-        feed_config.fetch('sites')
-      end
-
-      def feed_config
+      def service_config
         Brand
           .where(name: brand_name).first
-          .feed_configs
-          .where(feed_name: feed_name).first
-          .config
+          .services
+          .where(feed_name: feed_name, type_name: 'site').first
+          .service_config
+          .data
       end
 
       def meta
@@ -84,10 +74,6 @@ module Entities
 
       def brand_name
         meta.fetch(:brand_name)
-      end
-
-      def source_url
-        meta.fetch(:source_url)
       end
 
       def feed_name
