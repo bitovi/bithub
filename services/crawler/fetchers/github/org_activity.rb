@@ -1,3 +1,5 @@
+require 'github_api'
+
 module Fetchers
   module Github
 
@@ -11,6 +13,9 @@ module Fetchers
 
       def fetch
         @client.activity.events.org @org
+      rescue ::Github::Error::Forbidden => e
+        Celluloid.logger.error "Github::OrgActivity fetcher error: #{e}"
+        nil
       end
     end
   end
