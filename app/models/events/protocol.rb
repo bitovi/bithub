@@ -10,21 +10,6 @@ end
 
 module Events
 
-  module Github; end
-  module Twitter; end
-  module Forum; end
-  module Blog; end
-  module Disqus; end
-  module Bithub; end
-  module Meetup; end
-  module Irc; end
-  module Rss; end
-  module Stackexchange; end
-  module Facebook; end
-  module Foursquare; end
-  module Instagram; end
-  module Tumblr; end
-
   class Protocol
     include CoreHelpers
     include Persistable
@@ -93,11 +78,5 @@ module Events
       _, @feed_name, @type_name = self.class.name.match(/.*::(.*)::(.*)/).to_a
       [@feed_name, @type_name]
     end
-  end
-end
-
-if $0 =~ /crawler/ # only require if in crawler, Rails auto-loads
-  Dir[File.join('app', 'models', 'events', '**', '*.rb')].each do |f|
-    require f.gsub('app/models/', '')
   end
 end
