@@ -84,9 +84,9 @@ module Services
 
     module Github
       class Tracking
-        include Virtus.model(:strict => true)
-        attribute :issues, Boolean
-        attribute :pull_requests, Boolean
+        include Virtus.model
+        attribute :issues, Boolean, default: false
+        attribute :pull_requests, Boolean, default: false
       end
 
       class Repo
