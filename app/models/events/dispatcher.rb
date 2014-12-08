@@ -2,6 +2,7 @@ require 'events/protocol'
 
 # only require if in crawler or listener, Rails auto-loads
 if $0 =~ /crawler|listener/
+  require File.join('events', 'github', 'github_event_accessors')
   Dir[File.join('app', 'models', 'events', '**', '*.rb')].each do |f|
     require f.gsub('app/models/', '')
   end
