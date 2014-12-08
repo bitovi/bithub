@@ -6,19 +6,16 @@
         <header class="bit-header col-sm-12">
           <figure class="bit-avatar col-xs-3 col-md-3 col-lg-2">
             <a href="#">
-              <img class="bit-avatar--img img-responsive" src="http://gravatar.com/avatar/7c36e3920ea1fbeadd6c208c8d9be803" />
             </a>
           </figure>
           <figcaption class="col-xs-7 col-md-7 col-lg-8 no-gutter">
-            <div class="bit-authorName col-xs-12 no-gutter">John Jacob Jingleheimer Schmidt</div>
+            <div class="bit-authorName col-xs-12 no-gutter"></div>
             <div class="bit-authorHandle col-xs-12 no-gutter">
-              <a href="#">
-                @JJJS
-              </a>
+              <a href="#"></a>
             </div>
           </figcaption>
           <div class="bit-origin col-xs-2 no-gutter text-right">
-            <a href="#" class="bh-icon bh-icon-twitter"></a>
+            <a href="#" class="bh-icon bh-icon-{{ feed_name }}"></a>
           </div>
         </header>
         <div class="bit-content col-sm-12">
