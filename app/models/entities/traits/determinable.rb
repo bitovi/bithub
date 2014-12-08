@@ -27,22 +27,6 @@ module Entities
       @instance.tag_list = ActsAsTaggableOn::TagList.new(tags) unless tags.empty?
     end
 
-    def determine_rule
-      tags = @instance.tag_list
-      rules = ScoringRule.order('position DESC')
-
-      @instance.scoring_rule = Tagger::List.new(tags).best_match(rules)
-    end
-
-    def determine_author
-      ident = Identity.find_by_provider_and_uid(
-        feed_name.snake_case,
-        @instance.props[:origin_author_id]
-      )
-
-      @instance.author = ident.user if ident && ident.user
-    end
-
     private
 
     def taggify_feed_and_type_name
