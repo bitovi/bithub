@@ -1,3 +1,6 @@
+- name: "Add bithub.loc to hosts"
+  lineinfile: dest=/etc/hosts line="127.0.0.1 bithub.loc"
+
 - name: "Create bithub user"
   user: name={{ bithub.username }} password={{ bithub.password }} shell=/bin/bash group=vagrant append=yes
 
