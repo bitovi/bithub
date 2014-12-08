@@ -29,18 +29,19 @@ module Entities
       private
 
       def match_chat_by_server_and_channel(server, channel)
-        feed_config
+        service_config
           .fetch('chats')
           .select {|c| c.fetch('server') == server and c.fetch('channel') == channel}
           .first
       end
 
-      def feed_config
+      def service_config
         Brand
           .where(name: brand_name).first
-          .feed_configs
-          .where(feed_name: feed_name).first
+          .services
+          .where(feed_name: feed_name, type_name: 'channel').first
           .config
+          .data
       end
 
       def brand_name
