@@ -5,6 +5,7 @@ require_relative 'traits/normalizable'
 require_relative 'traits/persistable'
 require_relative 'traits/referencable'
 require_relative 'traits/validatable'
+require_relative 'traits/routeable'
 
 Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
   require f.gsub('app/models/', '')
@@ -32,6 +33,7 @@ module Entities
     include Groupable
     include Normalizable
     include Persistable
+    include Routable
 
     attr_reader :instance
 
@@ -69,6 +71,10 @@ module Entities
 
     def type_name
       @type_name ||= feed_and_type_name[1]
+    end
+
+    def embed_name
+      @event.embed_name
     end
 
     def collect_methods(regexp)
