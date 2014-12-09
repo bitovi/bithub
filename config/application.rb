@@ -30,9 +30,7 @@ module Bithub
     config.middleware.use Muster::Rack, Muster::Strategies::ActiveRecord
 
     # Stripe
-    # secret key is red from env directly
     config.stripe.publishable_key = ENV['STRIPE_PUBLISHABLE_KEY']
-    # stripe webhook endpoint is manually mounted in routes.rb
     config.stripe.auto_mount = false
 
     config.middleware.use Sass::Plugin::Rack
