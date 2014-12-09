@@ -1,8 +1,5 @@
 require_relative 'support/propagation'
-require_relative 'support/brand_info'
-require_relative 'support/embed_info'
-require_relative 'support/service_info'
-require_relative 'support/tree_path'
+require_relative 'support/supervision_node'
 require_relative 'brand'
 
 module Supervisors
@@ -11,7 +8,7 @@ module Supervisors
     include Propagation
 
     def initialize
-      @path = TreePath.new(nil, 'main', :root)
+      @path = SupervisionNode.new(nil, MainNode.new)
       Celluloid.logger.info "Booting #{@path.actor_name}"
       boot
     end
@@ -19,29 +16,30 @@ module Supervisors
     def boot
       @brands = SupervisionGroup.new
       config.fetch(:brands).each do |b|
-        start_brand_supervisor(b.fetch(:name))
+        bi = BrandInfo.new(b.fetch(:id), b.fetch(:name))
+        start_brand_supervisor(bi)
       end
     end
 
-    def start_brand_supervisor(brand_name)
+    def start_brand_supervisor(bi)
       @brands.supervise_as(
-        @path.child_actor_name(brand_name),
+        @path.child_actor_name(bi),
         Supervisors::Brand,
-        *[@path, brand_id, brand_name]
+        *[@path, bi]
       )
     end
 
-    def stop_brand_supervisor(brand_name)
-      if (a = Actor[@path.child_actor_name(brand_name)])
+    def stop_brand_supervisor(bi)
+      if (a = Actor[@path.child_actor_name(bi.name)])
         a.terminate
       end
     end
 
     def execute_cmd(target, action)
       if action == :stop
-        stop_brand_supervisor(target.brand_name)
+        stop_brand_supervisor(target)
       elsif action == :start
-        start_brand_supervisor(target.brand_name)
+        start_brand_supervisor(target)
       end
     end
 

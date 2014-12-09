@@ -12,10 +12,6 @@ class Node
     to_a.join('/')
   end
 
-  def as_node
-    [to_s]
-  end
-  
   def self.from_s(str)
     self.new(str)
   end

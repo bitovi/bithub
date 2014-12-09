@@ -6,8 +6,8 @@ module Supervisors
     include Celluloid
     include Propagation
 
-    def initialize(path, si)
-      @path = TreePath.new(path, @service_info = si, :service_info)
+    def initialize(path, service_info)
+      @path = SupervisionNode.new(path, service_info)
       Celluloid.logger.info "Booting #{@path.actor_name}"
       boot
     end
@@ -19,11 +19,11 @@ module Supervisors
     private
 
     def static_config
-      Celluloid::Actor[:configurator].static_config
+      Actor[:configurator].static_config
     end
 
     def service_config
-      Celluloid::Actor[:configurator].service_config(*@path.rootles_path)
+      Actor[:configurator].service_config(*@path.rootless)
     end
 
     def token
