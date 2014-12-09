@@ -40,7 +40,7 @@ module Entities
           .where(name: brand_name).first
           .services
           .where(feed_name: feed_name, type_name: 'channel').first
-          .config
+          .service_config
           .data
       end
 
