@@ -1,4 +1,3 @@
-require_relative 'node'
 require_relative 'brand_info'
 require_relative 'embed_info'
 require_relative 'service_info'
@@ -25,12 +24,16 @@ class SupervisionNode
     @node.content
   end
   
-  def path
-    root? ? @node.as_node : @parent.path + @node.as_node
+  def string_path
+    path.map{|n| n.to_s}
   end
   
-  def rootles_path
-    (root? ? [nil] : @parent.rootles_path + @node.as_node).compact
+  def path
+    (root? ? [@node] : @parent.path + [@node]).compact
+  end
+
+  def rootless(path_kind = :path)
+    send(path_kind)[1..-1]
   end
 
   def ==(other)
@@ -42,7 +45,7 @@ class SupervisionNode
   end
 
   def next_level(n)
-    TreePath.new(self, n)
+    SupervisionNode.new(self, n)
   end
 
   def actor_name
