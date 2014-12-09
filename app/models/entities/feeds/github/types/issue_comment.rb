@@ -1,7 +1,6 @@
 module Entities
   module Github
     class IssueComment < Protocol
-      include Entities::Github::Referencable
 
       def find
         @event.comment.id && find_by_comment_id.first
@@ -18,7 +17,7 @@ module Entities
 
       # Builder
       def build
-        built = Entity.new(
+        Entity.new(
           title: "Comment on issue ##{@event.ipr.number}",
           body: @event.comment.body,
           url: @event.comment.html_url,
@@ -32,14 +31,10 @@ module Entities
             number: @event.ipr.number
           }
         )
-
-        built.props[:references_to] = ''
-        built
       end
 
       def update
         @instance.body = @event.comment.body
-        @instance.props[:references_to] = ''
         super
       end
 
@@ -63,8 +58,8 @@ module Entities
         Entity
           .feed('github')
           .type('issue_comment')
-          .where("props -> 'repo_name' = :repo_name", repo_name: @event.repo.name)
-          .where("props -> 'number' = :ipr_number", ipr_number: @event.ipr.number)
+          .repo_name(@event.repo.name)
+          .number(@event.ipr.number)
       end
     end
   end
