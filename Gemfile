@@ -24,6 +24,7 @@ gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
 gem 'virtus'
+gem 'bazaar'
 
 gem 'textacular'
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
