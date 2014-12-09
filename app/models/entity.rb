@@ -6,7 +6,7 @@ class Entity < ActiveRecord::Base
   acts_as_taggable
 
   has_many :events
-  
+
   has_many :embed_entities
   has_many :embeds, through: :embed_entities
 

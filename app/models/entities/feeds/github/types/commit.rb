@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Commit < Protocol
-      include Entities::Github::Referencable
 
       def initialize(event, commit_wrapper)
         @event = event
@@ -14,7 +13,7 @@ module Entities
       end
 
       def build
-        built = Entity.new({
+        Entity.new({
           title: title,
           body: @commit.message,
           url: @commit.url,
@@ -28,10 +27,6 @@ module Entities
             sha: @commit.sha,
           }
         })
-
-        built.props[:references_to] = ""
-
-        built 
       end
 
       private

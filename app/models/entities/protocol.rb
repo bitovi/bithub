@@ -3,7 +3,6 @@ require_relative 'traits/determinable'
 require_relative 'traits/groupable'
 require_relative 'traits/normalizable'
 require_relative 'traits/persistable'
-require_relative 'traits/referencable'
 require_relative 'traits/validatable'
 require_relative 'traits/routeable'
 
@@ -58,7 +57,7 @@ module Entities
     end
 
     def find_by_origin_uid(uid)
-      Entity.where("props -> 'origin_author_id' = ?", uid)
+      Entity.origin_author(uid)
     end
 
     def nice_name

@@ -52,8 +52,8 @@ module Entities
         Entity
           .feed('github')
           .type(my_type_tag)
-          .where("props -> 'repo_name' = :repo_name", repo_name: @event.repo.name)
-          .where("props -> 'number' = :number", number: @event.number)
+          .repo_name(@event.repo.name)
+          .number(@event.number)
       end
 
       def my_type_tag
