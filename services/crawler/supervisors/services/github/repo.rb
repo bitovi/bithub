@@ -51,7 +51,7 @@ module Supervisors::Services::Github
             @path,
             pull_req_fetcher,
             {interval: 300}
-          ]) 
+          ])
 
         pull_req_comm_fetcher = Fetchers::Github::RepoPullRequestsComments.new(
           client, { user_repo: repo_name })
@@ -74,11 +74,11 @@ module Supervisors::Services::Github
     end
 
     def track_issues?
-      service_config.fetch(:tracking).fetch(:issues)
+      service_config.fetch(:tracking).fetch(:issues) { false }
     end
 
     def track_pull_requests?
-      service_config.fetch(:tracking).fetch(:pull_requests)
+      service_config.fetch(:tracking).fetch(:pull_requests) { false }
     end
   end
 end
