@@ -1,4 +1,6 @@
 require 'httparty'
+require 'supervisors/support/brand_info'
+require 'supervisors/support/embed_info'
 require 'supervisors/support/service_info'
 
 class Configurator
@@ -17,24 +19,25 @@ class Configurator
     @static_config ||= read_env_config
   end
 
-  def brand(brand_name)
+  def brand(bi)
     reload unless @config
-    config.fetch(:brands).select {|b| b[:name] == brand_name}.first
+    config.fetch(:brands).select {|b| b[:name] == bi.name}.first
   end
   alias_method :brand_config, :brand
 
-  def embed(brand_name, embed_name)
+  def embed(bi, ei)
     reload unless @config
-    brand(brand_name).fetch(:embeds).select {|e| e[:name] == embed_name}.first
+    brand(bi).fetch(:embeds).select {|e| e[:name] == ei.name}.first
   end
   alias_method :embed_config, :embed
 
-  def service(brand_name, embed_name, service_feed, service_type)
+  def service(bi, ei, si)
     reload unless @config
-    embed(brand_name, embed_name)\
+    embed(bi, ei)\
       .fetch(:services)\
       .select do |s|
-        s[:feed_name] == service_feed && s[:type_name] == service_type
+        s[:feed_name] == si.feed_name\
+        && s[:type_name] == si.type_name
       end.first
   end
   alias_method :service_config, :service
