@@ -54,9 +54,7 @@ class Publisher
 
   def process_one(event, owner_data, decorator)
     event     = event.to_h
-    brand     = owner_data.brand_name
-    embed     = owner_data.embed_name
-    feed      = owner_data.service_feed
+    feed      = owner_data.service.feed_name
     processed = nil
 
     begin
@@ -65,10 +63,10 @@ class Publisher
       # todo: move this to separete decorator?
       processed = {
         meta: {
-          feed_name: feed,
           type_name: dispatched.type_name.snake_case,
-          brand_name: brand,
-          embed_name: embed
+          brand_name: owner_data.brand.name,
+          embed_name: owner_data.embed.name,
+          feed_name: feed
         },
         content_digest: dispatched.content_digest,
         source_data: event
@@ -77,7 +75,7 @@ class Publisher
       Celluloid.logger.debug "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
 
     rescue Events::DispatchError => e
-      Celluloid.logger.info "Failed to dispatch event from feed #{feed} for brand #{brand}"
+      Celluloid.logger.info "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
       Celluloid.logger.debug "Failed to dispatch event #{event.inspect}"
       Celluloid.logger.error e
     end
