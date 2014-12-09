@@ -46,13 +46,13 @@ module Events
         self
       end
     end
-    
+
     class FakeRepo
-      attr_reader :repo_name
+      attr_reader :name
       def initialize(name)
-        @repo_name = name
+        @name = name
       end
     end
-    
+
   end
 end
