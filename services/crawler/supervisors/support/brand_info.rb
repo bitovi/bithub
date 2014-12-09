@@ -1,3 +1,5 @@
+require_relative 'node'
+
 class BrandInfo < Node
   def initialize(id, name)
     @id = id; @name = name
@@ -16,11 +18,7 @@ class BrandInfo < Node
     to_a.join('/')
   end
 
-  def as_node
-    [to_s]
-  end
-  
-  def self.deser(str)
+  def self.from_s(str)
     self.new(*str.split('/'))
   end
 end
