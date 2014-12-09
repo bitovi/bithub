@@ -15,7 +15,6 @@ module Entities
   module Bithub; end
   module Blog; end
   module Disqus; end
-  module Forum; end
   module Github; end
   module Irc; end
   module Meetup; end
@@ -93,7 +92,6 @@ end
 
 require_relative 'feeds/blog/blog'
 require_relative 'feeds/disqus/disqus'
-require_relative 'feeds/forum/forum'
 require_relative 'feeds/github/github'
 require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
