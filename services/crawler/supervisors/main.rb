@@ -1,4 +1,6 @@
 require_relative 'support/propagation'
+require_relative 'support/brand_info'
+require_relative 'support/embed_info'
 require_relative 'support/service_info'
 require_relative 'support/tree_path'
 require_relative 'brand'
@@ -25,7 +27,7 @@ module Supervisors
       @brands.supervise_as(
         @path.child_actor_name(brand_name),
         Supervisors::Brand,
-        *[@path, brand_name]
+        *[@path, brand_id, brand_name]
       )
     end
 
