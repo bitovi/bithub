@@ -16,9 +16,19 @@ class Node
     [to_s]
   end
   
-  def self.deser(str)
+  def self.from_s(str)
     self.new(str)
   end
 
   alias_method :name, :to_s
+end
+
+class MainNode < Node
+  def initialize
+    @name = 'main'
+  end
+
+  def self.from_s(str)
+    self.new
+  end
 end

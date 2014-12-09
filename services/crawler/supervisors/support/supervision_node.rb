@@ -8,7 +8,7 @@ class SupervisionNode
 
   def self.from_message(nodes)
     if (curr = nodes.pop) != nil
-      node_info = LEVELS[nodes.length].deser(curr)
+      node_info = LEVELS[nodes.length].from_s(curr)
       SupervisionNode.new(from_message(nodes), node_info)
     else
       nil

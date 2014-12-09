@@ -1,3 +1,5 @@
+require_relative 'node'
+
 class ServiceInfo < Node
   def initialize(id, fn, tn)
     @id = id;
@@ -19,11 +21,7 @@ class ServiceInfo < Node
     [@id, [@feed_name, @type_name].join('_')].join('/')
   end
 
-  def as_node
-    [to_s]
-  end
-
-  def self.deser(str)
+  def self.from_s(str)
     id, fwt = str.split('/')
     feed_name, type_name = fwt.split('_')
     self.new(id, feed_name, type_name)
