@@ -21,7 +21,7 @@
         <div class="bit-content col-sm-12">
           <figcaption class="bit-content--caption">
             <p><a href="{{url}}">{{ title }}</a></p>
-            <p>{{ body }}</p>
+            <p>{{{ body }}}</p>
           </figcaption>
         </div>
         <footer class="bit-footer col-sm-12">

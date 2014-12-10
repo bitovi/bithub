@@ -1,7 +1,8 @@
-steal('./hub.js', './service.js', './bit.js', function(Hub, Service, Bit){
+steal('./hub.js', './service.js', './bit.js', './identity.js', function(Hub, Service, Bit, Identity){
 	return {
 		Hub : Hub,
 		Service : Service,
-		Bit : Bit
+		Bit : Bit,
+		Identity : Identity
 	}
 })
