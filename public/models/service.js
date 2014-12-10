@@ -17,7 +17,8 @@ function(Model, _keys){
 		},
 		github : {
 			org : 'Organization',
-			repo : 'Repo'
+			repo : 'Repo',
+			private_repo : 'Private Repo'
 		},
 		instagram : {
 			tag : 'Tag',
@@ -58,9 +59,29 @@ function(Model, _keys){
 		twitter       : 'Twitter'
 	};
 
+	var NEEDS_OAUTH = {
+		github : {
+			types : ['private_repo']
+		},
+		twitter : {
+			types : ['followers']
+		},
+		meetup : {
+			types : ['group']
+		},
+		facebook : {
+			types : ['page']
+		},
+		foursquare : {
+			types : ['venue']
+		},
+
+	};
+
 	return Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
+		needsOAuth : NEEDS_OAUTH,
 		createEmptyService : function(feed){
 			var config = {};
 
