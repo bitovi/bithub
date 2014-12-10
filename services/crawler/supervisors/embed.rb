@@ -5,8 +5,8 @@ module Supervisors
     include Celluloid
     include Propagation
 
-    def initialize(path, en)
-      @path = TreePath.new(path, @embed_name = en, :embed_name)
+    def initialize(path, embed_info)
+      @path = SupervisionNode.new(path, embed_info)
       Celluloid.logger.info "Booting #{@path.actor_name}"
       boot
     end
@@ -14,7 +14,7 @@ module Supervisors
     def boot
       @services = SupervisionGroup.new
       embed_config.fetch(:services).each do |s|
-        si = ServiceInfo.new(s[:feed_name], s[:type_name])
+        si = ServiceInfo.new(s.fetch(:id), s.fetch(:feed_name), s.fetch(:type_name))
         start_service_supervisor(si);
       end
     end
@@ -28,16 +28,16 @@ module Supervisors
     end
 
     def stop_service_supervisor(si)
-      if (a = Celluloid::Actor[@path.child_actor_name(si.name)])
+      if (a = Actor[@path.child_actor_name(si.name)])
         a.terminate
       end
     end
     
-    def execute_cmd(path, action)
+    def execute_cmd(target, action)
       if action == :stop
-        stop_service_supervisor(path.service_info)
+        stop_service_supervisor(target)
       elsif action == :start
-        start_service_supervisor(path.service_info)
+        start_service_supervisor(target)
       end
     end
 
@@ -46,7 +46,7 @@ module Supervisors
     def _childs; @services; end
 
     def embed_config
-      Celluloid::Actor[:configurator].embed_config(*@path.rootles_path)
+      Actor[:configurator].embed_config(*@path.rootless)
     end
 
     def service_supervisor(si)
