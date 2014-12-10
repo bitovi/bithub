@@ -63,7 +63,6 @@ Bithub::Application.routes.draw do
 
         resources :filters, except: %i(new edit)
         resources :services, except: %i(new edit update)
-
       end
 
       resources :services, except: %i(new edit) do
@@ -78,6 +77,8 @@ Bithub::Application.routes.draw do
           get 'current', to: 'brands#show'
           put 'current', to: 'brands#update'
           get 'current/payments', to: 'payments#index'
+          get 'current/identities', to: 'brand_identities#index'
+          get 'current/identities/:id', to: 'brand_identities#show'
           delete 'current/identities/:id', to: 'brand_identities#destroy'
         end
       end
@@ -88,6 +89,7 @@ Bithub::Application.routes.draw do
         end
       end
 
+      resources :brand_identities, path: 'identities', only: %i(index show destroy)
       resources :services, except: %i(new edit update)
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
