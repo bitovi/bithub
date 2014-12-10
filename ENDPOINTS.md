@@ -361,7 +361,7 @@ Site:
 	feed_name: "rss",
 	type_name: "site",
 	config: {
-		tag_with: ["blog"],
+		tag_with: "blog",
 		url: "pltconfusion.com/feed"
 	}
 }

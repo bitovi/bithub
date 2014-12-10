@@ -112,7 +112,7 @@ module Services
       class Site
         include Virtus.model(:strict => true)
         attribute :url, String
-        attribute :tag_with, Array[String]
+        attribute :tag_with, String
       end
     end
   end
