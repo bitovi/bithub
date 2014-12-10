@@ -18,8 +18,7 @@ class Embed < ActiveRecord::Base
     class_name: 'EmbedEntity',
     source: :entity
 
-  after_create :notify_embed_start
-  after_update :notify_embed_restart
+  after_update :notify_embed_start
   after_destroy :notify_embed_stop
 
   def blocking_filter

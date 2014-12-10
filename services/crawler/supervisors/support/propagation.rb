@@ -2,6 +2,7 @@ module Supervisors
   module Propagation
     def handle_cmd(path, action)
       if target_among_children?(path)
+        Celluloid.logger.info "Executing #{action} for #{path}"
         execute_cmd(path, action)
       else
         propagate_cmd(path, action)
