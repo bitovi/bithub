@@ -5,7 +5,7 @@ module Supervisors::Services::Tumblr
 
       blog_fetcher = Fetchers::Tumblr::Posts.new(hostname) 
       @endpoints.supervise_as(
-        @path.child_actor_name("blog_#{hostname}"),
+        @path.next_level(EndpointInfo.new('blog_' + hostname)).actor_name,
         Poller, *[
           @path,
           blog_fetcher,
