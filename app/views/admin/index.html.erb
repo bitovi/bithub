@@ -9,29 +9,5 @@
 <body>
 <script src='/bower_components/steal/steal.js' data-main='bithub-social' data-env="<%= Rails.env == 'development' ? 'development' : 'production' %>"></script>
 <div id="app"></div>
-
-<script>
-  var socket = io('/?embed_name=Lonac');
-  socket.on('connect', function() {
-    console.log('CONNECTED!');
-  });
-  socket.on('connect_error', function() {
-    console.log('CONNECTION ERROR!');
-  });
-
-  socket.on('entities', function( msg ) {
-    console.log( 'New message from entities', msg );
-  });
-
-  socket.on('services', function( msg ) {
-    console.log( 'New message from services', msg );
-  });
-
-  socket.on('moderation', function( msg ) {
-    console.log( 'New message from moderation', msg );
-  });
-
-</script>
-
 </body>
 </html>
