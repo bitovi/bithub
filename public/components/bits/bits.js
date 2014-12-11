@@ -12,7 +12,7 @@ function(Component, initView, Models){
 			define : {
 				bits : {
 					get : function(){
-						//return new Models.Bit.List({hubId: can.route.attr('hubId')});
+						return new Models.Bit.List({hubId: can.route.attr('hubId')});
 					}
 				}
 			},
