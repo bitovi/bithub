@@ -5,7 +5,7 @@ class Api::V3::EntitiesController < Api::V3::BaseController
   load_and_authorize_resource
 
   def index
-    embed_entities.all.map(&:entity)
+    @entities = embed_entities.all.map(&:entity)
     render :index
   end
 
