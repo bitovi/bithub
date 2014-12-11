@@ -7,7 +7,7 @@ class Entity < ActiveRecord::Base
 
   has_many :events
 
-  has_many :embed_entities
+  has_many :embed_entities, dependent: :destroy
   has_many :embeds, through: :embed_entities
 
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
