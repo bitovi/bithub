@@ -23,7 +23,7 @@ class Entity < ActiveRecord::Base
     :tag_list
 
   # Hooks
-  after_create :notify_liveservice
+  after_commit :notify_liveservice
 
   # Basic
   scope :feed, ->(f) { where(feed_name: f) }
@@ -204,6 +204,10 @@ class Entity < ActiveRecord::Base
   def notify_liveservice
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     payload = view.render('api/v3/embed_entities/entity', {entity: self})
+
+    puts "========================== HERE"
+    puts payload.inspect
+    puts embeds.inspect
 
     embeds.each do |embed|
       Support::LiveserviceNotifier.new.notif({
