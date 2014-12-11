@@ -71,7 +71,7 @@ LiveService.prototype.registerEndpoints = function() {
 		self.listener.bindConsumer(endpoint, function( data ) {
 			self.quite || console.info( 'New message from MQ', data );
 
-			var key = [endpoint, data.meta.brand_name, data.meta.embed_name].join('.');
+			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
 			self.router.publish( key, data.payload );
 		});
 	});
@@ -97,7 +97,7 @@ LiveService.prototype.onIoConnection = function() {
 				console.error( err );
 			} else {
 				_.each( self.endpoints, function( endpoint ) {
-					var key = [endpoint, result.tenant_name, params.embed_name].join('.');
+					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
 
 					self.router.subscribe( key, function( message ) {
 						socket.emit( endpoint, message );
