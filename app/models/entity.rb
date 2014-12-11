@@ -22,6 +22,9 @@ class Entity < ActiveRecord::Base
     :origin_ts, :thread_updated_ts,
     :tag_list
 
+  # Hooks
+  after_create :notify_liveservice
+
   # Basic
   scope :feed, ->(f) { where(feed_name: f) }
   scope :no_feed, ->(f) { where('feed_name <> ?', f) }
@@ -197,4 +200,18 @@ class Entity < ActiveRecord::Base
       errors[:base].concat(errors.delete(:hash_key))
     end
   end
+
+  def notify_liveservice
+    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
+    payload = view.render('api/v3/embed_entities/entity', {entity: self})
+
+    Support.LiveserviceNotifier.new.notif({
+      meta: {
+        brand_name: brand.name,
+        embed_name: embed.name
+      },
+      payload: payload
+    }, :entities)
+  end
+
 end
