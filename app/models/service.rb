@@ -5,6 +5,7 @@ class Service < ActiveRecord::Base
   belongs_to :embed
 
   after_create :notify_service_start
+  after_create :notify_liveservice
   after_update :notify_service_reload
   after_destroy :notify_service_stop
 
@@ -36,6 +37,19 @@ class Service < ActiveRecord::Base
   end
 
   private
+
+  def notify_liveservice
+    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
+    payload = view.render('api/v3/embed_entities/entity', self)
+
+    Support.LiveserviceNotifier.new.notif({
+      meta: {
+        brand_name: brand.name,
+        embed_name: embed.name
+      },
+      payload: payload
+    }, :entities)
+  end
 
   def notify_service_start
     notify_service_change(:start)
