@@ -208,7 +208,7 @@ class Entity < ActiveRecord::Base
     Support.LiveserviceNotifier.new.notif({
       meta: {
         brand_name: brand.name,
-        embed_name: embed.name
+        embed_id: embed.id
       },
       payload: payload
     }, :entities)

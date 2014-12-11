@@ -21,9 +21,9 @@ describe('The Universe', function() {
 		duo: { session_id: 'test_session_duo', tenant_name: 'test_tenant_duo'}
 	};
 
-	var websocketUrl = function( embed_name, session_id )  {
+	var websocketUrl = function( embed_id, session_id )  {
 		return 'http://127.0.0.1:' + process.env.LIVESERVICE_HTTP_PORT +
-			'/?embed_name=' + embed_name +
+			'/?embed_id=' + embed_id +
 			'&session_id=' + session_id;
 	};
 
@@ -79,25 +79,25 @@ describe('The Universe', function() {
 		Q.all([ wsUnoFooReady.promise, wsUnoBarReady.promise, wsDuoFooReady.promise ]).then( function() {
 
 			// 1x uno foo
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_name: 'embed_uno_foo' },
+			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_foo' },
 									payload: { id: 'msg_4_uno_foo'} });
 
 			// 2x uno bar
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_name: 'embed_uno_bar' },
+			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_bar' },
 									payload: { id: 'msg_4_uno_bar'} });
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_name: 'embed_uno_bar' },
+			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_bar' },
 									payload: { id: 'msg_4_uno_bar'} });
 
 			// 1x duo foo
-			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_name: 'embed_duo_foo' },
+			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_id: 'embed_duo_foo' },
 									payload: { id: 'msg_4_duo_foo'} });
 
 			// 1x duo bar (non existing embed)
-			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_name: 'embed_duo_bar' },
+			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_id: 'embed_duo_bar' },
 									payload: { id: 'msg_4_duo_bar'} });
 
 			// 1x tre baz (non existing tenant)
-			mq.publish('entities',{ meta: { brand_name: 'test_tenant_tre', embed_name: 'embed_tree_baz' },
+			mq.publish('entities',{ meta: { brand_name: 'test_tenant_tre', embed_id: 'embed_tree_baz' },
 									payload: { id: 'msg_4_tre_baz'} });
 
 			// give it some time before checking results
