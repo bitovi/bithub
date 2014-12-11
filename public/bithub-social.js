@@ -3,11 +3,12 @@ steal(
 	'./bithub-social.stache!',
 	'can/route',
 	'can/view/stache',
+	'models',
 	'lodash/collections/reduce.js',
 	'can/map/define',
 	'components',
 	'fixtures',
-	function(Map, initView, route, stache, _reduce){
+	function(Map, initView, route, stache, Models, _reduce){
 
 		var currentSocket;
 
@@ -37,7 +38,8 @@ steal(
 						});
 
 						currentSocket.on('entities', function( msg ) {
-							console.log( 'New message from entities', msg );
+							var entity = Models.Bit.model(JSON.parse(msg));
+							entity.created();
 						});
 
 						currentSocket.on('services', function( msg ) {
@@ -50,6 +52,10 @@ steal(
 						console.log(currentSocket)
 						return val;
 					}
+				},
+				sidebarIsExpanded : {
+					value : true,
+					serialize: false
 				}
 			},
 			isSidebar : function(){
