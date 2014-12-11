@@ -7,7 +7,7 @@ module Supervisors
 
     def initialize(path, brand_info)
       @path = SupervisionNode.new(path, brand_info)
-      Celluloid.logger.info "Booting #{@path.actor_name}"
+      Celluloid.logger.info "Booting B #{@path.actor_name}"
       boot
     end
 
@@ -21,26 +21,26 @@ module Supervisors
 
     def start_embed_supervisor(ei)
       @embeds.supervise_as(
-        @path.child_actor_name(ei.name),
+        @path.next_level(ei).actor_name,
         Supervisors::Embed,
         *[@path, ei]
       )
     end
 
     def stop_embed_supervisor(ei)
-      if (a = Actor[@path.child_actor_name(ei.name)])
+      if (a = Actor[@path.next_level(ei).actor_name])
         a.terminate
       end
     end
     
     def execute_cmd(target, action)
       if action == :stop
-        stop_embed_supervisor(target)
+        stop_embed_supervisor(target.node)
       elsif action == :start
-        start_embed_supervisor(target)
+        start_embed_supervisor(target.node)
       elsif action == :restart
-        stop_embed_supervisor(target)
-        start_embed_supervisor(target)
+        stop_embed_supervisor(target.node)
+        start_embed_supervisor(target.node)
       end
     end
     
