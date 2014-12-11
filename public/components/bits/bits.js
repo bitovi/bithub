@@ -29,6 +29,14 @@ function(Component, initView, Models){
 					});
 				}, 10000)
 			}
+		},
+		events : {
+			inserted : function(){
+				var self = this;
+				this.on(Models.Bit, 'created', function(ev, bit){
+					self.scope.attr('bits').unshift(bit)
+				})
+			}
 		}
 	})
 });

@@ -1,10 +1,10 @@
 {{#if state.isSidebar}}
 
 <div class="sidebar-wrap">
-	<bh-sidebar state="{state}" class="is-expanded"></bh-sidebar>
+	<bh-sidebar state="{state}"{{#if state.sidebarIsExpanded}}class="is-expanded"{{/if}}></bh-sidebar>
 </div>
 
-<main id="content" class="container-fluid">
+<main id="content" class="container-fluid {{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
   <bh-bits></bh-bits>
 </main>
 
