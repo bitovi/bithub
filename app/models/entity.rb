@@ -205,13 +205,15 @@ class Entity < ActiveRecord::Base
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     payload = view.render('api/v3/embed_entities/entity', {entity: self})
 
-    Support.LiveserviceNotifier.new.notif({
-      meta: {
-        brand_name: brand.name,
-        embed_id: embed.id
-      },
-      payload: payload
-    }, :entities)
+    embeds.each do |embed|
+      Support::LiveserviceNotifier.new.notif({
+        meta: {
+          brand_name: Apartment::Database.current_tenant,
+          embed_id: embed.id
+        },
+        payload: payload
+      }, :entities)
+    end
   end
 
 end
