@@ -81,10 +81,16 @@ LiveService.prototype.onIoConnection = function() {
 	var self = this;
 
 	this.io.on('connection', function (socket) {
-		var	params = socket.handshake.query,
-			cookie = socket.conn.request.headers.cookie;
+		var	params   = socket.handshake.query,
+			cookie   = socket.conn.request.headers.cookie,
+			remoteIp = socket.conn.remoteAddress;
 
-		var session_id = params.session_id || parseCookies( cookie )._session_id;
+		var session_id = params.session_id || (cookie && parseCookies( cookie )._session_id);
+
+		if( session_id == undefined ) {
+			console.log("User without valid session from " + remoteIp);
+			return;
+		}
 
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
