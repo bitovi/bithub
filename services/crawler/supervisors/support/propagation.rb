@@ -3,6 +3,7 @@ module Supervisors
     def handle_cmd(path, action)
       if target_among_children?(path)
         Celluloid.logger.info "Executing #{action} for #{path}"
+        Celluloid.logger.info "#{name} / propagation NMB of childs: #{children.count}"
         execute_cmd(path, action)
       else
         propagate_cmd(path, action)
@@ -11,11 +12,13 @@ module Supervisors
 
     def target_among_children?(path)
       !(children.select do |a|
+        Celluloid.logger.debug "[target] #{path} === #{a.name} [child]"
         path.actor_name == a.name
       end).empty?
     end
 
     def propagate_cmd(path, action)
+      Celluloid.logger.info "#{name} / propagation NMB of childs: #{children.count}"
       children.each do |b|
         b.handle_cmd(path, action)
       end

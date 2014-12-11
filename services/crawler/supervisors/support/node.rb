@@ -11,12 +11,6 @@ class Node
   def to_s
     to_a.join('/')
   end
-
-  def self.from_s(str)
-    self.new(str)
-  end
-
-  alias_method :name, :to_s
 end
 
 class MainNode < Node
@@ -24,7 +18,11 @@ class MainNode < Node
     @name = 'main'
   end
 
-  def self.from_s(str)
+  def self.from_s(_)
+    self.new
+  end
+
+  def self.from_msg(_)
     self.new
   end
 end

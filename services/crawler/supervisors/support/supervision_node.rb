@@ -1,17 +1,17 @@
+require_relative 'node'
 require_relative 'brand_info'
 require_relative 'embed_info'
 require_relative 'service_info'
+require_relative 'endpoint_info'
 
 class SupervisionNode
   SEPARATOR = '->'
-  LEVELS = [Node, BrandInfo, EmbedInfo, ServiceInfo]
+  LEVELS = [MainNode, BrandInfo, EmbedInfo, ServiceInfo]
 
   def self.from_message(nodes)
-    if (curr = nodes.pop) != nil
-      node_info = LEVELS[nodes.length].from_s(curr)
-      SupervisionNode.new(from_message(nodes), node_info)
-    else
-      nil
+    if !(curr = nodes.pop).nil?
+      node = LEVELS[nodes.length].from_msg(curr)
+      SupervisionNode.new(from_message(nodes), node)
     end
   end
 
@@ -19,11 +19,8 @@ class SupervisionNode
     @parent = parent
     @node = node
   end
+  attr_reader :node
 
-  def node
-    @node.content
-  end
-  
   def string_path
     path.map{|n| n.to_s}
   end
@@ -49,11 +46,7 @@ class SupervisionNode
   end
 
   def actor_name
-    self.to_s.to_sym
-  end
-
-  def child_actor_name(n)
-    next_level(n).actor_name
+    to_s.to_sym
   end
 
   def root?
@@ -61,7 +54,7 @@ class SupervisionNode
   end
 
   def to_s
-    path.join(SEPARATOR)
+    string_path.join(SEPARATOR)
   end
 
   # Shortcuts
