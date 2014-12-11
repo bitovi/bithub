@@ -9,7 +9,7 @@ module Supervisors::Services::Github
         client, { org_name: org_name })
 
       @endpoints.supervise_as(
-        @path.child_actor_name("org_#{org_name}"),
+        @path.next_level(EndpointInfo.new('org_' + org_name)).actor_name,
         Poller, *[
           @path,
           org_fetcher,

@@ -7,7 +7,7 @@ module Supervisors::Services::Rss
       rss_fetcher = Fetchers::Rss::Rss.new(url)
 
       @endpoints.supervise_as(
-        @path.child_actor_name(url),
+        @path.next_level(EndpointInfo.new(url)).actor_name,
         Poller, *[
           @path,
           rss_fetcher,

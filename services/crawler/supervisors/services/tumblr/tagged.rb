@@ -5,7 +5,7 @@ module Supervisors::Services::Tumblr
 
       tag_fetcher = Fetchers::Tumblr::Tagged.new(tag)
       @endpoints.supervise_as(
-        @path.child_actor_name("tagged_#{tag}"),
+        @path.next_level(EndpointInfo.new('tagged_' + tag)).actor_name,
         Poller, *[
           @path,
           tag_fetcher,

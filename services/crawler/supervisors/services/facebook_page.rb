@@ -9,7 +9,7 @@ module Supervisors::Services::Facebook
         ::Koala::Facebook::API.new(page_token))
 
       @endpoints.supervise_as(
-        @path.child_actor_name(page_id),
+        @path.next_level(EndpointInfo.new(page_id)).actor_name,
         Poller, *[
           @path,
           fetcher,
