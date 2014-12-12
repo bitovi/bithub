@@ -29,10 +29,10 @@ module Supervisors
 
     def stop_embed_supervisor(ei)
       if (a = Actor[@path.next_level(ei).actor_name])
-        a.terminate
+        a.shutyoself
       end
     end
-    
+
     def execute_cmd(target, action)
       if action == :stop
         stop_embed_supervisor(target.node)
@@ -43,9 +43,9 @@ module Supervisors
         start_embed_supervisor(target.node)
       end
     end
-    
+
     private
-    
+
     def _childs; @embeds; end
 
     def brand_config

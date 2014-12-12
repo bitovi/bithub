@@ -48,9 +48,14 @@ class Brand < ActiveRecord::Base
   end
 
   def notify_brand_stop
+    notify_embed_action(:stop)
+  end
+  
+  def notify_embed_action(action)
     Support::CrawlerNotifier.new.notif({
-      brand_name: name,
-      action: :stop
+      brand: { id: id, name: name },
+      signature: "brand_#{action}",
+      action: action
     })
   end
   

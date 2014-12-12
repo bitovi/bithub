@@ -11,7 +11,7 @@ module Supervisors::Services::Rss
         Poller, *[
           @path,
           rss_fetcher,
-          {interval: 300, decorator: decorator}
+          { interval: 600, decorator: decorator }
         ])
     end
 

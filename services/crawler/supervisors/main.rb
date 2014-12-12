@@ -31,7 +31,7 @@ module Supervisors
 
     def stop_brand_supervisor(bi)
       if (a = Actor[@path.next_level(bi).actor_name])
-        a.terminate
+        a.shutyoself
       end
     end
 

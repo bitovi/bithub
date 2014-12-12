@@ -33,6 +33,10 @@ class Poller
     Celluloid.logger.info "Publishing with brand: #{@path.brand}, embed: #{@path.embed}, and service: #{@path.service}"
     publisher.publish @path, data, decorator: @decorator
   end
+
+  def shutyoself
+    terminate
+  end
   
   def interval
     @timer.interval

@@ -16,7 +16,7 @@ module Supervisors::Services::Tumblr
     private
 
     def hostname
-      service_config.fetch(:hostname) { [] }
+      service_config.fetch(:hostname)
     end
   end
 end

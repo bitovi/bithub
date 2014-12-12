@@ -19,7 +19,7 @@ class SupervisionNode
     @parent = parent
     @node = node
   end
-  attr_reader :node
+  attr_reader :node, :parent
 
   def string_path
     path.map{|n| n.to_s}

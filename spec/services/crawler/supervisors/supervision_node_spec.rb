@@ -16,19 +16,23 @@ describe SupervisionNode do
 
   describe '.from_message' do
     it 'recursively traverses the message scope, creating Tree nodes' do
-      msg_arr = %w(main 1501/bitovi 2452/code 3396/github_repo)
+      msg_arr = [ 'main',
+        { id: 1501, name: 'bitovi' },
+        { id: 2452, name: 'code' },
+        { id: 3396, feed_name: 'github', type_name: 'repo' }
+      ]
       tree = SupervisionNode.from_message(msg_arr)
-      expect(tree.string_path).to eq %w(main 1501/bitovi 2452/code 3396/github_repo)
-      expect(tree.brand.to_s).to eq '1501/bitovi'
-      expect(tree.embed.to_s).to eq '2452/code'
-      expect(tree.service.to_s).to eq '3396/github_repo'
-      expect(tree.actor_name).to eq 'main->1501/bitovi->2452/code->3396/github_repo'.to_sym
+      expect(tree.string_path).to eq %w(main brand/1501 embed/2452 service/3396)
+      expect(tree.brand.to_s).to eq 'brand/1501'
+      expect(tree.embed.to_s).to eq 'embed/2452'
+      expect(tree.service.to_s).to eq 'service/3396'
+      expect(tree.actor_name).to eq 'main->brand/1501->embed/2452->service/3396'.to_sym
     end
   end
 
   describe '#string_path' do
     it 'recursively calculates the current path, returning the string representation of nodes' do
-      expect(@sup_tree.string_path).to eq %w(main 1501/bitovi 2452/code 3396/github_repo)
+      expect(@sup_tree.string_path).to eq %w(main brand/1501 embed/2452 service/3396)
     end
   end
   
@@ -46,7 +50,7 @@ describe SupervisionNode do
 
   describe '#actor_name' do
     it 'converts the current path to an array of strings that identify an actor' do
-      expect(@sup_tree.actor_name).to eq :'main->1501/bitovi->2452/code->3396/github_repo'
+      expect(@sup_tree.actor_name).to eq :'main->brand/1501->embed/2452->service/3396'
     end
   end
 

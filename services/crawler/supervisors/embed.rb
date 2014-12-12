@@ -29,7 +29,7 @@ module Supervisors
 
     def stop_service_supervisor(si)
       if (a = Actor[@path.next_level(si).actor_name])
-        a.terminate
+        a.shutyoself
       end
     end
 

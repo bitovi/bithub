@@ -18,7 +18,8 @@ class Embed < ActiveRecord::Base
     class_name: 'EmbedEntity',
     source: :entity
 
-  after_update :notify_embed_start
+  after_create :notify_embed_start
+  after_update :notify_embed_restart
   after_destroy :notify_embed_stop
 
   def blocking_filter
@@ -27,6 +28,10 @@ class Embed < ActiveRecord::Base
 
   def moderating_filter
     self.filters.where(classification: 'moderating').first
+  end
+
+  def valid_services
+    services.all.select { |s| s.service_config.valid? }
   end
 
   def moderate
@@ -43,28 +48,24 @@ class Embed < ActiveRecord::Base
     self.embed_entities.create(entity: entity, is_approved: true)
   end
   
-
   def notify_embed_start
-    Support::CrawlerNotifier.new.notif({
-      brand_name: brand.name,
-      embed_name: name,
-      action: :start
-    })
-  end
-  
-  def notify_embed_restart
-    Support::CrawlerNotifier.new.notif({
-      brand_name: brand.name,
-      embed_name: name,
-      action: :restart
-    })
+    notify_embed_action(:start)
   end
   
   def notify_embed_stop
+    notify_embed_action(:stop)
+  end
+
+  def notify_embed_restart
+    notify_embed_action(:restart)
+  end
+
+  def notify_embed_action(action)
     Support::CrawlerNotifier.new.notif({
-      brand_name: brand.name,
-      embed_name: name,
-      action: :stop
+      brand: { id: brand.id, name: brand.name },
+      embed: { id: id, name: name },
+      signature: "embed_#{action}",
+      action: action
     })
   end
 end

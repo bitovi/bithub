@@ -29,10 +29,9 @@ class Commander
   end
 
   def dispatch_command(msg)
-    path = TreePath.from_message(message_scope(msg))
-
+    path = SupervisionNode.from_message(message_scope(msg))
     Celluloid.logger.info "Executing #{message_action(msg)} for #{path}"
-    Celluloid::Actor[:main].handle_cmd(path, message_action(msg))
+    Actor[:main].handle_cmd(path, message_action(msg))
   end
 
   def message_action(msg)
@@ -40,12 +39,7 @@ class Commander
   end
 
   def message_scope(msg)
-    [
-      'main',
-      msg[:brand_name],
-      msg[:embed_name],
-      msg[:service_info],
-    ].compact
+    [msg[:brand], msg[:embed], msg[:service]].unshift('main').compact
   end
 
   def rabbitmq_uri
