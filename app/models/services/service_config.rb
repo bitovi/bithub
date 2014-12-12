@@ -1,22 +1,21 @@
 module Services
   class ServiceConfig
 
-    attr_reader :errors
-
     def initialize(feed_name, type_name, config)
       @feed_name = feed_name
       @type_name = type_name
       @config    = config
-      @validator = get_validator
       @errors    = []
     end
+    attr_reader :errors
 
     def valid?
-      if @validator
-        @validator.new @config
+      @errors = []
+      if validator_class
+        validator_class.new @config
         true
       else
-        @errors.push({ type: :validator, msg: "Feed: #{@feed_name}, Type: #{@type_name}" })
+        @errors.push({ type: :validator, msg: "Unknown feed/type, feed: #{@feed_name}, type: #{@type_name}" })
         false
       end
     rescue Virtus::CoercionError => e
@@ -34,7 +33,7 @@ module Services
 
     private
 
-    def get_validator
+    def validator_class
       validators = Services::ConfigValidators
       feed = @feed_name.to_s.camelize
       type = @type_name.to_s.camelize
