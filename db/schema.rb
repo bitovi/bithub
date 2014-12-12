@@ -13,7 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20141212114813) do
 
-  create_schema "bitovi"
 
   create_extension "hstore", :version => "1.2"
   create_extension "intarray", :version => "1.0"
@@ -74,117 +73,6 @@ ActiveRecord::Schema.define(version: 20141212114813) do
   add_index "accounts_brands", ["account_id"], :name => "index_accounts_brands_on_account_id"
   add_index "accounts_brands", ["brand_id", "account_id"], :name => "index_accounts_brands_on_brand_id_and_account_id"
   add_index "accounts_brands", ["brand_id"], :name => "index_accounts_brands_on_brand_id"
-
-  create_table "bitovi.embed_entities", force: true do |t|
-    t.integer "embed_id"
-    t.integer "entity_id"
-    t.boolean "is_approved"
-  end
-
-  create_table "bitovi.embeds", force: true do |t|
-    t.string  "name"
-    t.string  "colorscheme"
-    t.string  "layout"
-    t.integer "brand_id"
-  end
-
-  add_index "bitovi.embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
-
-  create_table "bitovi.entities", force: true do |t|
-    t.text     "title"
-    t.text     "url"
-    t.text     "body"
-    t.string   "origin_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.integer  "parent_id"
-    t.datetime "origin_ts",                      null: false
-    t.datetime "thread_updated_ts",              null: false
-    t.string   "image"
-    t.string   "cached_tag_list"
-    t.integer  "total_upvotes"
-    t.hstore   "props",             default: {}
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "bitovi.events", force: true do |t|
-    t.string   "type_name"
-    t.string   "feed_name"
-    t.string   "content_digest"
-    t.hstore   "props",          default: {}
-    t.json     "source_data"
-    t.integer  "entity_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.events", ["content_digest"], :name => "index_events_on_content_digest"
-
-  create_table "bitovi.filters", force: true do |t|
-    t.integer "embed_id"
-    t.boolean "is_conj"
-    t.string  "classification"
-  end
-
-  create_table "bitovi.natlang_queries", force: true do |t|
-    t.string  "attr"
-    t.string  "op"
-    t.string  "val"
-    t.boolean "is_negated", default: false
-    t.integer "filter_id"
-  end
-
-  create_table "bitovi.ownerships", force: true do |t|
-    t.integer  "owner_id"
-    t.integer  "entity_id"
-    t.integer  "value"
-    t.string   "ownership_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
-  add_index "bitovi.ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
-
-  create_table "bitovi.schema_migrations", id: false, force: true do |t|
-    t.string "version", null: false
-  end
-
-  add_index "bitovi.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
-
-  create_table "bitovi.services", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.services", ["embed_id"], :name => "index_services_on_embed_id"
-
-  create_table "bitovi.taggings", force: true do |t|
-    t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context",       limit: 128
-    t.datetime "created_at"
-  end
-
-  add_index "bitovi.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
-
-  create_table "bitovi.tags", force: true do |t|
-    t.string  "name",                        null: false
-    t.string  "display_name"
-    t.string  "aliases",        default: [],              array: true
-    t.hstore  "props",          default: {}
-    t.integer "taggings_count", default: 0
-  end
-
-  add_index "bitovi.tags", ["name"], :name => "index_tags_on_name", :unique => true
 
   create_table "brand_identities", force: true do |t|
     t.string   "provider"
@@ -400,117 +288,6 @@ ActiveRecord::Schema.define(version: 20141212114813) do
   add_index "users", ["country_id"], :name => "index_users_on_country_id"
   add_index "users", ["email"], :name => "index_users_on_email"
 
-  create_table "bitovi.embed_entities", force: true do |t|
-    t.integer "embed_id"
-    t.integer "entity_id"
-    t.boolean "is_approved"
-  end
-
-  create_table "bitovi.embeds", force: true do |t|
-    t.string  "name"
-    t.string  "colorscheme"
-    t.string  "layout"
-    t.integer "brand_id"
-  end
-
-  add_index "bitovi.embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
-
-  create_table "bitovi.entities", force: true do |t|
-    t.text     "title"
-    t.text     "url"
-    t.text     "body"
-    t.string   "origin_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.integer  "parent_id"
-    t.datetime "origin_ts",                      null: false
-    t.datetime "thread_updated_ts",              null: false
-    t.string   "image"
-    t.string   "cached_tag_list"
-    t.integer  "total_upvotes"
-    t.hstore   "props",             default: {}
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "bitovi.events", force: true do |t|
-    t.string   "type_name"
-    t.string   "feed_name"
-    t.string   "content_digest"
-    t.hstore   "props",          default: {}
-    t.json     "source_data"
-    t.integer  "entity_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.events", ["content_digest"], :name => "index_events_on_content_digest"
-
-  create_table "bitovi.filters", force: true do |t|
-    t.integer "embed_id"
-    t.boolean "is_conj"
-    t.string  "classification"
-  end
-
-  create_table "bitovi.natlang_queries", force: true do |t|
-    t.string  "attr"
-    t.string  "op"
-    t.string  "val"
-    t.boolean "is_negated", default: false
-    t.integer "filter_id"
-  end
-
-  create_table "bitovi.ownerships", force: true do |t|
-    t.integer  "owner_id"
-    t.integer  "entity_id"
-    t.integer  "value"
-    t.string   "ownership_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
-  add_index "bitovi.ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
-
-  create_table "bitovi.schema_migrations", id: false, force: true do |t|
-    t.string "version", null: false
-  end
-
-  add_index "bitovi.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
-
-  create_table "bitovi.services", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "bitovi.services", ["embed_id"], :name => "index_services_on_embed_id"
-
-  create_table "bitovi.taggings", force: true do |t|
-    t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context",       limit: 128
-    t.datetime "created_at"
-  end
-
-  add_index "bitovi.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
-
-  create_table "bitovi.tags", force: true do |t|
-    t.string  "name",                        null: false
-    t.string  "display_name"
-    t.string  "aliases",        default: [],              array: true
-    t.hstore  "props",          default: {}
-    t.integer "taggings_count", default: 0
-  end
-
-  add_index "bitovi.tags", ["name"], :name => "index_tags_on_name", :unique => true
-
   create_view "public.entity_aggregated_tag_list", <<-SQL
      SELECT e.id AS entity_id,
     string_agg((t.name)::text, ','::text) AS tag_list
@@ -520,25 +297,9 @@ ActiveRecord::Schema.define(version: 20141212114813) do
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
   SQL
-  create_view "bitovi.entity_aggregated_tag_list", <<-SQL
-     SELECT e.id AS entity_id,
-    string_agg((t.name)::text, ','::text) AS tag_list
-   FROM bitovi.entities e,
-    bitovi.tags t,
-    bitovi.taggings e_t
-  WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
-  GROUP BY e.id;
-  SQL
 
   add_foreign_key "accounts_brands", "public.accounts", :name => "accounts_brands_account_id_fk", :column => "account_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "accounts_brands", "public.brands", :name => "accounts_brands_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "bitovi.embeds", "public.brands", :name => "embeds_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "bitovi.ownerships", "bitovi.entities", :name => "ownerships_entity_id_fk", :column => "entity_id", :dependent => :delete, :exclude_index => true
-  add_foreign_key "bitovi.ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "bitovi.services", "bitovi.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "brand_identities", "public.brands", :name => "brand_identities_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
 

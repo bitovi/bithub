@@ -5,6 +5,7 @@ json.brands @brands do |b|
     json.services e.services do |s|
       json.(s, :id, :feed_name, :type_name)
       json.merge! s.service_config.data
+	  json.merge! s.credentials
     end
   end
 end

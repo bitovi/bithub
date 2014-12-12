@@ -2,6 +2,13 @@ module Identities
   module Builders
     class Twitter < Base
 
+      def credentials
+        {
+          access_token: access_token,
+          access_secret: access_secret
+        }
+      end
+
       def access_token
         oauth.fetch(:credentials).fetch(:token)
       end
