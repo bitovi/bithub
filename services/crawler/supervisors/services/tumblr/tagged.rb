@@ -9,7 +9,7 @@ module Supervisors::Services::Tumblr
         Poller, *[
           @path,
           tag_fetcher,
-          {interval: 600}
+          { interval: 600 }
         ])
     end
 

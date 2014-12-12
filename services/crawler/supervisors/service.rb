@@ -11,11 +11,12 @@ module Supervisors
       Celluloid.logger.info "Booting S #{@path.actor_name}"
       boot
     end
-    attr_reader :endpoints
 
     def execute_cmd(action)
-      Celluloid.logger.debug "YOU SHOULDN'T EVER BE HERE"
+      raise "Executing command on service level. Very bad. This is wrong!"
     end
+
+    def _childs; @endpoints; end
 
     private
 
@@ -24,7 +25,6 @@ module Supervisors
     end
 
     def service_config
-      # Celluloid.logger.debug "SERVICE: PATH LEN #{@path.rootless}"
       Actor[:configurator].service_config(*@path.rootless)
     end
 
