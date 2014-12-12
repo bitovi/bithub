@@ -50,6 +50,12 @@ module Identities
         end
       end
 
+      def present
+        {
+          groups: group_names_and_ids
+        }
+      end
+
       # Accessors
 
       def groups

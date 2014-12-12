@@ -66,8 +66,8 @@ Bithub::Application.routes.draw do
       end
 
       resources :services, except: %i(new edit) do
-        get :tree, on: :collection
-        get :suggestions, on: :collection
+        get 'tree', on: :collection
+        get 'suggestions/:feed_name', on: :collection, to: 'services#suggestions'
       end
 
       resources :filters, except: %i(new edit)

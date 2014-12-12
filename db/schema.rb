@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141114153920) do
+ActiveRecord::Schema.define(version: 20141212114813) do
 
 
   create_extension "hstore", :version => "1.2"
@@ -219,6 +219,7 @@ ActiveRecord::Schema.define(version: 20141114153920) do
     t.json     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uid"
   end
 
   add_index "services", ["embed_id"], :name => "index_services_on_embed_id"

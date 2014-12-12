@@ -48,8 +48,12 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def suggestions
-    bi = current_brand.identities.find_by_provider(params[:feed_name])
-    render json: Identities::SuggestionNormalizer.new(bi).normalize(params[:type_name])
+    if feed_name = params[:feed_name]
+      @bi = current_brand.identities.find_by_provider feed_name
+      render json: @bi.config.data(:reduced)
+    else
+      render json: msg_hash(@bi, 'suggestions'), status => 406
+    end
   end
 
   private
