@@ -52,8 +52,7 @@ class Poller
   end
   
   def lock_name
-    ln = fetcher_name.to_s.snake_case.gsub('fetchers','').split('/').reject{|x| x == ""}.join(':') 
-    "lock:polling:#{@path.brand.name}:#{ln}"
+    "lock:polling:brand/#{@path.brand.id}:embed/#{@path.embed.id}:service/#{@path.service.id}"
   end
 
   def fetcher_name
