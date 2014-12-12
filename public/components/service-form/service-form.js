@@ -46,6 +46,9 @@ function(Component, initView, Models){
 		tag : 'bh-service-form',
 		template: initView,
 		scope : {
+			init : function(){
+				console.log(this.attr())
+			},
 			saveService : function(formData, el, ev){
 				ev.preventDefault();
 
@@ -60,6 +63,9 @@ function(Component, initView, Models){
 					console.log('Error on creating service: ', error );
 				});
 
+				this.attr('service', null);
+			},
+			clearService : function(){
 				this.attr('service', null);
 			}
 		},

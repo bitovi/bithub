@@ -129,8 +129,8 @@ function(Model, _keys){
 			return TYPES[ this.attr('feed_name') ][ this.attr('type_name') ];
 		},
 		printConfig: function() {
-			var output = '',
-				config = this.attr('service_config');
+			var output = [],
+				config = this.attr('config');
 
 			config = config ? config.attr() : config;
 
@@ -139,11 +139,11 @@ function(Model, _keys){
 			}
 
 			for( var key in config ) {
-					output += key + ': ' + config[key] + ', ';
+				output.push(key + ': ' + config[key]);
 			}
 
 			// remove last ', '
-			return output.substring(0, output.length -2);
+			return output.join('<br>');
 		}
 	});
 });

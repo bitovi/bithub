@@ -13,6 +13,16 @@ function(Component, Models, initView){
 				if( confirm('Are you sure?') ) {
 					service.destroy();
 				}
+			},
+			editService:function(service){
+				this.attr('currentService', service);
+			}
+		},
+		helpers : {
+			isCurrentService : function(service, opts){
+				console.log(this.attr())
+				service = can.isFunction(service) ? service() : service;
+				return service === this.attr('currentService') ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
 			}
 		}
 	});
