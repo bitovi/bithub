@@ -5,7 +5,9 @@
 </div>
 
 <main id="content" class="container-fluid {{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
-  <bh-bits></bh-bits>
+	{{#if state.bits}}
+  	<bh-bits state="{state}" bits="{state.bits}"></bh-bits>
+  {{/if}}
 </main>
 
 {{else}}

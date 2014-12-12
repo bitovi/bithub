@@ -38,6 +38,7 @@ steal(
 						});
 
 						currentSocket.on('entities', function( msg ) {
+							console.log('NEW ENTITY')
 							var entity = Models.Bit.model(JSON.parse(msg));
 							entity.created();
 						});
@@ -56,6 +57,13 @@ steal(
 				sidebarIsExpanded : {
 					value : true,
 					serialize: false
+				},
+				isLoadingService : {
+					value : false,
+					serialize: false
+				},
+				bits : {
+					Value : Models.Bit.List
 				}
 			},
 			isSidebar : function(){
@@ -75,6 +83,16 @@ steal(
 		can.route.map(appState);
 
 		can.route.ready();
+
+		Models.Service.on('created', function(){
+			appState.attr('isLoadingService', true);
+		});
+
+		Models.Bit.on('created', function(ev, bit){
+			console.log('BIT CREATED', arguments)
+			appState.attr('isLoadingService', false);
+			appState.attr('bits').unshift(bit)
+		});
 
 		stache.registerHelper('pageUrl', function(page, opts){
 			var hash = getHash(opts.hash);
