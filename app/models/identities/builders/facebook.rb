@@ -31,6 +31,19 @@ module Identities
         @data[:pages] = fetch_pages
       end
 
+      def present
+        {
+          pages: page_ids
+        }
+      end
+
+      def credentials
+        {
+          access_token: access_token,
+          pages: pages_ids_and_tokens
+        }
+      end
+
       # Accessors
 
       def access_token

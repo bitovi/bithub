@@ -12,6 +12,18 @@ module Identities
         @data
       end
 
+      def present
+        {
+         venues: reduced_venues
+        }
+      end
+
+      def access_token
+        oauth.fetch(:credentials).fetch(:token)
+      end
+
+      private
+
       def reduced_venues
         managed_venues.map do |v|
           {
@@ -21,12 +33,6 @@ module Identities
           }
         end
       end
-
-      def access_token
-        oauth.fetch(:credentials).fetch(:token)
-      end
-
-      private
 
       def managed_venues
         @client.managed_venues.items
