@@ -1,12 +1,25 @@
 {{#if services.isPending}}
-
+	<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 {{else}}
 	<table class="table">
 		<tbody>
 			{{#each services}}
-				<tr>
-					<td>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small> <i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i></td>
-				</tr>
+				{{#isCurrentService this}}
+					<tr>
+						<td colspan="4">
+							<bh-service-form service="{currentService}" state="{state}" services="{../services}"></bh-service-form>
+						</td>
+					</tr>
+				{{else}}
+					<tr>
+						<td>{{ printFeed }} &dash; {{ printType }}</td>
+						<td><small>{{{ printConfig }}}</small></td>
+						<td>
+							<i can-click="editService" class="fa fa-pencil edit-service"></i>
+							<i can-click="destroyService" class="fa fa-close destroy-service"></i>
+						</td>
+					</tr>
+				{{/isCurrentService}}
 			{{/each}}
 		</tbody>
 	</table>
