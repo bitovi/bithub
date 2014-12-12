@@ -20,7 +20,11 @@ class Service < ActiveRecord::Base
   end
 
   def credentials
-    brand_identities.first.config.data(:credentials)
+    if bi = brand_identities.first
+      bi.config.data(:credentials)
+    else
+      {}
+    end
   end
 
   def config_valid
