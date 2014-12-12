@@ -40,6 +40,9 @@ module Supervisors
         stop_brand_supervisor(target.node)
       elsif action == :start
         start_brand_supervisor(target.node)
+      elsif action == :restart
+        stop_embed_supervisor(target.node)
+        start_embed_supervisor(target.node)
       end
     end
 
