@@ -5,7 +5,7 @@ module Entities
     end
 
     def route_embed
-      if embed_name && (e = Embed.find_by_name(embed_name))
+      if embed_id && (e = Embed.find_by_id(embed_id))
         e.make_link_to(@instance)
       end
     end
