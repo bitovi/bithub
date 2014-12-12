@@ -20,6 +20,10 @@ class Service < ActiveRecord::Base
     @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
   end
 
+  def credentials
+    brand_identities.first.config.data(:credentials)
+  end
+
   def config_valid
     unless service_config.valid?
       errors.add(:config, service_config.error_msg)
