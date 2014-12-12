@@ -91,8 +91,8 @@ module Entities
         Entity
         .feed('github')
         .type('pull_request')
-        .where("props -> 'repo_name' = '#{@event.repo.name}'")
-        .where("props -> 'number' = '#{number}'")
+        .repo_name(@event.repo.name)
+        .number(number)
       end
 
     end

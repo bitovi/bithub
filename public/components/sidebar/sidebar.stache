@@ -7,11 +7,11 @@
 		</a>
 		<span class="fa fa-close close-sidebar" can-click="toggleSidebarPosition"></span>
 	</div>
-	<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}">
+	<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}" can-dblclick="toggleHubEditing">
+		<b>Hub Name</b>
 		{{#if isEditing}}
 			<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}">
 		{{else}}
-			<b>Hub Name</b>
 			<h2>{{ name }}</h2>
 			<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
 		{{/if}}

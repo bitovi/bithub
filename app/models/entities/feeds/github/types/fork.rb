@@ -30,8 +30,8 @@ module Entities
         Entity
           .feed('github')
           .type('fork')
-          .where("props -> 'origin_author_id' = :actor_id", actor_id: @event.actor.id)
-          .where("props -> 'repo_name' = :repo_name", repo_name: @event.repo.name)
+          .origin_author(@event.actor.id)
+          .repo_name(@event.repo.name)
       end
     end
   end

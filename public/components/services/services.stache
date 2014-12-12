@@ -1,4 +1,4 @@
-<bh-services-list state="{state}"></bh-services-list>
+<bh-services-list state="{state}" current-service="{currentService}" services="{services}"></bh-services-list>
 <p>Select a service to connect content and update your feed.</p>
 
 <div class="service-slider-outer-wrap">

@@ -12,22 +12,24 @@ function(Component, initView, Models){
 			define : {
 				bits : {
 					get : function(){
-						return new Models.Bit.List({hubId: can.route.attr('hubId')});
+						return new Models.Bit.List();
 					}
 				}
 			},
 			init : function(){
-				this.reload();
-			},
-			reload : function(){
-				console.log('RELOAD')
 				var self = this;
-				setTimeout(function(){
-					Models.Bit.findAll({hubId: can.route.attr('hubId')}).then(function(data){
-						self.attr('bits').replace(data);
-						self.reload();
-					});
-				}, 10000)
+				Models.Bit.findAll({hubId: can.route.attr('hubId')}).then(function(data){
+					var bits = self.attr('bits');
+					bits.unshift.apply(bits, data);
+				});
+			}
+		},
+		events : {
+			inserted : function(){
+				var self = this;
+				this.on(Models.Bit, 'created', function(ev, bit){
+					self.scope.attr('bits').unshift(bit)
+				})
 			}
 		}
 	})

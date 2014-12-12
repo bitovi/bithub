@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Push < Protocol
-      include Entities::Github::Referencable
 
       def find
         @event.push_id && find_by_push_id.where(:parent_id => nil).first

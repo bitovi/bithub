@@ -1,9 +1,21 @@
 bh-services-list {
+	display: block;
+	margin: 0 -10px;
 	h2 {
 		margin: 0 0 5px;
 		font-size: 20px;
 	}
-	.destroy-service {
+	.destroy-service, .edit-service {
 		cursor: pointer;
+	}
+	table.table {
+		tr {
+			td:first-child {
+				padding-left: 0;
+			}
+			td:last-child {
+				padding-right: 0;
+			}
+		}
 	}
 }

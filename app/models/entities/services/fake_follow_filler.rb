@@ -24,7 +24,7 @@ module Entities
       def update_follows(data)
         data.each do |user_id, screen_name|
 
-          if (ss = follows_with_missing_source_name.where("props -> 'origin_author_id' = :user_id", :user_id => user_id.to_s).all)
+          if (ss = follows_with_missing_source_name.origin_author(user_id).all)
 
             ss.each do |s|
               s.props['origin_author_name'] = screen_name
@@ -59,17 +59,17 @@ module Entities
       def user_ids_with_missing_names
         sources = follows_with_missing_source_name\
           .pluck("props -> 'origin_author_id'").map{|id_str| id_str.to_i} || []
-        
+
         targets = follows_with_missing_target_name\
           .pluck("props -> 'target_id'").map{|id_str| id_str.to_i} || []
 
         (sources + targets).uniq
       end
-      
+
       def follows_with_missing_source_name
         follows.where("props -> 'origin_author_name' = ''")
       end
-      
+
       def follows_with_missing_target_name
         follows.where("props -> 'target_name' = ''")
       end
@@ -81,7 +81,7 @@ module Entities
       def name_from_cache(user_id)
         @redis.get(redis_prefix + user_id.to_s)
       end
-      
+
       def present_in_cache?(id)
         name_from_cache(id).nil?
       end

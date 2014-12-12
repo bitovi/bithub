@@ -1,11 +1,10 @@
 steal(
 'can/component',
-'./stackexchange-tags.stache!',
-'./stackexchange-tags.less!',
-'components/tag-list',
+'./github-private-repo.stache!',
+'./github-private-repo.less!',
 function(Component, initView){
   return Component.extend({
-    tag : 'bh-stackexchange-tags-service',
+    tag : 'bh-github-private-repo-service',
     template : initView,
     scope : {
 

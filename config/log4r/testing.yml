@@ -21,25 +21,32 @@ log4r_config:
   outputters:
     - name     : component_logfile
       type     : DateFileOutputter
-      filename : "/var/log/bithub/#{COMPONENT_NAME}.log"
+      filename : "/home/bithub/web/shared/log/#{COMPONENT_NAME}.log"
       trunc    : false
       maxsize  : 104857600
+      max_backups : 10
       formatter:
         type: PatternFormatter
-        pattern: '[#{ENV}][%d][%l]: %m '
+        pattern: '[%d][%l]: %m '
 
     - name     : active_record_logfile
       type     : DateFileOutputter
-      dirname  : "/var/log/bithub"
+      dirname  : "/home/bithub/web/shared/log"
       filename : "active_record.log"
+      trunc    : false
+      maxsize  : 104857600
+      max_backups : 10
       formatter:
         type: PatternFormatter
         pattern: '[%d][%l]: %m '
 
     - name     : action_controller_logfile
       type     : DateFileOutputter
-      dirname  : "/var/log/bithub"
+      dirname  : "/home/bithub/web/shared/log"
       filename : "action_controller.log"
+      trunc    : false
+      maxsize  : 104857600
+      max_backups : 10
       formatter:
         type: PatternFormatter
         pattern: '[%d][%l]: %m '

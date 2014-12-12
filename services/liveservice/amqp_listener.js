@@ -27,7 +27,7 @@ Client.prototype.bindConsumer = function( routingKey, cb ) {
 	var self = this,
 		queueName = 'q.liveservice.' + routingKey;
 
-	this.conn.queue( queueName , {autodelete: false}, function( q ) {
+	this.conn.queue( queueName , {autoDelete: false}, function( q ) {
 		q.bind( self.exchange, routingKey, function() {
 			self.quite || console.info('Binded queue ' + queueName);
 			q.subscribe( function( message, headers, deliveryInfo, messageObject ) {
