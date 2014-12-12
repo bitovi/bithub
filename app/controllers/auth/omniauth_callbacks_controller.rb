@@ -61,13 +61,13 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def oauthorize(provider)
-    raise 'Unknown tenant' unless brand = Brand.find_by_tenant_name(session['tenant_name'])
+    unless brand = Brand.find_by_tenant_name(session['tenant_name'])
+      raise 'Unknown tenant'
+    end
+
     uid = oauth_data[:uid].to_s
+    source_data = Identities::BrandIdentityConfig.new({oauth: oauth_data}, provider).build.data
 
-    # Build identity source_data
-    source_data = Identities::Builders.const_get(provider.camel_case).new({oauth: oauth_data}).build
-
-    # Find or update brand
     if identity = brand.identities.where(provider: provider, uid: uid).first
       identity.source_data = source_data
     else
@@ -77,7 +77,6 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     if identity.save
       render :template => 'special/close_oauth_popup.html'
     else
-      # TODO return some reasonable error
       render :json => { message: 'error'}, :status => 406
     end
   end

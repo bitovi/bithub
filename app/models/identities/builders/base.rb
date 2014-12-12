@@ -24,6 +24,20 @@ module Identities
         oauth[:info]
       end
 
+      def present
+        {}
+      end
+
+      def credentials
+        {
+          access_token: access_token
+        }
+      end
+
+      def present_with_credentials
+        present.merge credentials
+      end
+
     end
   end
 end
