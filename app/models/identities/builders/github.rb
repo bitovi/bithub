@@ -23,6 +23,13 @@ module Identities
         @data[:orgs] = fetch_orgs
       end
 
+      def present
+        {
+         repos: repo_names,
+         orgs: org_names
+        }
+      end
+
       # Accessors
 
       def access_token

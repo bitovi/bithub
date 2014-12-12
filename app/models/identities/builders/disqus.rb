@@ -41,6 +41,12 @@ module Identities
         end
       end
 
+      def present
+        {
+         forums: forum_names_and_ids
+        }
+      end
+
       # Accessors
 
       def access_token
