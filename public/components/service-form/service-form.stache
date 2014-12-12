@@ -15,8 +15,11 @@
 		{{/if}}
 
 		{{{renderForm}}}
-
-		<button class="btn btn-primary">Save Service</button>
+		<div class="clearfix">
+			<button class="btn btn-primary pull-right">Save Service</button>
+			<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
+		</div>
+		
 	</form>
 
 {{/service}}

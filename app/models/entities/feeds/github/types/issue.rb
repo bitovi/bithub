@@ -2,7 +2,6 @@ module Entities
   module Github
 
     class Issue < Protocol
-      include Entities::Github::Referencable
 
       def find
         @event.issue.id && find_by_issue_id.first
@@ -22,8 +21,6 @@ module Entities
             state: @event.issue.state,
           }
         })
-
-        built.props[:references_to] = ""
 
         if @event.actor
           built.props[:origin_author_id] = @event.actor.id
@@ -48,7 +45,6 @@ module Entities
         @instance.body = @event.body
         @instance.props[:label_names] = @event.labels.names_csv
         @instance.props[:state] = @event.state
-        @instance.props[:references_to] = ""
         super
       end
 
@@ -95,8 +91,8 @@ module Entities
         Entity
         .feed('github')
         .type('issue')
-        .where("props -> 'repo_name' = '#{@event.repo.name}'")
-        .where("props -> 'number' = '#{number}'")
+        .repo_name(@event.repo.name)
+        .number(number)
       end
 
       def taggify_labels

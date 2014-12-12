@@ -1,6 +1,9 @@
 deb http://ftp.hr.debian.org/debian wheezy main contrib non-free
 deb-src http://ftp.hr.debian.org/debian wheezy main contrib non-free
 
+deb http://ftp.hr.debian.org/debian wheezy-backports main
+deb-src http://ftp.hr.debian.org/debian wheezy-backports main
+
 deb http://security.debian.org/ wheezy/updates main
 deb-src http://security.debian.org/ wheezy/updates main
 

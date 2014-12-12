@@ -71,7 +71,7 @@ LiveService.prototype.registerEndpoints = function() {
 		self.listener.bindConsumer(endpoint, function( data ) {
 			self.quite || console.info( 'New message from MQ', data );
 
-			var key = [endpoint, data.meta.brand_name, data.meta.embed_name].join('.');
+			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
 			self.router.publish( key, data.payload );
 		});
 	});
@@ -81,17 +81,23 @@ LiveService.prototype.onIoConnection = function() {
 	var self = this;
 
 	this.io.on('connection', function (socket) {
-		var	params = socket.handshake.query,
-			cookie = socket.conn.request.headers.cookie;
+		var	params   = socket.handshake.query,
+			cookie   = socket.conn.request.headers.cookie,
+			remoteIp = socket.conn.remoteAddress;
 
-		var session_id = params.session_id || parseCookies( cookie )._session_id;
+		var session_id = params.session_id || (cookie && parseCookies( cookie )._session_id);
+
+		if( session_id == undefined ) {
+			console.log("User without valid session from " + remoteIp);
+			return;
+		}
 
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
 				console.error( err );
 			} else {
 				_.each( self.endpoints, function( endpoint ) {
-					var key = [endpoint, result.tenant_name, params.embed_name].join('.');
+					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
 
 					self.router.subscribe( key, function( message ) {
 						socket.emit( endpoint, message );

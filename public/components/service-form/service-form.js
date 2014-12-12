@@ -8,6 +8,7 @@ steal(
 'components/service-forms/facebook-page',
 'components/service-forms/foursquare-venue',
 'components/service-forms/github-org',
+'components/service-forms/github-private-repo',
 'components/service-forms/github-repo',
 'components/service-forms/instagram-tag',
 'components/service-forms/instagram-user',
@@ -19,17 +20,35 @@ steal(
 'components/service-forms/twitter-followers',
 'components/service-forms/twitter-hashtag',
 'components/service-forms/twitter-user_timeline',
+'components/oauthorizer',
 function(Component, initView, Models){
 
 	var makeTemplate = function(feed, type){
-		var componentName = ['bh', feed, type, 'service'].join('-');
-		return can.stache("<" + componentName + " map='{service}'></" + componentName + '>');
+		var componentName = ['bh', feed, type.replace(/_/g, '-'), 'service'].join('-'),
+			template = '<' + componentName + ' map="{service}"></' + componentName + '>',
+			needsOAuth = Models.Service.needsOAuth[feed];
+
+		needsOAuth = needsOAuth && can.inArray(type, needsOAuth.types) > -1;
+
+
+		if(needsOAuth){
+			template = [
+				'<bh-oauthorizer service="' + feed + '">',
+				template,
+				'</bh-oauthorizer>'
+			].join('');
+		}
+
+		return can.stache(template);
 	};
 
 	return Component.extend({
 		tag : 'bh-service-form',
 		template: initView,
 		scope : {
+			init : function(){
+				console.log(this.attr())
+			},
 			saveService : function(formData, el, ev){
 				ev.preventDefault();
 
@@ -44,6 +63,9 @@ function(Component, initView, Models){
 					console.log('Error on creating service: ', error );
 				});
 
+				this.attr('service', null);
+			},
+			clearService : function(){
 				this.attr('service', null);
 			}
 		},

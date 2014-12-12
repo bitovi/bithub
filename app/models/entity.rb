@@ -6,8 +6,8 @@ class Entity < ActiveRecord::Base
   acts_as_taggable
 
   has_many :events
-  
-  has_many :embed_entities
+
+  has_many :embed_entities, dependent: :destroy
   has_many :embeds, through: :embed_entities
 
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
@@ -21,6 +21,9 @@ class Entity < ActiveRecord::Base
     :feed_name, :type_name,
     :origin_ts, :thread_updated_ts,
     :tag_list
+
+  # Hooks
+  after_commit :notify_liveservice
 
   # Basic
   scope :feed, ->(f) { where(feed_name: f) }
@@ -197,4 +200,24 @@ class Entity < ActiveRecord::Base
       errors[:base].concat(errors.delete(:hash_key))
     end
   end
+
+  def notify_liveservice
+    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
+    payload = view.render('api/v3/embed_entities/entity', {entity: self})
+
+    puts "========================== HERE"
+    puts payload.inspect
+    puts embeds.inspect
+
+    embeds.each do |embed|
+      Support::LiveserviceNotifier.new.notif({
+        meta: {
+          brand_name: Apartment::Database.current_tenant,
+          embed_id: embed.id
+        },
+        payload: payload
+      }, :entities)
+    end
+  end
+
 end
