@@ -7,12 +7,9 @@ class Configurator
   include Celluloid
   include CoreHelpers
 
-  attr_reader :config
-
   def initialize(opts)
     @env = opts.fetch(:environment)
-    reload unless ENV['TRAVIS']
-    Celluloid.logger.info "Config: #{@config.to_yaml}"
+    @config = config unless ENV['TRAVIS']
   end
 
   def static_config
@@ -20,25 +17,24 @@ class Configurator
   end
 
   def brand(bi)
-    reload
     config.fetch(:brands).select{|b| b.fetch(:id) == bi.id}.first
   end
   alias_method :brand_config, :brand
 
   def embed(bi, ei)
-    reload
     brand(bi).fetch(:embeds).select{|e| e.fetch(:id) == ei.id}.first
   end
   alias_method :embed_config, :embed
 
   def service(bi, ei, si)
-    reload
     embed(bi, ei).fetch(:services).select{|s| s.fetch(:id) == si.id}.first
   end
   alias_method :service_config, :service
 
-  def reload
+  def config
     @config = symbolize_keys(remote_config)
+    Celluloid.logger.debug "Config: #{@config.to_yaml}"
+    @config
   end
 
   def remote_config
