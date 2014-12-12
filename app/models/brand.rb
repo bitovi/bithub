@@ -19,6 +19,8 @@ class Brand < ActiveRecord::Base
   after_create  :create_tenant
   after_update  :rename_tenant_schema
   after_destroy :destroy_tenant
+
+  after_create  :notify_brand_start
   after_destroy :notify_brand_stop
 
   def create_tenant
@@ -45,6 +47,10 @@ class Brand < ActiveRecord::Base
 
   def self.current
     where(tenant_name: Apartment::Database.current_tenant).first
+  end
+
+  def notify_brand_start
+    notify_embed_action(:start)
   end
 
   def notify_brand_stop
