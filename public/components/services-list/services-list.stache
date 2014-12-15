@@ -13,10 +13,16 @@
 				{{else}}
 					<tr>
 						<td>{{ printFeed }} &dash; {{ printType }}</td>
-						<td><small>{{{ printConfig }}}</small></td>
 						<td>
-							<i can-click="editService" class="fa fa-pencil edit-service"></i>
-							<i can-click="destroyService" class="fa fa-close destroy-service"></i>
+							{{#each config}}
+								<div class="config-line">
+									<b>{{formatConfigKey @key}}</b>: {{ . }}
+								</div>
+							{{/each}}
+						</td>
+						<td>
+							<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>
+							<i can-click="editService" class="fa fa-pencil pull-right edit-service"></i>
 						</td>
 					</tr>
 				{{/isCurrentService}}

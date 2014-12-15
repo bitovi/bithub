@@ -23,6 +23,13 @@ function(Component, Models, initView){
 				console.log(this.attr())
 				service = can.isFunction(service) ? service() : service;
 				return service === this.attr('currentService') ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
+			},
+			formatConfigKey : function(key){
+				key = can.isFunction(key) ? key() : key;
+				if(key === 'url'){
+					return 'URL';
+				}
+				return can.capitalize(key.replace(/_/g, ' '));
 			}
 		}
 	});
