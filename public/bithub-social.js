@@ -29,7 +29,7 @@ steal(
 						if(currentSocket && currentSocket){
 							currentSocket.close();
 						}
-						currentSocket = io('/?embed_id=' + val);
+						currentSocket = io('/?embed_id=' + val, { multiplex: false });
 						currentSocket.on('connect', function() {
 							console.log('CONNECTED!');
 						});
@@ -38,7 +38,7 @@ steal(
 						});
 
 						currentSocket.on('entities', function( msg ) {
-							console.log('NEW ENTITY')
+							console.log('NEW ENTITY');
 							var entity = Models.Bit.model(JSON.parse(msg));
 							entity.created();
 						});
@@ -50,7 +50,6 @@ steal(
 						currentSocket.on('moderation', function( msg ) {
 							console.log( 'New message from moderation', msg );
 						});
-						console.log(currentSocket)
 						return val;
 					}
 				},
