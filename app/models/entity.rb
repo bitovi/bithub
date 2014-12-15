@@ -205,9 +205,6 @@ class Entity < ActiveRecord::Base
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     payload = view.render('api/v3/embed_entities/entity', {entity: self})
 
-    puts payload.inspect
-    puts embeds.inspect
-
     embeds.each do |embed|
       Support::LiveserviceNotifier.new.notif({
         meta: {
