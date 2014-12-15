@@ -30,7 +30,7 @@
       </header>
       <div class="bit-content col-sm-12">
         <figcaption class="bit-content--caption">
-          <p><a href="{{url}}">{{ title }}</a></p>
+          <p><a href="{{url}}">{{{ title }}}</a></p>
           <p>{{{ body }}}</p>
         </figcaption>
       </div>
