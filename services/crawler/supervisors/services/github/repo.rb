@@ -9,7 +9,7 @@ module Supervisors::Services::Github
         client, { user_repo: repo_name })
 
       @endpoints.supervise_as(
-        @path.child_actor_name("activty_#{repo_name}"),
+        @path.next_level(EndpointInfo.new('repo_activity', repo_name)).actor_name,
         Poller, *[
           @path,
           repo_act_fetcher,
@@ -22,7 +22,7 @@ module Supervisors::Services::Github
           client, { user_repo: repo_name })
 
         @endpoints.supervise_as(
-          @path.child_actor_name("issues_#{repo_name}"),
+          @path.next_level(EndpointInfo.new('repo_issues', repo_name)).actor_name,
           Poller, *[
             @path,
             repo_issues_fetcher,
@@ -33,7 +33,7 @@ module Supervisors::Services::Github
           client, { user_repo: repo_name })
 
         @endpoints.supervise_as(
-          @path.child_actor_name("issues_comments_#{repo_name}"),
+          @path.next_level(EndpointInfo.new('repo_issue_comments', repo_name)).actor_name,
           Poller, *[
             @path,
             iss_comm_fetcher,
@@ -46,7 +46,7 @@ module Supervisors::Services::Github
           client, { user_repo: repo_name })
 
         @endpoints.supervise_as(
-          @path.child_actor_name("pull_requests_#{repo_name}"),
+          @path.next_level(EndpointInfo.new('repo_pull_requests', repo_name)).actor_name,
           Poller, *[
             @path,
             pull_req_fetcher,
@@ -57,7 +57,7 @@ module Supervisors::Services::Github
           client, { user_repo: repo_name })
 
         @endpoints.supervise_as(
-          @path.child_actor_name("pull_requests_comments#{repo_name}"),
+          @path.next_level(EndpointInfo.new('repo_pull_request_comments', repo_name)).actor_name,
           Poller, *[
             @path,
             pull_req_comm_fetcher,
