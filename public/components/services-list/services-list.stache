@@ -14,11 +14,7 @@
 					<tr>
 						<td>{{ printFeed }} &dash; {{ printType }}</td>
 						<td>
-							{{#each config}}
-								<div class="config-line">
-									<b>{{formatConfigKey @key}}</b>: {{ . }}
-								</div>
-							{{/each}}
+							{{{formatConfig config}}}
 						</td>
 						<td>
 							<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>

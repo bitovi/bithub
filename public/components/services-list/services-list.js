@@ -5,6 +5,27 @@ steal(
 './services-list.less!',
 'can/map/define',
 function(Component, Models, initView){
+
+	var formatKey = function(key){
+		if(key === 'url') return 'URL';
+		return can.capitalize(key.replace(/_/g, ' '));
+	}
+
+	var formatConfig = function(config){
+		var res = ['<ul class="config">'];
+		for(var k in config){
+			res.push('<li><b>' + formatKey(k) + '</b>: ');
+			if(can.isPlainObject(config[k])){
+				res.push(formatConfig(config[k]));
+			} else {
+				res.push(config[k]);
+			}
+			res.push('</li>');
+		}
+		res.push('</ul>')
+		return res.join('');
+	}
+
 	return Component.extend({
 		tag : 'bh-services-list',
 		template : initView,
@@ -24,12 +45,9 @@ function(Component, Models, initView){
 				service = can.isFunction(service) ? service() : service;
 				return service === this.attr('currentService') ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
 			},
-			formatConfigKey : function(key){
-				key = can.isFunction(key) ? key() : key;
-				if(key === 'url'){
-					return 'URL';
-				}
-				return can.capitalize(key.replace(/_/g, ' '));
+			formatConfig : function(config){
+				config = can.isFunction(config) ? config() : config;
+				return formatConfig(config.attr());
 			}
 		}
 	});
