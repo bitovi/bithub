@@ -3,42 +3,37 @@ namespace :log do
   desc "Tail listener log"
   task :listener do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'listener.log')
+      execute :tail, '-f', File.join(fetch(:log_path), 'listener-1.log')
     end
   end
 
   desc "Tail worker log"
   task :worker do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'worker.log')
-    end
-  end
-
-  desc "Tail crawler log"
-  task :crawler do
-    on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'crawler.log')
-    end
-  end
-
-  desc "Tail IRC bot log"
-  task :ircbot do
-    on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'irc_bot.log')
+      execute :tail, '-f', File.join(fetch(:log_path), 'worker-1.log')
     end
   end
 
   desc "Tail liveservice log"
   task :liveservice do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'liveservice.log')
+      execute :tail, '-f', File.join(fetch(:log_path), 'liveservice-1.log')
     end
   end
 
-  desc "Tail unicorn log"
-  task :unicorn do
-    on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'unicorn.log')
+  namespace :crawler do
+    desc "Tail crawler log"
+    task :poller do
+      on roles(:app) do |host|
+        execute :tail, '-f', File.join(fetch(:log_path), 'crawler-1.log')
+      end
+    end
+
+    desc "Tail crawler log"
+    task :streamer do
+      on roles(:app) do |host|
+        execute :tail, '-f', File.join(fetch(:log_path), 'streamer-1.log')
+      end
     end
   end
 
@@ -46,7 +41,7 @@ namespace :log do
     desc "Tail rails log"
     task :rails do
       on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'rails.log')
+        execute :tail, '-f', File.join(fetch(:log_path), 'web-1.log')
       end
     end
 
@@ -63,6 +58,5 @@ namespace :log do
         execute :tail, '-f', File.join(fetch(:log_path), 'action_controller.log')
       end
     end
-
   end
 end

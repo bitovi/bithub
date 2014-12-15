@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |v|
     # v.gui = true # use this for debugging
     v.name = "Bithub"
-    v.memory = 1024
+    v.memory = 2048
     v.cpus = 2
   end
 
