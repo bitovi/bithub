@@ -88,7 +88,7 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && parseCookies( cookie )._session_id);
 
 		if( session_id == undefined ) {
-			console.log("User without valid session from " + remoteIp);
+			console.log('User without valid session from ' + remoteIp);
 			return;
 		}
 
@@ -96,6 +96,11 @@ LiveService.prototype.onIoConnection = function() {
 			if( err ) {
 				console.error( err );
 			} else {
+				if( result == null ) {
+					console.log('No session data for session ' + session_id + ' from ' + remoteIp);
+					return;
+				}
+
 				_.each( self.endpoints, function( endpoint ) {
 					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
 
