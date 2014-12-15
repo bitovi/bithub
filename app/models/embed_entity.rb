@@ -17,4 +17,3 @@ class EmbedEntity < ActiveRecord::Base
     destroy
   end
 end
-

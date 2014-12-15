@@ -66,6 +66,7 @@ class Publisher
           type_name: dispatched.type_name.snake_case,
           brand_id: owner_data.brand.id,
           embed_id: owner_data.embed.id,
+          service_id: owner_data.service.id,
           brand_name: owner_data.brand.name,
           embed_name: owner_data.embed.name,
           feed_name: feed
