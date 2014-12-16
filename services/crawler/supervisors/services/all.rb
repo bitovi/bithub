@@ -8,7 +8,7 @@ require_relative 'twitter/followers'
 require_relative 'twitter/hashtag'
 
 require_relative 'tumblr/blog'
-require_relative 'tumblr/tagged'
+require_relative 'tumblr/tag'
 
 require_relative 'disqus_forum'
 require_relative 'facebook_page'
