@@ -62,11 +62,12 @@ steal(
 					serialize: false
 				},
 				bits : {
-					Value : Models.Bit.List
+					Value : Models.Bit.List,
+					serialize: false
 				}
 			},
 			isSidebar : function(){
-				return this.attr('page') === 'sidebar';
+				return this.attr('page') === 'sidebar' && this.attr('hubId');
 			}
 		});
 
