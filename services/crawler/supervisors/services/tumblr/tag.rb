@@ -1,5 +1,5 @@
 module Supervisors::Services::Tumblr
-  class Tagged < Supervisors::Service
+  class Tag < Supervisors::Service
     def boot
       @endpoints = SupervisionGroup.new
 
