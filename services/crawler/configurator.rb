@@ -33,8 +33,6 @@ class Configurator
 
   def config
     @config = symbolize_keys(remote_config)
-    Celluloid.logger.debug "Config: #{@config.to_yaml}"
-    @config
   end
 
   def remote_config
