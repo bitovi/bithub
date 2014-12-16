@@ -52,19 +52,18 @@ function(Component, initView, Models){
 		events : {
 			inserted : 'setPanelHeight',
 			'{window} resize' : 'setPanelHeight',
-			'{can.route} panel' : function(route, ev, newVal){
-				var self = this;
-				newVal && setTimeout(function(){
-					self.setPanelHeight();
-				}, 1);
-			},
+			'{can.route} panel' : 'setPanelHeight',
+			'{scope} hub' : 'setPanelHeight',
 			setPanelHeight: function(){
-				var containerHeight = this.element.height(),
-					headerHeight = this.element.find('.header').outerHeight(),
-					hubNameHeight = this.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
-					linksHeight = (4 * 37),
-					totalHeight = headerHeight + hubNameHeight + linksHeight + 50; // add padding
-				this.element.find('.panel-container').height(containerHeight - totalHeight)
+				var self = this;
+				setTimeout(function(){
+					var containerHeight = self.element.height(),
+						headerHeight = self.element.find('.header').outerHeight(),
+						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
+						linksHeight = (4 * 37),
+						totalHeight = headerHeight + hubNameHeight + linksHeight + 50; // add padding
+					self.element.find('.panel-container').height(containerHeight - totalHeight)
+				}, 1);
 			},
 			'{scope} isEditing' : function(scope, ev, newVal){
 				var self = this;
