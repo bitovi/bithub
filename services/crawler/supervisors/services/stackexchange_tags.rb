@@ -7,7 +7,7 @@ module Supervisors::Services::Stackexchange
         tags: tags, token: token)
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new("questions_#{tags_csv}")).actor_name,
+        @path.next_level(EndpointInfo.new('questions', tags_csv)).actor_name,
         Poller, *[
           @path,
           questions_fetcher,
@@ -18,7 +18,7 @@ module Supervisors::Services::Stackexchange
         tags: tags, token: token)
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new("search_#{tags_csv}")).actor_name,
+        @path.next_level(EndpointInfo.new('search', tags_csv)).actor_name,
         Poller, *[
           @path,
           search_fetcher,

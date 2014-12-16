@@ -3,28 +3,25 @@ require_relative 'decorators/all'
 
 class Poller
   include Celluloid
+  HEARTBEAT_INTERVAL = 1
 
   def initialize(path, fetcher, opts = {})
     @path = path
     @fetcher = fetcher
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
-    interval = opts.fetch(:interval) { 3600 }
-    @timer = every(interval) { fetch }
+    @lock_ttl = opts.fetch(:interval) { 3600 }
+    @timer = every(HEARTBEAT_INTERVAL) { fetch }
     fetch
   end
-  attr_reader :fetcher
+  attr_reader :fetcher, :lock_ttl
 
   def fetch
-    if not(locker.nil?)
-      if locker.locked?(lock_name)
-        Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand.name}' LOCKED!"
-      else
-        locker.lock(lock_name, lock_interval)
-        if (events = @fetcher.fetch)
-          Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand.name}', fetched #{events.count} events"
-          publish events if events.count > 0
-        end
+    if !locker.nil? && !locker.locked?(lock_name)
+      locker.lock(lock_name, lock_ttl)
+      if (events = @fetcher.fetch)
+        Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand.name}', fetched #{events.count} events"
+        publish events if events.count > 0
       end
     end
   end
@@ -38,19 +35,6 @@ class Poller
     terminate
   end
   
-  def interval
-    @timer.interval
-  end
-
-  def lock_interval
-    interval - 5
-  end
-
-  def interval=(seconds)
-    @timer.cancel
-    @timer = every(seconds) { fetch }
-  end
-  
   def lock_name
     "lock:polling:brand/#{@path.brand.id}:embed/#{@path.embed.id}:service/#{@path.service.id}"
   end
@@ -60,10 +44,10 @@ class Poller
   end
 
   def locker
-    Celluloid::Actor[:lock_manager]
+    Actor[:lock_manager]
   end
 
   def publisher
-    Celluloid::Actor[:publisher]
+    Actor[:publisher]
   end
 end
