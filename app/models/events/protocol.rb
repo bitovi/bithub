@@ -58,6 +58,10 @@ module Events
     def embed_id
       @meta.fetch(:embed_id)
     end
+    
+    def service_id
+      @meta.fetch(:service_id)
+    end
 
     def ==(other)
       @source_data == other

@@ -3,6 +3,7 @@ class Service < ActiveRecord::Base
   validate :service_config_validator
 
   belongs_to :embed
+  has_and_belongs_to_many :entities
 
   after_create :notify_service_start
   after_destroy :notify_service_stop
@@ -18,13 +19,13 @@ class Service < ActiveRecord::Base
   def service_config
     @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
   end
+  
+  def make_link_to(entity)
+    self.entities << entity
+  end
 
   def credentials
-    if bi = brand_identities.first
-      bi.config.data(:credentials)
-    else
-      {}
-    end
+    (bi = brand_identities.first) ? bi.config.data(:credentials) : {}
   end
 
   def config_valid
