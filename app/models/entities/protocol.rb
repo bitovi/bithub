@@ -78,6 +78,10 @@ module Entities
     def embed_id
       @event.embed_id
     end
+    
+    def service_id
+      @event.service_id
+    end
 
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
