@@ -64,7 +64,7 @@ function(Model, _keys){
 			types : ['private_repo']
 		},
 		twitter : {
-			types : ['followers']
+			types : ['followers', 'hashtag', 'user_timeline']
 		},
 		meetup : {
 			types : ['group']
@@ -75,7 +75,9 @@ function(Model, _keys){
 		foursquare : {
 			types : ['venue']
 		},
-
+		disqus : {
+			types: ['forum']
+		}
 	};
 
 	return Model.extend({
