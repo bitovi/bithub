@@ -12,7 +12,7 @@ module Supervisors::Services::Meetup
         client, group_ids: [group_id], event_set: event_set)
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('events_' + group_id)).actor_name,
+        @path.next_level(EndpointInfo.new('events', group_id)).actor_name,
         Poller, *[
           @path,
           e_fetcher
@@ -22,7 +22,7 @@ module Supervisors::Services::Meetup
         client, event_set: event_set)
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('rsvps_' + group_id)).actor_name,
+        @path.next_level(EndpointInfo.new('rsvps', group_id)).actor_name,
         Poller, *[
           @path,
           rsvp_fetcher

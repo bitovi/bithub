@@ -9,7 +9,7 @@ module Supervisors::Services::Disqus
         api_key: api_key, forum: forum_url)
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('comments_' + forum_url)).actor_name,
+        @path.next_level(EndpointInfo.new('comments', forum_url)).actor_name,
         Poller, *[
           @path,
           fetcher,
