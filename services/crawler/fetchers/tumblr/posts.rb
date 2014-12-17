@@ -15,6 +15,9 @@ module Fetchers
       def fetch
         @result = @client.posts @hostname, offset: @offset
         @result.fetch('posts')
+      rescue KeyError
+        Celluloid.logger.info "Tumblr poller: '#{@hostname}' not found!"
+        []
       end
 
       def next
