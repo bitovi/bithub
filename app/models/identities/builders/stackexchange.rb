@@ -2,13 +2,14 @@ module Identities
   module Builders
     class Stackexchange < Base
 
-      def access_token
-        credentials.fetch('token')
+      def credentials
+        { access_token: access_token }
       end
 
-      def credentials
-        @data.fetch('oauth').fetch('credentials')
+      def access_token
+        @data.fetch('oauth').fetch('token')
       end
+
     end
   end
 end

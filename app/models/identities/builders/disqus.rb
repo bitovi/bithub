@@ -41,24 +41,24 @@ module Identities
         end
       end
 
-      def present
+      def suggestions(type=nil)
+        forum_names_and_ids
+      end
+
+      def credentials
         {
-         forums: forum_names_and_ids
+          access_token: access_token
         }
       end
 
       # Accessors
 
       def access_token
-        credentials.fetch(:access_token)
+        @data.fetch(:credentials).fetch(:access_token)
       end
 
       def refresh_token
-        credentials.fetch(:refresh_token)
-      end
-
-      def credentials
-        @data.fetch(:credentials)
+        @data.fetch(:credentials).fetch(:refresh_token)
       end
 
       def forums

@@ -19,13 +19,13 @@ class Service < ActiveRecord::Base
   def service_config
     @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
   end
-  
+
   def make_link_to(entity)
     self.entities << entity
   end
 
   def credentials
-    (bi = brand_identities.first) ? bi.config.data(:credentials) : {}
+    (bi = brand_identities.first) ? bi.config.credentials : {}
   end
 
   def config_valid
