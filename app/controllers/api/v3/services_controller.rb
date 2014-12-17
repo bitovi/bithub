@@ -49,8 +49,12 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def suggestions
     if feed_name = params[:feed_name]
-      bi = current_brand.identities.find_by_provider feed_name
-      suggestion = bi.config.suggestions params[:feed_type]
+
+      if bi = current_brand.identities.find_by_provider(feed_name)
+        suggestion = bi.config.suggestions params[:feed_type]
+      else
+        suggestion = []
+      end
 
       render json: suggestion
     else

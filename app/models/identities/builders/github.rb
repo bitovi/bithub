@@ -24,16 +24,16 @@ module Identities
       end
 
       def suggestions(type)
-        if type == 'repos'
+        if type == 'repo'
           repo_names.map do |r|
             { id: r, name: r }
           end
-        elsif type == 'orgs'
+        elsif type == 'org'
           org_names.map do |o|
             { id: o, name: o }
           end
         else
-          {}
+          []
         end
       end
 
