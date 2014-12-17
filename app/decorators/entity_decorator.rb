@@ -1,6 +1,5 @@
 require 'pp'
 class EntityDecorator < Draper::Decorator
-  S3_PREFIX = "http://s3.amazonaws.com/bithub"
 
   delegate_all
 
@@ -8,18 +7,9 @@ class EntityDecorator < Draper::Decorator
     cached_tags
   end
 
-  def upvotes
-    if !source.parent
-      source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
-    else
-      source.respond_to?(:total_upvotes) ? source.total_upvotes : source.upvotes.reduce(0) { |acc, u| acc += u.value }
-    end
-  end
-
   def title
     if source.cached_tags.include?('tweet')
       apply_hyperlinks(source.title, source.props['entities_urls'])
-
     else
       source.title
     end
@@ -42,101 +32,11 @@ class EntityDecorator < Draper::Decorator
     end
   end
 
-  def source_body
-    source.body
-  end
-
-  # deprecated: use 'author' or 'props.origin_author_*' attrs
-  def actor
-    (author && author[:name]) ? author[:name] : source.props['origin_author_name']
-  end
-
   def has_parent
     !!parent
   end
 
-  def author
-    if source.author
-      { id: source.author.id, name: source.author.name }
-    else
-      { name: source.props['origin_author_name'] }
-    end
-  end
-
-  # thumb, large, original
-  def image_url(size = :thumb)
-    if has_local_image?(source)
-      local_prefix + (size.blank? ? source.image.url(:thumb) : source.image.url(size))
-    else
-      ""
-    end
-  end
-
-  def original_image_url
-    if has_local_image?(source)
-      local_prefix + source.image.url
-    else
-      nil
-    end
-  end
-
-  def props(thread_awarded = false, awarded_value = nil)
-    source.props[:thread_awarded] = thread_awarded
-    source.props[:awarded_value] = awarded_value
-    source.props[:target] = if not(source.props['target_name'].blank?)
-                              source.props['target_name']
-                            elsif not(source.props['target'].blank?)
-                              source.props['target']
-                            elsif not(source.props['target_screen_name'].blank?)
-                              source.props['target_screen_name']
-                            end
-    #source.props[:thread_awarded] = source.thread_awarded?
-    #source.props[:awarded_value] = source.awards.first.value if source.awards.first
-    source.props
-  end
-
-  private
-  def has_s3_image?(event)
-    !!event.props['image']
-  end
-
-  def has_local_image?(event)
-    !event.image.url.blank?
-  end
-
-  def props_image_path(img_string, size)
-    if !img_string.blank?
-      if size == :thumb
-        img_string.gsub(/(?<ext>\.\w+)$/,'_60\k<ext>')
-      elsif size == :large
-        img_string.gsub(/(?<ext>\.\w+)$/,'_800\k<ext>')
-      else
-        img_string.gsub(/(?<ext>\.\w+)$/,'_200\k<ext>')
-      end
-    end
-  end
-
-  def local_prefix
-    case Rails.env
-    when 'production'
-      "http://bithub.com"
-    when 'staging'
-      "http://staging.bithub.com"
-    when 'testing'
-      "http://testing.bithub.com"
-    when 'development'
-      "http://bithub.dev"
-    end
-  end
-
-  def excluded_attributes_include?(attr)
-    context[:excluded_attributes] && (
-      context[:excluded_attributes].include?(attr.to_sym) ||
-      context[:excluded_attributes].include?(attr.to_s))
-  end
-
   def apply_hyperlinks(text, urls )
-
     urls = ActiveSupport::JSON.decode(urls || '[]')
 
     urls.reduce(text) do |acc, url|
