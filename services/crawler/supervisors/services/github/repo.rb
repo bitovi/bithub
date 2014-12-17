@@ -17,7 +17,6 @@ module Supervisors::Services::Github
         ]
       )
 
-      if track_issues?
         repo_issues_fetcher =  Fetchers::Github::RepoIssues.new(
           client, { user_repo: repo_name })
 
@@ -39,9 +38,7 @@ module Supervisors::Services::Github
             iss_comm_fetcher,
             {interval: 600}
           ])
-      end
 
-      if track_pull_requests?
         pull_req_fetcher = Fetchers::Github::RepoIssuesComments.new(
           client, { user_repo: repo_name })
 
@@ -63,7 +60,6 @@ module Supervisors::Services::Github
             pull_req_comm_fetcher,
             {interval: 300}
           ])
-      end
 
     end
 
