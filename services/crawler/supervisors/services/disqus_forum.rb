@@ -20,7 +20,7 @@ module Supervisors::Services::Disqus
     private
 
     def forum_url
-      config.fetch(:url)
+      service_config.fetch(:url)
     end
 
     def api_key
