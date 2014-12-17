@@ -6,6 +6,10 @@ module Identities
         @data
       end
 
+      def credentials
+        { access_token: access_token }
+      end
+
       # Accessors
 
       def access_token
