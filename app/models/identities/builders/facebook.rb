@@ -51,14 +51,22 @@ module Identities
       end
 
       def page_ids
-        pages.map {|p| p.fetch('id')}
+        pages.map do |p|
+          {
+            id: p['id'],
+            name: p['name'],
+            category: p['category']
+          }
+        end
       end
 
       def page_ids_and_tokens
         pages.map do |page|
           {
-            id: page.fetch('id'),
-            token: page.fetch('access_token')
+            id: p['id'],
+            name: p['name'],
+            category: p['category'],
+            token: p.fetch('access_token')
           }
         end
       end
