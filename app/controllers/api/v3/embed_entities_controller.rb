@@ -8,7 +8,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def index
     embed = current_brand.embeds.find(embed_id)
-    entities = embed.embed_entities.all.map(&:entity)
+    entities = embed.embed_entities.includes(:entity).order('entities.thread_updated_ts').all.map(&:entity)
 
     @entities = EntityDecorator.decorate_collection entities
     render :index
