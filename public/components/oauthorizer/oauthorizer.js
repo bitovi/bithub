@@ -36,24 +36,25 @@ function(Component, initView, Models){
 					}
 				}
 			},
-			isAuthorized : false,
+			isAuthorized : function(){
+				return this.attr('identities').hasIdentityForService(this.attr('feed'));
+			},
 			isAuthorizing : false,
 			oauthorize : function(){
 				var self = this,
-					service = this.attr('service');
+					feed = this.attr('feed');
 
-				if(!service){
-					throw "You must initialize bh-oauthorizer component with the `service` attribute";
+				if(!feed){
+					throw "You must initialize bh-oauthorizer component with the `feed` attribute";
 				}
 
 				this.attr('isAuthorizing', true);
 
-				OAuthConnect(service).then(function(){
+				OAuthConnect(feed).then(function(){
 					Models.Identity.reloadAll().then(function(identities){
 						self.attr({
 							identities : identities,
-							isAuthorizing : false,
-							isAuthorized : identities.hasIdentityForService(service)
+							isAuthorizing : false
 						});
 					});
 				});
