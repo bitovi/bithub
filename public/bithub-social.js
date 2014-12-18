@@ -29,6 +29,9 @@ steal(
 						if(currentSocket && currentSocket){
 							currentSocket.close();
 						}
+
+						if(typeof io === 'undefined') return;
+
 						currentSocket = io('/?embed_id=' + val, { multiplex: false });
 						currentSocket.on('connect', function() {
 							console.log('CONNECTED!');
@@ -57,8 +60,8 @@ steal(
 					value : true,
 					serialize: false
 				},
-				isLoadingService : {
-					value : false,
+				loadingServices : {
+					value : [],
 					serialize: false
 				},
 				bits : {
@@ -84,14 +87,27 @@ steal(
 
 		can.route.ready();
 
-		Models.Service.on('created', function(){
-			appState.attr('isLoadingService', true);
+		Models.Service.on('saving', function(ev, service){
+			appState.attr('loadingServices').unshift(service);
 		});
 
 		Models.Bit.on('created', function(ev, bit){
-			console.log('BIT CREATED', arguments)
-			appState.attr('isLoadingService', false);
-			appState.attr('bits').unshift(bit)
+			var serviceIds = bit.attr('service_ids'),
+				loadingServices = appState.attr('loadingServices'),
+				loadingServiceIds = _reduce(loadingServices, function(acc, service){
+					acc[service.attr('id')] = service;
+					return acc;
+				}, {}),
+				index;
+
+			appState.attr('bits').unshift(bit);
+
+			for(var i = 0; i < serviceIds.length; i++){
+				if(loadingServiceIds[serviceIds[i]]){
+					index = loadingServices.indexOf(serviceIds[i]);
+					loadingServices.splice(index, 1);
+				}
+			}
 		});
 
 		stache.registerHelper('pageUrl', function(page, opts){

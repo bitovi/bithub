@@ -14,11 +14,12 @@
 			</div>
 		{{/if}}
 
-		{{{renderForm}}}
-		<div class="clearfix">
-			<button class="btn btn-primary pull-right">Save Service</button>
-			<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
-		</div>
+		{{#renderForm}}
+			<div class="clearfix">
+				<button class="btn btn-primary pull-right">Save Service</button>
+				<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
+			</div>
+		{{/renderForm}}
 		
 	</form>
 

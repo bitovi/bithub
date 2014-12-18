@@ -14,7 +14,7 @@
 					<tr>
 						<td>{{ printFeed }} &dash; {{ printType }}</td>
 						<td>
-							{{{formatConfig config}}}
+							{{{formattedConfig}}}
 						</td>
 						<td>
 							<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>

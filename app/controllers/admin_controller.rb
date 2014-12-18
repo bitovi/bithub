@@ -2,6 +2,12 @@ class AdminController < ApplicationController
 
   layout false, only: [:index]
 
+  def index
+    unless current_account
+      redirect_to :new_account_session
+    end
+  end
+
   def choose_brand
     if current_account
       if tenant_name = params['tenant_name']

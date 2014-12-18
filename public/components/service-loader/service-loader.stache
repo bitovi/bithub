@@ -1,0 +1,11 @@
+<article class="bit-container">
+	<div class="bit">
+		<div class="bit-content col-sm-12">
+			<figcaption class="bit-content--caption">
+				<h4><i class="fa fa-spin fa-circle-o-notch"></i> Loading ...</h4>
+				<p>{{service.printFeed}} &dash; {{service.printType}}</p>
+				{{{service.formattedConfig}}}
+			</figcaption>
+		</div>
+	</div>
+</article>
