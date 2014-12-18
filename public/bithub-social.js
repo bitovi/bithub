@@ -100,7 +100,7 @@ steal(
 				}, {}),
 				index;
 
-			appState.attr('bits').unshift(bit);
+			appState.attr('bits').place(bit);
 
 			for(var i = 0; i < serviceIds.length; i++){
 				if(loadingServiceIds[serviceIds[i]]){
