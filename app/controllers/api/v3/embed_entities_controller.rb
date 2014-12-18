@@ -8,25 +8,33 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def index
     embed = current_brand.embeds.find(embed_id)
-    @entities = embed.embed_entities.all.map(&:entity)
+    entities = embed.embed_entities.all.map(&:entity)
+
+    @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
   def approved
     embed = current_brand.embeds.find(embed_id)
-    @entities = embed.embed_entities.approved.map(&:entity)
+    entities = embed.embed_entities.approved.map(&:entity)
+
+    @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
   def waitlisted
     embed = current_brand.embeds.find(embed_id)
-    @entities = embed.embed_entities.waitlisted.map(&:entity)
+    entities = embed.embed_entities.waitlisted.map(&:entity)
+
+    @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
   def show
     embed = current_brand.embeds.find(embed_id)
-    @entity = embed.embed_entities.find(entity_id)
+    entity = embed.embed_entities.find(entity_id)
+
+    @entity = EntityDecorator.decorate entity
     render :show
   end
 
@@ -34,7 +42,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     @embed = current_brand.embeds.find(embed_id)
     render :show
   end
-  
+
   def approve
     if embed_entity_relation.approve
       render json: embed_entity_relation

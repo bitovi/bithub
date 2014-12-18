@@ -25,7 +25,7 @@ function(Component, initView, Models){
 
 	var makeTemplate = function(feed, type){
 		var componentName = ['bh', feed, type.replace(/_/g, '-'), 'service'].join('-'),
-			template = '<' + componentName + ' map="{service}"></' + componentName + '>',
+			template = '<' + componentName + ' map="{service}"></' + componentName + '>{{{saveButtons}}}',
 			needsOAuth = Models.Service.needsOAuth[feed];
 
 		needsOAuth = needsOAuth && can.inArray(type, needsOAuth.types) > -1;
@@ -52,14 +52,18 @@ function(Component, initView, Models){
 			saveService : function(formData, el, ev){
 				ev.preventDefault();
 
-				var self = this;
+				var self = this,
+					service = this.attr('service'),
+					services = this.attr('services');
 
-				this.attr('service').attr('embed_id', this.state.attr('hubId'));
+				service.attr('embed_id', this.state.attr('hubId'));
+				services.push( service );
 
-				this.attr('service').save( function( newService ) {
+				service.save( function( newService ) {
 					console.log('Service saved!');
-					self.attr('services').push( newService );
 				}, function( error ) {
+					var index = services.indexOf(service);
+					services.splice(index, 1);
 					console.log('Error on creating service: ', error );
 				});
 
@@ -76,7 +80,13 @@ function(Component, initView, Models){
 					type = service.attr('type_name');
 
 				if(type && feed){
-					return makeTemplate(feed, type)(opts.scope.add({service: this.attr('service')}));
+					return makeTemplate(feed, type)(opts.scope.add({
+						service: this.attr('service')
+					}),{
+						saveButtons : function(){
+							return opts.fn()
+						}
+					});
 				}
 			}
 		}

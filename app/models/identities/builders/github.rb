@@ -23,10 +23,23 @@ module Identities
         @data[:orgs] = fetch_orgs
       end
 
-      def present
+      def suggestions(type)
+        if type == 'repo'
+          repo_names.map do |r|
+            { id: r, name: r }
+          end
+        elsif type == 'org'
+          org_names.map do |o|
+            { id: o, name: o }
+          end
+        else
+          []
+        end
+      end
+
+      def credentials
         {
-         repos: repo_names,
-         orgs: org_names
+          access_token: access_token
         }
       end
 

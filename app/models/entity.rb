@@ -204,7 +204,9 @@ class Entity < ActiveRecord::Base
 
   def notify_liveservice
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
-    payload = view.render('api/v3/embed_entities/entity', {entity: self})
+    entity = EntityDecorator.decorate self
+
+    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
     embeds.each do |embed|
       Support::LiveserviceNotifier.new.notif({
