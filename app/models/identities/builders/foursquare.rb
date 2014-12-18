@@ -8,7 +8,7 @@ module Identities
       end
 
       def build
-        @data[:venues] = reduced_venues
+        @data[:venues] = managed_venues
         @data
       end
 
