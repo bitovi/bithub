@@ -172,8 +172,21 @@ module Entities
 
   module Stackexchange
     class Dispatcher < BasicTypeDispatcher
+
+      Mappings = {
+        :QuestionEvent => :Question,
+        :AnswerEvent => :Answer,
+        :CommentEvent => :Comment
+      }
+
+      def remapped_type
+        Mappings[@event.type_name.to_sym]
+      end
+
       def type
-        Stackexchange.const_get(@event.type_name)
+        if Stackexchange.constants.include? remapped_type
+          Stackexchange.const_get remapped_type
+        end
       end
     end
   end
