@@ -5,14 +5,13 @@ steal('can/model', 'can/list/promise', function(Model){
 	var Identity = Model.extend({
 		resource : 'api/v3/identities',
 		getAll : function(){
-			var def = can.Deferred();
 			if(identities){
-				return def.resolve(identities);
+				return identities;
 			}
 			return this.reloadAll();
 		},
 		reloadAll : function(){
-			var def = this.findAll({});
+			return new this.List({});
 
 			def.then(function(data){
 				identities = data;
