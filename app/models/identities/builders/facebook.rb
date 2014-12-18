@@ -31,10 +31,8 @@ module Identities
         @data[:pages] = fetch_pages
       end
 
-      def present
-        {
-          pages: page_ids
-        }
+      def suggestions(type=nil)
+        page_ids_and_names
       end
 
       def credentials
@@ -50,12 +48,11 @@ module Identities
         long_lived_access_token || oauth.fetch(:credentials).fetch(:token)
       end
 
-      def page_ids
+      def page_ids_and_names
         pages.map do |p|
           {
             id: p['id'],
-            name: p['name'],
-            category: p['category']
+            name: p['name']
           }
         end
       end
@@ -65,7 +62,6 @@ module Identities
           {
             id: p['id'],
             name: p['name'],
-            category: p['category'],
             token: p.fetch('access_token')
           }
         end

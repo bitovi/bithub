@@ -12,10 +12,12 @@ module Identities
         @data
       end
 
-      def present
-        {
-         venues: reduced_venues
-        }
+      def suggestions(type=nil)
+        venue_ids_and_names
+      end
+
+      def credentials
+        { access_token: access_token }
       end
 
       def access_token
@@ -24,12 +26,11 @@ module Identities
 
       private
 
-      def reduced_venues
+      def venue_ids_and_names
         managed_venues.map do |v|
           {
             id: v['id'],
-            name: v['name'],
-            access_token: v['access_token']
+            name: v['name']
           }
         end
       end

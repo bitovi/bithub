@@ -61,7 +61,7 @@ function(Model, _keys){
 
 	var NEEDS_OAUTH = {
 		github : {
-			types : ['private_repo']
+			types : ['repo', 'org', 'private_repo']
 		},
 		twitter : {
 			types : ['followers', 'hashtag', 'user_timeline']
@@ -80,6 +80,26 @@ function(Model, _keys){
 		}
 	};
 
+	var formatKey = function(key){
+		if(key === 'url') return 'URL';
+		return can.capitalize(key.replace(/_/g, ' '));
+	}
+
+	var formatConfig = function(config){
+		var res = ['<ul class="config">'];
+		for(var k in config){
+			res.push('<li><b>' + formatKey(k) + '</b>: ');
+			if(can.isPlainObject(config[k])){
+				res.push(formatConfig(config[k]));
+			} else {
+				res.push(config[k]);
+			}
+			res.push('</li>');
+		}
+		res.push('</ul>')
+		return res.join('');
+	}
+
 	return Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
@@ -90,6 +110,10 @@ function(Model, _keys){
 
 			if(feed === 'github'){
 				config.tracking = {};
+			}
+
+			if(feed === 'stackexchange'){
+				config.tags = [];
 			}
 
 			return new this({
@@ -146,6 +170,13 @@ function(Model, _keys){
 
 			// remove last ', '
 			return output.join('<br>');
+		},
+		save : function(){
+			can.trigger(this.constructor, 'saving', [this]);
+			return this._super.apply(this, arguments);
+		},
+		formattedConfig : function(){
+			return formatConfig(this.attr('config').attr());
 		}
 	});
 });

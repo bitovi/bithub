@@ -2,6 +2,8 @@ module Identities
 
   class BrandIdentityConfig
 
+    attr_reader :data
+
     def initialize(source_data, provider_name)
       @data = source_data
       @provider_name = provider_name
@@ -20,20 +22,12 @@ module Identities
       self
     end
 
-    def data(present = :raw)
+    def suggestions(type=nil)
+      builder.suggestions(type)
+    end
 
-      if present == :raw
-        builder.data
-      elsif present == :reduced
-        builder.present
-      elsif present == :credentials
-        builder.credentials
-      elsif present == :reduced_with_credentials
-        builder.present_with_credentials
-      else
-        nil
-      end
-
+    def credentials
+      builder.credentials
     end
 
   end
