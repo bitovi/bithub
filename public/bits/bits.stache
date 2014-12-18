@@ -24,9 +24,12 @@
       </div>
     </header>
     <div class="bit-content col-sm-12">
-      <figcaption class="bit-content--caption">
-        {{{ body }}}
-      </figcaption>
+      <h4><a href="{{url}}">{{{ title }}}</a></h4>
+      {{#if body}}
+        <figcaption class="bit-content--caption">
+          {{{ body }}}
+        </figcaption>
+      {{/if}}
     </div>
     <footer class="bit-footer col-sm-12">
     </footer>
