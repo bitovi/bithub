@@ -1,4 +1,13 @@
 bh-bits {
+	display: block;
+	position: relative;
+	.alert-below-the-fold {
+		position: fixed;
+		bottom: 0;
+		left: 10px;
+		right: 10px;
+		box-shadow: 0 0 30px rgba(0,0,0,0.2);
+	}
 	.bit-content {
 		.bit-content--caption {
 			overflow: hidden;
@@ -7,5 +16,8 @@ bh-bits {
 		img {
 			max-width: 100%;
 		}
+	}
+	bh-bit.below-the-fold .bit {
+		background: #fcf8e3;
 	}
 }
