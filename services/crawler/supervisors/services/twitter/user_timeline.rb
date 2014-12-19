@@ -9,7 +9,7 @@ module Supervisors::Services::Twitter
         client, { user_handle: user_handle })
 
       @endpoints.supervise_as(
-        @path.child_actor_name("user_timeline_#{user_handle}"),
+        @path.next_level(EndpointInfo.new("user_timeline", user_handle)).actor_name,
         Poller, *[
           @path,
           user_timeline_fetcher,
