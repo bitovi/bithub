@@ -41,8 +41,12 @@ steal(
 						});
 
 						currentSocket.on('entities', function( msg ) {
+							var parsed = JSON.parse(msg);
 							console.log('NEW ENTITY');
-							var entity = Models.Bit.model(JSON.parse(msg));
+
+							parsed._isFromLiveService = true;
+
+							var entity = Models.Bit.model(parsed);
 							entity.created();
 						});
 
@@ -66,6 +70,14 @@ steal(
 				},
 				bits : {
 					Value : Models.Bit.List,
+					serialize: false
+				},
+				scrollTop : {
+					value : 0,
+					serialize: false
+				},
+				scrollHeight: {
+					value : 0,
 					serialize: false
 				}
 			},
@@ -114,6 +126,23 @@ steal(
 			var hash = getHash(opts.hash);
 			hash.page = can.isFunction(page) ? page() : page;
 			return can.route.url(hash, false);
+		});
+
+		var $window = $(window);
+
+		var calculateScrollAndHeight = function(){
+			return {
+				scrollTop : $window.scrollTop(),
+				scrollHeight : $window.height()
+			}
+		}
+
+		$window.scroll(function(){
+			appState.attr(calculateScrollAndHeight());
+		});
+
+		$window.on('resize', function(){
+			appState.attr(calculateScrollAndHeight());
 		});
 
 		$('#app').html(initView({
