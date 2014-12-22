@@ -29,7 +29,7 @@ RSpec.describe 'Embed endpoints', type: :request do
   context 'given the account is logged in and the brand is determined' do
     describe 'GET /embeds' do
       it 'responds with all embeds' do
-        Apartment::Database.switch('neektza')
+        Apartment::Tenant.switch('neektza')
         embeds = FactoryGirl.create_list(:embed, 10, brand: @current_brand)
 
         get "/api/#{api_version}/embeds"
@@ -40,7 +40,7 @@ RSpec.describe 'Embed endpoints', type: :request do
 
     describe 'GET /embeds/:id' do
       it 'responds with a specific embed' do
-        Apartment::Database.switch('neektza')
+        Apartment::Tenant.switch('neektza')
         FactoryGirl.create(:embed, brand: @current_brand)
 
         get "/api/#{api_version}/embeds/1"
@@ -56,13 +56,13 @@ RSpec.describe 'Embed endpoints', type: :request do
         expect(json.keys).to include('name', 'colorscheme', 'layout')
       end
     end
-    
+
     describe 'PUT /embeds' do
       it 'updates an existing embed' do
-        Apartment::Database.switch('neektza')
+        Apartment::Tenant.switch('neektza')
         e = FactoryGirl.create(:embed, brand: @current_brand)
 
-        put "/api/#{api_version}/embeds/#{e.id}", { embed: { name: 'myname' } } 
+        put "/api/#{api_version}/embeds/#{e.id}", { embed: { name: 'myname' } }
         expect(response).to be_success
         expect(json['name']).to eq 'myname'
       end

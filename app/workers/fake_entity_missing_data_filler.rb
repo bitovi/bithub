@@ -2,12 +2,12 @@ module Workers
   class FakeFollowMissingDataFiller
     include Sidekiq::Worker
     include Sidetiq::Schedulable
-    
+
     recurrence { minutely }
 
     def perform
-      Brand.pluck(:name).each do |name| 
-        Apartment::Database.switch(name)
+      Brand.pluck(:name).each do |name|
+        Apartment::Tenant.switch name
         fff = ::Entities::Services::FakeFollowFiller.new
 
         if fff.user_ids_with_missing_names.count >= 50
@@ -16,7 +16,7 @@ module Workers
           Rails.logger.info "Not enough empty Follow entities to init processing"
         end
       end
-      Apartment::Database.switch('public')
+      Apartment::Tenant.switch 'public'
     end
   end
 end

@@ -211,7 +211,7 @@ class Entity < ActiveRecord::Base
     embeds.each do |embed|
       Support::LiveserviceNotifier.new.notif({
         meta: {
-          brand_name: Apartment::Database.current_tenant,
+          brand_name: Apartment::Tenant.current,
           embed_id: embed.id
         },
         payload: payload
