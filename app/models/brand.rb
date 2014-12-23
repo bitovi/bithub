@@ -24,8 +24,8 @@ class Brand < ActiveRecord::Base
   after_destroy :notify_brand_stop
 
   def create_tenant
-    Apartment::Database.create tenant_name
-    Apartment::Database.switch tenant_name
+    Apartment::Tenant.create tenant_name
+    Apartment::Tenant.switch tenant_name
 
     # run seed tasks
     Bithub::Application.load_tasks
@@ -34,11 +34,11 @@ class Brand < ActiveRecord::Base
     Rake::Task['data:import_or_update_tags'].reenable
     Rake::Task['data:import_or_update_tags'].invoke
 
-    Apartment::Database.switch
+    Apartment::Tenant.switch
   end
 
   def destroy_tenant
-    Apartment::Database.drop tenant_name
+    Apartment::Tenant.drop tenant_name
   end
 
   def self.find_by_tenant_name(tenant)
@@ -46,7 +46,7 @@ class Brand < ActiveRecord::Base
   end
 
   def self.current
-    where(tenant_name: Apartment::Database.current_tenant).first
+    where(tenant_name: Apartment::Tenant.current).first
   end
 
   def notify_brand_start
@@ -56,7 +56,7 @@ class Brand < ActiveRecord::Base
   def notify_brand_stop
     notify_embed_action(:stop)
   end
-  
+
   def notify_embed_action(action)
     Support::CrawlerNotifier.new.notif({
       brand: { id: id, name: name },
@@ -64,7 +64,7 @@ class Brand < ActiveRecord::Base
       action: action
     })
   end
-  
+
   def rename_tenant_schema
     return if !changes['tenant_name'] || !changes['tenant_name'][0]
 
