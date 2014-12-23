@@ -32,12 +32,23 @@ function(Component, initView, Models){
 			define : {
 				identities : {
 					get : function(){
-						return Models.Identity.getAll();
+						return new Models.Identity.List();
 					}
 				}
 			},
 			isAuthorized : function(){
-				return this.attr('identities').hasIdentityForService(this.attr('feed'));
+				return this.hasIdentityForService(this.attr('feed'));
+			},
+			hasIdentityForService : function(service){
+				var identities = this.attr('identities'),
+					length = identities.attr('length');
+				
+				for(var i = 0; i < length; i++){
+					if(identities.attr(i + '.provider') === service){
+						return true;
+					}
+				}
+				return false;
 			},
 			isAuthorizing : false,
 			oauthorize : function(){
@@ -51,7 +62,8 @@ function(Component, initView, Models){
 				this.attr('isAuthorizing', true);
 
 				OAuthConnect(feed).then(function(){
-					Models.Identity.reloadAll().then(function(identities){
+					Models.Identity.findAll().then(function(identities){
+						console.log(identities)
 						self.attr({
 							identities : identities,
 							isAuthorizing : false
