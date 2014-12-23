@@ -1,6 +1,6 @@
 steal('can/model', 'can/list/promise', function(Model){
 	var Bit = Model.extend({
-		resource : 'api/v3/embeds/{hubId}/entities'
+		resource : '/api/v3/embeds/{hubId}/entities'
 	}, {
 
 	});

@@ -32,10 +32,12 @@
 							{{else}}
 								{{#if services.length}}
 									{{#isExpandedRow this}}
-										<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Collapse</button>
-										{{#each services}}
-											<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small>
-										{{/each}}
+										<div class="expanded-services">
+											<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Collapse</button>
+											{{#each services}}
+												<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small>
+											{{/each}}
+										</div>
 									{{/else}}
 										<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Expand</button>
 										{{formatConnectedServices services}}
@@ -47,7 +49,7 @@
 						</td>
 						<td>
 							<div class="btn-group">
-								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default">Edit</button>
+								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default edit-hub-btn">Edit</button>
 								<button class="btn btn-xs btn-default" can-click="destroyHub">Delete</button>
 								<button class="btn btn-xs btn-default">Clone</button>
 							</div>

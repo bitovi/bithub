@@ -44,7 +44,7 @@ function(Component, initView, Models){
 				clearTimeout(this.__recalculateTimeout);
 
 				this.__recalculateTimeout = setTimeout(function(){
-					self.element.find('bh-bit.below-the-fold').each(function(){
+					self.element && self.element.find('bh-bit.below-the-fold').each(function(){
 						self.isBelowTheFold($(this));
 					})
 				}, 100);
