@@ -6,8 +6,8 @@ namespace :data do
     Rails.logger.info "Importing funnel definitions"
 
     if tenant = ENV['TENANT']
-      Apartment::Database.switch tenant
-      Rails.logger.info "Tenant switched to '#{Apartment::Database.current_tenant}'"
+      Apartment::Tenant.switch tenant
+      Rails.logger.info "Tenant switched to '#{Apartment::Tenant.current}'"
     end
 
     definitions = YAML::load_file('config/funnel_definitions.yml')

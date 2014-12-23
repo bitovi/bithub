@@ -18,7 +18,7 @@ namespace :seed do
         puts "Created new brand '#{brand.name}'." if brand.save!
       end
 
-      Apartment::Database.switch brand.name
+      Apartment::Tenant.switch brand.name
 
       bc[:embeds].each do |ec|
         next if brand.embeds.find_by_name ec[:name]
@@ -36,7 +36,7 @@ namespace :seed do
         end
       end
 
-      Apartment::Database.switch
+      Apartment::Tenant.switch
     end
 
   end
