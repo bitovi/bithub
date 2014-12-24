@@ -50,6 +50,13 @@ function(Component, initView){
 			'input focus': function(el){
 				this.__lastSelectionStart = el[0].selectionStart;
 			},
+			'input blur' : function(el, ev){
+				var val = can.trim(el.val() || "");
+				if(val !== ""){
+					this.scope.addTag(val);
+					el.val("");
+				}
+			},
 			click : function(el, ev){
 				if(ev.target === this.element[0] || $(ev.target).is('.tag-list-wrap')){
 					this.element.find('input').focus();

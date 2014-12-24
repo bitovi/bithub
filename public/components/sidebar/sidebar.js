@@ -4,6 +4,8 @@ steal(
 'models',
 './sidebar.less!',
 'components/services',
+'can/route',
+'components/helpers.js',
 function(Component, initView, Models){
 
 	var KEYMAP = {
@@ -18,14 +20,14 @@ function(Component, initView, Models){
 			isEditing: false,
 			init : function(){
 				var self = this;
-				if(can.route.attr('hubId')){
+				if(this.attr('state.hubId')){
 					Models.Hub.findOne({
-						id: can.route.attr('hubId')
+						id: this.attr('state.hubId')
 					}).then(function(hub){
 						self.attr('hub', hub);
 					});
 				} else {
-					this.attr('hub', new Models.Hub);
+					throw "No Hub selected";
 				}
 			},
 			toggleHubEditing : function(){
@@ -81,7 +83,7 @@ function(Component, initView, Models){
 			},
 			isPanel : function(panel, opts){
 				panel = can.isFunction(panel) ? panel() : panel;
-				return panel === can.route.attr('panel') ? opts.fn(this) : opts.inverse(this);
+				return panel === this.attr('state.panel') ? opts.fn(this) : opts.inverse(this);
 			}
 		}
 	});
