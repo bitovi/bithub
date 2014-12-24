@@ -5,10 +5,40 @@ module Fetchers
 
     class Base
 
-      attr_reader :result, :client
+      COUNT = 100
 
-      def initialize
-        @client = create_client
+      attr_reader :result, :client, :count
+
+      def initialize(object_id, opts={})
+        @client    = create_client
+        @object_id = object_id
+        @count     = opts[:count] || COUNT
+
+        # user_id or access_token
+      end
+
+      def fetch(opts={})
+        opts[:count] ||= @count
+
+        @result = fetch_once opts
+      end
+
+      def has_next?
+        @result && @result.pagination.andand("next_max_id")
+      end
+
+      def next
+        if next_max_id = has_next?
+          @result = fetch max_id: next_max_id
+        end
+      end
+
+      def reset
+        @result = nil
+      end
+
+      def self.fetch(object_id, opts={})
+        self.new(object_id, opts).fetch
       end
 
       private

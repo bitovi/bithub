@@ -34,9 +34,17 @@ module HttpServer
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
-          if object_id = notif['object_id']
-            media = Fetchers::Instagram::Media.fetch object_id
-            publish owner_data, media.to_h
+          object = notif['object']
+          object_id = notif['object_id']
+
+          method_name = "handle_postback_#{object}".to_sym
+
+          if self.respond_to? method_name
+            results = self.send method_name.to_sym, object_id
+
+            results.each do |media|
+              publish owner_data, media.to_h
+            end
           end
         end
 
@@ -47,7 +55,7 @@ module HttpServer
       def build_owner_data_from_url(url)
         captures = Regexp.new(self.class.path).match(url)
 
-        owner_data = OwnerData.new\
+        OwnerData.new\
           BrandInfo.new(captures[:brand_id], captures[:brand_name]),
           EmbedInfo.new(captures[:embed_id], captures[:embed_name]),
           ServiceInfo.new(captures[:service_id], 'instagram', 'media_event')
@@ -61,6 +69,21 @@ module HttpServer
         "/instagram/media/(?<brand_id>\\d+)-(?<brand_name>.*)/(?<embed_id>\\d+)-(?<embed_name>.*)/(?<service_id>\\d+)"
       end
 
+      def handle_postback_user(object_id)
+        Fetchers::Instagram::UserRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_tag(object_id)
+        Fetchers::Instagram::TagRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_location(object_id)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_geography(object_id)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      end
     end
 
   end
