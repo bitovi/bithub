@@ -1,4 +1,4 @@
-json.(entity, :id, :title, :body, :feed_name, :type_name, :url, :created_at, :updated_at)
+json.(entity, :id, :title, :body, :feed_name, :type_name, :url, :images, :created_at, :updated_at)
 
 json.thread_updated_ts entity.thread_updated_ts.to_i
 json.thread_updated_at entity.thread_updated_ts
