@@ -1,4 +1,4 @@
-{{#if identities.isPending}}
+{{#if isPending}}
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
 {{else}}
 
