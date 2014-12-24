@@ -20,11 +20,18 @@
       </header>
       <div class="bit-content col-sm-12">
         <h4><a href="{{url}}">{{{ title }}}</a></h4>
+
+        {{#each images}}
+          <img src="{{url}}">
+          <p>{{caption}}</p>
+        {{/each}}
+
         {{#if body}}
           <figcaption class="bit-content--caption">
             {{{ body }}}
           </figcaption>
         {{/if}}
+
       </div>
       <footer class="bit-footer col-sm-12">
       </footer>
