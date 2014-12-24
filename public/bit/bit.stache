@@ -2,7 +2,6 @@
   <article class="bit-container">
       <div class="bit">
       <header class="bit-header col-sm-12">
-        {{type_name}}
         {{#author.avatar_url}}
           <figure class="bit-avatar col-xs-2 col-md-2 col-lg-2">
             <a href="#">

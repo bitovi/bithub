@@ -39,8 +39,6 @@ function(Component, initView, Models){
 			].join('');
 		}
 
-		console.log('TEMPLATE', template)
-
 		return can.stache(template);
 	};
 

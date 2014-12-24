@@ -28,7 +28,9 @@
 		map: {
 			"can/util/util": "can/util/jquery/jquery",
 			"jquery/jquery": "jquery",
-			'can-form/can-form' : 'can-form'
+			'can-form/can-form' : 'can-form',
+			'qunit/qunit' : 'qunit',
+			'funcunit/funcunit' : 'funcunit'
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -37,11 +39,16 @@
 			"can-form" : "bower_components/can-form/can-form.js",
 			'lib/validator' : 'bower_components/can-form/lib/validator.js',
 			'lib/form_component' : 'bower_components/can-form/lib/form_component.js',
+			'qunit' : 'bower_components/qunit/qunit/qunit.js',
+			'funcunit' : 'bower_components/funcunit/dist/funcunit.js'
 		},
 		meta: {
 			jquery: {
 				exports: "jQuery",
 				deps: supportsUnknownElements ? undefined : ["can/lib/html5shiv.js"]
+			},
+			funcunit : {
+				exports : 'FuncUnit'
 			}
 		},
 		ext: {
