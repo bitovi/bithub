@@ -16,8 +16,6 @@ steal('funcunit', 'kickstart.js', function(F, kickstart){
 		}
 	});
 
-
-
 	QUnit.test('List of hubs is shown', function(assert){
 		hubListExists();
 	})
