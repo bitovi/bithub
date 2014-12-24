@@ -1,7 +1,7 @@
 require_relative 'feeds_helper'
 
 require 'events/instagram/media_event'
-require 'fetchers/instagram/media'
+require 'fetchers/instagram/tag_recent_media'
 
 describe HttpServer::Handlers::Instagram  do
 
