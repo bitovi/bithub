@@ -29,12 +29,11 @@ function(Component, initView, Models){
 		tag : 'bh-oauthorizer',
 		template : initView,
 		scope : {
-			define : {
-				identities : {
-					get : function(){
-						return new Models.Identity.List();
-					}
-				}
+			init : function(){
+				var self = this;
+				Models.Identity.findAll({}).then(function(identities){
+					self.attr('identities', identities);
+				});
 			},
 			isAuthorized : function(){
 				return this.hasIdentityForService(this.attr('feed'));
@@ -42,7 +41,7 @@ function(Component, initView, Models){
 			hasIdentityForService : function(service){
 				var identities = this.attr('identities'),
 					length = identities.attr('length');
-				
+
 				for(var i = 0; i < length; i++){
 					if(identities.attr(i + '.provider') === service){
 						return true;
@@ -50,7 +49,11 @@ function(Component, initView, Models){
 				}
 				return false;
 			},
+			identities: null,
 			isAuthorizing : false,
+			isPending : function(){
+				return this.attr('identities') === null;
+			},
 			oauthorize : function(){
 				var self = this,
 					feed = this.attr('feed');
@@ -62,7 +65,7 @@ function(Component, initView, Models){
 				this.attr('isAuthorizing', true);
 
 				OAuthConnect(feed).then(function(){
-					Models.Identity.findAll().then(function(identities){
+					Models.Identity.findAll({}).then(function(identities){
 						console.log(identities)
 						self.attr({
 							identities : identities,
