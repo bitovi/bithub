@@ -60,5 +60,11 @@ FactoryGirl.define do
         ['KSET']
       ]
     end
+    
+    after(:create) do |service|
+      service.class.skip_callback(:create, :after, :notify_service_start)
+      service.class.skip_callback(:update, :after, :notify_service_restart)
+      service.class.skip_callback(:destroy, :after, :notify_service_stop)
+    end
   end
 end
