@@ -1,4 +1,5 @@
 require 'core_ext'
+require_relative 'error_persistor'
 require_relative 'decorators/all'
 
 class Poller
@@ -24,6 +25,8 @@ class Poller
         publish events if events.count > 0
       end
     end
+  rescue => e
+    ErrorPersistor.new(e, @path.service.id).persist(@path.brand.name)
   end
 
   def publish(data)
