@@ -1,13 +1,14 @@
 module Supervisors::Services::Foursquare
   class Venue < Supervisors::Service
+
     def boot
-      venues_handler.register @brand_name, venue_ids
+      venues_handler.register venue_id, @path.serialize
     end
 
     private
 
-    def venue_ids
-      [ service_config.fetch(:id) ]
+    def venue_id
+      service_config.fetch(:id)
     end
 
     def venues_handler
