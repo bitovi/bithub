@@ -15,7 +15,7 @@ describe HttpServer::Handlers::Instagram  do
     embed = owner_data[:embed]
     service = owner_data[:service]
 
-    File.join "http://127.0.0.1:#{port}", prefix, 'instagram/media', "#{brand[:id]}-#{brand[:name]}", "#{embed[:id]}-#{embed[:name]}", service[:id]
+    File.join "http://127.0.0.1:#{port}", prefix, 'instagram/media', "#{brand[:id].to_s}-#{brand[:name]}", "#{embed[:id].to_s}-#{embed[:name]}", service[:id].to_s
   end
 
   def load_response(path)
@@ -51,9 +51,9 @@ describe HttpServer::Handlers::Instagram  do
     it "listens for postback notifs, queries API and publishes events" do
 
       owner_data = {
-        brand: { id: '1', name: 'bitovi' },
-        embed: { id: '2', name: 'lonac' },
-        service: { id: '3' }
+        brand: { id: 1, name: 'bitovi' },
+        embed: { id: 2, name: 'lonac' },
+        service: { id: 3 }
       }
 
       notif_raw = load_response 'instagram/notif.json'
