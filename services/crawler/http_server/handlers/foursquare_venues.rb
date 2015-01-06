@@ -1,10 +1,16 @@
 require 'cgi'
 
+require 'supervisors/support/brand_info'
+require 'supervisors/support/embed_info'
+require 'supervisors/support/service_info'
+
 module HttpServer
   module Handlers
 
     class FoursquareVenues
       include Celluloid
+
+      OwnerData = Struct.new :brand, :embed, :service
 
       def initialize
         Celluloid.logger.info "Started HTTP handler for Foursquare Venues"
@@ -12,39 +18,57 @@ module HttpServer
       end
 
       def handle(req)
+        # FS postback sends data in URL encoded form :/
         parsed  = CGI.parse req.body.to_s
-        secret  = parsed['secret']
+        secret  = parsed['secret'].first
         payload = parsed['checkin'] || parsed['like'] || parsed['tip'] || []
 
-        if payload = payload.first
-          payload = JSON.parse payload
+        # somebody is playing with us, pretend dead
+        if secret != ENV['FOURSQUARE_PUSH_SECRET']
+          Celluloid.logger.info "[FourSquare handler] unmatched push secret #{secret}"
+          return [404, 'Not found']
+        end
 
-          @channels.each do |brand, ids|
-            publish brand, payload if ids.include? venue_id(payload)
+        payload.each do |item|
+          item = JSON.parse item
+
+          @channels.each do |id, routers|
+            if id == item.fetch('venue').fetch('id')
+              routers.each {|route| publish route, item}
+            end
           end
         end
 
         [200, 'OK']
       end
 
-      def register(brand, venue_ids)
-        @channels[brand] = venue_ids
+      def register(venue_id, path)
+        Celluloid.logger.info "Registering channel for Foursquare, venue_id: #{venue_id}, path: #{path}"
+
+        if route = @channels[venue_id]
+          route.push path
+        else
+          @channels[venue_id] = [path]
+        end
       end
 
-      def unregister(brand)
-        if channel = @channels[brand]
-          @channel.delete brand
+      def unregister(path)
+        @channels.each do |id, routes|
+          routes.delete path
         end
       end
 
       private
 
-      def publish(brand, body)
-        Celluloid::Actor[:publisher].publish brand, :foursquare, [body]
-      end
+      def publish(path, body)
+        main, brand, embed, service = path
 
-      def venue_id(body)
-        body.fetch('venue').fetch('id')
+        owner_data = OwnerData.new\
+          BrandInfo.new(brand[:id], brand[:name]),
+          EmbedInfo.new(embed[:id], embed[:name]),
+          ServiceInfo.new(service[:id], 'foursquare', 'checkin_event')
+
+        Celluloid::Actor[:publisher].publish owner_data, [body]
       end
 
       def self.path
