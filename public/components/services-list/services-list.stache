@@ -1,7 +1,7 @@
 {{#if services.isPending}}
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 {{else}}
-	<table class="table">
+	<table class="table services-table">
 		<tbody>
 			{{#each services}}
 				{{#isCurrentService this}}
