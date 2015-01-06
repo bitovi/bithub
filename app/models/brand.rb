@@ -25,7 +25,7 @@ class Brand < ActiveRecord::Base
 
   def create_tenant
     Apartment::Tenant.create tenant_name
-    Apartment::Tenant.switch tenant_name
+    Apartment::Tenant.switch! tenant_name
 
     # run seed tasks
     Bithub::Application.load_tasks
@@ -34,7 +34,7 @@ class Brand < ActiveRecord::Base
     Rake::Task['data:import_or_update_tags'].reenable
     Rake::Task['data:import_or_update_tags'].invoke
 
-    Apartment::Tenant.switch
+    Apartment::Tenant.switch!
   end
 
   def destroy_tenant

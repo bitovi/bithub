@@ -19,7 +19,7 @@ RSpec.configure do |config|
 
     Apartment::Tenant.drop('testy') rescue nil
     Brand.create name: 'testy', tenant_name: 'testy'
-    Apartment::Tenant.switch 'testy'
+    Apartment::Tenant.switch! 'testy'
   end
 
   config.after(:suite) do
@@ -28,7 +28,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Apartment::Tenant.switch 'testy'
+    Apartment::Tenant.switch! 'testy'
   end
 
   config.include Requests::JsonHelpers, type: :request
