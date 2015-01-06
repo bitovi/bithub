@@ -17,18 +17,18 @@ RSpec.configure do |config|
     Celluloid.boot
     DatabaseCleaner.clean_with :truncation
 
-    Apartment::Database.drop('testy') rescue nil
+    Apartment::Tenant.drop('testy') rescue nil
     Brand.create name: 'testy', tenant_name: 'testy'
-    Apartment::Database.switch 'testy'
+    Apartment::Tenant.switch 'testy'
   end
 
   config.after(:suite) do
-    Apartment::Database.drop 'testy' rescue nil
+    Apartment::Tenant.drop 'testy' rescue nil
     Celluloid.shutdown
   end
 
   config.before(:each) do
-    Apartment::Database.switch 'testy'
+    Apartment::Tenant.switch 'testy'
   end
 
   config.include Requests::JsonHelpers, type: :request

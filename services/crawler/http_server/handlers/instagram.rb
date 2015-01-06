@@ -1,8 +1,14 @@
+require 'supervisors/support/brand_info'
+require 'supervisors/support/embed_info'
+require 'supervisors/support/service_info'
+
 module HttpServer
   module Handlers
 
     class Instagram
       include Celluloid
+
+      OwnerData = Struct.new :brand, :embed, :service
 
       def initialize
         Celluloid.logger.info "Started HTTP handler for Instagram"
@@ -24,13 +30,21 @@ module HttpServer
       end
 
       def handle_postback(req)
-        brand   = brand_from_url req.url
+        owner_data = build_owner_data_from_url req.url
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
-          if object_id = notif['object_id']
-            media = Fetchers::Instagram::Media.fetch object_id
-            publish brand, media.to_h
+          object = notif['object']
+          object_id = notif['object_id']
+
+          method_name = "handle_postback_#{object}".to_sym
+
+          if self.respond_to? method_name
+            results = self.send method_name.to_sym, object_id
+
+            results.each do |media|
+              publish owner_data, media.to_h
+            end
           end
         end
 
@@ -38,18 +52,38 @@ module HttpServer
         [200, 'OK']
       end
 
-      def brand_from_url(url)
-        Regexp.new(self.class.path).match(url)[1]
+      def build_owner_data_from_url(url)
+        captures = Regexp.new(self.class.path).match(url)
+
+        OwnerData.new\
+          BrandInfo.new(captures[:brand_id], captures[:brand_name]),
+          EmbedInfo.new(captures[:embed_id], captures[:embed_name]),
+          ServiceInfo.new(captures[:service_id], 'instagram', 'media_event')
       end
 
-      def publish(brand, body)
-        Celluloid::Actor[:publisher].publish brand, :instagram, [body]
+      def publish(owner_data, body)
+        Actor[:publisher].publish owner_data, [body]
       end
 
       def self.path
-        "/instagram/media/(.*)"
+        "/instagram/media/(?<brand_id>\\d+)-(?<brand_name>.*)/(?<embed_id>\\d+)-(?<embed_name>.*)/(?<service_id>\\d+)"
       end
 
+      def handle_postback_user(object_id)
+        Fetchers::Instagram::UserRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_tag(object_id)
+        Fetchers::Instagram::TagRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_location(object_id)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      end
+
+      def handle_postback_geography(object_id)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      end
     end
 
   end

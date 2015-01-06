@@ -41,7 +41,7 @@ module Entities
 
       def build_comments
         @event.comments.map do |c| # Wrappers
-          Events::Stackexchange::Comment.new(c.raw)
+          Events::Stackexchange::CommentEvent.new(c.raw)
         end.map do |c_e| # Events
           Entities::Stackexchange::Comment.new(c_e)
             .procure

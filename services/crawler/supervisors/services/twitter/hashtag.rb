@@ -6,10 +6,10 @@ module Supervisors::Services::Twitter
       @endpoints = SupervisionGroup.new
 
       hashtags_fetcher = Fetchers::Twitter::Hashtags.new(
-        client, { hashtags: hashtags })
+        client, { hashtags: hashtags.join(' ') })
 
       @endpoints.supervise_as(
-        @path.child_actor_name("hashtags_#{hashtags.join('_')}"),
+        @path.next_level(EndpointInfo.new('hashtags', hashtags.join(','))).actor_name,
         Poller, *[
           @path,
           hashtags_fetcher,
@@ -20,7 +20,7 @@ module Supervisors::Services::Twitter
     private
 
     def hashtags
-      service_config.fetch(:hashtags)
+      [service_config.fetch(:hashtag)]
     end
 
   end

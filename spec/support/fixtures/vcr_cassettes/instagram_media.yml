@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.instagram.com/v1/media/9820112.json?client_id=57f1f8efac48444a951fea94fcff89d0
+    uri: https://api.instagram.com/v1/tags/nofilter/media/recent.json?client_id=045f29acbe4c44938084e394279cbb64&count=1
     body:
       encoding: US-ASCII
       string: ''
@@ -18,60 +18,46 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Server:
-      - nginx
-      Date:
-      - Thu, 09 Oct 2014 23:20:27 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      X-Ratelimit-Remaining:
-      - '4999'
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
       Content-Language:
       - en
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 24 Dec 2014 13:54:13 GMT
       Expires:
       - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - nginx
+      Set-Cookie:
+      - ccode=HR; Path=/
+      - csrftoken=e5510de2cd0da87c027bec2799bb833c; expires=Wed, 23-Dec-2015 13:54:13
+        GMT; Max-Age=31449600; Path=/
       Vary:
       - Cookie, Accept-Language, Accept-Encoding
       X-Ratelimit-Limit:
       - '5000'
-      Pragma:
-      - no-cache
-      Cache-Control:
-      - private, no-cache, no-store, must-revalidate
-      Set-Cookie:
-      - ccode=HR; Path=/
-      - csrftoken=454ed05cc4ce05aa7244a0d789d98c31; expires=Thu, 08-Oct-2015 23:20:27
-        GMT; Max-Age=31449600; Path=/
+      X-Ratelimit-Remaining:
+      - '4999'
+      Content-Length:
+      - '1087'
       Connection:
       - keep-alive
-      Content-Length:
-      - '516'
     body:
       encoding: UTF-8
-      string: '{"meta":{"code":200},"data":{"attribution":null,"tags":[],"location":null,"comments":{"count":0,"data":[]},"filter":"X-Pro
-        II","created_time":"1292542793","link":"http:\/\/instagram.com\/p\/ldfQ\/","likes":{"count":0,"data":[]},"images":{"low_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_6.jpg","width":306,"height":306},"thumbnail":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_5.jpg","width":150,"height":150},"standard_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/outbound-distillery\/t0.0-17\/OBPTH\/media\/2010\/12\/16\/5decf9d5e9fd4583a1e61b595d3cabad_7.jpg","width":612,"height":612}},"users_in_photo":[],"caption":{"created_time":"1292542793","text":"She''s
-        home!","from":{"username":"sbradford","profile_picture":"http:\/\/images.ak.instagram.com\/profiles\/profile_558546_75sq_1289233190.jpg","id":"558546","full_name":"sbradford"},"id":"9867134"},"type":"image","id":"9820112_558546","user":{"username":"sbradford","website":"","profile_picture":"http:\/\/images.ak.instagram.com\/profiles\/profile_558546_75sq_1289233190.jpg","full_name":"sbradford","bio":"","id":"558546"}}}'
+      string: '{"pagination":{"next_max_tag_id":"1419429253352277","deprecation_warning":"next_max_id
+        and min_id are deprecated for this endpoint; use min_tag_id and max_tag_id
+        instead","next_max_id":"1419429253352277","next_min_id":"1419429253674234","min_tag_id":"1419429253674234","next_url":"https:\/\/api.instagram.com\/v1\/tags\/nofilter\/media\/recent?count=1\u0026client_id=045f29acbe4c44938084e394279cbb64\u0026max_tag_id=1419429253352277"},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"location":{"latitude":60.631337338,"longitude":6.425800156},"comments":{"count":0,"data":[]},"filter":"Normal","created_time":"1419428977","link":"http:\/\/instagram.com\/p\/w_eKHhIkMg\/","likes":{"count":6,"data":[{"username":"meetthepups","profile_picture":"https:\/\/igcdn-photos-c-a.akamaihd.net\/hphotos-ak-xpa1\/t51.2885-19\/927353_294883064026514_409159599_a.jpg","id":"408579529","full_name":"Meet
+        The Pups"},{"username":"techka0211","profile_picture":"https:\/\/igcdn-photos-c-a.akamaihd.net\/hphotos-ak-xfp1\/t51.2885-19\/10784899_370818196399114_2145286587_a.jpg","id":"1180993611","full_name":"Iwasa
+        tetsuya"},{"username":"kateborodkina32","profile_picture":"https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xfa1\/t51.2885-19\/10817609_882793351764678_1932719912_a.jpg","id":"1294492254","full_name":"\u0415\u043a\u0430\u0442\u0435\u0440\u0438\u043d\u0430
+        \u0411\u043e\u0440\u043e\u0434\u043a\u0438\u043d\u0430"},{"username":"oliverlorenz_270914","profile_picture":"https:\/\/igcdn-photos-d-a.akamaihd.net\/hphotos-ak-xaf1\/t51.2885-19\/10852983_362869277206043_212868732_a.jpg","id":"1511913993","full_name":"Oliver
+        | 17 | C\u2764\ufe0f\ud83d\udd12270914\ud83d\udc8e\ud83d\udc8d"}]},"images":{"low_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/t51.2885-15\/10865285_333234006859952_2081515259_a.jpg","width":306,"height":306},"thumbnail":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/t51.2885-15\/10865285_333234006859952_2081515259_s.jpg","width":150,"height":150},"standard_resolution":{"url":"http:\/\/scontent-a.cdninstagram.com\/hphotos-xfa1\/t51.2885-15\/10865285_333234006859952_2081515259_n.jpg","width":640,"height":640}},"users_in_photo":[],"caption":{"created_time":"1419428977","text":"Merry
+        Christmas! \ud83c\udf85\ud83c\udf84\ud83c\udf81\u26c4\ufe0f","from":{"username":"anjaatombre","profile_picture":"https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xap1\/t51.2885-19\/10414053_255629591227902_1518828897_a.jpg","id":"188077191","full_name":"A
+        N J A  \ud83d\udc8e"},"id":"882556689153410013"},"type":"image","id":"882556688650093344_188077191","user":{"username":"anjaatombre","website":"","profile_picture":"https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xap1\/t51.2885-19\/10414053_255629591227902_1518828897_a.jpg","full_name":"A
+        N J A  \ud83d\udc8e","bio":"","id":"188077191"}}]}'
     http_version: 
-  recorded_at: Thu, 09 Oct 2014 23:20:27 GMT
-- request:
-    method: post
-    uri: http://127.0.0.1:3001/api/postback/instagram/media/bitovi
-    body:
-      encoding: UTF-8
-      string: '[{"changed_aspect":"media","object":"geography","object_id":"9820112","time":1411667117,"subscription_id":13261146,"data":{}}]'
-    headers: {}
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Connection:
-      - Keep-Alive
-      Content-Length:
-      - '2'
-    body:
-      encoding: UTF-8
-      string: OK
-    http_version: 
-  recorded_at: Thu, 09 Oct 2014 23:20:27 GMT
+  recorded_at: Wed, 24 Dec 2014 13:48:00 GMT
 recorded_with: VCR 2.9.3

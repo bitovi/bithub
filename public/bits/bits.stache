@@ -3,31 +3,9 @@
 {{/each}}
 
 {{#each state.bits}}
-  <article class="bit-container">
-    <div class="bit">
-      <header class="bit-header col-sm-12">
-        <figure class="bit-avatar col-xs-3 col-md-3 col-lg-2">
-          <a href="#">
-          </a>
-        </figure>
-        <figcaption class="col-xs-7 col-md-7 col-lg-8 no-gutter">
-          <div class="bit-authorName col-xs-12 no-gutter"></div>
-          <div class="bit-authorHandle col-xs-12 no-gutter">
-            <a href="#"></a>
-          </div>
-        </figcaption>
-        <div class="bit-origin col-xs-2 no-gutter text-right">
-          <a href="#" class="bh-icon bh-icon-{{ feed_name }}"></a>
-        </div>
-      </header>
-      <div class="bit-content col-sm-12">
-        <figcaption class="bit-content--caption">
-          <p><a href="{{url}}">{{{ title }}}</a></p>
-          <p>{{{ body }}}</p>
-        </figcaption>
-      </div>
-      <footer class="bit-footer col-sm-12">
-      </footer>
-    </div>
-  </article>
+  <bh-bit bit="{this}"></bh-bit>
 {{/each}}
+
+{{#if belowTheFoldCounter}}
+  <div class="alert alert-warning alert-below-the-fold">Some of the new content is loaded below the fold. Scroll down to see it.</div>
+{{/if}}

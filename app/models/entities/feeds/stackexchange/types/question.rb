@@ -49,7 +49,7 @@ module Entities
 
       def build_answers
         @event.answers.map do |a| # Wrappers
-          Events::Stackexchange::Answer.new(a.raw)
+          Events::Stackexchange::AnswerEvent.new(a.raw)
         end.map do |a_e| # Events
           Entities::Stackexchange::Answer.new(a_e)
           .procure.determine.group.normalize.instance
@@ -58,7 +58,7 @@ module Entities
 
       def build_comments
         @event.comments.map do |c| # Wrappers
-          Events::Stackexchange::Comment.new(c.raw)
+          Events::Stackexchange::CommentEvent.new(c.raw)
         end.map do |c_e| # Events
           Entities::Stackexchange::Comment.new(c_e)
           .procure.determine.group.normalize.instance
@@ -67,7 +67,7 @@ module Entities
 
       def update_answers
         @event.answers.map do |a| # Wrappers
-          Events::Stackexchange::Answer.new(a.raw)
+          Events::Stackexchange::AnswerEvent.new(a.raw)
         end.map do |a_e| # Events
           Entities::Stackexchange::Answer.new(a_e)
           .procure.update.determine.group.normalize.persist

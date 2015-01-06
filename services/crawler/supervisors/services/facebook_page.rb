@@ -22,5 +22,10 @@ module Supervisors::Services::Facebook
     def page_id
       service_config.fetch(:id)
     end
+
+    def page_token
+      service_config.fetch(:access_token)
+    end
+
   end
 end

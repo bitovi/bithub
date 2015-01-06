@@ -8,7 +8,7 @@ module Supervisors::Services::Twitter
       user_timeline_fetcher = Fetchers::Twitter::Followers.new(client)
 
       @endpoints.supervise_as(
-        @path.child_actor_name("followers_dodaj_user_handle_auth"),
+        @path.next_level(EndpointInfo.new('followers', user_handle)).actor_name,
         Poller, *[
           @path,
           user_timeline_fetcher,

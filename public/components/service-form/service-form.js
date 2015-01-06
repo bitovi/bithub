@@ -19,7 +19,7 @@ steal(
 'components/service-forms/tumblr-tag',
 'components/service-forms/twitter-followers',
 'components/service-forms/twitter-hashtag',
-'components/service-forms/twitter-user_timeline',
+'components/service-forms/twitter-user-timeline',
 'components/oauthorizer',
 function(Component, initView, Models){
 
@@ -33,7 +33,7 @@ function(Component, initView, Models){
 
 		if(needsOAuth){
 			template = [
-				'<bh-oauthorizer service="' + feed + '">',
+				'<bh-oauthorizer feed="' + feed + '">',
 				template,
 				'</bh-oauthorizer>'
 			].join('');
@@ -80,9 +80,7 @@ function(Component, initView, Models){
 					type = service.attr('type_name');
 
 				if(type && feed){
-					return makeTemplate(feed, type)(opts.scope.add({
-						service: this.attr('service')
-					}),{
+					return makeTemplate(feed, type)(opts.scope, {
 						saveButtons : function(){
 							return opts.fn()
 						}

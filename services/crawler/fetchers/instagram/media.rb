@@ -1,19 +1,28 @@
-require_relative 'base'
+require 'instagram'
 
 module Fetchers
   module Instagram
+    class Media
 
-    class Media < Base
-
-      def fetch(media_id)
-        @result = @client.media_item media_id
+      def initialize(media_id, opts={})
+        @client   = create_client
+        @media_id = media_id
       end
 
-      def self.fetch(media_id)
-        self.new.fetch media_id
+      def fetch(opts)
+        @result = @client.media_item @media_id
+      end
+
+      def self.fetch(media_id, opts={})
+        self.new(media_id, opts).fetch
+      end
+
+      private
+
+      def create_client
+        ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
       end
 
     end
-
   end
 end

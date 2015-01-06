@@ -29,31 +29,47 @@ function(Component, initView, Models){
 		tag : 'bh-oauthorizer',
 		template : initView,
 		scope : {
-			define : {
-				identities : {
-					get : function(){
-						return Models.Identity.getAll();
+			init : function(){
+				var self = this;
+				Models.Identity.findAll({}).then(function(identities){
+					self.attr('identities', identities);
+				});
+			},
+			isAuthorized : function(){
+				return this.hasIdentityForService(this.attr('feed'));
+			},
+			hasIdentityForService : function(service){
+				var identities = this.attr('identities'),
+					length = identities.attr('length');
+
+				for(var i = 0; i < length; i++){
+					if(identities.attr(i + '.provider') === service){
+						return true;
 					}
 				}
+				return false;
 			},
-			isAuthorized : false,
+			identities: null,
 			isAuthorizing : false,
+			isPending : function(){
+				return this.attr('identities') === null;
+			},
 			oauthorize : function(){
 				var self = this,
-					service = this.attr('service');
+					feed = this.attr('feed');
 
-				if(!service){
-					throw "You must initialize bh-oauthorizer component with the `service` attribute";
+				if(!feed){
+					throw "You must initialize bh-oauthorizer component with the `feed` attribute";
 				}
 
 				this.attr('isAuthorizing', true);
 
-				OAuthConnect(service).then(function(){
-					Models.Identity.reloadAll().then(function(identities){
+				OAuthConnect(feed).then(function(){
+					Models.Identity.findAll({}).then(function(identities){
+						console.log(identities)
 						self.attr({
 							identities : identities,
-							isAuthorizing : false,
-							isAuthorized : identities.hasIdentityForService(service)
+							isAuthorizing : false
 						});
 					});
 				});

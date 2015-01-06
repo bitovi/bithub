@@ -1,17 +1,21 @@
 require_relative 'feeds_helper'
 
 require 'events/instagram/media_event'
-require 'fetchers/instagram/media'
+require 'fetchers/instagram/tag_recent_media'
 
 describe HttpServer::Handlers::Instagram  do
 
   ### Helper methods
 
-  def build_instagram_endpoint(brand)
+  def build_instagram_endpoint(owner_data)
     port   = ENV['CRAWLER_HTTP_PORT'] || 3001
     prefix = ENV['CRAWLER_HTTP_PREFIX'] || '/api/postback/'
 
-    File.join "http://127.0.0.1:#{port}", prefix, 'instagram/media', brand
+    brand = owner_data[:brand]
+    embed = owner_data[:embed]
+    service = owner_data[:service]
+
+    File.join "http://127.0.0.1:#{port}", prefix, 'instagram/media', "#{brand[:id]}-#{brand[:name]}", "#{embed[:id]}-#{embed[:name]}", service[:id]
   end
 
   def load_response(path)
@@ -46,12 +50,18 @@ describe HttpServer::Handlers::Instagram  do
   describe "#handle" do
     it "listens for postback notifs, queries API and publishes events" do
 
+      owner_data = {
+        brand: { id: '1', name: 'bitovi' },
+        embed: { id: '2', name: 'lonac' },
+        service: { id: '3' }
+      }
+
       notif_raw = load_response 'instagram/notif.json'
-      brand_name = 'bitovi'
+      endpoint = build_instagram_endpoint owner_data
 
       # fake postback notification to the crawler
       VCR.use_cassette('instagram_media') do
-        HTTParty.post build_instagram_endpoint(brand_name), body: notif_raw
+        HTTParty.post endpoint, body: notif_raw
       end
 
       # wait for an event on MQ
@@ -60,9 +70,13 @@ describe HttpServer::Handlers::Instagram  do
 
         expect(parsed['content_digest'].length).to eq(32)
 
-        expect(parsed['meta']['feed_name']).to eq('instagram')
-        expect(parsed['meta']['type_name']).to eq('media_event')
-        expect(parsed['meta']['brand_name']).to eq(brand_name)
+        expect(parsed['meta']['feed_name']).to  eq 'instagram'
+        expect(parsed['meta']['type_name']).to  eq 'media_event'
+        expect(parsed['meta']['brand_id']).to   eq owner_data[:brand][:id]
+        expect(parsed['meta']['brand_name']).to eq owner_data[:brand][:name]
+        expect(parsed['meta']['embed_id']).to   eq owner_data[:embed][:id]
+        expect(parsed['meta']['embed_name']).to eq owner_data[:embed][:name]
+        expect(parsed['meta']['service_id']).to eq owner_data[:service][:id]
 
         @rabbit.close
       end
