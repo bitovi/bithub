@@ -10,6 +10,7 @@ class Configurator
   def initialize(opts)
     @env = opts.fetch(:environment)
     @config = config unless ENV['TRAVIS']
+    Celluloid.logger.debug @config.to_yaml
   end
 
   def static_config
