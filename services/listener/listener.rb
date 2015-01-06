@@ -44,8 +44,8 @@ Listener
 
     logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
 
-    Apartment::Database.switch brand_name
-    logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Database.current_tenant}"
+    Apartment::Tenant.switch brand_name
+    logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Tenant.current}"
 
     # Catch any possible errors
     # (errors inside bunny listen method won't be logged :/)
@@ -57,6 +57,6 @@ Listener
       logger.error err.backtrace.join("\n")
     end
 
-    Apartment::Database.switch
-    logger.debug "(#{content_digest}) Current tenant switched back to #{Apartment::Database.current_tenant}"
+    Apartment::Tenant.switch
+    logger.debug "(#{content_digest}) Current tenant switched back to #{Apartment::Tenant.current}"
   end

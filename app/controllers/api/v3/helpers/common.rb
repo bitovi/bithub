@@ -50,7 +50,7 @@ module Api::V3::Helpers
     end
 
     def current_brand
-      Apartment::Database.current_tenant
+      Apartment::Tenant.current
     end
   end
 end

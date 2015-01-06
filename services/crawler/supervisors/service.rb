@@ -25,7 +25,7 @@ module Supervisors
     end
 
     def service_config
-      Actor[:configurator].service_config(*@path.rootless)
+      Actor[:configurator].service_config(*@path.rootless).fetch(:config)
     end
 
     def token

@@ -11,7 +11,7 @@ module Entities
           origin_id: @event.id,
           props: {
             tags: @event.tags,
-            photos: @event.source_data[:photos],
+            photos: @event.source_data[:photos].to_json,
             origin_author_name: @event.blog_name
           }
         })

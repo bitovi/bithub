@@ -4,8 +4,10 @@ json.brands @brands do |b|
     json.(e, :id, :name)
     json.services e.valid_services do |s|
       json.(s, :id, :feed_name, :type_name)
-      json.merge! s.service_config.data
-	  json.merge! s.credentials
+      json.config do 
+        json.merge! s.service_config.data
+        json.merge! s.credentials
+      end
     end
   end
 end

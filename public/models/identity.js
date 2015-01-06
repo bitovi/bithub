@@ -3,16 +3,16 @@ steal('can/model', 'can/list/promise', function(Model){
 	var identities;
 
 	var Identity = Model.extend({
-		resource : 'api/v3/identities',
+		resource : '/api/v3/identities',
 		getAll : function(){
-			var def = can.Deferred();
-			if(identities){
-				return def.resolve(identities);
-			}
 			return this.reloadAll();
+			if(identities){
+				return identities;
+			}
+			
 		},
 		reloadAll : function(){
-			var def = this.findAll({});
+			var def = new this.List({});
 
 			def.then(function(data){
 				identities = data;
@@ -25,15 +25,7 @@ steal('can/model', 'can/list/promise', function(Model){
 	});
 
 	Identity.List = Identity.List.extend({
-		hasIdentityForService : function(service){
-			var length = this.attr('length');
-			for(var i = 0; i < length; i++){
-				if(this.attr(i + '.provider') === service){
-					return true;
-				}
-			}
-			return false;
-		}
+		
 	});
 
 	return Identity;

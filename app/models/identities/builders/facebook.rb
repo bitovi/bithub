@@ -37,8 +37,7 @@ module Identities
 
       def credentials
         {
-          access_token: access_token,
-          pages: pages_ids_and_tokens
+          access_token: access_token
         }
       end
 
@@ -53,16 +52,6 @@ module Identities
           {
             id: p['id'],
             name: p['name']
-          }
-        end
-      end
-
-      def page_ids_and_tokens
-        pages.map do |page|
-          {
-            id: p['id'],
-            name: p['name'],
-            token: p.fetch('access_token')
           }
         end
       end
