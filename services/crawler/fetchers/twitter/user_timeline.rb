@@ -13,11 +13,7 @@ module Fetchers
 
       def fetch
         @client.user_timeline(@handle)
-      rescue ::Twitter::Error::Unauthorized => e
-        Celluloid.logger.error "#{e.class.name} -> #{e.to_s}"
-        nil
       end
-
     end
   end
 end

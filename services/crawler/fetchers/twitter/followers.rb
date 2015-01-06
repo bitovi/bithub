@@ -2,7 +2,6 @@ require 'twitter'
 
 module Fetchers
   module Twitter
-
     class Followers
       include Protocol
 
@@ -23,9 +22,6 @@ module Fetchers
             created_at: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
           }
         end
-      rescue ::Twitter::Error::Unauthorized => e
-        Celluloid.logger.error "#{e.class.name} -> #{e.to_s}"
-        nil
       end
 
       def user_id
