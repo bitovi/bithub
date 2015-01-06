@@ -17,9 +17,6 @@ module Fetchers
       
       def fetch
         @client.search(@hashtags.join(' '), :count => 100).take(100)
-      rescue ::Twitter::Error::Unauthorized => e
-        Celluloid.logger.error "#{e.class.name} -> #{e.to_s}"
-        nil
       end
     end
   end
