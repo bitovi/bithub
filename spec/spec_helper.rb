@@ -20,7 +20,15 @@ require 'celluloid/io'
 require 'lib/core_helpers'
 require 'spec/test_helper_methods'
 
+
+require 'sequel'
+require 'database_cleaner'
+
+require 'dotenv'
+Dotenv.load
+
 Celluloid.logger.level = Logger::ERROR
+DatabaseCleaner.logger = Celluloid.logger
 
 RSpec.configure do |config|
   config.filter_run :focus
