@@ -7,7 +7,8 @@ FactoryGirl.define do
       feed_name 'rss'
       type_name 'site'
       config Hash[
-        'sites', %w(pltconfusion.com)
+        'url', 'pltconfusion.com',
+        'tag_with', 'wat'
       ]
     end
 
