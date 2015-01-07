@@ -177,6 +177,15 @@ function(Model, _keys){
 		},
 		formattedConfig : function(){
 			return formatConfig(this.attr('config').attr());
+		},
+		formattedError : function(){
+			var klass = this.attr('error.klass');
+			if(klass !== 'UnknownError'){
+				return this.attr('error.message');
+			}
+		},
+		formattedErrorClass : function(){
+			return this.attr('error.klass');
 		}
 	});
 });
