@@ -27,6 +27,7 @@ class Poller
     end
   rescue => e
     ErrorPersistor.new(e, @path.service.id).persist(@path.brand.name)
+    Celluloid.logger.error "#{e.class.name} : #{e.message}"
   end
 
   def publish(data)
