@@ -3,8 +3,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
   # load_and_authorize_resource
 
   def index
-    if params[:embed_id]
-      embed = current_brand.embeds.find params[:embed_id]
+    if embed_id
+      embed = current_brand.embeds.find_by_id(embed_id)
       @services = embed.services
     else
       @services = Service.all
@@ -14,7 +14,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def show
-    if @service = Service.find(service_id)
+    if @service = Service.find_by_id(service_id)
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'show'), :status => 404
@@ -26,6 +26,17 @@ class Api::V3::ServicesController < Api::V3::BaseController
     @service = embed.services.build(service_definition)
 
     if embed.save
+      render 'api/v3/services/show'
+    else
+      render :json => msg_hash(@service, 'create'), :status => 406
+    end
+  end
+  
+  def update
+    @service = Service.find_by_id(service_id)
+    @service.assign_attributes(service_definition)
+
+    if @service.save
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
