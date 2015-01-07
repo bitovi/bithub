@@ -1,0 +1,23 @@
+{{#if isLoading}}
+	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+{{else}}
+	{{#if suggestions.length}}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<b>Suggestions</b>
+			</div>
+			<table class="table table-hover">
+				<tbody>
+					{{#each suggestions}}
+						<tr {{#isSelected this}}class="info"{{/isSelected}} can-click="toggleSuggestion">
+							<td>
+								<i class="fa {{#isSelected this}}fa-dot-circle-o{{else}}fa-circle-o{{/isSelected}}"></i>
+								{{ name }}
+							</td>
+						</tr>
+					{{/each}}
+				</tbody>
+			</table>
+		</div>
+	{{/if}}
+{{/if}}
