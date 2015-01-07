@@ -40,6 +40,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 
 						currentSocket.on('services', function( msg ) {
 							console.log( 'New message from services', msg );
+							Models.Service.findOne(JSON.parse(msg).service);
 						});
 
 						currentSocket.on('moderation', function( msg ) {
