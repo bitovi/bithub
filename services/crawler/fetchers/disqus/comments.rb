@@ -12,8 +12,10 @@ module Fetchers
       end
 
       def fetch
-        resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
-        pluck(resp)
+        handled_errors do
+          resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
+          pluck(resp)
+        end
       end
 
       private

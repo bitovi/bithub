@@ -4,6 +4,7 @@ module Fetchers
   module Tumblr
 
     class Posts < Base
+      include Protocol
       # http://www.tumblr.com/docs/en/api/v2#posts
 
       def initialize(hostname, opts={})
@@ -13,11 +14,10 @@ module Fetchers
       end
 
       def fetch
-        @result = @client.posts @hostname, offset: @offset
-        @result.fetch('posts')
-      rescue KeyError
-        Celluloid.logger.info "Tumblr poller: '#{@hostname}' not found!"
-        []
+        handle_errors do
+          @result = @client.posts @hostname, offset: @offset
+          @result.fetch('posts')
+        end
       end
 
       def next

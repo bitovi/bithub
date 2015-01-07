@@ -10,7 +10,9 @@ module Fetchers
       end
 
       def fetch
-        @client.issues.list user: @user, repo: @repo
+        handle_errors do
+          @client.issues.list user: @user, repo: @repo
+        end
       end
     end
   end
