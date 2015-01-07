@@ -13,6 +13,10 @@ class Service < ActiveRecord::Base
     self.brand.identities.where(:provider => feed_name).all
   end
 
+  def has_errors?
+    service_errors.present?
+  end
+
   def brand
     self.embed.brand
   end
