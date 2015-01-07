@@ -44,7 +44,7 @@ class ErrorPersistor
       payload: {
         service: { id: @service_id }
       }
-    }, :service_errors)
+    }, :services)
   end
 
   def errors
