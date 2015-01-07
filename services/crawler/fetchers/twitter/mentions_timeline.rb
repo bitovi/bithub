@@ -11,7 +11,9 @@ module Fetchers
       end
 
       def fetch
-        @client.mentions_timeline
+        handle_errors do
+          @client.mentions_timeline
+        end
       end
     end
   end

@@ -12,7 +12,9 @@ module Fetchers
       end
 
       def fetch
-        @client.user_timeline(@handle)
+        handle_errors do
+          @client.user_timeline(@handle)
+        end
       end
     end
   end

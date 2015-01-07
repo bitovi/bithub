@@ -16,7 +16,9 @@ module Fetchers
       end
       
       def fetch
-        @client.search(@hashtags.join(' '), :count => 100).take(100)
+        handle_errors do
+          @client.search(@hashtags.join(' '), :count => 100).take(100)
+        end
       end
     end
   end
