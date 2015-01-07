@@ -1,4 +1,4 @@
-ENV['RAILS_ENV'] ||= 'test'
+ENV['RAILS_ENV'] = 'test'
 
 require File.expand_path("#{PROJECT_ROOT}/config/environment", __FILE__)
 require 'spec_helper'
