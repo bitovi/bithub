@@ -56,9 +56,9 @@ module HttpServer
         captures = Regexp.new(self.class.path).match(url)
 
         OwnerData.new\
-          BrandInfo.new(captures[:brand_id], captures[:brand_name]),
-          EmbedInfo.new(captures[:embed_id], captures[:embed_name]),
-          ServiceInfo.new(captures[:service_id], 'instagram', 'media_event')
+          BrandInfo.new(captures[:brand_id].to_i, captures[:brand_name]),
+          EmbedInfo.new(captures[:embed_id].to_i, captures[:embed_name]),
+          ServiceInfo.new(captures[:service_id].to_i, 'instagram', 'media_event')
       end
 
       def publish(owner_data, body)
