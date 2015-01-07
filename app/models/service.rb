@@ -17,6 +17,10 @@ class Service < ActiveRecord::Base
     service_errors.present?
   end
 
+  def errors
+    service_errors
+  end
+
   def brand
     self.embed.brand
   end
