@@ -26,7 +26,7 @@ class Poller
       end
     end
   rescue => e
-    ErrorPersistor.new(e, @path.service.id).persist(@path.brand.name)
+    ErrorPersistor.new(e, @path).persist.notify_client
     Celluloid.logger.error "#{e.class.name} : #{e.message}"
   end
 
