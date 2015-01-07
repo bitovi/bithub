@@ -33,6 +33,11 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 							entity.created();
 						});
 
+						currentSocket.on('service_errors', function(msg){
+							console.log('SERVICE ERRORS', msg)
+							Models.Service.findOne(JSON.parse(msg));
+						})
+
 						currentSocket.on('services', function( msg ) {
 							console.log( 'New message from services', msg );
 						});

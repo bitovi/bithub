@@ -1,28 +1,46 @@
 {{#if services.isPending}}
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 {{else}}
-	<table class="table services-table">
-		<tbody>
-			{{#each services}}
-				{{#isCurrentService this}}
-					<tr>
-						<td colspan="4">
-							<bh-service-form service="{currentService}" state="{state}" services="{../services}"></bh-service-form>
-						</td>
-					</tr>
-				{{else}}
-					<tr>
-						<td>{{ printFeed }} &dash; {{ printType }}</td>
-						<td>
-							{{{formattedConfig}}}
-						</td>
-						<td>
-							<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>
-							<i can-click="editService" class="fa fa-pencil pull-right edit-service"></i>
-						</td>
-					</tr>
-				{{/isCurrentService}}
-			{{/each}}
-		</tbody>
-	</table>
+	<div class="services-table-wrap">
+		<table class="table services-table">
+			<tbody>
+				{{#each services}}
+					{{#isCurrentService this}}
+						<tr>
+							<td colspan="3">
+								<bh-service-form service="{currentService}" state="{state}" services="{../services}"></bh-service-form>
+							</td>
+						</tr>
+					{{else}}
+						<tr class="service-row {{#if error}}danger{{/if}}">
+							<td>
+								{{#if error}}
+									<i class="fa fa-warning toggle-errors" can-click="toggleErrorShowing"></i>
+								{{/if}}
+								{{ printFeed }} &dash; {{ printType }}
+							</td>
+							<td>
+								{{{formattedConfig}}}
+							</td>
+							<td>
+								<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>
+								<i can-click="editService" class="fa fa-pencil pull-right edit-service"></i>
+							</td>
+						</tr>
+						{{#showErrorsForService this}}
+							<tr class="danger">
+								<td colspan="3">
+									<div class="alert alert-danger">
+										<b>{{ formattedErrorClass }}</b>
+										{{ formattedError }}
+									</div>
+								</td>
+							</tr>
+						{{/showErrorsForService}}
+					{{/isCurrentService}}
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+
 {{/if}}

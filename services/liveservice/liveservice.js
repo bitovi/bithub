@@ -105,6 +105,7 @@ LiveService.prototype.onIoConnection = function() {
 					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
 
 					self.router.subscribe( key, function( message ) {
+						console.log(endpoint, message);
 						socket.emit( endpoint, message );
 					});
 				});
