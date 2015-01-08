@@ -55,8 +55,31 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def tree
-    @brands = Brand.all
-    render 'api/v3/services/tree'
+    big_hash = Hash[
+      :brands, Brand.all.map do |b|
+        Apartment::Tenant.switch b.name
+        Hash[
+          :id, b.id,
+          :name, b.name,
+          :embeds, b.embeds.map do |e|
+            Hash[
+              :id, e.id,
+              :name, e.name,
+              :services, e.services.map do |s|
+                Hash[
+                  :id, s.id,
+                  :feed_name, s.feed_name,
+                  :type_name, s.type_name,
+                  :config, s.service_config.data.merge(s.credentials)
+                ]
+              end
+            ]
+          end
+        ]
+      end
+    ]
+
+    render :json => big_hash.to_json
   end
 
   def suggestions
