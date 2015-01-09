@@ -11,7 +11,7 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @client.issues.list user: @user, repo: @repo
+          # @client.issues.list user: @user, repo: @repo
         end
       end
     end
