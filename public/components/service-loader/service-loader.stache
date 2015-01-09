@@ -3,7 +3,7 @@
 		<div class="bit-content col-sm-12">
 			<figcaption class="bit-content--caption">
 				<h4>
-					{{#unless service.error}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/unless}}
+					{{#if isLoading}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/isLoading}}
 					{{service.printFeed}} &dash; {{service.printType}}
 				</h4>
 				
@@ -15,6 +15,12 @@
 						{{ formattedError }}
 					</div>
 				{{/service.error}}
+
+				{{#if service.noResults}}
+					<div class="alert alert-info">
+						We couldn't find any data on this service.
+					</div>
+				{{/if}}
 				
 			</figcaption>
 		</div>

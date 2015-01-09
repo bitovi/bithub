@@ -7,7 +7,9 @@ function(Component, initView){
 		tag : 'bh-service-loader',
 		template : initView,
 		scope : {
-			
+			isLoading : function(){
+				return !(this.attr('service.error') || this.attr('service.noResults'));
+			}
 		}
 	});
 });
