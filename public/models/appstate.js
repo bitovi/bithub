@@ -34,7 +34,24 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 						});
 
 						currentSocket.on('services', function( msg ) {
-							Models.Service.findOne(msg.service);
+							var cb = can.noop,
+								timeout = 1,
+								self = this;
+
+							console.log('MSG', msg.service)
+
+							if(msg.service.empty_results){
+								cb = function(service){
+									if(service.attr('entity_count') === 0){
+										service.attr('noResults', true);
+									}
+								}
+								timeout = 2000
+							}
+
+							setTimeout(function(){
+								Models.Service.findOne(msg.service).then(cb);
+							}, timeout);
 						});
 
 						currentSocket.on('moderation', function( msg ) {
