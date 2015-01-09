@@ -2,9 +2,20 @@
 	<div class="bit">
 		<div class="bit-content col-sm-12">
 			<figcaption class="bit-content--caption">
-				<h4><i class="fa fa-spin fa-circle-o-notch"></i> Loading ...</h4>
-				<p>{{service.printFeed}} &dash; {{service.printType}}</p>
-				{{{service.formattedConfig}}}
+				<h4>
+					{{#unless service.error}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/unless}}
+					{{service.printFeed}} &dash; {{service.printType}}
+				</h4>
+				
+				<p>{{{service.formattedConfig}}}</p>
+
+				{{#service.error}}
+					<div class="alert alert-danger">
+						<b>{{ formattedErrorClass }}</b>
+						{{ formattedError }}
+					</div>
+				{{/service.error}}
+				
 			</figcaption>
 		</div>
 	</div>
