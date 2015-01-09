@@ -10,11 +10,13 @@ module Fetchers
       end
 
       def fetch
-        pluck_items(HTTParty.get url, :query => tagged\
-          .merge(static)
-          .merge(tagged)
-          .merge(api_key)
-          .merge(token))
+        handle_errors do
+          pluck_items(HTTParty.get url, :query => tagged\
+            .merge(static)
+            .merge(tagged)
+            .merge(api_key)
+            .merge(token))
+        end
       end
 
       def pluck_items(resp)

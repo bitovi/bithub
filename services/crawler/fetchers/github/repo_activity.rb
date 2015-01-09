@@ -12,10 +12,9 @@ module Fetchers
       end
 
       def fetch
-        @client.activity.events.repos @user, @repo
-      rescue ::Github::Error::Forbidden => e
-        Celluloid.logger.error "Github::RepoActivity fetcher error: #{e}"
-        nil
+        handle_errors do
+          @client.activity.events.repos @user, @repo
+        end
       end
     end
   end

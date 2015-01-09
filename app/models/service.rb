@@ -4,12 +4,21 @@ class Service < ActiveRecord::Base
 
   belongs_to :embed
   has_and_belongs_to_many :entities
+  has_many :service_errors
 
   after_create :notify_service_start
   after_destroy :notify_service_stop
 
   def brand_identities
     self.brand.identities.where(:provider => feed_name).all
+  end
+
+  def has_errors?
+    service_errors.present?
+  end
+
+  def errors
+    service_errors
   end
 
   def brand

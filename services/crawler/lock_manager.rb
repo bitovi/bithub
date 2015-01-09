@@ -1,10 +1,11 @@
 require 'core_ext'
+require_relative 'connection_manager'
 
 class LockManager
   include Celluloid
 
   def initialize
-    @redis = Redis.new(:url => ENV['REDIS_URL'])
+    @redis = ConnectionManager.instance.redis
   end
 
   attr_accessor :interval

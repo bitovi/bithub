@@ -1,4 +1,5 @@
 require 'core_ext'
+require_relative 'error_persistor'
 require_relative 'decorators/all'
 
 class Poller
@@ -24,6 +25,9 @@ class Poller
         publish events if events.count > 0
       end
     end
+  rescue => e
+    ErrorPersistor.new(e, @path).persist.notify_client
+    Celluloid.logger.error "#{e.class.name} : #{e.message}"
   end
 
   def publish(data)

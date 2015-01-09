@@ -8,17 +8,31 @@ bh-services-list {
 	.destroy-service, .edit-service {
 		cursor: pointer;
 	}
-	table.table {
-		tr {
+	.services-table-wrap {
+		margin-left: -15px;
+		margin-right: -15px;
+	}
+	table.services-table {
+		> tbody > tr {
 			td:first-child {
-				padding-left: 0;
+				padding-left: 15px;
 			}
 			td:last-child {
-				padding-right: 0;
+				padding-right: 15px;
 			}
+			&.service-row td {
+				border-top-color: #f1efef;
+			}
+		}
+		.alert-danger {
+			margin-bottom: 0;
+			background: white;
 		}
 	}
 	ul.config {
 		font-size: 12px;
+	}
+	.toggle-errors {
+		cursor: pointer;
 	}
 }
