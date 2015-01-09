@@ -5,7 +5,3 @@
 {{#each state.bits}}
   <bh-bit bit="{this}"></bh-bit>
 {{/each}}
-
-{{#if belowTheFoldCounter}}
-  <div class="alert alert-warning alert-below-the-fold">Some of the new content is loaded below the fold. Scroll down to see it.</div>
-{{/if}}
