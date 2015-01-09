@@ -1,5 +1,6 @@
 require 'cgi'
 
+require 'supervisors/support/supervision_node'
 require 'supervisors/support/brand_info'
 require 'supervisors/support/embed_info'
 require 'supervisors/support/service_info'
@@ -21,7 +22,11 @@ module HttpServer
         # FS postback sends data in URL encoded form :/
         parsed  = CGI.parse req.body.to_s
         secret  = parsed['secret'].first
-        payload = parsed['checkin'] || parsed['like'] || parsed['tip'] || []
+        evtype  = (parsed['checkin'] && 'checkin') ||
+                  (parsed['like'] && 'like') ||
+                  (parsed['tip'] && 'tip') ||
+                  (parsed['photo'] && 'photo')
+        payload = parsed[evtype] || []
 
         # somebody is playing with us, pretend dead
         if secret != ENV['FOURSQUARE_PUSH_SECRET']
@@ -29,12 +34,12 @@ module HttpServer
           return [404, 'Not found']
         end
 
-        payload.each do |item|
-          item = JSON.parse item
+        payload.each do |event|
+          event = JSON.parse event
 
-          @channels.each do |id, routers|
-            if id == item.fetch('venue').fetch('id')
-              routers.each {|route| publish route, item}
+          @channels.each do |id, routes|
+            if id == event.fetch('venue').fetch('id')
+              routes.each {|route| publish route, event, evtype}
             end
           end
         end
@@ -60,15 +65,17 @@ module HttpServer
 
       private
 
-      def publish(path, body)
-        main, brand, embed, service = path
+      def publish(path, event, event_type)
+        main, brand, embed, service = SupervisionNode.deserialize(path)
+
+        # return unless main && brand && embed && service
 
         owner_data = OwnerData.new\
           BrandInfo.new(brand[:id], brand[:name]),
           EmbedInfo.new(embed[:id], embed[:name]),
-          ServiceInfo.new(service[:id], 'foursquare', 'checkin_event')
+          ServiceInfo.new(service[:id], 'foursquare', "#{event_type}_event")
 
-        Celluloid::Actor[:publisher].publish owner_data, [body]
+        Celluloid::Actor[:publisher].publish owner_data, [event]
       end
 
       def self.path
