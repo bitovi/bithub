@@ -44,7 +44,7 @@ Listener
 
     logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
 
-    Apartment::Tenant.switch brand_name
+    Apartment::Tenant.switch! brand_name
     logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Tenant.current}"
 
     # Catch any possible errors
@@ -57,6 +57,6 @@ Listener
       logger.error err.backtrace.join("\n")
     end
 
-    Apartment::Tenant.switch
+    Apartment::Tenant.switch!
     logger.debug "(#{content_digest}) Current tenant switched back to #{Apartment::Tenant.current}"
   end
