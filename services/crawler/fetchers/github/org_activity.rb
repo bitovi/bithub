@@ -12,7 +12,7 @@ module Fetchers
       end
 
       def fetch
-        handled_errors do
+        handle_errors do
           @client.activity.events.org @org
         end
       end
