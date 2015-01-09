@@ -30,6 +30,15 @@ steal(
 				appState.attr('loadingServices').unshift(service);
 			});
 
+			Models.Service.on('destroyed', function(ev, service){
+				var loadingServices = appState.attr('loadingServices'),
+					index = loadingServiced.indexOf(service);
+
+				if(index > -1){
+					loadingServices.splice(index, 1);
+				}
+			});
+
 			Models.Bit.on('created', function(ev, bit){
 				var serviceIds = bit.attr('service_ids'),
 					loadingServices = appState.attr('loadingServices'),
@@ -39,7 +48,7 @@ steal(
 					}, {}),
 					index;
 
-				appState.attr('bits').place(bit);
+				appState.attr('bits').unshift(bit);
 
 				for(var i = 0; i < serviceIds.length; i++){
 					if(loadingServiceIds[serviceIds[i]]){
