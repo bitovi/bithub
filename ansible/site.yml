@@ -9,12 +9,12 @@
       password: "Ei7PhaaH"
     pg:
       version: "9.3"
-      dbname: "bithub_development"
+      dbname: "bithub"
       username: "bithub"
-      password: "ainie/h8Mie6"
+      password: "Ei7PhaaH"
     bithub:
       username: "bithub"
-      password: "ainie/h8Mie6"
+      password: "Ei7PhaaH"
       project_path: "/vagrant"
       ruby_version: "2.1.2"
   roles:

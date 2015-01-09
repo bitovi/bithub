@@ -108,6 +108,28 @@ RSpec.describe 'Service creation', type: :request do
         end
       end
     end
+    
+    describe "PUT /services/1" do
+      context 'given well defined service data' do
+        it 'updates an existing service' do
+
+          @service = FactoryGirl.create(:rss_service, embed: @embed)
+          put "/api/#{api_version}/services/#{@service.id}", {
+            service: {
+              feed_name: 'twitter',
+              type_name: 'user_timeline',
+              embed_id: @embed.id,
+              config: {
+                :handle => 'canjs'
+              }
+            }
+          }.to_json, AuthTestData::POST_HEADERS
+
+          expect(response).to be_success
+          expect(Service.count).to eq 1
+        end
+      end
+    end
 
     describe 'DELETE /embed/1/services/1' do
       it 'destroys an existing service' do

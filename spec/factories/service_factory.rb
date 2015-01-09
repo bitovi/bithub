@@ -7,7 +7,8 @@ FactoryGirl.define do
       feed_name 'rss'
       type_name 'site'
       config Hash[
-        'sites', %w(pltconfusion.com)
+        'url', 'pltconfusion.com',
+        'tag_with', 'wat'
       ]
     end
 
@@ -59,6 +60,12 @@ FactoryGirl.define do
         'orgs',
         ['KSET']
       ]
+    end
+    
+    after(:create) do |service|
+      service.class.skip_callback(:create, :after, :notify_service_start)
+      service.class.skip_callback(:update, :after, :notify_service_restart)
+      service.class.skip_callback(:destroy, :after, :notify_service_stop)
     end
   end
 end

@@ -4,6 +4,7 @@ module Fetchers
   module Tumblr
 
     class Tagged < Base
+      include Protocol
       # http://www.tumblr.com/docs/en/api/v2#tagged-method
 
       def initialize(tag, opts={})
@@ -12,7 +13,9 @@ module Fetchers
       end
 
       def fetch
-        @result = @client.tagged @tag
+        handle_errors do
+          @result = @client.tagged @tag
+        end
       end
 
       def self.fetch(tag, opts={})
