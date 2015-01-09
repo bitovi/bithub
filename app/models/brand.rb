@@ -13,7 +13,7 @@ class Brand < ActiveRecord::Base
   has_and_belongs_to_many :users
 
   validates :tenant_name, format: {
-    with: /\A[-0-9a-zA-Z]+\z/, message: 'invalid characters'
+    with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
   after_create  :create_tenant

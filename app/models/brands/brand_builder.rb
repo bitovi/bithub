@@ -25,7 +25,7 @@ module Brands
     end
 
     def brand_name
-      @account.email.split('@').first.gsub(/[^\w-]/,'-')
+      @brand_name ||= "#{Bazaar.heroku}_#{@account.id}".gsub('-','_')
     end
 
     private
