@@ -164,8 +164,20 @@ module Entities
 
   module Meetup
     class Dispatcher < BasicTypeDispatcher
+
+      Mappings = {
+        :EventEvent => :Event,
+        :RsvpEvent => :Rsvp
+      }
+
+      def remapped_type
+        Mappings[@event.type_name.to_sym]
+      end
+
       def type
-        Meetup.const_get(@event.type_name) if Meetup.constants.include?(@event.type_name)
+        if Meetup.constants.include? remapped_type
+          Meetup.const_get remapped_type
+        end
       end
     end
   end
