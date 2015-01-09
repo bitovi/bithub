@@ -42,7 +42,10 @@ class ErrorPersistor
         embed_id: @embed_id
       },
       payload: {
-        service: { id: @service_id }
+        service: {
+          id: @service_id,
+          has_errors: true
+        }
       }
     }, :services)
   end
