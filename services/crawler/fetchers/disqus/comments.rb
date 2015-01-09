@@ -12,7 +12,7 @@ module Fetchers
       end
 
       def fetch
-        handled_errors do
+        handle_errors do
           resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
           pluck(resp)
         end
