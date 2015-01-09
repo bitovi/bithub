@@ -7,7 +7,7 @@ module Supervisors
       elsif action == :start && on_correct_level?(target)
         Celluloid.logger.info "Executing #{action} for #{target}"
         execute_cmd(target, action)
-      else
+      elsif !final_level?
         propagate_cmd(target, action)
       end
     end
@@ -23,14 +23,22 @@ module Supervisors
     def on_correct_level?(target)
       target.parent.actor_name == name
     end
-
-    # Action not meant for this level, propagate further down
-    def propagate_cmd(target, action)
-      children.each do |b|
-        b.handle_cmd(target, action)
-      end
+    
+    # Final level is service level. Don't
+    # propagate further down than that.
+    def final_level?
+      name =~ /service/
     end
     
+
+    # Action not meant for this level,
+    # propagate further down
+    def propagate_cmd(target, action)
+      children.each do |c|
+        c.handle_cmd(target, action)
+      end
+    end
+
     def children
       _childs.actors.compact
     end
