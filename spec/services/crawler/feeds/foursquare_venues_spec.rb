@@ -45,9 +45,12 @@ describe HttpServer::Handlers::FoursquareVenues  do
       embed =  { id: 2, name: 'lonac' }
       service = { id: 3, feed_name: 'foursquare', type_name: 'checkin_event' }
 
+      # node  = ['main', brand, embed, service]
+      # node2 = ['main', brand, {id: 100, name: 'do_not_route_here'}, service]
+
       # serialized supervision nodes
-      node  = ['main', brand, embed, service]
-      node2 = ['main', brand, {id: 100, name: 'do_not_route_here'}, service]
+      node = "#{brand[:id]}-#{brand[:name]}/#{embed[:id]}-#{embed[:name]}/#{service[:id]}-#{service[:feed_name]}-#{service[:type_name]}"
+      node2 = "#{brand[:id]}-#{brand[:name]}/100-do_not_route_here/#{service[:id]}-#{service[:feed_name]}-#{service[:type_name]}"
 
       # register channels
       Celluloid::Actor[:http_server_foursquare_venues].register '123456789012345678901234', node2

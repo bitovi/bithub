@@ -58,16 +58,16 @@ class SupervisionNode
   end
 
   def serialize
-    "#{brand.id}-#{brand.name}/#{embed.id}-#{embed.name}/#{service.id}-#{service.name}-#{service.type}"
+    "#{brand.id}-#{brand.name}/#{embed.id}-#{embed.name}/#{service.id}-#{service.feed_name}-#{service.type_name}"
   end
 
   def self.deserialize(path)
     md = /(?<brand_id>\d+)-(?<brand_name>.*)\/(?<embed_id>\d+)-(?<embed_name>.*)\/(?<service_id>\d+)-(?<service_name>.*)-(?<service_type>.*)/.match path
 
     [ 'main',
-      { id: md[:brand_id], name: md[:brand_name] },
-      { id: md[:embed_id], name: md[:embed_name] },
-      { id: md[:service_id], feed_name: md[:service_name], type_name: md[:service_type] }
+      { id: md[:brand_id].to_i, name: md[:brand_name] },
+      { id: md[:embed_id].to_i, name: md[:embed_name] },
+      { id: md[:service_id].to_i, feed_name: md[:service_name], type_name: md[:service_type] }
     ]
   end
 
