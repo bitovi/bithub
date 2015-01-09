@@ -1,4 +1,4 @@
-json.(service, :id, :feed_name, :type_name)
+json.(service, :id, :feed_name, :type_name, :entity_count)
 
 json.config service.service_config.data
 

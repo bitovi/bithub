@@ -1,13 +1,5 @@
-require 'connection_manager'
-require 'amqp_helpers'
-
-class LiveserviceNotifier
-  include AmqpHelpers
-
-  def notif(msg, rk)
-    rabbit(exchange_name: 'x.liveservice', exchange_opts: {auto_delete: true}).publish(msg, rk)
-  end
-end
+require_relative 'connection_manager'
+require_relative 'liveservice_notifier'
 
 class ErrorPersistor
   include Celluloid

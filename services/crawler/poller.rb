@@ -1,10 +1,13 @@
 require 'core_ext'
 require_relative 'error_persistor'
+require_relative 'liveservice_notifier'
 require_relative 'decorators/all'
 
 class Poller
   include Celluloid
   HEARTBEAT_INTERVAL = 1
+
+  LockInfo = Struct.new(:name, :ttl)
 
   def initialize(path, fetcher, opts = {})
     @path = path
@@ -18,11 +21,15 @@ class Poller
   attr_reader :fetcher, :lock_ttl
 
   def fetch
-    if !locker.nil? && !locker.locked?(lock_name)
-      locker.lock(lock_name, lock_ttl)
+    if !locker.nil? && !locker.locked?(LockInfo.new(lock_name, nil))
+      locker.lock(LockInfo.new(lock_name, lock_ttl))
       if (events = @fetcher.fetch)
         Celluloid.logger.info "#{fetcher_name} for brand '#{@path.brand.name}', fetched #{events.count} events"
-        publish events if events.count > 0
+        if events.count > 0
+          publish events
+        else
+          notify_client
+        end
       end
     end
   rescue => e
@@ -33,6 +40,22 @@ class Poller
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@path.brand}, embed: #{@path.embed}, and service: #{@path.service}"
     publisher.publish @path, data, decorator: @decorator
+  end
+
+  def notify_client
+    LiveserviceNotifier.new.notif({
+      meta: {
+        brand_name: @path.brand.name,
+        embed_id: @path.embed.id
+      },
+      payload: {
+        service: {
+          id: @path.service.id,
+          lock_ttl: @lock_ttl,
+          empty_results: true,
+        }
+      }
+    }, :services)
   end
 
   def shutyoself
