@@ -2,12 +2,12 @@ module Entities
   module Meetup
 
     class Event < Protocol
-      
+
       def find
-        @event.id && 
+        @event.id &&
           (find_by_event_url.first || find_by_event_id.first)
       end
-      
+
       def build
         Entity.new({
           title: @event.name,
@@ -40,12 +40,6 @@ module Entities
         @instance.props[:event_hosts] = ActiveSupport::JSON.encode(@event.hosts)
       end
 
-      def determine_hosts
-        @instance.event_hosts = @event.hosts.map do |host|
-          Identity.find_by_provider_and_uid('meetup', host.id).andand.user
-        end.compact
-      end
-
       def set_thread_ts
         @instance.thread_updated_ts = Time.parse(@instance.props[:scheduled_at])
       end
@@ -55,7 +49,7 @@ module Entities
           Entities::Meetup::Rsvp.find_by_event_id(@event.id).all
         end
       end
-      
+
       def find_by_event_id
         self.class.find_by_origin_id(@event.id)
       end
