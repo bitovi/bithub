@@ -1,7 +1,7 @@
 module Identities
   module Builders
     class Base
-      class InvalidArguments < Exception; end
+      class InvalidArguments < StandardError; end
 
       attr_accessor :data
 

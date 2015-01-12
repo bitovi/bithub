@@ -45,10 +45,8 @@ module Identities
         forum_names_and_ids
       end
 
-      def credentials
-        {
-          access_token: access_token
-        }
+      def credentials(argument = nil)
+        { access_token: access_token }
       end
 
       # Accessors

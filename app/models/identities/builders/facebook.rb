@@ -35,10 +35,20 @@ module Identities
         page_ids_and_names
       end
 
-      def credentials
-        {
-          access_token: access_token
-        }
+      def credentials(page_id = nil)
+        if page_id
+          page_credentials(page_id)
+        else
+          { access_token: access_token } # user_credentials
+        end
+      end
+
+      def page_credentials(page_id)
+        if (page = pages.select{|p| p.fetch('id') == page_id}.first)
+          { access_token: page.fetch('access_token') }
+        else
+          {}
+        end
       end
 
       # Accessors

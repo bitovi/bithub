@@ -2,7 +2,7 @@ module Identities
   module Builders
     class Twitter < Base
 
-      def credentials
+      def credentials(argument = nil)
         {
           access_token: access_token,
           access_secret: access_secret

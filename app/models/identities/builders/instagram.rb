@@ -6,7 +6,7 @@ module Identities
         @data
       end
 
-      def credentials
+      def credentials(argument = nil)
         { access_token: access_token }
       end
 

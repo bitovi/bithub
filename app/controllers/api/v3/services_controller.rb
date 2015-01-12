@@ -70,7 +70,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
                   :id, s.id,
                   :feed_name, s.feed_name,
                   :type_name, s.type_name,
-                  :config, s.service_config.data.merge(s.credentials)
+                  :config, s.service_config.data.merge(s.credentials(s.config['id']))
                 ]
               end
             ]

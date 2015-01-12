@@ -33,8 +33,8 @@ class Service < ActiveRecord::Base
     self.entities << entity
   end
 
-  def credentials
-    (bi = brand_identities.first) ? bi.config.credentials : {}
+  def credentials(argument = nil)
+    (bi = brand_identities.first) ? bi.config.credentials(argument) : {}
   end
 
   def config_valid

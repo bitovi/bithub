@@ -16,7 +16,7 @@ module Identities
         venue_ids_and_names
       end
 
-      def credentials
+      def credentials(argument = nil)
         { access_token: access_token }
       end
 

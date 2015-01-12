@@ -26,8 +26,8 @@ module Identities
       builder.suggestions(type)
     end
 
-    def credentials
-      builder.credentials
+    def credentials(argument = nil)
+      builder.credentials(argument)
     end
 
   end
