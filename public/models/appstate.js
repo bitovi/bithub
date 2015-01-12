@@ -50,7 +50,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 							}
 
 							setTimeout(function(){
-								Models.Service.findOne(msg.service).then(cb);
+								Models.Service.findOne({id: msg.service.id}).then(cb);
 							}, timeout);
 						});
 
