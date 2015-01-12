@@ -8,7 +8,6 @@ steal(
 'components/service-forms/facebook-page',
 'components/service-forms/foursquare-venue',
 'components/service-forms/github-org',
-'components/service-forms/github-private-repo',
 'components/service-forms/github-repo',
 'components/service-forms/instagram-tag',
 'components/service-forms/instagram-user',
@@ -19,6 +18,7 @@ steal(
 'components/service-forms/tumblr-tag',
 'components/service-forms/twitter-followers',
 'components/service-forms/twitter-hashtag',
+'components/service-forms/twitter-term',
 'components/service-forms/twitter-user-timeline',
 'components/oauthorizer',
 function(Component, initView, Models){

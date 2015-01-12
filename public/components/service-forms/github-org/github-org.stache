@@ -1,4 +1,4 @@
 <div class="form-group">
 	<label>Organization Name</label>
-	<input type="text" can-value="map.config.name" class="form-control">
+	<bh-suggestions service="github/org" val="{map.config.name}"></bh-suggestions>
 </div>

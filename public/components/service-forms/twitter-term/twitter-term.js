@@ -1,10 +1,10 @@
 steal(
 'can/component',
-'./github-private-repo.stache!',
-'./github-private-repo.less!',
+'./twitter-term.stache!',
+'./twitter-term.less!',
 function(Component, initView){
   return Component.extend({
-    tag : 'bh-github-private-repo-service',
+    tag : 'bh-twitter-term-service',
     template : initView,
     scope : {
 
