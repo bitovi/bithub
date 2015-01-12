@@ -3,21 +3,17 @@ require 'twitter'
 module Fetchers
   module Twitter
 
-    class Hashtags
+    class Search
       include Protocol
 
       def initialize(client, opts)
         @client = client
-        @hashtags = opts.fetch(:hashtags)
-      end
-
-      def hashtags=(new_hashtags)
-        @hashtags = new_hashtags
+        @term = opts.fetch(:term)
       end
       
       def fetch
         handle_errors do
-          @client.search(@hashtags.join(' '), :count => 100).take(100)
+          @client.search(@term, :count => 100).take(100)
         end
       end
     end
