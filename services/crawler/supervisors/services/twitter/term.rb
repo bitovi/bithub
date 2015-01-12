@@ -1,15 +1,15 @@
 module Supervisors::Services::Twitter
-  class Hashtag < Supervisors::Service
+  class Term < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
     def boot
       @endpoints = SupervisionGroup.new
 
       hashtags_fetcher = Fetchers::Twitter::Search.new(
-        client, { term: hashtag })
+        client, { term: term })
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('hashtag', hashtag)).actor_name,
+        @path.next_level(EndpointInfo.new('term', term)).actor_name,
         Poller, *[
           @path,
           hashtags_fetcher,
@@ -19,9 +19,8 @@ module Supervisors::Services::Twitter
 
     private
 
-    def hashtag
-      hashtag = service_config.fetch(:hashtag)
-      (hashtag.first != '#') ? '#' + hashtag : hashtag
+    def term
+      service_config.fetch(:term)
     end
 
   end

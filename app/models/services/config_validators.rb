@@ -16,6 +16,11 @@ module Services
         include Virtus.model(:strict => true)
         attribute :hashtag, String
       end
+      
+      class Term
+        include Virtus.model(:strict => true)
+        attribute :term, String
+      end
     end
 
     module Disqus

@@ -6,6 +6,7 @@ require_relative 'twitter/common'
 require_relative 'twitter/user_timeline'
 require_relative 'twitter/followers'
 require_relative 'twitter/hashtag'
+require_relative 'twitter/term'
 
 require_relative 'tumblr/blog'
 require_relative 'tumblr/tag'
