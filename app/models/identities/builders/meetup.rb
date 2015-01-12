@@ -54,7 +54,7 @@ module Identities
         group_names_and_ids
       end
 
-      def credentials
+      def credentials(argument = nil)
         { access_token: access_token }
       end
 
