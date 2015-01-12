@@ -29,7 +29,6 @@ module Supervisors
     def final_level?
       name =~ /service/
     end
-    
 
     # Action not meant for this level,
     # propagate further down
@@ -40,7 +39,7 @@ module Supervisors
     end
 
     def children
-      _childs.actors.compact
+      (respond_to? :_childs) ? _childs.actors.compact : []
     end
     
     def children_names
