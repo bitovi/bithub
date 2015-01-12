@@ -17,8 +17,7 @@ function(Model, _keys){
 		},
 		github : {
 			org : 'Organization',
-			repo : 'Repo',
-			private_repo : 'Private Repo'
+			repo : 'Repo'
 		},
 		instagram : {
 			tag : 'Tag',
@@ -42,7 +41,8 @@ function(Model, _keys){
 		twitter : {
 			followers : 'Followers',
 			hashtag : 'Hashtag',
-			user_timeline : 'User Timeline'
+			user_timeline : 'User Timeline',
+			term : 'Term'
 		}
 	};
 
@@ -61,10 +61,10 @@ function(Model, _keys){
 
 	var NEEDS_OAUTH = {
 		github : {
-			types : ['repo', 'org', 'private_repo']
+			types : ['repo', 'org']
 		},
 		twitter : {
-			types : ['followers', 'hashtag', 'user_timeline']
+			types : ['followers', 'hashtag', 'user_timeline', 'term']
 		},
 		meetup : {
 			types : ['group']

@@ -1,4 +1,4 @@
 <div class="form-group">
 	<label>Venue ID</label>
-	<input type="text" can-value="map.config.id" class="form-control">
+	<bh-suggestions service="foursquare" val="{map.config.id}"></bh-suggestions>
 </div>
