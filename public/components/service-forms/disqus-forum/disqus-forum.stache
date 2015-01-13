@@ -1,4 +1,5 @@
 <div class="form-group">
 	<label>Site URL</label>
 	<bh-suggestions service="disqus" val="{map.config.url}"></bh-suggestions>
+	{{{configErrors errors 'url'}}}
 </div>
