@@ -20,6 +20,5 @@
 </div>
 
 {{#if currentService.isNew}}
-	<h4>Add {{currentServiceFeedName}}</h4>
 	<bh-service-form service="{currentService}" state="{state}" services="{services}"></bh-service-form>
 {{/if}}

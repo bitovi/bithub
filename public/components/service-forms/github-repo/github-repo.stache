@@ -1,6 +1,7 @@
 <div class="form-group">
 	<label>Repo Name</label>
 	<bh-suggestions service="github/repo" val="{map.config.name}"></bh-suggestions>
+	{{{configErrors errors 'name'}}}
 </div>
 <div class="class-group">
 	<div class="checkbox">

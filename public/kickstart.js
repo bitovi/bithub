@@ -30,6 +30,14 @@ steal(
 				appState.attr('loadingServices').unshift(service);
 			});
 
+
+			Models.Service.on('errored', function(ev, service){
+				var loadingServices = appState.attr('loadingServices');
+				var index = loadingServices.indexOf(service);
+
+				loadingServices.splice(index, 1);
+			});
+
 			Models.Service.on('destroyed', function(ev, service){
 				var loadingServices = appState.attr('loadingServices'),
 					index = loadingServiced.indexOf(service);

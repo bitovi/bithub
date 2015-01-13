@@ -120,6 +120,9 @@ function(Model, _keys){
 				feed_name : feed,
 				config: config
 			});
+		},
+		errored : function(service){
+			can.trigger(this, 'errored', [this]);
 		}
 	}, {
 		define : {

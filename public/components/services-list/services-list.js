@@ -33,14 +33,25 @@ function(Component, Models, initView){
 		},
 		helpers : {
 			isCurrentService : function(service, opts){
+				var check;
+
 				service = can.isFunction(service) ? service() : service;
-				return service === this.attr('currentService') ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
+				
+				check = service === this.attr('currentService');
+				check = check && !service.isNew();
+
+				return check ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
 			},
 			showErrorsForService : function(service, opts){
 				service = can.isFunction(service) ? service() : service;
 				if(this.attr('shownErrors').indexOf(service) > -1 && service.attr('error')){
 					return opts.fn();
 				}
+			}
+		},
+		events : {
+			'{currentService} created' : function(){
+				this.scope.attr('currentService', null);
 			}
 		}
 	});

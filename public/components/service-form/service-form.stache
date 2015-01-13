@@ -1,26 +1,37 @@
-{{#service}}
+{{#unless isHidden}}
+	<h4>Add {{currentServiceFeedName}}</h4>
+	{{#service}}
 
-	<form can-submit="saveService">
-		
-		{{#if hasMultipleTypes}}
-			<label>Type</label>
-			<div class="form-group">
-				<select can-value="type_name" class="form-control">
-					<option value="">Select Type</option>
-					{{#each typesForFeed}}
-					<option value="{{ @key }}">{{ . }}</option>
-					{{/each}}
-				</select>
-			</div>
-		{{/if}}
+		<form can-submit="saveService">
+			
+			{{#if hasMultipleTypes}}
+				<label>Type</label>
+				<div class="form-group">
+					<select can-value="type_name" class="form-control">
+						<option value="">Select Type</option>
+						{{#each typesForFeed}}
+						<option value="{{ @key }}">{{ . }}</option>
+						{{/each}}
+					</select>
+				</div>
+			{{/if}}
 
-		{{#renderForm}}
-			<div class="clearfix">
-				<button class="btn btn-primary pull-right">Save Service</button>
-				<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
-			</div>
-		{{/renderForm}}
-		
-	</form>
+			{{#missingConfig}}
+				<div class="alert alert-danger">Config can't be empty</div>
+			{{/missingConfig}}
 
-{{/service}}
+			{{#if errors}}
+				<div class="alert alert-danger">Service config has some errors</div>
+			{{/if}}
+
+			{{#renderForm}}
+				<div class="clearfix">
+					<button class="btn btn-primary pull-right">Save Service</button>
+					<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
+				</div>
+			{{/renderForm}}
+			
+		</form>
+
+	{{/service}}
+{{/unless}}
