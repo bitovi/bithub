@@ -7,6 +7,7 @@ class Service < ActiveRecord::Base
   has_many :service_errors
 
   after_create :notify_service_start
+  after_update :notify_service_restart
   after_destroy :notify_service_stop
 
   def brand_identities

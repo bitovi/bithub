@@ -1,13 +1,15 @@
 module Supervisors
   module Propagation
     def handle_cmd(target, action)
+      Celluloid.logger.debug "#handle_cmd, me: #{self.name}, target: #{target}"
       if %i(stop restart).include?(action) && target_among_children?(target)
         Celluloid.logger.info "Executing #{action} for #{target}"
         execute_cmd(target, action)
       elsif action == :start && on_correct_level?(target)
         Celluloid.logger.info "Executing #{action} for #{target}"
         execute_cmd(target, action)
-      elsif !final_level?
+      else
+        Celluloid.logger.info "Propagating further down..."
         propagate_cmd(target, action)
       end
     end
@@ -19,27 +21,22 @@ module Supervisors
       end).empty?
     end
     
-    # I am target's supposed parent
+    # I am supposed target's parent
     def on_correct_level?(target)
       target.parent.actor_name == name
     end
     
-    # Final level is service level. Don't
-    # propagate further down than that.
-    def final_level?
-      name =~ /service/
-    end
-
     # Action not meant for this level,
     # propagate further down
     def propagate_cmd(target, action)
+      Celluloid.logger.debug "Childs: #{children_names}"
       children.each do |c|
         c.handle_cmd(target, action)
       end
     end
 
     def children
-      (respond_to? :_childs) ? _childs.actors.compact : []
+      (respond_to? :_childs, true) ? _childs.actors.compact : []
     end
     
     def children_names

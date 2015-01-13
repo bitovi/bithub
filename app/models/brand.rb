@@ -23,6 +23,11 @@ class Brand < ActiveRecord::Base
   after_create  :notify_brand_start
   after_destroy :notify_brand_stop
 
+
+  def self.switch!(name)
+    Apartment::Tenant.switch! name
+  end
+
   def create_tenant
     Apartment::Tenant.create tenant_name
     Apartment::Tenant.switch! tenant_name
