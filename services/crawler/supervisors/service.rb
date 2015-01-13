@@ -16,9 +16,9 @@ module Supervisors
       raise "Executing command on service level. Very bad. This is wrong!"
     end
 
-    def _childs; @endpoints; end
-
     private
+    
+    def _childs; @endpoints; end
 
     def static_config
       Actor[:configurator].static_config
