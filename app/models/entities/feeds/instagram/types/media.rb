@@ -17,8 +17,18 @@ module Entities
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.full_name,
             origin_author_avatar_url: @event.user.profile_picture,
+            caption: caption,
+            image_url: image_url
           }
         })
+      end
+
+      def caption
+        @event.source_data[:caption].andand[:text] || ''
+      end
+
+      def image_url
+        @event.source_data[:images].andand[:standard_resolution].andand[:url]
       end
 
       # Finders
