@@ -25,7 +25,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 
 						currentSocket.on('entities', function( msg ) {
 							var parsed = JSON.parse(msg);
-							console.log('NEW ENTITY');
+							console.log('NEW ENTITY', parsed);
 
 							parsed._isFromLiveService = true;
 

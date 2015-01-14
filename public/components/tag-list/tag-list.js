@@ -7,7 +7,8 @@ function(Component, initView){
 	var KEYMAP = {
 		COMMA : 188,
 		SPACE : 32,
-		BACKSPACE : 8
+		BACKSPACE : 8,
+		ENTER : 13
 	}
 
 	return Component.extend({
@@ -35,10 +36,10 @@ function(Component, initView){
 		events: {
 			'input keydown' : function(el, ev){
 				var val = can.trim(el.val());
-				if((ev.which === KEYMAP.COMMA || ev.which === KEYMAP.SPACE) && val !== ''){
+				if((ev.which === KEYMAP.COMMA || ev.which === KEYMAP.SPACE || ev.which === KEYMAP.ENTER) && val !== ''){
 					this.scope.addTag(val);
 					el.val('');
-					ev.preventDefault();
+					(ev.which !== KEYMAP.ENTER) && ev.preventDefault();
 				} else if(ev.which === KEYMAP.BACKSPACE && this.__lastSelectionStart === 0){
 					this.scope.removeTag();
 				}
