@@ -6,7 +6,7 @@ namespace :data do
     Rails.logger.info "Importing/updating tags"
 
     if tenant = ENV['TENANT']
-      Apartment::Tenant.switch tenant
+      Apartment::Tenant.switch! tenant
       Rails.logger.info "Tenant switched to '#{Apartment::Tenant.current}'"
     end
 
@@ -38,5 +38,6 @@ namespace :data do
     Rails.logger.info "  #{updated.length} tags updated"
     Rails.logger.info "  #{failed.length} tags failed: #{failed.to_s}"
 
+    Apartment::Tenant.switch!
   end
 end
