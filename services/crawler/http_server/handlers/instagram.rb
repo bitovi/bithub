@@ -1,14 +1,10 @@
-require 'supervisors/support/brand_info'
-require 'supervisors/support/embed_info'
-require 'supervisors/support/service_info'
+require 'supervisors/support/owner_data'
 
 module HttpServer
   module Handlers
 
     class Instagram
       include Celluloid
-
-      OwnerData = Struct.new :brand, :embed, :service
 
       def initialize
         Celluloid.logger.info "Started HTTP handler for Instagram"
@@ -56,9 +52,13 @@ module HttpServer
         captures = Regexp.new(self.class.path).match(url)
 
         OwnerData.new\
-          BrandInfo.new(captures[:brand_id].to_i, captures[:brand_name]),
-          EmbedInfo.new(captures[:embed_id].to_i, captures[:embed_name]),
-          ServiceInfo.new(captures[:service_id].to_i, 'instagram', 'media_event')
+          captures[:brand_id],
+          captures[:brand_name],
+          captures[:embed_id],
+          captures[:embed_name],
+          captures[:service_id],
+          'instagram',
+          'media_event'
       end
 
       def publish(owner_data, body)
