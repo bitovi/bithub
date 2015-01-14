@@ -1,6 +1,7 @@
 {{#if isLoading}}
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
 {{else}}
+	Pick a suggestion
 	{{#if suggestions.length}}
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -20,7 +21,14 @@
 					</tbody>
 				</table>
 			</div>
-			
 		</div>
+	{{else}}
+		<div class="alert alert-info">
+			We couldn't load any suggestions for this feed.
+		</div>
+	{{/if}}
+	{{#if hasExtra}}
+		Or enter your own
+		<input type="text" can-value="val" class="form-control">
 	{{/if}}
 {{/if}}

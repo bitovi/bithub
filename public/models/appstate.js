@@ -43,7 +43,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 							if(msg.service.empty_results){
 								cb = function(service){
 									if(service.attr('entity_count') === 0){
-										service.attr('noResults', true);
+										service.noResults();
 									}
 								}
 								timeout = 2000
