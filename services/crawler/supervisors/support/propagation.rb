@@ -31,7 +31,9 @@ module Supervisors
     def propagate_cmd(target, action)
       Celluloid.logger.debug "Childs: #{children_names}"
       children.each do |c|
-        c.handle_cmd(target, action)
+        if c.respond_to?(:handle_cmd, true)
+          c.handle_cmd(target, action)
+        end
       end
     end
 
