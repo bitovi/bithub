@@ -6,7 +6,7 @@ namespace :data do
     Rails.logger.info "Importing funnel definitions"
 
     if tenant = ENV['TENANT']
-      Apartment::Tenant.switch tenant
+      Apartment::Tenant.switch! tenant
       Rails.logger.info "Tenant switched to '#{Apartment::Tenant.current}'"
     end
 
@@ -29,5 +29,6 @@ namespace :data do
       end
     end
 
+    Apartment::Tenant.switch!
   end
 end
