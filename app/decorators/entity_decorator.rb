@@ -45,7 +45,7 @@ class EntityDecorator < Draper::Decorator
 
     if source.feed_name == 'instagram' && source.type_name == 'media'
       [{
-        caption: source.source_data['caption']['text'],
+        caption: source.source_data['caption'].andand['text'] || '',
         url: source.source_data['images']['standard_resolution']['url'],
        }]
     end
