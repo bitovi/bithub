@@ -174,7 +174,11 @@ function(Model, _keys){
 			// remove last ', '
 			return output.join('<br>');
 		},
+		noResults : function(){
+			this.attr('noResults', true);
+		},
 		save : function(){
+			this.removeAttr('noResults');
 			can.trigger(this.constructor, 'saving', [this]);
 			return this._super.apply(this, arguments);
 		},
