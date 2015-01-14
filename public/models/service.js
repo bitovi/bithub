@@ -174,7 +174,7 @@ function(Model, _keys){
 			// remove last ', '
 			return output.join('<br>');
 		},
-		noResults : function(){
+		hasNoResults : function(){
 			this.attr('noResults', true);
 		},
 		save : function(){
