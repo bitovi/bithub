@@ -1,5 +1,5 @@
 <div class="form-group">
 	<label>Organization Name</label>
-	<bh-suggestions service="github/org" val="{map.config.name}"></bh-suggestions>
+	<bh-suggestions service="github/org" val="{map.config.name}" allow-extra="true"></bh-suggestions>
 	{{{configErrors errors 'name'}}}
 </div>
