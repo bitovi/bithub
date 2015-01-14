@@ -1,6 +1,13 @@
 {{#unless isHidden}}
-	<h4>Add {{currentServiceFeedName}}</h4>
+	<h4>{{#if service.isNew}}Add{{else}}Edit{{/if}} {{currentServiceFeedName}}</h4>
 	{{#service}}
+
+		{{#if error}}
+			<div class="alert alert-danger">
+				<b>{{ formattedErrorClass }}</b>
+				{{ formattedError }}
+			</div>
+		{{/if}}
 
 		<form can-submit="saveService">
 			
