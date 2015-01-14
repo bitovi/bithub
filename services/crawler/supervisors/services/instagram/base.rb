@@ -1,5 +1,6 @@
 require 'instagram'
 require 'active_support/core_ext/string'
+require 'supervisors/support/owner_data'
 
 module Supervisors::Services::Instagram
   class Base < Supervisors::Service
@@ -15,6 +16,10 @@ module Supervisors::Services::Instagram
       rescue ::Instagram::Error => e
         Celluloid.logger.info "Instagram subscription failed with #{e.message}"
       end
+
+      if self.respond_to? :preload, true
+        publish preload service_config
+      end
     end
 
     def token
@@ -22,6 +27,24 @@ module Supervisors::Services::Instagram
     end
 
     private
+
+    def subscribe; raise NotImplementedError; end
+    def preload; raise NotImplementedError; end
+
+    def publish(items)
+      Actor[:publisher].publish owner_data, items
+    end
+
+    def owner_data
+      OwnerData.new\
+        @path.brand.id,
+        @path.brand.name,
+        @path.embed.id,
+        @path.embed.name,
+        @path.service.id,
+        'instagram',
+        'media_event'
+    end
 
     def delete_subscriptions
       client.subscriptions.each do |sub|
