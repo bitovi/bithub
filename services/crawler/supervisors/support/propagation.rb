@@ -36,7 +36,7 @@ module Supervisors
     end
 
     def children
-      (respond_to? :_childs, true) ? _childs.actors.compact : []
+      (respond_to?(:_childs, true) && !_childs.nil?) ? _childs.actors.compact : []
     end
     
     def children_names
