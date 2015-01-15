@@ -30,8 +30,14 @@ module HttpServer
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
-          object = notif['object']
-          object_id = notif['object_id']
+          object          = notif['object']
+          object_id       = notif['object_id']
+          subscription_id = notif['subscription_id']
+
+          unless owner_exists?(owner_data)
+            unsubscribe subscription_id
+            next
+          end
 
           method_name = "handle_postback_#{object}".to_sym
 
@@ -68,6 +74,23 @@ module HttpServer
       def self.path
         "/instagram/media/(?<brand_id>\\d+)-(?<brand_name>.*)/(?<embed_id>\\d+)-(?<embed_name>.*)/(?<service_id>\\d+)"
       end
+
+      private
+
+      def unsubscribe(subscription_id)
+          Celluloid.logger.info "Deleting Instagram subscription #{subscription_id}"
+          client.delete_subscription subscription_id
+      end
+
+      def client
+        @client ||= ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
+      end
+
+      def owner_exists?(owner_data)
+        !!Actor[:configurator].service_config(owner_data.brand, owner_data.embed, owner_data.service)
+      end
+
+      # Subhandlers
 
       def handle_postback_user(object_id)
         Fetchers::Instagram::UserRecentMedia.fetch object_id, count: 1
