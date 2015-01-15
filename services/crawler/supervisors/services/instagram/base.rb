@@ -7,9 +7,6 @@ module Supervisors::Services::Instagram
     VALID_OBJECTS = %w(user tag location geography)
 
     def boot
-      # cleanup existing subscriptions
-      #delete_subscriptions
-
       Celluloid.logger.info "Creating Instagram #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
       begin
         subscribe service_config
@@ -44,13 +41,6 @@ module Supervisors::Services::Instagram
         @path.service.id,
         'instagram',
         'media_event'
-    end
-
-    def delete_subscriptions
-      client.subscriptions.each do |sub|
-        Celluloid.logger.info "Deleting Instagram subscription #{sub.id}"
-        client.delete_subscription sub.id
-      end
     end
 
     def client
