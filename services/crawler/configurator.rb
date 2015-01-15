@@ -23,12 +23,12 @@ class Configurator
   alias_method :brand_config, :brand
 
   def embed(bi, ei)
-    brand(bi).andand.fetch(:embeds).select{|e| e.fetch(:id) == ei.id}.first
+    brand(bi).fetch(:embeds).select{|e| e.fetch(:id) == ei.id}.first
   end
   alias_method :embed_config, :embed
 
   def service(bi, ei, si)
-    embed(bi, ei).andand.fetch(:services).select{|s| s.fetch(:id) == si.id}.first
+    embed(bi, ei).fetch(:services).select{|s| s.fetch(:id) == si.id}.first
   end
   alias_method :service_config, :service
 

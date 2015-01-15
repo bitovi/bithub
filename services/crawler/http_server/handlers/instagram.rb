@@ -88,6 +88,8 @@ module HttpServer
 
       def owner_exists?(owner_data)
         !!Actor[:configurator].service_config(owner_data.brand, owner_data.embed, owner_data.service)
+      rescue StandardError
+        false
       end
 
       # Subhandlers
