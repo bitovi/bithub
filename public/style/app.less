@@ -28,14 +28,17 @@
 	}
 }
 
-
+#content {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	-webkit-transition: left 0.35s ease-in;
+	-moz-transition: left 0.35s ease-in;
+	-o-transition: left 0.35s ease-in;
+	transition: left 0.35s ease-in;
+}
 #content.sidebar-is-expanded {
-	padding-left: 560px;
-	-webkit-transition: padding-left 0.35s ease-in;
-	-moz-transition: padding-left 0.35s ease-in;
-	-o-transition: padding-left 0.35s ease-in;
-	transition: padding-left 0.35s ease-in;
-	.alert-below-the-fold {
-		margin-left: 550px;
-	}
+	left: 560px;
 }
