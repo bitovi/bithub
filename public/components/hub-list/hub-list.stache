@@ -35,7 +35,7 @@
 										<div class="expanded-services">
 											<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Collapse</button>
 											{{#each services}}
-												<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{ printConfig }} )</small>
+												<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{{ printConfig }}} )</small>
 											{{/each}}
 										</div>
 									{{/else}}

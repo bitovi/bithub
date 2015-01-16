@@ -9,5 +9,9 @@ module Supervisors::Services::Instagram
       client.create_subscription object: "location", callback_url: callback_url, aspect: "media", object_id: location_id
     end
 
+    def preload(params)
+      Fetchers::Instagram::LocationRecentMedia.fetch params.fetch(:id), count: 100
+    end
+
   end
 end

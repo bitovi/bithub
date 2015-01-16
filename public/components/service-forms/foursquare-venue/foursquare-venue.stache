@@ -1,4 +1,5 @@
 <div class="form-group">
 	<label>Venue ID</label>
 	<bh-suggestions service="foursquare" val="{map.config.id}"></bh-suggestions>
+	{{{configErrors errors 'id'}}}
 </div>

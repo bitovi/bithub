@@ -1,4 +1,5 @@
 class Service < ActiveRecord::Base
+
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
 
@@ -38,12 +39,6 @@ class Service < ActiveRecord::Base
     (bi = brand_identities.first) ? bi.config.credentials(argument) : {}
   end
 
-  def config_valid
-    unless service_config.valid?
-      errors.add(:config, service_config.error_msg)
-    end
-  end
-
   def notify_service_change(action)
     Support::CrawlerNotifier.new.notif({
       brand_name: embed.brand.name,
@@ -77,9 +72,15 @@ class Service < ActiveRecord::Base
     }) if service_config.valid?
   end
 
+  def config_valid
+    unless service_config.valid?
+      errors.set(:config_attrs, service_config.error_msg)
+    end
+  end
+
   def service_config_validator
     unless service_config.valid?
-      errors.add(:config, service_config.error_msg)
+      errors.set(:config_attrs, service_config.error_msg)
     end
   end
 end

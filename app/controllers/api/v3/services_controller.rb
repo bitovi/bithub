@@ -31,7 +31,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
       render :json => msg_hash(@service, 'create'), :status => 406
     end
   end
-  
+
   def update
     @service = Service.find_by_id(service_id)
     @service.assign_attributes(service_definition)
@@ -57,25 +57,26 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def tree
     big_hash = Hash[
       :brands, Brand.all.map do |b|
-        Apartment::Tenant.switch b.name
-        Hash[
-          :id, b.id,
-          :name, b.name,
-          :embeds, b.embeds.map do |e|
-            Hash[
-              :id, e.id,
-              :name, e.name,
-              :services, e.services.map do |s|
-                Hash[
-                  :id, s.id,
-                  :feed_name, s.feed_name,
-                  :type_name, s.type_name,
-                  :config, s.service_config.data.merge(s.credentials(s.config['id']))
-                ]
-              end
-            ]
-          end
-        ]
+        Apartment::Tenant.switch b.name do
+          Hash[
+            :id, b.id,
+            :name, b.name,
+            :embeds, b.embeds.map do |e|
+              Hash[
+                :id, e.id,
+                :name, e.name,
+                :services, e.services.map do |s|
+                  Hash[
+                    :id, s.id,
+                    :feed_name, s.feed_name,
+                    :type_name, s.type_name,
+                    :config, s.service_config.data.merge(s.credentials(s.config['id']))
+                  ]
+                end
+              ]
+            end
+          ]
+        end
       end
     ]
 

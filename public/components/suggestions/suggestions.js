@@ -28,6 +28,18 @@ function(Component, initView, Models){
 					this.attr('val', suggestion.attr('id'));
 				}
 				
+			},
+			hasExtra : function(){
+				var suggestions = this.attr('suggestions');
+				var length = suggestions.attr('length');
+				var val = this.attr('val');
+
+				for(var i = 0; i < length; i++){
+					if(suggestions[i].id === val){
+						return false;
+					}
+				}
+				return !!this.attr('allowExtra');
 			}
 		},
 		helpers : {

@@ -25,7 +25,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 
 						currentSocket.on('entities', function( msg ) {
 							var parsed = JSON.parse(msg);
-							console.log('NEW ENTITY');
+							console.log('NEW ENTITY', parsed);
 
 							parsed._isFromLiveService = true;
 
@@ -43,7 +43,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 							if(msg.service.empty_results){
 								cb = function(service){
 									if(service.attr('entity_count') === 0){
-										service.attr('noResults', true);
+										service.hasNoResults();
 									}
 								}
 								timeout = 2000

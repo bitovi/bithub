@@ -1,4 +1,5 @@
 <div class="form-group">
 	<label>Group ID</label>
 	<bh-suggestions service="meetup" val="{map.config.id}"></bh-suggestions>
+	{{{configErrors errors 'id'}}}
 </div>

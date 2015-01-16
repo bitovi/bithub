@@ -64,48 +64,10 @@ class Entity < ActiveRecord::Base
   scope :repo_name, ->(rn) { where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, ->(s) { where("props ? 'state'").where("props -> 'state' = :val", val: s) }
 
-  scope :scoped_with_includes, -> { includes(:owners).includes(:parent) }
-
   after_validation :reformat_uniqueness_validation
 
   def self.satisfying(filter)
     NatlangQueries::Applier.new(filter, Entity).scope
-  end
-
-  def self.with_author(author_id)
-    joins(:ownerships)\
-      .where('ownerships.ownership_type = \'author\'')
-      .where('ownerships.owner_id = ?', author_id) if author_id
-  end
-
-  def self.with_host(host_id)
-    joins(:ownerships)\
-      .where('ownerships.ownership_type = \'host\'')
-      .where('ownerships.owner_id = ?', host_id) if host_id
-  end
-
-  def author=(user)
-    remove_author
-    ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author)
-  end
-
-  def event_hosts=(users)
-    remove_hosts
-    users.each do |u|
-      ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host)
-    end
-  end
-
-  def remove_author
-    ownerships.where(ownership_type: :author).destroy_all
-  end
-
-  def remove_hosts
-    ownerships.where(ownership_type: :host).destroy_all
-  end
-
-  def author
-    ownerships.select(&:is_authorship?).first.andand.owner
   end
 
   def state

@@ -7,10 +7,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    embed = current_brand.embeds.find(embed_id)
-    entities = embed.embed_entities.includes(:entity).order('entities.thread_updated_ts DESC').all.map(&:entity)
+    scope = build_scope
+    @entities = EntityDecorator.decorate_collection(scope.all)
 
-    @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
@@ -68,6 +67,29 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   private
+
+  def build_scope
+    scope = Entity.joins(:embed_entities)\
+      .where("embed_entities.embed_id" => embed_id)
+      .includes(:parent)
+      .no_children
+
+    scope = scope_applier(scope)
+    .apply_negated_attrs_to_scope
+    .apply_muster_query_to_scope(muster_query)
+    .apply_regular_params_to_scope
+    .apply_tag_based_params_to_scope
+    .apply_order_to_scope
+    .result
+  end
+
+  def query_logic
+    @query_logic ||= QueryLogic::Query.new(Entity, params)
+  end
+
+  def scope_applier(current_scope = nil)
+    ScopeApplier.new((current_scope || Entity), query_logic)
+  end
 
   def embed_entity_relation
     embed = current_brand.embeds.find(embed_id)
