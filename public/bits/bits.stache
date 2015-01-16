@@ -5,3 +5,7 @@
 {{#each state.bits}}
   <bh-bit bit="{this}"></bh-bit>
 {{/each}}
+
+{{#if loading}}
+	<div class="alert alert-info loading-bit">Loading...</div>
+{{/if}}
