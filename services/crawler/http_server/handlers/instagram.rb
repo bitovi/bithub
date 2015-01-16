@@ -41,7 +41,7 @@ module HttpServer
 
           method_name = "handle_postback_#{object}".to_sym
 
-          if self.respond_to? method_name
+          if self.respond_to? method_name, true
             results = self.send method_name.to_sym, object_id
 
             results.each do |media|
