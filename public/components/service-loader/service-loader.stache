@@ -9,12 +9,12 @@
 				
 				<p>{{{service.formattedConfig}}}</p>
 
-				{{#service.error}}
+				{{#if service.error}}
 					<div class="alert alert-danger">
 						<b>{{ formattedErrorClass }}</b>
 						{{ formattedError }}
 					</div>
-				{{/service.error}}
+				{{/if}}
 
 				{{#if service.noResults}}
 					<div class="alert alert-info">

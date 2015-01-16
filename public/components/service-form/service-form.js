@@ -21,11 +21,12 @@ steal(
 'components/service-forms/twitter-term',
 'components/service-forms/twitter-user-timeline',
 'components/oauthorizer',
+'components/helpers.js',
 function(Component, initView, Models){
 
 	var makeTemplate = function(feed, type){
 		var componentName = ['bh', feed, type.replace(/_/g, '-'), 'service'].join('-'),
-			template = '<' + componentName + ' map="{service}"></' + componentName + '>{{{saveButtons}}}',
+			template = '<' + componentName + ' map="{service}" errors="{errors.config}"></' + componentName + '>{{{saveButtons}}}',
 			needsOAuth = Models.Service.needsOAuth[feed];
 
 		needsOAuth = needsOAuth && can.inArray(type, needsOAuth.types) > -1;
@@ -46,6 +47,9 @@ function(Component, initView, Models){
 		tag : 'bh-service-form',
 		template: initView,
 		scope : {
+			isHidden: false,
+			missingConfig : false,
+			errors: null,
 			init : function(){
 				console.log(this.attr())
 			},
@@ -54,23 +58,51 @@ function(Component, initView, Models){
 
 				var self = this,
 					service = this.attr('service'),
-					services = this.attr('services');
+					services = this.attr('services'),
+					serviceCompute = this.compute('service');
 
 				service.attr('embed_id', this.state.attr('hubId'));
 				services.push( service );
 
 				service.save( function( newService ) {
-					console.log('Service saved!');
+
 				}, function( error ) {
 					var index = services.indexOf(service);
+					var attrs = {
+						isHidden: false
+					};
+					var errors;
+
 					services.splice(index, 1);
-					console.log('Error on creating service: ', error );
+
+					if(error.status === 400){
+						attrs.missingConfig = true;
+					} else if(error.status = 406){
+						try {
+							errors = JSON.parse(error.responseText).errors.config_attrs;
+						} catch(e){
+							errors = {};
+						}
+						attrs.errors = errors;
+					}
+
+					Models.Service.errored(service);
+
+					self.attr(attrs);
 				});
 
-				this.attr('service', null);
+				this.attr({
+					isHidden: true,
+					missingConfig: false,
+					errors: null
+				});
 			},
 			clearService : function(){
 				this.attr('service', null);
+			},
+			currentServiceFeedName : function(){
+				var feed = this.attr('service').attr('feed_name');
+				return Models.Service.feeds[feed];
 			}
 		},
 		helpers : {

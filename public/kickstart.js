@@ -27,7 +27,22 @@ steal(
 			can.route.ready();
 
 			Models.Service.on('saving', function(ev, service){
-				appState.attr('loadingServices').unshift(service);
+				var loadingServices = appState.attr('loadingServices');
+				var index = loadingServices.indexOf(service);
+
+				if(index > -1){
+					loadingServices.splice(index, 1);
+				}
+				
+				loadingServices.unshift(service);
+			});
+
+
+			Models.Service.on('errored', function(ev, service){
+				var loadingServices = appState.attr('loadingServices');
+				var index = loadingServices.indexOf(service);
+
+				loadingServices.splice(index, 1);
 			});
 
 			Models.Service.on('destroyed', function(ev, service){

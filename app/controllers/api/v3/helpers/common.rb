@@ -24,7 +24,7 @@ module Api::V3::Helpers
       };
 
       if is_ar_object?(obj) && !obj.errors.blank?
-        resp_hash[:errors] = obj.errors.full_messages
+        resp_hash[:errors] = obj.errors
       end
 
       resp_hash

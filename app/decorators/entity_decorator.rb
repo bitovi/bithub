@@ -42,6 +42,13 @@ class EntityDecorator < Draper::Decorator
         }
       end
     end
+
+    if source.feed_name == 'instagram' && source.type_name == 'media'
+      [{
+        caption: source.props[:caption] || source.props['caption'],
+        url: source.props[:image_url] || source.props['image_url'],
+       }]
+    end
   end
 
   def has_parent

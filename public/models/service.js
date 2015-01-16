@@ -120,6 +120,9 @@ function(Model, _keys){
 				feed_name : feed,
 				config: config
 			});
+		},
+		errored : function(service){
+			can.trigger(this, 'errored', [this]);
 		}
 	}, {
 		define : {
@@ -171,7 +174,11 @@ function(Model, _keys){
 			// remove last ', '
 			return output.join('<br>');
 		},
+		hasNoResults : function(){
+			this.attr('noResults', true);
+		},
 		save : function(){
+			this.removeAttr('noResults');
 			can.trigger(this.constructor, 'saving', [this]);
 			return this._super.apply(this, arguments);
 		},

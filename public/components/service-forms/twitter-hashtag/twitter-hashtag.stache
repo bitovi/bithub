@@ -3,5 +3,6 @@
 	<div class="input-group">
 		<span class="input-group-addon">#</span>
 		<input type="text" can-value="map.config.hashtag" class="form-control">
+		{{{configErrors errors 'hashtag'}}}
 	</div>
 </div>

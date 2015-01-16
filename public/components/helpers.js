@@ -16,4 +16,24 @@ function(stache, _reduce){
 		return can.route.url(hash, false);
 	});
 
+	stache.registerHelper('configErrors', function(errors, key, opts){
+		var res;
+		
+		errors = can.isFunction(errors) ? errors() : errors;
+		key = can.isFunction(key) ? key() : key;
+
+		if(errors){
+			errors = errors.attr(key) || [];
+
+			if(!errors.length) return;
+
+			res = ['<div class="alert alert-danger alert-error-list"><ul class="list-unstyled">'];
+			for(var i = 0; i < errors.length; i++){
+				res.push('<li>' + errors[i] + '</li>');
+			}
+			res.push('</ul></div>');
+			return res.join('');
+		}
+	});
+
 })

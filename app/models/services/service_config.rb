@@ -28,7 +28,13 @@ module Services
     end
 
     def error_msg
-      @errors.map {|e| "#{e[:type]} error: #{e[:msg]}" }.join('\n')
+      res = @errors.reduce({}) do |memo, e|
+        memo[e[:attr]] = [] if memo[e[:attr]].nil?
+        memo[e[:attr]] << e[:msg]
+        memo
+      end
+      Rails.logger.info res
+      res
     end
 
     private

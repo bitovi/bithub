@@ -1,23 +1,34 @@
 {{#if isLoading}}
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
 {{else}}
+	Pick a suggestion
 	{{#if suggestions.length}}
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<b>Suggestions</b>
 			</div>
-			<table class="table table-hover">
-				<tbody>
-					{{#each suggestions}}
-						<tr {{#isSelected this}}class="info"{{/isSelected}} can-click="toggleSuggestion">
-							<td>
-								<i class="fa {{#isSelected this}}fa-dot-circle-o{{else}}fa-circle-o{{/isSelected}}"></i>
-								{{ name }}
-							</td>
-						</tr>
-					{{/each}}
-				</tbody>
-			</table>
+			<div class="scroll">
+				<table class="table table-hover">
+					<tbody>
+						{{#each suggestions}}
+							<tr {{#isSelected this}}class="info"{{/isSelected}} can-click="toggleSuggestion">
+								<td>
+									<i class="fa {{#isSelected this}}fa-dot-circle-o{{else}}fa-circle-o{{/isSelected}}"></i>
+									{{ name }}
+								</td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
 		</div>
+	{{else}}
+		<div class="alert alert-info">
+			We couldn't load any suggestions for this feed.
+		</div>
+	{{/if}}
+	{{#if hasExtra}}
+		Or enter your own
+		<input type="text" can-value="val" class="form-control">
 	{{/if}}
 {{/if}}
