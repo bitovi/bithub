@@ -72,42 +72,6 @@ class Entity < ActiveRecord::Base
     NatlangQueries::Applier.new(filter, Entity).scope
   end
 
-  def self.with_author(author_id)
-    joins(:ownerships)\
-      .where('ownerships.ownership_type = \'author\'')
-      .where('ownerships.owner_id = ?', author_id) if author_id
-  end
-
-  def self.with_host(host_id)
-    joins(:ownerships)\
-      .where('ownerships.ownership_type = \'host\'')
-      .where('ownerships.owner_id = ?', host_id) if host_id
-  end
-
-  def author=(user)
-    remove_author
-    ownerships << Ownership.new(owner: user, entity: self, ownership_type: :author)
-  end
-
-  def event_hosts=(users)
-    remove_hosts
-    users.each do |u|
-      ownerships << Ownership.new(owner: u, entity: self, ownership_type: :host)
-    end
-  end
-
-  def remove_author
-    ownerships.where(ownership_type: :author).destroy_all
-  end
-
-  def remove_hosts
-    ownerships.where(ownership_type: :host).destroy_all
-  end
-
-  def author
-    ownerships.select(&:is_authorship?).first.andand.owner
-  end
-
   def state
     props.andand['state']
   end
