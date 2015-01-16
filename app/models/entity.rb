@@ -64,8 +64,6 @@ class Entity < ActiveRecord::Base
   scope :repo_name, ->(rn) { where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, ->(s) { where("props ? 'state'").where("props -> 'state' = :val", val: s) }
 
-  scope :scoped_with_includes, -> { includes(:owners).includes(:parent) }
-
   after_validation :reformat_uniqueness_validation
 
   def self.satisfying(filter)
