@@ -54,3 +54,16 @@ Here are the port mappings, check `Vagrantfile` and `ansible/site.yml` for addit
 | 6380   | 6379    | redis
 
 After `foreman start web` on guest, you should be able to access `http://127.0.0.1:8080` on your host machine.
+
+
+## Server provisioning
+
+Take a look at `server.yml`, change config if needed and run:
+
+`ansible-playbook server.yml -t bithub --vault-password-file .vault_pass.txt`
+
+`.vault_pass.txt` isn't in version control b/c it contains Ansible vault password in clear text.
+
+Other passwords are stored in group/host vars and can be updated by running `ansible-vault edit group_vars/staging.yml`.
+
+Check http://docs.ansible.com/playbooks_vault.html for more info about using Ansible vaults.

@@ -1,0 +1,21 @@
+- name: Initial setup
+  hosts: staging
+  user: root
+  vars:
+    domain: 'staging.bithub.com'
+    env: 'staging'
+    pg:
+      version: '9.4'
+    ruby:
+      version: '2.1.2'
+    bithub:
+      project_path: '/home/bithub'
+  roles:
+    - { role: common,      tags: ['common'] }
+    - { role: nodejs,      tags: ['nodejs'] }
+    - { role: nginx,       tags: ['nginx'] }
+    - { role: postgresql,  tags: ['postgresql'] }
+    - { role: rabbitmq,    tags: ['rabbitmq'] }
+    - { role: redis,       tags: ['redis'] }
+    - { role: ruby,        tags: ['ruby'] }
+    - { role: bithub_prod, tags: ['bithub'] }

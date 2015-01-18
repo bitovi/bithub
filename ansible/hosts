@@ -1,4 +1,14 @@
+[localhost]
+localhost ansible_connection=local
+
 [development]
+192.168.99.99
+
+[testing]
+88.80.184.65
+
+[staging]
+173.230.136.135
 
 [production]
-# put your host ip's here
+# 69.164.216.88

@@ -1,0 +1,17 @@
+- name: Add contrib and non-free to Apt repositories
+  apt_repository: repo={{ item }} state=present
+  with_items:
+    - 'deb http://mirrors.linode.com/debian jessie main contrib non-free'
+    - 'deb http://security.debian.org/ jessie/updates main'
+
+- name: Update packages
+  apt: update_cache=yes
+
+- name: Safe-upgrade packages
+  apt: upgrade=safe
+
+- name: Migrate to systemd
+  apt: name={{ item }} state=installed
+  with_items:
+    - systemd
+    - systemd-sysv
