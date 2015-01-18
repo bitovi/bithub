@@ -10,10 +10,10 @@ namespace :deploy do
       options << "--user #{fetch(:user)}"
       options << "--env #{fetch(:current_path)}/.env_#{fetch(:stage)}"
       options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
-      dst = '/etc/init'
+      dst = "/home/#{fetch(:user)}/.config/systemd/user/"
 
       within fetch(:release_path) do
-        capture :foreman, :export, options, :upstart, dst
+        capture :foreman, :export, options, :systemd, dst
       end
     end
   end
