@@ -1,0 +1,11 @@
+- name: Restart Nginx
+  service: name=nginx state=restarted
+
+- name: Restart Postgresql
+  service: name=postgresql state=restarted
+
+- name: Restart RabbitMQ
+  service: name=rabbitmq-server state=restarted
+
+- name: Restart Redis
+  service: name=redis-server state=restarted

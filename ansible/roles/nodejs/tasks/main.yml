@@ -1,8 +1,8 @@
-- name: "Add nodejs repo"
-  shell: curl -sL https://deb.nodesource.com/setup | bash -
-
 - name: "Run apt-get update"
   apt: update_cache=yes
 
 - name: "Install nodejs deb package"
-  apt: name=nodejs state=installed force=yes
+  apt: name={{ item }} state=installed force=yes
+  with_items:
+    - nodejs
+    - npm
