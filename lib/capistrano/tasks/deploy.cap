@@ -26,6 +26,8 @@ namespace :deploy do
       within fetch(:release_path) do
         capture "sudo foreman export #{options.join(' ')} systemd #{dst}"
       end
+
+      execute 'sudo systemctl daemon-reload'
     end
   end
 
