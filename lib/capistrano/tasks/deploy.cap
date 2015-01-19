@@ -21,10 +21,10 @@ namespace :deploy do
       options << "--template #{fetch(:current_path)}/lib/capistrano/tasks/templates"
       options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
 
-      dst = "/home/#{fetch(:user)}/.config/systemd/user/"
+      dst = "/lib/systemd/system/"
 
       within fetch(:release_path) do
-        capture :foreman, :export, options, :systemd, dst
+        capture "sudo foreman export #{options.join(' ')} systemd #{dst}"
       end
     end
   end
