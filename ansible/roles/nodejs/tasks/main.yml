@@ -1,8 +1,16 @@
-- name: "Run apt-get update"
+- name: Run apt-get update
   apt: update_cache=yes
 
-- name: "Install nodejs deb package"
+- name: Install nodejs deb package
   apt: name={{ item }} state=installed force=yes
   with_items:
     - nodejs
     - npm
+
+- name: Symlink node to nodejs
+  file: src=/usr/bin/nodejs dest=/usr/local/bin/node state=link
+
+- name: Install common nodejs packages
+  npm: name={{ item }} global=yes
+  with_items:
+    - bower

@@ -13,8 +13,11 @@
 
 - name: Setup env vars
   lineinfile: dest=/home/bithub/.bashrc
-              line='# Added by Ansible provisioning\nRAILS_ENV={{ env }}\nENV={{ env }}'
+              line='# Added by Ansible provisioning\nexport RAILS_ENV={{ env }}\nexport ENV={{ env }}'
               state=present
+
+- name: Configure sudo for bithub account
+  template: src=bithub_sudoers dest=/etc/sudoers.d/bithub
 
 ### Configure nginx vhost
 
