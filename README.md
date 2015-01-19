@@ -58,9 +58,11 @@ After `foreman start web` on guest, you should be able to access `http://127.0.0
 
 ## Server provisioning
 
-Take a look at `server.yml`, change config if needed and run:
+Change directory to `ansible`, take a look at `server.yml`, change config if needed and run:
 
-`ansible-playbook server.yml -t bithub --vault-password-file .vault_pass.txt`
+`ansible-playbook server.yml --vault-password-file .vault_pass.txt`
+
+(Optionally run only tagged tasks by passing `-t _tag_name_` param)
 
 `.vault_pass.txt` isn't in version control b/c it contains Ansible vault password in clear text.
 

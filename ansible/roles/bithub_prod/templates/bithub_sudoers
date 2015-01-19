@@ -1,0 +1,21 @@
+bithub ALL=(root) NOPASSWD: /usr/local/bin/foreman export --app bithub --log /home/bithub/web/shared/log/ --user bithub --env /home/bithub/web/current/.env_staging --template /home/bithub/web/current/lib/capistrano/tasks/templates --procfile /home/bithub/web/current/Procfile.staging systemd /lib/systemd/system/
+
+bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-web-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-web-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-web-1.service
+
+bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-liveservice-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-liveservice-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-liveservice-1.service
+
+bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-listener-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-listener-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-listener-1.service
+
+bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-crawler-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-crawler-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-crawler-1.service
+
+bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-worker-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-worker-1.service
+bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-worker-1.service
