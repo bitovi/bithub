@@ -1,6 +1,4 @@
 require 'core_ext'
-require_relative 'error_persistor'
-require_relative 'liveservice_notifier'
 require_relative 'decorators/all'
 
 class Poller
@@ -33,13 +31,14 @@ class Poller
       end
     end
   rescue => e
-    ErrorPersistor.new(e, @path).persist.notify_client
-    Celluloid.logger.error "#{e.class.name} : #{e.message}"
+    Celluloid.logger.error "Caught a Service Error : #{e.class.name} : Publishing ..."
+    error_publisher.publish(e, @path)
+    Celluloid.logger.error "Stacktrace: \n" + e.backtrace.join("\n")
   end
 
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@path.brand}, embed: #{@path.embed}, and service: #{@path.service}"
-    publisher.publish @path, data, decorator: @decorator
+    event_publisher.publish(data, @path, decorator: @decorator)
   end
 
   def notify_client
@@ -74,7 +73,11 @@ class Poller
     Actor[:lock_manager]
   end
 
-  def publisher
-    Actor[:publisher]
+  def error_publisher
+    Actor[:error_publisher]
+  end
+
+  def event_publisher
+    Actor[:event_publisher]
   end
 end

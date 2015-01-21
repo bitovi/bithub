@@ -10,6 +10,7 @@ require 'config/environment'
 require 'dispatcher'
 require 'logger_factory'
 require 'celluloid'
+require 'lib/rabbit_factory'
 require_relative 'helpers'
 
 class Listener
@@ -19,8 +20,10 @@ class Listener
     routing_key = q_opts.fetch(:routing_key) { '' }
     @conn = Bunny.new(ENV['RABBITMQ_URI']).start
     @chan = @conn.create_channel
-    @x = @chan.direct('x.web')
-    @q = @chan.queue(q_name).bind(@x, routing_key: routing_key)
+
+    rf = RabbitFactory.new(@chan)
+    @x = rf.x('x.web', :direct)
+    @q = rf.q(q_name).bind(@x, routing_key: routing_key)
     @fn = fn
 
     Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
@@ -35,7 +38,7 @@ class Listener
 end
 
 class Listeners < Celluloid::SupervisionGroup
-  supervise Listener, as: :error_l, args: ['q.errors.web', { routing_key: 'errors' }, ->(packet) do
+  supervise Listener, as: :error_l, args: ['q.web.errors', { routing_key: 'errors' }, ->(packet) do
     meta           = packet.fetch('meta')
     payload        = packet.fetch('payload')
     brand_name     = meta.fetch('brand_name')
@@ -43,7 +46,9 @@ class Listeners < Celluloid::SupervisionGroup
     Celluloid.logger.info "New error received; brand: '#{brand_name}', payload: #{payload}"
 
     begin
-      Apartment::Tenant.switch(brand_name) { Service.new(payload).save! }
+      Apartment::Tenant.switch(brand_name) { ServiceError.new(payload).save! }
+    rescue ValidationError => err
+      Celluloid.logger.error "ValidationError: #{err.message}"
     rescue StandardError => err
       Celluloid.logger.error "Saving ServiceError failed: #{err.message}"
       Celluloid.logger.error err.backtrace.join("\n")
@@ -52,7 +57,7 @@ class Listeners < Celluloid::SupervisionGroup
     end
   end]
 
-  supervise Listener, as: :event_l, args: ['q.events.web', { routing_key: 'events' }, ->(payload) do
+  supervise Listener, as: :event_l, args: ['q.web.events', { routing_key: 'events' }, ->(payload) do
     meta           = payload.fetch('meta')
     content_digest = payload.fetch('content_digest')
     brand_name     = meta.fetch('brand_name')
@@ -63,7 +68,7 @@ class Listeners < Celluloid::SupervisionGroup
     Celluloid.logger.info "New event received; digest: '#{content_digest}', brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
 
     begin
-      Apartment::Tenant.switch(brand_name) { Dispatcher.new(logger: logger).dispatch(payload) }
+      Apartment::Tenant.switch(brand_name) { Dispatcher.new(logger: Celluloid.logger).dispatch(payload) }
       Celluloid.logger.info "(#{content_digest}) Dispatching finished"
     rescue StandardError => err
       Celluloid.logger.error "(#{content_digest}) Dispatching failed: #{err.message}"

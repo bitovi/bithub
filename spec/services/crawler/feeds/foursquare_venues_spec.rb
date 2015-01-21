@@ -27,8 +27,8 @@ describe HttpServer::Handlers::FoursquareVenues  do
     @rabbit.start
     @chan = @rabbit.create_channel
 
-    @x = @chan.direct("x.events")
-    @q = @chan.queue("q.events").bind(@x)
+    @x = @chan.direct('x.web')
+    @q = @chan.queue('q.web.events').bind(@x)
   end
 
   after do

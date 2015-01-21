@@ -14,14 +14,15 @@ require 'bunny'
 require 'pry'
 require 'core_ext'
 require 'core_helpers'
-require 'amqp_helpers'
+require 'rabbit_factory'
 require 'logger_factory'
 
 require 'events/dispatcher'
 
 require_relative 'supervisors/main'
 require_relative 'lock_manager'
-require_relative 'publisher'
+require_relative 'publishers/error'
+require_relative 'publishers/event'
 require_relative 'configurator'
 require_relative 'commander'
 require_relative 'poller'
@@ -37,7 +38,8 @@ logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
-  supervise Publisher, as: :publisher
+  supervise EventPublisher, as: :event_publisher
+  supervise ErrorPublisher, as: :error_publisher
   supervise Commander, as: :commander
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager
