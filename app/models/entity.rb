@@ -1,5 +1,6 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
+  include Traits::AmqpDeclaration
 
   store_accessor :props
 
@@ -165,20 +166,23 @@ class Entity < ActiveRecord::Base
   end
 
   def notify_liveservice
-    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
-    entity = EntityDecorator.decorate self
-
-    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
-
+    Rails.logger.info "Publishing new entity to liveservice #{msg}"
     embeds.each do |embed|
-      Support::LiveserviceNotifier.new.notif({
-        meta: {
-          brand_name: Apartment::Tenant.current,
-          embed_id: embed.id
-        },
-        payload: payload
-      }, :entities)
+      x('x.liveservice').publish(msg, routing_key: :entities)
     end
   end
 
+  def msg
+    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
+    entity = EntityDecorator.decorate self
+    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
+
+    {
+      meta: {
+        brand_name: Apartment::Tenant.current,
+        embed_id: embed.id
+      },
+      payload: payload
+    }
+  end
 end
