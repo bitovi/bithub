@@ -1,7 +1,11 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
 
-  store_accessor :props
+  serialize :props, IndifferentHstore
+
+  def props=(hash)
+    write_attribute :props, HashWithIndifferentAccess.new(hash)
+  end
 
   acts_as_taggable
 
@@ -69,6 +73,10 @@ class Entity < ActiveRecord::Base
   def self.satisfying(filter)
     NatlangQueries::Applier.new(filter, Entity).scope
   end
+
+  # def props
+  #   @props ||= HashWithIndifferentAccess.new super
+  # end
 
   def state
     props.andand['state']
