@@ -8,8 +8,11 @@ module Supervisors
 
     def initialize(path, service_info)
       @path = SupervisionNode.new(path, service_info)
-      Celluloid.logger.info "Booting S #{@path.actor_name}"
       boot
+    end
+
+    def boot
+      Celluloid.logger.info "Booting S #{@path.actor_name}"
     end
 
     def execute_cmd(action)

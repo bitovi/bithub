@@ -5,6 +5,7 @@ module Supervisors::Services::Irc
     include Celluloid
 
     def boot
+      super
       @bots = []
 
       chats.each do |c|
