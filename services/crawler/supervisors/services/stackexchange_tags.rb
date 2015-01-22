@@ -1,6 +1,8 @@
 module Supervisors::Services::Stackexchange
   class Tags < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       questions_fetcher = Fetchers::Stackexchange::Questions.new(
