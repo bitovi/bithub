@@ -1,26 +1,23 @@
-require 'bunny'
-require_relative 'persistent/digest_set'
+require 'persistent/digest_set'
+require 'connection_manager'
+require 'rabbit_factory'
 
-class Publisher
+class EventPublisher
   include Celluloid
-  include AmqpHelpers
 
   def initialize(opts={})
-    Celluloid.logger.info "Initializing Publisher"
+    Celluloid.logger.info 'Initializing entity publisher'
 
     @reject_old = opts.fetch(:reject_old) { true }
-
-    @rabbit = Bunny.new(rabbitmq_uri)
-    @rabbit.start
-    @chan = @rabbit.create_channel
-
-    @x = @chan.direct("x.events")
-    @q = @chan.queue("q.events").bind(@x)
-
     @filter = DigestSet.new
+
+    rf = RabbitFactory.new(rabbit_chan)
+
+    @x = rf.x('x.web', :direct)
+    @q = rf.q('q.web.events').bind(@x)
   end
 
-  def publish(owner_data, events, opts={})
+  def publish(events, owner_data, opts={})
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
@@ -28,19 +25,17 @@ class Publisher
     new_events = reject_old new_events if @reject_old == true
 
     # finally send events to MQ
-    send new_events, owner_data.brand
-  end
-
-  def send(events, brand)
-    Celluloid.logger.info "Publishing #{events.size} messages!"
-    events.each {|e| send_one e, brand}
-  end
-
-  def send_one(event, brand)
-    @x.publish event.to_json
+    publish_many new_events, owner_data.brand
   end
 
   private
+  
+  def publish_many(events, brand)
+    Celluloid.logger.info "Publishing #{events.size} messages!"
+    events.each do |e|
+      @x.publish(e.to_json, routing_key: 'events')
+    end
+  end
 
   def reject_old(events)
     @filter.reject_old events
@@ -86,4 +81,7 @@ class Publisher
     decorator.decorate processed
   end
 
+  def rabbit_chan
+    ConnectionManager.instance.rabbit
+  end
 end

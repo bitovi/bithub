@@ -1,4 +1,6 @@
 class Embed < ActiveRecord::Base
+  include Traits::AmqpDeclaration
+
   belongs_to :brand
   validates_uniqueness_of :name, :scope => [:brand_id]
 
@@ -18,9 +20,9 @@ class Embed < ActiveRecord::Base
     class_name: 'EmbedEntity',
     source: :entity
 
-  after_create :notify_embed_start
-  after_update :notify_embed_restart
-  after_destroy :notify_embed_stop
+  after_create { notify_crawler(:start) }
+  after_update { notify_crawler(:restart) }
+  after_destroy { notify_crawler(:stop) }
 
   def blocking_filter
     self.filters.where(classification: 'blocking').first
@@ -47,25 +49,26 @@ class Embed < ActiveRecord::Base
   def make_link_to(entity)
     self.embed_entities.create(entity: entity, is_approved: true)
   end
-  
-  def notify_embed_start
-    notify_embed_action(:start)
-  end
-  
-  def notify_embed_stop
-    notify_embed_action(:stop)
+
+  private 
+
+  def notify_crawler(action)
+    Rails.logger.info "Publishing a command to crawler #{msg(action)}"
+    x('x.crawler').publish(ActiveSupport::JSON.encode(msg(action)), routing_key: :config)
   end
 
-  def notify_embed_restart
-    notify_embed_action(:restart)
-  end
-
-  def notify_embed_action(action)
-    Support::CrawlerNotifier.new.notif({
-      brand: { id: brand.id, name: brand.name },
-      embed: { id: id, name: name },
+  def msg(action)
+    {
+      brand: {
+        id: brand.id,
+        name: brand.name
+      },
+      embed: {
+        id: id,
+        name: name
+      },
       signature: "embed_#{action}",
       action: action
-    })
+    }
   end
 end

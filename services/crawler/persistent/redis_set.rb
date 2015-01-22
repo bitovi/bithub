@@ -1,10 +1,10 @@
 require 'digest/md5'
-require 'redis'
+require 'connection_manager'
 require 'andand'
 
 class RedisSet
   def initialize(initial_world = [])
-    @redis = Redis.new(:url => ENV['REDIS_URL'])
+    @redis = ConnectionManager.instance.redis
 
     unless initial_world.empty?
       initial_world.each {|elem| add_many elem}

@@ -36,8 +36,8 @@ describe HttpServer::Handlers::Instagram  do
     @rabbit.start
     @chan = @rabbit.create_channel
 
-    @x = @chan.direct("x.events")
-    @q = @chan.queue("q.events").bind(@x)
+    @x = @chan.direct('x.web')
+    @q = @chan.queue('q.web.events').bind(@x)
   end
 
   after do
@@ -47,8 +47,8 @@ describe HttpServer::Handlers::Instagram  do
 
   ### Tests
 
-  describe "#handle" do
-    it "listens for postback notifs, queries API and publishes events" do
+  describe '#handle' do
+    it 'listens for postback notifs, queries API and publishes events' do
 
       owner_data = {
         brand: { id: 1, name: 'bitovi' },
