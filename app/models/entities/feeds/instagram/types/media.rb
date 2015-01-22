@@ -9,7 +9,7 @@ module Entities
 
       def build
         Entity.new({
-          title: "Instagram media",
+          title: caption,
           url: @event.link,
           origin_ts: @event.created_at,
           origin_id: @event.id,
@@ -17,7 +17,6 @@ module Entities
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.full_name,
             origin_author_avatar_url: @event.user.profile_picture,
-            caption: caption,
             image_url: image_url
           }
         })
