@@ -33,22 +33,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def images
-    if source.feed_name == 'tumblr' && source.type_name == 'photo'
-      photos = JSON.parse(source.props['photos'] || source.props[:photos])
-      return photos.map do |p|
-        {
-          caption: p['caption'],
-          url: p['original_size']['url']
-        }
-      end
-    end
-
-    if source.feed_name == 'instagram' && source.type_name == 'media'
-      return [{
-        caption: source.props[:caption] || source.props['caption'],
-        url: source.props[:image_url] || source.props['image_url'],
-       }]
-    end
+    EntityImagesMapper.new(source).build
   end
 
   def has_parent
