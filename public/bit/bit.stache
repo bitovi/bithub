@@ -28,7 +28,7 @@
 
       </div>
       <footer class="bit-footer col-sm-12">
-         {{#author.avatar_url}}
+        {{#author.avatar_url}}
           <figure class="bit-avatar">
             <a href="#">
               <img class="bit-avatar--img img-responsive" src="{{.}}" />
@@ -43,7 +43,7 @@
             {{formattedThreadUpdatedAt}}
           </div>
         </figcaption>
-        <a href="#" class="bh-icon bh-icon-{{feed_name}}"></a>
+        <a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
       </footer>
     </div>
   </article>
