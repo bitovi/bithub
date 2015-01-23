@@ -5,7 +5,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 	var buffer = [];
 
 	setInterval(function(){
-		var localBuffer = buffer.splice(0);
+		var localBuffer = buffer.splice(0).reverse();
 		for(var i = 0; i < localBuffer.length; i++){
 			localBuffer[i].created();
 		}
