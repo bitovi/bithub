@@ -14,7 +14,8 @@ steal(
 				this.attr('currentImage', img);
 			},
 			hasGallery : function(){
-				return this.attr('images').attr('length') > 1;
+				var images = this.attr('images');
+				return images && images.attr('length') > 1;
 			}
 		},
 		helpers : {

@@ -1,4 +1,4 @@
-steal('can/model', 'moment', 'can/list/promise', function(Model, moment){
+steal('can/model', 'moment', 'can/list/promise', 'can/map/define', function(Model, moment){
 	var Bit = Model.extend({
 		resource : '/api/v3/embeds/{hubId}/entities'
 	}, {

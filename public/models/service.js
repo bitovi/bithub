@@ -134,6 +134,12 @@ function(Model, _keys){
 
 					return val;
 				}
+			},
+			type_name : {
+				set : function(val){
+					this.attr('config', {});
+					return val;
+				}
 			}
 		},
 		serialize : function(){
