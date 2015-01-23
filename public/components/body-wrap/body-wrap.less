@@ -1,0 +1,32 @@
+bh-body-wrap {
+	display: block;
+	.body-wrap {
+		overflow: hidden;
+	}
+	&.short {
+		.collapsed {
+			max-height: 150px;
+		}
+	}
+	&.tall {
+		.collapsed {
+			max-height: 500px;
+		}
+	}
+	
+	.expand-collapse {
+		text-align: center;
+		color: #666;
+		cursor: pointer;
+		padding: 10px 0;
+		box-shadow: 0 0 20px 10px #fff;
+		position: relative;
+		z-index: 10;
+		&:hover {
+			color: #000;
+		}
+	}
+	.no-gradient {
+		box-shadow: none;
+	}
+}

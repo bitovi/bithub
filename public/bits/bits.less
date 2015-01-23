@@ -1,3 +1,5 @@
+@import "/bower_components/bootstrap/less/mixins.less";
+
 bh-bits {
 	display: block;
 	position: absolute;
@@ -6,6 +8,7 @@ bh-bits {
 	bottom: 0;
 	width: 100%;
 	overflow-y: auto;
+	.clearfix;
 	.alert-below-the-fold {
 		position: fixed;
 		bottom: 0;
@@ -22,7 +25,30 @@ bh-bits {
 			max-width: 100%;
 		}
 	}
+	.loader {
+		clear: both;
+		font-size: 300%;
+		margin: 0;
+		padding: 20px 0;
+		text-align: center;
+		color: #666;
+	}
 	bh-bit.below-the-fold .bit {
 		background: #fcf8e3;
+	}
+	.column {
+		float: left;
+	}
+	&.columns-1 .column {
+		width: 100%;
+	}
+	&.columns-2 .column {
+		width: 50%;
+	}
+	&.columns-3 .column {
+		width: 33%;
+	}
+	&.columns-4 .column {
+		width: 25%;
 	}
 }
