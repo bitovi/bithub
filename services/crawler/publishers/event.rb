@@ -52,33 +52,29 @@ class EventPublisher
     feed      = owner_data.service.feed_name
     processed = nil
 
-    begin
-      dispatched = Events::Dispatcher.dispatch(event, feed)
+    dispatched = Events::Dispatcher.dispatch(event, feed)
 
-      # todo: move this to separete decorator?
-      processed = {
-        meta: {
-          type_name: dispatched.type_name.snake_case,
-          brand_id: owner_data.brand.id,
-          embed_id: owner_data.embed.id,
-          service_id: owner_data.service.id,
-          brand_name: owner_data.brand.name,
-          embed_name: owner_data.embed.name,
-          feed_name: feed
-        },
-        content_digest: dispatched.content_digest,
-        source_data: event
-      }
+    # todo: move this to separete decorator?
+    processed = {
+      meta: {
+        type_name: dispatched.type_name.snake_case,
+        brand_id: owner_data.brand.id,
+        embed_id: owner_data.embed.id,
+        service_id: owner_data.service.id,
+        brand_name: owner_data.brand.name,
+        embed_name: owner_data.embed.name,
+        feed_name: feed
+      },
+      content_digest: dispatched.content_digest,
+      source_data: event
+    }
 
-      Celluloid.logger.debug "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
-
-    rescue Events::DispatchError => e
-      Celluloid.logger.info "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
-      Celluloid.logger.debug "Failed to dispatch event #{event.inspect}"
-      Celluloid.logger.error e
-    end
-
+    Celluloid.logger.info "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
     decorator.decorate processed
+  rescue Events::DispatchError => e
+    Celluloid.logger.error "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
+    Celluloid.logger.error "Event: #{event}"
+    Celluloid.logger.error "Error: #{e}"
   end
 
   def rabbit_chan

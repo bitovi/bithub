@@ -1,5 +1,7 @@
 module Entities
   module Routable
+    include ::Traits::AmqpDeclaration
+
     def route
       route_embed
       route_service
@@ -20,7 +22,13 @@ module Entities
     end
 
     def notify_client
-      Support::LiveserviceNotifier.new.notif({
+      RabbitFactory.new($rabbitmq)\
+        .x('x.liveservice')\
+        .publish(ActiveSupport::JSON.encode(client_msg), routing_key: :services)
+    end
+
+    def client_msg
+      {
         meta: {
           brand_name: Apartment::Tenant.current,
           embed_id: embed_id
@@ -31,7 +39,7 @@ module Entities
             has_errors: false
           }
         }
-      }, :services)
+      }
     end
   end
 end

@@ -1,9 +1,11 @@
+require 'bunny'
+
 class RabbitFactory
   def initialize(rabbit_channel)
     @chan = rabbit_channel
   end
 
-  def x(name, type, opts = {})
+  def x(name, type = :direct, opts = {})
     @chan.exchange(name, defaults.merge(opts).merge({type: type}))
   end
 

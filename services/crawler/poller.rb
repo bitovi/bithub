@@ -57,7 +57,7 @@ class Poller
     }, :services)
   end
 
-  def shutyoself
+  def terminate_cascading
     terminate
   end
   
