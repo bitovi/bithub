@@ -20,6 +20,7 @@ class Listener
     routing_key = q_opts.fetch(:routing_key) { '' }
     @conn = Bunny.new(ENV['RABBITMQ_URI']).start
     @chan = @conn.create_channel
+    $rabbitmq = @chan
 
     rf = RabbitFactory.new(@chan)
     @x = rf.x('x.web', :direct)

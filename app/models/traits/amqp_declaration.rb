@@ -2,7 +2,7 @@ module Traits
   module AmqpDeclaration
 
     def x(x_name)
-      @x ||= RabbitFactory.new($rabbitmq).x(x_name, :direct)
+      @x ||= RabbitFactory.new($rabbitmq).x(x_name)
     end
 
     def q(q_name)

@@ -25,7 +25,7 @@ class Brand < ActiveRecord::Base
   after_create  { notify_crawler(:start) }
   after_destroy { notify_crawler(:stop) }
 
-  def self.switch!(name)
+  def self.switch!(name = nil)
     Apartment::Tenant.switch! name
   end
 
