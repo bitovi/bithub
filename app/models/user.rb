@@ -11,33 +11,6 @@ class User < ActiveRecord::Base
   scope :only_not_null_names, -> { where("name <> '' and name IS NOT NULL") }
   scope :from_tenant, ->(brand_name) { joins(:brands).where("brands.tenant_name = ?", brand_name) }
 
-  def collect_authored_entities
-    identities.each do |ident|
-      Entity.origin_author(ident.uid).find_each do |entity|
-        entity.author = self
-      end
-    end
-  end
-
-  def collect_hosted_entities
-    if (ident = identities.where(provider: 'meetup').first)
-      Entity.feed('meetup').type('event').origin_host(ident.uid).find_each do |entity|
-        entity.ownerships << Ownership.new(owner: self, entity: entity, ownership_type: :host).determine_value
-        entity.save
-      end
-    end
-  end
-
-  def update_blank_attrs(ident)
-    self.name = ident.name if self.name.blank? && ident.name.present?
-    self.email = ident.email if self.email.blank? && ident.email.present?
-  end
-
-  def async_collect_authored_entities
-    Workers::UserUpdater.perform_async self.id, :collect_authored_entities
-    Workers::UserUpdater.perform_async self.id, :collect_hosted_entities
-  end
-
   def join_brand(brand_name)
     return unless (b = match_brand brand_name)
     brands << b unless brands.include? b
