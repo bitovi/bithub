@@ -8,6 +8,7 @@ Bithub::Application.routes.draw do
   # Admin
   resources :admin, only: %i(index) do
     collection do
+      get 'embed', to: 'admin#embed'
       get 'choose_brand', to: 'admin#choose_brand'
 
       resources :subscriptions, only: %i() do

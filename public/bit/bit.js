@@ -10,6 +10,15 @@ function(Component, initView){
 		template : initView,
 		events : {
 
+		},
+		helpers : {
+			formattedTitle : function(title){
+				title = can.isFunction(title) ? title() : title;
+				if(title && title !== 'undefined'){
+					return title;
+				}
+				return "";
+			}
 		}
 	})
 })
