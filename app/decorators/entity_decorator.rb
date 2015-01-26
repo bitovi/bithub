@@ -8,7 +8,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def title
-    if source.cached_tags.include?('tweet')
+    if (contains? source.cached_tags, ['tweet', 'follow'])
       apply_hyperlinks(source.title, source.props['entities_urls'])
     else
       source.title
