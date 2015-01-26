@@ -100,25 +100,28 @@ function(Model, _keys){
 		return res.join('');
 	}
 
+	var emptyConfigForService = function(feed){
+		var config = {};
+
+		if(feed === 'github'){
+			config.tracking = {};
+		}
+
+		if(feed === 'stackexchange'){
+			config.tags = [];
+		}
+		return config;
+	}
+
 	return Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
 		needsOAuth : NEEDS_OAUTH,
 		createEmptyService : function(feed){
-			var config = {};
-
-
-			if(feed === 'github'){
-				config.tracking = {};
-			}
-
-			if(feed === 'stackexchange'){
-				config.tags = [];
-			}
 
 			return new this({
 				feed_name : feed,
-				config: config
+				config: emptyConfigForService(feed)
 			});
 		},
 		errored : function(service){
@@ -137,7 +140,7 @@ function(Model, _keys){
 			},
 			type_name : {
 				set : function(val){
-					this.attr('config', {});
+					this.attr('config', emptyConfigForService(this.attr('feed_name')));
 					return val;
 				}
 			}

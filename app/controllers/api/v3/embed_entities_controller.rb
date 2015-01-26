@@ -1,16 +1,28 @@
 require 'digest/md5'
 
 class Api::V3::EmbedEntitiesController < Api::V3::BaseController
+  #before_filter :authenticate_account!, except: [:index]
   before_filter :authenticate!
 
   helper_method :custom_cache_key
   helper_method :list_cache_key
 
   def index
-    scope = build_scope
-    @entities = EntityDecorator.decorate_collection(scope.all)
+    if tenant_name = params['tenant_name']
 
-    render :index
+      # check if tenant_name exists
+      tenant_name = nil unless Brand.find_by_tenant_name tenant_name
+
+      Apartment::Tenant.switch tenant_name do
+        scope = build_scope
+        @entities = EntityDecorator.decorate_collection(scope.all)
+        render :index
+      end
+    else
+      scope = build_scope
+      @entities = EntityDecorator.decorate_collection(scope.all)
+      render :index
+    end
   end
 
   def approved

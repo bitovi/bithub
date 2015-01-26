@@ -16,7 +16,7 @@
         {{/if}}
 
         <bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
-          <h4>{{{ title }}}</h4>
+          <h4>{{{ formattedTitle title }}}</h4>
 
           {{#if body}}
             <figcaption class="bit-content--caption">
@@ -39,9 +39,11 @@
           {{#author.id}}
             <div class="bit-authorName col-xs-12 no-gutter"><a href="{{url}}">{{.}}</a></div>
           {{/author.id}}
-          <div class="bit-created-at">
-            {{formattedThreadUpdatedAt}}
-          </div>
+          {{#unless isTwitterFollow}}
+            <div class="bit-created-at">
+              {{formattedThreadUpdatedAt}}
+            </div>
+          {{/unless}}
         </figcaption>
         <a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
       </footer>
