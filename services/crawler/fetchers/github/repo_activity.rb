@@ -13,7 +13,7 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @client.activity.events.repos @user, @repo
+          @client.activity.events.repos(user: @user, repo: @repo)
         end
       end
     end
