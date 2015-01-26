@@ -39,9 +39,11 @@
           {{#author.id}}
             <div class="bit-authorName col-xs-12 no-gutter"><a href="{{url}}">{{.}}</a></div>
           {{/author.id}}
-          <div class="bit-created-at">
-            {{formattedThreadUpdatedAt}}
-          </div>
+          {{#unless isTwitterFollow}}
+            <div class="bit-created-at">
+              {{formattedThreadUpdatedAt}}
+            </div>
+          {{/unless}}
         </figcaption>
         <a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
       </footer>
