@@ -11,6 +11,10 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 		}
 	}, 10000);
 
+	$(window).on('beforeunload', function(){
+		currentSocket && currentSocket.close();
+	});
+
 	return Map.extend({
 		define : {
 			page : {

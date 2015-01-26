@@ -16,7 +16,7 @@
         {{/if}}
 
         <bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
-          <h4>{{{ title }}}</h4>
+          <h4>{{{ formattedTitle title }}}</h4>
 
           {{#if body}}
             <figcaption class="bit-content--caption">

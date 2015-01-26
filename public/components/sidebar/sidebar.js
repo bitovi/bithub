@@ -20,6 +20,9 @@ function(Component, initView, Models){
 			isEditing: false,
 			init : function(){
 				var self = this;
+				Models.Brand.findOne({}).then(function(brand){
+					self.attr('currentBrand', brand);
+				});
 				if(this.attr('state.hubId')){
 					Models.Hub.findOne({
 						id: this.attr('state.hubId')
@@ -49,6 +52,14 @@ function(Component, initView, Models){
 			},
 			toggleSidebarPosition : function(ctx, el, ev){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
+			},
+			integrationCode : function(){
+				var currentBrand = this.attr('currentBrand');
+				var hub = this.attr('hub');
+				if(currentBrand){
+					console.log('CURRENT BRAND', currentBrand)
+					return '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js?hubId='+hub.attr('id')+'&tenant_name='+currentBrand.attr('tenant_name')+'"></script>';
+				}
 			}
 		},
 		events : {

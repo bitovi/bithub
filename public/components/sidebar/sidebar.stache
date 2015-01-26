@@ -40,6 +40,9 @@
 		Integration
 	</a>
 	{{#isPanel 'integration'}}
-		<div class="panel-container">Integration Panel</div>
+		<div class="panel-container">
+		<h4>Paste this code in the HTML</h4>
+		<textarea class="form-control">{{ integrationCode }}</textarea>
+		</div>
 	{{/isPanel}}
 {{/hub}}

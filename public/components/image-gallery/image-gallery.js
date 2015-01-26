@@ -7,7 +7,6 @@ steal(
 		template: initView,
 		scope: {
 			init : function(){
-				console.log(this.attr('images'))
 				this.attr('currentImage', this.attr('images.0'));
 			},
 			setCurrent : function(img){

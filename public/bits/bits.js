@@ -11,7 +11,7 @@ steal(
 'can/construct/proxy',
 function(Component, initView, Models, _map, _reduce){
 
-	var CARD_MIN_WIDTH = 350;
+	var CARD_MIN_WIDTH = 300;
 	var bitTemplate = can.stache('<bh-bit bit="{this}"></bh-bit>');
 
 	var calculateColumnCount = function(el){
@@ -40,6 +40,11 @@ function(Component, initView, Models, _map, _reduce){
 			getParams : function(){
 				var hubId = can.route.attr('hubId');
 				var params = this.attr('params').attr();
+				var tenant = this.attr('state.tenant');
+
+				if(tenant){
+					params.tenant_name = tenant;
+				}
 
 				params.hubId = hubId;
 
