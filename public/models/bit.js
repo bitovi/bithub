@@ -13,6 +13,9 @@ steal('can/model', 'moment', 'can/list/promise', 'can/map/define', function(Mode
 		},
 		isPhoto : function(){
 			return this.attr('type_name') === 'photo';
+		},
+		isTwitterFollow : function(){
+			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
 		}
 	});
 
