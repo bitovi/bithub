@@ -8,7 +8,7 @@
 </head>
 <body>
 <script>
-	window.EMBED_ENDPOINT = '<%= Rails.env === "development" ? "bithub.loc" : "staging.bithub.com" %>';
+	window.EMBED_ENDPOINT = '<%= ENV["EMBED_ENDPOINT"] %>';
 </script>
 <script src='/bower_components/steal/steal.js' data-main='bithub-social' data-env="<%= Rails.env == 'development' ? 'development' : 'production' %>"></script>
 <div id="app"></div>
