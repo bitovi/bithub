@@ -44,6 +44,7 @@ function(Component, initView, Models, _map, _reduce){
 
 				if(tenant){
 					params.tenant_name = tenant;
+					params.order = "thread_updated_ts:desc"
 				}
 
 				params.hubId = hubId;
