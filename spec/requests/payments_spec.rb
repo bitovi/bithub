@@ -13,16 +13,18 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
 
 
   before do
+    ENV['STRIPE_DISABLE'] = 'false'
     StripeMock.start
     stripe_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
   end
   after do
     StripeMock.stop
+    ENV['STRIPE_DISABLE'] = 'true'
   end
 
   before(:each) do
     post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    @current_brand = Brand.where(name: 'neektza').first
+    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   describe 'handling Stripe webhook event invoice.payment_succeeded ' do
