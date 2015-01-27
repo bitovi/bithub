@@ -7,7 +7,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   before(:each) do
     post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Brand.where(name: 'neektza').first
+    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   context 'given the account is logged in and the brand is determined' do
@@ -29,10 +29,11 @@ RSpec.describe 'Filter endpoints', type: :request do
       context 'when filtering by approved status' do
         before(:each) do
           @embed = FactoryGirl.create(:embed, brand: @current_brand)
-          link = @embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet))
-          @embed.make_link_to(ent = FactoryGirl.create(:github_issue))
+
+          # approved by default
           @embed.make_link_to(ent = FactoryGirl.create(:github_watch))
-          link.approve
+          @embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet)).disaprove
+          @embed.make_link_to(ent = FactoryGirl.create(:github_issue)).disaprove
         end
 
         describe 'GET /embed/1/entities/approved' do

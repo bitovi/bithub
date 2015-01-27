@@ -6,18 +6,20 @@ RSpec.describe 'Subscriptions', type: :request do
   let(:stripe_helper) { StripeMock.create_test_helper }
 
   before do
+    ENV['STRIPE_DISABLE'] = 'false'
     StripeMock.start
     stripe_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
     stripe_helper.create_plan(id: 'advanced', amount: 4500, trial_period_days: 7)
   end
   after do
     StripeMock.stop
+    ENV['STRIPE_DISABLE'] = 'true'
   end
 
   before(:each) do
     post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Brand.where(name: 'neektza').first
+    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   describe 'GET /admin/subscriptions/edit/cc' do
