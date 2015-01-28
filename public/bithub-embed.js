@@ -11,7 +11,6 @@ function(bindModelEvents, AppState, embedView){
 	var hubId = params.hubId;
 	var tenantName = params.tenantName;
 
-
 	var appState = new AppState();
 	can.route.map(appState);
 
@@ -22,7 +21,9 @@ function(bindModelEvents, AppState, embedView){
 		tenant : tenantName
 	});
 
-	//bindModelEvents(appState);
+	if(params.live){
+		bindModelEvents(appState);
+	}
 
 	$('body').addClass('no-background');
 

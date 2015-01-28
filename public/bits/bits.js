@@ -98,6 +98,10 @@ function(Component, initView, Models, _map, _reduce){
 				this.__addedTimeout = setTimeout(this.proxy('renderContent'), 4);
 			},
 			renderContent : function(){
+				if(!this.element){
+					return;
+				}
+
 				var bits = this.scope.attr('bits');
 				var columnCount = calculateColumnCount(this.element);
 				var columns = this.getColumns(columnCount);
