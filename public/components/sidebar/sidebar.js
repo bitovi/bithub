@@ -59,7 +59,7 @@ function(Component, initView, Models){
 				if(currentBrand){
 					var link = '<a href="http://'+EMBED_ENDPOINT+'/admin/embed.js" data-hub-id="' + hub.id + '" data-tenant-name="' + currentBrand.attr('tenant_name') + '" class="bithub-embed">' + hub.name + ' Embed</a>';
 					var script = '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js"></script>';
-					return link + script;
+					return link + "\n" + script;
 				}
 			}
 		},
