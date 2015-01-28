@@ -1,6 +1,6 @@
 class Api::V3::ServicesController < Api::V3::BaseController
-  before_filter :authenticate!, :except => [:tree]
-  # load_and_authorize_resource
+  before_filter :authenticate_account!, :except => [:tree]
+  load_and_authorize_resource
 
   def index
     if params[:embed_id]
