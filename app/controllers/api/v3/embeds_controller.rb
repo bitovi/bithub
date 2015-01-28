@@ -1,7 +1,7 @@
 require 'securerandom'
 
 class Api::V3::EmbedsController < Api::V3::BaseController
-  before_filter :authenticate!
+  before_filter :authenticate_account!
   load_and_authorize_resource
 
   def index
