@@ -22,6 +22,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 			},
 			hubId : {
 				set : function(val){
+					this.attr('bits').splice(0);
 					
 					if(currentSocket && currentSocket.close){
 						currentSocket.close();
@@ -72,6 +73,9 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 					}
 
 					return val;
+				},
+				remove : function(){
+					this.attr('bits').splice(0);
 				}
 			},
 			sidebarIsExpanded : {
