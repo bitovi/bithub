@@ -5,7 +5,7 @@
 		var r = /(\-|_|\s)+(.)?/g,
 			f = function(m, s, c) { return c ? c.toUpperCase() : ''; },
 			w = /\s+/g;
-		str.replace(r, f).replace(w, '');
+		return str.replace(r, f).replace(w, '');
 	}
 
 	/*!
