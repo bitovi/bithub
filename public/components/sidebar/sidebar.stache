@@ -42,7 +42,7 @@
 	{{#isPanel 'integration'}}
 		<div class="panel-container">
 		<h4>Paste this code in the HTML</h4>
-		<textarea class="form-control">{{ integrationCode }}</textarea>
+		<textarea class="form-control embed-code">{{ integrationCode }}</textarea>
 		</div>
 	{{/isPanel}}
 {{/hub}}
