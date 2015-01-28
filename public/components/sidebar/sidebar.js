@@ -57,8 +57,9 @@ function(Component, initView, Models){
 				var currentBrand = this.attr('currentBrand');
 				var hub = this.attr('hub');
 				if(currentBrand){
-					console.log('CURRENT BRAND', currentBrand)
-					return '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js?hubId='+hub.attr('id')+'&tenant_name='+currentBrand.attr('tenant_name')+'"></script>';
+					var link = '<a href="http://'+EMBED_ENDPOINT+'/admin/embed.js" data-hub-id="' + hub.id + '" data-tenant-name="' + currentBrand.attr('tenant_name') + '" class="bithub-embed">' + hub.name + ' Embed</a>';
+					var script = '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js"></script>';
+					return link + script;
 				}
 			}
 		},
