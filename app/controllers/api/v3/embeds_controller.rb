@@ -15,8 +15,9 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def create
-    @embed = current_brand.embeds.create(embed_params)
+    @embed = current_brand.embeds.new(embed_params)
     @embed.name = generated_name if params[:name].blank?
+    @embed.save
     render :show
   end
   
@@ -44,6 +45,6 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def generated_name
-    SecureRandom.hex
+    Bazaar.heroku
   end
 end
