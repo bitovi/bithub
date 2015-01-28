@@ -13,44 +13,44 @@ Devise.setup do |config|
   # OmniAuth
 
   config.omniauth :meetup,
-    ENV['MEETUP_CLIENT_ID'],
-    ENV['MEETUP_CLIENT_SECRET']
+    ENV.fetch('MEETUP_CLIENT_ID'),
+    ENV.fetch('MEETUP_CLIENT_SECRET')
 
   config.omniauth :github,
-    ENV['GITHUB_CLIENT_ID'],
-    ENV['GITHUB_CLIENT_SECRET'],
+    ENV.fetch('GITHUB_CLIENT_ID'),
+    ENV.fetch('GITHUB_CLIENT_SECRET'),
     scope: "user:email,read:org"
 
   config.omniauth :twitter,
-    ENV['TWITTER_CLIENT_ID'],
-    ENV['TWITTER_CLIENT_SECRET']
+    ENV.fetch('TWITTER_CLIENT_ID'),
+    ENV.fetch('TWITTER_CLIENT_SECRET')
 
   config.omniauth :stackexchange,
-    ENV['STACKEXCHANGE_CLIENT_ID'],
-    ENV['STACKEXCHANGE_CLIENT_SECRET'],
-    public_key: ENV['STACKEXCHANGE_CLIENT_KEY'],
+    ENV.fetch('STACKEXCHANGE_CLIENT_ID'),
+    ENV.fetch('STACKEXCHANGE_CLIENT_SECRET'),
+    public_key: ENV.fetch('STACKEXCHANGE_CLIENT_KEY'),
     site: 'stackoverflow'
 
   config.omniauth :disqus,
-    ENV['DISQUS_CLIENT_ID'],
-    ENV['DISQUS_CLIENT_SECRET']
+    ENV.fetch('DISQUS_CLIENT_ID'),
+    ENV.fetch('DISQUS_CLIENT_SECRET')
 
   config.omniauth :facebook,
-    ENV['FACEBOOK_CLIENT_ID'],
-    ENV['FACEBOOK_CLIENT_SECRET'],
+    ENV.fetch('FACEBOOK_CLIENT_ID'),
+    ENV.fetch('FACEBOOK_CLIENT_SECRET'),
     :scope => 'email,manage_pages'
 
   config.omniauth :foursquare,
-    ENV['FOURSQUARE_CLIENT_ID'],
-    ENV['FOURSQUARE_CLIENT_SECRET']
+    ENV.fetch('FOURSQUARE_CLIENT_ID'),
+    ENV.fetch('FOURSQUARE_CLIENT_SECRET')
 
   config.omniauth :instagram,
-    ENV['INSTAGRAM_CLIENT_ID'],
-    ENV['INSTAGRAM_CLIENT_SECRET']
+    ENV.fetch('INSTAGRAM_CLIENT_ID'),
+    ENV.fetch('INSTAGRAM_CLIENT_SECRET')
 
   config.omniauth :tumblr,
-    ENV['TUMBLR_CLIENT_ID'],
-    ENV['TUMBLR_CLIENT_SECRET']
+    ENV.fetch('TUMBLR_CLIENT_ID'),
+    ENV.fetch('TUMBLR_CLIENT_SECRET')
 
   config.sign_out_via = [:delete, :get]
 
