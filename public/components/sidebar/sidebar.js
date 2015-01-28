@@ -38,6 +38,9 @@ function(Component, initView, Models){
 				newVal && this.attr('hub').backup();
 				this.attr('isEditing', newVal);
 			},
+			preventHubEditingToggle : function(ctx, el, ev){
+				ev.stopPropagation();
+			},
 			restoreOrSave : function(ctx, el, ev){
 				var key = KEYMAP[ev.which];
 
@@ -71,6 +74,9 @@ function(Component, initView, Models){
 			setPanelHeight: function(){
 				var self = this;
 				setTimeout(function(){
+					if(!self.element){
+						return;
+					}
 					var containerHeight = self.element.height(),
 						headerHeight = self.element.find('.header').outerHeight(),
 						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
@@ -83,7 +89,7 @@ function(Component, initView, Models){
 				var self = this;
 				if(newVal){
 					setTimeout(function(){
-						self.element.find('.hub-name').select().focus();
+						self.element && self.element.find('.hub-name').select().focus();
 					}, 100);
 				}
 			}
