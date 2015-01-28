@@ -5,15 +5,15 @@ module Api::V3::Helpers
     end
 
     def show_404(exception)
-      render json: exception, status: 404
+      render json: { message: exception.message }, status: 404
+    end
+    
+    def show_406(exception)
+      render json: { message: exception.message }, status: 406
     end
 
     def muster_query
       request.env['muster.query']
-    end
-
-    def show_406(exception)
-      render json: exception, status: 406
     end
 
     def msg_hash(obj, t_action, t_outcome = "error")
