@@ -1,5 +1,5 @@
 class Api::V3::FiltersController < Api::V3::BaseController
-  before_filter :authenticate!
+  before_filter :authenticate_account!
   # load_and_authorize_resource
 
   def index

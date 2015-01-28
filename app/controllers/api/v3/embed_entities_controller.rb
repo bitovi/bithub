@@ -1,8 +1,7 @@
 require 'digest/md5'
 
 class Api::V3::EmbedEntitiesController < Api::V3::BaseController
-  #before_filter :authenticate_account!, except: [:index]
-  before_filter :authenticate!
+  before_filter :authenticate_account!, except: [:index]
 
   helper_method :custom_cache_key
   helper_method :list_cache_key

@@ -13,7 +13,6 @@ class Api::V3::BaseController < ActionController::Base
 
   respond_to :json
 
-
   def home
     render :text => "Bithub API v3", content_type: "text/plain"
   end
@@ -31,12 +30,4 @@ class Api::V3::BaseController < ActionController::Base
   def current_brand
     Brand.where(tenant_name: session['tenant_name']).first
   end
-
-  # Handle mutiple devise models for auth
-  def authenticate!
-    if account_signed_in?
-      :authenticate_account!
-    end
-  end
-
 end
