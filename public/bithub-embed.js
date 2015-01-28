@@ -9,7 +9,7 @@ function(bindModelEvents, AppState, embedView){
 
 	var params = can.deparam(window.location.search.substr(1));
 	var hubId = params.hubId;
-	var tenantName = params.tenant_name;
+	var tenantName = params.tenantName;
 
 
 	var appState = new AppState();
