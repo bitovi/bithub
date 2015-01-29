@@ -36,6 +36,8 @@ This will take some time (~30 mins), it will download Vagrant box (chef/debian-7
 
 After all that is over you should be able to ssh into guest machine, your project directory on host will be mounted under `/vagrant` path on guest.
 
+It would be good to restart Vagrant machine after provisining so that new kernel and vmbox additions gets reloaded, you can do that with `vagrant reload`.
+
 ```
 ssh -p 2222 bithub@127.0.0.1
 ```

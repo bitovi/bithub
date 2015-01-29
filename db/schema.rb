@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(version: 20141218144029) do
 
 
-  create_extension "hstore", :version => "1.2"
+  create_extension "hstore", :version => "1.3"
   create_extension "intarray", :version => "1.0"
 
   # These are extensions that must be enabled in order to support this database

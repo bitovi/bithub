@@ -1,92 +1,106 @@
-- name: "Add bithub.loc to hosts"
+
+### Setup user env
+
+- name: Add bithub.loc to hosts
   lineinfile: dest=/etc/hosts line="127.0.0.1 bithub.loc"
 
-- name: "Create bithub user"
-  user: name={{ bithub.username }} password={{ bithub.password }} shell=/bin/bash group=vagrant append=yes
+- name: Create bithub user
+  user: name=bithub password=bithub shell=/bin/bash group=vagrant groups=sudo append=yes
 
-- name: "Copying yours id_rsa.pub to bithub's authorized_keys"
+- name: Copying yours id_rsa.pub to authorized_keys
   authorized_key: user=bithub key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   ignore_errors: True
 
-- name: "Upon login chdir bithub user to the shared dir /vagrant"
-  template: src=.bash_profile dest=/home/{{ bithub.username }}/.bash_profile owner={{ bithub.username }} group=vagrant
+- name: Upon login chdir bithub user to the shared dir /vagrant
+  template: src=.bash_profile dest=/home/bithub/.bash_profile owner=bithub group=vagrant
 
-- name: "Check if ruby is already installed"
-  stat: path=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/ruby
-  register: st_ruby
+### Configure nginx vhost
 
-- name: "Clone ruby-build repo"
-  git: repo=https://github.com/sstephenson/ruby-build.git dest=/tmp/ruby-build
+- name: Copy bithub vhost
+  template: src=bithub_vhost dest=/etc/nginx/sites-available/bithub
+  notify:
+    - restart nginx
 
-- name: "Install ruby-build"
-  shell: ./install.sh
-  args:
-    chdir: /tmp/ruby-build
+- name: Enable bithub vhost
+  file: src=/etc/nginx/sites-available/bithub dest=/etc/nginx/sites-enabled/bithub state=link
+  notify:
+    - restart nginx
 
-- name: "Build ruby"
-  shell: ruby-build {{ bithub.ruby_version }} /home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
-  when: not st_ruby.stat.exists
+### Configure RabbitMQ
+
+- name: Create RabbitMQ vhost
+  rabbitmq_vhost: name='/bithub' state=present
+
+- name: Create RabbitMQ user
+  rabbitmq_user: user=bithub
+                 password=bithub
+                 force=yes
+                 vhost='/bithub'
+                 tags=administrator
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
 
 
-- name: "Create user bin dir"
-  file: dest=/home/{{ bithub.username }}/bin state=directory
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
+### Configure Postgresql
 
-- name: "Symlink ruby executables"
-  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/{{ item }} dest=/home/{{ bithub.username}}/bin/{{ item }} state=link
-  with_items:
-    - ruby
-    - irb
-    - gem
-    - rake
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
+- name: Create Postgresql user
+  postgresql_user: name=bithub
+                   password=bithub
+                   role_attr_flags=CREATEDB,NOSUPERUSER
+  sudo: yes
+  sudo_user: 'postgres'
 
-- name: "Install bundler"
-  command: gem install bundler
-  environment:
-    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
+- name: Create Postgresql database
+  postgresql_db: name=bithub_development
+                 owner=bithub
+                 encoding='UTF-8'
+  sudo: yes
+  sudo_user: 'postgres'
 
-- name: "Symlink ruby executables"
-  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/{{ item }} dest=/home/{{ bithub.username}}/bin/{{ item }} state=link
-  with_items:
-    - bundle
-    - bundler
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
 
+### Setup bithub
+
+# bundle to bithub's home b/c shared folder is damn slow
 - name: Run bundle install
-  command: bundle install
+  command: bundle install --binstubs --path=/home/bithub/bundle
   args:
     chdir: "{{ bithub.project_path }}"
-  environment:
-    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
   sudo: True
-  sudo_user: "{{ bithub.username }}"
+  sudo_user: bithub
 
-- name: "Symlink foreman"
-  file: src=/home/{{ bithub.username }}/lib/ruby-{{ bithub.ruby_version }}/bin/foreman dest=/home/{{ bithub.username}}/bin/foreman state=link
-  sudo: True
-  sudo_user: "{{ bithub.username }}"
-
-- name: "Run rake tasks for db creating and migrating"
-  command: rake {{ item }}
+- name: Run rake tasks for db creating and migrating
+  command: bundle exec rake {{ item }}
   args:
     chdir: "{{ bithub.project_path }}"
-  environment:
-    PATH: "/home/bithub/bin/:{{ ansible_env.PATH }}"
   sudo: True
-  sudo_user: "{{ bithub.username }}"
+  sudo_user: bithub
   with_items:
-    - "db:create"
     - "db:migrate"
 
-- name: "Install npm packages for liveservice"
+- name: Install npm packages for the liveservice
   npm: path=/vagrant/services/liveservice
   sudo: True
-  sudo_user: "{{ bithub.username }}"
+  sudo_user: bithub
+
+- name: NPM install for the client
+  command: npm install --production --silent
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub
+
+- name: Bower install for the client
+  command: bower install --quite --config.interactive=false
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub
+
+- name: Steal build for the client
+  command: ./node_modules/steal-tools/bin/steal build --config=stealconfig.js --main=bithub-social
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub

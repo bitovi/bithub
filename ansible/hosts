@@ -2,7 +2,6 @@
 localhost ansible_connection=local
 
 [development]
-192.168.99.99
 
 [testing]
 88.80.184.65
