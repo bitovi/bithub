@@ -15,7 +15,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   before(:each) do
     post "/register/starter", { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Brand.where(name: 'neektza').first
+    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
     @embed = FactoryGirl.create(:embed, brand: @current_brand)
   end
 

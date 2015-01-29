@@ -50,7 +50,6 @@ module Entities
 
       def update_from_children
         if (most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last)
-          most_recent_child.props.symbolize_keys!
           most_recent_child.source_data.symbolize_keys!
 
           data = most_recent_child.last_modified_by.source_data

@@ -1,3 +1,42 @@
 bh-bit {
-  display: block;
+	display: block;
+	.bit-content {
+		overflow: hidden;
+		p {
+			padding: 0 15px;
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+	.bit {
+		overflow: hidden;
+	}
+	.bit-container {
+		padding: 0.5rem 1rem 0;
+	}
+	.bit-content--caption {
+		padding-bottom: 15px;
+		iframe {
+			display: block;
+		}
+		p .img-wrap {
+			margin: 0 -15px  15px;
+			img {
+				width: 100%;
+			}
+		}
+	}
+	.bit-created-at {
+		font-size: 70%;
+		position: relative;
+		top: -3px;
+	}
+	.image-wrap {
+		margin: 0 -15px 10px;
+		position: relative;
+		img {
+			width: 100%;
+		}
+	}
 }

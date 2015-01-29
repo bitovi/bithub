@@ -1,6 +1,6 @@
 class Api::V3::ServicesController < Api::V3::BaseController
-  before_filter :authenticate!, :except => [:tree]
-  # load_and_authorize_resource
+  before_filter :authenticate_account!, :except => [:tree]
+  load_and_authorize_resource
 
   def index
     if params[:embed_id]
@@ -35,7 +35,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def update
     @service = Service.find_by_id(service_id)
     @service.assign_attributes(service_definition)
-    @service.errors.destroy_all
+    @service.service_errors.destroy_all
 
     if @service.save
       render 'api/v3/services/show'

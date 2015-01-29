@@ -2,7 +2,11 @@ class Entity < ActiveRecord::Base
   extend Solipsism
   include Traits::AmqpDeclaration
 
-  store_accessor :props
+  serialize :props, IndifferentHstore
+
+  def props=(hash)
+    write_attribute :props, HashWithIndifferentAccess.new(hash)
+  end
 
   acts_as_taggable
 
@@ -70,6 +74,10 @@ class Entity < ActiveRecord::Base
   def self.satisfying(filter)
     NatlangQueries::Applier.new(filter, Entity).scope
   end
+
+  # def props
+  #   @props ||= HashWithIndifferentAccess.new super
+  # end
 
   def state
     props.andand['state']
@@ -169,7 +177,7 @@ class Entity < ActiveRecord::Base
     Rails.logger.info "Publishing new entity to liveservice #{msg}"
     embeds.each do |embed|
       x('x.liveservice').publish(msg, routing_key: :entities)
-    end
+    end if !incomplete_follow?
   end
 
   def msg
@@ -184,5 +192,9 @@ class Entity < ActiveRecord::Base
       },
       payload: payload
     }
+  end
+
+  def incomplete_follow?
+    type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
 end
