@@ -11,6 +11,7 @@
     bithub:
       project_path: '/home/bithub'
   roles:
+    - { role: jessie,      tags: ['jessie'] }
     - { role: common,      tags: ['common'] }
     - { role: nodejs,      tags: ['nodejs'] }
     - { role: nginx,       tags: ['nginx'] }

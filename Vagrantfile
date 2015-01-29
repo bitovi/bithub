@@ -1,5 +1,5 @@
 Vagrant.configure(2) do |config|
-  config.vm.box = "chef/debian-7.4"
+  config.vm.box = "chef/debian-7.6"
 
   config.vm.network "forwarded_port", guest: 80,    host: 8080   # http
   config.vm.network "forwarded_port", guest: 5432,  host: 5433   # postgres
@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "ansible/vagrant.yml"
     ansible.sudo = true
     ansible.host_key_checking = false
-    # ansible.verbose = "vvvv"
+    ansible.verbose = "vvvv"
     # ansible.tags = ["run_this"]
     ansible.extra_vars = {
       ansible_ssh_user: "vagrant",

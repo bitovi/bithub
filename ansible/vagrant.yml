@@ -1,5 +1,5 @@
 - name: Bithub Vagrant Development
-  hosts: development # all
+  hosts: all
   user: vagrant
   vars:
     domain: 'bithub.loc'
