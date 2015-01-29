@@ -60,7 +60,7 @@ RSpec.describe 'Service creation', type: :request do
               feed_name: 'twitter',
               type_name: 'user_timeline',
               config: {
-                :handle => 'canjs'
+                handle: 'canjs'
               }
             }
           }.to_json, AuthTestData::POST_HEADERS
@@ -98,7 +98,7 @@ RSpec.describe 'Service creation', type: :request do
               type_name: 'user_timeline',
               embed_id: @embed.id,
               config: {
-                :handle => 'canjs'
+                handle: 'canjs'
               }
             }
           }.to_json, AuthTestData::POST_HEADERS
@@ -120,7 +120,7 @@ RSpec.describe 'Service creation', type: :request do
               type_name: 'user_timeline',
               embed_id: @embed.id,
               config: {
-                :handle => 'canjs'
+                handle: 'canjs'
               }
             }
           }.to_json, AuthTestData::POST_HEADERS
