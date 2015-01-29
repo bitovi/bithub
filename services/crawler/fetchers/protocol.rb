@@ -1,6 +1,12 @@
-require_relative 'errors'
-
 module Fetchers
+
+  class ServiceError < StandardError; end
+  class ConfigError < ServiceError; end
+  class AuthError < ServiceError; end
+  class RemoteError < ServiceError; end
+  class UnknownError < ServiceError; end
+  class RateLimitError < ServiceError; end
+
   module Protocol
 
     def handle_errors
@@ -9,6 +15,9 @@ module Fetchers
     # Twitter
     rescue ::Twitter::Error::Unauthorized => e
       raise AuthError.new e.to_s
+      log_and_return_empty e
+    rescue ::Twitter::Error::TooManyRequests => e
+      raise RateLimitError.new e.to_s
       log_and_return_empty e
 
     # Github

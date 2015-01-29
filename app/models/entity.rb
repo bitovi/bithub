@@ -1,7 +1,11 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
 
-  store_accessor :props
+  serialize :props, IndifferentHstore
+
+  def props=(hash)
+    write_attribute :props, HashWithIndifferentAccess.new(hash)
+  end
 
   acts_as_taggable
 
@@ -69,6 +73,10 @@ class Entity < ActiveRecord::Base
   def self.satisfying(filter)
     NatlangQueries::Applier.new(filter, Entity).scope
   end
+
+  # def props
+  #   @props ||= HashWithIndifferentAccess.new super
+  # end
 
   def state
     props.andand['state']
@@ -171,14 +179,20 @@ class Entity < ActiveRecord::Base
     payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
     embeds.each do |embed|
-      Support::LiveserviceNotifier.new.notif({
-        meta: {
-          brand_name: Apartment::Tenant.current,
-          embed_id: embed.id
-        },
-        payload: payload
-      }, :entities)
+      if !incomplete_follow?
+        Support::LiveserviceNotifier.new.notif({
+          meta: {
+            brand_name: Apartment::Tenant.current,
+            embed_id: embed.id
+          },
+          payload: payload
+        }, :entities)
+      end
     end
+  end
+
+  def incomplete_follow?
+    type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
 
 end

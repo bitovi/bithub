@@ -15,7 +15,7 @@ RSpec.describe 'Brand endpoints', type: :request do
   before(:each) do
     post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Brand.where(name: 'neektza').first
+    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   describe 'GET /brands/current' do
@@ -23,7 +23,7 @@ RSpec.describe 'Brand endpoints', type: :request do
       get "/api/#{api_version}/brands/current"
 
       expect(response).to be_success
-      expect(json['data'].keys).to include('id', 'name', 'identities', 'tenant_name')
+      expect(json.keys).to include('id', 'name', 'identities', 'tenant_name')
     end
   end
 
@@ -32,9 +32,9 @@ RSpec.describe 'Brand endpoints', type: :request do
       post "/api/#{api_version}/brands", { brand: AuthTestData::BRAND_DATA }.to_json, AuthTestData::POST_HEADERS
 
       expect(response).to be_success
-      expect(json['data'].keys).to include('id', 'name', 'identities', 'tenant_name')
+      expect(json.keys).to include('id', 'name', 'identities', 'tenant_name')
 
-      delete "/api/#{api_version}/brands/#{json['data']['id']}"
+      delete "/api/#{api_version}/brands/#{json['id']}"
 
       expect(response).to be_success
     end

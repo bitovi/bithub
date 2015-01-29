@@ -1,6 +1,7 @@
 {
 	"brands":[
 		{
+        "id":42,
 		"name":"bitovi",
 		"embeds":[
 		{
@@ -8,30 +9,23 @@
 			"name":"code",
 			"services":[
 			{
+				"id": 1,
 				"feed_name":"stackexchange",
 				"type_name":"tags",
-				"token":"owNlHljrKl3zIweUoFK7mQ))",
-				"tags":[ "canjs", "funcunit", "jquerypp", "javascriptmvc" ]
+				"config":{
+					"token":"owNlHljrKl3zIweUoFK7mQ))",
+					"tags":[ "canjs", "funcunit", "jquerypp", "javascriptmvc" ]
+				}
 			},
 			{
+				"id": 2,
 				"feed_name":"github",
 				"type_name":"repo",
-				"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
-				"name":"bitovi/canjs",
-				"tracking": { "issues":true, "pull_requests": false }
-			},
-			{
-				"feed_name":"github",
-				"type_name":"repo",
-				"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
-				"name": "bitovi/funcunit",
-				"tracking": { "issues": false, "pull_requests": true }
-			},
-			{
-				"feed_name":"github",
-				"type_name":"org",
-				"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
-				"name": "bitovi"
+				"config":{
+					"access_token":"4e3606a527a60262071ba03eaa6464f5fe341f4f",
+					"name":"bitovi/canjs",
+					"tracking": { "issues":true, "pull_requests": false }
+				}
 			}
 			]
 		},
@@ -41,46 +35,30 @@
 			"name":"community",
 			"services":[
 			{
+				"id": 5,
 				"feed_name":"meetup",
 				"type_name":"group",
-				"token":"4c480e096c41f8adeeccd1ded37ce44c",
-				"id":"12312342"
+				"config":{
+					"token":"4c480e096c41f8adeeccd1ded37ce44c",
+					"id":"12312342"
+				}
 			},
 			{
+				"id": 6,
 				"feed_name":"rss",
 				"type_name":"site",
-				"tag_with":["blog"],
-				"url":"http://bitovi.com/blog.rss"
+				"config":{
+					"tag_with":["blog"],
+					"url":"http://bitovi.com/blog.rss"
+				}
 			},
 			{
+				"id": 7,
 				"feed_name":"tumblr",
 				"type_name":"blog",
-				"hostname":"ryangosling.tumblr.com"
-			},
-			{
-				"feed_name":"tumblr",
-				"type_name":"tagged",
-				"tag":"ryangosling"
-			},
-			{
-				"feed_name":"twitter",
-				"type_name":"hashtag",
-				"hashtags":["canjs", "jquerypp"],
-				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
-			},
-			{
-				"feed_name":"twitter",
-				"type_name":"user_timeline",
-				"handle":"bitovi",
-				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
-			},
-			{
-				"feed_name":"twitter",
-				"type_name":"followers",
-				"access_token":"55592490-2wJvxrMg7YS1Ndf2N0bGe8DRMr2ba3wmukx0vMUHw",
-				"access_secret":"XREakQgM9iXvploScr7jT8JbwFlWapNO3PVrBSbTE"
+				"config":{
+					"hostname":"ryangosling.tumblr.com"
+				}
 			}
 			]
 		}

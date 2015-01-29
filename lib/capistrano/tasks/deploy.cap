@@ -69,6 +69,15 @@ namespace :deploy do
         end
       end
     end
+
+    desc "Embed build"
+    task :embed_build do
+      on roles(:all) do |host|
+        within release_path.join('public') do
+          execute './node_modules/steal-tools/bin/steal', 'build', '--config=stealconfig.js', '--main=bithub-embed'
+        end
+      end
+    end
   end
 
   after :finishing, 'deploy:prepare'
@@ -77,4 +86,5 @@ namespace :deploy do
   after :finishing, 'deploy:client:npm_install'
   after :finishing, 'deploy:client:bower_install'
   after :finishing, 'deploy:client:steal_build'
+  after :finishing, 'deploy:client:embed_build'
 end

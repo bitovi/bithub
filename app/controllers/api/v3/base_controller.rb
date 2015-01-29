@@ -1,6 +1,7 @@
 class Api::V3::BaseController < ActionController::Base
   include Helpers::Common
 
+  # deals with http://factore.ca/blog/258-rails-4-strong-parameters-and-cancan
   before_filter do
     resource = controller_path.split('/').last.singularize.to_sym
     method = "#{resource}_params"
@@ -12,7 +13,6 @@ class Api::V3::BaseController < ActionController::Base
   rescue_from CanCan::AccessDenied, with: :show_401
 
   respond_to :json
-
 
   def home
     render :text => "Bithub API v3", content_type: "text/plain"
@@ -31,12 +31,4 @@ class Api::V3::BaseController < ActionController::Base
   def current_brand
     Brand.where(tenant_name: session['tenant_name']).first
   end
-
-  # Handle mutiple devise models for auth
-  def authenticate!
-    if account_signed_in?
-      :authenticate_account!
-    end
-  end
-
 end

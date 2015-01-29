@@ -34,7 +34,7 @@ module HttpServer
           object_id       = notif['object_id']
           subscription_id = notif['subscription_id']
 
-          unless owner_exists?(owner_data)
+          if !owner_exists?(owner_data) && ENV['INSIDE_TEST'] != 'true'
             unsubscribe subscription_id
             next
           end
