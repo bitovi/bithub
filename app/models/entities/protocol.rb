@@ -42,7 +42,6 @@ module Entities
 
     def procure
       @instance = (e = find) ? e : build
-      @instance.props.symbolize_keys!
       self
     end
 
@@ -74,11 +73,11 @@ module Entities
     def embed_name
       @event.embed_name
     end
-    
+
     def embed_id
       @event.embed_id
     end
-    
+
     def service_id
       @event.service_id
     end

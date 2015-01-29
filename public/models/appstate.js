@@ -2,6 +2,19 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 
 	var currentSocket;
 
+	var buffer = [];
+
+	setInterval(function(){
+		var localBuffer = buffer.splice(0).reverse();
+		for(var i = 0; i < localBuffer.length; i++){
+			localBuffer[i].created();
+		}
+	}, 10000);
+
+	$(window).on('beforeunload', function(){
+		currentSocket && currentSocket.close();
+	});
+
 	return Map.extend({
 		define : {
 			page : {
@@ -9,6 +22,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 			},
 			hubId : {
 				set : function(val){
+					this.attr('bits').splice(0);
 					
 					if(currentSocket && currentSocket.close){
 						currentSocket.close();
@@ -25,12 +39,11 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 
 						currentSocket.on('entities', function( msg ) {
 							var parsed = JSON.parse(msg);
-							console.log('NEW ENTITY', parsed);
+							//console.log('NEW ENTITY', parsed);
 
 							parsed._isFromLiveService = true;
 
-							var entity = Models.Bit.model(parsed);
-							entity.created();
+							buffer.push(Models.Bit.model(parsed));
 						});
 
 						currentSocket.on('services', function( msg ) {
@@ -38,7 +51,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 								timeout = 1,
 								self = this;
 
-							console.log('MSG', msg.service)
+							//console.log('MSG', msg.service)
 
 							if(msg.service.empty_results){
 								cb = function(service){
@@ -60,6 +73,9 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 					}
 
 					return val;
+				},
+				remove : function(){
+					this.attr('bits').splice(0);
 				}
 			},
 			sidebarIsExpanded : {

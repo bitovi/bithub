@@ -1,11 +1,15 @@
 class AdminController < ApplicationController
 
-  layout false, only: [:index]
+  layout false, only: [:index, :embed]
+  after_action :allow_iframe, only: :embed
 
   def index
     unless current_account
       redirect_to :new_account_session
     end
+  end
+
+  def embed
   end
 
   def choose_brand
@@ -21,5 +25,11 @@ class AdminController < ApplicationController
       redirect_to :new_account_session
     end
   end
+
+  private
+
+    def allow_iframe
+      response.headers.except! 'X-Frame-Options'
+    end
 
 end

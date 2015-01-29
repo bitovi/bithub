@@ -25,6 +25,8 @@ describe HttpServer::Handlers::Instagram  do
   ### Init / cleanup
 
   before do
+    ENV['INSIDE_TEST'] = 'true'
+
     Celluloid.boot
 
     Celluloid::Actor[:http_server] = HttpServer::Listener.new
@@ -43,6 +45,7 @@ describe HttpServer::Handlers::Instagram  do
   after do
     Celluloid.shutdown
     @rabbit.close
+    ENV['INSIDE_TEST'] = nil
   end
 
   ### Tests

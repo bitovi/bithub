@@ -5,19 +5,21 @@ module Fetchers
     class Followers
       include Protocol
 
-      def initialize(client)
+      def initialize(client, opts)
         @client = client
+        @user_handle = opts.fetch(:user_handle)
       end
 
       def fetch
         handle_errors do
-          @client.follower_ids.map do |uid| 
+          @client.follower_ids(@user_handle).map do |uid| 
             {
               source: {
                 id: uid,
               },
               target: {
                 id: user_id,
+
               },
               event: "fake_follow",
               created_at: Time.now.strftime("%a %b %d %H:%M:%S %z %Y")
@@ -27,7 +29,7 @@ module Fetchers
       end
 
       def user_id
-        @user_id ||= @client.user.id
+        @user_id ||= @client.user(@user_handle).id
       end
     end
   end

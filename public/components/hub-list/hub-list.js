@@ -25,8 +25,9 @@ function(Component, initView, Models, _map, _reduce){
 			},
 			createAndEditHub : function(){
 				new Models.Hub({
-					name : 'Untitled Hub'
+					name: ''
 				}).save(function(hub){
+					console.log('HUB', hub)
 					can.route.attr({
 						hubId : hub.id,
 						page : 'sidebar',

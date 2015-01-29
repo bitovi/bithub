@@ -30,7 +30,8 @@
 			"jquery/jquery": "jquery",
 			'can-form/can-form' : 'can-form',
 			'qunit/qunit' : 'qunit',
-			'funcunit/funcunit' : 'funcunit'
+			'funcunit/funcunit' : 'funcunit',
+			"moment/moment" : "moment"
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -40,7 +41,8 @@
 			'lib/validator' : 'bower_components/can-form/lib/validator.js',
 			'lib/form_component' : 'bower_components/can-form/lib/form_component.js',
 			'qunit' : 'bower_components/qunit/qunit/qunit.js',
-			'funcunit' : 'bower_components/funcunit/dist/funcunit.js'
+			'funcunit' : 'bower_components/funcunit/dist/funcunit.js',
+			"moment" : "bower_components/moment/moment.js"
 		},
 		meta: {
 			jquery: {
