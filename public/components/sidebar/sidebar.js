@@ -20,6 +20,9 @@ function(Component, initView, Models){
 			isEditing: false,
 			init : function(){
 				var self = this;
+				Models.Brand.findOne({}).then(function(brand){
+					self.attr('currentBrand', brand);
+				});
 				if(this.attr('state.hubId')){
 					Models.Hub.findOne({
 						id: this.attr('state.hubId')
@@ -35,6 +38,9 @@ function(Component, initView, Models){
 				newVal && this.attr('hub').backup();
 				this.attr('isEditing', newVal);
 			},
+			preventHubEditingToggle : function(ctx, el, ev){
+				ev.stopPropagation();
+			},
 			restoreOrSave : function(ctx, el, ev){
 				var key = KEYMAP[ev.which];
 
@@ -49,6 +55,15 @@ function(Component, initView, Models){
 			},
 			toggleSidebarPosition : function(ctx, el, ev){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
+			},
+			integrationCode : function(){
+				var currentBrand = this.attr('currentBrand');
+				var hub = this.attr('hub');
+				if(currentBrand){
+					var link = '<a href="http://'+EMBED_ENDPOINT+'/admin/embed.js" data-hub-id="' + hub.id + '" data-tenant-name="' + currentBrand.attr('tenant_name') + '" class="bithub-embed">' + hub.name + ' Embed</a>';
+					var script = '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js"></script>';
+					return link + "\n" + script;
+				}
 			}
 		},
 		events : {
@@ -59,6 +74,9 @@ function(Component, initView, Models){
 			setPanelHeight: function(){
 				var self = this;
 				setTimeout(function(){
+					if(!self.element){
+						return;
+					}
 					var containerHeight = self.element.height(),
 						headerHeight = self.element.find('.header').outerHeight(),
 						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
@@ -71,7 +89,7 @@ function(Component, initView, Models){
 				var self = this;
 				if(newVal){
 					setTimeout(function(){
-						self.element.find('.hub-name').select().focus();
+						self.element && self.element.find('.hub-name').select().focus();
 					}, 100);
 				}
 			}

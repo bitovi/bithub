@@ -1,8 +1,22 @@
-steal('can/model', 'can/list/promise', function(Model){
+steal('can/model', 'moment', 'can/list/promise', 'can/map/define', function(Model, moment){
 	var Bit = Model.extend({
 		resource : '/api/v3/embeds/{hubId}/entities'
 	}, {
-
+		formattedThreadUpdatedAt : function(){
+			return moment(this.attr('thread_updated_at')).format('LL');
+		},
+		isTumblrImage : function(){
+			return this.isPhoto() && this.attr('feed_name') === 'tumblr';
+		},
+		isInstagramImage : function(){
+			return this.isPhoto() && this.attr('feed_name') === 'instagram';
+		},
+		isPhoto : function(){
+			return this.attr('type_name') === 'photo';
+		},
+		isTwitterFollow : function(){
+			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
+		}
 	});
 
 	Bit.List = Bit.List.extend({

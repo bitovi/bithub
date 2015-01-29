@@ -2,6 +2,7 @@ require_relative 'feeds_helper'
 
 require 'events/tumblr/post'
 require 'fetchers/tumblr/posts'
+require 'supervisors/support/owner_data'
 
 describe Fetchers::Tumblr::Posts  do
 
@@ -19,6 +20,8 @@ describe Fetchers::Tumblr::Posts  do
 
     @x = @chan.direct("x.events")
     @q = @chan.queue("q.events").bind(@x)
+
+    @owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'tumblr', 'post'
   end
 
   after do
@@ -31,11 +34,9 @@ describe Fetchers::Tumblr::Posts  do
   describe "#fetch" do
     it "queries Tumblr API, dispatches and publishes events" do
 
-      brand_name = 'bitovi'
-
       VCR.use_cassette('tumblr_posts') do
         response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
-        Celluloid::Actor[:publisher].publish brand_name, :tumblr, response
+        Celluloid::Actor[:publisher].publish @owner_data, response
       end
 
       # wait for an event on MQ
@@ -46,7 +47,10 @@ describe Fetchers::Tumblr::Posts  do
 
         expect(parsed['meta']['feed_name']).to eq('tumblr')
         expect(parsed['meta']['type_name']).to eq('post')
-        expect(parsed['meta']['brand_name']).to eq(brand_name)
+        expect(parsed['meta']['brand_id']).to eq(1)
+        expect(parsed['meta']['brand_name']).to eq('foo')
+        expect(parsed['meta']['embed_id']).to eq(2)
+        expect(parsed['meta']['embed_name']).to eq('bar')
 
         @rabbit.close
       end

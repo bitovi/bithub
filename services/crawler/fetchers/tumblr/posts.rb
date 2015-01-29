@@ -1,4 +1,5 @@
 require_relative 'base'
+require_relative '../protocol'
 
 module Fetchers
   module Tumblr

@@ -18,7 +18,7 @@ module Supervisors
         start_service_supervisor(si);
       end
     end
-    
+
     def start_service_supervisor(si)
       @services.supervise_as(
         @path.next_level(si).actor_name,

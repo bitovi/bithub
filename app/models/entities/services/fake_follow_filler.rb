@@ -1,10 +1,13 @@
+require 'redis-namespace'
+
 module Entities
   module Services
 
     class FakeFollowFiller
-      def initialize
-        @twitter_api = ::Accounts::ThirdPartyUserInformer.new.twitter
-        @redis = Redis.new(:url => ENV['REDIS_URL'])
+      def initialize(redis_conn = nil)
+        @twitter_api = ::Support::ThirdPartyApiAdapter.new.twitter
+
+        @redis = Redis::Namespace.new(redis_prefix, redis: redis_conn)
       end
 
       def fill_missing
@@ -22,48 +25,47 @@ module Entities
       end
 
       def update_follows(data)
-        data.each do |user_id, screen_name|
+        if (es = Entity.where(feed_name: 'twitter', type_name: 'follow').where("props -> 'origin_author_name' = '' OR props -> 'target_name' = ''").all) 
 
-          if (ss = follows_with_missing_source_name.origin_author(user_id).all)
-
-            ss.each do |s|
-              s.props['origin_author_name'] = screen_name
-              s.props_will_change!
-              s.save
+          es.each do |e|
+            if (x_name = data[x_id = e.props['origin_author_id'].to_i])
+              e.props['origin_author_name'] = x_name
             end
-          end
 
-          if (ts = follows_with_missing_target_name.where("props -> 'target_id' = :user_id", :user_id => user_id.to_s).all)
-
-            ts.each do |t|
-              t.props['target_name'] = screen_name
-              t.props_will_change!
-              t.save
+            if (y_name = data[y_id = e.props['target_id'].to_i])
+              e.props['target_name'] = y_name
             end
+
+            title_src = x_name ? ('@' + x_name) : ('UID' + x_id)
+            title_tgt = y_name ? ('@' + y_name) : ('UID' + y_id)
+
+            e.title = "#{title_src} followed #{title_tgt}"
+            e.props_will_change!
+            e.save
           end
         end
       end
 
       def cache
-        Hash[(@redis.keys "screen_name_cache*").map do |k|
-          [k.gsub('screen_name_cache:','').to_i, @redis.get(k)]
+        Hash[(@redis.keys "*").map do |k|
+          [k.to_i, @redis.get(k)]
         end]
       end
 
       def update_cache(new_data)
         new_data.map do |user_id, screen_name|
-          @redis.set(redis_prefix + user_id.to_s, screen_name)
+          @redis.set(user_id.to_s, screen_name)
         end
       end
 
       def user_ids_with_missing_names
-        sources = follows_with_missing_source_name\
-          .pluck("props -> 'origin_author_id'").map{|id_str| id_str.to_i} || []
+        user_ids = []
+        
+        follows.where("props -> 'origin_author_name' = '' OR props -> 'target_name' = ''").all.map do |e|
+          user_ids.push(e.props['origin_author_id'].to_i).push(e.props['target_id'].to_i)
+        end
 
-        targets = follows_with_missing_target_name\
-          .pluck("props -> 'target_id'").map{|id_str| id_str.to_i} || []
-
-        (sources + targets).uniq
+        user_ids.uniq
       end
 
       def follows_with_missing_source_name
@@ -79,7 +81,7 @@ module Entities
       end
 
       def name_from_cache(user_id)
-        @redis.get(redis_prefix + user_id.to_s)
+        @redis.get(user_id.to_s)
       end
 
       def present_in_cache?(id)
@@ -87,9 +89,8 @@ module Entities
       end
 
       def redis_prefix
-        "screen_name_cache:"
+        'screen_name_cache'
       end
-
     end
   end
 end

@@ -2,10 +2,10 @@
   <bh-service-loader service="{this}"></bh-service-loader>
 {{/each}}
 
-{{#each state.bits}}
-  <bh-bit bit="{this}"></bh-bit>
-{{/each}}
+<div class="column-wrapper clearfix"></div>
 
 {{#if loading}}
-	<div class="alert alert-info loading-bit">Loading...</div>
+	<div class="loader">
+		<i class="fa-circle-o-notch fa fa-spin"></i>
+	</div>
 {{/if}}
