@@ -1,5 +1,6 @@
 class Api::V3::ServicesController < Api::V3::BaseController
   before_filter :authenticate_account!, :except => [:tree]
+  before_filter :create_new_service, only: [:create]
   load_and_authorize_resource
 
   def index
@@ -119,5 +120,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def service_config
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:service).require(:config).permit!
+  end
+
+  def create_new_service
+    embed = current_brand.embeds.find(embed_id)
+    @service = embed.services.build(service_definition)
   end
 end

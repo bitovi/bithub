@@ -1,11 +1,12 @@
-class ServiceError < StandardError; end
-class ConfigError < ServiceError; end
-class AuthError < ServiceError; end
-class RemoteError < ServiceError; end
-class UnknownError < ServiceError; end
-class RateLimitError < ServiceError; end
-
 module Fetchers
+
+  class ServiceError < StandardError; end
+  class ConfigError < ServiceError; end
+  class AuthError < ServiceError; end
+  class RemoteError < ServiceError; end
+  class UnknownError < ServiceError; end
+  class RateLimitError < ServiceError; end
+
   module Protocol
 
     def handle_errors

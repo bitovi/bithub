@@ -1,6 +1,7 @@
 class Api::V3::BaseController < ActionController::Base
   include Helpers::Common
 
+  # deals with http://factore.ca/blog/258-rails-4-strong-parameters-and-cancan
   before_filter do
     resource = controller_path.split('/').last.singularize.to_sym
     method = "#{resource}_params"
