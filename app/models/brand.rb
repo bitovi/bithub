@@ -60,8 +60,10 @@ class Brand < ActiveRecord::Base
   end
 
   def notify_crawler(action)
-    Rails.logger.info "Publishing a command to crawler #{msg(action)}"
-    x('x.crawler').publish(ActiveSupport::JSON.encode(msg(action)), routing_key: :config)
+    unless ENV['RAILS_ENV'] == 'test'
+      Rails.logger.info "Publishing a command to crawler #{msg(action)}"
+      x('x.crawler').publish(ActiveSupport::JSON.encode(msg(action)), routing_key: :config)
+    end
   end
 
   def msg(action)

@@ -49,7 +49,7 @@ class Service < ActiveRecord::Base
   end
 
   def notify_crawler(action)
-    if service_config.valid?
+    if ENV['RAILS_ENV'] != 'test' && service_config.valid?
       Rails.logger.info "Publishing a command to crawler #{msg(action)}"
       x('x.crawler').publish(ActiveSupport::JSON.encode(msg(action)), routing_key: :config)
     end

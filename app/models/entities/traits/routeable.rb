@@ -24,7 +24,7 @@ module Entities
     def notify_client
       RabbitFactory.new($rabbitmq)\
         .x('x.liveservice')\
-        .publish(ActiveSupport::JSON.encode(client_msg), routing_key: :services)
+        .publish(ActiveSupport::JSON.encode(client_msg), routing_key: 'services')
     end
 
     def client_msg

@@ -11,6 +11,7 @@ require 'dispatcher'
 require 'logger_factory'
 require 'celluloid'
 require 'lib/rabbit_factory'
+require 'lib/connection_manager'
 require_relative 'helpers'
 
 class Listener
@@ -18,11 +19,8 @@ class Listener
 
   def initialize(q_name, q_opts, fn)
     routing_key = q_opts.fetch(:routing_key) { '' }
-    @conn = Bunny.new(ENV['RABBITMQ_URI']).start
-    @chan = @conn.create_channel
-    $rabbitmq = @chan
 
-    rf = RabbitFactory.new(@chan)
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.web', :direct)
     @q = rf.q(q_name).bind(@x, routing_key: routing_key)
     @fn = fn

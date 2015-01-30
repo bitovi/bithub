@@ -10,23 +10,17 @@ describe Fetchers::Tumblr::Posts  do
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:publisher] = Publisher.new reject_old: false
+    Celluloid::Actor[:publisher] = EventPublisher.new reject_old: false
 
-    rabbitmq_uri = ENV['RABBITMQ_URI']
-
-    @rabbit = Bunny.new(rabbitmq_uri)
-    @rabbit.start
-    @chan = @rabbit.create_channel
-
-    @x = @chan.direct('x.web')
-    @q = @chan.queue('q.web.events').bind(@x)
+    rf = RabbitFactory.new($rabbit_channel)
+    @x = rf.x('x.web')
+    @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
 
     @owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'tumblr', 'post'
   end
 
   after do
     Celluloid.shutdown
-    @rabbit.close
   end
 
   ### Tests
@@ -36,25 +30,21 @@ describe Fetchers::Tumblr::Posts  do
 
       VCR.use_cassette('tumblr_posts') do
         response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
-        Celluloid::Actor[:publisher].publish @owner_data, response
+        Celluloid::Actor[:publisher].publish response, @owner_data
       end
 
       # wait for an event on MQ
-      c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
+      @q.subscribe do |delivery_info, metadata, payload|
         parsed = JSON.parse payload
 
         expect(parsed['content_digest'].length).to eq(32)
-
         expect(parsed['meta']['feed_name']).to eq('tumblr')
         expect(parsed['meta']['type_name']).to eq('post')
         expect(parsed['meta']['brand_id']).to eq(1)
         expect(parsed['meta']['brand_name']).to eq('foo')
         expect(parsed['meta']['embed_id']).to eq(2)
         expect(parsed['meta']['embed_name']).to eq('bar')
-
-        @rabbit.close
       end
-
     end
   end
 end
