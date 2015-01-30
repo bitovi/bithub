@@ -8,7 +8,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "private_network", ip: "192.168.99.99"
 
-  config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
+  #config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
+  config.vm.synced_folder ".", "/vagrant", type: 'nfs', nfs_version: "4,nolock"
 
   config.ssh.forward_agent = true
 
@@ -23,7 +24,7 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "ansible/vagrant.yml"
     ansible.sudo = true
     ansible.host_key_checking = false
-    ansible.verbose = "vvvv"
+    # ansible.verbose = "vvvv"
     # ansible.tags = ["run_this"]
     ansible.extra_vars = {
       ansible_ssh_user: "vagrant",
