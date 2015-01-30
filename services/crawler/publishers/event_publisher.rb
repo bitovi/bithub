@@ -11,10 +11,9 @@ class EventPublisher
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
 
-    rf = RabbitFactory.new(rabbit_chan)
-
-    @x = rf.x('x.web', :direct)
-    @q = rf.q('q.web.events').bind(@x)
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    @x = rf.x('x.web')
+    @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
   end
 
   def publish(events, owner_data, opts={})
@@ -24,19 +23,15 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    # finally send events to MQ
-    publish_many new_events, owner_data.brand
-  end
+    Celluloid.logger.info "Publishing #{new_events.size} messages!"
 
-  private
-  
-  def publish_many(events, brand)
-    Celluloid.logger.info "Publishing #{events.size} messages!"
-    events.each do |e|
+    new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
     end
   end
 
+  private
+  
   def reject_old(events)
     @filter.reject_old events
   end
@@ -75,9 +70,5 @@ class EventPublisher
     Celluloid.logger.error "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
     Celluloid.logger.error "Event: #{event}"
     Celluloid.logger.error "Error: #{e}"
-  end
-
-  def rabbit_chan
-    ConnectionManager.instance.rabbit
   end
 end

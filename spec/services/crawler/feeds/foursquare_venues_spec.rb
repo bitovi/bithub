@@ -1,5 +1,4 @@
 require_relative 'feeds_helper'
-
 require 'events/foursquare/checkin_event'
 
 describe HttpServer::Handlers::FoursquareVenues  do
@@ -17,23 +16,16 @@ describe HttpServer::Handlers::FoursquareVenues  do
 
   before do
     Celluloid.boot
-
     Celluloid::Actor[:http_server] = HttpServer::Listener.new
-    Celluloid::Actor[:publisher]   = Publisher.new reject_old: false
+    Celluloid::Actor[:publisher]   = EventPublisher.new reject_old: false
 
-    rabbitmq_uri = ENV['RABBITMQ_URI']
-
-    @rabbit = Bunny.new(rabbitmq_uri)
-    @rabbit.start
-    @chan = @rabbit.create_channel
-
-    @x = @chan.direct('x.web')
-    @q = @chan.queue('q.web.events').bind(@x)
+    rf = RabbitFactory.new($rabbit_channel)
+    @x = rf.x('x.web')
+    @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
   end
 
   after do
     Celluloid.shutdown
-    @rabbit.close
   end
 
   ### Tests
@@ -58,16 +50,16 @@ describe HttpServer::Handlers::FoursquareVenues  do
 
       # simulate postback from foursquare
       post_body = File.new('spec/support/responses/foursquare/checkin_postback').read
+
       res = HTTParty.post build_foursquare_endpoint, body: post_body
 
       expect(res.code).to eq 200
 
       # wait for an event on MQ
-      c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
+      @q.subscribe do |delivery_info, metadata, payload|
         parsed = JSON.parse payload
 
         expect(parsed['content_digest'].length).to eq(32)
-
         expect(parsed['meta']['feed_name']).to  eq 'foursquare'
         expect(parsed['meta']['type_name']).to  eq 'checkin_event'
         expect(parsed['meta']['brand_id']).to   eq brand[:id]
@@ -75,11 +67,7 @@ describe HttpServer::Handlers::FoursquareVenues  do
         expect(parsed['meta']['embed_id']).to   eq embed[:id]
         expect(parsed['meta']['embed_name']).to eq embed[:name]
         expect(parsed['meta']['service_id']).to eq service[:id]
-
-        @rabbit.close
       end
-
     end
   end
-
 end

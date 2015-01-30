@@ -7,7 +7,7 @@ class Commander
   def initialize
     Celluloid.logger.info "Initializing Commander"
 
-    rf = RabbitFactory.new(rabbit_chan)
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.crawler', :direct)
     @q = rf.q('q.poller.commands').bind(@x, :routing_key => 'config')
 
@@ -19,10 +19,6 @@ class Commander
       msg = JSON.parse(payload).symbolize_keys
       dispatch_command(msg)
     end
-  end
-
-  def publish(msg, rk)
-    @x.publish(msg.to_json, :routing_key => rk)
   end
 
   def dispatch_command(msg)
@@ -37,11 +33,5 @@ class Commander
 
   def message_scope(msg)
     [msg[:brand], msg[:embed], msg[:service]].unshift('main').compact
-  end
-
-  private
-  
-  def rabbit_chan
-    ConnectionManager.instance.rabbit
   end
 end

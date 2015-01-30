@@ -14,6 +14,6 @@ class RabbitFactory
   end
 
   def defaults
-    { durable: false, auto_delete: true }
+    { durable: false, auto_delete: false }
   end
 end

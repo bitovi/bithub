@@ -7,14 +7,18 @@ class ErrorPublisher
   def initialize
     Celluloid.logger.info 'Initializing error publisher'
 
-    rf = RabbitFactory.new(rabbit_chan)
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')
   end
 
   def publish(error, owner_info)
-    @x.publish({
+    @x.publish(msg(error, owner_info).to_json, routing_key: 'errors')
+  end
+
+  def msg(error)
+    {
       payload: {
         klass: error.class.name,
         message: error.message,
@@ -23,12 +27,6 @@ class ErrorPublisher
       meta: {
         brand_name: owner_info.brand.name,
       }
-    }.to_json, routing_key: :errors)
-  end
-
-  private
-
-  def rabbit_chan
-    ConnectionManager.instance.rabbit
+    }
   end
 end

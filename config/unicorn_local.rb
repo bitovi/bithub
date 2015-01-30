@@ -1,7 +1,6 @@
 ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 require File.join(ROOT_DIR, 'lib', 'logger_factory')
-require 'bunny'
-require 'redis'
+require File.join(ROOT_DIR, 'lib', 'connection_manager')
 
 worker_processes 1
 timeout 30
@@ -33,14 +32,12 @@ after_fork do |server, worker|
   end
 
   if defined?(Bunny)
-    $rabbitmq_connection = Bunny.new(ENV.fetch('RABBITMQ_URI'))
-    $rabbitmq_connection.start
-    $rabbitmq = $rabbitmq_connection.create_channel
+    ConnectionManager.instance
     Rails.logger.info('Connected to RabbitMQ')
   end
 
   if defined?(Redis)
-    $redis = Redis.new(:url => ENV.fetch('REDIS_URL'))
+    ConnectionManager.instance
     Rails.logger.info('Connected to Redis')
   end
 end

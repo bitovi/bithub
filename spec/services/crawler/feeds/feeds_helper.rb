@@ -10,16 +10,27 @@ require 'celluloid/test'
 require 'webmock/rspec'
 require 'httparty'
 require 'amqp'
-require 'amqp_helpers'
 
+require 'rabbit_factory'
 require 'events/dispatcher'
 
+require 'connection_manager'
 require 'http_server/listener'
-require 'publisher'
+require 'publishers/event_publisher'
 require 'decorators/all'
 
-# conn params for services like rabbitmq
 Dotenv.load
+
+RSpec.configure do |config|
+
+  config.before(:suite) do
+    $rabbit_channel = ConnectionManager.instance.rabbit
+  end
+
+  config.after(:suite) do
+    $rabbit_channel.close
+  end
+end
 
 # first time saves the responses to be used later
 VCR.configure do |c|
