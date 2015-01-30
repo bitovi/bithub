@@ -1,7 +1,7 @@
 class Api::V3::ServicesController < Api::V3::BaseController
   before_filter :authenticate_account!, :except => [:tree]
   before_filter :create_new_service, only: [:create]
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:tree]
 
   def index
     if params[:embed_id]
@@ -56,6 +56,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def tree
+    raise CanCan::AccessDenied unless params['secret'] == ENV['CRAWLER_SECRET_KEY']
+
     big_hash = Hash[
       :brands, Brand.all.map do |b|
         Apartment::Tenant.switch b.name do

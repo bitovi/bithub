@@ -72,7 +72,7 @@ class Configurator
   end
 
   def url
-    ENV['CRAWLER_CONFIG']
+    ENV['CRAWLER_CONFIG'] + '?secret=' + ENV['CRAWLER_SECRET_KEY']
   end
 
 end
