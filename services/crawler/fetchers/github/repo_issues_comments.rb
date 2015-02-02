@@ -1,3 +1,5 @@
+require 'fetchers/protocol'
+
 module Fetchers
   module Github
 
@@ -11,7 +13,7 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @client.issues.commments.list(user: @user, repo: @repo)
+          @client.issues.comments.list(user: @user, repo: @repo)
         end
       end
     end
