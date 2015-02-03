@@ -16,6 +16,14 @@ class EmbedEntity < ActiveRecord::Base
       update_attribute(:is_approved, false)
     end
   end
+  
+  def pin
+    update_attribute(:is_pinned, true)
+  end
+  
+  def unpin
+    update_attribute(:is_pinned, false)
+  end
 
   def disconnect
     destroy

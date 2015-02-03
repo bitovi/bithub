@@ -82,14 +82,6 @@ class Entity < ActiveRecord::Base
     props.andand['state']
   end
 
-  def pin
-    update_attribute(:is_pinned, true)
-  end
-  
-  def unpin
-    update_attribute(:is_pinned, false)
-  end
-
   def label_names
     props.andand['label_names']
   end
