@@ -5,8 +5,8 @@ gem 'unicorn'
 gem 'rails', '~> 4.1'
 
 gem 'rake'
-gem 'rspec', '~> 3.1.0'
-gem 'rspec-rails', '~> 3.1.0'
+gem 'rspec', '~> 3.1'
+gem 'rspec-rails', '~> 3.1'
 gem 'pry'
 gem 'pry-rails'
 gem 'rb-readline'
@@ -40,7 +40,7 @@ gem 'jbuilder'
 gem 'devise', '~> 3.2'
 gem 'rolify', '~> 3.2'
 
-gem 'omniauth'
+gem 'omniauth', '~> 1.2'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
 gem 'omniauth-meetup'
@@ -67,23 +67,24 @@ gem 'muster', :github => 'neektza/muster'
 
 # API client libs
 gem 'octokit', '~> 2.0'
-gem 'koala'
-gem 'instagram'
-gem 'github_api'
-gem 'twitter'
-gem 'foursquare2'
+gem 'github_api', '~> 0.11'
+gem 'instagram', '~> 1.1'
+gem 'twitter', '~> 5.13'
+gem 'koala', '~> 1.11'
+gem 'foursquare2', '~> 2.0'
 gem 'rMeetup'
 gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
-gem 'reel', '~> 0.5.0'
+
+gem 'reel', '~> 0.5'
 
 # Payments
 gem 'stripe', '~> 1.16'
 gem 'stripe-rails', '~> 0.3'
 
 # https://github.com/tumblr/tumblr_client/issues/39
-gem 'simple_oauth', '~> 0.2.0'
+gem 'simple_oauth', '~> 0.2'
 gem 'tumblr_client' # , github: 'vdragsic/tumblr_client'
 
 gem 'activesupport-json_encoder'
@@ -121,10 +122,10 @@ end
 # --------
 # services
 # --------
-gem 'celluloid', '~> 0.15.0'
+gem 'celluloid', '~> 0.16'
 gem 'celluloid-io'
-gem 'nokogiri', '1.6.1'
-gem 'nori', '~> 2.3.0'
+gem 'nokogiri', '~> 1.6'
+gem 'nori', '~> 2.3'
 gem 'vetinari'
 gem 'newrelic_rpm'
 gem 'sequel'
