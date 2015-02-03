@@ -54,7 +54,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def approve
-    if embed_entity_relation.approve
+    if embed_entity_relation.approve(current_account)
       render json: embed_entity_relation
     else
       render text: "error", status: 406
@@ -62,8 +62,24 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def disaprove
-    if embed_entity_relation.disaprove
+    if embed_entity_relation.disaprove(current_account)
       render json: embed_entity_relation
+    else
+      render text: "error", status: 406
+    end
+  end
+
+  def pin
+    if (entity = Entity.find(entity_id)) && entity.pin
+      render json: entity
+    else
+      render text: "error", status: 406
+    end
+  end
+  
+  def unpin
+    if (entity = Entity.find(entity_id)) && entity.unpin
+      render json: entity
     else
       render text: "error", status: 406
     end
@@ -71,7 +87,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def destroy
     if embed_entity_relation.destroy
-      render text: "ok"
+      render json: embed_entity_relation
     else
       render text: "error", status: 406
     end

@@ -82,6 +82,14 @@ class Entity < ActiveRecord::Base
     props.andand['state']
   end
 
+  def pin
+    update_attribute(:is_pinned, true)
+  end
+  
+  def unpin
+    update_attribute(:is_pinned, false)
+  end
+
   def label_names
     props.andand['label_names']
   end
@@ -194,5 +202,4 @@ class Entity < ActiveRecord::Base
   def incomplete_follow?
     type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
-
 end
