@@ -35,10 +35,11 @@ function(Component, initView, Models){
 					throw "No Hub selected";
 				}
 			},
-			toggleHubEditing : function(){
+			toggleHubEditing : function(ctx, el, ev){
 				var newVal = !this.attr('isEditing');
 				newVal && this.attr('hub').backup();
 				this.attr('isEditing', newVal);
+				ev.stopPropagation();
 			},
 			preventHubEditingToggle : function(ctx, el, ev){
 				ev.stopPropagation();
@@ -86,7 +87,7 @@ function(Component, initView, Models){
 					var containerHeight = self.element.height(),
 						headerHeight = self.element.find('.header').outerHeight(),
 						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
-						linksHeight = (4 * 37),
+						linksHeight = (1 * 37),
 						totalHeight = headerHeight + hubNameHeight + linksHeight + 50; // add padding
 					self.element.find('.panel-container').height(containerHeight - totalHeight)
 				}, 1);

@@ -1,6 +1,5 @@
 <div class="form-group">
-	<label>Repo Name</label>
-	<bh-suggestions service="github/repo" val="{map.config.name}" allow-extra="true"></bh-suggestions>
+	<bh-suggestions service="github/repo" val="{map.config.name}" allow-extra="true" pick-suggestion-label="Pick a repo you have access to" enter-your-own-label="Or enter any public repo"></bh-suggestions>
 	{{{configErrors errors 'name'}}}
 </div>
 <div class="class-group">
