@@ -1,24 +1,21 @@
-{{#if services.length}}
-	<bh-services-list state="{state}" current-service="{currentService}" services="{services}"></bh-services-list>
-{{/if}}
+<h2 class="subtitle-separator">Connect a service</h2>
 
-<p>Select a service to connect content and update your feed.</p>
-
-<div class="service-slider-outer-wrap">
-	<div class="service-slider-wrap">
-		<ul class="list-unstyled new-service-picker clearfix">
-			{{#each feeds}}
-				<li can-click="toggleNewService" data-feed="{{@key}}" {{#currentServiceIsNewAndHasFeedName @key}}class="active"{{/currentServiceIsNewAndHasFeedName}}>
-					<i class="fa fa-{{iconFeedMapping @key}}"></i>
-					{{ . }}
-				</li>
-			{{/each}}
-		</ul>
-	</div>
-	<i class="scroll-left fa fa-chevron-left"></i>
-	<i class="scroll-right fa fa-chevron-right"></i>
+<div class="service-slider-wrap">
+	<ul class="list-unstyled new-service-picker clearfix">
+		{{#each feeds}}
+			<li can-click="toggleNewService" data-feed="{{@key}}" {{#currentServiceIsNewAndHasFeedName @key}}class="active"{{/currentServiceIsNewAndHasFeedName}}>
+				<i class="fa fa-{{iconFeedMapping @key}}"></i>
+				{{ . }}
+			</li>
+		{{/each}}
+	</ul>
 </div>
 
 {{#if currentService.isNew}}
 	<bh-service-form service="{currentService}" state="{state}" services="{services}"></bh-service-form>
+{{/if}}
+
+{{#if services.length}}
+	<h2 class="subtitle-separator">Connected services</h2>
+	<bh-services-list state="{state}" current-service="{currentService}" services="{services}"></bh-services-list>
 {{/if}}
