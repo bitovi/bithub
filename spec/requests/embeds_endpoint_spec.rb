@@ -6,7 +6,8 @@ RSpec.describe 'Embed endpoints', type: :request do
     {
       name: 'some name',
       colorscheme: '#FFF,#000',
-      layout: 'left-right'
+      layout: 'left-right',
+      approved_by_default: true
     }
   }
 
@@ -46,7 +47,7 @@ RSpec.describe 'Embed endpoints', type: :request do
 
           get "/api/#{api_version}/embeds/1"
           expect(response).to be_success
-          expect(json.keys).to include('name', 'colorscheme', 'layout')
+          expect(json.keys).to include('name', 'colorscheme', 'layout', 'approved_by_default')
         end
       end
     end
@@ -55,7 +56,7 @@ RSpec.describe 'Embed endpoints', type: :request do
       it 'creates a new embed' do
         post "/api/#{api_version}/embeds", { embed: embed_creation_data }
         expect(response).to be_success
-        expect(json.keys).to include('name', 'colorscheme', 'layout')
+        expect(json.keys).to include('name', 'colorscheme', 'layout', 'approved_by_default')
       end
     end
 
