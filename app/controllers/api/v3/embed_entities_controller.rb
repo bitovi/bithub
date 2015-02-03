@@ -69,6 +69,22 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     end
   end
 
+  def pin
+    if (entity = Entity.find(entity_id)) && entity.pin
+      render json: entity
+    else
+      render text: "error", status: 406
+    end
+  end
+  
+  def unpin
+    if (entity = Entity.find(entity_id)) && entity.unpin
+      render json: entity
+    else
+      render text: "error", status: 406
+    end
+  end
+
   def destroy
     if embed_entity_relation.destroy
       render json: embed_entity_relation
