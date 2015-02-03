@@ -28,7 +28,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       context 'when filtering by approved status' do
         before(:each) do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand)
+          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: true)
 
           # approved by default
           @embed.make_link_to(ent = FactoryGirl.create(:github_watch))

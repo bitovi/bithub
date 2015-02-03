@@ -194,5 +194,4 @@ class Entity < ActiveRecord::Base
   def incomplete_follow?
     type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
-
 end
