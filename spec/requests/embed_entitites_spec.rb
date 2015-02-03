@@ -18,7 +18,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           embed = FactoryGirl.create(:embed, brand: @current_brand)
           link = embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet))
           embed.make_link_to(ent = FactoryGirl.create(:github_issue))
-          link.approve
+          link.approve(@current_brand)
 
           get "/api/#{api_version}/embeds/#{embed.id}/entities"
           expect(response).to be_success
@@ -32,8 +32,8 @@ RSpec.describe 'Filter endpoints', type: :request do
 
           # approved by default
           @embed.make_link_to(ent = FactoryGirl.create(:github_watch))
-          @embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet)).disaprove
-          @embed.make_link_to(ent = FactoryGirl.create(:github_issue)).disaprove
+          @embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet)).disaprove(@current_brand)
+          @embed.make_link_to(ent = FactoryGirl.create(:github_issue)).disaprove(@current_brand)
         end
 
         describe 'GET /embed/1/entities/approved' do
@@ -73,11 +73,29 @@ RSpec.describe 'Filter endpoints', type: :request do
         describe 'PUT /embed/1/entities/2/disaprove' do
           context 'given a certain entity from an embed' do
             it 'disaproves it' do
-              @link.approve
-
               put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/disaprove"
               expect(response).to be_success
               expect(json['is_approved']).to be_falsey
+            end
+          end
+        end
+        
+        describe 'PUT /embed/1/entities/2/pin' do
+          context 'given a certain entity from an embed' do
+            it 'pins it to the top' do
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/pin"
+              expect(response).to be_success
+              expect(json['is_pinned']).to be_truthy
+            end
+          end
+        end
+        
+        describe 'PUT /embed/1/entities/2/unpin' do
+          context 'given a certain entity from an embed' do
+            it 'unpins it from the top' do
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/unpin"
+              expect(response).to be_success
+              expect(json['is_pinned']).to be_falsey
             end
           end
         end
