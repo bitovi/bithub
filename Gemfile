@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.1.2'
 
 gem 'unicorn'
-gem 'rails', '~> 4.1'
+gem 'rails', '4.1.7'
 
 gem 'rake'
 gem 'rspec', '~> 3.1'
@@ -11,7 +11,6 @@ gem 'pry'
 gem 'pry-rails'
 gem 'rb-readline'
 
-gem 'amqp'
 gem 'bunny'
 gem 'pg', '~> 0.17.1'
 gem 'pg_power'
