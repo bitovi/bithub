@@ -4,6 +4,7 @@ class CreateServiceErrors < ActiveRecord::Migration
       t.string :klass
       t.string :message
       t.references :service
+      t.timestamps
     end
   end
 end
