@@ -9,7 +9,6 @@ require 'vcr'
 require 'celluloid/test'
 require 'webmock/rspec'
 require 'httparty'
-require 'amqp'
 require 'amqp_helpers'
 
 require 'events/dispatcher'
