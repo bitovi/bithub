@@ -35,7 +35,9 @@
 	{{/isPanel}}
 
 	{{#isPanel 'moderation'}}
-		<div class="panel-container">Moderation Panel</div>
+		<div class="panel-container">
+			<bh-moderation state="{state}" hub="{hub}"></bh-moderation>
+		</div>
 	{{/isPanel}}
 
 	
