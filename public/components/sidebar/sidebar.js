@@ -4,6 +4,7 @@ steal(
 'models',
 './sidebar.less!',
 'components/services',
+'components/moderation',
 'can/route',
 'components/helpers.js',
 function(Component, initView, Models){
