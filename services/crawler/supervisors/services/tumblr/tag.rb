@@ -1,6 +1,8 @@
 module Supervisors::Services::Tumblr
   class Tag < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       tag_fetcher = Fetchers::Tumblr::Tagged.new(tag)

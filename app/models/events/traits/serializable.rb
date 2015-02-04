@@ -12,7 +12,7 @@ module Events
     end
 
     def to_json
-      ActiveSupport::JSON.encode(to_hash)
+      to_hash.to_json
     end
   end
 end

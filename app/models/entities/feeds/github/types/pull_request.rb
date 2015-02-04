@@ -22,8 +22,6 @@ module Entities
           }
         })
 
-        built.props[:references_to] = ""
-
         if @event.actor
           built.props[:origin_author_id] = @event.actor.id
           built.props[:origin_author_name] = @event.actor.login
@@ -47,7 +45,6 @@ module Entities
         @instance.body = @event.body
         @instance.props[:state] = @event.state
         @instance.props[:label_names] = @event.labels.names_csv
-        @instance.props[:references_to] = ""
         super
       end
 

@@ -8,6 +8,8 @@ function(Component, initView, Models){
 		tag : 'bh-suggestions',
 		template : initView,
 		scope : {
+			enterYourOwnLabel : 'Enter your own',
+			pickSuggestionLabel : 'Pick a suggestion',
 			isLoading : true,
 			init : function(){
 				var self = this;

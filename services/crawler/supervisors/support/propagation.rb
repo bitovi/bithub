@@ -1,15 +1,11 @@
 module Supervisors
   module Propagation
     def handle_cmd(target, action)
-      Celluloid.logger.debug "#handle_cmd, me: #{self.name}, target: #{target}"
       if %i(stop restart).include?(action) && target_among_children?(target)
-        Celluloid.logger.info "Executing #{action} for #{target}"
         execute_cmd(target, action)
       elsif action == :start && on_correct_level?(target)
-        Celluloid.logger.info "Executing #{action} for #{target}"
         execute_cmd(target, action)
       else
-        Celluloid.logger.info "Propagating further down..."
         propagate_cmd(target, action)
       end
     end
@@ -29,7 +25,6 @@ module Supervisors
     # Action not meant for this level,
     # propagate further down
     def propagate_cmd(target, action)
-      Celluloid.logger.debug "Childs: #{children_names}"
       children.each do |c|
         if c.respond_to?(:handle_cmd, true)
           c.handle_cmd(target, action)
@@ -45,8 +40,8 @@ module Supervisors
       children.map { |a| a.name }
     end
     
-    def shutyoself
-      children.each { |c| c.shutyoself }
+    def terminate_cascading
+      children.each { |c| c.terminate_cascading }
       terminate
     end
   end

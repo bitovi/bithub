@@ -2,6 +2,7 @@ module Supervisors::Services::Foursquare
   class Venue < Supervisors::Service
 
     def boot
+      super
       venues_handler.register venue_id, @path.serialize
     end
 

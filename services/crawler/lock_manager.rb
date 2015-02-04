@@ -1,6 +1,5 @@
 require 'core_ext'
-require_relative 'connection_manager'
-require_relative 'liveservice_notifier'
+require 'connection_manager'
 
 class LockManager
   include Celluloid

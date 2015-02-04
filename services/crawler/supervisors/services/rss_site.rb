@@ -1,6 +1,8 @@
 module Supervisors::Services::Rss
   class Site < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       decorator = Decorators::Rss.new(service_config)

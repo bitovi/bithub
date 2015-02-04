@@ -45,7 +45,7 @@ module HttpServer
             results = self.send method_name.to_sym, object_id
 
             results.each do |media|
-              publish owner_data, media.to_h
+              publisher.publish [media.to_h], owner_data
             end
           end
         end
@@ -67,10 +67,6 @@ module HttpServer
           'media_event'
       end
 
-      def publish(owner_data, body)
-        Actor[:publisher].publish owner_data, [body]
-      end
-
       def self.path
         "/instagram/media/(?<brand_id>\\d+)-(?<brand_name>.*)/(?<embed_id>\\d+)-(?<embed_name>.*)/(?<service_id>\\d+)"
       end
@@ -90,6 +86,10 @@ module HttpServer
         !!Actor[:configurator].service_config(owner_data.brand, owner_data.embed, owner_data.service)
       rescue StandardError
         false
+      end
+
+      def publisher
+        Actor[:event_publisher]
       end
 
       # Subhandlers

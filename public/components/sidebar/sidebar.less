@@ -1,12 +1,13 @@
 bh-sidebar {
 	display: block;
 	background: #f1efef;
-	border-right: 1px solid #ced2d3;
 	box-shadow: 0 0 30px rgba(0,0,0,0.2);
 	.header {
 		height: 50px;
 		line-height: 20px;
 		padding: 15px;
+		border-bottom: 1px solid #cecdcd;
+		margin-bottom: 15px;
 		.close-sidebar {
 			float: right;
 			cursor: pointer;
@@ -28,9 +29,7 @@ bh-sidebar {
 		}
 	}
 	.hub-name-wrap {
-		margin: 0 15px 29px;
-		border-bottom: 1px solid #d3d3d3;
-		padding: 0 15px;
+		margin: 0 15px 15px;
 		height: 36px;
 		line-height: 36px;
 		position: relative;
@@ -50,30 +49,41 @@ bh-sidebar {
 	}
 	.hub-name {
 		display: inline-block;
-		width: 413px;
+		width: 429px;
 	}
 	.hub-name-is-editting {
 		border-bottom-color: transparent;
 		padding-right: 0;
 	}
+	.service-tabs {
+		border-bottom: 2px solid #222;
+	}
 	.panel-link {
-		border-top: 1px solid #cecdcd;
+		border: 1px solid #cecdcd;
+		border-bottom: none;
+		border-right: none;
 		background: #e4e3e3;
 		height: 37px;
-		display: block;
+		float: left;
+		width: 33.3333%;
+		float: left;
 		line-height: 37px;
 		padding: 0 15px;
 		color: #727272;
 		text-transform: uppercase;
 		font-size: 12px;
+		text-align: center;
+		&:last-child {
+			border-right: none;
+		}
 		&.active {
-			background: #2c2c2c;
-			border-top-color: #2c2c2c;
+			border-color: #222;
+			background: #222;
 			color: white;
 		}
 	}
 	.panel-container {
-		padding: 25px;
+		padding: 0 25px 25px;
 		overflow-y: auto;
 	}
 	.edit-hub-name {
@@ -84,6 +94,18 @@ bh-sidebar {
 	}
 	.embed-code {
 		font-size: 80%;
-		height: 70px;
+		height: 100px;
+	}
+	h2.subtitle-separator {
+		background: #e4e3e3;
+		margin: 0 -25px 0;
+		padding: 0 25px;
+		font-size: 12px;
+		font-weight: bold;
+		line-height: 40px;
+		text-transform: uppercase;
+		&:first-child {
+			border-top: none;
+		}
 	}
 }
