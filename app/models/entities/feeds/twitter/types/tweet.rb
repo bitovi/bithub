@@ -17,7 +17,7 @@ module Entities
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.screen_name,
             origin_author_avatar_url: @event.user.profile_image_url,
-            entities_urls: ActiveSupport::JSON.encode(@event.entities.urls),
+            entities_urls: JSON.generate(@event.entities.urls)
           }
         })
         built[:props][:retweeted_id] = @event.retweet.id if @event.retweet?

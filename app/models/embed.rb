@@ -55,7 +55,7 @@ class Embed < ActiveRecord::Base
   def notify_crawler(action)
     unless ENV['RAILS_ENV'] == 'test'
       Rails.logger.info "Publishing a command to crawler #{msg(action)}"
-      x('x.crawler').publish(ActiveSupport::JSON.encode(msg(action)), routing_key: :config)
+      x('x.crawler').publish((msg(action).to_json), routing_key: :config)
     end
   end
 

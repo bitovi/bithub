@@ -22,9 +22,10 @@ module Entities
     end
 
     def notify_client
-      RabbitFactory.new($rabbitmq)\
+
+      RabbitFactory.new(ConnectionManager.instance.rabbit)\
         .x('x.liveservice')\
-        .publish(ActiveSupport::JSON.encode(client_msg), routing_key: 'services')
+        .publish(JSON.generate(client_msg), routing_key: 'services')
     end
 
     def client_msg
