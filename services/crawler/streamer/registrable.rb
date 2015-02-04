@@ -26,7 +26,7 @@ module Streamers
     end
 
     def publish(brand, feed, object)
-      Celluloid::Actor[:publisher].publish brand, feed, [object]
+      publisher.publish brand, feed, [object]
     end
 
     def channel_with_name(name)
@@ -43,6 +43,10 @@ module Streamers
       else
         @last_registration = after(registration_timeout) { reconnect }
       end
+    end
+
+    def publisher
+      Celluloid::Actor[:event_publisher]
     end
 
     def registration_timeout

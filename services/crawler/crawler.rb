@@ -23,6 +23,7 @@ require_relative 'supervisors/main'
 require_relative 'lock_manager'
 require_relative 'publishers/error_publisher'
 require_relative 'publishers/event_publisher'
+require_relative 'publishers/notification_publisher'
 require_relative 'configurator'
 require_relative 'commander'
 require_relative 'poller'
@@ -40,6 +41,7 @@ Celluloid.logger = logger
 class Crawler < Celluloid::SupervisionGroup
   supervise EventPublisher, as: :event_publisher
   supervise ErrorPublisher, as: :error_publisher
+  supervise NotificationPublisher, as: :notification_publisher
   supervise Commander, as: :commander
   supervise Configurator, as: :configurator, args: [{environment: $env}]
   supervise LockManager, as: :lock_manager

@@ -56,11 +56,16 @@ module Supervisors::Services::Irc
 
     def publish(event, decorator)
       Celluloid.logger.info "Publishing with brand: #{@brand_name}, feed: #{feed_name}"
-      Celluloid::Actor[:publisher].publish @brand_name, feed_name, [event], decorator: decorator
+      raise NotImplementedError
+      # publisher.publish @brand_name, feed_name, [event], decorator: decorator
     end
 
     def feed_name
       'irc'
+    end
+
+    def publisher
+      Celluloid::Actor[:event_publisher]
     end
 
     def build_event(env)
