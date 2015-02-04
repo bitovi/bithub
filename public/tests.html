@@ -1,18 +1,43 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-  <title>BitHub Tests</title>
-  <link rel="stylesheet" href="/bower_components/qunit/qunit/qunit.css">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<title>BitHub Tests</title>
+	<link rel="stylesheet" href="/bower_components/qunit/qunit/qunit.css">
+	<style>
+	#bithub-iframe {
+		width: 100%;
+		height: 600px;
+	}
+	</style>
 </head>
 <body>
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
-<script src="./bower_components/qunit/qunit/qunit.js"></script>
-<script>
+	<iframe src="/register/starter" name="bithub" id="bithub-iframe"></iframe>
+	<div id="qunit">
+		<h1 id="qunit-header"></h1>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="test-content"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-test-area"></div>
+	</div>
+	<script src="./bower_components/jquery/jquery.js"></script>
+	<script src="./bower_components/qunit/qunit/qunit.js"></script>
+	<script src="./bower_components/funcunit/dist/funcunit.js"></script>
+	<script>
 	QUnit.config.autostart = false;
-</script>
-<script src='./bower_components/steal/steal.js' data-main='tests/tests'></script>
+	</script>
+	<script src="./tests/smoketest.js"></script>
+	<script>
+	QUnit.config.reorder = false;
+
+
+	if(window.Testee) {
+		window.Testee.init();
+	}
+
+	QUnit.start();
+	</script>
 </body>
 </html>

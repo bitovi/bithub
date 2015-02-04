@@ -1,11 +1,12 @@
 {{#if isLoading}}
-	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+	<div class="loader">
+		<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+	</div>
 {{else}}
-	Pick a suggestion
 	{{#if suggestions.length}}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<b>Suggestions</b>
+				<b>{{ pickSuggestionLabel }}</b>
 			</div>
 			<div class="scroll">
 				<table class="table table-hover">
@@ -28,7 +29,7 @@
 		</div>
 	{{/if}}
 	{{#if hasExtra}}
-		Or enter your own
+		<label class="enter-your-own">{{ enterYourOwnLabel }}</label>
 		<input type="text" can-value="val" class="form-control">
 	{{/if}}
 {{/if}}

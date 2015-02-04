@@ -9,7 +9,6 @@ require 'vcr'
 require 'celluloid/test'
 require 'webmock/rspec'
 require 'httparty'
-require 'amqp'
 
 require 'rabbit_factory'
 require 'events/dispatcher'
