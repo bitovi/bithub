@@ -31,9 +31,7 @@ class Poller
       end
     end
   rescue => e
-    Celluloid.logger.error "Caught a Service Error : #{e.class.name} : Publishing ..."
     error_publisher.publish(e, @path)
-    Celluloid.logger.error "Stacktrace: \n" + e.backtrace.join("\n")
   end
 
   def publish(data)
