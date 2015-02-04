@@ -146,11 +146,19 @@ module Events
       def type_name
         if github_event?
           @source_data[:type].camel_case.to_sym
+        elsif github_issue_with_pull_request?
+          nil
         elsif github_issue?
           :CustomIssueEvent
-        elsif @source_data[:custom_watch]
+        # elsif github_pull_request?
+        #   :CustomPullRequestEvent
+        elsif github_custom_watch?
           :CustomWatchEvent
         end
+      end
+
+      def github_custom_watch?
+        @source_data[:custom_watch]
       end
 
       def github_event?
@@ -158,7 +166,16 @@ module Events
       end
 
       def github_issue?
-        not(@source_data[:labels].nil?) && not(@source_data[:state].nil?) && not(@source_data[:comments].nil?)
+        not(@source_data[:labels].nil?)\
+          && not(@source_data[:state].nil?)\
+          && not(@source_data[:comments].nil?)
+      end
+      
+      def github_issue_with_pull_request?
+        !@source_data[:labels].nil?\
+          && !@source_data[:state].nil?\
+          && !@source_data[:comments].nil?\
+          && !@source_data[:pull_request].nil?
       end
     end
   end
