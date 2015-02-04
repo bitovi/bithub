@@ -24,7 +24,7 @@ def load_and_parse(path)
   ext_name = File.extname(path).gsub('.','').to_sym
 
   loaders = {
-    json: lambda {|p| ActiveSupport::JSON.decode(File.read(path)) },
+    json: lambda {|p| JSON.generate(File.read(path)) },
     rss: lambda {|p| Nori.new(:parser => :nokogiri).parse(File.read(path)) }
   }
 

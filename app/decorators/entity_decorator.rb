@@ -41,7 +41,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def apply_hyperlinks(text, urls )
-    urls = ActiveSupport::JSON.decode(urls || '[]')
+    urls = JSON.parse(urls || '[]')
 
     urls.reduce(text) do |acc, url|
       range = url["indices"]

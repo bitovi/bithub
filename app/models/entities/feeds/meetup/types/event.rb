@@ -22,7 +22,7 @@ module Entities
             scheduled_at: @event.scheduled_at,
             latitude: "", #@event.venue.lat,
             longitude: "", #@event.venue.lon,
-            event_hosts: ActiveSupport::JSON.encode(@event.hosts),
+            event_hosts: JSON.generate(@event.hosts),
             event_host_ids: @event.host_ids_csv,
           }
         })
@@ -37,7 +37,7 @@ module Entities
         @instance.props[:latitude] = "" #@event.lat
         @instance.props[:longitude] = "" #@event.lon
         @instance.props[:event_host_ids] = @event.host_ids_csv
-        @instance.props[:event_hosts] = ActiveSupport::JSON.encode(@event.hosts)
+        @instance.props[:event_hosts] = JSON.generate(@event.hosts)
       end
 
       def set_thread_ts
