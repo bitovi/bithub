@@ -7,8 +7,6 @@ require 'webmock/rspec'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
-ActiveRecord::Migration.maintain_test_schema!
-
 # otherwise all net connects will fail
 WebMock.allow_net_connect!
 

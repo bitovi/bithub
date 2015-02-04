@@ -4,6 +4,7 @@ steal(
 'models',
 './sidebar.less!',
 'components/services',
+'components/moderation',
 'can/route',
 'components/helpers.js',
 function(Component, initView, Models){
@@ -12,6 +13,8 @@ function(Component, initView, Models){
 		13 : 'ENTER',
 		27 : 'ESC'
 	};
+
+	var INTEGRATION_TEMPLATE = '<a href="http://{embedEndpoint}/admin/embed?tenantName={tenantName}&hubId={hubId}" data-hub-id="{hubId}" data-tenant-name="{tenantName}" class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/admin/embed.js"></script>'
 
 	return Component.extend({
 		tag : 'bh-sidebar',
@@ -33,10 +36,11 @@ function(Component, initView, Models){
 					throw "No Hub selected";
 				}
 			},
-			toggleHubEditing : function(){
+			toggleHubEditing : function(ctx, el, ev){
 				var newVal = !this.attr('isEditing');
 				newVal && this.attr('hub').backup();
 				this.attr('isEditing', newVal);
+				ev.stopPropagation();
 			},
 			preventHubEditingToggle : function(ctx, el, ev){
 				ev.stopPropagation();
@@ -59,10 +63,14 @@ function(Component, initView, Models){
 			integrationCode : function(){
 				var currentBrand = this.attr('currentBrand');
 				var hub = this.attr('hub');
-				if(currentBrand){
-					var link = '<a href="http://'+EMBED_ENDPOINT+'/admin/embed.js" data-hub-id="' + hub.id + '" data-tenant-name="' + currentBrand.attr('tenant_name') + '" class="bithub-embed">' + hub.name + ' Embed</a>';
-					var script = '<script src="http://'+EMBED_ENDPOINT+'/admin/embed.js"></script>';
-					return link + "\n" + script;
+				var tenantName, hubId;
+				if(currentBrand && hub){
+					return can.sub(INTEGRATION_TEMPLATE, {
+						tenantName: currentBrand.attr('tenant_name'),
+						embedEndpoint: EMBED_ENDPOINT,
+						hubName: hub.attr('name'),
+						hubId: hub.attr('id')
+					});
 				}
 			}
 		},
@@ -80,7 +88,7 @@ function(Component, initView, Models){
 					var containerHeight = self.element.height(),
 						headerHeight = self.element.find('.header').outerHeight(),
 						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
-						linksHeight = (4 * 37),
+						linksHeight = (1 * 37),
 						totalHeight = headerHeight + hubNameHeight + linksHeight + 50; // add padding
 					self.element.find('.panel-container').height(containerHeight - totalHeight)
 				}, 1);

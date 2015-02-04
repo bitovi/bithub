@@ -1,0 +1,30 @@
+<h4>Do you want all items approved and public by default?</h4>
+<form class="form">
+	<div class="options-wrapper">
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#if hub.approved_by_default}}checked{{/if}} value="1" can-change="toggleApprovedByDefault">
+				<b>Yes</b>. Make all items approved and public by default.
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#unless hub.approved_by_default}}checked{{/unless}} value="0" can-change="toggleApprovedByDefault">
+				<b>No</b>. I will manualy approve each item.
+			</label>
+		</div>
+	</div>
+	{{#isSaving}}
+		<div class="alert alert-info">
+			<i class="fa fa-spin fa-circle-o-notch"></i> Saving&hellip;
+		</div>
+	{{/isSaving}}
+	{{#hasErrors}}
+		<div class="alert alert-danger">
+			There was a problem with the moderation update!
+		</div>
+	{{/hasErrors}}
+	<div class="buttons-wrapper">
+		<button class="btn btn-primary pull-right">Update moderation settings</button>
+	</div>
+</form>

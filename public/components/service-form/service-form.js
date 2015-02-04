@@ -50,6 +50,14 @@ function(Component, initView, Models){
 			isHidden: false,
 			missingConfig : false,
 			errors: null,
+			define : {
+				service : {
+					set : function(val){
+						this.clearErrors();
+						return val;
+					}
+				}
+			},
 			init : function(){
 				console.log(this.attr())
 			},
@@ -98,7 +106,16 @@ function(Component, initView, Models){
 				});
 			},
 			clearService : function(){
+				can.batch.start();
 				this.attr('service', null);
+				this.clearErrors();
+				can.batch.stop();
+			},
+			clearErrors : function(){
+				this.attr({
+					errors: null,
+					missingConfig: false
+				});
 			},
 			currentServiceFeedName : function(){
 				var feed = this.attr('service').attr('feed_name');
