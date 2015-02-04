@@ -13,11 +13,13 @@ var Client = function( url, opts ) {
 	this.timeout  = opts.timeout || 5000;
 
 	var exchangeName = opts.exchangeName || 'x.liveservice',
-		exchangeType = opts.exchangeType || 'direct';
+		exchangeType = opts.exchangeType || 'direct',
+		exchangeAD   = opts.exchangeAD   || false;
+
 
 	this.conn.on('ready', function() {
 		self.quite || console.info("Connected to " + self.conn.serverProperties.product);
-		self.exchange = self.conn.exchange( exchangeName, { type: exchangeType }, function( ex ) {
+		self.exchange = self.conn.exchange( exchangeName, { type: exchangeType, autoDelete: exchangeAD}, function( ex ) {
 			self.ready.resolve('OK');
 		});
 	});
