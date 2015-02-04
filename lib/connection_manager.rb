@@ -11,7 +11,7 @@ class ConnectionManager
   end
 
   def rabbit
-    @chan ||= @rabbit_conn.create_channel
+    @rabbit_conn.create_channel
   end
   alias_method :rabbitmq, :rabbit
 

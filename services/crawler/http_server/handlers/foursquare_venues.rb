@@ -39,7 +39,7 @@ module HttpServer
           event = JSON.parse event
           @channels.each do |id, routes|
             if id == event.fetch('venue').fetch('id')
-              routes.each {|route| publish route, event, evtype}
+              routes.each {|route| publish(route,event,evtype)}
             end
           end
         end
@@ -75,7 +75,7 @@ module HttpServer
           EmbedInfo.new(embed[:id], embed[:name]),
           ServiceInfo.new(service[:id], 'foursquare', "#{event_type}_event")
 
-        Celluloid::Actor[:publisher].publish [event], owner_data
+        Celluloid::Actor[:event_publisher].publish [event], owner_data
       end
 
       def self.path

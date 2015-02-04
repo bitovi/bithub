@@ -17,7 +17,7 @@ class EventPublisher
   end
 
   def publish(events, owner_data, opts={})
-    fail ArgumentError.new('First argument (events) must be an Array') if !events.is_a?(Array)
+    # fail ArgumentError.new('First argument (events) must be an Array') if !events.is_a?(Array)
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events

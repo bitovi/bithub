@@ -26,7 +26,7 @@ class Poller
         if events.count > 0
           publish events
         else
-          notify_client
+          notification_publisher.publish(empty_response_notif)
         end
       end
     end
@@ -39,8 +39,8 @@ class Poller
     event_publisher.publish(data, @path, decorator: @decorator)
   end
 
-  def notify_client
-    LiveserviceNotifier.new.notif({
+  def empty_response_notif
+    {
       meta: {
         brand_name: @path.brand.name,
         embed_id: @path.embed.id
@@ -48,11 +48,10 @@ class Poller
       payload: {
         service: {
           id: @path.service.id,
-          lock_ttl: @lock_ttl,
           empty_results: true,
         }
       }
-    }, :services)
+    }
   end
 
   def terminate_cascading
@@ -77,5 +76,9 @@ class Poller
 
   def event_publisher
     Actor[:event_publisher]
+  end
+
+  def notification_publisher
+    Actor[:notification_publisher]
   end
 end

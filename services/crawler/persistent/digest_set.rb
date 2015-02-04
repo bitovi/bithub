@@ -24,5 +24,8 @@ class DigestSet < RedisSet
     [event.fetch(:meta).fetch(:brand_name),
      event.fetch(:meta).fetch(:feed_name),
      event.fetch(:meta).fetch(:type_name)]
+  rescue TypeError => err
+    Celluloid.logger.debug "------------ #{event}"
+    raise err
   end
 end

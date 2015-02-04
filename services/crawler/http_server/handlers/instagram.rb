@@ -89,7 +89,7 @@ module HttpServer
       end
 
       def publisher
-        Actor[:publisher]
+        Actor[:event_publisher]
       end
 
       # Subhandlers
