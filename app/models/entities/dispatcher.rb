@@ -75,15 +75,16 @@ module Entities
 
       Mappings = {
         :IssueEvent => :Issue,
+        :CustomIssueEvent => :Issue,
         :IssueCommentEvent => :IssueComment,
         :PullRequestEvent => :PullRequest,
+        # :CustomPullRequestEvent => :PullRequest,
         :PullRequestReviewEvent => :PullRequestReview,
         :WatchEvent => :Watch,
         :ForkEvent => :Fork,
         :PushEvent => :Push,
         :CreateEvent => :Create,
         :DeleteEvent => :Delete,
-        :CustomIssueEvent => :Issue,
         :CustomWatchEvent => :Watch,
         :CustomIssueCommentEvent => :IssueComment,
       }

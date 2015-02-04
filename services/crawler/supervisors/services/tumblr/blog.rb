@@ -1,6 +1,8 @@
 module Supervisors::Services::Tumblr
   class Blog < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       blog_fetcher = Fetchers::Tumblr::Posts.new(hostname) 

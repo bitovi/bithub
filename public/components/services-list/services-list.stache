@@ -3,6 +3,13 @@
 {{else}}
 	<div class="services-table-wrap">
 		<table class="table services-table">
+			<thead>
+				<tr>
+					<th>Service</th>
+					<th>Config</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
 			<tbody>
 				{{#each services}}
 					{{#isCurrentService this}}
@@ -22,8 +29,8 @@
 							<td>
 								{{{formattedConfig}}}
 							</td>
-							<td>
-								<i can-click="destroyService" class="fa fa-close pull-right destroy-service"></i>
+							<td class="actions">
+								<i can-click="destroyService" class="fa fa-trash-o pull-right destroy-service"></i>
 								<i can-click="editService" class="fa fa-pencil pull-right edit-service"></i>
 							</td>
 						</tr>

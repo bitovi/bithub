@@ -7,11 +7,11 @@ module Supervisors
 
     def initialize(path, embed_info)
       @path = SupervisionNode.new(path, embed_info)
-      Celluloid.logger.info "Booting E #{@path.actor_name}"
       boot
     end
 
     def boot
+      Celluloid.logger.info "Booting E #{@path.actor_name}"
       @services = SupervisionGroup.new
       embed_config.fetch(:services).each do |s|
         si = ServiceInfo.new(s.fetch(:id), s.fetch(:feed_name), s.fetch(:type_name))
@@ -28,8 +28,9 @@ module Supervisors
     end
 
     def stop_service_supervisor(si)
+      Celluloid.logger.info "Killing S #{@path.next_level(si).actor_name}"
       if (a = Actor[@path.next_level(si).actor_name])
-        a.shutyoself
+        a.terminate_cascading
       end
     end
 

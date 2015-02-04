@@ -1,5 +1,6 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
+  include Traits::AmqpDeclaration
 
   serialize :props, IndifferentHstore
 
@@ -173,26 +174,27 @@ class Entity < ActiveRecord::Base
   end
 
   def notify_liveservice
+    Rails.logger.info "Publishing new entity to liveservice #{msg}"
+    embeds.each do |embed|
+      x('x.liveservice').publish(msg, routing_key: :entities)
+    end if !incomplete_follow?
+  end
+
+  def msg
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     entity = EntityDecorator.decorate self
-
     payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
-    embeds.each do |embed|
-      if !incomplete_follow?
-        Support::LiveserviceNotifier.new.notif({
-          meta: {
-            brand_name: Apartment::Tenant.current,
-            embed_id: embed.id
-          },
-          payload: payload
-        }, :entities)
-      end
-    end
+    {
+      meta: {
+        brand_name: Apartment::Tenant.current,
+        embed_id: embed.id
+      },
+      payload: payload
+    }
   end
 
   def incomplete_follow?
     type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
-
 end

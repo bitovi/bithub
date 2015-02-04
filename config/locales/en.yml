@@ -54,6 +54,22 @@ en:
       destroy:
         success: "Reward deleted."
         error: "Error during reward deletion."
+    
+    services:
+      show:
+        error: "Embed not found."
+      create:
+        success: "Embed created."
+        error: "Error during embed creation."
+      update:
+        success: "Embed created."
+        error: "Error during embed creation"
+      update:
+        success: "Embed updated."
+        error: "Error during embed update"
+      destroy:
+        success: "Embed deleted."
+        error: "Error during embed deletion."
 
     services:
       create:

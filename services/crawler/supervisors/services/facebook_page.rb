@@ -2,7 +2,9 @@ require 'koala'
 
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       fetcher = Fetchers::Facebook::PageFeed.new(

@@ -29,7 +29,7 @@ module Supervisors::Services::Instagram
     def preload; raise NotImplementedError; end
 
     def publish(items)
-      Actor[:publisher].publish owner_data, items
+      publisher.publish items, owner_data
     end
 
     def owner_data
@@ -45,6 +45,10 @@ module Supervisors::Services::Instagram
 
     def client
       @client ||= ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
+    end
+
+    def publisher
+      Actor[:event_publisher]
     end
 
     def callback_url(opts={})
