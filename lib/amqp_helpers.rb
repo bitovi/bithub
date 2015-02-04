@@ -23,7 +23,7 @@ module AmqpHelpers
   end
 
   def rabbitmq_uri
-    ENV.fetch('RABBITMQ_URI') { 'amqp://bithub:Ei7PhaaH@localhost/bithub' }
+    ENV.fetch('RABBITMQ_URI') { 'amqp://bithub:bithub@localhost/bithub' }
   end
 
   def returning(exp)
