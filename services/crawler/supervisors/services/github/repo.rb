@@ -3,6 +3,7 @@ module Supervisors::Services::Github
     include Supervisors::Services::Github::Common
 
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       repo_act_fetcher = Fetchers::Github::RepoActivity.new(

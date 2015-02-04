@@ -3,6 +3,7 @@ module Supervisors::Services::Twitter
     include Supervisors::Services::Twitter::Common
 
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       hashtags_fetcher = Fetchers::Twitter::Search.new(

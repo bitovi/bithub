@@ -1,6 +1,4 @@
 require 'core_ext'
-require_relative 'error_persistor'
-require_relative 'liveservice_notifier'
 require_relative 'decorators/all'
 
 class Poller
@@ -28,22 +26,21 @@ class Poller
         if events.count > 0
           publish events
         else
-          notify_client
+          notification_publisher.publish(empty_response_notif)
         end
       end
     end
   rescue => e
-    ErrorPersistor.new(e, @path).persist.notify_client
-    Celluloid.logger.error "#{e.class.name} : #{e.message}"
+    error_publisher.publish(e, @path)
   end
 
   def publish(data)
     Celluloid.logger.info "Publishing with brand: #{@path.brand}, embed: #{@path.embed}, and service: #{@path.service}"
-    publisher.publish @path, data, decorator: @decorator
+    event_publisher.publish(data, @path, decorator: @decorator)
   end
 
-  def notify_client
-    LiveserviceNotifier.new.notif({
+  def empty_response_notif
+    {
       meta: {
         brand_name: @path.brand.name,
         embed_id: @path.embed.id
@@ -51,14 +48,13 @@ class Poller
       payload: {
         service: {
           id: @path.service.id,
-          lock_ttl: @lock_ttl,
           empty_results: true,
         }
       }
-    }, :services)
+    }
   end
 
-  def shutyoself
+  def terminate_cascading
     terminate
   end
   
@@ -74,7 +70,15 @@ class Poller
     Actor[:lock_manager]
   end
 
-  def publisher
-    Actor[:publisher]
+  def error_publisher
+    Actor[:error_publisher]
+  end
+
+  def event_publisher
+    Actor[:event_publisher]
+  end
+
+  def notification_publisher
+    Actor[:notification_publisher]
   end
 end

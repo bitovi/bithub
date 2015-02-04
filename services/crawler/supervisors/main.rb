@@ -9,11 +9,11 @@ module Supervisors
 
     def initialize
       @path = SupervisionNode.new(nil, MainNode.new)
-      Celluloid.logger.info "Booting M #{@path.actor_name}"
       boot
     end
 
     def boot
+      Celluloid.logger.info "Booting M #{@path.actor_name}"
       @brands = SupervisionGroup.new
       config.fetch(:brands).each do |b|
         bi = BrandInfo.new(b.fetch(:id), b.fetch(:name))
@@ -30,8 +30,9 @@ module Supervisors
     end
 
     def stop_brand_supervisor(bi)
+      Celluloid.logger.info "Killing B #{@path.next_level(bi).actor_name}"
       if (a = Actor[@path.next_level(bi).actor_name])
-        a.shutyoself
+        a.terminate_cascading
       end
     end
 

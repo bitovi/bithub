@@ -31,14 +31,9 @@ describe HttpServer::Handlers::Instagram  do
     Celluloid::Actor[:configurator] = Configurator.new
     Celluloid::Actor[:http_server]  = HttpServer.new
 
-    rabbitmq_uri = ENV['RABBITMQ_URI']
-
-    @rabbit = Bunny.new(rabbitmq_uri)
-    @rabbit.start
-    @chan = @rabbit.create_channel
-
-    @x = @chan.direct("x.events")
-    @q = @chan.queue("q.events").bind(@x)
+    rf = RabbitFactory.new($rabbit_channel)
+    @x = rf.x('x.web')
+    @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
   end
 
   after do
@@ -48,8 +43,8 @@ describe HttpServer::Handlers::Instagram  do
 
   ### Tests
 
-  describe "#handle" do
-    it "listens for postback notifs, queries API and publishes events" do
+  describe '#handle' do
+    it 'listens for postback notifs, queries API and publishes events' do
 
       owner_data = {
         brand: { id: 1, name: 'bitovi' },
@@ -66,7 +61,7 @@ describe HttpServer::Handlers::Instagram  do
       end
 
       # wait for an event on MQ
-      c = @q.subscribe(block: true) do |delivery_info, metadata, payload|
+      @q.subscribe do |delivery_info, metadata, payload|
         parsed = JSON.parse payload
 
         expect(parsed['content_digest'].length).to eq(32)
@@ -78,11 +73,7 @@ describe HttpServer::Handlers::Instagram  do
         expect(parsed['meta']['embed_id']).to   eq owner_data[:embed][:id]
         expect(parsed['meta']['embed_name']).to eq owner_data[:embed][:name]
         expect(parsed['meta']['service_id']).to eq owner_data[:service][:id]
-
-        @rabbit.close
       end
-
     end
   end
-
 end

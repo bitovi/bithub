@@ -1,4 +1,6 @@
 class Brand < ActiveRecord::Base
+  include Traits::AmqpDeclaration
+
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
   has_one  :subscription
@@ -20,12 +22,15 @@ class Brand < ActiveRecord::Base
   after_update  :rename_tenant_schema
   after_destroy :destroy_tenant
 
-  after_create  :notify_brand_start
-  after_destroy :notify_brand_stop
+  after_create  { notify_crawler(:start) }
+  after_destroy { notify_crawler(:stop) }
 
-
-  def self.switch!(name)
+  def self.switch!(name = nil)
     Apartment::Tenant.switch! name
+  end
+
+  def self.current
+    Apartment::Tenant.current
   end
 
   def create_tenant
@@ -54,20 +59,22 @@ class Brand < ActiveRecord::Base
     where(tenant_name: Apartment::Tenant.current).first
   end
 
-  def notify_brand_start
-    notify_embed_action(:start)
+  def notify_crawler(action)
+    unless ENV['RAILS_ENV'] == 'test'
+      Rails.logger.info "Publishing a command to crawler #{msg(action)}"
+      x('x.crawler').publish((msg(action).to_json), routing_key: :config)
+    end
   end
 
-  def notify_brand_stop
-    notify_embed_action(:stop)
-  end
-
-  def notify_embed_action(action)
-    Support::CrawlerNotifier.new.notif({
-      brand: { id: id, name: name },
+  def msg(action)
+    {
+      brand: {
+        id: id,
+        name: name
+      },
       signature: "brand_#{action}",
       action: action
-    })
+    }
   end
 
   def rename_tenant_schema

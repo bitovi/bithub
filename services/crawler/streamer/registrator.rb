@@ -1,15 +1,15 @@
-require 'bunny'
-require 'amqp_helpers'
+require 'rabbit_factory'
 
 class Registrator
   include Celluloid
 
   def initialize
     Celluloid.logger.info "Initializing Registrator"
-    @rabbit = Bunny.new(rabbitmq_uri)
-    @rabbit.start
-    @chan = @rabbit.create_channel
-    @x = @chan.direct("x.crawler")
+
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+
+    @x = rf.x("x.crawler")
+    @q = rf.q("x.crawler").bind
     listen
   end
 

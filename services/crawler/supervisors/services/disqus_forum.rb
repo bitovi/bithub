@@ -2,7 +2,9 @@ require 'supervisors/service'
 
 module Supervisors::Services::Disqus
   class Forum < Supervisors::Service
+
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       fetcher = Fetchers::Disqus::Comments.new(

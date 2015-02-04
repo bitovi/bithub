@@ -22,7 +22,7 @@ RSpec.describe Embed, :type => :model do
   describe '#moderate' do
 
     before do
-      @embed = FactoryGirl.create(:embed)
+      @embed = FactoryGirl.create(:embed, approved_by_default: false)
       entities = []
       entities << FactoryGirl.create(:github_pull_request)
       entities << FactoryGirl.create(:github_push)
