@@ -36,7 +36,7 @@ logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 class Streamer < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
   supervise Registrator, as: :registrator
-  supervise Configurator, as: :configurator, args: [{environment: $env}]
+  supervise Configurator, as: :configurator
   supervise LockManager, as: :lock_manager
   supervise StreamSupervisor, as: :stream_supervisor
 end

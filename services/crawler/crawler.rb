@@ -39,7 +39,7 @@ Celluloid.logger = logger
 class Crawler < Celluloid::SupervisionGroup
   supervise Publisher, as: :publisher
   supervise Commander, as: :commander
-  supervise Configurator, as: :configurator, args: [{environment: $env}]
+  supervise Configurator, as: :configurator
   supervise LockManager, as: :lock_manager
   supervise HttpServer::Listener, as: :http_listener
   supervise Supervisors::Main, as: :main

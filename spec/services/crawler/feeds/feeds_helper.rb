@@ -14,9 +14,11 @@ require 'amqp_helpers'
 
 require 'events/dispatcher'
 
-require 'http_server/listener'
+require 'listener/http_server'
 require 'publisher'
+require 'configurator'
 require 'decorators/all'
+require 'supervisors/support/owner_data'
 
 # conn params for services like rabbitmq
 Dotenv.load

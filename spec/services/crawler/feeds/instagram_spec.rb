@@ -25,12 +25,11 @@ describe HttpServer::Handlers::Instagram  do
   ### Init / cleanup
 
   before do
-    ENV['INSIDE_TEST'] = 'true'
-
     Celluloid.boot
 
-    Celluloid::Actor[:http_server] = HttpServer::Listener.new
-    Celluloid::Actor[:publisher]   = Publisher.new reject_old: false
+    Celluloid::Actor[:publisher]    = Publisher.new reject_old: false
+    Celluloid::Actor[:configurator] = Configurator.new
+    Celluloid::Actor[:http_server]  = HttpServer.new
 
     rabbitmq_uri = ENV['RABBITMQ_URI']
 
@@ -45,7 +44,6 @@ describe HttpServer::Handlers::Instagram  do
   after do
     Celluloid.shutdown
     @rabbit.close
-    ENV['INSIDE_TEST'] = nil
   end
 
   ### Tests
