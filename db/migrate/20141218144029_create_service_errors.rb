@@ -3,6 +3,7 @@ class CreateServiceErrors < ActiveRecord::Migration
     create_table :service_errors do |t|
       t.string :klass
       t.string :message
+      t.text :backtrace
       t.references :service
       t.timestamps
     end
