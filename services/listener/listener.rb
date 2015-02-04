@@ -1,5 +1,7 @@
-ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+LISTENER_DIR = File.dirname(__FILE__)
+ROOT_DIR = File.expand_path(File.join(LISTENER_DIR, '..', '..'))
 
+$:.unshift(LISTENER_DIR)
 $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
@@ -12,70 +14,53 @@ require 'logger_factory'
 require 'celluloid'
 require 'lib/rabbit_factory'
 require 'lib/connection_manager'
-require_relative 'helpers'
+
+require 'handlers'
 
 class Listener
   include Celluloid
 
-  def initialize(q_name, q_opts, fn)
-    routing_key = q_opts.fetch(:routing_key) { '' }
-
+  def initialize(q_name, q_rk, handler_class)
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
-    @x = rf.x('x.web', :direct)
-    @q = rf.q(q_name).bind(@x, routing_key: routing_key)
-    @fn = fn
+    @x = rf.x('x.web')
+    @q = rf.q(q_name).bind(@x, routing_key: q_rk)
+
+    @handler = handler_class.new(self)
 
     Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
     async.listen
   end
 
   def listen
-    @q.subscribe(block: true) do |delivery_info, properties, payload|
-      @fn.(ActiveSupport::JSON.decode(payload))
+    @q.subscribe do |delivery_info, properties, payload|
+      packet = JSON.parse(payload)
+      @handler.handle(packet)
     end
+  end
+
+  def handle_errors
+    yield
+  rescue => err
+    Celluloid.logger.error "Error: #{err.class}, #{err.message}"
+    Celluloid.logger.error "Backtrace: ----------"
+    Celluloid.logger.error err.backtrace.join("\n")
+  ensure
+    Apartment::Tenant.switch! # either way switch back to public
   end
 end
 
 class Listeners < Celluloid::SupervisionGroup
-  supervise Listener, as: :error_l, args: ['q.web.errors', { routing_key: 'errors' }, ->(packet) do
-    meta           = packet.fetch('meta')
-    payload        = packet.fetch('payload')
-    brand_name     = meta.fetch('brand_name')
+  supervise(
+    Listener,
+    as: :error_listener,
+    args: ['q.web.errors', 'errors', ErrorHandler]
+  )
 
-    Celluloid.logger.info "New error received; brand: '#{brand_name}', payload: #{payload}"
-
-    begin
-      Apartment::Tenant.switch(brand_name) { ServiceError.new(payload).save! }
-    rescue ValidationError => err
-      Celluloid.logger.error "ValidationError: #{err.message}"
-    rescue StandardError => err
-      Celluloid.logger.error "Saving ServiceError failed: #{err.message}"
-      Celluloid.logger.error err.backtrace.join("\n")
-    ensure
-      Apartment::Tenant.switch! # either way switch back to public
-    end
-  end]
-
-  supervise Listener, as: :event_l, args: ['q.web.events', { routing_key: 'events' }, ->(payload) do
-    meta           = payload.fetch('meta')
-    content_digest = payload.fetch('content_digest')
-    brand_name     = meta.fetch('brand_name')
-    embed_name     = meta.fetch('embed_name')
-    feed_name      = meta.fetch('feed_name')
-    type_name      = meta.fetch('type_name')
-
-    Celluloid.logger.info "New event received; digest: '#{content_digest}', brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
-
-    begin
-      Apartment::Tenant.switch(brand_name) { Dispatcher.new(logger: Celluloid.logger).dispatch(payload) }
-      Celluloid.logger.info "(#{content_digest}) Dispatching finished"
-    rescue StandardError => err
-      Celluloid.logger.error "(#{content_digest}) Dispatching failed: #{err.message}"
-      Celluloid.logger.error err.backtrace.join("\n")
-    ensure
-      Apartment::Tenant.switch! # either way switch back to public
-    end
-  end]
+  supervise(
+    Listener,
+    as: :event_listener,
+    args: ['q.web.events', 'events', EventHandler]
+  )
 end
 
 Listeners.run
