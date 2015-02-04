@@ -6,7 +6,7 @@ class EventPublisher
   include Celluloid
 
   def initialize(opts={})
-    Celluloid.logger.info 'Initializing entity publisher'
+    Celluloid.logger.info 'Initializing Entity publisher'
 
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
@@ -17,13 +17,14 @@ class EventPublisher
   end
 
   def publish(events, owner_data, opts={})
+    fail ArgumentError.new('First argument (events) must be an Array') if !events.is_a?(Array)
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    Celluloid.logger.info "Publishing #{new_events.size} messages!"
+    Celluloid.logger.info "Publishing #{new_events.size} Events"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
