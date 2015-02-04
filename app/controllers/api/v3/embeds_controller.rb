@@ -41,7 +41,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   private
 
   def embed_params
-    params.require(:embed).permit(:name, :colorscheme, :layout)
+    params.require(:embed).permit(:name, :colorscheme, :layout, :approved_by_default)
   end
 
   def generated_name

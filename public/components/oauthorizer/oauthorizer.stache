@@ -1,5 +1,7 @@
 {{#if isPending}}
-	<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+	<div class="loader oauthorizer-loader">
+		<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+	</div>
 {{else}}
 
 	{{#if isAuthorized}}

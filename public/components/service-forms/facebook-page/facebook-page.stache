@@ -1,5 +1,4 @@
-<div class="form-group">
-	<label>Page ID</label>
-	<bh-suggestions service="facebook" val="{map.config.id}"></bh-suggestions>
+<div class="form-group form-group-without-margin suggestions-wrapper">
+	<bh-suggestions service="facebook" val="{map.config.id}" pick-suggestion-label="Select a page"></bh-suggestions>
 	{{{configErrors errors 'id'}}}
 </div>

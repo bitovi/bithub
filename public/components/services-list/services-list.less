@@ -1,27 +1,36 @@
 bh-services-list {
 	display: block;
-	margin: 0 -10px;
-	h2 {
-		margin: 0 0 5px;
-		font-size: 20px;
-	}
+	margin: 0 -25px;
+	border-bottom: 1px solid #ddd;
 	.destroy-service, .edit-service {
 		cursor: pointer;
-	}
-	.services-table-wrap {
-		margin-left: -15px;
-		margin-right: -15px;
+		color: #666;
+		&:hover {
+			color: #333;
+		}
 	}
 	table.services-table {
-		> tbody > tr {
-			td:first-child {
-				padding-left: 15px;
-			}
-			td:last-child {
-				padding-right: 15px;
-			}
+		margin-bottom: 0;
+		> tbody > tr, > thead > tr{
 			&.service-row td {
 				border-top-color: #f1efef;
+			}
+			th:first-child, td:first-child {
+				padding-left: 25px;
+			}
+			th:last-child, td:last-child {
+				padding-right: 25px;
+			}
+			td {
+				border-bottom: 1px solid #ddd;
+			}
+			th.actions {
+				width: 70px;
+			}
+			td.actions .fa {
+				display: inline-block;
+				margin-top: 3px;
+
 			}
 		}
 		.alert-config-error {
@@ -32,12 +41,13 @@ bh-services-list {
 	ul.config {
 		font-size: 12px;
 		margin: 0;
+		padding: 0 0 0 16px;
 	}
 	.toggle-errors {
 		cursor: pointer;
 	}
 	.table > tbody > tr.current-editing-service > td {
-		border-bottom: 1px solid #ccc;
-		border-top: 1px solid #ccc;
+		padding-bottom: 0;
+		padding-top: 25px;
 	}
 }

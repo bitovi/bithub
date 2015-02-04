@@ -3,6 +3,7 @@ module Supervisors::Services::Twitter
     include Supervisors::Services::Twitter::Common
 
     def boot
+      super
       @endpoints = SupervisionGroup.new
 
       user_timeline_fetcher = Fetchers::Twitter::Followers.new(client, {user_handle: user_handle})

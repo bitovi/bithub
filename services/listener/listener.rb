@@ -1,5 +1,7 @@
-ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+LISTENER_DIR = File.dirname(__FILE__)
+ROOT_DIR = File.expand_path(File.join(LISTENER_DIR, '..', '..'))
 
+$:.unshift(LISTENER_DIR)
 $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
@@ -9,54 +11,56 @@ require 'bunny'
 require 'config/environment'
 require 'dispatcher'
 require 'logger_factory'
-require_relative 'helpers'
+require 'celluloid'
+require 'lib/rabbit_factory'
+require 'lib/connection_manager'
+
+require 'handlers'
 
 class Listener
-  def initialize(uri=ENV['RABBITMQ_URI'])
-    @logger = LoggerFactory.new('listener', :environment => ENV['ENV']).component_logger
-    @logger.info 'Starting listener'
+  include Celluloid
 
-    @conn = Bunny.new(uri).start
-    @chan = @conn.create_channel
+  def initialize(q_name, q_rk, handler_class)
+    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    @x = rf.x('x.web')
+    @q = rf.q(q_name).bind(@x, routing_key: q_rk)
 
-    @logger.info 'Listener connected to AMQP'
+    @handler = handler_class.new(self)
+
+    Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
+    async.listen
   end
 
-  def listen(queue_name, args={})
-    @chan
-      .queue(queue_name, args)
-      .subscribe(:block => true) do |delivery_info, properties, payload|
-        yield ActiveSupport::JSON.decode(payload), @logger if block_given?
-      end
+  def listen
+    @q.subscribe do |delivery_info, properties, payload|
+      packet = JSON.parse(payload)
+      @handler.handle(packet)
+    end
+  end
+
+  def handle_errors
+    yield
+  rescue => err
+    Celluloid.logger.error "Error: #{err.class}, #{err.message}"
+    Celluloid.logger.error "Backtrace: ----------"
+    Celluloid.logger.error err.backtrace.join("\n")
+  ensure
+    Apartment::Tenant.switch! # either way switch back to public
   end
 end
 
+class Listeners < Celluloid::SupervisionGroup
+  supervise(
+    Listener,
+    as: :error_listener,
+    args: ['q.web.errors', 'errors', ErrorHandler]
+  )
 
-Listener
-  .new(ENV['RABBITMQ_URI'])
-  .listen('q.events') do |payload, logger|
-    meta           = payload.fetch('meta')
-    brand_name     = meta.fetch('brand_name')
-    embed_name     = meta.fetch('embed_name')
-    feed_name      = meta.fetch('feed_name')
-    type_name      = meta.fetch('type_name')
-    content_digest = payload.fetch('content_digest')
+  supervise(
+    Listener,
+    as: :event_listener,
+    args: ['q.web.events', 'events', EventHandler]
+  )
+end
 
-    logger.info "(#{content_digest}) New message received; brand: '#{brand_name}', embed: '#{embed_name}', feed: '#{feed_name}', type: '#{type_name}'"
-
-    Apartment::Tenant.switch! brand_name
-    logger.debug "(#{content_digest}) Current tenant switched to #{Apartment::Tenant.current}"
-
-    # Catch any possible errors
-    # (errors inside bunny listen method won't be logged :/)
-    begin
-      Dispatcher.new(logger: logger).dispatch payload
-      logger.info "(#{content_digest}) Dispatching finished"
-    rescue Exception => err
-      logger.error "(#{content_digest}) Dispatching failed: #{err.message}"
-      logger.error err.backtrace.join("\n")
-    end
-
-    Apartment::Tenant.switch!
-    logger.debug "(#{content_digest}) Current tenant switched back to #{Apartment::Tenant.current}"
-  end
+Listeners.run

@@ -5,12 +5,9 @@ bh-services {
 		margin-bottom: 20px;
 	}
 	.service-slider-wrap {
-		overflow: hidden;
-		height: 77px;
-		border-left: 1px solid #dad9d9;
-		border-right: 1px solid #dad9d9;
+		padding: 25px 0;
 		.new-service-picker {
-			width: 711px;
+			margin-bottom: 0;
 			li {
 				float: left;
 				width: 72px;
@@ -19,6 +16,7 @@ bh-services {
 				text-align: center;
 				font-size: 9px;
 				margin-right: -1px;
+				margin-top: -1px;
 				cursor: pointer;
 				.fa {
 					font-size: 400%;
@@ -29,44 +27,15 @@ bh-services {
 					background: white;
 					color: #249cb8;
 				}
-				&:last-child {
-					border-right: none;
-				}
-				&:first-child {
-					border-left: none;
-				}
 			}
 		}
-	}
-	.scroll-left, .scroll-right {
-		background: #dad9d9;
-		color: white;
-		margin-top: -48px;
-		display: block;
-		width: 21px;
-		height: 21px;
-		position: absolute;
-		line-height: 21px;
-		text-align: center;
-		border-radius: 11px;
-		font-size: 90%;
-		&:hover {
-			background: #db4222;
-		}
-	}
-	.scroll-left {
-		left: 0;
-		margin-left: -10px;
-		padding-right: 2px;
-	}
-	.scroll-right {
-		padding-left: 2px;
-		right: 0;
-		margin-right: -10px;
 	}
 	.alert-error-list {
 		padding: 5px;
 		margin-top: 5px;
 		font-size: 85%;
+	}
+	bh-service-form {
+		margin-bottom: 25px;
 	}
 }

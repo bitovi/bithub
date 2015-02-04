@@ -52,7 +52,7 @@ module Fetchers
       end
 
       def publisher
-        Celluloid::Actor[:publisher]
+        Celluloid::Actor[:event_publisher]
       end
 
     end
