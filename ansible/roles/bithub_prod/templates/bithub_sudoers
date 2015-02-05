@@ -21,3 +21,9 @@ bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-crawler-1.service
 bithub ALL=(root) NOPASSWD: /bin/systemctl start bithub-worker-1.service
 bithub ALL=(root) NOPASSWD: /bin/systemctl stop bithub-worker-1.service
 bithub ALL=(root) NOPASSWD: /bin/systemctl restart bithub-worker-1.service
+
+bithub ALL=(root) NOPASSWD: /bin/journalctl -f -u bithub-web-1
+bithub ALL=(root) NOPASSWD: /bin/journalctl -f -u bithub-liveservice-1
+bithub ALL=(root) NOPASSWD: /bin/journalctl -f -u bithub-listener-1
+bithub ALL=(root) NOPASSWD: /bin/journalctl -f -u bithub-crawler-1
+bithub ALL=(root) NOPASSWD: /bin/journalctl -f -u bithub-worker-1
