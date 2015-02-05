@@ -15,6 +15,8 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 		currentSocket && currentSocket.close();
 	});
 
+	var RELOAD_TIMEOUTS = {};
+
 	return Map.extend({
 		define : {
 			page : {
@@ -22,6 +24,7 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 			},
 			hubId : {
 				set : function(val){
+
 					this.attr('bits').splice(0);
 					
 					if(currentSocket && currentSocket.close){
@@ -51,18 +54,18 @@ steal('can/map', 'models', 'can/map/define', function(Map, Models){
 								timeout = 1,
 								self = this;
 
-							//console.log('MSG', msg.service)
-
 							if(msg.service.empty_results){
 								cb = function(service){
 									if(service.attr('entity_count') === 0){
 										service.hasNoResults();
 									}
 								}
-								timeout = 2000
+								timeout = 2000;
 							}
 
-							setTimeout(function(){
+							clearTimeout(RELOAD_TIMEOUTS[msg.service.id]);
+
+							RELOAD_TIMEOUTS[msg.service.id] = setTimeout(function(){
 								Models.Service.findOne({id: msg.service.id}).then(cb);
 							}, timeout);
 						});
