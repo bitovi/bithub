@@ -4,18 +4,32 @@ ROOT_DIR = File.expand_path(File.join(LISTENER_DIR, '..', '..'))
 $:.unshift(LISTENER_DIR)
 $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
+$:.unshift(File.join(ROOT_DIR, 'lib'))
 
 require 'bundler/setup'
 require 'rubygems'
-require 'bunny'
-require 'config/environment'
-require 'dispatcher'
-require 'logger_factory'
 require 'celluloid'
-require 'lib/rabbit_factory'
-require 'lib/connection_manager'
 
+# /
+require 'config/environment'
+
+# /lib
+require 'core_ext'
+require 'rabbit_factory'
+require 'logger_factory'
+require 'connection_manager'
+
+# /app/models
+require 'dispatcher'
+
+# /LISTENER_DIR
 require 'handlers'
+
+$env = ENV.fetch('ENV') { 'development' }
+require 'pry' if $env == 'development'
+
+logger = LoggerFactory.new('listener', :environment => $env).component_logger
+Celluloid.logger = logger
 
 class Listener
   include Celluloid
