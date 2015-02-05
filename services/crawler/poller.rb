@@ -28,6 +28,8 @@ class Poller
         else
           notification_publisher.publish(empty_response_notif)
         end
+        notification_publisher.publish_to_backend(clear_service_errors_notif)
+        notification_publisher.publish_to_frontend(clear_service_errors_notif)
       end
     end
   rescue => e
@@ -53,6 +55,22 @@ class Poller
       }
     }
   end
+
+  def clear_service_errors_notif
+    {
+      meta: {
+        brand_name: @path.brand.name,
+        embed_id: @path.embed.id,
+      },
+      payload: {
+        service: {
+          id: @path.service.id,
+          has_errors: false
+        }
+      }
+    }
+  end
+
 
   def terminate_cascading
     terminate
