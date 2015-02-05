@@ -34,8 +34,9 @@ require_relative 'persistent/digest_set'
 require_relative 'response_processor'
 require_relative 'http_server/listener'
 
-# log4r logger
 $env = ENV.fetch('ENV') { 'development' }
+require 'pry' if $env == 'development'
+
 logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 Celluloid.logger = logger
 

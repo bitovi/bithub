@@ -25,6 +25,9 @@ require 'dispatcher'
 # /LISTENER_DIR
 require 'handlers'
 
+$env = ENV.fetch('ENV') { 'development' }
+require 'pry' if $env == 'development'
+
 logger = LoggerFactory.new('listener', :environment => $env).component_logger
 Celluloid.logger = logger
 
