@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "private_network", ip: "192.168.99.99"
 
   #config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
-  config.vm.synced_folder ".", "/vagrant", type: 'nfs', nfs_version: "4,nolock"
+  config.vm.synced_folder ".", "/vagrant", type: 'nfs' #, nfs_version: "4,nolock"
 
   config.ssh.forward_agent = true
 
