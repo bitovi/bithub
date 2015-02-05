@@ -174,13 +174,13 @@ class Entity < ActiveRecord::Base
   end
 
   def notify_liveservice
-    Rails.logger.info "Publishing new entity to liveservice #{msg}"
     embeds.each do |embed|
-      x('x.liveservice').publish(msg, routing_key: :entities)
+      message = JSON.generate msg(embed)
+      x('x.liveservice').publish(message, routing_key: 'entities')
     end if !incomplete_follow?
   end
 
-  def msg
+  def msg(embed)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     entity = EntityDecorator.decorate self
     payload = view.render('api/v3/embed_entities/entity', {entity: entity})
