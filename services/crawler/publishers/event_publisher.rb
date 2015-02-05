@@ -50,7 +50,7 @@ class EventPublisher
 
     dispatched = Events::Dispatcher.dispatch(event, feed)
 
-    # todo: move this to separete decorator?
+    # todo: move this to separate decorator?
     processed = {
       meta: {
         type_name: dispatched.type_name.snake_case,
@@ -65,11 +65,11 @@ class EventPublisher
       source_data: event
     }
 
-    Celluloid.logger.info "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
+    Celluloid.logger.info "(#{processed[:content_digest]}) Event processed: #{processed[:meta]}"
     decorator.decorate processed
+  # TODO!!!: Publisher shouldn't be handling dispatching errors
   rescue Events::DispatchError => e
-    Celluloid.logger.error "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
-    Celluloid.logger.error "Event: #{event}"
-    Celluloid.logger.error "Error: #{e}"
+    Celluloid.logger.error e
+    nil # if we can't disptch, return nil so it will end up filtered out
   end
 end
