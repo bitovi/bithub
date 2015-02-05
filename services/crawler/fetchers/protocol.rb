@@ -33,6 +33,10 @@ module Fetchers
       raise ConfigError.new("Blog doesn't exist.")
       log_and_return_empty e
 
+    # If we cause a Celluloid error, let it propagate
+    rescue Celluloid::Error => e
+      raise e
+
     # Everything else that's not catastrophic
     rescue => e
       raise UnknownError.new "#{e.class.name} with message #{e.to_s}"

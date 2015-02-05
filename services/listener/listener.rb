@@ -75,6 +75,12 @@ class Listeners < Celluloid::SupervisionGroup
     as: :event_listener,
     args: ['q.web.events', 'events', EventHandler]
   )
+  
+  supervise(
+    Listener,
+    as: :command_listener,
+    args: ['q.web.commands', 'commands', CommandHandler]
+  )
 end
 
 Listeners.run

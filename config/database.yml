@@ -5,6 +5,7 @@ development:
   username: bithub
   password: bithub
   socket: /var/run/postgresql/.s.PGSQL.5432
+  pool: 10
 
 test:
   adapter: postgresql
@@ -20,6 +21,7 @@ testing:
   username: bithub
   password: Oof4laed
   socket: /var/run/postgresql/.s.PGSQL.5432
+  pool: 10
 
 staging:
   adapter: postgresql
@@ -28,6 +30,7 @@ staging:
   username: bithub
   password: Ahc5eish
   socket: /var/run/postgresql/.s.PGSQL.5432
+  pool: 10
 
 production:
   adapter: postgresql
@@ -36,3 +39,4 @@ production:
   username: bithub
   password: Chooth5z
   socket: /var/run/postgresql/.s.PGSQL.5432
+  pool: 10
