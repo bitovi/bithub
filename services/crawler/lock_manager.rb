@@ -11,7 +11,11 @@ class LockManager
   attr_accessor :interval
 
   def lock(lock_info)
-    @redis.setex lock_info.name, lock_info.ttl, "LOCKED"
+    if lock_info.ttl == :infinity
+      @redis.set lock_info.name, "LOCKED"
+    else
+      @redis.setex lock_info.name, lock_info.ttl, "LOCKED"
+    end
   end
 
   def unlock(lock_info)
@@ -19,6 +23,6 @@ class LockManager
   end
 
   def locked?(lock_info)
-    not @redis.get(lock_info.name).nil?
+    !@redis.get(lock_info.name).nil?
   end
 end

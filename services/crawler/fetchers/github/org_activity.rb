@@ -13,7 +13,15 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @client.activity.events.org @org
+          @client.activity.events.auto_pagination = false
+          @client.activity.events.org(@org)
+        end
+      end
+
+      def initial_fetch
+        handle_errors do
+          @client.activity.events.auto_pagination = true
+          @client.activity.events.org(@org)
         end
       end
     end
