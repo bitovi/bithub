@@ -34,5 +34,8 @@ module Bithub
     config.stripe.auto_mount = false
 
     config.middleware.use Sass::Plugin::Rack
+
+    # possibly resolved issues with sidekiq :/
+    Celluloid::LINKING_TIMEOUT = 10
   end
 end
