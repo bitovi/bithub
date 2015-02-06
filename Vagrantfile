@@ -1,5 +1,5 @@
 Vagrant.configure(2) do |config|
-  config.vm.box = "chef/debian-7.4"
+  config.vm.box = "chef/debian-7.6"
 
   config.vm.network "forwarded_port", guest: 80,    host: 8080   # http
   config.vm.network "forwarded_port", guest: 5432,  host: 5433   # postgres
@@ -8,7 +8,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "private_network", ip: "192.168.99.99"
 
-  config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
+  #config.vm.synced_folder ".", "/vagrant", :owner=> "vagrant", :group=>"vagrant", :mount_options => ['dmode=775', 'fmode=775']
+  config.vm.synced_folder ".", "/vagrant", type: 'nfs' #, nfs_version: "4,nolock"
 
   config.ssh.forward_agent = true
 
@@ -20,7 +21,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/site.yml"
+    ansible.playbook = "ansible/vagrant.yml"
     ansible.sudo = true
     ansible.host_key_checking = false
     # ansible.verbose = "vvvv"

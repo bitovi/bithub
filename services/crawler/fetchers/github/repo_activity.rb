@@ -13,6 +13,14 @@ module Fetchers
 
       def fetch
         handle_errors do
+          @client.activity.events.auto_pagination = false
+          @client.activity.events.repos(user: @user, repo: @repo)
+        end
+      end
+
+      def initial_fetch
+        handle_errors do
+          @client.activity.events.auto_pagination = true
           @client.activity.events.repos(user: @user, repo: @repo)
         end
       end

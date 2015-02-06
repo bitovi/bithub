@@ -1,24 +1,26 @@
-ROOT_DIR = File.expand_path(File.join(File.dirname(__FILE__),  '..', '..'))
+CRAWLER_DIR = File.dirname(__FILE__)
+ROOT_DIR = File.expand_path(File.join(CRAWLER_DIR,  '..', '..'))
 
-$:.unshift(File.join(ROOT_DIR, 'app'))
+$:.unshift(CRAWLER_DIR)
+$:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 $:.unshift(File.join(ROOT_DIR, 'lib'))
-$:.unshift(File.join(ROOT_DIR, 'services'))
-$:.unshift(File.join(ROOT_DIR, 'services', 'crawler'))
 
 require 'bundler/setup'
 require 'rubygems'
 require 'celluloid'
 require 'celluloid/io'
-require 'bunny'
-require 'pry'
+
+# /lib
 require 'core_ext'
 require 'core_helpers'
 require 'rabbit_factory'
 require 'logger_factory'
 
+# /app/models
 require 'events/dispatcher'
 
+# /CRAWLER_DIR
 require_relative 'supervisors/main'
 require_relative 'lock_manager'
 require_relative 'publishers/error_publisher'
@@ -31,10 +33,10 @@ require_relative 'decorators/all'
 require_relative 'persistent/digest_set'
 require_relative 'response_processor'
 
-# log4r logger
 $env = ENV.fetch('ENV') { 'development' }
-logger = LoggerFactory.new('crawler', :environment => $env).component_logger
+require 'pry' if $env == 'development'
 
+logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup

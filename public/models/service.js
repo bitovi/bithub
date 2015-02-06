@@ -202,6 +202,9 @@ function(Model, _keys){
 		},
 		formattedErrorClass : function(){
 			return this.attr('error.klass');
+		},
+		clearErrors : function(){
+			this.removeAttr('error');
 		}
 	});
 });

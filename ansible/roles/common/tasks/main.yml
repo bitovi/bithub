@@ -1,26 +1,11 @@
+- name: Update packages
+  apt: update_cache=yes
+
 - name: Install ansible apt dependecies
   apt: name={{ item }} state=installed
   with_items:
     - python-apt
     - aptitude
-
-- name: Update apt sources.list
-  copy: src=sources.list dest=/etc/apt/sources.list
-
-- name: Add additional repo keys
-  shell: "wget --quiet -O - {{ item }} | sudo apt-key add -"
-  with_items:
-    - https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-
-- name: Run apt-get update
-  apt: update_cache=yes
-
-- name: Run aptitude safe-upgrade
-  apt: upgrade=safe
-
-# - name: Install grub
-#   shell: grub-install /dev/sda
 
 - name: Install common deps
   apt: name={{ item }} state=installed

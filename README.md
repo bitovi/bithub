@@ -36,6 +36,8 @@ This will take some time (~30 mins), it will download Vagrant box (chef/debian-7
 
 After all that is over you should be able to ssh into guest machine, your project directory on host will be mounted under `/vagrant` path on guest.
 
+It would be good to restart Vagrant machine after provisining so that new kernel and vmbox additions gets reloaded, you can do that with `vagrant reload`.
+
 ```
 ssh -p 2222 bithub@127.0.0.1
 ```
@@ -54,3 +56,18 @@ Here are the port mappings, check `Vagrantfile` and `ansible/site.yml` for addit
 | 6380   | 6379    | redis
 
 After `foreman start web` on guest, you should be able to access `http://127.0.0.1:8080` on your host machine.
+
+
+## Server provisioning
+
+Change directory to `ansible`, take a look at `server.yml`, change config if needed and run:
+
+`ansible-playbook server.yml --vault-password-file .vault_pass.txt`
+
+(Optionally run only tagged tasks by passing `-t _tag_name_` param)
+
+`.vault_pass.txt` isn't in version control b/c it contains Ansible vault password in clear text.
+
+Other passwords are stored in group/host vars and can be updated by running `ansible-vault edit group_vars/staging.yml`.
+
+Check http://docs.ansible.com/playbooks_vault.html for more info about using Ansible vaults.
