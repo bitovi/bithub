@@ -177,7 +177,7 @@ class Entity < ActiveRecord::Base
     embeds.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice').publish(message, routing_key: 'entities')
-    end if !incomplete_follow?
+    end if !is_pending?
   end
 
   def msg(embed)
@@ -192,9 +192,5 @@ class Entity < ActiveRecord::Base
       },
       payload: payload
     }
-  end
-
-  def incomplete_follow?
-    type_name == 'follow' && feed_name == 'twitter' && (props['target_name'].blank? || props['origin_author_name'].blank?)
   end
 end

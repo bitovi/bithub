@@ -25,6 +25,7 @@ module Entities
         Entity.new({
           title: "followed user #{@event.target.id}",
           origin_ts: origin_ts,
+          is_pending: true,
           props: {
             origin_author_id: @event.source.id.to_s,
             origin_author_name: @event.source.screen_name,
