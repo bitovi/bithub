@@ -24,7 +24,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    Celluloid.logger.info "Publishing #{new_events.size} Events"
+    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' #{new_events.size} Events"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -38,9 +38,12 @@ class EventPublisher
   end
 
   def processed(events, owner_data, decorator)
-    events.map do |e|
+    processed_events = events.map do |e|
       process_one e, owner_data, decorator
     end.compact
+
+    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' processed #{processed_events.count} Events"
+    processed_events
   end
 
   def process_one(event, owner_data, decorator)
@@ -65,7 +68,6 @@ class EventPublisher
       source_data: event
     }
 
-    Celluloid.logger.info "(#{processed[:content_digest]}) Event processed: #{processed[:meta]}"
     decorator.decorate processed
   # TODO!!!: Publisher shouldn't be handling dispatching errors
   rescue Events::DispatchError => e
