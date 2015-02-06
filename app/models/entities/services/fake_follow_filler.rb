@@ -40,6 +40,8 @@ module Entities
             title_tgt = y_name ? ('@' + y_name) : ('UID' + y_id)
 
             e.title = "#{title_src} followed #{title_tgt}"
+
+            e.is_pending = false
             e.props_will_change!
             e.save
           end
