@@ -1,0 +1,106 @@
+
+### Setup user env
+
+- name: Add bithub.loc to hosts
+  lineinfile: dest=/etc/hosts line="127.0.0.1 bithub.loc"
+
+- name: Create bithub user
+  user: name=bithub password=bithub shell=/bin/bash group=vagrant groups=sudo append=yes
+
+- name: Copying yours id_rsa.pub to authorized_keys
+  authorized_key: user=bithub key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  ignore_errors: True
+
+- name: Upon login chdir bithub user to the shared dir /vagrant
+  template: src=.bash_profile dest=/home/bithub/.bash_profile owner=bithub group=vagrant
+
+### Configure nginx vhost
+
+- name: Copy bithub vhost
+  template: src=bithub_vhost dest=/etc/nginx/sites-available/bithub
+  notify:
+    - restart nginx
+
+- name: Enable bithub vhost
+  file: src=/etc/nginx/sites-available/bithub dest=/etc/nginx/sites-enabled/bithub state=link
+  notify:
+    - restart nginx
+
+### Configure RabbitMQ
+
+- name: Create RabbitMQ vhost
+  rabbitmq_vhost: name='/bithub' state=present
+
+- name: Create RabbitMQ user
+  rabbitmq_user: user=bithub
+                 password=bithub
+                 force=yes
+                 vhost='/bithub'
+                 tags=administrator
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
+
+
+### Configure Postgresql
+
+- name: Create Postgresql user
+  postgresql_user: name=bithub
+                   password=bithub
+                   role_attr_flags=CREATEDB,NOSUPERUSER
+  sudo: yes
+  sudo_user: 'postgres'
+
+- name: Create Postgresql database
+  postgresql_db: name=bithub_development
+                 owner=bithub
+                 encoding='UTF-8'
+  sudo: yes
+  sudo_user: 'postgres'
+
+
+### Setup bithub
+
+# bundle to bithub's home b/c shared folder is damn slow
+- name: Run bundle install
+  command: bundle install --binstubs --path=/home/bithub/bundle
+  args:
+    chdir: "{{ bithub.project_path }}"
+  sudo: True
+  sudo_user: bithub
+
+- name: Run rake tasks for db creating and migrating
+  command: bundle exec rake {{ item }}
+  args:
+    chdir: "{{ bithub.project_path }}"
+  sudo: True
+  sudo_user: bithub
+  with_items:
+    - "db:migrate"
+
+- name: Install npm packages for the liveservice
+  npm: path=/vagrant/services/liveservice
+  sudo: True
+  sudo_user: bithub
+
+- name: NPM install for the client
+  command: npm install --production --silent
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub
+
+- name: Bower install for the client
+  command: bower install --quite --config.interactive=false
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub
+
+- name: Steal build for the client
+  command: ./node_modules/steal-tools/bin/steal build --config=stealconfig.js --main=bithub-social
+  args:
+    chdir: "{{ bithub.project_path }}/public"
+  sudo: True
+  sudo_user: bithub

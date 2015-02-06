@@ -1,5 +1,14 @@
 namespace :deploy do
 
+  desc "Preparation tasks"
+  task :prepare do
+    on roles(:all) do |host|
+      within fetch(:shared_path) do
+        execute :mkdir, '-p', 'pids', 'sockets'
+      end
+    end
+  end
+
   desc "Export upstart scripts"
   task :export do
     on roles(:all) do |host|
@@ -9,19 +18,16 @@ namespace :deploy do
       options << "--log #{fetch(:log_path)}"
       options << "--user #{fetch(:user)}"
       options << "--env #{fetch(:current_path)}/.env_#{fetch(:stage)}"
+      options << "--template #{fetch(:current_path)}/lib/capistrano/tasks/templates"
       options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
-      dst = '/etc/init'
+
+      dst = "/lib/systemd/system/"
 
       within fetch(:release_path) do
-        capture :foreman, :export, options, :upstart, dst
+        capture "sudo foreman export #{options.join(' ')} systemd #{dst}"
       end
-    end
-  end
 
-  desc "Symlink uploads"
-  task :symlink_uploads do
-    on roles(:all) do |host|
-      execute :ln, '-s', '/home/bithub/web/shared/uploads/', release_path.join('public/uploads')
+      execute 'sudo systemctl daemon-reload'
     end
   end
 
@@ -74,8 +80,8 @@ namespace :deploy do
     end
   end
 
+  after :finishing, 'deploy:prepare'
   after :finishing, 'deploy:export'
-  after :finishing, 'deploy:symlink_uploads'
   after :finishing, 'deploy:liveservice:npm_install'
   after :finishing, 'deploy:client:npm_install'
   after :finishing, 'deploy:client:bower_install'

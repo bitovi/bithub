@@ -1,0 +1,43 @@
+- name: "Check if ruby is already installed"
+  stat: path=/opt/ruby-{{ ruby.version }}/bin/ruby
+  register: st_ruby
+
+- name: "Clone ruby-build repo"
+  git: repo=https://github.com/sstephenson/ruby-build.git dest=/tmp/ruby-build
+
+- name: "Install ruby-build"
+  shell: ./install.sh
+  args:
+    chdir: /tmp/ruby-build
+  when: not st_ruby.stat.exists
+
+- name: "Build ruby"
+  shell: ruby-build {{ ruby.version }} /opt/ruby-{{ ruby.version }}
+  when: not st_ruby.stat.exists
+
+- name: "Symlink ruby executables"
+  file: src=/opt/ruby-{{ ruby.version }}/bin/{{ item }} dest=/usr/local/bin/{{ item }} state=link
+  with_items:
+    - ruby
+    - irb
+    - gem
+    - rake
+
+- name: "Install common gems"
+  gem: name={{ item }} user_install=false state=present
+  with_items:
+    - bundler
+    - jekyll
+    - pry
+    - pry-doc
+    - rb-readline
+    - foreman
+
+- name: "Symlink ruby executables"
+  file: src=/opt/ruby-{{ ruby.version }}/bin/{{ item }} dest=/usr/local/bin/{{ item }} state=link
+  with_items:
+    - bundle
+    - bundler
+    - jekyll
+    - pry
+    - foreman

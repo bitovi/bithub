@@ -28,7 +28,8 @@ log4r_config:
 
     - name     : component_logfile
       type     : DateFileOutputter
-      filename : "/home/bithub/web/shared/log/#{COMPONENT_NAME}.log"
+      dirname  : "/home/bithub/web/shared/log"
+      filename : "#{COMPONENT_NAME}.log"
       trunc    : false
       maxsize  : 104857600
       max_backups : 10
