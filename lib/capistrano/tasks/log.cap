@@ -3,60 +3,36 @@ namespace :log do
   desc "Tail listener log"
   task :listener do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'listener-1.log')
+      execute 'sudo journalctl -f -u bithub-listener-1'
     end
   end
 
   desc "Tail worker log"
   task :worker do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'worker-1.log')
+      execute 'sudo journalctl -f -u bithub-worker-1'
     end
   end
 
   desc "Tail liveservice log"
   task :liveservice do
     on roles(:app) do |host|
-      execute :tail, '-f', File.join(fetch(:log_path), 'liveservice-1.log')
+      execute 'sudo journalctl -f -u bithub-liveservice-1'
     end
   end
 
-  namespace :crawler do
-    desc "Tail crawler log"
-    task :poller do
-      on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'crawler-1.log')
-      end
-    end
-
-    desc "Tail crawler log"
-    task :streamer do
-      on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'streamer-1.log')
-      end
+  desc "Tail rails log"
+  task :web do
+    on roles(:app) do |host|
+      execute 'sudo journalctl -f -u bithub-web-1'
     end
   end
 
-  namespace :web do
-    desc "Tail rails log"
-    task :rails do
-      on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'web-1.log')
-      end
-    end
-
-    desc "Tail ActiveRecord log"
-    task :active_record do
-      on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'active_record.log')
-      end
-    end
-
-    desc "Tail ActionController log"
-    task :action_controller do
-      on roles(:app) do |host|
-        execute :tail, '-f', File.join(fetch(:log_path), 'action_controller.log')
-      end
+  desc "Tail rails log"
+  task :crawler do
+    on roles(:app) do |host|
+      execute 'sudo journalctl -f -u bithub-crawler-1'
     end
   end
+
 end

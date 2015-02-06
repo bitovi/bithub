@@ -52,7 +52,7 @@ gem 'omniauth-tumblr'
 
 gem 'redcarpet'
 
-gem 'foreman', '~> 0.63.0'
+gem 'foreman', '~> 0.77'
 gem 'sanitize'
 gem 'htmlentities'
 gem 'andand'

@@ -10,41 +10,18 @@
 - name: Install psycopg2, used by postgresql_* modules
   apt: name=python-psycopg2 state=installed
 
-- name: Copy postgresql.conf
-  copy: src=postgresql.conf dest=/etc/postgresql/{{ pg.version }}/main/postgresql.conf
+- name: Listen on all interfaces
+  lineinfile: dest=/etc/postgresql/{{ pg.version }}/main/postgresql.conf
+              regexp="listen_addresses = "
+              line="listen_addresses = '*'"
+              state=present
   notify:
     - restart postgresql
-
-- name: Copy pg_ident.conf
-  copy: src=pg_ident.conf dest=/etc/postgresql/{{ pg.version }}/main/pg_ident.conf
-  notify:
-    - restart postgresql
-
-- name: Copy pg_hba.conf
-  copy: src=pg_hba.conf dest=/etc/postgresql/{{ pg.version }}/main/pg_hba.conf
-  notify:
-    - restart postgresql
-
-- name: Restart PostgreSQL
-  service: name=postgresql state=restarted
-
-- name: Set password for postgres role
-  postgresql_user: name=postgres password={{ pg.password }}
 
 - name: Create hstore,intarray extensions in template1 database
   command: psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS {{ item }}"
   with_items:
-    - "hstore"
-    - "intarray"
+    - 'hstore'
+    - 'intarray'
   sudo: True
   sudo_user: postgres
-
-- name: Create user
-  postgresql_user: name={{ pg.username }}
-                   password={{ pg.password }}
-                   role_attr_flags=CREATEDB,NOSUPERUSER
-
-- name: Create db
-  postgresql_db: name={{ pg.dbname }}
-                 owner={{ pg.username }}
-                 encoding='UTF-8'

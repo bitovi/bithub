@@ -1,0 +1,22 @@
+- name: Bithub Vagrant Development
+  hosts: all
+  user: vagrant
+  vars:
+    domain: 'bithub.loc'
+    env: 'development'
+    pg:
+      version: '9.4'
+    ruby:
+      version: '2.1.2'
+    bithub:
+      project_path: '/vagrant'
+  roles:
+    - { role: jessie,      tags: ['jessie'] }
+    - { role: common,      tags: ['common'] }
+    - { role: nodejs,      tags: ['nodejs'] }
+    - { role: nginx,       tags: ['nginx'] }
+    - { role: postgresql,  tags: ['postgresql'] }
+    - { role: rabbitmq,    tags: ['rabbitmq'] }
+    - { role: redis,       tags: ['redis'] }
+    - { role: ruby,        tags: ['ruby'] }
+    - { role: bithub_dev,  tags: ['bithub'] }

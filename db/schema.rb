@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20150206154027) do
 
   create_schema "exuberant_swamp_8184_1"
 
-  create_extension "hstore", :version => "1.2"
+  create_extension "hstore", :version => "1.3"
   create_extension "intarray", :version => "1.0"
 
   # These are extensions that must be enabled in order to support this database
