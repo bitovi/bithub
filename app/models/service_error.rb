@@ -10,7 +10,7 @@ class ServiceError < ActiveRecord::Base
 
   def notify_liveservice
     Rails.logger.info "Publishing error to liveservice #{msg}"
-    x('x.liveservice').publish(msg, routing_key: :services)
+    x('x.liveservice').publish(msg.to_json, routing_key: :services)
   end
 
   def msg
