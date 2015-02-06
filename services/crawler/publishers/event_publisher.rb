@@ -24,7 +24,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    Celluloid.logger.info "Publishing #{new_events.size} Events"
+    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' #{new_events.size} Events"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -38,9 +38,12 @@ class EventPublisher
   end
 
   def processed(events, owner_data, decorator)
-    events.map do |e|
+    processed_events = events.map do |e|
       process_one e, owner_data, decorator
     end.compact
+
+    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' processed #{processed_events.count} Events"
+    processed_events
   end
 
   def process_one(event, owner_data, decorator)
@@ -50,7 +53,7 @@ class EventPublisher
 
     dispatched = Events::Dispatcher.dispatch(event, feed)
 
-    # todo: move this to separete decorator?
+    # todo: move this to separate decorator?
     processed = {
       meta: {
         type_name: dispatched.type_name.snake_case,
@@ -65,11 +68,10 @@ class EventPublisher
       source_data: event
     }
 
-    Celluloid.logger.info "(#{processed[:content_digest]}) Event processed: #{processed[:meta].inspect}"
     decorator.decorate processed
+  # TODO!!!: Publisher shouldn't be handling dispatching errors
   rescue Events::DispatchError => e
-    Celluloid.logger.error "Failed to dispatch event from feed #{feed} for brand #{owner_data.brand.name}"
-    Celluloid.logger.error "Event: #{event}"
-    Celluloid.logger.error "Error: #{e}"
+    Celluloid.logger.error e
+    nil # if we can't disptch, return nil so it will end up filtered out
   end
 end

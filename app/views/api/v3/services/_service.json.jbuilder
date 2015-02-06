@@ -6,4 +6,6 @@ if service.has_errors?
   json.error do
     json.(service.service_errors.last, :klass, :message)
   end
+else
+  json.error nil
 end

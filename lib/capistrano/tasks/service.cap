@@ -4,21 +4,21 @@ namespace :web do
   desc "Stop web"
   task :stop do
     on roles(:all) do |host|
-      capture("sudo service bithub-web stop")
+      capture("sudo systemctl stop bithub-web-1.service")
     end
   end
 
   desc "Start web"
   task :start do
     on roles(:all) do |host|
-      capture("sudo service bithub-web start")
+      capture("sudo systemctl start bithub-web-1.service")
     end
   end
 
   desc "Restart web"
   task :restart do
     on roles(:all) do |host|
-      capture("sudo service bithub-web restart")
+      capture("sudo systemctl restart bithub-web-1.service")
     end
   end
 end
@@ -30,21 +30,21 @@ namespace :crawler do
   desc "Stop crawler"
   task :stop do
     on roles(:all) do |host|
-      capture("sudo service bithub-crawler stop")
+      capture("sudo systemctl stop bithub-crawler-1.service")
     end
   end
 
   desc "Start crawler"
   task :start do
     on roles(:all) do |host|
-      capture("sudo service bithub-crawler start")
+      capture("sudo systemctl start bithub-crawler-1.service")
     end
   end
 
   desc "Restart crawler"
   task :restart do
     on roles(:all) do |host|
-      capture("sudo service bithub-crawler restart")
+      capture("sudo systemctl restart bithub-crawler-1.service")
     end
   end
 end
@@ -56,99 +56,72 @@ namespace :listener do
   desc "Stop listener"
   task :stop do
     on roles(:all) do |host|
-      capture("sudo service bithub-listener stop")
+      capture("sudo systemctl stop bithub-listener-1.service")
     end
   end
 
   desc "Start listener"
   task :start do
     on roles(:all) do |host|
-      capture("sudo service bithub-listener start")
+      capture("sudo systemctl start bithub-listener-1.service")
     end
   end
 
   desc "Restart listener"
   task :restart do
     on roles(:all) do |host|
-      capture("sudo service bithub-listener restart")
+      capture("sudo systemctl restart bithub-listener-1.service")
     end
   end
 end
 
 
-### Delayed job worker
+### Sidekiq worker
 
 namespace :worker do
-  desc "Stop delayed job worker"
+  desc "Stop sidekiq worker"
   task :stop do
     on roles(:all) do |host|
-      capture("sudo service bithub-worker stop")
+      capture("sudo systemctl stop bithub-worker-1.service")
     end
   end
 
-  desc "Start delayed job worker"
+  desc "Start sidekiq worker"
   task :start do
     on roles(:all) do |host|
-      capture("sudo service bithub-worker start")
+      capture("sudo systemctl start bithub-worker-1.service")
     end
   end
 
-  desc "Restart delayed job worker"
+  desc "Restart sidekiq worker"
   task :restart do
     on roles(:all) do |host|
-      capture("sudo service bithub-worker restart")
+      capture("sudo systemctl restart bithub-worker-1.service")
     end
   end
 end
-
-
-### IRC bot
-
-namespace :ircbot do
-  desc "Stop IRC bot"
-  task :stop do
-    on roles(:all) do |host|
-      capture("sudo service bithub-irc_bot stop")
-    end
-  end
-
-  desc "Start IRC bot"
-  task :start do
-    on roles(:all) do |host|
-      capture("sudo service bithub-irc_bot start")
-    end
-  end
-
-  desc "Restart IRC bot"
-  task :restart do
-    on roles(:all) do |host|
-      capture("sudo service bithub-irc_bot restart")
-    end
-  end
-end
-
 
 ### Live service
 
 namespace :liveservice do
-  desc "Stop live service"
+  desc "Stop live systemctl"
   task :stop do
     on roles(:all) do |host|
-      capture("sudo service bithub-liveservice stop")
+      capture("sudo systemctl stop bithub-liveservice-1.service")
     end
   end
 
-  desc "Start live service"
+  desc "Start live systemctl"
   task :start do
     on roles(:all) do |host|
-      capture("sudo service bithub-liveservice start")
+      capture("sudo systemctl start bithub-liveservice-1.service")
     end
   end
 
-  desc "Restart live service"
+  desc "Restart live systemctl"
   task :restart do
     on roles(:all) do |host|
-      capture("sudo service bithub-liveservice restart")
+      capture("sudo systemctl restart bithub-liveservice-1.service")
     end
   end
 end
