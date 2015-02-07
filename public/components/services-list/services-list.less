@@ -11,18 +11,28 @@ bh-services-list {
 	}
 	table.services-table {
 		margin-bottom: 0;
-		> tbody > tr, > thead > tr{
-			&.service-row td {
-				border-top-color: #f1efef;
+		> tbody > tr, > thead > tr {
+			&.service-row td, &.loader td {
+				border-top-color: #ddd;
+			}
+			&.loader td {
+				background: #97ECFF;
+			}
+			&.loading-service td {
+				border-top: none;
+				background: #97ECFF;
+			}
+			&.errored-service td {
+				border-top-color: #FFB8B8;
+			}
+			th {
+				border-bottom-color: #ddd;
 			}
 			th:first-child, td:first-child {
 				padding-left: 25px;
 			}
 			th:last-child, td:last-child {
 				padding-right: 25px;
-			}
-			td {
-				border-bottom: 1px solid #ddd;
 			}
 			th.actions {
 				width: 70px;
@@ -31,6 +41,10 @@ bh-services-list {
 				display: inline-block;
 				margin-top: 3px;
 
+			}
+			.progress {
+				height: 5px;
+				margin: 5px 0 0;
 			}
 		}
 		.alert-config-error {

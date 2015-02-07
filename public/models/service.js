@@ -5,6 +5,9 @@ steal(
 'can/map/define',
 'can/construct/super',
 function(Model, _keys){
+
+	var RELOAD_TIMEOUTS = {};
+	
 	var TYPES = {
 		disqus : {
 			forum : 'Forum'
@@ -126,6 +129,30 @@ function(Model, _keys){
 		},
 		errored : function(service){
 			can.trigger(this, 'errored', [this]);
+		},
+		messageFromLiveService : function( msg ) {
+			var cb = can.noop,
+				timeout = 1,
+				self = this;
+
+			if(typeof msg === 'string'){
+				msg = JSON.parse(msg);
+			}
+
+			if(msg.service.empty_results){
+				cb = function(service){
+					if(service.attr('entity_count') === 0){
+						service.hasNoResults();
+					}
+				}
+				timeout = 2000;
+			}
+
+			clearTimeout(RELOAD_TIMEOUTS[msg.service.id]);
+
+			RELOAD_TIMEOUTS[msg.service.id] = setTimeout(function(){
+				self.findOne({id: msg.service.id}).then(cb);
+			}, timeout);
 		}
 	}, {
 		define : {
