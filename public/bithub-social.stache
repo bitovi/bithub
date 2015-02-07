@@ -4,10 +4,8 @@
 	<bh-sidebar state="{state}"{{#if state.sidebarIsExpanded}}class="is-expanded"{{/if}}></bh-sidebar>
 </div>
 
-<main id="content" class="container-fluid {{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
-	{{#if state.bits}}
-  	<bh-bits state="{state}" bits="{state.bits}"></bh-bits>
-  {{/if}}
+<main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
+	{{{state.iframe}}}
 </main>
 
 

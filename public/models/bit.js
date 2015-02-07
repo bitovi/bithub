@@ -1,6 +1,32 @@
 steal('can/model', 'moment', 'can/list/promise', 'can/map/define', function(Model, moment){
+	
+	var buffer = (function(){
+		var _buffer = [];
+		var _currentSweeper;
+
+		return {
+			add : function(bit){
+				_buffer.push(bit);
+				if(!_currentSweeper){
+					_currentSweeper = setTimeout(function(){
+						var localBuffer = _buffer.splice(0).reverse();
+						for(var i = 0; i < localBuffer.length; i++){
+							localBuffer[i].created();
+						}
+						_currentSweeper = null;
+					}, 5000)
+				}
+			}
+		}
+	})();
+
 	var Bit = Model.extend({
-		resource : '/api/v3/embeds/{hubId}/entities'
+		resource : '/api/v3/embeds/{hubId}/entities',
+		messageFromLiveService : function(msg){
+			var parsed = JSON.parse(msg);
+			parsed._isFromLiveService = true;
+			buffer.add(this.model(parsed));
+		}
 	}, {
 		formattedThreadUpdatedAt : function(){
 			return moment(this.attr('thread_updated_at')).format('LL');

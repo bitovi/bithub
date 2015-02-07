@@ -23,9 +23,7 @@ function(Component, initView, Models){
 			isEditing: false,
 			init : function(){
 				var self = this;
-				Models.Brand.findOne({}).then(function(brand){
-					self.attr('currentBrand', brand);
-				});
+				
 				if(this.attr('state.hubId')){
 					Models.Hub.findOne({
 						id: this.attr('state.hubId')
@@ -61,7 +59,7 @@ function(Component, initView, Models){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
 			},
 			integrationCode : function(){
-				var currentBrand = this.attr('currentBrand');
+				var currentBrand = this.attr('state.currentBrand');
 				var hub = this.attr('hub');
 				var tenantName, hubId;
 				if(currentBrand && hub){

@@ -70,7 +70,7 @@ function(Component, initView, Models){
 					serviceCompute = this.compute('service');
 
 				service.attr('embed_id', this.state.attr('hubId'));
-				services.push( service );
+				services.unshift( service );
 
 				service.save( function( newService ) {
 
