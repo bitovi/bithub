@@ -1,4 +1,10 @@
-steal('can/model', 'moment', 'can/list/promise', 'can/map/define', function(Model, moment){
+steal(
+'can/model',
+'moment',
+'can/list/promise',
+'can/map/define',
+'bit',
+function(Model, moment){
 	
 	var buffer = (function(){
 		var _buffer = [];

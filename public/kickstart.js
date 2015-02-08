@@ -44,21 +44,6 @@ steal(
 
 				var $window = $(window);
 
-				var calculateScrollAndHeight = function(){
-					return {
-						scrollTop : $window.scrollTop(),
-						scrollHeight : $window.height()
-					}
-				}
-
-				$window.scroll(function(){
-					appState.attr(calculateScrollAndHeight());
-				});
-
-				$window.on('resize', function(){
-					appState.attr(calculateScrollAndHeight());
-				});
-
 				$(selector).html(initView({
 					state: appState
 				}, {

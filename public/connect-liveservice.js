@@ -1,6 +1,10 @@
 steal(function(){
 	var currentSocket;
 
+	$(window).on('beforeunload', function(){
+		currentSocket && currentSocket.close && currentSocket.close();
+	});
+
 	return function(hubId){
 
 		if(currentSocket && currentSocket.close){

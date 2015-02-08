@@ -30,14 +30,14 @@
       <footer class="bit-footer col-sm-12">
         {{#author.avatar_url}}
           <figure class="bit-avatar">
-            <a href="#">
+            <a href="{{url}}">
               <img class="bit-avatar--img img-responsive" src="{{.}}" />
             </a>
           </figure>
         {{/author.avatar_url}}
         <figcaption>
           {{#author.id}}
-            <div class="bit-authorName col-xs-12 no-gutter"><a href="{{url}}">{{.}}</a></div>
+            <div class="bit-authorName"><a href="{{url}}">{{.}}</a></div>
           {{/author.id}}
           {{#unless isTwitterFollow}}
             <div class="bit-created-at">
