@@ -6,10 +6,6 @@ steal(
 'can/map/define', 
 function(Map, Models, _reduce, connectLiveService){
 
-	$(window).on('beforeunload', function(){
-		currentSocket && currentSocket.close();
-	});
-
 	return Map.extend({
 		define : {
 			page : {

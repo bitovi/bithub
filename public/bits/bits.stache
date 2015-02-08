@@ -1,8 +1,12 @@
-{{#each state.loadingServices}}
-  <bh-service-loader service="{this}"></bh-service-loader>
-{{/each}}
-
-<div class="column-wrapper clearfix"></div>
+<div class="column-wrapper clearfix columns-{{columnCount}}">
+	{{#each columns}}
+		<div class="column">
+			{{#each this}}
+				{{renderCard this}}
+			{{/each}}
+		</div>
+	{{/each}}
+</div>
 
 {{#if loading}}
 	<div class="loader">

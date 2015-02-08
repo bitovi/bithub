@@ -14,6 +14,17 @@ function(AppState, embedView, Bit, connectLiveService){
 	var liveService;
 
 	var appState = new AppState();
+
+	var triggerPartition = (function(){
+		var partitionTimeout;
+		return function(bits){
+			clearTimeout(partitionTimeout);
+			partitionTimeout = setTimeout(function(){
+				can.trigger(bits, 'partition');
+			}, 100);
+		}
+	})()
+
 	can.route.map(appState);
 
 	can.route.ready();
@@ -30,8 +41,11 @@ function(AppState, embedView, Bit, connectLiveService){
 		}
 		Bit.on('created', function(ev, bit){
 			var serviceIds = bit.attr('service_ids');
+			var bits = appState.attr('bits');
 
-			appState.attr('bits').unshift(bit);
+			bits.unshift(bit);
+			
+			triggerPartition(bits);
 
 			window.parent && window.parent.postMessage({
 				type : 'loadedBits',
@@ -41,7 +55,7 @@ function(AppState, embedView, Bit, connectLiveService){
 		});
 	}
 
-	$('body').addClass('no-background');
+	$('body').addClass('embed');
 
 	$('#app').html(embedView({
 		state: appState

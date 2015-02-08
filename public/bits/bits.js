@@ -12,9 +12,12 @@ steal(
 function(Component, initView, Models, _map, _reduce){
 
 	var CARD_MIN_WIDTH = 300;
-	var bitTemplate = can.stache('<bh-bit bit="{this}"></bh-bit>');
+	var CARD_TEMPLATE = can.stache('<bh-bit bit="{this}"></bh-bit>');
 
 	var calculateColumnCount = function(el){
+		if(el.width < CARD_MIN_WIDTH) {
+			return 1;
+		}
 		return Math.min(4, Math.floor(el.width() / CARD_MIN_WIDTH));
 	}
 
@@ -22,6 +25,18 @@ function(Component, initView, Models, _map, _reduce){
 		tag : 'bh-bits',
 		template : initView,
 		scope : {
+			define : {
+				columnCount : {
+					set : function(val){
+						if(parseInt(this.attr('columnCount'), 10) !== parseInt(val, 10)){
+							this.partition(val);
+						}
+
+						return val;
+					}
+				}
+			},
+			columns: [],
 			loading : false,
 			hasNextPage : true,
 			init : function(){
@@ -30,7 +45,7 @@ function(Component, initView, Models, _map, _reduce){
 				this.attr({
 					params: {
 						offset: 0,
-						limit: 50,
+						limit: 15,
 						order: "created_at:desc"
 					}
 				});
@@ -68,8 +83,56 @@ function(Component, initView, Models, _map, _reduce){
 						self.attr('hasNextPage', false);
 					}
 
+					self.partitionAppendedData(data);
+
 					can.batch.stop();
 				});
+			},
+			partition : function(columnCount){
+				var bits = this.attr('bits');
+				var bitsLength = bits.attr('length');
+				var partitioner;
+
+				this.attr('__currentColumn', 0);
+				this.attr('columns').replace(
+					_map(new Array(columnCount || this.attr('columnCount')), function(){
+						return [];
+					})
+				);
+
+				partitioner = this.makePartitioner()
+
+				for(var i = 0; i < bitsLength; i++){
+					partitioner.add(bits[i])
+				}
+
+				this.attr('__currentColumn', partitioner.currentColumn());
+			},
+			makePartitioner : function(){
+				var columns = this.attr('columns');
+				var currentColumn = this.attr('__currentColumn');
+				return {
+					add : function(bit){
+						columns.attr(currentColumn).push(bit);
+						currentColumn++;
+						if(currentColumn === columns.attr('length')){
+							currentColumn = 0;
+						}
+					},
+					currentColumn : function(){
+						return currentColumn;
+					}
+				}
+			},
+			partitionAppendedData : function(bits){
+				var bitsLength = bits.attr('length');
+				var partitioner = this.makePartitioner();
+
+				for(var i = 0; i < bitsLength; i++){
+					partitioner.add(bits[i]);
+				}
+
+				this.attr('__currentColumn', partitioner.currentColumn());
 			},
 			nextPage : function(){
 				var params;
@@ -80,71 +143,47 @@ function(Component, initView, Models, _map, _reduce){
 				}
 			}
 		},
+		helpers : {
+			renderCard : function(bit){
+				bit = can.isFunction(bit) ? bit() : bit;
+
+				this.__cardCache = this.__cardCache || {};
+
+				if(!this.__cardCache[bit.id]){
+					this.__cardCache[bit.id] = CARD_TEMPLATE(bit).firstChild;
+				}
+
+				return this.__cardCache[bit.id];
+			}
+		},
 		events : {
 			inserted : function(){
-				this.element.on('scroll', this.proxy('appendContent'));
-				this.__bitsCache = {};
-				this.__columns = [];
-				this.__currentlyRendered = {};
-				this.__firstRender = false;
-				this.renderContent();
+				this.$document = $(document);
+				this.$window = $(window);
+				this.$body = $('body');
+				this.calculateColumnCount();
+			},
+			calculateColumnCount : function(){
+				this.scope.attr('columnCount', calculateColumnCount(this.element));
 			},
 			"{window} resize" : function(){
 				clearTimeout(this.__resizeTimeout);
-				this.__resizeTimeout = setTimeout(this.proxy('renderContent'), 300);
+				this.__resizeTimeout = setTimeout(this.proxy('calculateColumnCount'), 100);
 			},
-			"{state.bits} length" : function(){
-				clearTimeout(this.__addedTimeout);
-				this.__addedTimeout = setTimeout(this.proxy('renderContent'), 4);
+			scroll : 'appendContent',
+			"{scope.bits} partition" : function(){
+				this.scope.partition();
 			},
-			renderContent : function(){
-				if(!this.element){
-					return;
+			"{scope.bits} remove" : function(bits, ev, oldVals, where){
+				var ids = _map(oldVals, function(bit){
+					return bit.id;
+				});
+
+				for(var i = 0; i < ids.length; i++){
+					delete this.scope.__cardCache[ids[i]];
 				}
 
-				var bits = this.scope.attr('bits');
-				var columnCount = calculateColumnCount(this.element);
-				var columns = this.getColumns(columnCount);
-				var bigFragment = document.createDocumentFragment();
-				var currentColumn = 0;
-
-				for(var i = 0; i < bits.length; i++){
-					currentBit = bits[i];
-					if(!this.__bitsCache[currentBit.id]){
-						this.__bitsCache[currentBit.id] = bitTemplate(currentBit).firstChild;
-					}
-					if(this.__currentlyRendered[currentBit.id] !== currentColumn){
-						columns[currentColumn].appendChild(this.__bitsCache[currentBit.id]);
-						this.__currentlyRendered[currentColumn.id] = currentColumn;
-						currentColumn++;
-						if(currentColumn === columnCount){
-							currentColumn = 0;
-						}
-					}
-				}
-
-				_reduce(columns, function(bFrag, child){
-					bFrag.appendChild(child);
-					return bFrag;
-				}, bigFragment);
-
-				this.element.removeClass('columns-1 columns-2 columns-3 columns-4');
-				this.element.addClass('columns-' + columnCount);
-				this.element.find('.column-wrapper').html(bigFragment);
-			},
-			getColumns : function(columnCount){
-				var columns;
-				if(this.__columns.length === columnCount){
-					columns = this.__columns;
-				} else {
-					columns = _map(new Array(columnCount), function(){
-						var div = document.createElement('div');
-						div.className = 'column';
-						return div;
-					});
-				}
-				this.__columns = columns;
-				return this.__columns;
+				this.scope.partition();
 			},
 			appendContent : function(){
 				var self = this;
@@ -153,13 +192,9 @@ function(Component, initView, Models, _map, _reduce){
 					var scrollTop = self.element.scrollTop();
 					var scrollHeight = self.element.prop('scrollHeight');
 					var height = self.element.height();
-
 					(scrollHeight - scrollTop - height < 500) && self.scope.nextPage();
 				}, 100);
 			},
-			removed : function(){
-				this.element.off('scroll');
-			}
 		}
 	})
 });
