@@ -12,7 +12,7 @@ steal(
 function(Component, initView, Models, _map, _reduce){
 
 	var CARD_MIN_WIDTH = 300;
-	var CARD_TEMPLATE = can.stache('<bh-bit bit="{this}"></bh-bit>');
+	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}"></bh-bit>');
 
 	var calculateColumnCount = function(el){
 		if(el.width < CARD_MIN_WIDTH) {
@@ -143,7 +143,10 @@ function(Component, initView, Models, _map, _reduce){
 				this.__cardCache = this.__cardCache || {};
 
 				if(!this.__cardCache[bit.id]){
-					this.__cardCache[bit.id] = CARD_TEMPLATE(bit).firstChild;
+					this.__cardCache[bit.id] = CARD_TEMPLATE({
+						bit : bit,
+						state : this.attr('state')
+					}).firstChild;
 				}
 
 				return this.__cardCache[bit.id];

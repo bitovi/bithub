@@ -1,11 +1,31 @@
 {{#bit}}
 	<div class="admin-panel">
-		<div class="disapprove">
-			<i class="fa fa-thumbs-down"></i>
+		
+		<div class="disapprove-approve" can-click="toggleApproveBit">
+			<i class="fa fa-thumbs-{{#is_approved}}down{{else}}up{{/is_approved}}"></i>
+			<div class="action-is">
+				{{#is_approved}}
+					Block
+				{{else}}
+					Approve
+				{{/is_approved}}
+			</div>
 		</div>
-		<div class="pin">
+	
+		<div class="pin" can-click="togglePinBit">
 			<i class="fa-thumb-tack fa"></i>
+			{{#is_pinned}}
+				<i class="fa fa-remove"></i>
+			{{/is_pinned}}
+			<div class="action-is">
+				{{#is_pinned}}
+					Unpin
+				{{else}}
+					Pin
+				{{/is_pinned}}
+			</div>
 		</div>
+		
 	</div>
 	<div class="bit">
 		<div class="bit-content col-sm-12">
