@@ -27,13 +27,13 @@ class HttpServer < Reel::Server::HTTP
   private
 
   def boot
-    @handlers.supervise_as :instagram_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, Handlers::Instagram]
-    # @handlers.supervise_as :facebook_handler,  HandlerProxy, *[@publisher, @logger, @configurator, Handlers::Facebook]
-    @handlers.supervise_as :foursquare_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, Handlers::Foursquare]
+    @handlers.supervise_as :instagram_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, ::Handlers::Instagram]
+    # @handlers.supervise_as :facebook_handler,  HandlerProxy, *[@publisher, @logger, @configurator, ::Handlers::Facebook]
+    @handlers.supervise_as :foursquare_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, ::Handlers::Foursquare]
 
-    register_route Handlers::Instagram.path,  Actor[:instagram_handler]
+    register_route ::Handlers::Instagram.path,  Actor[:instagram_handler]
     # register_route Handlers::Facebook.path,   facebook_handler
-    register_route Handlers::Foursquare.path, Actor[:foursquare_handler]
+    register_route ::Handlers::Foursquare.path, Actor[:foursquare_handler]
   end
 
   def on_connection(connection)
