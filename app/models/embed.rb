@@ -6,6 +6,7 @@ class Embed < ActiveRecord::Base
 
   has_many :filters, dependent: :destroy
   has_many :services, dependent: :destroy
+  has_many :presets, :class_name => "EmbedPreset"
 
   has_many :embed_entities
   has_many :entities, through: :embed_entities
