@@ -9,3 +9,8 @@ json.author do
 end
 
 json.service_ids entity.services.map {|s| s.id}
+
+if relation
+  json.is_approved relation.is_approved
+  json.is_pinned relation.is_pinned
+end

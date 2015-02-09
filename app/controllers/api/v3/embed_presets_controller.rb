@@ -1,6 +1,8 @@
 require 'digest/md5'
 
 class Api::V3::EmbedPresetsController < Api::V3::BaseController
+  include Api::EmbedScoped
+
   before_filter :authenticate_account!
 
   def index
@@ -32,10 +34,6 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
 
   private
 
-  def owner_embed
-    current_brand.embeds.find(embed_id)
-  end
-
   def find_preset
     owner_embed.presets.find(preset_id)
   end
@@ -46,9 +44,5 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
 
   def preset_id
     params[:preset_id] || params[:id]
-  end
-
-  def embed_id
-    params[:embed_id]
   end
 end
