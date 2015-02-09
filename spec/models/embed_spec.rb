@@ -102,13 +102,13 @@ RSpec.describe Embed, :type => :model do
       end
 
       it 'filters by tying :contains and :is_a predicates with a logical AND' do
-        @filter = FactoryGirl.create(:filter, :conjunctive, embed: @embed)
+        embed = FactoryGirl.create(:embed, approved_by_default: true)
+        filter = FactoryGirl.create(:filter, :conjunctive, embed: embed)
+        filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
+        filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
 
-        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
-        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
-
-        @embed.moderate
-        expect(@embed.approved_entities.length).to eq 1
+        embed.moderate
+        expect(embed.approved_entities.length).to eq 1
       end
     end
     
@@ -116,13 +116,13 @@ RSpec.describe Embed, :type => :model do
       after { Filter.delete_all; NatlangQuery.delete_all }
 
       it 'filters by tying all predicates with a logical OR' do
-        @filter = FactoryGirl.create(:filter, :disjunctive, embed: @embed)
+        embed = FactoryGirl.create(:embed, approved_by_default: true)
+        filter = FactoryGirl.create(:filter, :disjunctive, embed: embed)
+        filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
+        filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
-        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
-        @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
-
-        @embed.moderate
-        expect(@embed.approved_entities.length).to eq 5
+        embed.moderate
+        expect(embed.approved_entities.length).to eq 5
       end
     end
   end

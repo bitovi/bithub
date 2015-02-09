@@ -1,6 +1,8 @@
 require 'digest/md5'
 
 class Api::V3::EmbedEntitiesController < Api::V3::BaseController
+  include Api::EmbedScoped
+
   before_filter :authenticate_account!, except: [:index]
 
   helper_method :custom_cache_key
@@ -8,85 +10,89 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def index
     if tenant_name = params['tenant_name']
+      visibility = :admin
 
       # check if tenant_name exists
       tenant_name = nil unless Brand.find_by_tenant_name tenant_name
 
       Apartment::Tenant.switch tenant_name do
-        scope = build_scope
+        scope = build_scope(visibility)
         @entities = EntityDecorator.decorate_collection(scope.all)
         render :index
       end
     else
-      scope = build_scope
+      visibility = :public
+
+      scope = build_scope(visibility)
       @entities = EntityDecorator.decorate_collection(scope.all)
       render :index
     end
   end
 
   def approved
-    embed = current_brand.embeds.find(embed_id)
-    entities = embed.embed_entities.approved.map(&:entity)
+    entities = owner_embed.embed_entities.approved.map(&:entity)
 
     @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
   def waitlisted
-    embed = current_brand.embeds.find(embed_id)
-    entities = embed.embed_entities.waitlisted.map(&:entity)
+    entities = owner_embed.embed_entities.waitlisted.map(&:entity)
 
     @entities = EntityDecorator.decorate_collection entities
     render :index
   end
 
   def show
-    embed = current_brand.embeds.find(embed_id)
-    entity = embed.embed_entities.find(entity_id)
+    entity = owner_embed.embed_entities.find(entity_id)
 
-    @entity = EntityDecorator.decorate entity
+    @entity = EntityDecorator.decorate(entity)
     render :show
   end
 
   def update
-    @embed = current_brand.embeds.find(embed_id)
+    @embed = owner_embed
     render :show
   end
 
   def approve
-    if embed_entity_relation.approve(current_account)
-      render json: embed_entity_relation
+    if (@relation = embed_entity_relation).approve(current_account)
+      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
+      render :show_relation
     else
       render text: "error", status: 406
     end
   end
 
-  def disaprove
-    if embed_entity_relation.disaprove(current_account)
-      render json: embed_entity_relation
+  def disapprove
+    if (@relation = embed_entity_relation).disaprove(current_account)
+      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
+      render :show_relation
     else
       render text: "error", status: 406
     end
   end
 
   def pin
-    if embed_entity_relation.pin
-      render json: embed_entity_relation
+    if (@relation = embed_entity_relation).pin
+      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
+      render :show_relation
     else
       render text: "error", status: 406
     end
   end
   
   def unpin
-    if embed_entity_relation.unpin
-      render json: embed_entity_relation
+    if (@relation = embed_entity_relation).unpin
+      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
+      render :show_relation
     else
       render text: "error", status: 406
     end
   end
 
   def destroy
-    if embed_entity_relation.destroy
+    if (@relation = embed_entity_relation).destroy
       render json: embed_entity_relation
     else
       render text: "error", status: 406
@@ -95,9 +101,19 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   private
 
-  def build_scope
+  def build_scope(visibility)
     scope = Entity.joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
+
+    if visibility == :public
+      if owner_embed.approving?
+        scope = scope.where("embed_entities.is_approved <> false")
+      elsif owner_embed.blocking?
+        scope = scope.where("embed_entities.is_approved = true")
+      end
+    end
+
+    scope = scope
       .where("entities.is_pending" => false)
       .includes(:parent)
       .no_children
@@ -120,15 +136,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def embed_entity_relation
-    embed = current_brand.embeds.find(embed_id)
-    embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
+    owner_embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
   end
 
   def entity_id
     params[:entity_id] || params[:id]
-  end
-
-  def embed_id
-    params.require(:embed_id)
   end
 end

@@ -2,9 +2,6 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :embed
   belongs_to :entity
 
-  scope :approved, lambda { where(is_approved: true) }
-  scope :waitlisted, lambda { where(is_approved: false) }
-  
   def approve(account)
     if ModerationLog.new_entry(action: 'approved', caused_by: account.name)
       update_attribute(:is_approved, true)

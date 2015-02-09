@@ -25,6 +25,15 @@ class Embed < ActiveRecord::Base
   after_update { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
 
+
+  def approving?
+    approved_by_default
+  end
+
+  def blocking?
+    !approved_by_default
+  end
+
   def blocking_filter
     self.filters.where(classification: 'blocking').first
   end
@@ -48,7 +57,7 @@ class Embed < ActiveRecord::Base
   end
 
   def make_link_to(entity)
-    self.embed_entities.create(entity: entity, is_approved: self.approved_by_default)
+    self.embed_entities.create(entity: entity, is_approved: nil)
   end
 
   private 

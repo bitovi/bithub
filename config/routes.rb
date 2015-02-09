@@ -59,7 +59,7 @@ Bithub::Application.routes.draw do
 
         resources :entities, to: 'embed_entities', only: %i(index destroy) do
           put :approve, on: :member
-          put :disaprove, on: :member
+          put :disapprove, on: :member
           put :pin, on: :member
           put :unpin, on: :member
           get :approved, on: :collection
