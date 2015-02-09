@@ -1,52 +1,58 @@
 {{#bit}}
-  <article class="bit-container">
-      <div class="bit">
-      <div class="bit-content col-sm-12">
+	<div class="admin-panel">
+		<div class="disapprove">
+			<i class="fa fa-thumbs-down"></i>
+		</div>
+		<div class="pin">
+			<i class="fa-thumb-tack fa"></i>
+		</div>
+	</div>
+	<div class="bit">
+		<div class="bit-content col-sm-12">
 
-        {{#if isTumblrImage}}
-          <bh-image-gallery images="{images}"></bh-image-gallery>
-        {{else}}
-          {{#if images.length}}
-            <div class="image-wrap">
-              {{#each images}}
-                <img src="{{url}}">
-              {{/each}}
-            </div>
-          {{/if}}
-        {{/if}}
+			{{#if isTumblrImage}}
+				<bh-image-gallery images="{images}"></bh-image-gallery>
+			{{else}}
+				{{#if images.length}}
+					<div class="image-wrap">
+						{{#each images}}
+						<img src="{{url}}">
+						{{/each}}
+					</div>
+				{{/if}}
+			{{/if}}
 
-        <bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
-          <h4>{{{ formattedTitle title }}}</h4>
+			<bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
+				<h4>{{{ formattedTitle title }}}</h4>
 
-          {{#if body}}
-            <figcaption class="bit-content--caption">
-              {{{ body }}}
-            </figcaption>
-          {{/if}}
-        </bh-body-wrap>
-        
+				{{#if body}}
+				<figcaption class="bit-content--caption">
+					{{{ body }}}
+				</figcaption>
+				{{/if}}
+			</bh-body-wrap>
 
-      </div>
-      <footer class="bit-footer col-sm-12">
-        {{#author.avatar_url}}
-          <figure class="bit-avatar">
-            <a href="{{url}}">
-              <img class="bit-avatar--img img-responsive" src="{{.}}" />
-            </a>
-          </figure>
-        {{/author.avatar_url}}
-        <figcaption>
-          {{#author.id}}
-            <div class="bit-authorName"><a href="{{url}}">{{.}}</a></div>
-          {{/author.id}}
-          {{#unless isTwitterFollow}}
-            <div class="bit-created-at">
-              {{formattedThreadUpdatedAt}}
-            </div>
-          {{/unless}}
-        </figcaption>
-        <a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
-      </footer>
-    </div>
-  </article>
+
+		</div>
+		<footer class="bit-footer col-sm-12">
+			{{#author.avatar_url}}
+			<figure class="bit-avatar">
+				<a href="{{url}}">
+					<img class="bit-avatar--img img-responsive" src="{{.}}" />
+				</a>
+			</figure>
+			{{/author.avatar_url}}
+			<figcaption>
+				{{#author.id}}
+				<div class="bit-authorName"><a href="{{url}}">{{.}}</a></div>
+				{{/author.id}}
+				{{#unless isTwitterFollow}}
+				<div class="bit-created-at">
+					{{formattedThreadUpdatedAt}}
+				</div>
+				{{/unless}}
+			</figcaption>
+			<a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
+		</footer>
+	</div>
 {{/bit}}

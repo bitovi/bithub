@@ -1,10 +1,24 @@
 steal(
 'can/component',
 './bit.stache!',
+'lodash/collections/map.js',
 './bit.less!',
 'components/image-gallery',
 'components/body-wrap',
-function(Component, initView){
+function(Component, initView, _map){
+
+	var imageStatus = function(img){
+		if(!img.complete){
+			return 'LOADING';
+		}
+		if(img.naturalWidth === 0){
+			return 'ERROR';
+		}
+		return 'LOADED';
+	}
+
+
+
 	return Component.extend({
 		tag: 'bh-bit',
 		template : initView,
@@ -24,38 +38,45 @@ function(Component, initView){
 			init : function(){
 				var self = this;
 				
-				this.element.addClass('loading')
-				this.imagesToLoadCount = 0;
+				this.element.addClass('loading');
+				this.element.trigger('loading');
 
 				setTimeout(function(){
-					var imgs = self.element.find('img');
+					self.imgs = self.element.find('img').toArray();
+					self.imagesToLoadCount = self.imgs.length;
 
-					self.imagesToLoadCount = imgs.length;
-
-					if(imgs.length){
-						
-						imgs.each(function(){
-							var $img = $(this);
-							$img.one('load', self.proxy('imageDone'));
-							$img.one('error', self.proxy('imageErrored'));
-						});
+					if(self.imgs.length){
+						setTimeout(self.proxy('imgSweeper'), 500);
 					} else {
 						self.updateVisibility();
 					}
-				});
+				}, 1);
 			},
-			updateVisibility : function(){
-				if(this.imagesToLoadCount === 0){
-					this.element.removeClass('loading');
+			imgSweeper : function(){
+				var statuses = _map(this.imgs, imageStatus);
+				var errored;
+
+				if(can.inArray('LOADING', statuses) > -1){
+					setTimeout(this.proxy('imgSweeper'), 500);
+				} else {
+					this.updateVisibility();
+				}
+
+				for(var i = 0; i < statuses.length; i++){
+					if(statuses[i] === 'ERROR'){
+						errored = self.imgs.splice(i, 1)[0];
+						errored && $(errored).remove();
+					}
 				}
 			},
-			imageDone : function(){
-				this.imagesToLoadCount--;
-				this.updateVisibility();
-			},
-			imageErrored : function(ev){
-				$(ev.target).remove();
-				this.imageLoaded();
+			updateVisibility : function(){
+				var self = this;
+				this.element.height(this.element.find('.bit').height() - 3);
+				this.element.removeClass('loading');
+				this.element.trigger('loaded');
+				setTimeout(function(){
+					self.element && self.element.css('height', 'auto');
+				}, 400);
 			}
 		}
 	})
