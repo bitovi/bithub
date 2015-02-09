@@ -64,7 +64,7 @@ function(Component, initView, _map){
 
 				for(var i = 0; i < statuses.length; i++){
 					if(statuses[i] === 'ERROR'){
-						errored = self.imgs.splice(i, 1)[0];
+						errored = this.imgs.splice(i, 1)[0];
 						errored && $(errored).remove();
 					}
 				}
