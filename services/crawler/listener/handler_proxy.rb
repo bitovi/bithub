@@ -23,9 +23,7 @@ class HandlerProxy
   end
 
   def publish(events, owner_data)
-    # UPDATE this after merging
-    # Actor[@publisher_name].publish events, owner_data
-    Actor[@publisher_name].publish owner_data, events
+    Actor[@publisher_name].publish events, owner_data
   end
 
 end

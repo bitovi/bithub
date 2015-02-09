@@ -3,7 +3,7 @@ require_relative 'feeds_helper'
 require 'events/instagram/media_event'
 require 'fetchers/instagram/tag_recent_media'
 
-describe HttpServer::Handlers::Instagram  do
+describe Handlers::Instagram  do
 
   ### Helper methods
 
@@ -27,7 +27,7 @@ describe HttpServer::Handlers::Instagram  do
   before do
     Celluloid.boot
 
-    Celluloid::Actor[:publisher]    = Publisher.new reject_old: false
+    Celluloid::Actor[:publisher]    = EventPublisher.new reject_old: false
     Celluloid::Actor[:configurator] = Configurator.new
     Celluloid::Actor[:http_server]  = HttpServer.new
 
@@ -38,7 +38,6 @@ describe HttpServer::Handlers::Instagram  do
 
   after do
     Celluloid.shutdown
-    @rabbit.close
   end
 
   ### Tests

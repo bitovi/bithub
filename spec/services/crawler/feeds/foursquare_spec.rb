@@ -1,7 +1,7 @@
 require_relative 'feeds_helper'
 require 'events/foursquare/checkin_event'
 
-describe HttpServer::Handlers::Foursquare  do
+describe Handlers::Foursquare  do
 
   ### Helper methods
 
@@ -9,7 +9,7 @@ describe HttpServer::Handlers::Foursquare  do
     port   = ENV['CRAWLER_HTTP_PORT'] || 3001
     prefix = ENV['CRAWLER_HTTP_PREFIX'] || '/api/postback/'
 
-    File.join "http://127.0.0.1:#{port}", prefix, HttpServer::Handlers::Foursquare.path
+    File.join "http://127.0.0.1:#{port}", prefix, ::Handlers::Foursquare.path
   end
 
   ### Init / cleanup
@@ -17,7 +17,7 @@ describe HttpServer::Handlers::Foursquare  do
   before do
     Celluloid.boot
 
-    Celluloid::Actor[:publisher]    = Publisher.new reject_old: false
+    Celluloid::Actor[:publisher]    = EventPublisher.new reject_old: false
     Celluloid::Actor[:configurator] = Configurator.new
     Celluloid::Actor[:http_server]  = HttpServer.new
 
