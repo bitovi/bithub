@@ -28,7 +28,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       context 'when filtering by approved status' do
         before(:each) do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: true)
+          @embed = FactoryGirl.create(:embed, brand: @current_brand)
 
           # approved by default
           @embed.make_link_to(ent = FactoryGirl.create(:github_watch))
@@ -70,10 +70,10 @@ RSpec.describe 'Filter endpoints', type: :request do
           end
         end
 
-        describe 'PUT /embed/1/entities/2/disaprove' do
+        describe 'PUT /embed/1/entities/2/disapprove' do
           context 'given a certain entity from an embed' do
             it 'disaproves it' do
-              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/disaprove"
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/disapprove"
               expect(response).to be_success
               expect(json['is_approved']).to be_falsey
             end
