@@ -23,31 +23,57 @@
 // custom brand colors
 @white: #fff;
 
-bh-bit, .bh-bit {
+bh-bit {
+	.border-radius(5px);
 	display: block;
 	position: relative;
+	-webkit-transition: height 0.5s ease-in;
+	-moz-transition: height 0.5s ease-in;
+	transition: height 0.5s ease-in;
+	opacity: 1;
+	background-color: @white;
+	border: 1px solid @gray-light;
+	overflow: hidden;
+	margin: 20px 10px 0;
+	height: auto;
 
-	.bit-container {
-		display: inline-block;
-		padding:  1rem;
-		width:  100%;
+	&:hover {
+		.admin-panel {
+			display: block;
+		}
 	}
+
+	&.loading {
+		height: 100px;
+		background: url(/images/card-loader.gif);
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+		&:hover {
+			.admin-panel {
+				display: none;
+			}
+		}
+		.bit {
+			opacity: 0;
+		}
+	}
+
+	&:hover {
+		.box-shadow(0 0 20px rgba(0,0,0,.15));
+	}
+
 	// Default "Clear" Theme
 	.bit {
-		.border-radius(5px);
-		background-color: @white;
-		border: 1px solid @gray-light;
-		&:extend(.b_margin--lowVert all);
+		-webkit-transition: opacity 0.5s ease-in-out;
+		-moz-transition: opacity 0.5s ease-in-out;
+		transition: opacity 0.5s ease-in-out;
 		.clearfix;
-		.box-shadow(0 0 20px rgba(0,0,0,0));
-		&:hover {
-			.box-shadow(0 0 20px rgba(0,0,0,.15));
-		}
+		
 		// header
 		.bit-header,
 		.bit-footer {
 			padding: 10px 0;
-			.clearfix
+			.clearfix;
 		}
 		.bit-footer {
 			border-top: 1px solid lighten(@gray-light, 5%);
@@ -108,16 +134,24 @@ bh-bit, .bh-bit {
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
+		.bit-content--caption {
+			padding-bottom: 15px;
+			iframe {
+				display: block;
+			}
+			p .img-wrap {
+				margin: 0 -15px  15px;
+				img {
+					width: 100%;
+				}
+			}
+		}
 		.img-responsive {
 			margin:0 auto;
 		}
 	}
 
-	&.loading {
-		.bit-container {
-			opacity: 0;
-		}
-	}
+	
 	.bit-content {
 		overflow: hidden;
 		p {
@@ -127,28 +161,7 @@ bh-bit, .bh-bit {
 			}
 		}
 	}
-	.bit {
-		overflow: hidden;
-	}
-	.bit-container {
-		-webkit-transition: opacity 0.5s ease-in-out;
-		-moz-transition: opacity 0.5s ease-in-out;
-		transition: opacity 0.5s ease-in-out;
-		opacity: 1;
-		padding: 0.5rem 1rem 0;
-	}
-	.bit-content--caption {
-		padding-bottom: 15px;
-		iframe {
-			display: block;
-		}
-		p .img-wrap {
-			margin: 0 -15px  15px;
-			img {
-				width: 100%;
-			}
-		}
-	}
+	
 	.bit-created-at {
 		font-size: 70%;
 		position: relative;
@@ -159,6 +172,47 @@ bh-bit, .bh-bit {
 		position: relative;
 		img {
 			width: 100%;
+		}
+	}
+	.admin-panel {
+		background: rgba(0,0,0,0.7);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 10000;
+		font-size: 50px;
+		color: #bbb;
+		display: none;
+		.disapprove, .pin {
+			top: 0;
+			width: 50%;
+			height: 100%;
+			position: absolute;
+			cursor: pointer;
+			&:hover {
+				background: rgba(0,0,0,0.5);
+				i {
+					color: #fff;
+					font-size: 60px;
+				}
+			}
+			i {
+				position: absolute;
+				height: 100px;
+				line-height: 100px;
+				width: 100%;
+				text-align: center;
+				top: 50%;
+				margin-top: -50px;
+			}
+		}
+		.disapprove {
+			left: 0;
+		}
+		.pin {
+			right: 0;
 		}
 	}
 }

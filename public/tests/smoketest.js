@@ -76,4 +76,10 @@
 		F('bh-rss-site-service', 0).exists('Edit service form exists');
 		F('.back-to-admin', 0).click();
 	})
+
+	QUnit.test('Deleting hub works', function(assert){
+		hubListExists();
+		F('bh-hub-list [can-click=destroyHub]', 0).click();
+		F('bh-hub-list table.table', 0).exists('List of hubs does not exist');
+	})
 })();

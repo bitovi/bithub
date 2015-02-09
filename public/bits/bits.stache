@@ -1,11 +1,11 @@
 <div class="column-wrapper clearfix columns-{{columnCount}}">
-	{{#each columns}}
+	{{#columns}}
 		<div class="column">
 			{{#each this}}
 				{{renderCard this}}
 			{{/each}}
 		</div>
-	{{/each}}
+	{{/columns}}
 </div>
 
 {{#if loading}}
