@@ -55,6 +55,8 @@ function(Component, initView, _map, Bit){
 				this.element.addClass('loading');
 				this.element.trigger('loading');
 
+				!this.scope.attr('is_approved') && this.element.addClass('blocked');
+
 				setTimeout(function(){
 					self.imgs = self.element.find('img').toArray();
 					self.imagesToLoadCount = self.imgs.length;
@@ -65,6 +67,9 @@ function(Component, initView, _map, Bit){
 						self.updateVisibility();
 					}
 				}, 1);
+			},
+			'{bit} is_approved' : function(bit, ev, newVal){
+				this.element.toggleClass('blocked', !newVal)
 			},
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);

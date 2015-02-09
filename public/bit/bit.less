@@ -37,6 +37,14 @@ bh-bit {
 	margin: 20px 10px 0;
 	height: auto;
 
+	&.blocked {
+		border: 2px solid red;
+		background: #FFDDDD;
+		bh-body-wrap .expand-collapse {
+			box-shadow: 0 0 20px 10px #FFDDDD;
+		}
+	}
+
 	&:hover {
 		.admin-panel {
 			display: block;
