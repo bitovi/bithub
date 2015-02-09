@@ -3,7 +3,6 @@ steal(
 'moment',
 'can/list/promise',
 'can/map/define',
-'bit',
 function(Model, moment){
 	
 	var buffer = (function(){
@@ -26,14 +25,9 @@ function(Model, moment){
 		}
 	})();
 
-	var Bit = Model.extend({
-		resource : '/api/v3/embeds/{hubId}/entities',
-		messageFromLiveService : function(msg){
-			var parsed = JSON.parse(msg);
-			parsed._isFromLiveService = true;
-			buffer.add(this.model(parsed));
-		}
-	}, {
+	var BIT_ACTIONS = ['pin', 'unpin', 'approve', 'disapprove'];
+
+	var instanceMethods = {
 		formattedThreadUpdatedAt : function(){
 			return moment(this.attr('thread_updated_at')).format('LL');
 		},
@@ -49,7 +43,38 @@ function(Model, moment){
 		isTwitterFollow : function(){
 			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
 		}
-	});
+	};
+
+	var makeBitAction = function(action){
+		var templateUrl = '/api/v3/embeds/{hubId}/entities/{id}/' + action;
+		return function(hubId){
+			var url = can.sub(templateUrl, {
+				hubId : hubId,
+				id : this.attr('id')
+			});
+
+			return $.ajax(url, {
+				dataType: 'json',
+				type: 'PUT'
+			}).then(function(data){
+				Bit.model(data);
+			})
+		}
+	}
+
+	for(var i = 0; i < BIT_ACTIONS.length; i++){
+		instanceMethods[BIT_ACTIONS[i]] = makeBitAction(BIT_ACTIONS[i]);
+	}
+
+	var Bit = Model.extend({
+		ACTIONS: BIT_ACTIONS,
+		resource : '/api/v3/embeds/{hubId}/entities',
+		messageFromLiveService : function(msg){
+			var parsed = JSON.parse(msg);
+			parsed._isFromLiveService = true;
+			buffer.add(this.model(parsed));
+		}
+	}, instanceMethods);
 
 	Bit.List = Bit.List.extend({
 		place : function(bit){

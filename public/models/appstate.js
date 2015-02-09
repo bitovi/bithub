@@ -27,6 +27,9 @@ function(Map, Models, _reduce, connectLiveService){
 					this.attr('bits').splice(0);
 				}
 			},
+			hub : {
+				serialize : false,
+			},
 			sidebarIsExpanded : {
 				value : true,
 				serialize: false

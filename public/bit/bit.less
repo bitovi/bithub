@@ -182,10 +182,10 @@ bh-bit {
 		right: 0;
 		bottom: 0;
 		z-index: 10000;
-		font-size: 50px;
+		
 		color: #bbb;
 		display: none;
-		.disapprove, .pin {
+		.disapprove-approve, .pin {
 			top: 0;
 			width: 50%;
 			height: 100%;
@@ -196,7 +196,25 @@ bh-bit {
 				i {
 					color: #fff;
 					font-size: 60px;
+					&.fa-remove {
+						margin-top: -73px;
+					}
 				}
+				.action-is {
+					margin-top: 30px;
+				}
+			}
+			.action-is {
+				height: 20px;
+				line-height: 20px;
+				text-align: center;
+				position: absolute;
+				top: 50%;
+				width: 100%;
+				font-weight: bold;
+				text-transform: uppercase;
+				font-size: 12px;
+				margin-top: 25px;
 			}
 			i {
 				position: absolute;
@@ -206,9 +224,15 @@ bh-bit {
 				text-align: center;
 				top: 50%;
 				margin-top: -50px;
+				font-size: 50px;
+				&.fa-remove {
+					font-size: 30px;
+					margin-top: -70px;
+					padding-left: 50px;
+				}
 			}
 		}
-		.disapprove {
+		.disapprove-approve {
 			left: 0;
 		}
 		.pin {

@@ -2,10 +2,11 @@ steal(
 'can/component',
 './bit.stache!',
 'lodash/collections/map.js',
+'models/bit.js',
 './bit.less!',
 'components/image-gallery',
 'components/body-wrap',
-function(Component, initView, _map){
+function(Component, initView, _map, Bit){
 
 	var imageStatus = function(img){
 		if(!img.complete){
@@ -17,14 +18,27 @@ function(Component, initView, _map){
 		return 'LOADED';
 	}
 
+	var scope = {
+		toggleApproveBit : function(){
+			this.attr('bit.is_approved') ? this.disapproveBit() : this.approveBit();
+		},
+		togglePinBit : function(){
+			this.attr('bit.is_pinned') ? this.unpinBit() : this.pinBit();
+		}
+	};
 
+	for(var i = 0; i < Bit.ACTIONS.length; i++){
+		scope[Bit.ACTIONS[i] + 'Bit'] = (function(action){
+			return function(){
+				this.attr('bit')[action](this.attr('state.hubId'));
+			}
+		})(Bit.ACTIONS[i]);
+	}
 
 	return Component.extend({
 		tag: 'bh-bit',
 		template : initView,
-		events : {
-
-		},
+		scope : scope,
 		helpers : {
 			formattedTitle : function(title){
 				title = can.isFunction(title) ? title() : title;
