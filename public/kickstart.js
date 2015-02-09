@@ -21,54 +21,55 @@ steal(
 				}
 			});
 
-			var appState = new AppState;
+			Models.Brand.findOne({}).then(function(brand){
+				
+				var appState = new AppState({
+					currentBrand: brand
+				});
 
-			can.route.map(appState);
+				window.addEventListener('message', function(event){
+					if(event.origin !== 'http://' + EMBED_ENDPOINT){
+						return;
+					}
+					if(event.data.type === 'loadedBits'){
+						appState.bitsWereLoaded(event.data.payload.split(','));
+					}
+				}, false);
 
-			can.route.ready();
+				can.route.map(appState);
 
-			bindModelEvents(appState);
+				can.route.ready();
 
-			var $window = $(window);
+				bindModelEvents(appState);
 
-			var calculateScrollAndHeight = function(){
-				return {
-					scrollTop : $window.scrollTop(),
-					scrollHeight : $window.height()
-				}
-			}
+				var $window = $(window);
 
-			$window.scroll(function(){
-				appState.attr(calculateScrollAndHeight());
+				$(selector).html(initView({
+					state: appState
+				}, {
+					renderPage : function(){
+						var page = can.route.attr('page') || "hub-list",
+						template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
+
+						return template(this);
+					},
+					pageLink : function(page, title){
+						page = can.isFunction(page) ? page() : page;
+						title = can.isFunction(title) ? title() : title;
+
+						var currentPage = can.route.attr('page'),
+						props = {
+							'class' : 'btn '
+						};
+
+						props['class'] += page === currentPage ? 'btn-default' : 'btn-link';
+
+						return can.route.link(title, {page: page}, props, false);
+					}
+				}));
 			});
 
-			$window.on('resize', function(){
-				appState.attr(calculateScrollAndHeight());
-			});
-
-			$(selector).html(initView({
-				state: appState
-			}, {
-				renderPage : function(){
-					var page = can.route.attr('page') || "hub-list",
-					template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
-
-					return template(this);
-				},
-				pageLink : function(page, title){
-					page = can.isFunction(page) ? page() : page;
-					title = can.isFunction(title) ? title() : title;
-
-					var currentPage = can.route.attr('page'),
-					props = {
-						'class' : 'btn '
-					};
-
-					props['class'] += page === currentPage ? 'btn-default' : 'btn-link';
-
-					return can.route.link(title, {page: page}, props, false);
-				}
-			}));
+			
 		}
 
 	});

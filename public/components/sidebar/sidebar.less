@@ -2,6 +2,7 @@ bh-sidebar {
 	display: block;
 	background: #f1efef;
 	box-shadow: 0 0 30px rgba(0,0,0,0.2);
+	position: relative;
 	.header {
 		height: 50px;
 		line-height: 20px;
@@ -56,7 +57,7 @@ bh-sidebar {
 		padding-right: 0;
 	}
 	.service-tabs {
-		border-bottom: 2px solid #222;
+		border-bottom: 2px solid #f30;
 	}
 	.panel-link {
 		border: 1px solid #cecdcd;
@@ -77,14 +78,20 @@ bh-sidebar {
 			border-right: none;
 		}
 		&.active {
-			border-color: #222;
-			background: #222;
+			border-color: #f30;
+			background: #f30;
 			color: white;
+			text-decoration: none;
 		}
 	}
 	.panel-container {
 		padding: 0 25px 25px;
 		overflow-y: auto;
+		top: 155px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		position: absolute;
 	}
 	.edit-hub-name {
 		position: absolute;

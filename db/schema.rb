@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150203150337) do
+ActiveRecord::Schema.define(version: 20150209123316) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -120,6 +120,14 @@ ActiveRecord::Schema.define(version: 20150203150337) do
     t.boolean "is_pinned",   default: false
   end
 
+  create_table "embed_presets", force: true do |t|
+    t.integer  "embed_id"
+    t.string   "name"
+    t.json     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "embeds", force: true do |t|
     t.string  "name"
     t.string  "colorscheme"
@@ -138,14 +146,15 @@ ActiveRecord::Schema.define(version: 20150203150337) do
     t.string   "feed_name"
     t.string   "type_name"
     t.integer  "parent_id"
-    t.datetime "origin_ts",                      null: false
-    t.datetime "thread_updated_ts",              null: false
+    t.datetime "origin_ts",                         null: false
+    t.datetime "thread_updated_ts",                 null: false
     t.string   "image"
     t.string   "cached_tag_list"
     t.integer  "total_upvotes"
     t.hstore   "props",             default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_pending",        default: false
   end
 
   create_table "entities_services", id: false, force: true do |t|

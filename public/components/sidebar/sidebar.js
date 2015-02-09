@@ -23,9 +23,7 @@ function(Component, initView, Models){
 			isEditing: false,
 			init : function(){
 				var self = this;
-				Models.Brand.findOne({}).then(function(brand){
-					self.attr('currentBrand', brand);
-				});
+				
 				if(this.attr('state.hubId')){
 					Models.Hub.findOne({
 						id: this.attr('state.hubId')
@@ -61,7 +59,7 @@ function(Component, initView, Models){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
 			},
 			integrationCode : function(){
-				var currentBrand = this.attr('currentBrand');
+				var currentBrand = this.attr('state.currentBrand');
 				var hub = this.attr('hub');
 				var tenantName, hubId;
 				if(currentBrand && hub){
@@ -75,24 +73,6 @@ function(Component, initView, Models){
 			}
 		},
 		events : {
-			inserted : 'setPanelHeight',
-			'{window} resize' : 'setPanelHeight',
-			'{can.route} panel' : 'setPanelHeight',
-			'{scope} hub' : 'setPanelHeight',
-			setPanelHeight: function(){
-				var self = this;
-				setTimeout(function(){
-					if(!self.element){
-						return;
-					}
-					var containerHeight = self.element.height(),
-						headerHeight = self.element.find('.header').outerHeight(),
-						hubNameHeight = self.element.find('.hub-name-wrap').outerHeight() + 29, // height + margin
-						linksHeight = (1 * 37),
-						totalHeight = headerHeight + hubNameHeight + linksHeight + 50; // add padding
-					self.element.find('.panel-container').height(containerHeight - totalHeight)
-				}, 1);
-			},
 			'{scope} isEditing' : function(scope, ev, newVal){
 				var self = this;
 				if(newVal){

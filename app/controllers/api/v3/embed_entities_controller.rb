@@ -98,6 +98,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   def build_scope
     scope = Entity.joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
+      .where("entities.is_pending" => false)
       .includes(:parent)
       .no_children
 

@@ -42,9 +42,18 @@ function(Component, Models, initView){
 
 				return check ? opts.fn(opts.scope.add(service)) : opts.inverse(opts.scope.add(service));
 			},
+			isServiceCurrentlyLoading : function(service, opts){
+				var currentlyLoading = this.attr('state.loadingServices');
+
+				service = can.isFunction(service) ? service() : service;
+
+				if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error')){
+					return opts.fn();
+				}
+			},
 			showErrorsForService : function(service, opts){
 				service = can.isFunction(service) ? service() : service;
-				if(this.attr('shownErrors').indexOf(service) > -1 && service.attr('error')){
+				if(this.attr('shownErrors').indexOf(service) !== -1 && service.attr('error')){
 					return opts.fn();
 				}
 			}
