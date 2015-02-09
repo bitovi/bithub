@@ -1,17 +1,30 @@
 steal(
-'./bind-model-events.js',
 'models/appstate.js',
 './embed.stache!',
+'models/bit.js',
+'connect-liveservice.js',
 'bits',
 'can/route',
 'style',
-function(bindModelEvents, AppState, embedView){
+function(AppState, embedView, Bit, connectLiveService){
 
 	var params = can.deparam(window.location.search.substr(1));
 	var hubId = params.hubId;
 	var tenantName = params.tenantName;
+	var liveService;
 
 	var appState = new AppState();
+
+	var triggerPartition = (function(){
+		var partitionTimeout;
+		return function(bits){
+			clearTimeout(partitionTimeout);
+			partitionTimeout = setTimeout(function(){
+				can.trigger(bits, 'partition');
+			}, 100);
+		}
+	})()
+
 	can.route.map(appState);
 
 	can.route.ready();
@@ -22,10 +35,27 @@ function(bindModelEvents, AppState, embedView){
 	});
 
 	if(params.live){
-		bindModelEvents(appState);
+		liveService = connectLiveService(hubId);
+		if(liveService){
+			liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
+		}
+		Bit.on('created', function(ev, bit){
+			var serviceIds = bit.attr('service_ids');
+			var bits = appState.attr('bits');
+
+			bits.unshift(bit);
+			
+			triggerPartition(bits);
+
+			window.parent && window.parent.postMessage({
+				type : 'loadedBits',
+				payload : serviceIds.join(',')
+			}, 'http://' + EMBED_ENDPOINT);
+
+		});
 	}
 
-	$('body').addClass('no-background');
+	$('body').addClass('embed');
 
 	$('#app').html(embedView({
 		state: appState

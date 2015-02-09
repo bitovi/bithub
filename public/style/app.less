@@ -1,6 +1,6 @@
 body {
 	background: #f6f6f6;
-	&.no-background {
+	&.embed {
 		background: transparent;
 	}
 }
@@ -37,13 +37,19 @@ body {
 #content {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 50px;
 	right: 0;
 	bottom: 0;
+	overflow: hidden;
 	-webkit-transition: left 0.35s ease-in;
 	-moz-transition: left 0.35s ease-in;
 	-o-transition: left 0.35s ease-in;
 	transition: left 0.35s ease-in;
+	iframe {
+		height: 100%;
+		width: 100%;
+		border: none;
+	}
 }
 #content.sidebar-is-expanded {
 	left: 560px;

@@ -5,17 +5,10 @@ bh-bits {
 	position: absolute;
 	top: 0;
 	left: 0;
+	right: 0;
 	bottom: 0;
-	width: 100%;
 	overflow-y: auto;
 	.clearfix;
-	.alert-below-the-fold {
-		position: fixed;
-		bottom: 0;
-		left: 10px;
-		right: 10px;
-		box-shadow: 0 0 30px rgba(0,0,0,0.2);
-	}
 	.bit-content {
 		.bit-content--caption {
 			overflow: hidden;
@@ -33,22 +26,19 @@ bh-bits {
 		text-align: center;
 		color: #666;
 	}
-	bh-bit.below-the-fold .bit {
-		background: #fcf8e3;
-	}
 	.column {
 		float: left;
 	}
-	&.columns-1 .column {
+	.columns-1 .column {
 		width: 100%;
 	}
-	&.columns-2 .column {
+	.columns-2 .column {
 		width: 50%;
 	}
-	&.columns-3 .column {
+	.columns-3 .column {
 		width: 33.3%;
 	}
-	&.columns-4 .column {
+	.columns-4 .column {
 		width: 25%;
 	}
 }
