@@ -77,10 +77,10 @@ function(Component, initView, _map, Bit){
 				}, 1);
 			},
 			'{bit} is_approved' : function(bit, ev, newVal){
-				this.element.toggleClass('blocked', !newVal)
+				this.scope.attr('state').isAdmin() && this.element.toggleClass('blocked', !newVal);
 			},
 			'{bit} is_pinned' : function(bit, ev, newVal){
-				this.element.toggleClass('pinned', newVal)
+				this.scope.attr('state').isAdmin() && this.element.toggleClass('pinned', newVal);
 			},
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);

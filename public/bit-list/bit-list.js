@@ -80,7 +80,16 @@ function(Control, initView, Bit, _map){
 			this.partition(this.options.state.attr('bits'));
 			this.element.find('.column-wrapper').html(this.columns);
 		},
-		"{state.bits} partition" : 'partition',
+		"{state.bits} partition" : function(){
+			this.currentColumn = 0;
+			this.partition(this.options.state.attr('bits'));
+		},
+		'{state.bits} remove' : function(bits, ev, removed){
+			for(var i = 0; i < removed.length; i++){
+				$(this.__cardCache[removed[i].id]).remove();
+				delete this.__cardCache[removed[i].id];
+			}
+		},
 		partition : function(bits){
 			var columnLength = this.columns.length;
 			var arrs = _map(Array(columnLength), function(){

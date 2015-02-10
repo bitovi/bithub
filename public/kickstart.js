@@ -7,12 +7,11 @@ steal(
 	'models',
 	'lodash/collections/reduce.js',
 	'./bind-model-events.js',
-	'./communicator.js',
 	'can/map/define',
 	'components',
 	'components/helpers.js',
 	'fixtures',
-	function(Map, initView, route, stache, AppState, Models, _reduce, bindModelEvents, Communicator){
+	function(Map, initView, route, stache, AppState, Models, _reduce, bindModelEvents){
 
 		return function(selector){
 			$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
@@ -28,17 +27,6 @@ steal(
 					currentBrand: brand
 				});
 
-				window.addEventListener('message', function(event){
-					if(event.origin !== 'http://' + EMBED_ENDPOINT){
-						return;
-					}
-					if(event.data.type === 'loadedBits'){
-						appState.bitsWereLoaded(event.data.payload.split(','));
-					}
-				}, false);
-
-				Communicator.bind();
-
 				can.route.map(appState);
 
 				can.route.ready();
@@ -50,6 +38,10 @@ steal(
 				$(selector).html(initView({
 					state: appState
 				}, {
+					renderIframe : function(iframe, opts){
+						iframe = can.isFunction(iframe) ? iframe() : iframe;
+						return iframe;
+					},
 					renderPage : function(){
 						var page = can.route.attr('page') || "hub-list",
 						template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');

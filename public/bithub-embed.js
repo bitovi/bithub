@@ -28,6 +28,8 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 	})()
 
 	var kickstart = function(hub){
+		var isPublic = !hub;
+
 		can.route.map(appState);
 
 		can.route.ready();
@@ -39,22 +41,41 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 		});
 
 		if(params.live){
-			liveService = connectLiveService(hubId);
+			liveService = connectLiveService(hubId, isPublic ? tenantName : null);
 			if(liveService){
 				liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
 			}
 			Bit.on('created', function(ev, bit){
 				var serviceIds = bit.attr('service_ids');
 				var bits = appState.attr('bits');
+				var index;
 
-				bits.unshift(bit);
+				if(isPublic){
+					if(!bit.attr('is_approved')){
+						index = bits.indexOf(bit);
+						if(index > -1){
+							bits.splice(index, 1);
+						}
+					} else {
+						bits.place(bit);
+					}
+					
+				} else {
+					if(bits.indexOf(bit) === -1){
+						bits.unshift(bit);
+					}
+				}
 				
 				triggerPartition(bits);
 
-				window.parent && window.parent.postMessage({
-					type : 'loadedBits',
-					payload : serviceIds.join(',')
-				}, 'http://' + EMBED_ENDPOINT);
+
+				if(serviceIds){
+					window.parent && window.parent.postMessage({
+						type : 'loadedBits',
+						payload : serviceIds.join(',')
+					}, 'http://' + EMBED_ENDPOINT);
+				}
+				
 
 			});
 		}
