@@ -67,7 +67,7 @@ class ScopeApplier
 
   def apply_order_to_scope(skip_order: false)
     if not(skip_order) && (orderings = @query.pluck_and_process_orderings)
-      @scope = @scope.order(orderings) unless (@params.andand[:funnel_id] || @params.andand[:funnel_name])
+      @scope = @scope.order(orderings)
     end
     self
   end
