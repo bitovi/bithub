@@ -3,11 +3,12 @@ steal(
 './embed.stache!',
 'models/bit.js',
 'models/hub.js',
+'bit-list',
 'connect-liveservice.js',
 'bits',
 'can/route',
 'style',
-function(AppState, embedView, Bit, Hub, connectLiveService){
+function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 
 	var params = can.deparam(window.location.search.substr(1));
 	var hubId = params.hubId;
@@ -60,10 +61,8 @@ function(AppState, embedView, Bit, Hub, connectLiveService){
 
 		$('body').addClass('embed');
 
-		$('#app').html(embedView({
-			state: appState
-		}));
+		new BitList($('#app'), {
+			state : appState
+		});
 	});
-
-	
 });
