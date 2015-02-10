@@ -87,7 +87,7 @@ class Entity < ActiveRecord::Base
     if has_attribute?(:is_approved)
       read_attribute(:is_approved)
     else
-      embed_entities.where(:id => embed.id).first.is_approved
+      embed && embed_entities.where(:embed_id => embed.id).first.is_approved?
     end
   end
 
@@ -95,7 +95,7 @@ class Entity < ActiveRecord::Base
     if has_attribute?(:is_pinned)
       read_attribute(:is_pinned)
     else
-      embed_entities.where(:id => embed.id).first.is_pinned
+      embed && embed_entities.where(:embed_id => embed.id).first.is_pinned?
     end
   end
 
