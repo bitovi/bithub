@@ -9,21 +9,15 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    if current_account
-      @visiblity = params[:view]
-      if (tenant_name = params[:tenant_name])
-        tenant_name = nil unless Brand.find_by_tenant_name tenant_name
-        Apartment::Tenant.switch tenant_name do
-          scope = build_scope
-          @entities = EntityDecorator.decorate_collection(scope.all)
-          render :index
-        end
+    @visibility = current_account ? params[:view] : :public
+
+    if (tn = (params[:tenant_name] || Apartment::Tenant.current))
+      tn = nil unless Apartment.tenant_names.include?(tn)
+      Apartment::Tenant.switch tenant_name do
+        scope = build_scope
+        @entities = EntityDecorator.decorate_collection(scope.all)
+        render :index
       end
-    else
-      @visibility = :public
-      scope = build_scope
-      @entities = EntityDecorator.decorate_collection(scope.all)
-      render :index
     end
   end
 
@@ -88,12 +82,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
-    if @visibility == :public
-      if owner_embed.approving?
-        scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
-      elsif owner_embed.blocking?
-        scope = scope.where('embed_entities.is_approved = TRUE')
-      end
+    if owner_embed.approving?
+      scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
+    elsif owner_embed.blocking?
+      scope = scope.where('embed_entities.is_approved = TRUE')
     end
 
     scope = scope
