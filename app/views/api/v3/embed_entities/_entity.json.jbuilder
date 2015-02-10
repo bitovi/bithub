@@ -10,7 +10,7 @@ end
 
 json.service_ids entity.services.map {|s| s.id}
 
-if defined?(:relation) && relation
-  json.is_approved relation.is_approved
-  json.is_pinned relation.is_pinned
+if @visiblity == :admin
+  json.is_approved entity.is_approved
+  json.is_pinned entity.is_pinned
 end
