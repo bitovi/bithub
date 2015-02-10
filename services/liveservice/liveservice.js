@@ -72,7 +72,7 @@ LiveService.prototype.registerEndpoints = function() {
 			self.quite || console.info( 'New message from MQ', data );
 
 			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
-			self.router.publish( key, data.payload );
+			self.router.publish( key, data );
 		});
 	});
 };
@@ -88,7 +88,21 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && parseCookies( cookie )._session_id);
 
 		if( session_id == undefined ) {
-			console.log('User without valid session from ' + remoteIp);
+			// Handle public entities
+			if(params.tenant_name){
+				var publicKey = ['entities', params.tenant_name, params.embed_id].join('.')
+				self.router.subscribe(publicKey, function(data){
+					console.log('PUBLIC MSG', data)
+					if(data.meta.is_public){
+						console.log('Public message', data.payload)
+						socket.emit('entities', data.payload);
+					}
+				});
+				console.log('Connecting public entities for tenant: ' + params.tenant_name)
+			} else {
+				console.log('User without valid session from ' + remoteIp);
+			}
+			
 			return;
 		}
 
@@ -104,7 +118,8 @@ LiveService.prototype.onIoConnection = function() {
 				_.each( self.endpoints, function( endpoint ) {
 					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
 
-					self.router.subscribe( key, function( message ) {
+					self.router.subscribe( key, function( data ) {
+						var message = data.payload;
 						console.log(endpoint, message);
 						socket.emit( endpoint, message );
 					});

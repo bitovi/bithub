@@ -208,7 +208,8 @@ class Entity < ActiveRecord::Base
     {
       meta: {
         brand_name: Apartment::Tenant.current,
-        embed_id: embed.id
+        embed_id: embed.id,
+        is_public: is_approved(embed)
       },
       payload: payload
     }
