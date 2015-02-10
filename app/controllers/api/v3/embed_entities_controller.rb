@@ -9,13 +9,13 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    @visibility = current_account ? params[:view] : :public
+    @visibility = current_account ? params[:view] : 'public'
 
     if (tn = (params[:tenant_name] || Apartment::Tenant.current))
       tn = nil unless Apartment.tenant_names.include?(tn)
-      Apartment::Tenant.switch tenant_name do
+      Apartment::Tenant.switch(tn) do
         scope = build_scope
-        @entities = EntityDecorator.decorate_collection(scope.all)
+        @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
         render :index
       end
     end
@@ -39,7 +39,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   def disapprove
     @visibility = :admin
     if (@relation = embed_entity_relation).disaprove(current_account)
-      @entity = EntityDecorator.decorate(entity_from_relation)
+      @entity = EntityDecorator.decorate(entity_from_relation, )
       render :show
     else
       render text: "error", status: 406
@@ -82,10 +82,23 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
-    if owner_embed.approving?
-      scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
-    elsif owner_embed.blocking?
-      scope = scope.where('embed_entities.is_approved = TRUE')
+    if public_visibility?
+      if owner_embed.approving?
+        scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
+      elsif owner_embed.blocking?
+        scope = scope.where('embed_entities.is_approved = TRUE')
+      end
+      scope = scope.order('embed_entities.is_pinned DESC, entities.thread_updated_ts DESC')
+
+    elsif show_only_blocked? 
+      scope = scope.where('embed_entities.is_approved = FALSE')
+    elsif show_only_pinned?
+      scope = scope.where('embed_entities.is_pinned = TRUE')
+    end
+
+    # named order
+    if params[:order] == 'preview'
+      params[:order] = ['is_pinned:desc', 'thread_updated_ts:desc']
     end
 
     scope = scope
@@ -93,13 +106,17 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .includes(:parent)
       .no_children
 
-    scope = scope_applier(scope)
-    .apply_negated_attrs_to_scope
-    .apply_muster_query_to_scope(muster_query)
-    .apply_regular_params_to_scope
-    .apply_tag_based_params_to_scope
-    .apply_order_to_scope
-    .result
+    if admin_visibility?
+      scope = scope_applier(scope)
+        .apply_negated_attrs_to_scope
+        .apply_muster_query_to_scope(muster_query)
+        .apply_regular_params_to_scope
+        .apply_tag_based_params_to_scope
+        .apply_order_to_scope
+        .result
+    end
+    
+    scope
   end
 
   def query_logic
@@ -123,5 +140,25 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def entity_id
     params[:entity_id] || params[:id]
+  end
+
+  def show_only_pinned?
+    params[:show] == 'blocked'
+  end
+
+  def show_only_blocked?
+    params[:show] == 'pinned'
+  end
+
+  def show_all?
+    params[:show].nil? || params[:show] == 'all'
+  end
+
+  def admin_visibility?
+    @visibility == 'admin'
+  end
+
+  def public_visibility?
+    @visibility == 'public'
   end
 end

@@ -32,6 +32,15 @@ class EntityDecorator < Draper::Decorator
     end
   end
 
+  def is_approved
+    current_embed = context.fetch(:embed)
+    if source.is_approved.nil?
+      current_embed.approved_by_default
+    else
+      source.is_approved
+    end
+  end
+
   def images
     EntityImagesMapper.new(source).build
   end
