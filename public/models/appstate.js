@@ -3,8 +3,9 @@ steal(
 'models',
 'lodash/collections/reduce.js',
 'connect-liveservice.js',
+'communicator',
 'can/map/define', 
-function(Map, Models, _reduce, connectLiveService){
+function(Map, Models, _reduce, connectLiveService, Communicator){
 
 	return Map.extend({
 		define : {
@@ -25,6 +26,25 @@ function(Map, Models, _reduce, connectLiveService){
 				},
 				remove : function(){
 					this.attr('bits').splice(0);
+				}
+			},
+			iframe : {
+				get : function(){
+					var currentBrand = this.attr('currentBrand');
+					var hubId = this.attr('hubId');
+					var url = "/admin/embed?tenantName={tenantName}&hubId={hubId}&live=true";
+					var iframe;
+
+					if(hubId && currentBrand){
+
+						iframe = document.createElement('iframe');
+						iframe.src = can.sub(url, {
+							hubId: hubId,
+							tenantName: currentBrand.attr('name')
+						});
+
+						return iframe;
+					}
 				}
 			},
 			hub : {
@@ -54,6 +74,14 @@ function(Map, Models, _reduce, connectLiveService){
 				serialize: false
 			}
 		},
+		init : function(){
+			var self = this;
+			this.communicator = Communicator.bind(this.compute('iframe'), {
+				loadedBits : function(payload){
+					self.bitsWereLoaded(payload.split(','));
+				}
+			});
+		},
 		bitsWereLoaded : function(serviceIds){
 			var loadingServices = this.attr('loadingServices');
 			var loadingServicesByIds = _reduce(loadingServices, function(acc, service){
@@ -71,16 +99,6 @@ function(Map, Models, _reduce, connectLiveService){
 		},
 		isSidebar : function(){
 			return this.attr('page') === 'sidebar' && this.attr('hubId');
-		},
-		iframe : function(){
-			var currentBrand = this.attr('currentBrand');
-			var hubId = this.attr('hubId');
-			if(hubId && currentBrand){
-				return can.sub('<iframe src="/admin/embed?tenantName={tenantName}&hubId={hubId}&live=true"></iframe>', {
-					hubId: hubId,
-					tenantName: currentBrand.attr('name')
-				});
-			}
 		}
 	});
 });

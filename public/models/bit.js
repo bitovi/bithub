@@ -25,6 +25,16 @@ function(Model, moment){
 		}
 	})();
 
+	var checkIfBitIsBelowCurrentBit = function(bit, currentBit){
+		if(!currentBit){
+			return false;
+		}
+		if(currentBit.is_pinned){
+			return true;
+		}
+		return bit.thread_updated_ts < currentBit.thread_updated_ts;
+	}
+
 	var BIT_ACTIONS = ['pin', 'unpin', 'approve', 'disapprove'];
 
 	var instanceMethods = {
@@ -78,20 +88,33 @@ function(Model, moment){
 
 	Bit.List = Bit.List.extend({
 		place : function(bit){
-			var length = this.attr('length'),
-				currentBit, nextBit;
-			for(var i = 0; i < length; i++){
-				currentBit = this[i];
-				nextBit = this[i + 1];
-				if(i === 0 && bit.thread_updated_ts > currentBit.thread_updated_ts){
-					this.unshift(bit)
-					return;
-				} else if(bit.thread_updated_ts < currentBit.thread_updated_ts && (nextBit && bit.thread_updated_ts >= nextBit.thread_updated_ts)){
-					this.splice(i, 0, bit);
-					return;
-				}
+			var length = this.attr('length');
+			var index = -1;
+			var currentIndex, currentBit, nextBit;
+
+			currentIndex = this.indexOf(bit);
+
+			// if it exists in the list remove it because we are changing the order
+			if(currentIndex > -1){
+				this.splice(currentIndex, 1);
 			}
-			this.push(bit);
+
+			if(bit.attr('is_pinned')){
+				do {
+					index++;
+					currentBit = this.attr(index);
+				} while(currentBit && currentBit.attr('is_pinned'));
+			} else {
+				do {
+					index++;
+					currentBit = this.attr(index);
+				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
+			}
+
+			console.log('INDEX', index)
+
+			
+			this.splice(index, 0, bit);
 		}
 	});
 

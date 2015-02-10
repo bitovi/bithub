@@ -5,7 +5,7 @@
 </div>
 
 <main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
-	{{{state.iframe}}}
+	{{renderIframe state.iframe}}
 </main>
 
 
