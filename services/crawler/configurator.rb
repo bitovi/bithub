@@ -7,8 +7,7 @@ class Configurator
   include Celluloid
   include CoreHelpers
 
-  def initialize(opts)
-    @env = opts.fetch(:environment)
+  def initialize()
     @config = config unless ENV['TRAVIS']
     Celluloid.logger.debug @config.to_yaml
   end
@@ -37,7 +36,7 @@ class Configurator
   end
 
   def remote_config
-    if @env == 'test'
+    if ENV['ENV'] == 'test'
       JSON.parse(File.read('config/test_account.json'))
     else
       res = HTTParty.get url

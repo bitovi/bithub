@@ -9,83 +9,64 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    if tenant_name = params['tenant_name']
-      visibility = :admin
-
-      # check if tenant_name exists
-      tenant_name = nil unless Brand.find_by_tenant_name tenant_name
-
-      Apartment::Tenant.switch tenant_name do
-        scope = build_scope(visibility)
-        @entities = EntityDecorator.decorate_collection(scope.all)
-        render :index
+    if current_account
+      @visiblity = params[:view]
+      if (tenant_name = params[:tenant_name])
+        tenant_name = nil unless Brand.find_by_tenant_name tenant_name
+        Apartment::Tenant.switch tenant_name do
+          scope = build_scope
+          @entities = EntityDecorator.decorate_collection(scope.all)
+          render :index
+        end
       end
     else
-      visibility = :public
-
-      scope = build_scope(visibility)
+      @visibility = :public
+      scope = build_scope
       @entities = EntityDecorator.decorate_collection(scope.all)
       render :index
     end
   end
 
-  def approved
-    entities = owner_embed.embed_entities.approved.map(&:entity)
-
-    @entities = EntityDecorator.decorate_collection entities
-    render :index
-  end
-
-  def waitlisted
-    entities = owner_embed.embed_entities.waitlisted.map(&:entity)
-
-    @entities = EntityDecorator.decorate_collection entities
-    render :index
-  end
-
   def show
-    entity = owner_embed.embed_entities.find(entity_id)
-
-    @entity = EntityDecorator.decorate(entity)
-    render :show
-  end
-
-  def update
-    @embed = owner_embed
+    @entity = EntityDecorator.decorate(entity_from_relation)
     render :show
   end
 
   def approve
+    @visibility = :admin
     if (@relation = embed_entity_relation).approve(current_account)
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
 
   def disapprove
+    @visibility = :admin
     if (@relation = embed_entity_relation).disaprove(current_account)
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
 
   def pin
+    @visibility = :admin
     if (@relation = embed_entity_relation).pin
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
   
   def unpin
+    @visibility = :admin
     if (@relation = embed_entity_relation).unpin
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
@@ -93,23 +74,25 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def destroy
     if (@relation = embed_entity_relation).destroy
-      render json: embed_entity_relation
+      render :json => msg_hash(@relation, 'destroy', 'success')
     else
-      render text: "error", status: 406
+      render :json => msg_hash(@relation, 'destroy'), :status => 406
     end
   end
 
   private
 
-  def build_scope(visibility)
-    scope = Entity.joins(:embed_entities)\
+  def build_scope
+    scope = Entity\
+      .select('entities.*, embed_entities.is_approved AS is_approved, embed_entities.is_pinned AS is_pinned')
+      .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
-    if visibility == :public
+    if @visibility == :public
       if owner_embed.approving?
-        scope = scope.where("embed_entities.is_approved <> false")
+        scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
       elsif owner_embed.blocking?
-        scope = scope.where("embed_entities.is_approved = true")
+        scope = scope.where('embed_entities.is_approved = TRUE')
       end
     end
 
@@ -137,6 +120,13 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def embed_entity_relation
     owner_embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
+  end
+
+  def entity_from_relation
+    Entity.joins(:embed_entities)\
+      .select('entities.*, embed_entities.is_approved AS is_approved, embed_entities.is_pinned AS is_pinned')
+      .where('embed_entities.embed_id' => embed_id)\
+      .where('entities.id' => entity_id).first
   end
 
   def entity_id
