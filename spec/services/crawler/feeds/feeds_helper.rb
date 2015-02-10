@@ -13,10 +13,13 @@ require 'httparty'
 require 'rabbit_factory'
 require 'events/dispatcher'
 
+require 'listener/http_server'
+require 'listener/handlers/all'
+require 'configurator'
 require 'connection_manager'
-require 'http_server/listener'
 require 'publishers/event_publisher'
 require 'decorators/all'
+require 'supervisors/support/owner_data'
 
 Dotenv.load
 

@@ -11,6 +11,8 @@ if ENV['RAILS_ENV'] == 'testing'
   CodeClimate::TestReporter.start
 end
 
+ENV['ENV'] = 'test'
+
 require 'rspec'
 require 'rspec/mocks'
 
