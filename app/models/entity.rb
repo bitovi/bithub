@@ -83,6 +83,22 @@ class Entity < ActiveRecord::Base
     props.andand['state']
   end
 
+  def is_approved(embed = nil)
+    if has_attribute?(:is_approved)
+      read_attribute(:is_approved)
+    else
+      embed_entities.where(:id => embed.id).first.is_approved
+    end
+  end
+
+  def is_pinned(embed = nil)
+    if has_attribute?(:is_pinned)
+      read_attribute(:is_pinned)
+    else
+      embed_entities.where(:id => embed.id).first.is_pinned
+    end
+  end
+
   def is_child?
     parent_id.present?
   end
@@ -186,7 +202,7 @@ class Entity < ActiveRecord::Base
 
   def msg(embed)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
-    entity = EntityDecorator.decorate self
+    entity = EntityDecorator.decorate(self, context: {embed: embed})
     payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
     {
