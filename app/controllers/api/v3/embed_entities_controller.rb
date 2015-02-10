@@ -82,15 +82,17 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   private
 
-  def build_scope(visibility)
-    scope = Entity.joins(:embed_entities)\
+  def build_scope
+    scope = Entity\
+      .select('entities.*, embed_entities.is_approved AS is_approved, embed_entities.is_pinned AS is_pinned')
+      .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
-    if visibility == :public
+    if @visibility == :public
       if owner_embed.approving?
-        scope = scope.where("embed_entities.is_approved <> false")
+        scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
       elsif owner_embed.blocking?
-        scope = scope.where("embed_entities.is_approved = true")
+        scope = scope.where('embed_entities.is_approved = TRUE')
       end
     end
 
@@ -118,6 +120,13 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def embed_entity_relation
     owner_embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
+  end
+
+  def entity_from_relation
+    Entity.joins(:embed_entities)\
+      .select('entities.*, embed_entities.is_approved AS is_approved, embed_entities.is_pinned AS is_pinned')
+      .where('embed_entities.embed_id' => embed_id)\
+      .where('entities.id' => entity_id).first
   end
 
   def entity_id
