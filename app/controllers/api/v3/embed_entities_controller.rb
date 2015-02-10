@@ -28,7 +28,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def approve
     @visibility = 'admin'
-    if (@relation = embed_entity_relation).approve(current_account)
+    if (@relation = embed_entity_relation).approve
       @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
@@ -38,7 +38,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def disapprove
     @visibility = 'admin'
-    if (@relation = embed_entity_relation).disaprove(current_account)
+    if (@relation = embed_entity_relation).disaprove
       @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
