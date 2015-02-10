@@ -7,11 +7,12 @@ steal(
 	'models',
 	'lodash/collections/reduce.js',
 	'./bind-model-events.js',
+	'./communicator.js',
 	'can/map/define',
 	'components',
 	'components/helpers.js',
 	'fixtures',
-	function(Map, initView, route, stache, AppState, Models, _reduce, bindModelEvents){
+	function(Map, initView, route, stache, AppState, Models, _reduce, bindModelEvents, Communicator){
 
 		return function(selector){
 			$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
@@ -35,6 +36,8 @@ steal(
 						appState.bitsWereLoaded(event.data.payload.split(','));
 					}
 				}, false);
+
+				Communicator.bind();
 
 				can.route.map(appState);
 

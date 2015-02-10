@@ -62,8 +62,6 @@ function(Control, initView, Bit, _map){
 				bits.push.apply(bits, data);
 				self.options.isLoading(false);
 
-				console.log(data.length, self.options.params.attr('limit'))
-
 				if(data.length < self.options.params.attr('limit')){
 					self.options.hasNextPage(false);
 				}
