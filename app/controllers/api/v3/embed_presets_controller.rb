@@ -39,7 +39,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   end
   
   def embed_preset_params
-    params.require(:preset).permit(:name, :json, :embed_id)
+    params.require(:preset).permit(:name, :config, :embed_id)
   end
 
   def preset_id

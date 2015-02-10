@@ -83,6 +83,10 @@ class Entity < ActiveRecord::Base
     props.andand['state']
   end
 
+  def is_child?
+    parent_id.present?
+  end
+
   def label_names
     props.andand['label_names']
   end
@@ -177,7 +181,7 @@ class Entity < ActiveRecord::Base
     embeds.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice').publish(message, routing_key: 'entities')
-    end if !is_pending?
+    end if !is_pending? || !is_child?
   end
 
   def msg(embed)

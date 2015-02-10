@@ -60,6 +60,14 @@ RSpec.describe 'Embed endpoints', type: :request do
       end
     end
 
+    describe 'POST /embeds/1/presets' do
+      it 'creates a new embed' do
+        post "/api/#{api_version}/embeds", { embed: embed_creation_data }
+        expect(response).to be_success
+        expect(json.keys).to include('name', 'colorscheme', 'layout', 'approved_by_default')
+      end
+    end
+
     describe 'PUT /embeds' do
       it 'updates an existing embed' do
         Apartment::Tenant.switch @current_brand.tenant_name do
