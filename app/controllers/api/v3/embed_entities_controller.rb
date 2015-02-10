@@ -27,63 +27,46 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     end
   end
 
-  def approved
-    entities = owner_embed.embed_entities.approved.map(&:entity)
-
-    @entities = EntityDecorator.decorate_collection entities
-    render :index
-  end
-
-  def waitlisted
-    entities = owner_embed.embed_entities.waitlisted.map(&:entity)
-
-    @entities = EntityDecorator.decorate_collection entities
-    render :index
-  end
-
   def show
-    entity = owner_embed.embed_entities.find(entity_id)
-
-    @entity = EntityDecorator.decorate(entity)
-    render :show
-  end
-
-  def update
-    @embed = owner_embed
+    @entity = EntityDecorator.decorate(entity_from_relation)
     render :show
   end
 
   def approve
+    @visibility = :admin
     if (@relation = embed_entity_relation).approve(current_account)
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
 
   def disapprove
+    @visibility = :admin
     if (@relation = embed_entity_relation).disaprove(current_account)
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
 
   def pin
+    @visibility = :admin
     if (@relation = embed_entity_relation).pin
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
   end
   
   def unpin
+    @visibility = :admin
     if (@relation = embed_entity_relation).unpin
-      @entity = EntityDecorator.decorate(embed_entity_relation.entity)
-      render :show_relation
+      @entity = EntityDecorator.decorate(entity_from_relation)
+      render :show
     else
       render text: "error", status: 406
     end
@@ -91,9 +74,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def destroy
     if (@relation = embed_entity_relation).destroy
-      render json: embed_entity_relation
+      render :json => msg_hash(@relation, 'destroy', 'success')
     else
-      render text: "error", status: 406
+      render :json => msg_hash(@relation, 'destroy'), :status => 406
     end
   end
 
