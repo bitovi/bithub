@@ -56,8 +56,8 @@ class Embed < ActiveRecord::Base
       end
   end
 
-  def make_link_to(entity)
-    self.embed_entities.create(entity: entity, is_approved: nil)
+  def make_link_to(entity, is_approved = nil)
+    self.embed_entities.create(entity: entity, is_approved: is_approved)
   end
 
   private 

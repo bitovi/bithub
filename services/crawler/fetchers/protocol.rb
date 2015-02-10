@@ -1,3 +1,6 @@
+require 'twitter'
+require 'github_api'
+
 module Fetchers
 
   class ServiceError < StandardError; end
