@@ -1,5 +1,5 @@
 steal(
-'models/appstate.js',
+'models/embed_appstate.js',
 './embed.stache!',
 'models/bit.js',
 'models/hub.js',
@@ -27,7 +27,7 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 		}
 	})()
 
-	Hub.findOne({id: hubId}).then(function(hub){
+	var kickstart = function(hub){
 		can.route.map(appState);
 
 		can.route.ready();
@@ -64,5 +64,11 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 		new BitList($('#app'), {
 			state : appState
 		});
+	}
+
+	Hub.findOne({id: hubId}).then(function(hub){
+		kickstart(hub);
+	}, function(){
+		kickstart();
 	});
 });
