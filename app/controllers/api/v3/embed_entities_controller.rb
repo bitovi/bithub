@@ -9,21 +9,19 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    if tenant_name = params['tenant_name']
-      visibility = :admin
-
-      # check if tenant_name exists
-      tenant_name = nil unless Brand.find_by_tenant_name tenant_name
-
-      Apartment::Tenant.switch tenant_name do
-        scope = build_scope(visibility)
-        @entities = EntityDecorator.decorate_collection(scope.all)
-        render :index
+    if current_account
+      @visiblity = params[:view]
+      if (tenant_name = params[:tenant_name])
+        tenant_name = nil unless Brand.find_by_tenant_name tenant_name
+        Apartment::Tenant.switch tenant_name do
+          scope = build_scope
+          @entities = EntityDecorator.decorate_collection(scope.all)
+          render :index
+        end
       end
     else
-      visibility = :public
-
-      scope = build_scope(visibility)
+      @visibility = :public
+      scope = build_scope
       @entities = EntityDecorator.decorate_collection(scope.all)
       render :index
     end
