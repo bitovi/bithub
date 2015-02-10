@@ -41,6 +41,14 @@ class EntityDecorator < Draper::Decorator
     end
   end
 
+  def is_pinned
+    if !is_approved
+      false
+    else
+      source.is_pinned
+    end
+  end
+
   def images
     EntityImagesMapper.new(source).build
   end

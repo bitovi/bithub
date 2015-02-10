@@ -22,14 +22,14 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def show
-    @entity = EntityDecorator.decorate(entity_from_relation)
+    @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
     render :show
   end
 
   def approve
-    @visibility = :admin
+    @visibility = 'admin'
     if (@relation = embed_entity_relation).approve(current_account)
-      @entity = EntityDecorator.decorate(entity_from_relation)
+      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
       render text: "error", status: 406
@@ -37,9 +37,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def disapprove
-    @visibility = :admin
+    @visibility = 'admin'
     if (@relation = embed_entity_relation).disaprove(current_account)
-      @entity = EntityDecorator.decorate(entity_from_relation, )
+      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
       render text: "error", status: 406
@@ -47,9 +47,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def pin
-    @visibility = :admin
+    @visibility = 'admin'
     if (@relation = embed_entity_relation).pin
-      @entity = EntityDecorator.decorate(entity_from_relation)
+      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
       render text: "error", status: 406
@@ -57,9 +57,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
   
   def unpin
-    @visibility = :admin
+    @visibility = 'admin'
     if (@relation = embed_entity_relation).unpin
-      @entity = EntityDecorator.decorate(entity_from_relation)
+      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
       render :show
     else
       render text: "error", status: 406
@@ -106,15 +106,14 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .includes(:parent)
       .no_children
 
-    if admin_visibility?
-      scope = scope_applier(scope)
-        .apply_negated_attrs_to_scope
-        .apply_muster_query_to_scope(muster_query)
-        .apply_regular_params_to_scope
-        .apply_tag_based_params_to_scope
-        .apply_order_to_scope
-        .result
-    end
+
+    scope = scope_applier(scope)
+      .apply_negated_attrs_to_scope
+      .apply_muster_query_to_scope(muster_query)
+      .apply_regular_params_to_scope
+      .apply_tag_based_params_to_scope
+      .apply_order_to_scope
+      .result
     
     scope
   end
