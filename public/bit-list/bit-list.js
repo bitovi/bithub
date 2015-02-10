@@ -8,7 +8,7 @@ steal(
 function(Control, initView, Bit, _map){
 
 	var CARD_MIN_WIDTH = 300;
-	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}"></bh-bit>');
+	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}" class="animate-height loading"></bh-bit>');
 
 	var calculateColumnCount = function(el){
 		if(el.width < CARD_MIN_WIDTH) {
@@ -32,11 +32,6 @@ function(Control, initView, Bit, _map){
 			opts.columnCount = can.compute(0);
 			opts.isLoading   = can.compute(false);
 			opts.hasNextPage = can.compute(true);
-			opts.params      = new can.Map({
-				offset: 0,
-				limit: 15,
-				order: "created_at:desc"
-			});
 			return this._super(el, opts);
 		},
 		init : function(){
@@ -54,7 +49,7 @@ function(Control, initView, Bit, _map){
 			var self = this;
 			this.options.isLoading(true);
 
-			Bit.findAll(this.getParams()).then(function(data){
+			Bit.findAll(this.options.state.getParams()).then(function(data){
 				var bits = self.options.state.attr('bits');
 
 				can.batch.start();
@@ -62,7 +57,7 @@ function(Control, initView, Bit, _map){
 				bits.push.apply(bits, data);
 				self.options.isLoading(false);
 
-				if(data.length < self.options.params.attr('limit')){
+				if(data.length < self.options.state.attr('params.limit')){
 					self.options.hasNextPage(false);
 				}
 
@@ -70,20 +65,6 @@ function(Control, initView, Bit, _map){
 
 				can.batch.stop();
 			});
-		},
-		getParams : function(){
-			var hubId = can.route.attr('hubId');
-			var params = this.options.params.attr();
-			var tenant = this.options.state.attr('tenant');
-
-			if(tenant){
-				params.tenant_name = tenant;
-				params.order = "thread_updated_ts:desc"
-			}
-
-			params.hubId = hubId;
-
-			return params;
 		},
 		updateColumnCount : function(){
 			this.options.columnCount(calculateColumnCount(this.element));
@@ -138,7 +119,7 @@ function(Control, initView, Bit, _map){
 		nextPage : function(){
 			var params;
 			if(!this.options.isLoading() && this.options.hasNextPage()){
-				params = this.options.params;
+				params = this.options.state.attr('params');
 				params.attr('offset', this.options.state.attr('bits.length'));
 				this.load();
 			}

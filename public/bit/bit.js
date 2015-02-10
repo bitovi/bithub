@@ -50,12 +50,20 @@ function(Component, initView, _map, Bit){
 		},
 		events : {
 			init : function(){
+
 				var self = this;
-				
-				this.element.addClass('loading');
+
 				this.element.trigger('loading');
 
-				!this.scope.attr('is_approved') && this.element.addClass('blocked');
+				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+
+				if(this.scope.attr('state').isAdmin()){
+					if(!this.scope.attr('bit.is_approved')){
+						this.element.addClass('blocked');
+					} else if(this.scope.attr('bit.is_pinned')){
+						this.element.addClass('pinned');
+					}
+				}
 
 				setTimeout(function(){
 					self.imgs = self.element.find('img').toArray();
@@ -70,6 +78,9 @@ function(Component, initView, _map, Bit){
 			},
 			'{bit} is_approved' : function(bit, ev, newVal){
 				this.element.toggleClass('blocked', !newVal)
+			},
+			'{bit} is_pinned' : function(bit, ev, newVal){
+				this.element.toggleClass('pinned', newVal)
 			},
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);
@@ -90,12 +101,12 @@ function(Component, initView, _map, Bit){
 			},
 			updateVisibility : function(){
 				var self = this;
-				this.element.height(this.element.find('.bit').height() - 3);
+				this.element.height(this.element.find('.bit').height());
 				this.element.removeClass('loading');
 				this.element.trigger('loaded');
-				setTimeout(function(){
-					self.element && self.element.css('height', 'auto');
-				}, 400);
+			},
+			removeExplicitHeight : function(){
+				this.element.removeClass('animate-height').css('height', 'auto');
 			}
 		}
 	})
