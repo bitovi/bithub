@@ -9,7 +9,7 @@ describe "Propagation of commands" do
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:configurator] = Configurator.new({environment: 'test'})
+    Celluloid::Actor[:configurator] = Configurator.new
   end
 
   after do

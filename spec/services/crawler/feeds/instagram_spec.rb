@@ -3,7 +3,7 @@ require_relative 'feeds_helper'
 require 'events/instagram/media_event'
 require 'fetchers/instagram/tag_recent_media'
 
-describe HttpServer::Handlers::Instagram  do
+describe Handlers::Instagram  do
 
   ### Helper methods
 
@@ -26,9 +26,10 @@ describe HttpServer::Handlers::Instagram  do
 
   before do
     Celluloid.boot
-    ENV['INSIDE_TEST'] = 'true'
-    Celluloid::Actor[:http_server] = HttpServer::Listener.new
-    Celluloid::Actor[:publisher]   = EventPublisher.new reject_old: false
+
+    Celluloid::Actor[:publisher]    = EventPublisher.new reject_old: false
+    Celluloid::Actor[:configurator] = Configurator.new
+    Celluloid::Actor[:http_server]  = HttpServer.new
 
     rf = RabbitFactory.new($rabbit_channel)
     @x = rf.x('x.web')
@@ -37,7 +38,6 @@ describe HttpServer::Handlers::Instagram  do
 
   after do
     Celluloid.shutdown
-    ENV['INSIDE_TEST'] = nil
   end
 
   ### Tests
