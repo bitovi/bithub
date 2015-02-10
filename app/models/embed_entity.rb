@@ -5,11 +5,11 @@ class EmbedEntity < ActiveRecord::Base
   scope :approved, lambda { where(is_approved: true) }
   scope :waitlisted, lambda { where(is_approved: false) }
   
-  def approve(account)
+  def approve
     update_attribute(:is_approved, true)
   end
 
-  def block(account)
+  def block
     update_attributes({is_approved: false, is_pinned: false})
   end
   alias_method :disapprove, :block
