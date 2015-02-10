@@ -83,11 +83,24 @@ class Entity < ActiveRecord::Base
     props.andand['state']
   end
 
+  def memoize(*args, &block)
+    key = args.join('.')
+    @_memoized ||= {}
+    @_memoized[key] ||= yield
+  end
+
   def is_approved(embed = nil)
     if has_attribute?(:is_approved)
       read_attribute(:is_approved)
     else
-      embed && embed_entities.where(:embed_id => embed.id).first.is_approved?
+      return nil if embed.nil?
+      memoize('is_approved', embed.id) do
+        # don't use the `is_approved?` method here (with the question mark) because
+        # it always return boolean and we need to check if it's nil and return the 
+        # embed default in that case
+        ee_is_approved = embed_entities.where(:embed_id => embed.id).first.is_approved
+        ee_is_approved.nil? ? embed.approved_by_default : ee_is_approved
+      end
     end
   end
 
@@ -95,7 +108,10 @@ class Entity < ActiveRecord::Base
     if has_attribute?(:is_pinned)
       read_attribute(:is_pinned)
     else
-      embed && embed_entities.where(:embed_id => embed.id).first.is_pinned?
+      return nil if embed.nil?
+      memoize('is_pinned', embed.id) do
+        embed_entities.where(:embed_id => embed.id).first.is_pinned?
+      end
     end
   end
 
@@ -197,7 +213,32 @@ class Entity < ActiveRecord::Base
     embeds.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice').publish(message, routing_key: 'entities')
+      unless is_approved(embed)
+        # if the entity is not approved we don't want to send publicly
+        # the whole entity, but we need to send just enough so it can 
+        # be removed from an active embed. This way live embeds (like on
+        # event media walls) can be moderated and updated
+        x('x.liveservice').publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
+      end
     end if !is_pending? || !is_child?
+  end
+
+  def meta_msg(embed, is_public)
+    {
+      brand_name: Apartment::Tenant.current,
+      embed_id: embed.id,
+      is_public: is_public
+    }
+  end
+
+  def not_approved_msg(embed)
+    {
+      meta: meta_msg(embed, true),
+      payload: JSON.generate({
+        id: self.id,
+        is_approved: false
+      })
+    }
   end
 
   def msg(embed)
@@ -206,11 +247,7 @@ class Entity < ActiveRecord::Base
     payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
     {
-      meta: {
-        brand_name: Apartment::Tenant.current,
-        embed_id: embed.id,
-        is_public: is_approved(embed)
-      },
+      meta: meta_msg(embed, is_approved(embed)),
       payload: payload
     }
   end
