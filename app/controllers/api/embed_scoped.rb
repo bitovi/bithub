@@ -1,6 +1,6 @@
 module Api::EmbedScoped
   def owner_embed
-    Embed.find(embed_id)
+    @embed = Embed.find(embed_id)
   end
   
   def embed_id
