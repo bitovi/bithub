@@ -1,5 +1,5 @@
 web: bundle exec unicorn_rails -c ./config/unicorn.rb
 listener: ruby ./services/listener/listener.rb
 crawler: ruby ./services/crawler/crawler.rb
-worker: /home/bithub/web/shared/bin/sidekiq
+worker: bundle exec sidekiq
 liveservice: nodejs ./services/liveservice/server.js
