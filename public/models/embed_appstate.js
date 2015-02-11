@@ -6,13 +6,17 @@ steal(
 function(Map, Bit, connectLiveService){
 
 	var addDefaultAttrs = function(params){
-		if(!params.view){
-			params.view = 'public';
+		var defaultParams = {
+			view: 'public',
+			theme: 'light',
+			live: false
 		}
-		return params;
+		return can.extend(defaultParams, params);
 	}
 
 	var liveService;
+
+
 
 	return Map.extend({
 		define : {
@@ -43,17 +47,10 @@ function(Map, Bit, connectLiveService){
 			},
 			params : {
 				serialize: false
-			},
-			view : {
-				set : function(val){
-					if(this.isPublic()){
-						return 'public';
-					}
-					return val || 'public';
-				}
 			}
 		},
 		setAttrs : function(attrs){
+			console.log('SET ATTRS', attrs, addDefaultAttrs(attrs))
 			this.attr(addDefaultAttrs(attrs));
 		},
 		init : function(){
@@ -63,7 +60,7 @@ function(Map, Bit, connectLiveService){
 			return this.attr('live');
 		},
 		isPublic : function(){
-			return !this.attr('hub');
+			return !this.isAdmin();
 		},
 		reset : function(){
 			can.batch.start();
@@ -71,14 +68,21 @@ function(Map, Bit, connectLiveService){
 			this.bits.splice(0);
 			can.batch.stop();
 		},
+		getView : function(){
+			if(this.isAdmin()){
+				return 'admin';
+			}
+			return 'public';
+		},
 		getParams: function(){
 			var hubId = this.attr('hubId');
 			var params = this.attr('params').attr();
 			var tenant = this.attr('tenant');
+			var isPublic = this.isPublic();
 
-			params.view = this.attr('view');
+			params.view = this.getView();
 
-			if(params.view === 'public'){
+			if(isPublic){
 				params.tenant_name = tenant;
 			} else {
 				params.order = "created_at:desc"

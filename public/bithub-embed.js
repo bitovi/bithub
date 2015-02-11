@@ -83,10 +83,19 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			});
 		}
 
-		appState.on('view', function(){
-			appState.reset();
-			initApp();
-		});
+		var resetApp = (function(){
+			var timeout;
+			return function(){
+				clearTimeout(timeout);
+				setTimeout(function(){
+					appState.reset();
+					initApp();
+				}, 1);
+			}
+		})();
+
+		appState.on('view', resetApp);
+		appState.on('sort', resetApp);
 
 		appState.on('theme', function(ev, newTheme){
 			$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');

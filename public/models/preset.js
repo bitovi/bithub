@@ -77,7 +77,7 @@ function(Model){
 
 	Preset.PREVIEW = new Preset({
 		config: {
-			live: true
+			live: false
 		}
 	});
 
