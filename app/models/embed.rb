@@ -38,22 +38,22 @@ class Embed < ActiveRecord::Base
     self.filters.where(classification: 'blocking').first
   end
 
-  def moderating_filter
-    self.filters.where(classification: 'moderating').first
+  def approving_filter
+    self.filters.where(classification: 'approving').first
   end
 
   def valid_services
     services.all.select { |s| s.service_config.valid? }
   end
 
-  def moderate
-    self.entities
-      .satisfying(moderating_filter)
-      .each do |entity|
-        entity.embed_entities
-          .select { |ee| ee.embed == self }
-          .each { |ee| ee.is_approved = true ; ee.save }
-      end
+  def block_invalid
+    entity_ids = entities.satisfying(blocking_filter).pluck(:id)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).map(&:block)
+  end
+
+  def approve_valid
+    entity_ids = entities.satisfying(approving_filter).pluck(:id)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).map(&:approve)
   end
 
   def make_link_to(entity, is_approved = nil)

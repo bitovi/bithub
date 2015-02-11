@@ -20,8 +20,8 @@ class Filter < ActiveRecord::Base
   end
 
   def classification_type
-    if (classification != 'blocking' && classification != 'moderating')
-      errors.add(:classification, 'must be either "blocking", "moderating"')
+    if (classification != 'blocking' && classification != 'approving')
+      errors.add(:classification, 'must be either "blocking", "approving"')
     end
   end
 
@@ -31,5 +31,4 @@ class Filter < ActiveRecord::Base
 
   alias_method :blocks?, :detects?
   alias_method :approves?, :detects?
-  alias_method :links?, :detects?
 end
