@@ -1,7 +1,7 @@
 require 'bunny'
 require 'connection_manager'
 
-class Commander
+class CommandHandler
   include Celluloid
 
   def initialize

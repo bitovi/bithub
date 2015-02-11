@@ -1,5 +1,4 @@
 require 'core_ext'
-require_relative 'decorators/all'
 
 class Poller
   include Celluloid
@@ -87,7 +86,7 @@ class Poller
   def terminate_cascading
     terminate
   end
-  
+
   def lock_name
     "lock:polling:brand/#{@path.brand.id}:embed/#{@path.embed.id}:service/#{@path.service.id}"
   end
