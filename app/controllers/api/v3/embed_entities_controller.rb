@@ -36,7 +36,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     end
   end
 
-  def disapprove
+  def block
     @visibility = 'admin'
     if (@relation = embed_entity_relation).block
       @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
@@ -45,6 +45,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       render text: "error", status: 406
     end
   end
+  alias_method :disapprove, :block
 
   def pin
     @visibility = 'admin'

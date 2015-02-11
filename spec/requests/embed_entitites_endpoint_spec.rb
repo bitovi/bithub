@@ -6,7 +6,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
   context 'given a certain embed id' do
 
-    context 'assuming the admin is logged in' do
+    context 'assuming the request requires admin privileges' do
 
       before(:each) do
         post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
@@ -18,9 +18,8 @@ RSpec.describe 'Filter endpoints', type: :request do
         it 'gets all entities belonging to an embed' do
 
           embed = FactoryGirl.create(:embed, brand: @current_brand)
-          link = embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet))
-          embed.make_link_to(ent = FactoryGirl.create(:github_issue))
-          link.approve(@current_brand)
+          embed.make_link_to(ent = FactoryGirl.create(:twitter_tweet), true)
+          embed.make_link_to(ent = FactoryGirl.create(:github_issue), false)
 
           get "/api/#{api_version}/embeds/#{embed.id}/entities"
           expect(response).to be_success
@@ -31,14 +30,15 @@ RSpec.describe 'Filter endpoints', type: :request do
       context 'and the user is managing the state of individual entities' do
         before(:each) do
           @embed = FactoryGirl.create(:embed, brand: @current_brand)
-          @link = @embed.make_link_to(@ent = FactoryGirl.create(:twitter_tweet))
+          @entity = FactoryGirl.create(:twitter_tweet)
+          @embed.make_link_to(@entity)
         end
 
         describe 'PUT /embed/1/entities/2/approve' do
           context 'given a certain entity from an embed' do
             it 'approves it' do
 
-              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/approve"
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@entity.id}/approve"
               expect(response).to be_success
               expect(json['is_approved']).to be_truthy
             end
@@ -48,7 +48,7 @@ RSpec.describe 'Filter endpoints', type: :request do
         describe 'PUT /embed/1/entities/2/disapprove' do
           context 'given a certain entity from an embed' do
             it 'disaproves it' do
-              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/disapprove"
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@entity.id}/disapprove"
               expect(response).to be_success
               expect(json['is_approved']).to be_falsey
             end
@@ -58,7 +58,7 @@ RSpec.describe 'Filter endpoints', type: :request do
         describe 'PUT /embed/1/entities/2/pin' do
           context 'given a certain entity from an embed' do
             it 'pins it to the top' do
-              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/pin"
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@entity.id}/pin"
               expect(response).to be_success
               expect(json['is_pinned']).to be_truthy
             end
@@ -68,7 +68,7 @@ RSpec.describe 'Filter endpoints', type: :request do
         describe 'PUT /embed/1/entities/2/unpin' do
           context 'given a certain entity from an embed' do
             it 'unpins it from the top' do
-              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@ent.id}/unpin"
+              put "/api/#{api_version}/embeds/#{@embed.id}/entities/#{@entity.id}/unpin"
               expect(response).to be_success
               expect(json['is_pinned']).to be_falsey
             end
