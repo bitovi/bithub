@@ -5,6 +5,7 @@ steal(
 './sidebar.less!',
 'components/services',
 'components/moderation',
+'components/integration',
 'can/route',
 'components/helpers.js',
 function(Component, initView, Models){
@@ -13,8 +14,6 @@ function(Component, initView, Models){
 		13 : 'ENTER',
 		27 : 'ESC'
 	};
-
-	var INTEGRATION_TEMPLATE = '<a href="http://{embedEndpoint}/admin/embed?tenantName={tenantName}&hubId={hubId}" data-hub-id="{hubId}" data-tenant-name="{tenantName}" class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/admin/embed.js"></script>'
 
 	return Component.extend({
 		tag : 'bh-sidebar',
@@ -57,19 +56,6 @@ function(Component, initView, Models){
 			},
 			toggleSidebarPosition : function(ctx, el, ev){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
-			},
-			integrationCode : function(){
-				var currentBrand = this.attr('state.currentBrand');
-				var hub = this.attr('hub');
-				var tenantName, hubId;
-				if(currentBrand && hub){
-					return can.sub(INTEGRATION_TEMPLATE, {
-						tenantName: currentBrand.attr('tenant_name'),
-						embedEndpoint: EMBED_ENDPOINT,
-						hubName: hub.attr('name'),
-						hubId: hub.attr('id')
-					});
-				}
 			}
 		},
 		events : {

@@ -6,6 +6,7 @@ steal(
 './bit.less!',
 'components/image-gallery',
 'components/body-wrap',
+'can/construct/super',
 function(Component, initView, _map, Bit){
 
 	var imageStatus = function(img){
@@ -65,12 +66,12 @@ function(Component, initView, _map, Bit){
 					}
 				}
 
-				setTimeout(function(){
+				this.__initTimeout = setTimeout(function(){
 					self.imgs = self.element.find('img').toArray();
 					self.imagesToLoadCount = self.imgs.length;
 
 					if(self.imgs.length){
-						setTimeout(self.proxy('imgSweeper'), 500);
+						self.__imgSweeperTimeout = setTimeout(self.proxy('imgSweeper'), 500);
 					} else {
 						self.updateVisibility();
 					}
@@ -87,7 +88,7 @@ function(Component, initView, _map, Bit){
 				var errored;
 
 				if(can.inArray('LOADING', statuses) > -1){
-					setTimeout(this.proxy('imgSweeper'), 500);
+					this.__imgSweeperTimeout = setTimeout(this.proxy('imgSweeper'), 500);
 				} else {
 					this.updateVisibility();
 				}
@@ -107,6 +108,11 @@ function(Component, initView, _map, Bit){
 			},
 			removeExplicitHeight : function(){
 				this.element.removeClass('animate-height').css('height', 'auto');
+			},
+			destroy : function(){
+				clearTimeout(this.__imgSweeperTimeout);
+				clearTimeout(this.__initTimeout);
+				return this._super.apply(this, arguments);
 			}
 		}
 	})

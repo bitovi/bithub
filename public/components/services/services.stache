@@ -12,7 +12,7 @@
 </div>
 
 {{#if currentService.isNew}}
-	<bh-service-form service="{currentService}" state="{state}" services="{services}"></bh-service-form>
+	<bh-service-form service="{currentService}" state="{state}" services="{services}" class="bithub-form"></bh-service-form>
 {{/if}}
 
 {{#if services.length}}

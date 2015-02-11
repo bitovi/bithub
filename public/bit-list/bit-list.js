@@ -11,10 +11,11 @@ function(Control, initView, Bit, _map){
 	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}" class="animate-height loading"></bh-bit>');
 
 	var calculateColumnCount = function(el){
-		if(el.width < CARD_MIN_WIDTH) {
+		var width = el.width();
+		if(width < CARD_MIN_WIDTH) {
 			return 1;
 		}
-		return Math.min(5, Math.floor(el.width() / CARD_MIN_WIDTH));
+		return Math.min(5, Math.floor(width / CARD_MIN_WIDTH));
 	}
 
 	var makeColumns = function(count){
@@ -45,11 +46,23 @@ function(Control, initView, Bit, _map){
 			this.updateColumnCount();
 			this.load();
 		},
+		reset : function(){
+			can.batch.start();
+			this.clearAllTimeouts();
+			this.clearPendingReq();
+			this.__cardCache = {};
+			this.element.find('.column-wrapper').empty();
+			this.options.isLoading(false);
+			this.options.hasNextPage(true);
+			this.updateColumnCount();
+			this.load();
+			can.batch.stop();
+		},
 		load : function(){
 			var self = this;
 			this.options.isLoading(true);
 
-			Bit.findAll(this.options.state.getParams()).then(function(data){
+			this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
 				var bits = self.options.state.attr('bits');
 
 				can.batch.start();
@@ -63,6 +76,8 @@ function(Control, initView, Bit, _map){
 
 				self.partition(data);
 
+				delete self.__pendingReq;
+
 				can.batch.stop();
 			});
 		},
@@ -74,6 +89,7 @@ function(Control, initView, Bit, _map){
 			this.setTimeout('windowResize', 100, 'updateColumnCount');
 		},
 		'{columnCount} change' : function(compute, ev, newVal){
+			console.log('COLUMN COUNT', newVal)
 			this.columns = makeColumns(newVal);
 			this.currentColumn = 0;
 
@@ -155,10 +171,16 @@ function(Control, initView, Bit, _map){
 			}
 			this.__timeouts[name] = setTimeout(fn, timeout);
 		},
-		destroy : function(){
+		clearAllTimeouts : function(){
 			for(var k in this.__timeouts){
 				this.clearTimeout(k);
 			}
+		},
+		clearPendingReq : function(){
+			this.__pendingReq && this.__pendingReq.abort();
+		},
+		destroy : function(){
+			this.clearAllTimeouts();
 			return this._super.apply(this, arguments);
 		}
 	});

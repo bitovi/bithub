@@ -1,0 +1,60 @@
+<h2 class="subtitle-separator">Default Preset</h2>
+
+<div class="content-section">
+	<p>Paste this code in the HTML source of your page:</p>
+	<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
+</div>
+
+<h2 class="subtitle-separator">
+	Custom Presets
+	<button class="btn btn-primary btn-xs btn-add-preset" can-click="addPreset">Add new Preset</button>
+</h2>
+<div class="content-section">
+	<p>Custom Presets allow you to customize the behavior of the embed.</p>
+	{{#if customPresetExistsAndIsNew}}
+		<bh-preset-form preset="{state.customPreset}" class="bithub-form new-preset-form"></bh-preset-form>
+	{{/if}}
+
+	<div class="list-wrapper">
+		{{#if presets.isPending}}
+			<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
+		{{else}}
+				<table class="table">
+					<thead>
+						<tr>
+							<th class="expand"></th>
+							<th>Preset Name</th>
+							<th class="actions"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each presets}}
+							{{#unlessCurrentlyEditingPreset this}}
+								<tr>
+									<td class="expand" can-click="toggleCurrentPreset">
+										<i class="fa fa-chevron-{{#isCurrentPreset this}}down{{else}}right{{/isCurrentPreset}}"></i>
+									</td>
+									<td>{{ name }}</td>
+									<td class="actions">
+										<i can-click="destroyPreset" class="fa fa-trash-o pull-right destroy-preset"></i>
+										<i can-click="editPreset" class="fa fa-pencil pull-right edit-preset"></i>
+									</td>
+								</tr>
+							{{/unlessCurrentlyEditingPreset}}
+							{{#isCurrentPreset this}}
+								<tr>
+									<td class="{{#unless isEditing}}preset-embed-code{{/unless}}" colspan="3">
+										{{#unlessCurrentlyEditingPreset this}}
+											<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
+										{{ else }}
+											<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
+										{{/unlessCurrentlyEditingPreset}}
+									</td>
+								</tr>
+							{{/isCurrentPreset}}
+						{{/each}}
+					</tbody>
+				</table>
+		{{/if}}
+	</div>
+</div>

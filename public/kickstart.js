@@ -33,6 +33,9 @@ steal(
 
 				bindModelEvents(appState);
 
+				appState.on('preset', appState.proxy('updateIframeAttrs'));
+				appState.delegate('customPreset.**', 'change', appState.proxy('updateIframeAttrs'));
+
 				var $window = $(window);
 
 				$(selector).html(initView({
@@ -40,6 +43,7 @@ steal(
 				}, {
 					renderIframe : function(iframe, opts){
 						iframe = can.isFunction(iframe) ? iframe() : iframe;
+						console.log('IFRAME', iframe)
 						return iframe;
 					},
 					renderPage : function(){
