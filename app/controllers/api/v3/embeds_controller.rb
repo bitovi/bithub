@@ -28,9 +28,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def destroy
-    @embed = current_brand.embeds.find(params[:id])
-
-    if @embed.destroy
+    if owner_embed.destroy
       render :json => msg_hash(@filter, 'destroy', 'success')
     else
       render :json => msg_hash(@filter, 'destroy'), :status => 406
