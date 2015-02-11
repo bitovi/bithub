@@ -4,8 +4,13 @@
 	<bh-sidebar state="{state}"{{#if state.sidebarIsExpanded}}class="is-expanded"{{/if}}></bh-sidebar>
 </div>
 
-<main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
-	{{renderIframe state.iframe}}
+<main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}} content-{{state.theme}}">
+	<div class="embed-preset">
+		<b>{{state.embedTypeTitle}} Mode</b>
+	</div>
+	<div class="iframe-wrapper">
+		{{renderIframe state.iframe}}
+	</div>
 </main>
 
 

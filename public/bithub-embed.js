@@ -4,15 +4,13 @@ steal(
 'models/bit.js',
 'models/hub.js',
 'bit-list',
-'connect-liveservice.js',
+'communicator',
 'bits',
 'can/route',
 'style',
-function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
+function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 	var params = can.deparam(window.location.search.substr(1));
-	var hubId = params.hubId;
-	var tenantName = params.tenantName;
 	var liveService;
 
 	var appState = new AppState();
@@ -25,69 +23,79 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 				can.trigger(bits, 'partition');
 			}, 100);
 		}
-	})()
+	})();
 
 	var kickstart = function(hub){
-		var isPublic = !hub;
-
-		can.route.map(appState);
-
-		can.route.ready();
-
-		appState.attr({
-			hubId : hubId,
-			hub: hub,
-			tenant : tenantName
+		var communicator = Communicator.bind(window.parent, {
+			updateAttrs : function(data){
+				appState.setAttrs(data);
+			}
 		});
 
-		if(params.live){
-			liveService = connectLiveService(hubId, isPublic ? tenantName : null);
-			if(liveService){
-				liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
-			}
-			Bit.on('created', function(ev, bit){
-				var serviceIds = bit.attr('service_ids');
-				var bits = appState.attr('bits');
-				var index;
+		var theme = params.theme || 'light';
 
-				if(isPublic){
-					if(!bit.attr('is_approved')){
-						index = bits.indexOf(bit);
-						if(index > -1){
-							bits.splice(index, 1);
-						}
-					} else {
-						bits.place(bit);
+		can.route.map(appState);
+		can.route.ready();
+
+		appState.attr('hub', hub);
+		appState.setAttrs(params);
+
+		Bit.on('lifecycle', function(ev, bit){
+			var serviceIds = bit.attr('service_ids');
+			var bits = appState.attr('bits');
+			var index;
+			var isLive = appState.isLive();
+
+			if(appState.isPublic()){
+				if(!bit.attr('is_approved')){
+					index = bits.indexOf(bit);
+					if(index > -1){
+						bits.splice(index, 1);
 					}
-					
 				} else {
-					if(bits.indexOf(bit) === -1){
-						bits.unshift(bit);
-					}
+					isLive && bits.place(bit);
 				}
 				
-				triggerPartition(bits);
-
-
-				if(serviceIds){
-					window.parent && window.parent.postMessage({
-						type : 'loadedBits',
-						payload : serviceIds.join(',')
-					}, 'http://' + EMBED_ENDPOINT);
+			} else {
+				if(isLive && bits.indexOf(bit) === -1){
+					bits.unshift(bit);
 				}
-				
+			}
+			
+			triggerPartition(bits);
 
+			if(serviceIds){
+				communicator.send('loadedBits', serviceIds);
+			}
+			
+
+		});
+
+		$('body').addClass('embed ' + theme + '-theme');
+
+		var initApp = function(){
+			var div = $('<div id="app" />');
+			
+			$('#app-wrapper').html(div);
+
+			new BitList(div, {
+				state : appState
 			});
 		}
 
-		$('body').addClass('embed');
-
-		new BitList($('#app'), {
-			state : appState
+		appState.on('view', function(){
+			appState.reset();
+			initApp();
 		});
+
+		appState.on('theme', function(ev, newTheme){
+			$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');
+		});
+
+		initApp();
 	}
 
-	Hub.findOne({id: hubId}).then(function(hub){
+	Hub.findOne({id: params.hubId}).then(function(hub){
 		kickstart(hub);
 	}, function(){
 		kickstart();

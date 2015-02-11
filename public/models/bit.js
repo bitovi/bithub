@@ -16,7 +16,7 @@ function(Model, moment){
 					_currentSweeper = setTimeout(function(){
 						var localBuffer = _buffer.splice(0).reverse();
 						for(var i = 0; i < localBuffer.length; i++){
-							localBuffer[i].created();
+							can.trigger(Bit, 'lifecycle', [localBuffer[i]]);
 						}
 						_currentSweeper = null;
 					}, 5000)

@@ -1,4 +1,12 @@
 steal('can/control', function(Control){
+
+	var preparePayload = function(payload){
+		while(can.isFunction(payload.attr)){
+			payload = payload.attr();
+		}
+		return payload;
+	}
+
 	return Control.extend({
 		bind : function(frame, handlers){
 			return new this(document.documentElement, {
@@ -16,6 +24,20 @@ steal('can/control', function(Control){
 				if(this.options.handlers[type]){
 					this.options.handlers[type](event.data.payload)
 				}
+			}
+		},
+		send : function(type, payload){
+			var frame = this.options.frame;
+
+			frame = can.isFunction(frame) ? frame() : frame;
+
+			frame = frame.contentWindow ? frame.contentWindow : frame;
+
+			if(frame){
+				frame.postMessage({
+					type: type,
+					payload: preparePayload(payload)
+				}, 'http://' + EMBED_ENDPOINT);
 			}
 		},
 		'{window} message' : 'receive'

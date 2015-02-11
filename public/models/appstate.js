@@ -5,7 +5,11 @@ steal(
 'connect-liveservice.js',
 'communicator',
 'can/map/define', 
+'can/construct/proxy',
+'can/map/delegate',
 function(Map, Models, _reduce, connectLiveService, Communicator){
+
+	var CURRENT_IFRAME;
 
 	return Map.extend({
 		define : {
@@ -28,24 +32,64 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 					this.attr('bits').splice(0);
 				}
 			},
+			embedType : {
+				get : function(){
+					if(this.attr('page') === 'sidebar'){
+						if(this.attr('panel') === 'integration'){
+							return 'preview';
+						}
+						return 'admin';
+					}
+				},
+				serialize: false
+			},
 			iframe : {
+				get : function(){
+					var src = this.attr('iframeSrc');
+					var iframe;
+
+					if(src){
+						if(!CURRENT_IFRAME){
+							iframe = document.createElement('iframe');
+							console.log( this.iframeSrc())
+							iframe.src = this.iframeSrc();
+
+							CURRENT_IFRAME = iframe;
+						}
+
+						return CURRENT_IFRAME;
+					}
+				}
+			},
+			iframeSrc : {
 				get : function(){
 					var currentBrand = this.attr('currentBrand');
 					var hubId = this.attr('hubId');
-					var url = "/admin/embed?tenantName={tenantName}&hubId={hubId}&live=true";
-					var iframe;
 
 					if(hubId && currentBrand){
-
-						iframe = document.createElement('iframe');
-						iframe.src = can.sub(url, {
-							hubId: hubId,
-							tenantName: currentBrand.attr('name')
-						});
-
-						return iframe;
+						return this.attr('preset').url(currentBrand.attr('tenant_name'), hubId);
 					}
-				}
+				},
+				serialize: false
+			},
+			preset : {
+				get : function(){
+					var embedType = this.embedType();
+					var customPreset;
+
+					console.log('EMBED TYPE', embedType)
+
+					if(embedType === 'admin'){
+						return Models.Preset.ADMIN;
+					} else {
+						customPreset = this.attr('customPreset');
+						return customPreset || Models.Preset.PREVIEW;
+					}
+				},
+				serialize: false,
+			},
+			customPreset: {
+				serialize: false
 			},
 			hub : {
 				serialize : false,
@@ -78,9 +122,20 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			var self = this;
 			this.communicator = Communicator.bind(this.compute('iframe'), {
 				loadedBits : function(payload){
-					self.bitsWereLoaded(payload.split(','));
+					self.bitsWereLoaded(payload);
 				}
 			});
+		},
+		updateIframeAttrs : function(){
+			var preset = this.attr('preset');
+			var currentBrand = this.attr('currentBrand');
+			var hubId = this.attr('hubId');
+			var newAttrs;
+
+			if(preset && currentBrand && hubId){
+				newAttrs = preset.embedAttrs(currentBrand.attr('tenant_name'), hubId);
+				this.communicator.send('updateAttrs', newAttrs);
+			}
 		},
 		bitsWereLoaded : function(serviceIds){
 			var loadingServices = this.attr('loadingServices');
@@ -97,8 +152,22 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 				}
 			}
 		},
+		theme : function(){
+			var preset = this.attr('preset');
+			return preset.attr('config.theme') || 'light';
+		},
 		isSidebar : function(){
 			return this.attr('page') === 'sidebar' && this.attr('hubId');
+		},
+		embedType : function(){
+			return this.attr('embedType');
+		},
+		embedTypeTitle : function(){
+			var titles = {
+				admin: 'Administration',
+				preview: 'Preview'
+			};
+			return titles[this.embedType()];
 		}
 	});
 });
