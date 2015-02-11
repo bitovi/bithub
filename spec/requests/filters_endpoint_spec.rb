@@ -24,7 +24,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'GET /embeds/1/filters' do
         it 'gets all filters' do
-          @embed.filters.create!(classification: 'moderating')
+          @embed.filters.create!(classification: 'approving')
           @embed.filters.create!(classification: 'blocking')
 
           get "/api/#{api_version}/embeds/#{@embed.id}/filters"
@@ -35,7 +35,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'GET /embeds/1/filters/1' do
         it 'gets a specific filter' do
-          f1 = @embed.filters.create(classification: 'moderating')
+          f1 = @embed.filters.create(classification: 'approving')
           @embed.filters.create(classification: 'blocking')
 
           get "/api/#{api_version}/embeds/#{@embed.id}/filters/#{f1.id}"
@@ -51,7 +51,7 @@ RSpec.describe 'Filter endpoints', type: :request do
             post "/api/#{api_version}/embeds/#{@embed.id}/filters", {
               filter: {
                 is_conj: true,
-                classification: 'moderating',
+                classification: 'approving',
                 natlang_queries: [{
                   is_negated: false,
                   attr: 'content',
@@ -76,7 +76,7 @@ RSpec.describe 'Filter endpoints', type: :request do
             post "/api/#{api_version}/embeds/#{@embed.id}/filters", {
               filter: {
                 is_conj: true,
-                classification: 'moderating',
+                classification: 'approving',
                 natlang_queries: [{
                   is_negated: false,
                   attr: 'what',
@@ -93,7 +93,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'DELETE /embeds/1/filters/2' do
         it 'destroys an existing filter' do
-          filter = @embed.filters.create(classification: 'moderating')
+          filter = @embed.filters.create(classification: 'approving')
 
           delete "/api/#{api_version}/embeds/#{@embed.id}/filters/#{filter.id}"
           expect(Filter.count).to eq 0
