@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :embed do
-    sequence :name do |n|
-      "Embed that embeds Internet no #{n}"
-    end
+    name "an embed that embeds Internet"
     colorscheme 'peaksea'
     layout 'up and down'
 
