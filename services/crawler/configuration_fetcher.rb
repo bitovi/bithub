@@ -3,7 +3,7 @@ require 'supervisors/support/brand_info'
 require 'supervisors/support/embed_info'
 require 'supervisors/support/service_info'
 
-class Configurator
+class ConfigurationFetcher
   include Celluloid
   include CoreHelpers
 

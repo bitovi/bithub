@@ -1,7 +1,8 @@
-require 'poller'
 require 'fetchers/all'
 
 module Supervisors
+  module Services; end
+
   class Service
     include Celluloid
     include Propagation
@@ -20,7 +21,7 @@ module Supervisors
     end
 
     private
-    
+
     def _childs; @endpoints; end
 
     def static_config
@@ -36,9 +37,3 @@ module Supervisors
     end
   end
 end
-
-module Supervisors
-  module Services; end
-end
-
-require_relative 'services/all'

@@ -32,7 +32,7 @@ class EventPublisher
   end
 
   private
-  
+
   def reject_old(events)
     @filter.reject_old events
   end

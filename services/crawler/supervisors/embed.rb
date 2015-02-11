@@ -24,7 +24,7 @@ module Supervisors
         @path.next_level(si).actor_name,
         service_supervisor(si),
         *[@path, si]
-      )
+      ) if service_supervisor(si)
     end
 
     def stop_service_supervisor(si)
@@ -54,9 +54,13 @@ module Supervisors
     end
 
     def service_supervisor(si)
-      Supervisors::Services
-        .const_get(si.feed_name.camel_case.to_sym)
-        .const_get(si.type_name.camel_case.to_sym)
+      feed_name = si.feed_name.camel_case.to_sym
+      type_name = si.type_name.camel_case.to_sym
+
+      return unless Supervisors::Services.constants.include? feed_name
+      return unless Supervisors::Services.const_get(feed_name).constants.include? type_name
+
+      Supervisors::Services.const_get(feed_name).const_get(type_name)
     end
   end
 end
