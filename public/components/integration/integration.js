@@ -60,6 +60,9 @@ function(Component, initView, Models){
 					this.attr('state.customPreset', preset);
 				}
 			},
+			isDefaultPresetOpen : function(){
+				return !this.currentPreset();
+			},
 			clearPreset : function(forceClear){
 				var currentPreset = this.currentPreset();
 				can.batch.start();
@@ -91,7 +94,7 @@ function(Component, initView, Models){
 
 				return preset === currentPreset ? opts.fn() : opts.inverse();
 			},
-			unlessCurrentlyEditingPreset : function(preset, opts){
+			ifCurrentlyEditingPreset : function(preset, opts){
 				var currentPreset = this.currentPreset();
 				var isEditing = this.attr('isEditing');
 				var check;
@@ -99,7 +102,7 @@ function(Component, initView, Models){
 				preset = can.isFunction(preset) ? preset() : preset;
 				check = preset === currentPreset && isEditing;
 
-				return !check ? opts.fn() : opts.inverse();
+				return check ? opts.fn() : opts.inverse();
 			}
 		},
 		events : {
