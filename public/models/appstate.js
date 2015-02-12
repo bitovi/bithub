@@ -19,11 +19,30 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			hubId : {
 				set : function(val){
 					var liveService = connectLiveService(val);
+					var self = this;
 
 					this.attr('bits').splice(0);
 
 					if(liveService){
 						liveService.on('services', can.proxy(Models.Service.messageFromLiveService, Models.Service));
+
+						liveService.on('services', function(msg){
+							var loadingServices = self.attr('loadingServices');
+							var index, service;
+							if(typeof msg === 'string'){
+								msg = JSON.parse(msg);
+							}
+
+							if(msg.service.empty_results || msg.service.has_errors){
+								service = loadingServices.filter(function(s){
+									return s.id === msg.service.id;
+								})[0];
+								index = loadingServices.indexOf(service);
+								if(index > -1){
+									loadingServices.splice(index, 1);
+								}
+							}
+						})
 					}
 
 					return val;

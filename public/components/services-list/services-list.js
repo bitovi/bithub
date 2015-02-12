@@ -47,7 +47,7 @@ function(Component, Models, initView){
 
 				service = can.isFunction(service) ? service() : service;
 
-				if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error')){
+				if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error') && !service.attr('noResults')){
 					return opts.fn();
 				}
 			},
