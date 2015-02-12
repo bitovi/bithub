@@ -148,9 +148,7 @@ function(Model, _keys){
 				timeout = 2000;
 			}
 
-			clearTimeout(RELOAD_TIMEOUTS[msg.service.id]);
-
-			RELOAD_TIMEOUTS[msg.service.id] = setTimeout(function(){
+			setTimeout(function(){
 				self.findOne({id: msg.service.id}).then(cb);
 			}, timeout);
 		}
@@ -212,6 +210,9 @@ function(Model, _keys){
 		},
 		hasNoResults : function(){
 			this.attr('noResults', true);
+		},
+		clearNoResults : function(){
+			this.removeAttr('noResults');
 		},
 		save : function(){
 			this.removeAttr('noResults');

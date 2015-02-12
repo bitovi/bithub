@@ -43,6 +43,14 @@
 								<i can-click="editService" class="fa fa-pencil pull-right edit-service"></i>
 							</td>
 						</tr>
+						{{#if noResults}}
+							<td colspan="3">
+								<div class="alert alert-info alert-dismissible no-data-alert">
+									<button class="close" can-click="clearNoResults">&times;</button>
+									We couldn't find any data for this service.
+								</div>
+							</td>
+						{{/if}}
 						{{#showErrorsForService this}}
 							<tr class="danger">
 								<td colspan="3">
