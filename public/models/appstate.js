@@ -52,7 +52,6 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 					if(src){
 						if(!CURRENT_IFRAME){
 							iframe = document.createElement('iframe');
-							console.log( this.iframeSrc())
 							iframe.src = this.iframeSrc();
 
 							CURRENT_IFRAME = iframe;
@@ -73,18 +72,24 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 				},
 				serialize: false
 			},
+			adminPreset : {
+				value : Models.Preset.ADMIN,
+				serialize: false
+			},
+			defaultPreviewPreset : {
+				value : Models.Preset.PREVIEW,
+				serialize: false
+			},
 			preset : {
 				get : function(){
 					var embedType = this.embedType();
 					var customPreset;
 
-					console.log('EMBED TYPE', embedType)
-
 					if(embedType === 'admin'){
-						return Models.Preset.ADMIN;
+						return this.attr('adminPreset');
 					} else {
 						customPreset = this.attr('customPreset');
-						return customPreset || Models.Preset.PREVIEW;
+						return customPreset || this.attr('defaultPreviewPreset');
 					}
 				},
 				serialize: false,
@@ -156,9 +161,13 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 				}
 			}
 		},
+		isAdminEmbed : function(){
+			var preset = this.attr('preset');
+			return preset && preset.attr('config.view') === 'admin';
+		},
 		theme : function(){
 			var preset = this.attr('preset');
-			return preset.attr('config.theme') || 'light';
+			return (preset && preset.attr('config.theme')) || 'light';
 		},
 		isSidebar : function(){
 			return this.attr('page') === 'sidebar' && this.attr('hubId');

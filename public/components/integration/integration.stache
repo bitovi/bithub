@@ -25,10 +25,8 @@
 			{{#if isDefaultPresetOpen}}
 				<tr class="expanded">
 					<td class="preset-embed-code" colspan="32">
-						<div class="slide-down">
-							<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
-							<p class="instructions">Paste this code in the HTML source of your page</p>
-						</div>
+						<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
+						<p class="instructions">Paste this code in the HTML source of your page</p>
 					</td>
 				</tr>
 			{{/if}}
@@ -48,14 +46,12 @@
 				{{#isCurrentPreset this}}
 					<tr class="expanded">
 						<td class="{{#unless isEditing}}preset-embed-code{{/unless}}" colspan="2">
-							<div class="slide-down">
-								{{#ifCurrentlyEditingPreset this}}
-									<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
-								{{ else }}
-									<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
-									<p class="instructions">Paste this code in the HTML source of your page</p>
-								{{/ifCurrentlyEditingPreset}}
-							</div>
+							{{#ifCurrentlyEditingPreset this}}
+								<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
+							{{ else }}
+								<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
+								<p class="instructions">Paste this code in the HTML source of your page</p>
+							{{/ifCurrentlyEditingPreset}}
 						</td>
 					</tr>
 				{{/isCurrentPreset}}

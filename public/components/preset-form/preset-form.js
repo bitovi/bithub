@@ -8,6 +8,10 @@ function(Component, initView){
 		template: initView,
 		scope: {
 			isSaving: false,
+			init : function(){
+				this.attr('preset').backup();
+				this.attr('preset.config').backup();
+			},
 			savePreset : function(ctx, el, ev){
 				var self = this;
 
@@ -23,6 +27,8 @@ function(Component, initView){
 		},
 		events : {
 			'.clear-preset click' : function(){
+				this.scope.attr('preset').restore();
+				this.scope.attr('preset.config').restore();
 				this.element.trigger('clearPreset');
 			}
 		}
