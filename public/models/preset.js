@@ -3,6 +3,7 @@ steal(
 'can/construct/super',
 'can/map/define',
 'can/list/promise',
+'can/map/backup',
 function(Model){
 
 	var EMBED_TEMPLATE = '<a href="http://{embedEndpoint}{embedUrl}" {embedData} class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/admin/embed.js"></script>'
@@ -71,11 +72,14 @@ function(Model){
 	Preset.ADMIN = new Preset({
 		config: {
 			live: true,
-			view: 'admin'
+			view: 'admin',
+			order: 'created_at:desc',
+			filter: 'all'
 		}
 	});
 
 	Preset.PREVIEW = new Preset({
+		name : 'Default Preset',
 		config: {
 			live: false
 		}
