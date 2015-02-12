@@ -98,9 +98,8 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 		})();
 
 		appState.on('view', resetApp);
-		appState.on('sort', resetApp);
-
-		console.log('IN THE IFRAME', window.parent === window)
+		appState.on('order', resetApp);
+		appState.on('filter', resetApp);
 
 		appState.on('theme', function(ev, newTheme){
 			$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');

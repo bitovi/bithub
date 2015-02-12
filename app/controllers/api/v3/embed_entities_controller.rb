@@ -142,11 +142,11 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def show_only_pinned?
-    params[:show] == 'blocked'
+    params[:show] == 'pinned'
   end
 
   def show_only_blocked?
-    params[:show] == 'pinned'
+    params[:show] == 'blocked'
   end
 
   def show_only_visible?
