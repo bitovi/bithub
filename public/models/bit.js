@@ -92,6 +92,9 @@ function(Model, moment){
 			} else {
 				isFullBit(parsed) && buffer.add(this.model(parsed));
 			}
+			if(!parsed.is_approved){
+				can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
+			}
 		}
 	}, instanceMethods);
 
@@ -119,8 +122,6 @@ function(Model, moment){
 					currentBit = this.attr(index);
 				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
 			}
-
-			console.log('INDEX', index)
 
 			
 			this.splice(index, 0, bit);
