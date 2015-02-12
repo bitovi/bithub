@@ -22,6 +22,15 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
       render :json => msg_hash(@preset, 'create'), :status => 406
     end
   end
+  
+  def update
+    @preset = find_preset
+    if (@preset.update_attributes(embed_preset_params))
+      render :show
+    else
+      render :json => msg_hash(@preset, 'create'), :status => 406
+    end
+  end
 
   def destroy
     @preset = find_preset
