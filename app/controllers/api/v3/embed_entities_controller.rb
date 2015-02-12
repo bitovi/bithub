@@ -90,7 +90,11 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
         scope = scope.where('embed_entities.is_approved = TRUE')
       end
     elsif show_only_blocked? 
-      scope = scope.where('embed_entities.is_approved = FALSE')
+      if owner_embed.approving?
+        scope = scope.where('embed_entities.is_approved = FALSE')
+      elsif owner_embed.blocking?
+        scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = FALSE')
+      end
     elsif show_only_pinned?
       scope = scope.where('embed_entities.is_pinned = TRUE')
     end
