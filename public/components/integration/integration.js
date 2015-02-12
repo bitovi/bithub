@@ -5,6 +5,7 @@ steal(
 './integration.less!',
 'components/preset-form',
 'can/map/define',
+'can/construct/proxy',
 function(Component, initView, Models){
 
 	return Component.extend({
@@ -12,11 +13,7 @@ function(Component, initView, Models){
 		template: initView,
 		scope: {
 			init : function(){
-				this.attr('presets', new Models.Preset.List({
-					preset: {
-						embedId : this.attr('hub.id')
-					}
-				}));
+				this.attr('presets', new Models.Preset.List({embed_id : this.attr('hub.id')}));
 			},
 			integrationCodeForPreset : function(preset){
 				var currentBrand = this.attr('state.currentBrand');
@@ -40,7 +37,7 @@ function(Component, initView, Models){
 			addPreset : function(){
 				can.batch.start();
 				this.attr('state.customPreset', new Models.Preset({
-					embedId : this.attr('hub.id')
+					embed_id : this.attr('hub.id')
 				}));
 				this.attr('isEditing', false);
 				can.batch.stop();
@@ -106,6 +103,17 @@ function(Component, initView, Models){
 			}
 		},
 		events : {
+			init : function(){
+				this.on(Models.Preset, 'created', this.proxy('presetCreated'));
+			},
+			presetCreated : function(ev, preset){
+				this.scope.presets.unshift(preset);
+			},
+			'{scope} change' : function(){
+				var el = this.element.find('.slide-down').slideDown(function(){
+					el.removeClass('slide-down');
+				});
+			},
 			'textarea focus' : function(el, ev){
 				ev.preventDefault();
 				if(el.is(':focus')){

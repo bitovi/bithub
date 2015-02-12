@@ -16,7 +16,7 @@
 		</thead>
 		<tbody>
 			<tr class="{{#if isDefaultPresetOpen}}expanded{{/if}}">
-				<td class="expand">
+				<td class="expand" can-click="clearPreset">
 					<i class="fa fa-chevron-{{#if isDefaultPresetOpen}}down{{else}}right{{/if}}"></i>
 					Default Preset
 				</td>
@@ -25,8 +25,10 @@
 			{{#if isDefaultPresetOpen}}
 				<tr class="expanded">
 					<td class="preset-embed-code" colspan="32">
-						<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
-						<p class="instructions">Paste this code in the HTML source of your page</p>
+						<div class="slide-down">
+							<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
+							<p class="instructions">Paste this code in the HTML source of your page</p>
+						</div>
 					</td>
 				</tr>
 			{{/if}}
@@ -46,12 +48,14 @@
 				{{#isCurrentPreset this}}
 					<tr class="expanded">
 						<td class="{{#unless isEditing}}preset-embed-code{{/unless}}" colspan="2">
-							{{#ifCurrentlyEditingPreset this}}
-								<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
-							{{ else }}
-								<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
-								<p>Paste this code in the HTML source of your page</p>
-							{{/ifCurrentlyEditingPreset}}
+							<div class="slide-down">
+								{{#ifCurrentlyEditingPreset this}}
+									<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
+								{{ else }}
+									<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
+									<p class="instructions">Paste this code in the HTML source of your page</p>
+								{{/ifCurrentlyEditingPreset}}
+							</div>
 						</td>
 					</tr>
 				{{/isCurrentPreset}}

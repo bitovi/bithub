@@ -29,6 +29,7 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 					return val;
 				},
 				remove : function(){
+					CURRENT_IFRAME = null;
 					this.attr('bits').splice(0);
 				}
 			},
@@ -136,6 +137,9 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 				newAttrs = preset.embedAttrs(currentBrand.attr('tenant_name'), hubId);
 				this.communicator.send('updateAttrs', newAttrs);
 			}
+		},
+		resetEmbed : function(){
+			this.communicator.send('reset');
 		},
 		bitsWereLoaded : function(serviceIds){
 			var loadingServices = this.attr('loadingServices');

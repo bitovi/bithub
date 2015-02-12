@@ -46,18 +46,6 @@ function(Control, initView, Bit, _map){
 			this.updateColumnCount();
 			this.load();
 		},
-		reset : function(){
-			can.batch.start();
-			this.clearAllTimeouts();
-			this.clearPendingReq();
-			this.__cardCache = {};
-			this.element.find('.column-wrapper').empty();
-			this.options.isLoading(false);
-			this.options.hasNextPage(true);
-			this.updateColumnCount();
-			this.load();
-			can.batch.stop();
-		},
 		load : function(){
 			var self = this;
 			this.options.isLoading(true);
