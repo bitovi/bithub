@@ -76,13 +76,22 @@ function(Model, moment){
 		instanceMethods[BIT_ACTIONS[i]] = makeBitAction(BIT_ACTIONS[i]);
 	}
 
+	var isFullBit = function(bit){
+		return !!bit.created_at;
+	}
+
 	var Bit = Model.extend({
 		ACTIONS: BIT_ACTIONS,
 		resource : '/api/v3/embeds/{hubId}/entities',
 		messageFromLiveService : function(msg){
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
-			buffer.add(this.model(parsed));
+
+			if(this.store[parsed.id]){
+				this.store[parsed.id].attr(parsed);
+			} else {
+				isFullBit(parsed) && buffer.add(this.model(parsed));
+			}
 		}
 	}, instanceMethods);
 

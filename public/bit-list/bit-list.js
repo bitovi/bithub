@@ -77,15 +77,16 @@ function(Control, initView, Bit, _map){
 			this.setTimeout('windowResize', 100, 'updateColumnCount');
 		},
 		'{columnCount} change' : function(compute, ev, newVal){
-			this.columns = makeColumns(newVal);
-			this.currentColumn = 0;
-
-			this.partition(this.options.state.attr('bits'));
-			this.element.find('.column-wrapper').html(this.columns);
+			this.resetColumns(newVal);
 		},
 		"{state.bits} partition" : function(){
+			this.resetColumns(this.options.columnCount());
+		},
+		resetColumns : function(columnCount){
+			this.columns = makeColumns(columnCount);
 			this.currentColumn = 0;
 			this.partition(this.options.state.attr('bits'));
+			this.element.find('.column-wrapper').html(this.columns);
 		},
 		'{state.bits} remove' : function(bits, ev, removed){
 			for(var i = 0; i < removed.length; i++){
@@ -94,6 +95,7 @@ function(Control, initView, Bit, _map){
 			}
 		},
 		partition : function(bits){
+
 			var columnLength = this.columns.length;
 			var arrs = _map(Array(columnLength), function(){
 				return [];
@@ -110,6 +112,7 @@ function(Control, initView, Bit, _map){
 					}
 				}
 			}
+
 
 			for(var i = 0; i < arrs.length; i++){
 				this.columns[i].append(arrs[i]);
