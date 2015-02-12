@@ -29,6 +29,7 @@ RSpec.describe Embed, :type => :model do
       @embed.make_link_to(FactoryGirl.create(:twitter_tweet), false)
       @embed.make_link_to(FactoryGirl.create(:twitter_follow), false)
       @embed.make_link_to(FactoryGirl.create(:meetup_entity, :event), false)
+      @embed.reload
     end
 
     context 'given a filter with a single query' do
@@ -51,28 +52,28 @@ RSpec.describe Embed, :type => :model do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 2
+        expect(@embed.reload.approved_entities.length).to eq 2
       end
 
       it 'filters by negated regular attribute (feed_name, type_name, etc.)' do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 4
+        expect(@embed.reload.approved_entities.length).to eq 4
       end
 
       it 'filters by present tags' do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 5
+        expect(@embed.reload.approved_entities.length).to eq 5
       end
 
       it 'filters by excluded tags' do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs, :negated)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 1
+        expect(@embed.reload.approved_entities.length).to eq 1
       end
     end
 
@@ -84,7 +85,7 @@ RSpec.describe Embed, :type => :model do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 2
+        expect(@embed.reload.approved_entities.length).to eq 2
       end
 
       # it 'filters by tying :tagged_with and :contains predicates with a logical AND' do
@@ -124,7 +125,7 @@ RSpec.describe Embed, :type => :model do
         filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
         embed.approve_valid
-        expect(embed.approved_entities.length).to eq 5
+        expect(embed.reload.approved_entities.length).to eq 5
       end
     end
   end
