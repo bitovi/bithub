@@ -83,22 +83,22 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
-    if public_visibility?
+    if public_visibility? || show_only_visible?
       if owner_embed.approving?
         scope = scope.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE')
       elsif owner_embed.blocking?
         scope = scope.where('embed_entities.is_approved = TRUE')
       end
-      scope = scope.order('embed_entities.is_pinned DESC, entities.thread_updated_ts DESC')
-
     elsif show_only_blocked? 
       scope = scope.where('embed_entities.is_approved = FALSE')
     elsif show_only_pinned?
       scope = scope.where('embed_entities.is_pinned = TRUE')
     end
 
-    # named order
-    if params[:order] == 'preview'
+    if public_visibility? 
+      scope = scope.order('embed_entities.is_pinned DESC, entities.thread_updated_ts DESC')
+      params.delete(:order)
+    elsif params[:order] == 'preview'
       params[:order] = ['is_pinned:desc', 'thread_updated_ts:desc']
     end
 
@@ -106,7 +106,6 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .where("entities.is_pending" => false)
       .includes(:parent)
       .no_children
-
 
     scope = scope_applier(scope)
       .apply_negated_attrs_to_scope
@@ -148,6 +147,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def show_only_blocked?
     params[:show] == 'pinned'
+  end
+
+  def show_only_visible?
+    params[:show] == 'visible'
   end
 
   def show_all?
