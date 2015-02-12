@@ -27,4 +27,11 @@ class EntityImagesMapper
       url: @source.props[:image_url]
      }]
   end
+
+  def facebook_photo
+    [{
+      caption: '',
+      url: @source.props[:image_url]
+     }]
+  end
 end

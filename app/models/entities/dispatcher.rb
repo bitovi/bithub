@@ -246,8 +246,17 @@ module Entities
 
   module Facebook
     class Dispatcher < BasicTypeDispatcher
+
       def type
-        Entities::Facebook::Status
+        if Entities::Facebook.constants.include? type_name
+          Entities::Facebook.const_get type_name
+        else
+          fail DispatchError.new("Failed to dispatch to a type in Entities::Facebook::#{type_name}")
+        end
+      end
+
+      def type_name
+        @event.source_data.fetch(:type).capitalize.to_sym
       end
     end
   end

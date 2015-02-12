@@ -3,18 +3,22 @@ require 'wrappers/data_accessible'
 module Wrappers
   module Facebook
 
-    class Status
+    class Photo
       include DataAccessible
       include CoreHelpers
 
-      has :id, :type
-      maybe_has :message, :link
+      has :id, :type, :picture
+      maybe_has :message, :link, :source, :width, :height
 
       def initialize(status)
         @data = symbolize_keys(status)
       end
 
-      def status_id
+      def images
+        @data.fetch(:images) { [] }
+      end
+
+      def photo_id
         @data.fetch(:object_id)
       end
 
