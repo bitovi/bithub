@@ -21,6 +21,14 @@ class EntityImagesMapper
     end
   end
 
+  def twitter_tweet
+    return [] unless (sem = @source.props[:entities_media])
+    media = JSON.parse sem
+    media.map do |m|
+      { url: m['media_url'] }
+    end
+  end
+
   def instagram_media
     [{
       caption: @source.props[:caption],
