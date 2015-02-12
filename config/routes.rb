@@ -70,7 +70,7 @@ Bithub::Application.routes.draw do
         resources :services, except: %i(new edit update)
       end
 
-      resources :presets, to: 'embed_presets', only: %i(index show create destroy)
+      resources :presets, to: 'embed_presets', except: %i(new edit)
 
       resources :services, except: %i(new edit) do
         get 'tree', on: :collection
