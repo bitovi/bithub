@@ -43,6 +43,8 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 		appState.attr('hub', hub);
 		appState.setAttrs(params);
 
+		window.appState = appState;
+
 		Bit.on('lifecycle', function(ev, bit){
 			var serviceIds = bit.attr('service_ids');
 			var bits = appState.attr('bits');
@@ -50,15 +52,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			var isLive = appState.isLive();
 
 			if(appState.isPublic()){
-				if(!bit.attr('is_approved')){
-					index = bits.indexOf(bit);
-					if(index > -1){
-						bits.splice(index, 1);
-					}
-				} else {
-					isLive && bits.place(bit);
-				}
-				
+				isLive && bits.place(bit);
 			} else {
 				if(isLive && bits.indexOf(bit) === -1){
 					bits.unshift(bit);

@@ -98,7 +98,7 @@ function(Map, Bit, connectLiveService){
 		setDefaultParams : function(){
 			this.attr('params', {
 				offset: 0,
-				limit: 15
+				limit: 30
 			});
 		},
 		isAdmin : function(){
