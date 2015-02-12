@@ -15,10 +15,6 @@ steal(function(){
 		}
 
 		if(typeof io !== 'undefined'){
-			console.log(can.sub((tenantName ? publicUrl : url), {
-				embedId : hubId,
-				tenantName : tenantName
-			}))
 			currentSocket = io(can.sub((tenantName ? publicUrl : url), {
 				embedId : hubId,
 				tenantName : tenantName

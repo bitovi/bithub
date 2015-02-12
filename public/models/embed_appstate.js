@@ -50,7 +50,6 @@ function(Map, Bit, connectLiveService){
 			}
 		},
 		setAttrs : function(attrs){
-			console.log('SET ATTRS', attrs, addDefaultAttrs(attrs))
 			this.attr(addDefaultAttrs(attrs));
 		},
 		init : function(){
@@ -79,13 +78,17 @@ function(Map, Bit, connectLiveService){
 			var params = this.attr('params').attr();
 			var tenant = this.attr('tenant');
 			var isPublic = this.isPublic();
+			var filter = this.attr('filter');
 
 			params.view = this.getView();
 
 			if(isPublic){
 				params.tenant_name = tenant;
 			} else {
-				params.order = "created_at:desc"
+				params.order = this.attr('order') || "created_at:desc"
+				if(filter){
+					params.show = filter;
+				}
 			}
 
 			params.hubId = hubId;

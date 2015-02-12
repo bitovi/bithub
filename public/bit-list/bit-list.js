@@ -77,7 +77,6 @@ function(Control, initView, Bit, _map){
 			this.setTimeout('windowResize', 100, 'updateColumnCount');
 		},
 		'{columnCount} change' : function(compute, ev, newVal){
-			console.log('COLUMN COUNT', newVal)
 			this.columns = makeColumns(newVal);
 			this.currentColumn = 0;
 

@@ -104,15 +104,14 @@ function(Component, initView, Models){
 		},
 		events : {
 			init : function(){
+				var self = this;
 				this.on(Models.Preset, 'created', this.proxy('presetCreated'));
+				this.on(Models.Preset, 'updated', function(){
+					self.scope.attr('isEditing', false);
+				});
 			},
 			presetCreated : function(ev, preset){
 				this.scope.presets.unshift(preset);
-			},
-			'{scope} change' : function(){
-				var el = this.element.find('.slide-down').slideDown(function(){
-					el.removeClass('slide-down');
-				});
 			},
 			'textarea focus' : function(el, ev){
 				ev.preventDefault();
