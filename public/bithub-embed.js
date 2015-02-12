@@ -29,6 +29,9 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 		var communicator = Communicator.bind(window.parent, {
 			updateAttrs : function(data){
 				appState.setAttrs(data);
+			},
+			reset : function(){
+				resetApp();
 			}
 		});
 
@@ -96,6 +99,8 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 		appState.on('view', resetApp);
 		appState.on('sort', resetApp);
+
+		console.log('IN THE IFRAME', window.parent === window)
 
 		appState.on('theme', function(ev, newTheme){
 			$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');

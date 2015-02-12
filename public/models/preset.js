@@ -14,7 +14,7 @@ function(Model){
 	};
 
 	var Preset = Model.extend({
-		resource: '/api/v3/embeds/{preset.embedId}/presets',
+		resource: '/api/v3/presets',
 	}, {
 		define : {
 			config : {

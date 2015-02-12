@@ -1,7 +1,7 @@
 steal('can/control', function(Control){
 
 	var preparePayload = function(payload){
-		while(can.isFunction(payload.attr)){
+		while(payload && can.isFunction(payload.attr)){
 			payload = payload.attr();
 		}
 		return payload;
@@ -33,7 +33,7 @@ steal('can/control', function(Control){
 
 			frame = frame.contentWindow ? frame.contentWindow : frame;
 
-			if(frame){
+			if(frame && frame.postMessage){
 				frame.postMessage({
 					type: type,
 					payload: preparePayload(payload)
