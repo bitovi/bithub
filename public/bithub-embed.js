@@ -7,13 +7,15 @@ steal(
 'communicator',
 'bits',
 'can/route',
-'style',
+'style/embed.less!',
 function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 	var params = can.deparam(window.location.search.substr(1));
 	var liveService;
-
+	var isLoadedFromIframe = window.parent !== window;
 	var appState = new AppState();
+
+	var bodyClasses = [(isLoadedFromIframe ? 'iframe-context' : 'page-context'), 'embed'];
 
 	var triggerPartition = (function(){
 		var partitionTimeout;
@@ -35,7 +37,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			}
 		});
 
-		var theme = params.theme || 'light';
+		bodyClasses.push((params.theme || 'light') + '-theme');
 
 		can.route.map(appState);
 		can.route.ready();
@@ -73,7 +75,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			}
 		});
 
-		$('body').addClass('embed ' + theme + '-theme');
+		$('body').addClass(bodyClasses.join(' '));
 
 		var initApp = function(){
 			var div = $('<div id="app" />');

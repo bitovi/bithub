@@ -260,16 +260,16 @@ bh-bit {
 		}
 	}
 }
-body.dark {
-	background: #222 !important;
-}
 .dark-theme {
 	bh-bit {
-		color: #fafafa;
-		.bit {
-			background: #111;
-			border-color: #222;
+		color: #eee;
+		background: #1f1f1f;
+		border-color: #444;
+		.bit-footer {
+			border-top-color: #444;
 		}
-		
+		&.loading {
+			background-image: url(/images/card-loader-dark.gif);
+		}
 	}
 }
