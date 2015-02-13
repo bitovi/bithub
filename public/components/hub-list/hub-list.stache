@@ -49,7 +49,7 @@
 						</td>
 						<td>
 							<div class="btn-group">
-								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default edit-hub-btn">Edit</button>
+								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default edit-hub-btn">Edit</a>
 								<button class="btn btn-xs btn-default" can-click="destroyHub">Delete</button>
 								<button class="btn btn-xs btn-default">Clone</button>
 							</div>
