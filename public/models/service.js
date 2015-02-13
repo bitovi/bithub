@@ -7,6 +7,14 @@ steal(
 function(Model, _keys){
 
 	var RELOAD_TIMEOUTS = {};
+
+	var isCelluloidError = function(klass){
+		return (/celluloid/).test(klass.toLowerCase());
+	}
+
+	var isConfigError = function(klass){
+		return (/configerror/).test(klass.toLowerCase());
+	}
 	
 	var TYPES = {
 		disqus : {
@@ -170,6 +178,15 @@ function(Model, _keys){
 					this.attr('config', emptyConfigForService(this.attr('feed_name')));
 					return val;
 				}
+			},
+			error : {
+				set : function(val){
+					var klass = val && val.klass;
+					if(klass && isCelluloidError(klass)){
+						return;
+					}
+					return val;
+				}
 			}
 		},
 		serialize : function(){
@@ -233,12 +250,14 @@ function(Model, _keys){
 		},
 		formattedError : function(){
 			var klass = this.attr('error.klass');
-			if(klass !== 'UnknownError'){
-				return this.attr('error.message');
+			if(!isConfigError(klass)){
+				return 'A problem was encountered when we tried to access the service.';
 			}
+			return this.attr('error.message');
 		},
 		formattedErrorClass : function(){
-			return this.attr('error.klass');
+			var klass = this.attr('error.klass');
+			return !isConfigError(klass) ? '' : 'Configuration Error';
 		},
 		clearErrors : function(){
 			this.removeAttr('error');
