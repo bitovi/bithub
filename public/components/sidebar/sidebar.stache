@@ -1,49 +1,56 @@
-{{#hub}}
-	<div class="header">
-		<h1>Hub Settings</h1>
-		<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
-			<span class="fa fa-arrow-left"></span>
-			Admin
-		</a>
-		<span class="fa fa-close close-sidebar" can-click="toggleSidebarPosition"></span>
-	</div>
-	<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}" can-click="toggleHubEditing">
-		<b>Hub Name</b>
-		{{#if isEditing}}
-			<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}" can-click="preventHubEditingToggle">
-		{{else}}
-			<h2>{{ name }}</h2>
-			<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
-		{{/if}}
-	</div>
-	<div class="service-tabs clearfix">
-		<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
-			Services
-		</a>
-		<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
-			Moderation
-		</a>
-		<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
-			Integration &amp; Design
-		</a>
-	</div>
-	
-	{{#isPanel 'services'}}
-		<div class="panel-container">
-			<bh-services state="{state}"></bh-services>
-		</div>
-	{{/isPanel}}
+{{#if menuOpen}}
 
-	{{#isPanel 'moderation'}}
-		<div class="panel-container">
-			<bh-moderation state="{state}" hub="{hub}"></bh-moderation>
+	{{#hub}}
+		<div class="header">
+			<h1>Hub Settings</h1>
+			<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
+				<span class="fa fa-arrow-left"></span>
+				Admin
+			</a>
+			<span class="fa fa-close close-sidebar" can-click="toggleSidebarPosition"></span>
 		</div>
-	{{/isPanel}}
+		<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}" can-click="toggleHubEditing">
+			<b>Hub Name</b>
+			{{#if isEditing}}
+				<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}" can-click="preventHubEditingToggle">
+			{{else}}
+				<h2>{{ name }}</h2>
+				<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
+			{{/if}}
+		</div>
+		<div class="service-tabs clearfix">
+			<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
+				Services
+			</a>
+			<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
+				Moderation
+			</a>
+			<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
+				Integration &amp; Design
+			</a>
+		</div>
+		
+		{{#isPanel 'services'}}
+			<div class="panel-container">
+				<bh-services state="{state}"></bh-services>
+			</div>
+		{{/isPanel}}
 
-	
-	{{#isPanel 'integration'}}
-		<div class="panel-container">
-			<bh-integration state="{state}" hub="{hub}"></bh-integration>
-		</div>
-	{{/isPanel}}
-{{/hub}}
+		{{#isPanel 'moderation'}}
+			<div class="panel-container">
+				<bh-moderation state="{state}" hub="{hub}"></bh-moderation>
+			</div>
+		{{/isPanel}}
+
+		
+		{{#isPanel 'integration'}}
+			<div class="panel-container">
+				<bh-integration state="{state}" hub="{hub}"></bh-integration>
+			</div>
+		{{/isPanel}}
+	{{/hub}}
+{{else}}
+	<div class="menu-wrap" can-click="toggleSidebarPosition">
+		<i class="fa fa-bars"></i>
+	</div>
+{{/if}}

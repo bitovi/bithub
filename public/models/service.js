@@ -116,7 +116,7 @@ function(Model, _keys){
 		return config;
 	}
 
-	return Model.extend({
+	var Service = Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
 		needsOAuth : NEEDS_OAUTH,
@@ -209,10 +209,14 @@ function(Model, _keys){
 			return output.join('<br>');
 		},
 		hasNoResults : function(){
+			can.batch.start();
+			if(this.attr('_isNewlyCreated')){
+				this.attr('noResults', true)
+			}
 			this.attr({
-				noResults: true,
 				error: null
 			});
+			can.batch.stop();
 		},
 		clearNoResults : function(){
 			this.removeAttr('noResults');
@@ -238,4 +242,10 @@ function(Model, _keys){
 			this.removeAttr('error');
 		}
 	});
+	
+	Service.on('created', function(ev, service){
+		service.attr('_isNewlyCreated', true);
+	})
+
+	return Service;
 });

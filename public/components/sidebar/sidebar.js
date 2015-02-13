@@ -20,6 +20,7 @@ function(Component, initView, Models){
 		template : initView,
 		scope : {
 			isEditing: false,
+			menuOpen : true,
 			init : function(){
 				var self = this;
 				
@@ -56,9 +57,23 @@ function(Component, initView, Models){
 			},
 			toggleSidebarPosition : function(ctx, el, ev){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
+			},
+			toggleSidebar : function(val){
+				this.attr('menuOpen', val);
 			}
 		},
 		events : {
+			init : function(){
+				this.element.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('toggleMenu'));
+			},
+			toggleMenu : function(){
+				this.scope.toggleSidebar(this.scope.attr('state.sidebarIsExpanded'));
+			},
+			'{state} sidebarIsExpanded' : function(state, ev, newVal){
+				if(newVal){
+					this.scope.toggleSidebar(true)
+				}
+			},
 			'{scope} isEditing' : function(scope, ev, newVal){
 				var self = this;
 				if(newVal){

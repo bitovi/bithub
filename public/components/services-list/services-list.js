@@ -15,7 +15,6 @@ function(Component, Models, initView){
 					shownErrors: [],
 					hiddenNoResults: []
 				});
-				
 			},
 			hideNoResults : function(service){
 				this.attr('hiddenNoResults').push(service);
