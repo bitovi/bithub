@@ -26,6 +26,7 @@ function(Component, initView, Models){
 
 				this.attr('hub').save(function(){
 					self.attr('isSaving', false);
+					self.attr('state').resetEmbed();
 				}, function(){
 					self.attr('hasErrors', true);
 				});

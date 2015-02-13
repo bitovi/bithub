@@ -16,7 +16,7 @@ function(Model, moment){
 					_currentSweeper = setTimeout(function(){
 						var localBuffer = _buffer.splice(0).reverse();
 						for(var i = 0; i < localBuffer.length; i++){
-							localBuffer[i].created();
+							can.trigger(Bit, 'lifecycle', [localBuffer[i]]);
 						}
 						_currentSweeper = null;
 					}, 5000)
@@ -76,13 +76,25 @@ function(Model, moment){
 		instanceMethods[BIT_ACTIONS[i]] = makeBitAction(BIT_ACTIONS[i]);
 	}
 
+	var isFullBit = function(bit){
+		return !!bit.created_at;
+	}
+
 	var Bit = Model.extend({
 		ACTIONS: BIT_ACTIONS,
 		resource : '/api/v3/embeds/{hubId}/entities',
 		messageFromLiveService : function(msg){
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
-			buffer.add(this.model(parsed));
+
+			if(this.store[parsed.id]){
+				this.store[parsed.id].attr(parsed);
+			} else {
+				isFullBit(parsed) && buffer.add(this.model(parsed));
+			}
+			if(!parsed.is_approved){
+				can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
+			}
 		}
 	}, instanceMethods);
 
@@ -110,8 +122,6 @@ function(Model, moment){
 					currentBit = this.attr(index);
 				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
 			}
-
-			console.log('INDEX', index)
 
 			
 			this.splice(index, 0, bit);

@@ -11,10 +11,11 @@ function(Control, initView, Bit, _map){
 	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}" class="animate-height loading"></bh-bit>');
 
 	var calculateColumnCount = function(el){
-		if(el.width < CARD_MIN_WIDTH) {
+		var width = el.width();
+		if(width < CARD_MIN_WIDTH) {
 			return 1;
 		}
-		return Math.min(5, Math.floor(el.width() / CARD_MIN_WIDTH));
+		return Math.min(5, Math.floor(width / CARD_MIN_WIDTH));
 	}
 
 	var makeColumns = function(count){
@@ -49,7 +50,7 @@ function(Control, initView, Bit, _map){
 			var self = this;
 			this.options.isLoading(true);
 
-			Bit.findAll(this.options.state.getParams()).then(function(data){
+			this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
 				var bits = self.options.state.attr('bits');
 
 				can.batch.start();
@@ -63,6 +64,8 @@ function(Control, initView, Bit, _map){
 
 				self.partition(data);
 
+				delete self.__pendingReq;
+
 				can.batch.stop();
 			});
 		},
@@ -74,15 +77,16 @@ function(Control, initView, Bit, _map){
 			this.setTimeout('windowResize', 100, 'updateColumnCount');
 		},
 		'{columnCount} change' : function(compute, ev, newVal){
-			this.columns = makeColumns(newVal);
-			this.currentColumn = 0;
-
-			this.partition(this.options.state.attr('bits'));
-			this.element.find('.column-wrapper').html(this.columns);
+			this.resetColumns(newVal);
 		},
 		"{state.bits} partition" : function(){
+			this.resetColumns(this.options.columnCount());
+		},
+		resetColumns : function(columnCount){
+			this.columns = makeColumns(columnCount);
 			this.currentColumn = 0;
 			this.partition(this.options.state.attr('bits'));
+			this.element.find('.column-wrapper').html(this.columns);
 		},
 		'{state.bits} remove' : function(bits, ev, removed){
 			for(var i = 0; i < removed.length; i++){
@@ -91,6 +95,7 @@ function(Control, initView, Bit, _map){
 			}
 		},
 		partition : function(bits){
+
 			var columnLength = this.columns.length;
 			var arrs = _map(Array(columnLength), function(){
 				return [];
@@ -107,6 +112,7 @@ function(Control, initView, Bit, _map){
 					}
 				}
 			}
+
 
 			for(var i = 0; i < arrs.length; i++){
 				this.columns[i].append(arrs[i]);
@@ -155,10 +161,16 @@ function(Control, initView, Bit, _map){
 			}
 			this.__timeouts[name] = setTimeout(fn, timeout);
 		},
-		destroy : function(){
+		clearAllTimeouts : function(){
 			for(var k in this.__timeouts){
 				this.clearTimeout(k);
 			}
+		},
+		clearPendingReq : function(){
+			this.__pendingReq && this.__pendingReq.abort();
+		},
+		destroy : function(){
+			this.clearAllTimeouts();
 			return this._super.apply(this, arguments);
 		}
 	});

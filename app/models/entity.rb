@@ -89,6 +89,7 @@ class Entity < ActiveRecord::Base
     @_memoized[key] ||= yield
   end
 
+  # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_approved(embed = nil)
     if has_attribute?(:is_approved)
       read_attribute(:is_approved)
@@ -104,6 +105,7 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_pinned(embed = nil)
     if has_attribute?(:is_pinned)
       read_attribute(:is_pinned)

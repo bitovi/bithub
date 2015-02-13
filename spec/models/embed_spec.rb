@@ -39,7 +39,7 @@ RSpec.describe Embed, :type => :model do
           embed: @embed
         )
       end
-
+      
       # it 'filters by a doing full text search' do
       #   @filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
 
@@ -58,7 +58,7 @@ RSpec.describe Embed, :type => :model do
         @filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
 
         @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 4
+        expect(@embed.approved_entities.count).to eq 4
       end
 
       it 'filters by present tags' do
@@ -77,6 +77,8 @@ RSpec.describe Embed, :type => :model do
     end
 
     context 'given a filter with multiple conjunctive predicates' do
+      after { Filter.delete_all; NatlangQuery.delete_all }
+
       it 'filters by tying :tagged_with and :is_a predicates with a logical AND' do
         @filter = FactoryGirl.create(:filter, :conjunctive, embed: @embed)
 

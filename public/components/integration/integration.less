@@ -1,0 +1,74 @@
+bh-integration {
+	display: block;
+	.content-section {
+		padding-top: 10px;
+		padding-bottom: 25px;
+	}
+	.embed-code, .embed-code[readonly] {
+		height: 100px;
+		font-family: Monaco, Consolas, monospace;
+		font-size: 12px;
+		background: white;
+		cursor: text;
+		margin-bottom: 10px;
+	}
+	.btn-add-preset {
+		margin-top: 10px;
+		float: right;
+	}
+	.new-preset-form {
+		margin: 25px 0;
+	}
+	.list-wrapper {
+		margin: 0 -25px;
+		.destroy-preset, .edit-preset {
+			cursor: pointer;
+			color: #666;
+			&:hover {
+				color: #333;
+			}
+		}
+		table.table {
+			border-top: 2px solid #ccc;
+			margin-top: 0;
+			p.instructions {
+				font-size: 90%;
+				font-style: oblique;
+			}
+			> tbody > tr, > thead > tr {
+				&.expanded td {
+					background: #e9e9e9;
+				}
+				th.expand {
+					width: 50px;
+				}
+				td.expand {
+					cursor: pointer;
+					.fa {
+						color: #666;
+					}
+					&:hover .fa {
+						color: #000;
+					}
+				}
+				th:first-child, td:first-child {
+					padding-left: 25px;
+				}
+				th:last-child, td:last-child {
+					padding-right: 25px;
+				}
+				th.actions {
+					width: 70px;
+				}
+				td.actions .fa {
+					display: inline-block;
+					margin-top: 3px;
+				}
+				.preset-embed-code {
+					border-top: none;
+				}
+			}
+		}
+		
+	}
+}

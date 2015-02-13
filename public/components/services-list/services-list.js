@@ -11,7 +11,14 @@ function(Component, Models, initView){
 		template : initView,
 		scope: {
 			init : function(){
-				this.attr('shownErrors', []);
+				this.attr({
+					shownErrors: [],
+					hiddenNoResults: []
+				});
+				
+			},
+			hideNoResults : function(service){
+				this.attr('hiddenNoResults').push(service);
 			},
 			destroyService: function( service, el, ev) {
 				if( confirm('Are you sure?') ) {
@@ -47,13 +54,21 @@ function(Component, Models, initView){
 
 				service = can.isFunction(service) ? service() : service;
 
-				if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error')){
+				if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error') && !service.attr('noResults')){
+					return opts.fn();
+				}
+			},
+			serviceHasNoResults : function(service, opts){
+				service = can.isFunction(service) ? service() : service;
+				this.attr('hiddenNoResults').attr('length');
+				if(service.attr('noResults') && this.attr('hiddenNoResults').indexOf(service) === -1){
 					return opts.fn();
 				}
 			},
 			showErrorsForService : function(service, opts){
 				service = can.isFunction(service) ? service() : service;
-				if(this.attr('shownErrors').indexOf(service) !== -1 && service.attr('error')){
+				this.attr('shownErrors').attr('length');
+				if(service.attr('error') && this.attr('shownErrors').indexOf(service) !== -1){
 					return opts.fn();
 				}
 			}

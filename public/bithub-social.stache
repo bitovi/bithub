@@ -4,8 +4,30 @@
 	<bh-sidebar state="{state}"{{#if state.sidebarIsExpanded}}class="is-expanded"{{/if}}></bh-sidebar>
 </div>
 
-<main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}}">
-	{{renderIframe state.iframe}}
+<main id="content" class="{{#if state.sidebarIsExpanded}}sidebar-is-expanded{{/if}} content-{{state.theme}}">
+	<div class="embed-preset">
+		<b>{{state.embedTypeTitle}} Mode</b>
+		{{#unless state.isAdminEmbed}}
+			- {{state.preset.name}}
+		{{/unless}}
+		{{#if state.isAdminEmbed}}
+			<div class="admin-embed-filter">
+				<select can-value="state.preset.config.filter" class="form-control input-sm">
+					<option value="all">Show all items</option>
+					<option value="visible">Show only public items</option>
+					<option value="pinned">Show only pinned items</option>
+					<option value="blocked">Show only blocked items</option>
+				</select>
+				<select can-value="state.preset.config.order" class="form-control input-sm">
+					<option value="created_at:desc">Ordered by crawling time</option>
+					<option value="preview">Ordered like in the public embed</option>
+				</select>
+			</div>
+		{{/if}}
+	</div>
+	<div class="iframe-wrapper">
+		{{renderIframe state.iframe}}
+	</div>
 </main>
 
 
