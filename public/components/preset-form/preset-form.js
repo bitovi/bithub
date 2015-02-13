@@ -22,7 +22,7 @@ function(Component, initView){
 				}
 
 				this.attr('isSaving', true);
-				this.attr('preset').save();
+				el.closest('bh-integration').trigger('savePreset')
 			}
 		},
 		events : {

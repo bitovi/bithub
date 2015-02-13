@@ -3,7 +3,7 @@
 	<button class="btn btn-primary btn-xs btn-add-preset" can-click="addPreset">Add new Preset</button>
 </h2>
 {{#if customPresetExistsAndIsNew}}
-	<bh-preset-form preset="{state.customPreset}" class="bithub-form new-preset-form"></bh-preset-form>
+	<bh-preset-form preset="{state.customPreset}" class="bithub-form new-preset-form" saved="{getSavedCb}"></bh-preset-form>
 {{/if}}
 
 <div class="list-wrapper">

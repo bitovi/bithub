@@ -103,15 +103,18 @@ function(Component, initView, Models){
 			}
 		},
 		events : {
-			init : function(){
+			" savePreset" : function(el, ev){
 				var self = this;
-				this.on(Models.Preset, 'created', this.proxy('presetCreated'));
-				this.on(Models.Preset, 'updated', function(){
+				this.scope.currentPreset().save(function(preset){
+					can.batch.start();
+					var presets = self.scope.attr('presets');
+					var index = presets.indexOf(preset);
+					if(index === -1){
+						presets.unshift(preset);
+					}
 					self.scope.attr('isEditing', false);
+					can.batch.stop();
 				});
-			},
-			presetCreated : function(ev, preset){
-				this.scope.presets.unshift(preset);
 			},
 			'textarea focus' : function(el, ev){
 				ev.preventDefault();
