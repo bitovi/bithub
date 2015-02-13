@@ -39,9 +39,6 @@
 			<div class="col-xs-10">
 				<ul class="list-unstyled menu">
 					<li>{{{pageLink 'hub-list' 'Hubs'}}}</li>
-					<li>{{{pageLink 'payments' 'Payments'}}}</li>
-					<li>{{{pageLink 'settings' 'Settings'}}}</li>
-					<li>{{{pageLink 'users' 'Users'}}}</li>
 					<li><a href="/logout" class="btn btn-link">Logout</a></li>
 				</ul>
 			</div>
