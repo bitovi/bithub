@@ -41,6 +41,7 @@ logger = LoggerFactory.new('crawler', :environment => $env).component_logger
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
+  supervise HttpServer::Listener, as: :http_listener
   supervise EventPublisher, as: :event_publisher
   supervise ErrorPublisher, as: :error_publisher
   supervise NotificationPublisher, as: :notification_publisher
@@ -48,7 +49,6 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator
   supervise LockManager, as: :lock_manager
   supervise Supervisors::Main, as: :main
-  supervise HttpServer::Listener, as: :http_listener
 end
 
 Crawler.run

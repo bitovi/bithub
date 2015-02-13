@@ -75,7 +75,7 @@ module HttpServer
           EmbedInfo.new(embed[:id], embed[:name]),
           ServiceInfo.new(service[:id], 'foursquare', "#{event_type}_event")
 
-        Celluloid::Actor[:publisher].publish owner_data, [event]
+        Celluloid::Actor[:event_publisher].publish [event], owner_data
       end
 
       def self.path
