@@ -10,9 +10,6 @@
 - name: Safe-upgrade packages
   apt: upgrade=safe
 
-- name: Install grub
-  shell: grub-install /dev/sda
-
 - name: Migrate to systemd
   apt: name={{ item }} state=installed
   with_items:

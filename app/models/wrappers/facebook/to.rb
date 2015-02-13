@@ -3,14 +3,14 @@ require 'wrappers/data_accessible'
 module Wrappers
   module Facebook
 
-    class Poster
+    class To
       include DataAccessible
       include CoreHelpers
 
-      has :id, :name
+      has :id, :name, :category
 
-      def initialize(status)
-        @data = symbolize_keys(status)
+      def initialize(data)
+        @data = symbolize_keys(data)
       end
 
     end

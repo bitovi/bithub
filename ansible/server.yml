@@ -1,9 +1,9 @@
 - name: Initial setup
-  hosts: staging
+  hosts: testing
   user: root
   vars:
-    domain: 'staging.bithub.com'
-    env: 'staging'
+    domain: 'testing.bithub.com'
+    env: 'testing'
     pg:
       version: '9.4'
     ruby:

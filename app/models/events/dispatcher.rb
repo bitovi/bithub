@@ -170,7 +170,7 @@ module Events
           && not(@source_data[:state].nil?)\
           && not(@source_data[:comments].nil?)
       end
-      
+
       def github_issue_with_pull_request?
         !@source_data[:labels].nil?\
           && !@source_data[:state].nil?\
@@ -240,8 +240,19 @@ module Events
 
   module Facebook
     class Dispatcher < BasicTypeDispatcher
+
+      def initialize(source_data)
+        @sd = source_data
+      end
+
       def type
-        Events::Facebook::StatusEvent
+        ev_type = "#{@sd[:type]}_event".camel_case.to_sym
+
+        if Events::Facebook.constants.include? ev_type
+          Events::Facebook.const_get ev_type
+        else
+          fail DispatchError.new('Failed to dispatch to a feed in Events', ev_type)
+        end
       end
     end
   end
