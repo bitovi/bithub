@@ -23,7 +23,6 @@ module Entities
           origin_ts: @event.created_time,
           props: {
             origin_id: @event.id,
-            origin_object_id: @event.status_id,
             origin_author_id: @event.from.id,
             origin_author_name: @event.from.name,
           }

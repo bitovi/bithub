@@ -4,7 +4,7 @@ module Events
     class StatusEvent < Protocol
       extend Forwardable
 
-      def_delegators :@status, :id, :status_id, :type, :link, :message, :created_time, :updated_time
+      def_delegators :@status, :id, :type, :link, :message, :created_time, :updated_time
 
       attr_accessor :status, :from, :comments, :likes
 
