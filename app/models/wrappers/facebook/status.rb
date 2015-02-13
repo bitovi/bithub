@@ -14,10 +14,6 @@ module Wrappers
         @data = symbolize_keys(status)
       end
 
-      def status_id
-        @data.fetch(:object_id)
-      end
-
       def created_time
         Time.parse(@data.fetch(:created_time)).utc
       end
