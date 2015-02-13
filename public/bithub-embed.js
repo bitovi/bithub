@@ -52,7 +52,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			var isLive = appState.isLive();
 
 			if(appState.isPublic()){
-				isLive && bits.place(bit);
+				isLive && bit.attr('is_approved') && bits.place(bit);
 			} else {
 				if(isLive && bits.indexOf(bit) === -1){
 					bits.unshift(bit);
