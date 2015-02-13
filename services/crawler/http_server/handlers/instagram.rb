@@ -68,7 +68,7 @@ module HttpServer
       end
 
       def publish(owner_data, body)
-        Actor[:publisher].publish owner_data, [body]
+        Actor[:event_publisher].publish [body], owner_data
       end
 
       def self.path
