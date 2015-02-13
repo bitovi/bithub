@@ -21,7 +21,6 @@ module HttpServer
       def handle(req)
         # FS postback sends data in URL encoded form :/
         parsed  = CGI.parse req.body.to_s
-
         secret  = parsed['secret'].first
         evtype  = (parsed['checkin'] && 'checkin') ||
                   (parsed['like'] && 'like') ||
@@ -37,9 +36,10 @@ module HttpServer
 
         payload.each do |event|
           event = JSON.parse event
+
           @channels.each do |id, routes|
             if id == event.fetch('venue').fetch('id')
-              routes.each {|route| publish(route,event,evtype)}
+              routes.each {|route| publish route, event, evtype}
             end
           end
         end
@@ -66,7 +66,7 @@ module HttpServer
       private
 
       def publish(path, event, event_type)
-        _, brand, embed, service = SupervisionNode.deserialize(path)
+        main, brand, embed, service = SupervisionNode.deserialize(path)
 
         # return unless main && brand && embed && service
 
@@ -75,7 +75,7 @@ module HttpServer
           EmbedInfo.new(embed[:id], embed[:name]),
           ServiceInfo.new(service[:id], 'foursquare', "#{event_type}_event")
 
-        Celluloid::Actor[:event_publisher].publish [event], owner_data
+        Celluloid::Actor[:publisher].publish owner_data, [event]
       end
 
       def self.path

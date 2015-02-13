@@ -32,6 +32,7 @@ require_relative 'poller'
 require_relative 'decorators/all'
 require_relative 'persistent/digest_set'
 require_relative 'response_processor'
+require_relative 'http_server/listener'
 
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
@@ -47,6 +48,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise Configurator, as: :configurator
   supervise LockManager, as: :lock_manager
   supervise Supervisors::Main, as: :main
+  supervise HttpServer::Listener, as: :http_listener
 end
 
 Crawler.run
