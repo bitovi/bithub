@@ -9,7 +9,7 @@ module Workers
       Brand.pluck(:name).each do |name|
         Apartment::Tenant.switch name do
 
-          Embed.each do |e|
+          Embed.all.each do |e|
             e.services.where(feed_name: 'facebook').each do |s|
               access_token = s.credentials.fetch(:access_token)
               client = Koala::Facebook::API.new access_token
