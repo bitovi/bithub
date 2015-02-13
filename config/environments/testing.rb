@@ -40,5 +40,8 @@ Bithub::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  # :sql breaks migrations during deployment
+  config.active_record.schema_format = :ruby
+
   config.eager_load = true
 end
