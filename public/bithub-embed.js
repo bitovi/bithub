@@ -4,18 +4,18 @@ steal(
 'models/bit.js',
 'models/hub.js',
 'bit-list',
-'connect-liveservice.js',
+'communicator',
 'bits',
 'can/route',
-'style',
-function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
+'style/embed.less!',
+function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 	var params = can.deparam(window.location.search.substr(1));
-	var hubId = params.hubId;
-	var tenantName = params.tenantName;
 	var liveService;
-
+	var isLoadedFromIframe = window.parent !== window;
 	var appState = new AppState();
+
+	var bodyClasses = [(isLoadedFromIframe ? 'iframe-context' : 'page-context'), 'embed'];
 
 	var triggerPartition = (function(){
 		var partitionTimeout;
@@ -25,69 +25,91 @@ function(AppState, embedView, Bit, Hub, BitList, connectLiveService){
 				can.trigger(bits, 'partition');
 			}, 100);
 		}
-	})()
+	})();
 
 	var kickstart = function(hub){
-		var isPublic = !hub;
-
-		can.route.map(appState);
-
-		can.route.ready();
-
-		appState.attr({
-			hubId : hubId,
-			hub: hub,
-			tenant : tenantName
+		var communicator = Communicator.bind(window.parent, {
+			updateAttrs : function(data){
+				appState.setAttrs(data);
+			},
+			reset : function(){
+				resetApp();
+			}
 		});
 
-		if(params.live){
-			liveService = connectLiveService(hubId, isPublic ? tenantName : null);
-			if(liveService){
-				liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
+		bodyClasses.push((params.theme || 'light') + '-theme');
+
+		can.route.map(appState);
+		can.route.ready();
+
+		appState.attr('hub', hub);
+		appState.setAttrs(params);
+
+		Bit.on('lifecycle', function(ev, bit){
+			var serviceIds = bit.attr('service_ids');
+			var bits = appState.attr('bits');
+			var index;
+			var isLive = appState.isLive();
+
+			if(appState.isPublic()){
+				isLive && bits.place(bit);
+			} else {
+				if(isLive && bits.indexOf(bit) === -1){
+					bits.unshift(bit);
+				}
 			}
-			Bit.on('created', function(ev, bit){
-				var serviceIds = bit.attr('service_ids');
-				var bits = appState.attr('bits');
-				var index;
+			
+			triggerPartition(bits);
 
-				if(isPublic){
-					if(!bit.attr('is_approved')){
-						index = bits.indexOf(bit);
-						if(index > -1){
-							bits.splice(index, 1);
-						}
-					} else {
-						bits.place(bit);
-					}
-					
-				} else {
-					if(bits.indexOf(bit) === -1){
-						bits.unshift(bit);
-					}
-				}
-				
-				triggerPartition(bits);
+			if(serviceIds){
+				communicator.send('loadedBits', serviceIds);
+			}
 
+		});
 
-				if(serviceIds){
-					window.parent && window.parent.postMessage({
-						type : 'loadedBits',
-						payload : serviceIds.join(',')
-					}, 'http://' + EMBED_ENDPOINT);
-				}
-				
+		Bit.on('disapproved', function(ev, bit){
+			var bits = appState.attr('bits');
+			var index = bits.indexOf(bit);
+			if(appState.isPublic() && index > -1){
+				bits.splice(index, 1);
+			}
+		});
 
+		$('body').addClass(bodyClasses.join(' '));
+
+		var initApp = function(){
+			var div = $('<div id="app" />');
+			
+			$('#app-wrapper').html(div);
+
+			new BitList(div, {
+				state : appState
 			});
 		}
 
-		$('body').addClass('embed');
+		var resetApp = (function(){
+			var timeout;
+			return function(){
+				clearTimeout(timeout);
+				setTimeout(function(){
+					appState.reset();
+					initApp();
+				}, 1);
+			}
+		})();
 
-		new BitList($('#app'), {
-			state : appState
+		appState.on('view', resetApp);
+		appState.on('order', resetApp);
+		appState.on('filter', resetApp);
+
+		appState.on('theme', function(ev, newTheme){
+			$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');
 		});
+
+		initApp();
 	}
 
-	Hub.findOne({id: hubId}).then(function(hub){
+	Hub.findOne({id: params.hubId}).then(function(hub){
 		kickstart(hub);
 	}, function(){
 		kickstart();

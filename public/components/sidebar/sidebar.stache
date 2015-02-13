@@ -43,8 +43,7 @@
 	
 	{{#isPanel 'integration'}}
 		<div class="panel-container">
-		<h4>Paste this code in the HTML</h4>
-		<textarea class="form-control embed-code" can-value="integrationCode"></textarea>
+			<bh-integration state="{state}" hub="{hub}"></bh-integration>
 		</div>
 	{{/isPanel}}
 {{/hub}}
