@@ -13,6 +13,7 @@
   roles:
     - { role: jessie,      tags: ['jessie'] }
     - { role: common,      tags: ['common'] }
+    - { role: ssh,         tags: ['ssh'] }
     - { role: nodejs,      tags: ['nodejs'] }
     - { role: nginx,       tags: ['nginx'] }
     - { role: postgresql,  tags: ['postgresql'] }
