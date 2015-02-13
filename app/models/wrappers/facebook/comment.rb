@@ -6,18 +6,18 @@ module Wrappers
     class Comment
       include DataAccessible
       include CoreHelpers
-      
+
       has :id, :message
 
-      def initialize(comment)
-        @data = symbolize_keys(comment)
+      def initialize(data)
+        @data = symbolize_keys(data)
       end
 
-      def poster_id
+      def from_id
         @data.fetch(:from).fetch(:id)
       end
-      
-      def poster_name
+
+      def from_name
         @data.fetch(:from).fetch(:name)
       end
 

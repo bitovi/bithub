@@ -12,7 +12,7 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @client.get_connections('me', 'feed', {:limit => 50})
+          @client.get_connections('me', 'feed', {:limit => 100})
         end
       end
     end

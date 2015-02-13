@@ -10,7 +10,7 @@ describe Fetchers::Tumblr::Posts  do
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:publisher] = EventPublisher.new reject_old: false
+    Celluloid::Actor[:event_publisher] = EventPublisher.new reject_old: false
 
     rf = RabbitFactory.new($rabbit_channel)
     @x = rf.x('x.web')
@@ -30,7 +30,7 @@ describe Fetchers::Tumblr::Posts  do
 
       VCR.use_cassette('tumblr_posts') do
         response = Fetchers::Tumblr::Posts.fetch 'puuluu.tumblr.com', limit: 1
-        Celluloid::Actor[:publisher].publish response, @owner_data
+        Celluloid::Actor[:event_publisher].publish response, @owner_data
       end
 
       # wait for an event on MQ
