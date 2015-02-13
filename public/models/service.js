@@ -209,7 +209,10 @@ function(Model, _keys){
 			return output.join('<br>');
 		},
 		hasNoResults : function(){
-			this.attr('noResults', true);
+			this.attr({
+				noResults: true,
+				error: null
+			});
 		},
 		clearNoResults : function(){
 			this.removeAttr('noResults');
