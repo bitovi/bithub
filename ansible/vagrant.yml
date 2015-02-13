@@ -12,6 +12,7 @@
       project_path: '/vagrant'
   roles:
     - { role: jessie,      tags: ['jessie'] }
+    - { role: grub,        tags: ['grub'] }
     - { role: common,      tags: ['common'] }
     - { role: nodejs,      tags: ['nodejs'] }
     - { role: nginx,       tags: ['nginx'] }

@@ -1,9 +1,11 @@
 module Entities
-	module Facebook
-		class Comment < Protocol; end
-		class Status < Protocol; end
-	end
+  module Facebook
+    class Status < Protocol; end
+    class Photo < Protocol; end
+    # class Comment < Protocol; end
+  end
 end
 
 require_relative 'types/status'
-require_relative 'types/comment'
+require_relative 'types/photo'
+#require_relative 'types/comment'
