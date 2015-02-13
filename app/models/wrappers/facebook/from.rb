@@ -3,11 +3,11 @@ require 'wrappers/data_accessible'
 module Wrappers
   module Facebook
 
-    class Like
+    class From
       include DataAccessible
       include CoreHelpers
 
-      has :id, :name
+      has :id, :name, :category
 
       def initialize(data)
         @data = symbolize_keys(data)

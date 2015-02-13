@@ -7,15 +7,15 @@ RSpec.describe Wrappers::Facebook::Status, :type => :domain do
   end
 
   subject(:poster) do
-    Wrappers::Facebook::Poster.new(raw_from)
+    Wrappers::Facebook::From.new(raw_from)
   end
-  
+
   describe "#id" do
     it "should respond with 'from' -> 'id' from raw data" do
       expect(poster.id).to eq raw_from['id']
     end
   end
-  
+
   describe "#name" do
     it "should respond with 'from' -> 'name' from raw data" do
       expect(poster.name).to eq raw_from['name']
