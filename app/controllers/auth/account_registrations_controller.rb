@@ -1,4 +1,5 @@
 class Auth::AccountRegistrationsController < Devise::RegistrationsController
+  before_filter :configure_permitted_parameters, if: :devise_controller?
 
   def create
     super do |account|
@@ -12,6 +13,10 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   end
 
   protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up) << :invite_key
+  end
 
   def after_sign_up_path_for(resource)
     admin_index_path
