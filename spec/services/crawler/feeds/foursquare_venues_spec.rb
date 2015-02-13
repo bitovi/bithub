@@ -17,7 +17,7 @@ describe HttpServer::Handlers::FoursquareVenues  do
   before do
     Celluloid.boot
     Celluloid::Actor[:http_server] = HttpServer::Listener.new
-    Celluloid::Actor[:publisher]   = EventPublisher.new reject_old: false
+    Celluloid::Actor[:event_publisher]   = EventPublisher.new reject_old: false
 
     rf = RabbitFactory.new($rabbit_channel)
     @x = rf.x('x.web')
