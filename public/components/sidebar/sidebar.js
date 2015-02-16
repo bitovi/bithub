@@ -5,6 +5,7 @@ steal(
 './sidebar.less!',
 'components/services',
 'components/moderation',
+'components/integration',
 'can/route',
 'components/helpers.js',
 function(Component, initView, Models){
@@ -14,13 +15,12 @@ function(Component, initView, Models){
 		27 : 'ESC'
 	};
 
-	var INTEGRATION_TEMPLATE = '<a href="http://{embedEndpoint}/admin/embed?tenantName={tenantName}&hubId={hubId}" data-hub-id="{hubId}" data-tenant-name="{tenantName}" class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/admin/embed.js"></script>'
-
 	return Component.extend({
 		tag : 'bh-sidebar',
 		template : initView,
 		scope : {
 			isEditing: false,
+			menuOpen : true,
 			init : function(){
 				var self = this;
 				
@@ -58,21 +58,22 @@ function(Component, initView, Models){
 			toggleSidebarPosition : function(ctx, el, ev){
 				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
 			},
-			integrationCode : function(){
-				var currentBrand = this.attr('state.currentBrand');
-				var hub = this.attr('hub');
-				var tenantName, hubId;
-				if(currentBrand && hub){
-					return can.sub(INTEGRATION_TEMPLATE, {
-						tenantName: currentBrand.attr('tenant_name'),
-						embedEndpoint: EMBED_ENDPOINT,
-						hubName: hub.attr('name'),
-						hubId: hub.attr('id')
-					});
-				}
+			toggleSidebar : function(val){
+				this.attr('menuOpen', val);
 			}
 		},
 		events : {
+			init : function(){
+				this.element.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('toggleMenu'));
+			},
+			toggleMenu : function(){
+				this.scope.toggleSidebar(this.scope.attr('state.sidebarIsExpanded'));
+			},
+			'{state} sidebarIsExpanded' : function(state, ev, newVal){
+				if(newVal){
+					this.scope.toggleSidebar(true)
+				}
+			},
 			'{scope} isEditing' : function(scope, ev, newVal){
 				var self = this;
 				if(newVal){

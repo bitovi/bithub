@@ -1,4 +1,4 @@
-bithub ALL=(root) NOPASSWD: /usr/local/bin/foreman export --app bithub --log /home/bithub/web/shared/log/ --user bithub --env /home/bithub/web/current/.env_staging --template /home/bithub/web/current/lib/capistrano/tasks/templates --procfile /home/bithub/web/current/Procfile.staging systemd /lib/systemd/system/
+bithub ALL=(root) NOPASSWD: /usr/local/bin/foreman export --app bithub --log /home/bithub/web/shared/log/ --user bithub --env /home/bithub/web/current/.env_{{ env }} --template /home/bithub/web/current/lib/capistrano/tasks/templates --procfile /home/bithub/web/current/Procfile.{{ env }} systemd /lib/systemd/system/
 
 bithub ALL=(root) NOPASSWD: /bin/systemctl daemon-reload
 

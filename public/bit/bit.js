@@ -1,16 +1,45 @@
 steal(
 'can/component',
 './bit.stache!',
+'lodash/collections/map.js',
+'models/bit.js',
 './bit.less!',
 'components/image-gallery',
 'components/body-wrap',
-function(Component, initView){
+'can/construct/super',
+function(Component, initView, _map, Bit){
+
+	var imageStatus = function(img){
+		if(!img.complete){
+			return 'LOADING';
+		}
+		if(img.naturalWidth === 0){
+			return 'ERROR';
+		}
+		return 'LOADED';
+	}
+
+	var scope = {
+		toggleApproveBit : function(){
+			this.attr('bit.is_approved') ? this.disapproveBit() : this.approveBit();
+		},
+		togglePinBit : function(){
+			this.attr('bit.is_pinned') ? this.unpinBit() : this.pinBit();
+		}
+	};
+
+	for(var i = 0; i < Bit.ACTIONS.length; i++){
+		scope[Bit.ACTIONS[i] + 'Bit'] = (function(action){
+			return function(){
+				this.attr('bit')[action](this.attr('state.hubId'));
+			}
+		})(Bit.ACTIONS[i]);
+	}
+
 	return Component.extend({
 		tag: 'bh-bit',
 		template : initView,
-		events : {
-
-		},
+		scope : scope,
 		helpers : {
 			formattedTitle : function(title){
 				title = can.isFunction(title) ? title() : title;
@@ -22,40 +51,68 @@ function(Component, initView){
 		},
 		events : {
 			init : function(){
+
 				var self = this;
-				
-				this.element.addClass('loading')
-				this.imagesToLoadCount = 0;
 
-				setTimeout(function(){
-					var imgs = self.element.find('img');
+				this.element.trigger('loading');
 
-					self.imagesToLoadCount = imgs.length;
+				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
 
-					if(imgs.length){
-						
-						imgs.each(function(){
-							var $img = $(this);
-							$img.one('load', self.proxy('imageDone'));
-							$img.one('error', self.proxy('imageErrored'));
-						});
+				if(this.scope.attr('state').isAdmin()){
+					if(!this.scope.attr('bit.is_approved')){
+						this.element.addClass('blocked');
+					} else if(this.scope.attr('bit.is_pinned')){
+						this.element.addClass('pinned');
+					}
+				}
+
+				this.__initTimeout = setTimeout(function(){
+					self.imgs = self.element.find('img').toArray();
+					self.imagesToLoadCount = self.imgs.length;
+
+					if(self.imgs.length){
+						self.__imgSweeperTimeout = setTimeout(self.proxy('imgSweeper'), 500);
 					} else {
 						self.updateVisibility();
 					}
-				});
+				}, 1);
 			},
-			updateVisibility : function(){
-				if(this.imagesToLoadCount === 0){
-					this.element.removeClass('loading');
+			'{bit} is_approved' : function(bit, ev, newVal){
+				this.scope.attr('state').isAdmin() && this.element.toggleClass('blocked', !newVal);
+			},
+			'{bit} is_pinned' : function(bit, ev, newVal){
+				this.scope.attr('state').isAdmin() && this.element.toggleClass('pinned', newVal);
+			},
+			imgSweeper : function(){
+				var statuses = _map(this.imgs, imageStatus);
+				var errored;
+
+				if(can.inArray('LOADING', statuses) > -1){
+					this.__imgSweeperTimeout = setTimeout(this.proxy('imgSweeper'), 500);
+				} else {
+					this.updateVisibility();
+				}
+
+				for(var i = 0; i < statuses.length; i++){
+					if(statuses[i] === 'ERROR'){
+						errored = this.imgs.splice(i, 1)[0];
+						errored && $(errored).remove();
+					}
 				}
 			},
-			imageDone : function(){
-				this.imagesToLoadCount--;
-				this.updateVisibility();
+			updateVisibility : function(){
+				var self = this;
+				this.element.height(this.element.find('.bit').height());
+				this.element.removeClass('loading');
+				this.element.trigger('loaded');
 			},
-			imageErrored : function(ev){
-				$(ev.target).remove();
-				this.imageLoaded();
+			removeExplicitHeight : function(){
+				this.element.removeClass('animate-height').css('height', 'auto');
+			},
+			destroy : function(){
+				clearTimeout(this.__imgSweeperTimeout);
+				clearTimeout(this.__initTimeout);
+				return this._super.apply(this, arguments);
 			}
 		}
 	})

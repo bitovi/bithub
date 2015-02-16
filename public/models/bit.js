@@ -3,7 +3,6 @@ steal(
 'moment',
 'can/list/promise',
 'can/map/define',
-'bit',
 function(Model, moment){
 	
 	var buffer = (function(){
@@ -17,7 +16,7 @@ function(Model, moment){
 					_currentSweeper = setTimeout(function(){
 						var localBuffer = _buffer.splice(0).reverse();
 						for(var i = 0; i < localBuffer.length; i++){
-							localBuffer[i].created();
+							can.trigger(Bit, 'lifecycle', [localBuffer[i]]);
 						}
 						_currentSweeper = null;
 					}, 5000)
@@ -26,14 +25,19 @@ function(Model, moment){
 		}
 	})();
 
-	var Bit = Model.extend({
-		resource : '/api/v3/embeds/{hubId}/entities',
-		messageFromLiveService : function(msg){
-			var parsed = JSON.parse(msg);
-			parsed._isFromLiveService = true;
-			buffer.add(this.model(parsed));
+	var checkIfBitIsBelowCurrentBit = function(bit, currentBit){
+		if(!currentBit){
+			return false;
 		}
-	}, {
+		if(currentBit.is_pinned){
+			return true;
+		}
+		return bit.thread_updated_ts < currentBit.thread_updated_ts;
+	}
+
+	var BIT_ACTIONS = ['pin', 'unpin', 'approve', 'disapprove'];
+
+	var instanceMethods = {
 		formattedThreadUpdatedAt : function(){
 			return moment(this.attr('thread_updated_at')).format('LL');
 		},
@@ -49,24 +53,78 @@ function(Model, moment){
 		isTwitterFollow : function(){
 			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
 		}
-	});
+	};
+
+	var makeBitAction = function(action){
+		var templateUrl = '/api/v3/embeds/{hubId}/entities/{id}/' + action;
+		return function(hubId){
+			var url = can.sub(templateUrl, {
+				hubId : hubId,
+				id : this.attr('id')
+			});
+
+			return $.ajax(url, {
+				dataType: 'json',
+				type: 'PUT'
+			}).then(function(data){
+				Bit.model(data);
+			})
+		}
+	}
+
+	for(var i = 0; i < BIT_ACTIONS.length; i++){
+		instanceMethods[BIT_ACTIONS[i]] = makeBitAction(BIT_ACTIONS[i]);
+	}
+
+	var isFullBit = function(bit){
+		return !!bit.created_at;
+	}
+
+	var Bit = Model.extend({
+		ACTIONS: BIT_ACTIONS,
+		resource : '/api/v3/embeds/{hubId}/entities',
+		messageFromLiveService : function(msg){
+			var parsed = JSON.parse(msg);
+			parsed._isFromLiveService = true;
+
+			if(this.store[parsed.id]){
+				this.store[parsed.id].attr(parsed);
+			} else {
+				isFullBit(parsed) && buffer.add(this.model(parsed));
+			}
+			if(!parsed.is_approved){
+				can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
+			}
+		}
+	}, instanceMethods);
 
 	Bit.List = Bit.List.extend({
 		place : function(bit){
-			var length = this.attr('length'),
-				currentBit, nextBit;
-			for(var i = 0; i < length; i++){
-				currentBit = this[i];
-				nextBit = this[i + 1];
-				if(i === 0 && bit.thread_updated_ts > currentBit.thread_updated_ts){
-					this.unshift(bit)
-					return;
-				} else if(bit.thread_updated_ts < currentBit.thread_updated_ts && (nextBit && bit.thread_updated_ts >= nextBit.thread_updated_ts)){
-					this.splice(i, 0, bit);
-					return;
-				}
+			var length = this.attr('length');
+			var index = -1;
+			var currentIndex, currentBit, nextBit;
+
+			currentIndex = this.indexOf(bit);
+
+			// if it exists in the list remove it because we are changing the order
+			if(currentIndex > -1){
+				this.splice(currentIndex, 1);
 			}
-			this.push(bit);
+
+			if(bit.attr('is_pinned')){
+				do {
+					index++;
+					currentBit = this.attr(index);
+				} while(currentBit && currentBit.attr('is_pinned'));
+			} else {
+				do {
+					index++;
+					currentBit = this.attr(index);
+				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
+			}
+
+			
+			this.splice(index, 0, bit);
 		}
 	});
 

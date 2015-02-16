@@ -1,4 +1,6 @@
 class Api::V3::EmbedsController < Api::V3::BaseController
+  include Api::EmbedScoped
+
   before_filter :authenticate_account!
   load_and_authorize_resource
 
@@ -8,7 +10,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def show
-    @embed = current_brand.embeds.find(params[:id])
+    @embed = owner_embed
     render :show
   end
 
@@ -20,16 +22,13 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
   
   def update
-    @embed = current_brand.embeds.find(params[:id])
-    if @embed.update_attributes(embed_params)
+    if owner_embed.update_attributes(embed_params)
       render :show
     end
   end
 
   def destroy
-    @embed = current_brand.embeds.find(params[:id])
-
-    if @embed.destroy
+    if owner_embed.destroy
       render :json => msg_hash(@filter, 'destroy', 'success')
     else
       render :json => msg_hash(@filter, 'destroy'), :status => 406
@@ -44,5 +43,9 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
   def generated_name
     Bazaar.heroku
+  end
+
+  def embed_id
+    params[:id]
   end
 end

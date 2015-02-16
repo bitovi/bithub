@@ -1,6 +1,13 @@
 module Services
   module ConfigValidators
 
+    class HashlessString < Virtus::Attribute
+      def coerce(value)
+        value.gsub(/[^\w|-]/,'')
+      end
+    end
+    
+
     module Twitter
       class UserTimeline
         include Virtus.model(:strict => true)
@@ -14,12 +21,12 @@ module Services
 
       class Hashtag
         include Virtus.model(:strict => true)
-        attribute :hashtag, String
+        attribute :hashtag, HashlessString
       end
       
       class Term
         include Virtus.model(:strict => true)
-        attribute :term, String
+        attribute :term, HashlessString
       end
     end
 
@@ -52,7 +59,7 @@ module Services
 
       class Tag
         include Virtus.model(:strict => true)
-        attribute :tag, String
+        attribute :tag, HashlessString
       end
 
       class Location
@@ -76,7 +83,7 @@ module Services
 
       class Tag
         include Virtus.model(:strict => true)
-        attribute :tag, String
+        attribute :tag, HashlessString
       end
     end
 
@@ -109,7 +116,7 @@ module Services
     module Stackexchange
       class Tags
         include Virtus.model(:strict => true)
-        attribute :tags, Array[String]
+        attribute :tags, Array[HashlessString]
       end
     end
 

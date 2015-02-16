@@ -3,8 +3,13 @@ steal(
 'models',
 'lodash/collections/reduce.js',
 'connect-liveservice.js',
+'communicator',
 'can/map/define', 
-function(Map, Models, _reduce, connectLiveService){
+'can/construct/proxy',
+'can/map/delegate',
+function(Map, Models, _reduce, connectLiveService, Communicator){
+
+	var CURRENT_IFRAME;
 
 	return Map.extend({
 		define : {
@@ -14,18 +19,105 @@ function(Map, Models, _reduce, connectLiveService){
 			hubId : {
 				set : function(val){
 					var liveService = connectLiveService(val);
+					var self = this;
 
 					this.attr('bits').splice(0);
 
 					if(liveService){
 						liveService.on('services', can.proxy(Models.Service.messageFromLiveService, Models.Service));
+
+						liveService.on('services', function(msg){
+							var loadingServices = self.attr('loadingServices');
+							var index, service;
+							if(typeof msg === 'string'){
+								msg = JSON.parse(msg);
+							}
+
+							if(msg.service.empty_results || msg.service.has_errors){
+								service = loadingServices.filter(function(s){
+									return s.id === msg.service.id;
+								})[0];
+								index = loadingServices.indexOf(service);
+								if(index > -1){
+									loadingServices.splice(index, 1);
+								}
+							}
+						})
 					}
 
 					return val;
 				},
 				remove : function(){
+					CURRENT_IFRAME = null;
 					this.attr('bits').splice(0);
 				}
+			},
+			embedType : {
+				get : function(){
+					if(this.attr('page') === 'sidebar'){
+						if(this.attr('panel') === 'integration'){
+							return 'preview';
+						}
+						return 'admin';
+					}
+				},
+				serialize: false
+			},
+			iframe : {
+				get : function(){
+					var src = this.attr('iframeSrc');
+					var iframe;
+
+					if(src){
+						if(!CURRENT_IFRAME){
+							iframe = document.createElement('iframe');
+							iframe.src = this.iframeSrc();
+
+							CURRENT_IFRAME = iframe;
+						}
+
+						return CURRENT_IFRAME;
+					}
+				}
+			},
+			iframeSrc : {
+				get : function(){
+					var currentBrand = this.attr('currentBrand');
+					var hubId = this.attr('hubId');
+
+					if(hubId && currentBrand){
+						return this.attr('preset').url(currentBrand.attr('tenant_name'), hubId);
+					}
+				},
+				serialize: false
+			},
+			adminPreset : {
+				value : Models.Preset.ADMIN,
+				serialize: false
+			},
+			defaultPreviewPreset : {
+				value : Models.Preset.PREVIEW,
+				serialize: false
+			},
+			preset : {
+				get : function(){
+					var embedType = this.embedType();
+					var customPreset;
+
+					if(embedType === 'admin'){
+						return this.attr('adminPreset');
+					} else {
+						customPreset = this.attr('customPreset');
+						return customPreset || this.attr('defaultPreviewPreset');
+					}
+				},
+				serialize: false,
+			},
+			customPreset: {
+				serialize: false
+			},
+			hub : {
+				serialize : false,
 			},
 			sidebarIsExpanded : {
 				value : true,
@@ -51,6 +143,28 @@ function(Map, Models, _reduce, connectLiveService){
 				serialize: false
 			}
 		},
+		init : function(){
+			var self = this;
+			this.communicator = Communicator.bind(this.compute('iframe'), {
+				loadedBits : function(payload){
+					self.bitsWereLoaded(payload);
+				}
+			});
+		},
+		updateIframeAttrs : function(){
+			var preset = this.attr('preset');
+			var currentBrand = this.attr('currentBrand');
+			var hubId = this.attr('hubId');
+			var newAttrs;
+
+			if(preset && currentBrand && hubId){
+				newAttrs = preset.embedAttrs(currentBrand.attr('tenant_name'), hubId);
+				this.communicator.send('updateAttrs', newAttrs);
+			}
+		},
+		resetEmbed : function(){
+			this.communicator.send('reset');
+		},
 		bitsWereLoaded : function(serviceIds){
 			var loadingServices = this.attr('loadingServices');
 			var loadingServicesByIds = _reduce(loadingServices, function(acc, service){
@@ -66,18 +180,26 @@ function(Map, Models, _reduce, connectLiveService){
 				}
 			}
 		},
+		isAdminEmbed : function(){
+			var preset = this.attr('preset');
+			return preset && preset.attr('config.view') === 'admin';
+		},
+		theme : function(){
+			var preset = this.attr('preset');
+			return (preset && preset.attr('config.theme')) || 'light';
+		},
 		isSidebar : function(){
 			return this.attr('page') === 'sidebar' && this.attr('hubId');
 		},
-		iframe : function(){
-			var currentBrand = this.attr('currentBrand');
-			var hubId = this.attr('hubId');
-			if(hubId && currentBrand){
-				return can.sub('<iframe src="/admin/embed?tenantName={tenantName}&hubId={hubId}&live=true"></iframe>', {
-					hubId: hubId,
-					tenantName: currentBrand.attr('name')
-				});
-			}
+		embedType : function(){
+			return this.attr('embedType');
+		},
+		embedTypeTitle : function(){
+			var titles = {
+				admin: 'Administration',
+				preview: 'Preview'
+			};
+			return titles[this.embedType()];
 		}
 	});
 });

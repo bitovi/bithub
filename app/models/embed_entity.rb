@@ -5,24 +5,25 @@ class EmbedEntity < ActiveRecord::Base
   scope :approved, lambda { where(is_approved: true) }
   scope :waitlisted, lambda { where(is_approved: false) }
   
-  def approve(account)
-    if ModerationLog.new_entry(action: 'approved', caused_by: account.name)
-      update_attribute(:is_approved, true)
-    end
+  def approve
+    update_attribute(:is_approved, true)
+    entity.touch
   end
 
-  def disaprove(account)
-    if ModerationLog.new_entry(action: 'disapproved', caused_by: account.name)
-      update_attribute(:is_approved, false)
-    end
+  def block
+    update_attributes({is_approved: false, is_pinned: false})
+    entity.touch
   end
+  alias_method :disapprove, :block
   
   def pin
-    update_attribute(:is_pinned, true)
+    update_attributes({is_pinned: true, is_approved: true})
+    entity.touch
   end
   
   def unpin
     update_attribute(:is_pinned, false)
+    entity.touch
   end
 
   def disconnect
