@@ -12,7 +12,8 @@ class HttpServer < Reel::Server::HTTP
 
     @path_prefix       = args[:path_prefix] || ENV['CRAWLER_HTTP_PREFIX'] || '/'
     @logger            = args[:logger]      || Celluloid.logger
-    @publisher_name    = args[:publisher_name] || :publisher
+    @publisher_name    = args[:event_publisher_name] || :event_publisher
+    #@publisher_name    = args[:error_publisher_name] || :error_publisher
     @configurator_name = args[:configurator_name] || :configurator
 
     @handlers  = SupervisionGroup.new
@@ -27,12 +28,20 @@ class HttpServer < Reel::Server::HTTP
   private
 
   def boot
-    @handlers.supervise_as :instagram_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, ::Handlers::Instagram]
-    # @handlers.supervise_as :facebook_handler,  HandlerProxy, *[@publisher, @logger, @configurator, ::Handlers::Facebook]
-    @handlers.supervise_as :foursquare_handler, HandlerProxy, *[@publisher_name, @logger, @configurator_name, ::Handlers::Foursquare]
+    @handlers.supervise_as :instagram_handler,
+      HandlerProxy,
+      *[@publisher_name, @logger, @configurator_name, ::Handlers::Instagram]
+
+    @handlers.supervise_as :facebook_handler,
+      HandlerProxy,
+      *[@publisher_name, @logger, @configurator_name, ::Handlers::Facebook]
+
+    @handlers.supervise_as :foursquare_handler,
+      HandlerProxy,
+      *[@publisher_name, @logger, @configurator_name, ::Handlers::Foursquare]
 
     register_route ::Handlers::Instagram.path,  Actor[:instagram_handler]
-    # register_route Handlers::Facebook.path,   facebook_handler
+    register_route ::Handlers::Facebook.path,   Actor[:facebook_handler]
     register_route ::Handlers::Foursquare.path, Actor[:foursquare_handler]
   end
 

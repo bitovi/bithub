@@ -28,7 +28,7 @@ module Fetchers
       end
 
       def self.fetch(client, *args)
-        self.new(client).fetch(args)
+        self.new(client).fetch(*args)
       end
 
     end
