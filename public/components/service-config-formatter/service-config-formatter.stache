@@ -1,0 +1,63 @@
+{{#isFeedAndType 'disqus' 'forum'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'facebook' 'page'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'foursquare' 'venue'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'github' 'org'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'github' 'repo'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'instagram' 'tag'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.tag}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'instagram' 'user'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'meetup' 'group'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'rss' 'site'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> <a href="{{service.config.url}}">{{service.config.url}}</a>
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'stackexchange' 'tags'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{joined service.config.tags}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'tumblr' 'blog'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> <a href="http://{{subdomain service.config.hostname}}.tumblr.com">{{service.config.hostname}}</a>
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'tumblr' 'tag'}}
+	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.tag}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'twitter' 'followers'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> @{{service.config.handle}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'twitter' 'hashtag'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> #{{service.config.hashtag}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'twitter' 'user_timeline'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> @{{service.config.handle}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'twitter' 'term'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.term}}
+{{/isFeedAndType}}

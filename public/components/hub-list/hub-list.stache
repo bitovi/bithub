@@ -7,9 +7,7 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>Name</th>
-					<th>Color Scheme</th>
-					<th>Layout</th>
+					<th class="name">Name</th>
 					<th>Connected Services</th>
 					<th class="actions"></th>
 				</tr>
@@ -17,14 +15,8 @@
 			<tbody>
 				{{#hubs}}
 					<tr>
-						<td>
+						<td class="name">
 							{{ name }}
-						</td>
-						<td>
-							{{ colorscheme }}
-						</td>
-						<td>
-							{{ layout}}
 						</td>
 						<td>
 							{{#if services.isPending}}
@@ -34,9 +26,14 @@
 									{{#isExpandedRow this}}
 										<div class="expanded-services">
 											<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Collapse</button>
-											{{#each services}}
-												<br>{{ printFeed }} &dash; {{ printType }} &dash; <small>( {{{ printConfig }}} )</small>
-											{{/each}}
+											<ul>
+												{{#each services}}
+													<li>
+														<bh-service-config-formatter service="{this}"></bh-service-config-formatter>
+													</li>
+												{{/each}}
+											</ul>
+											
 										</div>
 									{{/else}}
 										<button class="btn btn-default btn-xs" can-click="toggleExpandedRow">Expand</button>

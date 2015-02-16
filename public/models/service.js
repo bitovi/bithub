@@ -28,7 +28,7 @@ function(Model, _keys){
 		},
 		github : {
 			org : 'Organization',
-			repo : 'Repo'
+			repo : 'Repository'
 		},
 		instagram : {
 			tag : 'Tag',
@@ -40,7 +40,7 @@ function(Model, _keys){
 			group : 'Group'
 		},
 		rss : {
-			site : 'Site'
+			site : 'URL'
 		},
 		stackexchange : {
 			tags : 'Tags'
@@ -53,7 +53,7 @@ function(Model, _keys){
 			followers : 'Followers',
 			hashtag : 'Hashtag',
 			user_timeline : 'User Timeline',
-			term : 'Term'
+			term : 'Search'
 		}
 	};
 

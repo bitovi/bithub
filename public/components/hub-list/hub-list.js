@@ -7,6 +7,7 @@ steal(
 'style',
 './hub-list.less!',
 'can/map/define',
+'components/service-config-formatter',
 function(Component, initView, Models, _map, _reduce){
 
 	Component.extend({
@@ -72,7 +73,7 @@ function(Component, initView, Models, _map, _reduce){
 				}
 
 				serviceNames = can.map(services, function(service){
-					return service.attr('feed_name');
+					return service.printFeed();
 				});
 
 				return _map(_reduce(serviceNames, function(acc, service){
