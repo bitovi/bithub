@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150209171707) do
+ActiveRecord::Schema.define(version: 20150213224308) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 20150209171707) do
     t.integer  "entity_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "embed_id"
   end
 
   add_index "events", ["content_digest"], :name => "index_events_on_content_digest"
