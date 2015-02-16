@@ -38,6 +38,7 @@ module AuthTestData
   ACCOUNT_REGISTRATION_DATA = {
     name: 'neektza',
     email: 'neektza@gmail.com',
+    invite_key: 'mamatijejama',
     password: 'foobar123',
     password_confirmation: 'foobar123'
   }

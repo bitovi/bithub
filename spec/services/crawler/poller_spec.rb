@@ -1,6 +1,6 @@
 require 'celluloid/test'
 require 'spec_helper'
-require 'services/crawler/poller'
+require 'services/crawler/poller/poller'
 
 module Fetchers
   module Github

@@ -16,8 +16,8 @@ describe Handlers::Foursquare  do
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:configurator] = Configurator.new
-    Celluloid::Actor[:http_server] = HttpServer::Listener.new
+    Celluloid::Actor[:configurator] = ConfigurationFetcher.new
+    Celluloid::Actor[:http_server] = HttpServer.new
     Celluloid::Actor[:event_publisher]   = EventPublisher.new reject_old: false
 
     rf = RabbitFactory.new($rabbit_channel)

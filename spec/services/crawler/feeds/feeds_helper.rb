@@ -15,7 +15,7 @@ require 'events/dispatcher'
 
 require 'listener/http_server'
 require 'listener/handlers/all'
-require 'configurator'
+require 'configuration_fetcher'
 require 'connection_manager'
 require 'publishers/event_publisher'
 require 'decorators/all'

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'supervisors/main'
-require 'commander'
-require 'configurator'
+require 'command_handler'
+require 'configuration_fetcher'
 
 Message = Struct.new(:title, :body)
 
@@ -9,7 +9,7 @@ describe "Propagation of commands" do
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:configurator] = Configurator.new
+    Celluloid::Actor[:configurator] = ConfigurationFetcher.new
   end
 
   after do
