@@ -1,5 +1,6 @@
 steal(
 	'can/map',
+	'can/control',
 	'./bithub-social.stache!',
 	'can/route',
 	'can/view/stache',
@@ -11,9 +12,22 @@ steal(
 	'components',
 	'components/helpers.js',
 	'fixtures',
-	function(Map, initView, route, stache, AppState, Models, _reduce, bindModelEvents){
+	function(Map, Control, initView, route, stache, AppState, Models, _reduce, bindModelEvents){
 
 		return function(selector){
+			var PresetChangeUpdater = Control.extend({
+				'{appState} preset' : 'updateIframeAttrs',
+				'{appState} customPreset change' : 'updateIframeAttrs',
+				'{appState.adminPreset} change' : 'updateIframeAttrs',
+				updateIframeAttrs : function(){
+					var self = this;
+					clearTimeout(this.__updateIframeAttrs);
+					this.__updateIframeAttrs = setTimeout(function(){
+						self.options.appState.updateIframeAttrs();
+					});
+				}
+			});
+
 			$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 				if(options.type.toLowerCase() !== 'get'){
 					options.data = JSON.stringify(originalOptions.data);
@@ -27,14 +41,9 @@ steal(
 					currentBrand: brand
 				});
 
-				window.addEventListener('message', function(event){
-					if(event.origin !== 'http://' + EMBED_ENDPOINT){
-						return;
-					}
-					if(event.data.type === 'loadedBits'){
-						appState.bitsWereLoaded(event.data.payload.split(','));
-					}
-				}, false);
+				new PresetChangeUpdater(document.documentElement, {
+					appState : appState
+				});
 
 				can.route.map(appState);
 
@@ -47,6 +56,10 @@ steal(
 				$(selector).html(initView({
 					state: appState
 				}, {
+					renderIframe : function(iframe, opts){
+						iframe = can.isFunction(iframe) ? iframe() : iframe;
+						return iframe;
+					},
 					renderPage : function(){
 						var page = can.route.attr('page') || "hub-list",
 						template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');

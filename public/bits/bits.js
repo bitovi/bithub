@@ -12,13 +12,13 @@ steal(
 function(Component, initView, Models, _map, _reduce){
 
 	var CARD_MIN_WIDTH = 300;
-	var CARD_TEMPLATE = can.stache('<bh-bit bit="{this}"></bh-bit>');
+	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}"></bh-bit>');
 
 	var calculateColumnCount = function(el){
 		if(el.width < CARD_MIN_WIDTH) {
 			return 1;
 		}
-		return Math.min(4, Math.floor(el.width() / CARD_MIN_WIDTH));
+		return Math.min(5, Math.floor(el.width() / CARD_MIN_WIDTH));
 	}
 
 	return Component.extend({
@@ -29,9 +29,9 @@ function(Component, initView, Models, _map, _reduce){
 				columnCount : {
 					set : function(val){
 						if(parseInt(this.attr('columnCount'), 10) !== parseInt(val, 10)){
+							this.makePartitioner(val);
 							this.partition(val);
 						}
-
 						return val;
 					}
 				}
@@ -93,29 +93,25 @@ function(Component, initView, Models, _map, _reduce){
 				var bitsLength = bits.attr('length');
 				var partitioner;
 
-				this.attr('__currentColumn', 0);
 				this.attr('columns').replace(
 					_map(new Array(columnCount || this.attr('columnCount')), function(){
 						return [];
 					})
 				);
 
-				partitioner = this.makePartitioner()
-
 				for(var i = 0; i < bitsLength; i++){
-					partitioner.add(bits[i])
+					this.partitioner.add(bits[i])
 				}
-
-				this.attr('__currentColumn', partitioner.currentColumn());
 			},
-			makePartitioner : function(){
-				var columns = this.attr('columns');
-				var currentColumn = this.attr('__currentColumn');
-				return {
+			makePartitioner : function(columnCount){
+				var currentColumn = 0;
+				var self = this;
+
+				this.partitioner = {
 					add : function(bit){
-						columns.attr(currentColumn).push(bit);
+						self.attr('columns.' + currentColumn).push(bit);
 						currentColumn++;
-						if(currentColumn === columns.attr('length')){
+						if(currentColumn === columnCount){
 							currentColumn = 0;
 						}
 					},
@@ -126,13 +122,10 @@ function(Component, initView, Models, _map, _reduce){
 			},
 			partitionAppendedData : function(bits){
 				var bitsLength = bits.attr('length');
-				var partitioner = this.makePartitioner();
 
 				for(var i = 0; i < bitsLength; i++){
-					partitioner.add(bits[i]);
+					this.partitioner.add(bits[i]);
 				}
-
-				this.attr('__currentColumn', partitioner.currentColumn());
 			},
 			nextPage : function(){
 				var params;
@@ -150,7 +143,10 @@ function(Component, initView, Models, _map, _reduce){
 				this.__cardCache = this.__cardCache || {};
 
 				if(!this.__cardCache[bit.id]){
-					this.__cardCache[bit.id] = CARD_TEMPLATE(bit).firstChild;
+					this.__cardCache[bit.id] = CARD_TEMPLATE({
+						bit : bit,
+						state : this.attr('state')
+					}).firstChild;
 				}
 
 				return this.__cardCache[bit.id];
@@ -162,6 +158,7 @@ function(Component, initView, Models, _map, _reduce){
 				this.$window = $(window);
 				this.$body = $('body');
 				this.calculateColumnCount();
+				this.loadingCount = 0;
 			},
 			calculateColumnCount : function(){
 				this.scope.attr('columnCount', calculateColumnCount(this.element));
@@ -185,6 +182,12 @@ function(Component, initView, Models, _map, _reduce){
 
 				this.scope.partition();
 			},
+			'bh-bit loading' : function(){
+				this.loadingCount++;
+			},
+			'bh-bit loaded' : function(){
+				this.loadingCount--;
+			},
 			appendContent : function(){
 				var self = this;
 				clearTimeout(this.__appendContentTimeout);
@@ -192,7 +195,7 @@ function(Component, initView, Models, _map, _reduce){
 					var scrollTop = self.element.scrollTop();
 					var scrollHeight = self.element.prop('scrollHeight');
 					var height = self.element.height();
-					(scrollHeight - scrollTop - height < 500) && self.scope.nextPage();
+					(scrollHeight - scrollTop - height < 500) && self.loadingCount <= 0 && self.scope.nextPage();
 				}, 100);
 			},
 		}

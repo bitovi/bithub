@@ -11,44 +11,58 @@ class Embed < ActiveRecord::Base
   has_many :embed_entities
   has_many :entities, through: :embed_entities
 
-  has_many :waitlisted_entities, -> { where is_approved: false },
-    through: :embed_entities,
-    class_name: 'EmbedEntity',
-    source: :entity
-
-  has_many :approved_entities, -> { where is_approved: true },
-    through: :embed_entities,
-    class_name: 'EmbedEntity',
-    source: :entity
-
   after_create { notify_crawler(:start) }
   after_update { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
+
+  def approved_entities
+    if approving?
+      embed_entities.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE').map(&:entity)
+    elsif blocking?
+      embed_entities.where('embed_entities.is_approved = TRUE').map(&:entity)
+    end
+  end
+
+  def blocked_entities
+    if approving?
+      embed_entities.where('embed_entities.is_approved = FALSE').map(&:entity)
+    elsif blocking?
+      embed_entities.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = FALSE').map(&:entity)
+    end
+  end
+
+  def approving?
+    approved_by_default
+  end
+
+  def blocking?
+    !approved_by_default
+  end
 
   def blocking_filter
     self.filters.where(classification: 'blocking').first
   end
 
-  def moderating_filter
-    self.filters.where(classification: 'moderating').first
+  def approving_filter
+    self.filters.where(classification: 'approving').first
   end
 
   def valid_services
     services.all.select { |s| s.service_config.valid? }
   end
 
-  def moderate
-    self.entities
-      .satisfying(moderating_filter)
-      .each do |entity|
-        entity.embed_entities
-          .select { |ee| ee.embed == self }
-          .each { |ee| ee.is_approved = true ; ee.save }
-      end
+  def block_invalid
+    entity_ids = entities.satisfying(blocking_filter).pluck(:id)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved: false, is_pinned: false)
   end
 
-  def make_link_to(entity)
-    self.embed_entities.create(entity: entity, is_approved: self.approved_by_default)
+  def approve_valid
+    entity_ids = entities.satisfying(approving_filter).pluck(:id)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved: true)
+  end
+
+  def make_link_to(entity, is_approved = nil)
+    embed_entities.create(entity: entity, is_approved: is_approved)
   end
 
   private 

@@ -5,14 +5,20 @@ steal(function(){
 		currentSocket && currentSocket.close && currentSocket.close();
 	});
 
-	return function(hubId){
+	var url = '/?embed_id={embedId}';
+	var publicUrl = '/?embed_id={embedId}&tenant_name={tenantName}'
+
+	return function(hubId, tenantName){
 
 		if(currentSocket && currentSocket.close){
 			currentSocket.close();
 		}
 
 		if(typeof io !== 'undefined'){
-			currentSocket = io('/?embed_id=' + hubId, { multiplex: false });
+			currentSocket = io(can.sub((tenantName ? publicUrl : url), {
+				embedId : hubId,
+				tenantName : tenantName
+			}), { multiplex: false });
 
 			/*currentSocket.on('connect', function() {
 				console.log('CONNECTED!');

@@ -1,6 +1,8 @@
 require 'digest/md5'
 
 class Api::V3::EmbedPresetsController < Api::V3::BaseController
+  include Api::EmbedScoped
+
   before_filter :authenticate_account!
 
   def index
@@ -14,7 +16,16 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   end
 
   def create
-    if (@preset = owner_embed.presets.create(embed_preset_params))
+    if (@preset = EmbedPreset.create(embed_preset_params))
+      render :show
+    else
+      render :json => msg_hash(@preset, 'create'), :status => 406
+    end
+  end
+  
+  def update
+    @preset = find_preset
+    if (@preset.update_attributes(embed_preset_params))
       render :show
     else
       render :json => msg_hash(@preset, 'create'), :status => 406
@@ -22,7 +33,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   end
 
   def destroy
-    preset = find_preset
+    @preset = find_preset
     if (@preset.destroy)
       render :json => msg_hash(@preset, 'destroy', 'success')
     else
@@ -32,23 +43,15 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
 
   private
 
-  def owner_embed
-    current_brand.embeds.find(embed_id)
-  end
-
   def find_preset
-    owner_embed.presets.find(preset_id)
+    EmbedPreset.find(preset_id)
   end
   
   def embed_preset_params
-    params.require(:preset).permit(:name, :json, :embed_id)
+    params.require(:preset).permit(:name, :embed_id, config: [:live, :theme])
   end
 
   def preset_id
     params[:preset_id] || params[:id]
-  end
-
-  def embed_id
-    params[:embed_id]
   end
 end

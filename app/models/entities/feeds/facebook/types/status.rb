@@ -15,25 +15,24 @@ module Entities
       end
 
       def build
-        built = Entity.new({
+        Entity.new({
           title: title,
           body: @event.message,
           url: @event.link,
           origin_id: @event.id,
           origin_ts: @event.created_time,
           props: {
-            origin_author_id: @event.poster.id,
-            origin_author_name: @event.poster.name,
+            origin_id: @event.id,
+            origin_author_id: @event.from.id,
+            origin_author_name: @event.from.name,
           }
         })
-
-        built
       end
-      
+
       def build_children
         build_comments.to_a
       end
-      
+
       def build_comments
         @event.comments.map do |c| # Build entities
           Entities::Facebook::Comment.new(@event, c)
@@ -44,7 +43,7 @@ module Entities
       private
 
       def title
-        "#{@event.poster.name} posted: #{@event.type}"
+        "#{@event.from.name} posted: #{@event.type}"
       end
 
     end

@@ -1,6 +1,6 @@
 @import "/bower_components/bootstrap/less/mixins.less";
 
-bh-bits {
+bh-bits, .bh-bits {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -8,6 +8,7 @@ bh-bits {
 	right: 0;
 	bottom: 0;
 	overflow-y: auto;
+	padding-bottom: 20px;
 	.clearfix;
 	.bit-content {
 		.bit-content--caption {
@@ -40,5 +41,8 @@ bh-bits {
 	}
 	.columns-4 .column {
 		width: 25%;
+	}
+	.columns-5 .column {
+		width: 20%;
 	}
 }

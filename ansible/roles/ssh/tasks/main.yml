@@ -1,0 +1,4 @@
+- name: Enable GatewayPorts in SSH daemon
+  lineinfile: dest=/etc/ssh/sshd_config line="GatewayPorts yes"
+  notify:
+    - restart ssh

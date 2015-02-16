@@ -99,10 +99,6 @@ bh-sidebar {
 		right: 0;
 		cursor: pointer;
 	}
-	.embed-code {
-		font-size: 80%;
-		height: 100px;
-	}
 	h2.subtitle-separator {
 		background: #e4e3e3;
 		margin: 0 -25px 0;
@@ -113,6 +109,20 @@ bh-sidebar {
 		text-transform: uppercase;
 		&:first-child {
 			border-top: none;
+		}
+	}
+	.menu-wrap {
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 50px;
+		width: 50px;
+		border-bottom: 1px solid #cecdcd;
+		line-height: 50px;
+		text-align: center;
+		cursor: pointer;
+		&:hover {
+			background: #ccc;
 		}
 	}
 }
