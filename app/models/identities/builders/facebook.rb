@@ -10,8 +10,12 @@ module Identities
         @conn_oauth = create_facebook_oauth_client \
           args[:facebook_key] || ENV['FACEBOOK_CLIENT_ID'],
           args[:facebook_secret] || ENV['FACEBOOK_CLIENT_SECRET']
-
-        self
+      end
+      
+      def page_name(page_id)
+        pages.find do |p|
+          p['id'].to_s == page_id.to_s
+        end['name']
       end
 
       def build
@@ -26,7 +30,7 @@ module Identities
         sync_pages
         @data
       end
-
+      
       def sync_pages
         @data[:pages] = fetch_pages
       end

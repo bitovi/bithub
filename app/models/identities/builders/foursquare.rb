@@ -7,6 +7,12 @@ module Identities
         @client = client
       end
 
+      def venue_name(venue_id)
+        managed_venues.find do |v|
+          v['id'].to_s == venue_id.to_s
+        end['name']
+      end
+
       def build
         @data[:venues] = managed_venues
         @data
@@ -23,7 +29,7 @@ module Identities
       def access_token
         oauth.fetch(:credentials).fetch(:token)
       end
-
+      
       private
 
       def venue_ids_and_names
