@@ -4,4 +4,4 @@ require_relative 'instagram/location'
 require_relative 'instagram/geography'
 
 #require_relative 'facebook/page'
-require_relative 'foursquare_venue'
+require_relative 'foursquare/venue'
