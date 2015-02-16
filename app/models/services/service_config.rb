@@ -27,6 +27,10 @@ module Services
       @config if valid?
     end
 
+    def humanize(brand_ident)
+      @config = data.merge({'display_name' => brand_ident.config.humanized_name(data['id'])})
+    end
+
     def error_msg
       res = @errors.reduce({}) do |memo, e|
         memo[e[:attr]] = [] if memo[e[:attr]].nil?

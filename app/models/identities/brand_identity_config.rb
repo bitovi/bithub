@@ -22,6 +22,17 @@ module Identities
       self
     end
 
+    def humanized_name(e_id)
+      case @provider_name
+      when 'facebook'
+        builder.page_name(e_id)
+      when 'meetup'
+        builder.group_name(e_id)
+      when 'foursquare'
+        builder.venue_name(e_id)
+      end
+    end
+
     def suggestions(type=nil)
       builder.suggestions(type)
     end

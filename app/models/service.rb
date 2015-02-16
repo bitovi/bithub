@@ -32,6 +32,10 @@ class Service < ActiveRecord::Base
     @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
   end
 
+  def humanize
+    (bi = brand_identities.first) ? service_config.humanize(bi) : nil
+  end
+
   def make_link_to(entity)
     self.entities << entity
   end
