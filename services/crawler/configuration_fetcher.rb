@@ -45,6 +45,28 @@ class ConfigurationFetcher
     end
   end
 
+  def traverse(feed_name, type_name, attr_name, attr_value)
+    acc = []
+
+    config.fetch(:brands).each do |b|
+      b.fetch(:embeds).each do |e|
+        e.fetch(:services).each do |s|
+          if s[:feed_name] == feed_name && s[:type_name] == type_name && s[:config][attr_name.to_sym] == attr_value
+            acc.push({
+              brand_id: b[:id],
+              brand_name: b[:name],
+              embed_id: e[:id],
+              embed_name: e[:name],
+              service: s
+            })
+          end
+        end
+      end
+    end
+
+    acc
+  end
+
   private
 
   def read_env_config
