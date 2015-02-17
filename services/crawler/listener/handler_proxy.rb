@@ -26,4 +26,8 @@ class HandlerProxy
     Actor[@publisher_name].publish events, owner_data
   end
 
+  def logger
+    @logger
+  end
+
 end

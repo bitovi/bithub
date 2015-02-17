@@ -1,6 +1,7 @@
 require 'reel'
 require_relative 'handler_proxy'
 require_relative 'handlers/all'
+require_relative 'support/facebook_app_subscriber'
 
 class HttpServer < Reel::Server::HTTP
 
@@ -40,9 +41,15 @@ class HttpServer < Reel::Server::HTTP
       HandlerProxy,
       *[@publisher_name, @logger, @configurator_name, ::Handlers::Foursquare]
 
+    # TODO: move this to handlers
     register_route ::Handlers::Instagram.path,  Actor[:instagram_handler]
     register_route ::Handlers::Facebook.path,   Actor[:facebook_handler]
     register_route ::Handlers::Foursquare.path, Actor[:foursquare_handler]
+
+    # TODO: user celluloid futures
+    after(5) do
+      FacebookAppSubscriber.new(@logger).subscribe
+    end
   end
 
   def on_connection(connection)
@@ -55,6 +62,8 @@ class HttpServer < Reel::Server::HTTP
   def register_route(path, handler)
     route = Regexp.new File.join(@path_prefix, path)
     @routes[route] = handler
+
+    @logger.info "Registered route #{route} for #{handler}"
   end
 
   def route(req)

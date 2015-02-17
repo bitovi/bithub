@@ -23,12 +23,11 @@ module Supervisors::Services::Facebook
 
       Celluloid.logger.info "Creating Facebook #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
 
-      # begin
-      #   subscribe_app
-      #   subscribe_page
-      # rescue Koala::KoalaError => e
-      #   Celluloid.logger.info "Facebook subscription failed with #{e.message}"
-      # end
+      begin
+        subscribe_page
+      rescue Koala::KoalaError => e
+        Celluloid.logger.info "Facebook subscription failed with #{e.message}"
+      end
 
       publish preload_feed, owner_data
     end
@@ -58,23 +57,8 @@ module Supervisors::Services::Facebook
       service_config.fetch(:access_token)
     end
 
-    ### REST API
-
     def client
       @client ||= Koala::Facebook::API.new page_token #, app_secret
-    end
-
-    def preload_feed
-      Fetchers::Facebook::GetFeed.fetch client, page_id
-    end
-
-    ### Realtime API
-
-    def client_rt
-      @client_rt ||= Koala::Facebook::RealtimeUpdates.new\
-        app_id: ENV['FACEBOOK_CLIENT_ID'],
-        secret: ENV['FACEBOOK_CLIENT_SECRET']
-        # app_access_token: ''
     end
 
     def subscribe_page
@@ -85,20 +69,8 @@ module Supervisors::Services::Facebook
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'delete'
     end
 
-    def subscribe_app
-      client_rt.subscribe 'page', 'feed', callback_url, ENV['FACEBOOK_SUBSCRIPTIONS_VERIFY_TOKEN']
-    end
-
-    def unsubscribe_app(object_id=nil)
-      client_rt.unsubscribe object_id
-    end
-
-    def callback_url(opts={})
-      domain = opts[:domain] || ENV['CRAWLER_HTTP_DOMAIN']
-      port   = opts[:port]   || ENV['CRAWLER_HTTP_PORT'] || 80
-      path   = File.join ENV['CRAWLER_HTTP_PREFIX'], 'facebook', 'page', 'feed'
-
-      "http://#{domain}:#{port}#{path}"
+    def preload_feed
+      Fetchers::Facebook::GetFeed.fetch client, page_id
     end
 
   end
