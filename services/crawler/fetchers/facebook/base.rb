@@ -5,7 +5,8 @@ module Fetchers
     class Base
       include Protocol
 
-      COUNT = 250
+      LIMIT  = 250
+      FIELDS = 'attachments,from,message,picture,link,object_id,updated_time,type,status_type'
 
       def initialize(client)
         @client = client

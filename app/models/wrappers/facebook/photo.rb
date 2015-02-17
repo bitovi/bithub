@@ -15,7 +15,7 @@ module Wrappers
       end
 
       def images
-        @data.fetch(:images) { [] }
+        extract_images_from_attachments
       end
 
       def photo_id
@@ -29,6 +29,25 @@ module Wrappers
       def updated_time
         Time.parse(@data.fetch(:updated_time)).utc
       end
+
+      def extract_images_from_attachments
+        subattachments.reduce([]) do |acc, a|
+          if img = a[:media].andand[:image]
+            acc.push({
+              url: img[:src],
+              width: img[:width],
+              height: img[:height]
+            })
+          end
+        end
+      end
+
+      def subattachments
+        @data[:attachments][:data].reduce([]) do |acc, a|
+          acc.push a[:subattachments][:data]
+        end.flatten
+      end
+
     end
   end
 end

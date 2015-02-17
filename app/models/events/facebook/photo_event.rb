@@ -13,13 +13,13 @@ module Events
       end
 
       def wrap_response
-        @photo ||= Wrappers::Facebook::Photo.new(source_data)
-        @from ||= Wrappers::Facebook::From.new(source_data.fetch(:from))
+        @photo    ||= Wrappers::Facebook::Photo.new source_data
+        @from     ||= Wrappers::Facebook::From.new source_data.fetch :from
         @comments ||= source_data[:comments].andand[:data].andand.map do |c|
-          Wrappers::Facebook::Comment.new(c)
+          Wrappers::Facebook::Comment.new c
         end
-        @likes ||= source_data[:likes].andand[:data].andand.map do |l|
-          Wrappers::Facebook::Like.new(l)
+        @likes    ||= source_data[:likes].andand[:data].andand.map do |l|
+          Wrappers::Facebook::Like.new l
         end
 
         self

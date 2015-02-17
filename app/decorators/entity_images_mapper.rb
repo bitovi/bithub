@@ -37,9 +37,12 @@ class EntityImagesMapper
   end
 
   def facebook_photo
-    [{
-      caption: '',
-      url: @source.props[:image_url]
-     }]
+    photos = JSON.parse @source.props[:photos]
+    photos.map do |p|
+      {
+        caption: '',
+        url: p['url']
+      }
+    end
   end
 end
