@@ -30,6 +30,7 @@ module Events
       @instance = ::Event.new({
         content_digest: content_digest,
         source_data: source_data,
+        embed_id: embed_id,
         props: meta || {}
       })
       self
