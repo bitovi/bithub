@@ -61,7 +61,7 @@ module Handlers
         # I'm crying .... ;-(
 
         result = fetch_object client, object_id
-        @proxy.publish [result], owner_data
+        @proxy.publish result, owner_data
       end
     end
 
