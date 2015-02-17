@@ -5,7 +5,7 @@
 		{{#each feeds}}
 			<li can-click="toggleNewService" data-feed="{{@key}}" {{#currentServiceIsNewAndHasFeedName @key}}class="active"{{/currentServiceIsNewAndHasFeedName}}>
 				{{#currentServiceIsNewAndHasFeedName @key}}
-					<img src="/images/social/{{@key}}.png" alt="">
+					<img src="/images/social-empty/{{@key}}.png" alt="">
 				{{else}}
 					<img src="/images/social-grey/{{@key}}.png" alt="">
 				{{/currentServiceIsNewAndHasFeedName}}
