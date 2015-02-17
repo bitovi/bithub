@@ -90,14 +90,14 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def suggestions
     if feed_name = params[:feed_name]
-
-      if bi = current_brand.identities.find_by_provider(feed_name)
-        suggestion = bi.config.suggestions params[:feed_type]
-      else
-        suggestion = []
+      suggestions = []
+      if feed_name == 'instagram' && (username = params[:username])
+        suggestions += api_adapter.user_from_instagram(params[:username])
+      elsif bi = current_brand.identities.find_by_provider(feed_name)
+        suggestions += bi.config.suggestions params[:feed_type]
       end
 
-      render json: suggestion
+      render json: suggestions
     else
       render json: msg_hash(@bi, 'suggestions'), status => 406
     end
@@ -124,6 +124,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def service_config
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:service).require(:config).permit!
+  end
+
+  def api_adapter
+    Support::ThirdPartyApiAdapter.new
   end
 
   def create_new_service
