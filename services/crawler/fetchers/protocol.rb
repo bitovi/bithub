@@ -1,5 +1,6 @@
 require 'twitter'
 require 'github_api'
+require 'koala'
 
 module Fetchers
 
@@ -36,6 +37,10 @@ module Fetchers
       raise ConfigError.new("Blog doesn't exist.")
       log_and_return_empty e
 
+    # Facebook
+    rescue Koala::KoalaError => e
+      log_and_return_empty e
+
     # If we cause a Celluloid error, let it propagate
     rescue Celluloid::Error => e
       raise e
@@ -45,10 +50,11 @@ module Fetchers
       raise UnknownError.new "#{e.class.name} with message #{e.to_s}"
       log_and_return_empty e
     end
-  end
 
-  def log_and_return_empty(e)
-    Celluloid.logger.error e
-    []
+    def log_and_return_empty(e)
+      Celluloid.logger.error e
+      []
+    end
+
   end
 end
