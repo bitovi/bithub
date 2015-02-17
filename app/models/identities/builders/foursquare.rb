@@ -8,7 +8,7 @@ module Identities
       end
 
       def venue_name(venue_id)
-        managed_venues.find do |v|
+        venues.find do |v|
           v['id'].to_s == venue_id.to_s
         end['name']
       end
@@ -16,6 +16,10 @@ module Identities
       def build
         @data[:venues] = managed_venues
         @data
+      end
+
+      def venues
+        @data[:venues] || []
       end
 
       def suggestions(type=nil)

@@ -1,5 +1,5 @@
 module Services
-  module ConfigValidators
+  module ConfigTypes
 
     class HashlessString < Virtus::Attribute
       def coerce(value)
@@ -12,21 +12,25 @@ module Services
       class UserTimeline
         include Virtus.model(:strict => true)
         attribute :handle, String
+        attribute :display_name, String, :default => lambda { |obj, attr| "\@#{obj.handle}" }
       end
 
       class Followers
         include Virtus.model(:strict => true)
         attribute :handle, String
+        attribute :display_name, String, :default => lambda { |obj, attr| "\@#{obj.handle}" }
       end
 
       class Hashtag
         include Virtus.model(:strict => true)
         attribute :hashtag, HashlessString
+        attribute :display_name, String, :default => lambda { |obj, attr| "\##{obj.hashtag}" }
       end
       
       class Term
         include Virtus.model(:strict => true)
         attribute :term, HashlessString
+        attribute :display_name, String, :default => lambda { |obj, attr| obj.term }
       end
     end
 
@@ -34,6 +38,7 @@ module Services
       class Forum
         include Virtus.model(:strict => true)
         attribute :url, String
+        attribute :display_name, String, default: lambda { |obj, attr| obj.url }
       end
     end
 
@@ -41,6 +46,10 @@ module Services
       class Page
         include Virtus.model(:strict => true)
         attribute :id, String
+        attribute :display_name, String, :default => ''
+        def humanized_name=(name)
+          self.display_name = name
+        end
       end
     end
 
@@ -48,6 +57,10 @@ module Services
       class Venue
         include Virtus.model(:strict => true)
         attribute :id, String
+        attribute :display_name, String, :default => ''
+        def humanized_name=(name)
+          self.display_name = name
+        end
       end
     end
 
@@ -55,11 +68,16 @@ module Services
       class User
         include Virtus.model(:strict => true)
         attribute :id, String
+        attribute :display_name, String, :default => ''
+        def humanized_name=(name)
+          self.display_name = name
+        end
       end
 
       class Tag
         include Virtus.model(:strict => true)
         attribute :tag, HashlessString
+        attribute :display_name, String, :default => lambda { |obj, attr| "\##{obj.tag}" }
       end
 
       class Location
@@ -79,18 +97,35 @@ module Services
       class Blog
         include Virtus.model(:strict => true)
         attribute :hostname, String
+        attribute :display_name, String, :default => lambda { |obj, attr| obj.hostname }
+
+        def hostname=(new_hostname)
+          uri = URI.parse(new_hostname)
+          if uri.scheme.nil? && uri.host.nil? && !(uri.path.nil?)
+            uri.scheme = "http"
+            uri.host = uri.path
+            uri.path = ""
+          end
+
+          super uri.hostname.split('.').first
+        end
       end
 
       class Tag
         include Virtus.model(:strict => true)
         attribute :tag, HashlessString
+        attribute :display_name, String, :default => lambda { |obj, attr| "\##{obj.tag}" }
       end
     end
 
     module Meetup
       class Group
         include Virtus.model(:strict => true)
-        attribute :id, String
+        attribute :id, Integer
+        attribute :display_name, String, :default => ''
+        def humanized_name=(name)
+          self.display_name = name
+        end
       end
     end
 
@@ -105,11 +140,13 @@ module Services
         include Virtus.model(:strict => true)
         attribute :name, String
         attribute :tracking, Tracking
+        attribute :display_name, String, default: lambda {|obj, attr| obj.name}
       end
 
       class Org
         include Virtus.model(:strict => true)
         attribute :name, String
+        attribute :display_name, String, default: lambda {|obj, attr| obj.name}
       end
     end
 
@@ -117,6 +154,7 @@ module Services
       class Tags
         include Virtus.model(:strict => true)
         attribute :tags, Array[HashlessString]
+        attribute :display_name, String, default: lambda {|obj, attr| obj.tags.map{|t| "\##{t}"}.join(',')}
       end
     end
 
@@ -124,18 +162,13 @@ module Services
       class Site
         include Virtus.model(:strict => true)
         attribute :url, String
-        attribute :tag_with, String, required: false
+        attribute :tag_with, String, required: false, default: lambda { |obj, attr| obj.url_as_tag(obj.url) }
 
         def url_as_tag(url)
           url = url.sub(/^https?\:\/\//, '').sub(/^www./,'')
           url.downcase.gsub(/'/, '').gsub(/[^a-z0-9]+/, '-') do |slug|
             slug.chop! if slug.last == '-'
           end
-        end
-
-        def url=(new_url)
-          self.tag_with = url_as_tag(new_url) if tag_with.blank?
-          super new_url
         end
       end
     end
