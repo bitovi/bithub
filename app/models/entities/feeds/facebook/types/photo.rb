@@ -21,13 +21,12 @@ module Entities
           url: @event.link,
           origin_id: @event.id,
           origin_ts: @event.created_time,
-          is_pending: true,
           props: {
             origin_id: @event.id,
             origin_object_id: @event.photo_id,
             origin_author_id: @event.from.id,
             origin_author_name: @event.from.name,
-            image_url: @event.source
+            photos: JSON.generate(@event.images)
           }
         })
       end

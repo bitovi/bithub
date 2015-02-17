@@ -6,7 +6,7 @@ module Fetchers
 
       def fetch(object_id, opts={})
         args = {
-          fields: 'attachments,from,message,link,object_id,updated_time,type,status_type'
+          fields: FIELDS
         }.merge opts
 
         handle_errors do
