@@ -49,7 +49,7 @@ function(Component, Models, initView){
 				var img;
 				for(var k in feeds){
 					img = new Image();
-					img.src = "/images/social/" + k + '.png';
+					img.src = "/images/social-empty/" + k + '.png';
 				}
 			}
 		},

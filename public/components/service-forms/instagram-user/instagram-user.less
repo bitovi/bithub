@@ -1,3 +1,33 @@
+@import "/bower_components/bootstrap/less/mixins/border-radius.less";
+
 bh-instagram-user-service {
-  display: block;
+	display: block;
+	.selectize-control.single .selectize-input:after {
+		right: 9px;
+	}
+	.suggest-wrapper {
+		position: relative;
+		background: #ccc;
+		height: 34px;
+		.border-left-radius(3px);
+		.border-right-radius(3px);
+		.selectize-input {
+			.border-right-radius(3px);
+		}
+		.selectize-control {
+			margin-left: 34px;
+		}
+		.fa {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			font-size: 120%;
+			margin: 8px 0 0 11px;
+			color: #666;
+		}
+		.fa-circle-o-notch {
+			margin-left: 9px;
+		}
+	}
 }

@@ -70,10 +70,13 @@ function(Component, initView, Models){
 					serviceCompute = this.compute('service');
 
 				service.attr('embed_id', this.state.attr('hubId'));
-				services.unshift( service );
+				if(service.isNew()){
+					services.unshift( service );
+				}
+				
 
 				service.save( function( newService ) {
-
+					self.clearService();
 				}, function( error ) {
 					var index = services.indexOf(service);
 					var attrs = {
@@ -99,8 +102,10 @@ function(Component, initView, Models){
 					self.attr(attrs);
 				});
 
+
+
 				this.attr({
-					isHidden: true,
+					isHidden: service.isNew(),
 					missingConfig: false,
 					errors: null
 				});

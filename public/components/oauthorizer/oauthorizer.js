@@ -8,7 +8,7 @@ function(Component, initView, Models){
 
 
 	var OAuthConnect = function(feed) {
-		var windowPropsStr     = "width=600,height=300,scrollbars=yes",
+		var windowPropsStr     = "width=800,height=600,scrollbars=yes",
 			title              = "OAuth Login",
 			host               = window.location.host.split('.'),
 			url                = '/auth/' + feed,
