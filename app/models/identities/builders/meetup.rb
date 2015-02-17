@@ -8,23 +8,28 @@ module Identities
 
       def initialize(args)
         super
-        @http = create_https_client
-        boot
-        self
-      end
+        @http_client = create_https_client
 
-      def boot
         oauth_credentials = oauth.fetch(:credentials)
         @data[:credentials] = {
-            access_token: oauth_credentials.fetch(:token),
-            refresh_token: oauth_credentials.fetch(:refresh_token),
-            expires_at: oauth_credentials.fetch(:expires_at)
+          access_token: oauth_credentials.fetch(:token),
+          refresh_token: oauth_credentials.fetch(:refresh_token),
+          expires_at: oauth_credentials.fetch(:expires_at)
         }
       end
-
+      
+      def group_name(group_id)
+        groups.find do |g|
+          g['id'].to_s == group_id.to_s
+        end['name']
+      end
+      
       def build
         sync_groups
         @data
+      end
+      
+      def boot
       end
 
       def sync_groups
@@ -108,7 +113,7 @@ module Identities
           refresh_token: refresh_token
         }
 
-        response = @http.post "/oauth2/access", URI.encode_www_form(params)
+        response = @http_client.post "/oauth2/access", URI.encode_www_form(params)
 
         if response.code == "200"
           HashWithIndifferentAccess.new(JSON.parse(response.body))

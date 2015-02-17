@@ -4,27 +4,24 @@ module Services
     def initialize(feed_name, type_name, config)
       @feed_name = feed_name
       @type_name = type_name
-      @config    = config
       @errors    = []
+      @config    = virtus_class.new(config)
+    rescue => e
+      @errors.push({ klass: e.class, message: e.message })
     end
-    attr_reader :errors
-
-    def valid?
-      @errors = []
-      if validator_class
-        validator_class.new @config
-        true
-      else
-        @errors.push({ type: :validator, msg: "Unknown feed/type, feed: #{@feed_name}, type: #{@type_name}" })
-        false
-      end
-    rescue Virtus::CoercionError => e
-      @errors.push({ type: :coercion, attr: e.attribute_name, msg: e.message })
-      false
-    end
+    attr_reader :config, :errors
 
     def data
-      @config if valid?
+      @config.to_h if valid?
+    end
+
+    def valid?
+      @errors.empty?
+    end
+
+    def humanize(brand_ident)
+      @config.humanized_name = brand_ident.config.humanized_name(@config.id) if @config.respond_to?(:'humanized_name=')
+      @config
     end
 
     def error_msg
@@ -39,13 +36,15 @@ module Services
 
     private
 
-    def validator_class
-      validators = Services::ConfigValidators
+    def virtus_class
+      validators = Services::ConfigTypes
       feed = @feed_name.to_s.camelize
       type = @type_name.to_s.camelize
 
       if validators.const_defined?(feed, false) && validators.const_get(feed).const_defined?(type, false)
         validators.const_get(feed).const_get(type)
+      else
+        fail ArgumentError.new("Unknown feed/type, feed: #{feed}, type: #{type}" )
       end
     end
 

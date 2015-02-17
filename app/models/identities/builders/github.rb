@@ -36,7 +36,7 @@ module Identities
           []
         end
       end
-
+      
       def credentials(argument = nil)
         { access_token: access_token }
       end
