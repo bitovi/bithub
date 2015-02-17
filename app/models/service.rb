@@ -34,6 +34,7 @@ class Service < ActiveRecord::Base
 
   def humanize
     (bi = brand_identities.first) ? service_config.humanize(bi) : nil
+    self.config = service_config.data
   end
 
   def make_link_to(entity)
