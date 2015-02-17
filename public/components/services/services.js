@@ -40,17 +40,31 @@ function(Component, Models, initView){
 				this.attr('currentService', Models.Service.createEmptyService(feed));
 			}
 		},
+		events : {
+			init : function(){
+				this.preloadIcons();
+			},
+			preloadIcons : function(){
+				var feeds = this.scope.feeds.attr();
+				var img;
+				for(var k in feeds){
+					img = new Image();
+					img.src = "/images/social/" + k + '.png';
+				}
+			}
+		},
 		helpers : {
 			currentServiceIsNewAndHasFeedName : function(feedName, opts){
 				var currentService = this.attr('currentService');
 
 				feedName = can.isFunction(feedName) ? feedName() : feedName;
 
-				if(!currentService) return;
+				if(!currentService) return opts.inverse(this);
 
 				if(currentService.isNew() && currentService.attr('feed_name') === feedName){
 					return opts.fn(this);
 				}
+				return opts.inverse(this);
 			},
 			iconFeedMapping : function(feed){
 				feed = can.isFunction(feed) ? feed() : feed;

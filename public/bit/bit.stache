@@ -73,7 +73,9 @@
 				</div>
 				{{/unless}}
 			</figcaption>
-			<a href="{{url}}" class="bh-icon bh-icon-{{feed_name}}"></a>
+			<a href="{{url}}" class="social-icon">
+				<img src="/images/social-empty/{{feed_name}}.png">
+			</a>
 		</footer>
 	</div>
 {{/bit}}
