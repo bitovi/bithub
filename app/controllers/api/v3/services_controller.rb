@@ -1,12 +1,13 @@
 class Api::V3::ServicesController < Api::V3::BaseController
-  before_filter :authenticate_account!, :except => [:tree]
-  before_filter :create_new_service, only: [:create]
-  load_and_authorize_resource except: [:tree]
+  include Api::EmbedScoped
+
+  # before_filter :authenticate_account!, :except => [:tree]
+  # before_filter :create_new_service, only: [:create]
+  # load_and_authorize_resource except: [:tree]
 
   def index
     if params[:embed_id]
-      embed = current_brand.embeds.find params[:embed_id]
-      @services = embed.services
+      @services = owner_embed.services
     else
       @services = Service.all
     end
@@ -23,10 +24,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def create
-    embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.build(service_definition)
+    @service = owner_embed.services.build(service_definition)
+    @service.humanize
 
-    if embed.save
+    if @embed.save
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
@@ -37,6 +38,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
     @service = Service.find_by_id(service_id)
     @service.assign_attributes(service_definition)
     @service.service_errors.destroy_all
+    @service.humanize
 
     if @service.save
       render 'api/v3/services/show'
