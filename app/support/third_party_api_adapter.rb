@@ -23,20 +23,31 @@ module Support
         config.auto_pagination = true
       end
     end
+    
+    def instagram
+      @instagram ||= Instagram.configure do |config|
+        config.client_id = ENV.fetch('INSTAGRAM_CLIENT_ID')
+        config.client_secret = ENV.fetch('INSTAGRAM_CLIENT_SECRET')
+      end
+    end
 
-    def from_twitter(q)
+    def user_from_instagram(q)
+      instagram && Instagram.user_search(q)
+    end
+
+    def user_from_twitter(q)
       twitter.user_search(q)
     end
 
-    def from_github(q)
+    def user_from_github(q)
       github.search.users(q).items
     end
 
-    def from_twitter_by_uid(uid)
+    def user_from_twitter_by_uid(uid)
       @twitter.user(uid).andand.to_h.symbolize_keys
     end
 
-    def from_github_by_uid(uid)
+    def user_from_github_by_uid(uid)
       # Github API offically doesn't support fetching users by id
       # that's why we make 'manual' HTTP req.
 
