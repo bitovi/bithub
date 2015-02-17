@@ -39,12 +39,18 @@ module Wrappers
               height: img[:height]
             })
           end
+
+          acc
         end
       end
 
       def subattachments
         @data[:attachments][:data].reduce([]) do |acc, a|
-          acc.push a[:subattachments][:data]
+          if data = a[:subattachments].andand[:data]
+            acc.push data
+          end
+
+          acc
         end.flatten
       end
 
