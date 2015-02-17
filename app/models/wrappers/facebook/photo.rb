@@ -15,7 +15,16 @@ module Wrappers
       end
 
       def images
-        extract_images_from_attachments
+        if data = @data[:attachments].andand[:data]
+          extract_from_attachments_by_type(data, 'photo')\
+            .map do |p|
+            {
+              url: p[:media][:image][:src]
+            }
+          end
+        else
+          []
+        end
       end
 
       def photo_id
@@ -30,28 +39,24 @@ module Wrappers
         Time.parse(@data.fetch(:updated_time)).utc
       end
 
-      def extract_images_from_attachments
-        subattachments.reduce([]) do |acc, a|
-          if img = a[:media].andand[:image]
-            acc.push({
-              url: img[:src],
-              width: img[:width],
-              height: img[:height]
-            })
+      private
+
+      # Objects with 'media' attribute can be nested inside:
+      # - attachments['data'][{ 'media' => ... }]
+      # - attachments['data'][{ subattachments['data'][{ 'media' => ... }] }, ... ]
+
+      def extract_from_attachments_by_type(data, type)
+        data.reduce([]) do |acc, el|
+
+          if el[:type] == type
+            acc.push el
+          elsif sa_data = el[:subattachments].andand[:data]
+            # handle subattachments
+            acc.push *extract_from_attachments_by_type(sa_data, type)
           end
 
           acc
         end
-      end
-
-      def subattachments
-        @data[:attachments][:data].reduce([]) do |acc, a|
-          if data = a[:subattachments].andand[:data]
-            acc.push data
-          end
-
-          acc
-        end.flatten
       end
 
     end
