@@ -58,9 +58,6 @@ function(Component, initView, Models){
 					}
 				}
 			},
-			init : function(){
-				console.log(this.attr())
-			},
 			saveService : function(formData, el, ev){
 				ev.preventDefault();
 
@@ -127,7 +124,15 @@ function(Component, initView, Models){
 				return Models.Service.feeds[feed];
 			}
 		},
+		events : {
+			'{scope} change' : function(){
+				console.log('CHANGE', arguments)
+			}
+		},
 		helpers : {
+			'form submit' : function(){
+
+			},
 			renderForm : function(opts){
 				var service = this.attr('service'),
 					feed = service.attr('feed_name'),
