@@ -32,7 +32,9 @@
 			'qunit/qunit' : 'qunit',
 			'funcunit/funcunit' : 'funcunit',
 			"moment/moment" : "moment",
-			"selectize/selectize" : "selectize"
+			"selectize/selectize" : "selectize",
+			"sifter.js" : "sifter",
+			"microplugin.js" : "microplugin",
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -44,7 +46,10 @@
 			'qunit' : 'bower_components/qunit/qunit/qunit.js',
 			'funcunit' : 'bower_components/funcunit/dist/funcunit.js',
 			"moment" : "bower_components/moment/moment.js",
-			"selectize" : "bower_components/selectize/dist/js/standalone/selectize.js"
+			"sifter" : 'bower_components/sifter/sifter.js',
+			"microplugin" : 'bower_components/microplugin/src/microplugin.js',
+			"selectize" : "bower_components/selectize/dist/js/selectize.js",
+
 		},
 		meta: {
 			jquery: {
