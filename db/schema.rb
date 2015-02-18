@@ -11,8 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150213224308) do
+ActiveRecord::Schema.define(version: 20150218105841) do
 
+  create_schema "flowing_cliff_919_1"
 
   create_extension "hstore", :version => "1.3"
   create_extension "intarray", :version => "1.0"
@@ -185,13 +186,154 @@ ActiveRecord::Schema.define(version: 20150213224308) do
     t.string  "classification"
   end
 
-  create_table "moderation_logs", force: true do |t|
+  create_table "flowing_cliff_919_1.embed_entities", force: true do |t|
+    t.integer "embed_id"
+    t.integer "entity_id"
+    t.boolean "is_approved"
+    t.boolean "is_pinned",   default: false, null: false
+  end
+
+  create_table "flowing_cliff_919_1.embed_presets", force: true do |t|
+    t.integer  "embed_id"
+    t.string   "name"
+    t.json     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flowing_cliff_919_1.embeds", force: true do |t|
+    t.string  "name"
+    t.string  "colorscheme"
+    t.string  "layout"
+    t.integer "brand_id"
+    t.boolean "approved_by_default", default: true
+  end
+
+  add_index "flowing_cliff_919_1.embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
+
+  create_table "flowing_cliff_919_1.entities", force: true do |t|
+    t.text     "title"
+    t.text     "url"
+    t.text     "body"
+    t.string   "origin_id"
+    t.string   "feed_name"
+    t.string   "type_name"
+    t.integer  "parent_id"
+    t.datetime "origin_ts",                         null: false
+    t.datetime "thread_updated_ts",                 null: false
+    t.string   "image"
+    t.string   "cached_tag_list"
+    t.integer  "total_upvotes"
+    t.hstore   "props",             default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_pending",        default: false
+  end
+
+  create_table "flowing_cliff_919_1.entities_services", id: false, force: true do |t|
+    t.integer "service_id"
+    t.integer "entity_id"
+  end
+
+  add_index "flowing_cliff_919_1.entities_services", ["entity_id", "service_id"], :name => "index_entities_services_on_entity_id_and_service_id"
+  add_index "flowing_cliff_919_1.entities_services", ["service_id"], :name => "index_entities_services_on_service_id"
+
+  create_table "flowing_cliff_919_1.events", force: true do |t|
+    t.string   "type_name"
+    t.string   "feed_name"
+    t.string   "content_digest"
+    t.hstore   "props",          default: {}
+    t.json     "source_data"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "embed_id"
+  end
+
+  add_index "flowing_cliff_919_1.events", ["content_digest"], :name => "index_events_on_content_digest"
+
+  create_table "flowing_cliff_919_1.filters", force: true do |t|
+    t.integer "embed_id"
+    t.boolean "is_conj"
+    t.string  "classification"
+  end
+
+  create_table "flowing_cliff_919_1.moderation_logs", force: true do |t|
     t.string   "action"
     t.string   "caused_by"
     t.integer  "entity_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "flowing_cliff_919_1.natlang_queries", force: true do |t|
+    t.string  "attr"
+    t.string  "op"
+    t.string  "val"
+    t.boolean "is_negated", default: false
+    t.integer "filter_id"
+  end
+
+  create_table "flowing_cliff_919_1.ownerships", force: true do |t|
+    t.integer  "owner_id"
+    t.integer  "entity_id"
+    t.integer  "value"
+    t.string   "ownership_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "flowing_cliff_919_1.ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
+  add_index "flowing_cliff_919_1.ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
+
+  create_table "flowing_cliff_919_1.schema_migrations", id: false, force: true do |t|
+    t.string "version", null: false
+  end
+
+  add_index "flowing_cliff_919_1.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
+
+  create_table "flowing_cliff_919_1.service_errors", force: true do |t|
+    t.string   "klass"
+    t.string   "message"
+    t.text     "backtrace"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flowing_cliff_919_1.services", force: true do |t|
+    t.integer  "embed_id"
+    t.string   "feed_name"
+    t.string   "type_name"
+    t.json     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "uid"
+  end
+
+  add_index "flowing_cliff_919_1.services", ["embed_id"], :name => "index_services_on_embed_id"
+
+  create_table "flowing_cliff_919_1.taggings", force: true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context",       limit: 128
+    t.datetime "created_at"
+  end
+
+  add_index "flowing_cliff_919_1.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
+
+  create_table "flowing_cliff_919_1.tags", force: true do |t|
+    t.string  "name",                        null: false
+    t.string  "display_name"
+    t.string  "aliases",        default: [],              array: true
+    t.hstore  "props",          default: {}
+    t.integer "taggings_count", default: 0
+  end
+
+  add_index "flowing_cliff_919_1.tags", ["name"], :name => "index_tags_on_name", :unique => true
 
   create_table "natlang_queries", force: true do |t|
     t.string  "attr"
@@ -325,12 +467,170 @@ ActiveRecord::Schema.define(version: 20150213224308) do
   add_index "users", ["country_id"], :name => "index_users_on_country_id"
   add_index "users", ["email"], :name => "index_users_on_email"
 
+  create_table "flowing_cliff_919_1.embed_entities", force: true do |t|
+    t.integer "embed_id"
+    t.integer "entity_id"
+    t.boolean "is_approved"
+    t.boolean "is_pinned",   default: false, null: false
+  end
+
+  create_table "flowing_cliff_919_1.embed_presets", force: true do |t|
+    t.integer  "embed_id"
+    t.string   "name"
+    t.json     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flowing_cliff_919_1.embeds", force: true do |t|
+    t.string  "name"
+    t.string  "colorscheme"
+    t.string  "layout"
+    t.integer "brand_id"
+    t.boolean "approved_by_default", default: true
+  end
+
+  add_index "flowing_cliff_919_1.embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
+
+  create_table "flowing_cliff_919_1.entities", force: true do |t|
+    t.text     "title"
+    t.text     "url"
+    t.text     "body"
+    t.string   "origin_id"
+    t.string   "feed_name"
+    t.string   "type_name"
+    t.integer  "parent_id"
+    t.datetime "origin_ts",                         null: false
+    t.datetime "thread_updated_ts",                 null: false
+    t.string   "image"
+    t.string   "cached_tag_list"
+    t.integer  "total_upvotes"
+    t.hstore   "props",             default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_pending",        default: false
+  end
+
+  create_table "flowing_cliff_919_1.entities_services", id: false, force: true do |t|
+    t.integer "service_id"
+    t.integer "entity_id"
+  end
+
+  add_index "flowing_cliff_919_1.entities_services", ["entity_id", "service_id"], :name => "index_entities_services_on_entity_id_and_service_id"
+  add_index "flowing_cliff_919_1.entities_services", ["service_id"], :name => "index_entities_services_on_service_id"
+
+  create_table "flowing_cliff_919_1.events", force: true do |t|
+    t.string   "type_name"
+    t.string   "feed_name"
+    t.string   "content_digest"
+    t.hstore   "props",          default: {}
+    t.json     "source_data"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "embed_id"
+  end
+
+  add_index "flowing_cliff_919_1.events", ["content_digest"], :name => "index_events_on_content_digest"
+
+  create_table "flowing_cliff_919_1.filters", force: true do |t|
+    t.integer "embed_id"
+    t.boolean "is_conj"
+    t.string  "classification"
+  end
+
+  create_table "flowing_cliff_919_1.moderation_logs", force: true do |t|
+    t.string   "action"
+    t.string   "caused_by"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flowing_cliff_919_1.natlang_queries", force: true do |t|
+    t.string  "attr"
+    t.string  "op"
+    t.string  "val"
+    t.boolean "is_negated", default: false
+    t.integer "filter_id"
+  end
+
+  create_table "flowing_cliff_919_1.ownerships", force: true do |t|
+    t.integer  "owner_id"
+    t.integer  "entity_id"
+    t.integer  "value"
+    t.string   "ownership_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "flowing_cliff_919_1.ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
+  add_index "flowing_cliff_919_1.ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
+
+  create_table "flowing_cliff_919_1.schema_migrations", id: false, force: true do |t|
+    t.string "version", null: false
+  end
+
+  add_index "flowing_cliff_919_1.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
+
+  create_table "flowing_cliff_919_1.service_errors", force: true do |t|
+    t.string   "klass"
+    t.string   "message"
+    t.text     "backtrace"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flowing_cliff_919_1.services", force: true do |t|
+    t.integer  "embed_id"
+    t.string   "feed_name"
+    t.string   "type_name"
+    t.json     "config"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "uid"
+  end
+
+  add_index "flowing_cliff_919_1.services", ["embed_id"], :name => "index_services_on_embed_id"
+
+  create_table "flowing_cliff_919_1.taggings", force: true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context",       limit: 128
+    t.datetime "created_at"
+  end
+
+  add_index "flowing_cliff_919_1.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
+
+  create_table "flowing_cliff_919_1.tags", force: true do |t|
+    t.string  "name",                        null: false
+    t.string  "display_name"
+    t.string  "aliases",        default: [],              array: true
+    t.hstore  "props",          default: {}
+    t.integer "taggings_count", default: 0
+  end
+
+  add_index "flowing_cliff_919_1.tags", ["name"], :name => "index_tags_on_name", :unique => true
+
   create_view "public.entity_aggregated_tag_list", <<-SQL
      SELECT e.id AS entity_id,
     string_agg((t.name)::text, ','::text) AS tag_list
    FROM entities e,
     tags t,
     taggings e_t
+  WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
+  GROUP BY e.id;
+  SQL
+  create_view "flowing_cliff_919_1.entity_aggregated_tag_list", <<-SQL
+     SELECT e.id AS entity_id,
+    string_agg((t.name)::text, ','::text) AS tag_list
+   FROM flowing_cliff_919_1.entities e,
+    flowing_cliff_919_1.tags t,
+    flowing_cliff_919_1.taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
   SQL
@@ -344,6 +644,13 @@ ActiveRecord::Schema.define(version: 20150213224308) do
   add_foreign_key "brands_users", "public.users", :name => "brands_users_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "embeds", "public.brands", :name => "embeds_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
+
+  add_foreign_key "flowing_cliff_919_1.embeds", "public.brands", :name => "embeds_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
+
+  add_foreign_key "flowing_cliff_919_1.ownerships", "flowing_cliff_919_1.entities", :name => "ownerships_entity_id_fk", :column => "entity_id", :dependent => :delete, :exclude_index => true
+  add_foreign_key "flowing_cliff_919_1.ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
+
+  add_foreign_key "flowing_cliff_919_1.services", "flowing_cliff_919_1.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "ownerships", "public.entities", :name => "ownerships_entity_id_fk", :column => "entity_id", :dependent => :delete, :exclude_index => true
   add_foreign_key "ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
