@@ -54,7 +54,7 @@ function(Component, initView, Models){
 			isPending : function(){
 				return this.attr('identities') === null;
 			},
-			oauthorize : function(){
+			oauthorize : function(ctx, el, ev){
 				var self = this,
 					feed = this.attr('feed');
 

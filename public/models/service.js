@@ -190,8 +190,16 @@ function(Model, _keys){
 			}
 		},
 		serialize : function(){
+			var data = this._super.apply(this, arguments);
+
+			if(!(data.feed_name === 'instagram' && data.type_name === 'user')){
+				if(data.config){
+					delete data.config.display_name;
+				}
+			}
+
 			return {
-				service : this._super.apply(this, arguments)
+				service : data
 			};
 		},
 		typesForFeed : function(){
