@@ -21,7 +21,7 @@ module Supervisors::Services::Twitter
     private
 
     def hashtag
-      service_config.fetch(:hashtag)
+      '#' + service_config.fetch(:hashtag)
     end
 
   end
