@@ -212,6 +212,8 @@ class Entity < ActiveRecord::Base
   end
 
   def notify_liveservice
+    return if (is_pending? || is_child?)
+
     embeds.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice').publish(message, routing_key: 'entities')
@@ -222,7 +224,7 @@ class Entity < ActiveRecord::Base
         # event media walls) can be moderated and updated
         x('x.liveservice').publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
       end
-    end if !is_pending? || !is_child?
+    end
   end
 
   def meta_msg(embed, is_public)
