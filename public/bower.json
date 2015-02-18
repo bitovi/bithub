@@ -15,15 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "steal": "~0.4.0",
-    "canjs": "git@github.com:bitovi/canjs.git#minor",
-    "bootstrap": "~3.3.0",
-    "can-form": "retro/can-form",
-    "lodash": "~2.4.1",
-    "fontawesome": "~4.2.0",
-    "funcunit": "~2.0.4",
-    "qunit": "~1.16.0",
-    "moment": "~2.9.0"
+    "selectize": "~0.12.0"
   },
   "resolutions": {
     "steal": "~0.4.0",
@@ -31,5 +23,6 @@
     "canjs": "minor",
     "traceur": "0.0.58",
     "qunit": "~1.16.0"
-  }
+  },
+  "main": "bithub-social.js"
 }
