@@ -27,9 +27,9 @@
 					</div>
 				{{/if}}
 
-				{{#missingConfig}}
+				{{#if missingConfig}}
 					<div class="alert alert-danger">Config can't be empty</div>
-				{{/missingConfig}}
+				{{/if}}
 
 				{{#if errors}}
 					<div class="alert alert-danger">Service config has some errors</div>
