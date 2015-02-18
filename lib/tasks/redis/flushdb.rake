@@ -1,5 +1,5 @@
 namespace :redis do
-  desc "Flushes Redis (database from ENV)"
+  desc "Flushes the Redis database specified in the ENV"
   task :flushdb => :environment do
     redis = ConnectionManager.instance.redis
     redis.flushdb
