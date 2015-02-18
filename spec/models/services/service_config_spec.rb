@@ -3,35 +3,41 @@ require 'rails_helper'
 describe Services::ServiceConfig do
 
   describe '#valid?' do
-    it 'returns true if config is valid' do
+    
+    it "rejects the config as invalid if the corresponding feed class doesn't exist" do
+      config = { id: 12345677543 }
+
+      sc = Services::ServiceConfig.new('qua?', 'group', config)
+      expect(sc.valid?).to be false
+      expect(sc.errors.first[:klass]).to eq(NameError)
+    end
+
+    it "rejects the config as invalid if the corresponding type class doesn't exist" do
+      config = { id: 12345677543 }
+
+      sc = Services::ServiceConfig.new('meetup', 'wat?', config)
+      expect(sc.valid?).to be false
+      expect(sc.errors.first[:klass]).to eq(NameError)
+    end
+    
+    it 'rejects the config as invalid if it contains an unknown attribute' do
       config = {
-        name: 'foo/bar',
+        wat_qua: 'foo/bar',
+      }
+
+      sc = Services::ServiceConfig.new('github', 'repo', config)
+      expect(sc.valid?).to be false
+      expect(sc.errors.first[:klass]).to eq(Virtus::CoercionError)
+    end
+
+    it 'confirms that the config is valid' do
+      config = {
+        name: 'bitovi/canjs',
         tracking: { issues: true, pull_requests: false }
       }
 
       sc = Services::ServiceConfig.new('github', 'repo', config)
       expect(sc.valid?).to be true
     end
-
-    # Disabled b/c tracking doesn't force all attributes to be set
-    #
-    # it 'returns false and records errors if config is invalid' do
-    #   config = {
-    #     name: 'foo/bar',
-    #     tracking: { issues: true } # pull_req attr is missing
-    #   }
-
-    #   sc = Services::ServiceConfig.new('github', 'repo', config)
-    #   expect(sc.valid?).to eq false
-    #   expect(sc.errors.first[:type]).to eq(:coercion)
-    #   expect(sc.errors.first[:attr]).to eq(:pull_requests)
-    # end
-
-    it 'returns false and records errors if validator is missing' do
-      sc = Services::ServiceConfig.new('unknown', 'feed/type', {})
-      expect(sc.valid?).to eq false
-      expect(sc.errors.first[:type]).to eq(:validator)
-    end
   end
-
 end

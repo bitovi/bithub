@@ -44,7 +44,7 @@ module Services
       if validators.const_defined?(feed, false) && validators.const_get(feed).const_defined?(type, false)
         validators.const_get(feed).const_get(type)
       else
-        fail ArgumentError.new("Unknown feed/type, feed: #{feed}, type: #{type}" )
+        fail NameError.new("unknown feed/type, feed: #{feed}, type: #{type}" )
       end
     end
 
