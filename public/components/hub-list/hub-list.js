@@ -17,12 +17,10 @@ function(Component, initView, Models, _map, _reduce){
 			define : {
 				expandedRows : {
 					Value : Array
-				},
-				hubs : {
-					value : function(){
-						return new Models.Hub.List({});
-					}
 				}
+			},
+			init : function(){
+				this.attr('hubs', new Models.Hub.List({}));
 			},
 			createAndEditHub : function(){
 				new Models.Hub({
