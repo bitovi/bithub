@@ -21,8 +21,7 @@ module Supervisors::Services::Twitter
     private
 
     def hashtag
-      hashtag = service_config.fetch(:hashtag)
-      (hashtag.first != '#') ? '#' + hashtag : hashtag
+      service_config.fetch(:hashtag)
     end
 
   end
