@@ -83,6 +83,10 @@ function(Component, initView, _map, Bit){
 			'{bit} is_pinned' : function(bit, ev, newVal){
 				this.scope.attr('state').isAdmin() && this.element.toggleClass('pinned', newVal);
 			},
+			'a click' : function(el, ev){
+				ev.preventDefault();
+				window.open(el.attr('href'));
+			},
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);
 				var errored;
