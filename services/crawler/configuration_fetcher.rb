@@ -7,13 +7,8 @@ class ConfigurationFetcher
   include Celluloid
   include CoreHelpers
 
-  def initialize()
-    @config = config unless ENV['TRAVIS']
-    Celluloid.logger.debug @config.to_yaml
-  end
-
   def static_config
-    @static_config ||= read_env_config
+    @static_config ||= env_config
   end
 
   def brand(bi)
@@ -32,17 +27,24 @@ class ConfigurationFetcher
   alias_method :service_config, :service
 
   def config
-    @config = symbolize_keys(remote_config)
+    c = Condition.new
+    fetch_until_ok(c)
+    c.wait
   end
 
-  def remote_config
-    if ENV['ENV'] == 'test'
-      JSON.parse(File.read('config/test_account.json'))
-    else
-      res = HTTParty.get url
-      raise 'Web component not running' unless res.code == 200
-      res
-    end
+  def fetch_until_ok(c)
+    val = actually_fetch
+    after(0) { c.broadcast(val) }
+  rescue => e
+    Celluloid.logger.error "Web unresponsive, trying again in 3 seconds"
+    after(3) { fetch_until_ok(c) }
+  end
+
+  def actually_fetch
+    resp = HTTParty.get url
+    hash = JSON.parse resp.body
+    val = symbolize_keys hash
+    val
   end
 
   def traverse(feed_name, type_name, attr_name, attr_value)
@@ -69,7 +71,7 @@ class ConfigurationFetcher
 
   private
 
-  def read_env_config
+  def env_config
     {
       twitter: {
         api_key: ENV.fetch('TWITTER_CLIENT_ID'),
