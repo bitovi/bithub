@@ -74,7 +74,8 @@ class Service < ActiveRecord::Base
       service: {
         id: id,
         feed_name: feed_name,
-        type_name: type_name
+        type_name: type_name,
+        config: service_config.data
       },
       signature: "service_#{action}",
       action: action
