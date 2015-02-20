@@ -39,8 +39,8 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 		bodyClasses.push((params.theme || 'light') + '-theme');
 
-		can.route.map(appState);
-		can.route.ready();
+		//can.route.map(appState);
+		//can.route.ready();
 
 		appState.attr('hub', hub);
 		appState.setAttrs(params);
