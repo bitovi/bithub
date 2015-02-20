@@ -66,14 +66,13 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			iframe : {
 				get : function(){
 					var src = this.attr('iframeSrc');
+					var self = this;
 					var iframe;
 
 					if(src){
 						if(!CURRENT_IFRAME){
-							iframe = document.createElement('iframe');
-							iframe.src = this.iframeSrc();
-
-							CURRENT_IFRAME = iframe;
+							iframe = $('<iframe src="' + this.iframeSrc() + '"></iframe>');
+							CURRENT_IFRAME = iframe[0];
 						}
 
 						return CURRENT_IFRAME;
