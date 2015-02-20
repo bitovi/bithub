@@ -49,7 +49,7 @@ class Crawler < Celluloid::SupervisionGroup
   supervise EventPublisher,        as: :event_publisher
   supervise ErrorPublisher,        as: :error_publisher
   supervise NotificationPublisher, as: :notification_publisher
-  supervise CommandHandler,        as: :commander
+  supervise CommandHandler,        as: :commander, args: [:main]
   supervise ConfigurationFetcher,  as: :configurator
   supervise LockManager,           as: :lock_manager
   supervise Supervisors::Main,     as: :main
