@@ -35,22 +35,4 @@ describe SubscriptionRegistry do
 
     end
   end
-
-  describe '#handle_message' do
-    it 'creates subscription from message' do
-      msg = {
-        brand: { id: 1, name: 'foo'},
-        embed: { id: 2, name: 'bar'},
-        service: { id: 3, feed_name: 'feed', type_name: 'type', config: { id: 4, some: 'config'}},
-        signature: 'service_start',
-        action: :start
-      }
-
-      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'feed', 'type'
-
-      @registry.handle_message msg
-      expect(@registry['feed','type',4]).to include owner_data
-    end
-  end
-
 end
