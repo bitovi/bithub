@@ -1,3 +1,5 @@
-require_relative 'facebook'
-require_relative 'instagram'
+require_relative 'facebook/subscriptions'
+require_relative 'facebook/notifications'
+require_relative 'instagram/notifications'
+require_relative 'instagram/subscriptions'
 require_relative 'foursquare'
