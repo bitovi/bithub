@@ -49,8 +49,9 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def destroy
     @service = Service.find(service_id)
+    @service.entities.clear if clear_rels?
 
-    if @service && @service.destroy
+    if @service.destroy
       render :json => msg_hash(@service, 'destroy', 'success')
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406
@@ -128,6 +129,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def api_adapter
     Support::ThirdPartyApiAdapter.new
+  end
+
+  def clear_rels?
+    params[:clear_rels].present? && params[:clear_rels] == 'true'
   end
 
   def create_new_service
