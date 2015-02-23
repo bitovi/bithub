@@ -29,7 +29,7 @@ module Handlers
           page_id = entry['id']
           changes = entry.fetch('changes') { [] }
 
-          @proxy.logger.info "Facbook postback notification for page #{page_id}"
+          Celluloid.logger.info "Facbook postback notification for page #{page_id}"
 
           changes.each {|c| process_change page_id, c}
         end
@@ -42,17 +42,19 @@ module Handlers
         object_id = change['value'].andand['post_id']
         return unless object_id
 
-        matched_services = Celluloid::Actor[:configurator].traverse 'facebook', 'page', :id, page_id
+        if subscriptions = @proxy.registry['facebook', 'page', page_id]
+          subscriptions.each do |sub|
+            access_token = sub.fetch :access_token
+            owner_data   = sub.fetch :owner_data
 
-        matched_services.each do |sc|
-          client     = Koala::Facebook::API.new sc[:service][:config][:access_token]
-          owner_data = OwnerData.new sc[:brand_id], sc[:brand_name], sc[:embed_id], sc[:embed_name], sc[:service][:id], 'facebook', 'page'
-
-          # I'm crying .... ;-(
-
-          result = fetch_object client, object_id
-          @proxy.publish result, owner_data
+            result = fetch_object client(access_token), object_id
+            @proxy.publish result, owner_data
+          end
         end
+      end
+
+      def client(access_token)
+        Koala::Facebook::API.new access_token
       end
 
       def fetch_object(client, object_id)
