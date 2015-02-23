@@ -6,6 +6,19 @@ describe SubscriptionRegistry do
     @registry = SubscriptionRegistry.new
   end
 
+  describe '#subscribe' do
+    it 'valid key values must be passed' do
+      expect(@registry.subscribe 'feed', nil, 1, :foo).to be_nil
+    end
+
+    it 'doesnt push existing values' do
+      @registry.subscribe 'feed', 'type', 1, {foo: {bar: 1}}
+      @registry.subscribe 'feed', 'type', 1, {foo: {bar: 1}}
+
+      expect(@registry['feed','type',1].count).to eq 1
+    end
+  end
+
   describe '#[]' do
     it 'returns subscriptions by feed-type-id key' do
       @registry.subscribe 'feed', 'type', 1, :foo
@@ -32,7 +45,6 @@ describe SubscriptionRegistry do
 
       @registry.unsubscribe('feed', 'other_type', 1, :baz)
       expect(@registry['feed','other_type',1]).to be_empty
-
     end
   end
 end
