@@ -65,8 +65,7 @@
 	}
 
 	var makeIframe = function(link){
-		var params = getDataAttributes(link);
-		var iframeSrc = 'http://<%= ENV["EMBED_ENDPOINT"] %>/admin/embed' + objectToQuery(params);
+		var iframeSrc = link.href;
 		var iframe = document.createElement('iframe');
 		var parent = link.parentNode;
 
