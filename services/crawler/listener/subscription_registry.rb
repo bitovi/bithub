@@ -5,6 +5,10 @@ class SubscriptionRegistry
 
   SubscriptionKey = Struct.new :feed, :type, :id
 
+  module Errors
+    class InvalidKeyValues < StandardError; end
+  end
+
   attr_reader :subscriptions
 
   def initialize(opts={})
@@ -12,8 +16,12 @@ class SubscriptionRegistry
   end
 
   def subscribe(feed, type, id, owner_data)
-    key = SubscriptionKey.new feed, type, id
-    @subscriptions[key].push owner_data
+    if feed && type && id
+      key = SubscriptionKey.new feed, type, id
+      @subscriptions[key].push(owner_data) unless @subscriptions[key].include? owner_data
+    else
+      nil
+    end
   end
 
   def unsubscribe(feed, type, id, owner_data)
