@@ -22,13 +22,23 @@ function(Component, initView){
 					return opts.fn();
 				}
 			},
-			joined : function(arr, opts){
-				arr = can.isFunction(arr) ? arr() : arr;
-				return arr.join(', ');
-			},
-			subdomain : function(url){
-				url = can.isFunction(url) ? url() : url;
-				return url.split('.').shift();
+			cutoff : function(){
+				var str, opts;
+				if(arguments.length === 1){
+					opts = arguments[0];
+					str = opts.fn();
+				} else {
+					str = arguments[0];
+					opts = arguments[1];
+				}
+
+				str = can.isFunction(str) ? str() : str;
+
+				if(str.length > 50){
+					str = str.substr(0, 50) + '&hellip;';
+				}
+
+				return str;
 			}
 		}
 	})
