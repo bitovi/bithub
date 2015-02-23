@@ -25,6 +25,8 @@ function(Control, initView, Bit, _map){
 	}
 
 
+	var WINDOW_COUNT = 30;
+
 	return Control.extend({
 		pluginName : 'bh-bits',
 	}, {
@@ -33,6 +35,7 @@ function(Control, initView, Bit, _map){
 			opts.columnCount = can.compute(0);
 			opts.isLoading   = can.compute(false);
 			opts.hasNextPage = can.compute(true);
+			opts.currentScrollTop = can.compute(0);
 			return this._super(el, opts);
 		},
 		init : function(){
@@ -42,6 +45,8 @@ function(Control, initView, Bit, _map){
 				isLoading : this.options.isLoading,
 				columnCount : this.options.columnCount
 			}));
+
+			this.__hasItemsOnTop = false;
 
 			this.updateColumnCount();
 			this.load();
@@ -80,12 +85,19 @@ function(Control, initView, Bit, _map){
 			this.resetColumns(newVal);
 		},
 		"{state.bits} partition" : function(){
-			this.resetColumns(this.options.columnCount());
+			if(this.options.currentScrollTop() === 0){
+				this.resetColumns(this.options.columnCount());
+			}
+		},
+		"{currentScrollTop} change" : function(currentScrollTop, ev, newVal){
+			if(newVal === 0){
+				this.resetColumns(this.options.columnCount());
+			}
 		},
 		resetColumns : function(columnCount){
 			this.columns = makeColumns(columnCount);
 			this.currentColumn = 0;
-			this.partition(this.options.state.attr('bits'));
+			this.partitionFromTop(this.options.state.attr('bits'));
 			this.element.find('.column-wrapper').html(this.columns);
 		},
 		'{state.bits} remove' : function(bits, ev, removed){
@@ -93,6 +105,14 @@ function(Control, initView, Bit, _map){
 				$(this.__cardCache[removed[i].id]).remove();
 				delete this.__cardCache[removed[i].id];
 			}
+		},
+		partitionFromTop : function(bits){
+			this.currentStart = 0;
+			this.currentLimit = WINDOW_COUNT;
+			this.partitionPart(bits);
+		},
+		partitionPart : function(bits){
+			this.partition(bits.slice(this.currentStart, this.currentLimit));
 		},
 		partition : function(bits){
 
@@ -133,7 +153,12 @@ function(Control, initView, Bit, _map){
 		},
 		nextPage : function(){
 			var params;
-			if(!this.options.isLoading() && this.options.hasNextPage()){
+			var bits = this.options.state.attr('bits');
+			if(this.currentLimit < bits.length){
+				this.currentStart = this.currentLimit;
+				this.currentLimit = this.currentLimit + WINDOW_COUNT;
+				this.partitionPart(bits);
+			} else if(!this.options.isLoading() && this.options.hasNextPage()){
 				params = this.options.state.attr('params');
 				params.attr('offset', this.options.state.attr('bits.length'));
 				this.load();
@@ -147,6 +172,9 @@ function(Control, initView, Bit, _map){
 				var scrollTop = self.element.scrollTop();
 				var scrollHeight = self.element.prop('scrollHeight');
 				var height = self.element.height();
+
+				self.options.currentScrollTop(scrollTop);
+
 				(scrollHeight - scrollTop - height < 500) && self.nextPage();
 			});
 		},

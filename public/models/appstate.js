@@ -11,10 +11,41 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 
 	var CURRENT_IFRAME;
 
+	var PAGE_TITLES = {
+		'hub-list' : 'Hub List',
+		'services' : 'Services',
+		'integration' : 'Integration',
+		'moderation' : 'Moderation'
+	};
+
+	var getPageTitle = function(val, appState){
+		var page = val;
+
+		if(val === 'sidebar'){
+			val = appState.attr('panel') || 'services';
+		}
+
+		return PAGE_TITLES[val];
+	}
+
+	var setTitle = function(val, appState){
+		$('title').html('BitHub &mdash; ' + getPageTitle(val, appState));
+	}
+
 	return Map.extend({
 		define : {
 			page : {
-				value : 'hub-list'
+				value : 'hub-list',
+				set : function(val){
+					setTitle(val, this);
+					return val;
+				}
+			},
+			panel : {
+				set : function(val){
+					setTitle(val, this);
+					return val;
+				}
 			},
 			hubId : {
 				set : function(val){
@@ -66,14 +97,13 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			iframe : {
 				get : function(){
 					var src = this.attr('iframeSrc');
+					var self = this;
 					var iframe;
 
 					if(src){
 						if(!CURRENT_IFRAME){
-							iframe = document.createElement('iframe');
-							iframe.src = this.iframeSrc();
-
-							CURRENT_IFRAME = iframe;
+							iframe = $('<iframe src="' + this.iframeSrc() + '"></iframe>');
+							CURRENT_IFRAME = iframe[0];
 						}
 
 						return CURRENT_IFRAME;
