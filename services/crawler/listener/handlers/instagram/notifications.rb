@@ -18,7 +18,6 @@ module Handlers
       private
 
       def handle_postback(req)
-        owner_data = build_owner_data_from_url req.url
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
@@ -28,24 +27,17 @@ module Handlers
 
           if self.respond_to? method_name, true
             results = self.send method_name.to_sym, object_id
-            @proxy.publish results, owner_data
+
+            if subscriptions = @proxy.registry['instagram', 'media', object_id]
+              subscriptions.each do |owner_data|
+                @proxy.publish results, owner_data
+
+              end
+            end
           end
         end
 
         [200, 'OK']
-      end
-
-      def build_owner_data_from_url(url)
-        captures = Regexp.new(self.class.path).match(url)
-
-        OwnerData.new\
-          captures[:brand_id],
-          captures[:brand_name],
-          captures[:embed_id],
-          captures[:embed_name],
-          captures[:service_id],
-          'instagram',
-          'media_event'
       end
 
       # Subhandlers
