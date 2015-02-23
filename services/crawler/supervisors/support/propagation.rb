@@ -51,6 +51,7 @@ module Supervisors
 
     def terminate_cascading
       children.each { |c| c.terminate_cascading }
+      self.send :cleanup if respond_to? :cleanup
       terminate
     end
   end

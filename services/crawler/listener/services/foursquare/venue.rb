@@ -3,7 +3,11 @@ module Supervisors::Services::Foursquare
 
     def boot
       super
-      venues_handler.register venue_id, @path.serialize
+      registry.subscribe 'foursquare', 'venue', venue_id, owner_data
+    end
+
+    def cleanup
+      registry.unsubscribe 'foursquare', 'venue', venue_id, owner_data
     end
 
     private
@@ -12,8 +16,19 @@ module Supervisors::Services::Foursquare
       service_config.fetch(:id)
     end
 
-    def venues_handler
-      Celluloid::Actor[:http_server_foursquare_venues]
+    def registry
+      Actor[:subscription_registry]
+    end
+
+    def owner_data
+      OwnerData.new\
+        @path.brand.id,
+        @path.brand.name,
+        @path.embed.id,
+        @path.embed.name,
+        @path.service.id,
+        'foursquare',
+        'venue'
     end
 
   end
