@@ -9,16 +9,17 @@ describe Handlers::Foursquare  do
     port   = ENV['CRAWLER_HTTP_PORT'] || 3001
     prefix = ENV['CRAWLER_HTTP_PREFIX'] || '/api/postback/'
 
-    File.join "http://127.0.0.1:#{port}", prefix, ::Handlers::Foursquare.path
+    File.join "http://127.0.0.1:#{port}", prefix, ::Handlers::Foursquare.route[1]
   end
 
   ### Init / cleanup
 
   before do
     Celluloid.boot
-    Celluloid::Actor[:configurator] = ConfigurationFetcher.new
-    Celluloid::Actor[:http_server] = HttpServer.new
-    Celluloid::Actor[:event_publisher]   = EventPublisher.new reject_old: false
+    Celluloid::Actor[:configurator]          = ConfigurationFetcher.new
+    Celluloid::Actor[:http_server]           = HttpServer.new
+    Celluloid::Actor[:event_publisher]       = EventPublisher.new reject_old: false
+    Celluloid::Actor[:subscription_registry] = SubscriptionRegistry.new
 
     rf = RabbitFactory.new($rabbit_channel)
     @x = rf.x('x.web')
@@ -49,8 +50,8 @@ describe Handlers::Foursquare  do
         service[:id], service[:feed_name], service[:type_name]
 
       # register channels
-      Celluloid::Actor[:foursquare_handler].handler.subscribe '123456789012345678901234', node2
-      Celluloid::Actor[:foursquare_handler].handler.subscribe '4ef0e7cf7beb5932d5bdeb4e', node
+      Celluloid::Actor[:subscription_registry].subscribe 'foursquare', 'venue', '123456789012345678901234', node2
+      Celluloid::Actor[:subscription_registry].subscribe 'foursquare', 'venue', '4ef0e7cf7beb5932d5bdeb4e', node
 
       # simulate postback from foursquare
       post_body = File.new('spec/support/responses/foursquare/checkin_postback').read
