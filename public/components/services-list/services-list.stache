@@ -3,6 +3,9 @@
 	<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 </div>
 {{else}}
+	{{#if deletingService}}
+		<bh-delete-service-dialog service="{deletingService}" state="{state}"></bh-delete-service-dialog>
+	{{/if}}
 	<div class="services-table-wrap">
 		<table class="table services-table">
 			<tbody>
