@@ -2,6 +2,9 @@ require 'services/crawler/listener/subscription_registry'
 
 describe SubscriptionRegistry do
 
+  before { Celluloid.boot }
+  after { Celluloid.shutdown }
+
   before :each do
     @registry = SubscriptionRegistry.new
   end

@@ -14,6 +14,7 @@ require 'rabbit_factory'
 require 'events/dispatcher'
 
 require 'listener/http_server'
+require 'listener/subscription_registry'
 require 'listener/handlers/all'
 require 'configuration_fetcher'
 require 'connection_manager'
