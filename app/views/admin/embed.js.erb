@@ -34,36 +34,6 @@
 
 	};
 
-	var getDataAttributes = function(link) {
-		var data = {};
-		if (Object.prototype.hasOwnProperty.call(link, 'dataset')) {
-			data = link.dataset;
-		} else {
-			var attrs = link.attributes;
-			var key;
-			for (key in attrs) {
-				if (Object.prototype.hasOwnProperty.call(attrs, key)) {
-					var attr = attrs[key];
-					if (/^data-/.test(attr.name)) {
-						var camelized = camelize(attr.name.substr(5));
-						data[camelized] = attr.value;
-					}
-				}
-			}
-		}
-		return data;
-	}
-
-	var objectToQuery = function(obj){
-		var pairs = [];
-		for(var k in obj){
-			if(obj.hasOwnProperty(k)){
-				pairs.push(k + '=' + obj[k]);
-			}
-		}
-		return '?' + pairs.join('&');
-	}
-
 	var makeIframe = function(link){
 		var iframeSrc = link.href;
 		var iframe = document.createElement('iframe');

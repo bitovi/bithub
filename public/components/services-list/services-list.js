@@ -4,12 +4,14 @@ steal(
 './services-list.stache!',
 './services-list.less!',
 'can/map/define',
+'components/delete-service-dialog',
 function(Component, Models, initView){
 
 	return Component.extend({
 		tag : 'bh-services-list',
 		template : initView,
 		scope: {
+			deletingService: null,
 			init : function(){
 				this.attr({
 					shownErrors: [],
@@ -20,9 +22,7 @@ function(Component, Models, initView){
 				this.attr('hiddenNoResults').push(service);
 			},
 			destroyService: function( service, el, ev) {
-				if( confirm('Are you sure?') ) {
-					service.destroy();
-				}
+				this.attr('deletingService', service);
 			},
 			editService:function(service){
 				this.attr('currentService', service);

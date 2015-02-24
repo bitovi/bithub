@@ -1,0 +1,18 @@
+<div class="panel panel-default delete-service-panel">
+	<div class="panel-heading">
+		<h3 class="panel-title">Delete Service</h3>
+	</div>
+	<div class="panel-body">
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" can-value="deleteItems"> Delete all the items collected by the service
+			</label>
+		</div>
+	</div>
+	<div class="panel-footer clearfix">
+		<div class="btn-group">
+			<button class="btn btn-default" can-click="clearService">Cancel</button>
+			<button class="btn btn-danger" can-click="deleteService">Delete</button>
+		</div>
+	</div>
+</div>
