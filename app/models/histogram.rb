@@ -29,8 +29,8 @@ class Histogram < ActiveRecord::Base
                , sum(case when entities.id is not null then 1 else 0 end) as volume
                , date_trunc('#{recurrence}', now()) as measured_at
         from services
-        left join entities_services on services.id = entities_services.service_id
-        left join entities on entities_services.entity_id = entities.id
+        left join service_entities on services.id = service_entities.service_id
+        left join entities on service_entities.entity_id = entities.id
         group by services.id
         union (
           select source_fk, volume, measured_at

@@ -5,7 +5,10 @@ class Service < ActiveRecord::Base
   validate :service_config_validator
 
   belongs_to :embed
-  has_and_belongs_to_many :entities
+
+  has_many :service_entities
+  has_many :entities, through: :service_entities
+
   has_many :service_errors
 
   after_create  { notify_crawler(:start) }
