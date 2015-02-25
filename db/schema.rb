@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150218105841) do
+ActiveRecord::Schema.define(version: 20150224142354) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -185,6 +185,16 @@ ActiveRecord::Schema.define(version: 20150218105841) do
     t.string  "classification"
   end
 
+  create_table "histogram", id: false, force: true do |t|
+    t.integer  "source_fk"
+    t.string   "source_type"
+    t.integer  "volume"
+    t.integer  "delta"
+    t.datetime "measured_at"
+  end
+
+  add_index "histogram", ["source_type", "source_fk", "measured_at"], :name => "histogram_unique_source_fk_measured_at", :unique => true
+
   create_table "natlang_queries", force: true do |t|
     t.string  "attr"
     t.string  "op"
@@ -299,6 +309,15 @@ ActiveRecord::Schema.define(version: 20150218105841) do
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
 
+  create_table "user_identities", force: true do |t|
+    t.integer "user_id"
+    t.string  "provider"
+    t.json    "source_data",           default: {}
+    t.integer "uid",         limit: 8
+  end
+
+  add_index "user_identities", ["user_id"], :name => "index_user_identities_on_user_id"
+
   create_table "users", force: true do |t|
     t.string   "name"
     t.string   "email"
@@ -341,6 +360,8 @@ ActiveRecord::Schema.define(version: 20150218105841) do
   add_foreign_key "ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "services", "public.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
+
+  add_foreign_key "user_identities", "public.users", :name => "user_identities_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "users", "public.countries", :name => "users_country_id_fk", :column => "country_id", :exclude_index => true
 
