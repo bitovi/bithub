@@ -29,12 +29,16 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   def source
     if embed_id
       @source = Embed.find(embed_id)
-      @source_id = @source.services.pluck(:id)
-    elsif service_id
-      @source = Service.find_by_id(service_id)
+      if source_type == 'embeds'
+        @source_id = @source.id
+      elsif source_type == 'services'
+        @source_id = @source.services.pluck(:id)
+      end
+    elsif service_id && source_type == 'services'
+      @source = Service.find(service_id)
       @source_id = @source.id
     else
-      @source_id = params[:source_id]
+      fail ArgumentError.new('wrong combination of params')
     end
   end
 

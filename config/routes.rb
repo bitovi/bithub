@@ -97,7 +97,6 @@ Bithub::Application.routes.draw do
         end
       end
 
-      get 'analytics/:source_type/:source_id', to: 'analytics#show'
       get 'analytics/:source_type', to: 'analytics#show'
 
       resources :brand_identities, path: 'identities', only: %i(index show destroy)
