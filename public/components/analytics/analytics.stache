@@ -1,0 +1,4 @@
+BitHub Analytics
+{{#if analytics}}
+	<canvas width="1140" height="500" {{renderGraph}}></canvas>
+{{/if}}
