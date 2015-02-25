@@ -3,11 +3,26 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   def show
     source
 
-    @timepoints = Histogram.stats_by_source_type(source_type, resolution)
-      .where("source_fk" => @source_id)
-      .limit(last)
+    if @source
+      @timepoints = Histogram.stats_by_source_type(source_type, resolution)
+        .where(:source_id => @source.id)
+        .limit(last)
 
-    render :show
+      response = {
+        source: @source,
+        timepoints: @timepoints
+      }
+    elsif @sources
+      response = @sources.map do |s|
+        @timepoints = Histogram.stats_by_source_type(source_type, resolution)
+          .where(:source_id => s.id)
+          .limit(last)
+
+        { source: s, timepoints: @timepoints }
+      end
+    end
+
+    render :json => response
   rescue ArgumentError => e
     render :json => { message: e.message }.to_json, status: 406
   end
@@ -27,16 +42,12 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   end
   
   def source
-    if embed_id
+    if source_type == 'embeds' && embed_id
       @source = Embed.find(embed_id)
-      if source_type == 'embeds'
-        @source_id = @source.id
-      elsif source_type == 'services'
-        @source_id = @source.services.pluck(:id)
-      end
-    elsif service_id && source_type == 'services'
+    elsif source_type == 'services' && service_id
       @source = Service.find(service_id)
-      @source_id = @source.id
+    elsif source_type == 'services' && embed_id
+      @sources = Embed.find(embed_id).services
     else
       fail ArgumentError.new('wrong combination of params')
     end

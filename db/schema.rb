@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224142354) do
+ActiveRecord::Schema.define(version: 20150225154100) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -157,14 +157,6 @@ ActiveRecord::Schema.define(version: 20150224142354) do
     t.boolean  "is_pending",        default: false
   end
 
-  create_table "entities_services", id: false, force: true do |t|
-    t.integer "service_id"
-    t.integer "entity_id"
-  end
-
-  add_index "entities_services", ["entity_id", "service_id"], :name => "index_entities_services_on_entity_id_and_service_id"
-  add_index "entities_services", ["service_id"], :name => "index_entities_services_on_service_id"
-
   create_table "events", force: true do |t|
     t.string   "type_name"
     t.string   "feed_name"
@@ -186,14 +178,14 @@ ActiveRecord::Schema.define(version: 20150224142354) do
   end
 
   create_table "histogram", id: false, force: true do |t|
-    t.integer  "source_fk"
     t.string   "source_type"
+    t.integer  "source_id"
     t.integer  "volume"
     t.integer  "delta"
     t.datetime "measured_at"
   end
 
-  add_index "histogram", ["source_type", "source_fk", "measured_at"], :name => "histogram_unique_source_fk_measured_at", :unique => true
+  add_index "histogram", ["source_type", "source_id", "measured_at"], :name => "histogram_unique_source_measured_at", :unique => true
 
   create_table "natlang_queries", force: true do |t|
     t.string  "attr"
@@ -241,6 +233,14 @@ ActiveRecord::Schema.define(version: 20150224142354) do
     t.integer "interval_count",    default: 1,       null: false
     t.integer "trail_period_days", default: 30,      null: false
   end
+
+  create_table "service_entities", force: true do |t|
+    t.integer "service_id"
+    t.integer "entity_id"
+  end
+
+  add_index "service_entities", ["entity_id", "service_id"], :name => "index_service_entities_on_entity_id_and_service_id"
+  add_index "service_entities", ["service_id"], :name => "index_service_entities_on_service_id"
 
   create_table "service_errors", force: true do |t|
     t.string   "klass"
