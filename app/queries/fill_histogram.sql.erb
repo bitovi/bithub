@@ -1,0 +1,30 @@
+insert into histogram (source_type, source_fk, volume, delta, measured_at)
+with whole as (
+  select embeds.id as source_fk
+  	   , sum(case when entities.id is not null then 1 else 0 end) as volume
+  	   , date_trunc('<%= recurrence %>', now()) as measured_at
+	from <%= src %>
+	left join <%= src.singularize %>_entities on embeds.id = <%= src.singularize %>_entities.<% src.singularize %>_id
+	left join entities on <%= src.singularize %>_entities.entity_id = entities.id
+	group by <%= src %>.id
+  union (
+    select source_fk, volume, measured_at
+    from histogram
+    where source_type = '<%= src %>'
+    order by measured_at desc
+    limit (select count (distinct (<%= src %>.id)) from <%= src %>))
+  order by source_fk, measured_at asc
+), whole_diffed as (
+  select source_fk
+  	 , volume
+  	 , (volume - lag(volume::int,1,0) over w) as delta
+  	 , measured_at
+  from whole
+  window w as (partition by source_fk order by measured_at asc)
+) select 'embeds' source_type
+     , source_fk
+     , volume
+     , delta
+     , measured_at
+from whole_diffed
+where (now() - measured_at) < '1 #{recurrence}'::interval;
