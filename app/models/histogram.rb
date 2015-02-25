@@ -5,11 +5,6 @@ class Histogram < ActiveRecord::Base
   self.table_name = 'histogram'
   self.primary_key = :source_id
   
-  def self.stats_by_source_type_and_source_id(source_type, source_id, resolution)
-    fail ArgumentError.new("source_id must be an integer") unless source_id.is_a? Integer
-    stats_by_source_type(source_type, resolution).where("source_fk" => source_id)
-  end
-
   def self.stats_by_source_type(source_type, resolution)
     fail ArgumentError.new("source_type must be one of #{VALID_SOURCE_TYPES.join(', ')}") if !VALID_SOURCE_TYPES.include? source_type
     fail ArgumentError.new("resolution must be one of #{VALID_RESOLUTIONS.join(', ')}") if !VALID_RESOLUTIONS.include? resolution
