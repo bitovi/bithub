@@ -1,13 +1,23 @@
-steal('can/model', 'moment', function(Model, moment){
+steal(
+'can/model',
+'./service.js',
+'moment',
+'randomcolor',
+'can/map/define',
+function(Model, Service, moment, randomColor){
 	var Analytics = Model.extend({
 		findAll : '/api/v3/analytics/services?resolution=minute&embed_id={hubId}'
 	}, {
-
+		define : {
+			source : {
+				Type: Service
+			}
+		}
 	});
 
 	var fillInMissingTimepoints = function(points, length){
 		while(points.length < length){
-			points.unshift(0);
+			points.unshift(null);
 		}
 		return points;
 	}
@@ -21,12 +31,17 @@ steal('can/model', 'moment', function(Model, moment){
 			var timepoints;
 			var isLongest = false;
 			var data = [];
-
 			var longestPointsLengthLabels = [];
+			var randomColors = randomColor({
+				count: length,
+				hue: 'random'
+			})
 
 			for(var i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				timepoints = this.attr(i + '.timepoints');
+
+				service.attr('graphColor', randomColors.pop());
 				
 				serviceTimepoints[service.id] = [];
 
@@ -50,12 +65,11 @@ steal('can/model', 'moment', function(Model, moment){
 				service = this.attr(i + '.source');
 				data.push({
 					label : service.type_name,
-					fillColor: "rgba(220,220,220,0.2)",
-					strokeColor: "rgba(220,220,220,1)",
-					pointColor: "rgba(220,220,220,1)",
-					pointStrokeColor: "#fff",
+					fillColor: service.attr('graphColor'),
+					strokeColor: service.attr('graphColor'),
+					pointColor: service.attr('graphColor'),
 					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(220,220,220,1)",
+					pointHighlightStroke: service.attr('graphColor'),
 					data: serviceTimepoints[service.id]
 				});
 			}
