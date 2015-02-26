@@ -4,7 +4,11 @@ steal(
 'moment',
 'randomcolor',
 'can/map/define',
+'components/service-config-formatter',
 function(Model, Service, moment, randomColor){
+
+	var TOOLTIP = can.stache('<bh-service-config-formatter service="{this}"></bh-service-config-formatter>');
+
 	var Analytics = Model.extend({
 		findAll : '/api/v3/analytics/services?resolution=minute&embed_id={hubId}'
 	}, {
@@ -16,14 +20,26 @@ function(Model, Service, moment, randomColor){
 	});
 
 	var fillInMissingTimepoints = function(points, length){
+
+		var firstRun = true;
 		while(points.length < length){
-			points.unshift(null);
+			if(firstRun){
+				points.unshift(0);
+				firstRun = false;
+			} else {
+				points.unshift(null);
+			}
+			
 		}
 		return points;
 	}
 
+	var alphaVersion = function(color){
+		return 'rgba' + color.substring(3, color.length - 2) + ', .2)';
+	}
+
 	Analytics.List = Analytics.List.extend({
-		graphData : function(){
+		graphData : function(type){
 			var length = this.attr('length');
 			var dates = [];
 			var serviceTimepoints = {};
@@ -34,14 +50,18 @@ function(Model, Service, moment, randomColor){
 			var longestPointsLengthLabels = [];
 			var randomColors = randomColor({
 				count: length,
-				hue: 'random'
-			})
+				hue: 'random',
+				format: 'rgb'
+			}); 
 
 			for(var i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				timepoints = this.attr(i + '.timepoints');
 
-				service.attr('graphColor', randomColors.pop());
+				if(!service.attr('graphColor')){
+					service.attr('graphColor', randomColors.pop());
+				}
+				
 				
 				serviceTimepoints[service.id] = [];
 
@@ -52,8 +72,11 @@ function(Model, Service, moment, randomColor){
 				}
 
 				for(var j = 0; j < timepoints.length; j++){
-					serviceTimepoints[service.id].push(timepoints[j].volume);
-					longestPointsLengthLabels.push(moment(timepoints[j].measured_at).fromNow());
+					serviceTimepoints[service.id].push(timepoints[j][type]);
+					if(isLongest){
+						longestPointsLengthLabels.push(moment(timepoints[j].measured_at).fromNow());
+					}
+					
 				}
 			}
 
@@ -64,8 +87,8 @@ function(Model, Service, moment, randomColor){
 			for(var i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				data.push({
-					label : service.type_name,
-					fillColor: service.attr('graphColor'),
+					label : can.trim(TOOLTIP(service).firstChild.innerText),
+					fillColor: alphaVersion(service.attr('graphColor')),
 					strokeColor: service.attr('graphColor'),
 					pointColor: service.attr('graphColor'),
 					pointHighlightFill: "#fff",
