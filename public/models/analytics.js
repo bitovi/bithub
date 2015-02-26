@@ -2,10 +2,9 @@ steal(
 'can/model',
 './service.js',
 'moment',
-'randomcolor',
 'can/map/define',
 'components/service-config-formatter',
-function(Model, Service, moment, randomColor){
+function(Model, Service, moment){
 
 	var TOOLTIP = can.stache('<bh-service-config-formatter service="{this}"></bh-service-config-formatter>');
 
@@ -35,7 +34,7 @@ function(Model, Service, moment, randomColor){
 	}
 
 	var alphaVersion = function(color){
-		return 'rgba' + color.substring(3, color.length - 2) + ', .2)';
+		return 'rgba' + color.substring(3, color.length - 1) + ', .2)';
 	}
 
 	Analytics.List = Analytics.List.extend({
@@ -48,21 +47,11 @@ function(Model, Service, moment, randomColor){
 			var isLongest = false;
 			var data = [];
 			var longestPointsLengthLabels = [];
-			var randomColors = randomColor({
-				count: length,
-				hue: 'random',
-				format: 'rgb'
-			}); 
 
 			for(var i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				timepoints = this.attr(i + '.timepoints');
 
-				if(!service.attr('graphColor')){
-					service.attr('graphColor', randomColors.pop());
-				}
-				
-				
 				serviceTimepoints[service.id] = [];
 
 				isLongest = (timepoints.length > longestPointsLengthLabels.length);
