@@ -30,7 +30,6 @@
 	</div>
 </main>
 
-
 {{else}}
 
 	<div class="container">
@@ -39,6 +38,9 @@
 			<div class="col-xs-10">
 				<ul class="list-unstyled menu">
 					<li>{{{pageLink 'hub-list' 'Hubs'}}}</li>
+					{{#if state.isAnalyticsPageActive}}
+						<li><a href="{{pageUrl 'analytics' hubId=state.hubId}}" class="btn btn-default">Analytics</a></li>
+					{{/if}}
 					<li><a href="/logout" class="btn btn-link">Logout</a></li>
 				</ul>
 			</div>
