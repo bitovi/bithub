@@ -19,6 +19,14 @@ class Service < ActiveRecord::Base
     self.brand.identities.where(:provider => feed_name).all
   end
 
+  def clear_linked_entities
+    links = ServiceEntity.where(service_id: id).all 
+    links.each do |l|
+      l.entity.destroy if l.entity.has_only_one_service?
+      l.destroy
+    end
+  end
+
   def has_errors?
     service_errors.present?
   end
