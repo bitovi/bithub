@@ -1,0 +1,13 @@
+
+{{#if analytics}}
+	<ul class="list-unstyled">
+		{{#each analytics}}
+			<li class="clearfix">
+				<span style="background: {{source.graphColor}}"></span>
+				<bh-service-config-formatter service="{source}"></bh-service-config-formatter>
+				({{finalCount timepoints}} items)
+			</li>
+		{{/each}}
+	</ul>
+	<canvas width="1140" height="500" {{renderGraph}}></canvas>
+{{/if}}

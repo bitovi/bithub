@@ -35,6 +35,8 @@
 			"selectize/selectize" : "selectize",
 			"sifter.js" : "sifter",
 			"microplugin.js" : "microplugin",
+			"chart/chart" : "chart",
+			"randomcolor/randomcolor" : "randomcolor"
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -49,7 +51,8 @@
 			"sifter" : 'bower_components/sifter/sifter.js',
 			"microplugin" : 'bower_components/microplugin/src/microplugin.js',
 			"selectize" : "bower_components/selectize/dist/js/selectize.js",
-
+			"chart" : "bower_components/Chart.js/Chart.js",
+			"randomcolor" : "bower_components/randomcolor/randomColor.js"
 		},
 		meta: {
 			jquery: {
@@ -58,6 +61,9 @@
 			},
 			funcunit : {
 				exports : 'FuncUnit'
+			},
+			chart : {
+				exports: "Chart"
 			}
 		},
 		ext: {
