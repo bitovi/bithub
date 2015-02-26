@@ -91,6 +91,10 @@ class Entity < ActiveRecord::Base
     @_memoized[key] ||= yield
   end
 
+  def has_only_one_service?
+    services.count == 1
+  end
+
   # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_approved(embed = nil)
     if has_attribute?(:is_approved)

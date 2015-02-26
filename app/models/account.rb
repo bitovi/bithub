@@ -5,6 +5,8 @@ class Account < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable
 
+  devise :confirmable if ENV['RAILS_ENV'] != 'development'
+
   rolify :role_cname => 'AccountRole'
 
   validate :invite_key_must_match
