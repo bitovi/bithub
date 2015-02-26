@@ -33,7 +33,7 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
 
   def default_last
     case resolution
-    when 'minute' then 60
+    when 'minute' then 30
     when 'hour' then 24
     when 'day' then 30
     when 'week' then 52

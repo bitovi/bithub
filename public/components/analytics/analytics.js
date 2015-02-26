@@ -46,8 +46,8 @@ function(Component, initView, Chart, Models){
 				return function(el){
 					var ctx = el.getContext('2d');
 					var chart = new Chart(ctx).Line(self.attr('analytics').graphData(type), {
-						bezierCurve: false,
-						pointDot: false,
+						bezierCurveTension: 0.1,
+						pointDotRadius: 2,
 						datasetStrokeWidth: 2,
 						multiTooltipTemplate: "<%=datasetLabel%> - <%= value %> items",
 					})
@@ -55,7 +55,14 @@ function(Component, initView, Chart, Models){
 			},
 			finalCount : function(timepoints){
 				timepoints = can.isFunction(timepoints) ? timepoints() : timepoints;
-				return timepoints[timepoints.length - 1].volume;
+				return (timepoints[timepoints.length - 1] || {volume: '0'}).volume;
+			},
+			hasEnoughData : function(opts){
+				var analytics = this.attr('analytics');
+				if(analytics && analytics.graphData('volume').labels.length > 1){
+					return opts.fn();
+				}
+				return opts.inverse();
 			}
 		},
 		events : {
