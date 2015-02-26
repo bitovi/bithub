@@ -16,13 +16,13 @@
 			</li>
 		{{/each}}
 	</ul>
-	{{#with analytics}}
+	{{#hasEnoughData}}
 		<h3>Total amount of items</h3>
-		<canvas width="1140" height="500" {{renderGraph 'volume'}}></canvas>
-	{{/with}}
-	<hr>
-	{{#with analytics}}
-		<h3>Amount of items crawled</h3>
-		<canvas width="1140" height="500" {{renderGraph 'delta'}}></canvas>
-	{{/with}}
+		<canvas width="1140" height="400" {{renderGraph 'volume'}}></canvas>
+		<hr>
+		<h3>Amount of items crawled at time</h3>
+		<canvas width="1140" height="400" {{renderGraph 'delta'}}></canvas>
+	{{else}}
+		<div class="alert alert-info">We don't have enough data to plot the graph.</div>
+	{{/hasEnoughData}}
 {{/if}}
