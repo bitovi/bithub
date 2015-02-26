@@ -15,7 +15,8 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 		'hub-list' : 'Hub List',
 		'services' : 'Services',
 		'integration' : 'Integration',
-		'moderation' : 'Moderation'
+		'moderation' : 'Moderation',
+		'analytics' : 'Analytics'
 	};
 
 	var getPageTitle = function(val, appState){
