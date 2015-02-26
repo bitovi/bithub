@@ -1,6 +1,13 @@
-
+<h2>{{ hub.name }} Analytics</h2>
+<select can-value="resolution" class="form-control">
+	<option value="minute">Show by minute</option>
+	<option value="hour">Show by hour</option>
+	<option value="day">Show by day</option>
+	<option value="week">Show by week</option>
+	<option value="month">Show by month</option>
+</select>
 {{#if analytics}}
-	<ul class="list-unstyled">
+	<ul class="list-unstyled clearfix">
 		{{#each analytics}}
 			<li class="clearfix">
 				<span style="background: {{source.graphColor}}"></span>
@@ -9,5 +16,13 @@
 			</li>
 		{{/each}}
 	</ul>
-	<canvas width="1140" height="500" {{renderGraph}}></canvas>
+	{{#with analytics}}
+		<h3>Total amount of items</h3>
+		<canvas width="1140" height="500" {{renderGraph 'volume'}}></canvas>
+	{{/with}}
+	<hr>
+	{{#with analytics}}
+		<h3>Amount of items crawled</h3>
+		<canvas width="1140" height="500" {{renderGraph 'delta'}}></canvas>
+	{{/with}}
 {{/if}}
