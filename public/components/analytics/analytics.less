@@ -1,14 +1,38 @@
 bh-analytics {
 	display: block;
+	position: relative;
+
+	select.form-control {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 200px;
+	}
+
+	h2 {
+		margin-bottom: 20px;
+		border-bottom: 1px solid #eee;
+		padding-bottom: 20px;
+	}
 	li {
+		float: left;
+		margin-bottom: 5px;
+		width: 33.3333%;
 		span {
-			width: 50px;
-			height: 20px;
-			display: inline-block;
-			margin-right: 10px;
+			width: 15px;
+			height: 15px;
+			float: left;
+			margin: 2px 5px 0 0;
+			border-radius: 2px;
+			-webkit-border-radius: 2px;
+			-moz-border-radius: 2px;
 		}
 		bh-service-config-formatter {
-			display: inline-block;
+			float: left;
+			margin-right: 5px;
 		}
+	}
+	canvas {
+		display: block;
 	}
 }

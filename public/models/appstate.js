@@ -231,6 +231,9 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 				preview: 'Preview'
 			};
 			return titles[this.embedType()];
+		},
+		isAnalyticsPageActive : function(){
+			return this.attr('page') === 'analytics';
 		}
 	});
 });
