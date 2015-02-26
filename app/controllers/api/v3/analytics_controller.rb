@@ -1,4 +1,5 @@
 class Api::V3::AnalyticsController < Api::V3::BaseController
+  before_filter :authenticate_account!
   
   def show
     source
