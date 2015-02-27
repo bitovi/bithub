@@ -1,4 +1,4 @@
-require_relative 'feeds_helper'
+require_relative 'handlers_helper'
 require 'events/foursquare/checkin_event'
 
 describe Handlers::Foursquare  do
