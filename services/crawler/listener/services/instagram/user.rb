@@ -7,7 +7,7 @@ module Supervisors::Services::Instagram
       client.create_subscription object: "user", callback_url: callback_url, aspect: "media"
     end
 
-    def preload(params)
+    def preloaded_items(params)
       Fetchers::Instagram::UserRecentMedia.fetch params.fetch(:id), count: 100
     end
 

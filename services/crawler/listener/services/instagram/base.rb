@@ -7,18 +7,18 @@ module Supervisors::Services::Instagram
 
     VALID_OBJECTS = %w(user tag location geography)
 
-    def boot
+    def initialize
       super
+      info "Creating Instagram #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
 
-      Celluloid.logger.info "Creating Instagram #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
       begin
         subscribe service_config
       rescue ::Instagram::Error => e
-        Celluloid.logger.info "Instagram subscription failed with #{e.message}"
+        info "Instagram subscription failed with #{e.message}"
       end
 
-      if self.respond_to? :preload, true
-        publish preload service_config
+      if self.respond_to? :preloaded_items, true
+        publish preloaded_items service_config
       end
     end
 
@@ -29,7 +29,7 @@ module Supervisors::Services::Instagram
     private
 
     def subscribe; raise NotImplementedError; end
-    def preload; raise NotImplementedError; end
+    def preloaded_items; raise NotImplementedError; end
 
     def publish(items)
       publisher.publish items, owner_data
