@@ -1,6 +1,5 @@
 module Decorators
-  class Rss < Protocol
-
+  class Rss
     def initialize(site_config)
       @url = site_config[:url]
       @name = site_config[:name]

@@ -1,4 +1,7 @@
 module Decorators
-  class Basic < Protocol
+  class Basic
+    def decorate(event)
+      event
+    end
   end
 end
