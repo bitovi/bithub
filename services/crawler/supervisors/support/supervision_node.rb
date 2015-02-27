@@ -73,6 +73,9 @@ class SupervisionNode
 
   # Shortcuts
 
+  def main_info; find(MainNode); end
+  alias_method :brand, :main_info
+
   def brand_info; find(BrandInfo); end
   alias_method :brand, :brand_info
 
