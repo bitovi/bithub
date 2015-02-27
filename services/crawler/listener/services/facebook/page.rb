@@ -18,18 +18,17 @@ require 'supervisors/support/owner_data'
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
 
-    def boot
+    def initialize
       super
-
-      Celluloid.logger.info "Creating Facebook #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
+      info "Creating Facebook #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
 
       begin
         subscribe_page
       rescue Koala::KoalaError => e
-        Celluloid.logger.info "Facebook subscription failed with #{e.message}"
+        info "Facebook subscription failed with #{e.message}"
       end
 
-      publish preload_feed, owner_data
+      publish preloaded_items, owner_data
     end
 
     private
@@ -69,7 +68,7 @@ module Supervisors::Services::Facebook
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'delete'
     end
 
-    def preload_feed
+    def preloaded_items
       Fetchers::Facebook::GetFeed.fetch client, page_id
     end
 

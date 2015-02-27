@@ -2,18 +2,14 @@ module Supervisors::Services::Twitter
   class UserTimeline < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
-
-      user_timeline_fetcher = Fetchers::Twitter::UserTimeline.new(
-        client, { user_handle: user_handle })
 
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new("user_timeline", user_handle)).actor_name,
         Poller, *[
           @path,
-          user_timeline_fetcher,
+          Fetchers::Twitter::UserTimeline.new(client, { user_handle: user_handle }),
           {interval: 60}
         ])
     end

@@ -1,19 +1,15 @@
 module Supervisors::Services::Rss
   class Site < Supervisors::Service
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
-
-      decorator = Decorators::Rss.new(service_config)
-      rss_fetcher = Fetchers::Rss::Rss.new(url)
 
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new(url)).actor_name,
         Poller, *[
           @path,
-          rss_fetcher,
-          { interval: 600, decorator: decorator }
+          Fetchers::Rss::Rss.new(url),
+          { interval: 600, decorator: Decorators::Rss.new(service_config) }
         ])
     end
 

@@ -1,8 +1,9 @@
 module Supervisors::Services::Foursquare
   class Venue < Supervisors::Service
 
-    def boot
+    def initialize
       super
+      info "Creating Foursquare #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
       venues_handler.register venue_id, @path.serialize
     end
 

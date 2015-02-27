@@ -1,16 +1,14 @@
 module Supervisors::Services::Tumblr
   class Blog < Supervisors::Service
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
 
-      blog_fetcher = Fetchers::Tumblr::Posts.new(hostname) 
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new('blog', hostname)).actor_name,
         Poller, *[
           @path,
-          blog_fetcher,
+          Fetchers::Tumblr::Posts.new(hostname),
           { interval: 600 }
         ])
     end

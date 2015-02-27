@@ -1,16 +1,14 @@
 module Supervisors::Services::Tumblr
   class Tag < Supervisors::Service
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
 
-      tag_fetcher = Fetchers::Tumblr::Tagged.new(tag)
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new('tagged', tag)).actor_name,
         Poller, *[
           @path,
-          tag_fetcher,
+          Fetchers::Tumblr::Tagged.new(tag),
           { interval: 600 }
         ])
     end

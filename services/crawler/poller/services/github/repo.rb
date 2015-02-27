@@ -2,66 +2,50 @@ module Supervisors::Services::Github
   class Repo < Supervisors::Service
     include Supervisors::Services::Github::Common
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
-
-      repo_act_fetcher = Fetchers::Github::RepoActivity.new(
-        client, { user_repo: repo_name })
 
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new('repo_activity', repo_name)).actor_name,
         Poller, *[
           @path,
-          repo_act_fetcher,
+          Fetchers::Github::RepoActivity.new(client, { user_repo: repo_name }),
           {interval: 60}
-        ]
-      )
+        ])
 
-        repo_issues_fetcher =  Fetchers::Github::RepoIssues.new(
-          client, { user_repo: repo_name })
+      @endpoints.supervise_as(
+        @path.next_level(EndpointInfo.new('repo_issues', repo_name)).actor_name,
+        Poller, *[
+          @path,
+          Fetchers::Github::RepoIssues.new(client, { user_repo: repo_name }),
+          {interval: 600}
+        ])
 
-        @endpoints.supervise_as(
-          @path.next_level(EndpointInfo.new('repo_issues', repo_name)).actor_name,
-          Poller, *[
-            @path,
-            repo_issues_fetcher,
-            {interval: 600}
-          ])
+      @endpoints.supervise_as(
+        @path.next_level(EndpointInfo.new('repo_issue_comments', repo_name)).actor_name,
+        Poller, *[
+          @path,
+          Fetchers::Github::RepoPullRequests.new(client, { user_repo: repo_name }),
+          {interval: 600}
+        ])
 
-        iss_comm_fetcher = Fetchers::Github::RepoPullRequests.new(
-          client, { user_repo: repo_name })
 
-        @endpoints.supervise_as(
-          @path.next_level(EndpointInfo.new('repo_issue_comments', repo_name)).actor_name,
-          Poller, *[
-            @path,
-            iss_comm_fetcher,
-            {interval: 600}
-          ])
+      @endpoints.supervise_as(
+        @path.next_level(EndpointInfo.new('repo_pull_requests', repo_name)).actor_name,
+        Poller, *[
+          @path,
+          Fetchers::Github::RepoIssuesComments.new(client, { user_repo: repo_name }),
+          {interval: 300}
+        ])
 
-        pull_req_fetcher = Fetchers::Github::RepoIssuesComments.new(
-          client, { user_repo: repo_name })
 
-        @endpoints.supervise_as(
-          @path.next_level(EndpointInfo.new('repo_pull_requests', repo_name)).actor_name,
-          Poller, *[
-            @path,
-            pull_req_fetcher,
-            {interval: 300}
-          ])
-
-        pull_req_comm_fetcher = Fetchers::Github::RepoPullRequestsComments.new(
-          client, { user_repo: repo_name })
-
-        @endpoints.supervise_as(
-          @path.next_level(EndpointInfo.new('repo_pull_request_comments', repo_name)).actor_name,
-          Poller, *[
-            @path,
-            pull_req_comm_fetcher,
-            {interval: 300}
-          ])
-
+      @endpoints.supervise_as(
+        @path.next_level(EndpointInfo.new('repo_pull_request_comments', repo_name)).actor_name,
+        Poller, *[
+          @path,
+          Fetchers::Github::RepoPullRequestsComments.new(client, { user_repo: repo_name }),
+          {interval: 300}
+        ])
     end
 
     private

@@ -2,18 +2,14 @@ module Supervisors::Services::Github
   class Org < Supervisors::Service
     include Supervisors::Services::Github::Common
 
-    def boot
+    def initialize
       super
-      @endpoints = SupervisionGroup.new
-
-      org_fetcher = Fetchers::Github::OrgActivity.new(
-        client, { org_name: org_name })
 
       @endpoints.supervise_as(
         @path.next_level(EndpointInfo.new('org_activity', org_name)).actor_name,
         Poller, *[
           @path,
-          org_fetcher,
+          Fetchers::Github::OrgActivity.new(client, { org_name: org_name }),
           {interval: 60}
         ])
     end
