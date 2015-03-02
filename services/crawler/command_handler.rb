@@ -3,12 +3,10 @@ require 'connection_manager'
 
 class CommandHandler
   include Celluloid
+  include Celluloid::Logger
 
-  def initialize(receiver_actor_name, opts={})
-    Celluloid.logger.info "Initializing Commander"
-
-    @receiver_actor_name = receiver_actor_name
-    @logger              = opts[:logger] || Celluloid.logger
+  def initialize(opts={})
+    @receiver_name = opts.fetch(:receiver_name) { :main }
 
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.crawler', :direct)
@@ -18,6 +16,7 @@ class CommandHandler
   end
 
   def listen
+    info "Initializing Commander"
     @q.subscribe do |delivery_info, properties, payload|
       msg = JSON.parse(payload).symbolize_keys
       dispatch_command msg
@@ -25,11 +24,14 @@ class CommandHandler
   end
 
   def dispatch_command(msg)
-    if receiver = Actor[@receiver_actor_name]
+    if receiver
       receiver.handle_message msg
     else
-      @logger.info "Unable to dispatch command #{msg}"
+      error "Unable to dispatch command #{msg}"
     end
   end
 
+  def receiver
+    Actor[@receiver_name]
+  end
 end
