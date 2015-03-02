@@ -34,6 +34,7 @@ require 'supervisors/main'
 
 # Listener
 require 'http_server'
+require 'subscription_registry'
 require 'fetchers/all'
 require 'handlers/all'
 require 'listener/services/all'
@@ -45,8 +46,9 @@ logger = LoggerFactory.new('crawler_listener', :environment => $env).component_l
 Celluloid.logger = logger
 
 class Listener < Celluloid::SupervisionGroup
+  supervise SubscriptionRegistry, as: :subscription_registry
   supervise ConfigurationFetcher, as: :configurator
-  supervise CommandHandler,       as: :commander
+  supervise CommandHandler,       as: :commander, args: [:main]
   supervise EventPublisher,       as: :event_publisher
   supervise ErrorPublisher,       as: :error_publisher
   supervise HttpServer,           as: :http_server, args: [{host: '0.0.0.0'}]

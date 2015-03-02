@@ -14,7 +14,9 @@ class Entity < ActiveRecord::Base
 
   has_many :embed_entities, dependent: :destroy
   has_many :embeds, through: :embed_entities
-  has_and_belongs_to_many :services
+  
+  has_many :service_entities, dependent: :destroy
+  has_many :services, through: :service_entities
 
   has_many :ownerships, foreign_key: :entity_id, dependent: :destroy
   has_many :owners, through: :ownerships, source: :owner
@@ -87,6 +89,10 @@ class Entity < ActiveRecord::Base
     key = args.join('.')
     @_memoized ||= {}
     @_memoized[key] ||= yield
+  end
+
+  def has_only_one_service?
+    services.count == 1
   end
 
   # See first 5 lines of EmbedEntitiesController#build_scope method

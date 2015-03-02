@@ -31,7 +31,7 @@
 {{/isFeedAndType}}
 
 {{#isFeedAndType 'rss' 'site'}}
-	<b>{{service.printFeed}} {{service.printType}} </b> <a href="{{service.config.url}}" target="_blank">{{service.config.url}}</a>
+	<b>{{service.printFeed}} {{service.printType}} </b> <a href="{{service.config.url}}" target="_blank">{{{cutoff service.config.url}}}</a>
 {{/isFeedAndType}}
 
 {{#isFeedAndType 'stackexchange' 'tags'}}
@@ -39,7 +39,7 @@
 {{/isFeedAndType}}
 
 {{#isFeedAndType 'tumblr' 'blog'}}
-	<b>{{service.printFeed}} {{service.printType}} </b> <a href="http://{{subdomain service.config.hostname}}.tumblr.com" target="_blank">{{service.config.display_name}}</a>
+	<b>{{service.printFeed}} {{service.printType}} </b> <a href="http://{{service.config.hostname}}.tumblr.com" target="_blank">{{service.config.display_name}}</a>
 {{/isFeedAndType}}
 
 {{#isFeedAndType 'tumblr' 'tag'}}

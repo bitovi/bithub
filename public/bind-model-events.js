@@ -23,7 +23,7 @@ steal(
 
 		Models.Service.on('destroyed', function(ev, service){
 			var loadingServices = appState.attr('loadingServices');
-			var index = loadingServiced.indexOf(service);
+			var index = loadingServices.indexOf(service);
 
 			if(index > -1){
 				loadingServices.splice(index, 1);

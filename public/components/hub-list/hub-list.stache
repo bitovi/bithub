@@ -47,6 +47,7 @@
 						<td>
 							<div class="btn-group">
 								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default edit-hub-btn">Edit</a>
+								<a href="{{pageUrl 'analytics' hubId=id}}" class="btn btn-xs btn-default">Analytics</a>
 								<button class="btn btn-xs btn-default" can-click="destroyHub">Delete</button>
 							</div>
 						</td>

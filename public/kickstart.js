@@ -45,6 +45,12 @@ steal(
 					appState : appState
 				});
 
+				can.route('', {page: 'hub-list'});
+				can.route(':page');
+				can.route(':page/:panel');
+				can.route(':page/:panel/:hubId');
+				can.route(':page/:panel/:hubId');
+
 				can.route.map(appState);
 
 				can.route.ready();

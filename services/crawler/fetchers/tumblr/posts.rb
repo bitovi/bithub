@@ -16,7 +16,7 @@ module Fetchers
 
       def fetch
         handle_errors do
-          @result = @client.posts @hostname, offset: @offset
+          @result = @client.posts @hostname, limit: @limit, offset: @offset
           @result.fetch('posts')
         end
       end
