@@ -11,4 +11,7 @@ class OwnerData < Struct.new(:brand, :embed, :service)
     super brand, embed, service
   end
 
+  def to_s
+    "#{brand} / #{embed} / #{service}"
+  end
 end

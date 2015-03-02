@@ -9,21 +9,21 @@ module Supervisors::Services::Instagram
 
     def initialize
       super
-      info "Creating Instagram #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
 
       begin
         subscribe service_config
+        register_to_handler
       rescue ::Instagram::Error => e
         info "Instagram subscription failed with #{e.message}"
       end
 
       if self.respond_to? :preloaded_items, true
-        publish preloaded_items service_config
+        publish preloaded_items(service_config), owner_data
       end
     end
 
-    def token
-      service_config.fetch(:access_token)
+    def cleanup
+      unregister_from_handler
     end
 
     private
@@ -31,8 +31,24 @@ module Supervisors::Services::Instagram
     def subscribe; raise NotImplementedError; end
     def preloaded_items; raise NotImplementedError; end
 
-    def publish(items)
-      publisher.publish items, owner_data
+    def registry
+      Actor[:subscription_registry]
+    end
+
+    def register_to_handler
+      registry.subscribe 'instagram', 'media', instagram_object_id, owner_data
+    end
+
+    def unregister_from_handler
+      registry.unsubscribe 'instagram', 'media', instagram_object_id, owner_data
+    end
+
+    def instagram_object_id
+      service_config[:tag] || service_config[:id]
+    end
+
+    def publish(events, owner_data)
+      Actor[:event_publisher].publish events, owner_data
     end
 
     def owner_data
@@ -50,14 +66,10 @@ module Supervisors::Services::Instagram
       @client ||= ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
     end
 
-    def publisher
-      Actor[:event_publisher]
-    end
-
     def callback_url(opts={})
       domain = opts[:domain] || ENV['CRAWLER_HTTP_DOMAIN']
       port   = opts[:port]   || ENV['CRAWLER_HTTP_PORT']
-      path   = File.join ENV['CRAWLER_HTTP_PREFIX'], 'instagram', 'media', "#{@path.brand.id}-#{@path.brand.name}", "#{@path.embed.id}-#{@path.embed.name}", "#{@path.service.id}"
+      path   = File.join ENV['CRAWLER_HTTP_PREFIX'], 'instagram', 'media'
 
       "http://#{domain}:#{port}#{path}"
     end

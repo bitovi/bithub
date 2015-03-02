@@ -5,7 +5,10 @@ class Service < ActiveRecord::Base
   validate :service_config_validator
 
   belongs_to :embed
-  has_and_belongs_to_many :entities
+
+  has_many :service_entities
+  has_many :entities, through: :service_entities
+
   has_many :service_errors
 
   after_create  { notify_crawler(:start) }
@@ -14,6 +17,14 @@ class Service < ActiveRecord::Base
 
   def brand_identities
     self.brand.identities.where(:provider => feed_name).all
+  end
+
+  def clear_linked_entities
+    links = ServiceEntity.where(service_id: id).all 
+    links.each do |l|
+      l.entity.destroy if l.entity.has_only_one_service?
+      l.destroy
+    end
   end
 
   def has_errors?
@@ -74,7 +85,8 @@ class Service < ActiveRecord::Base
       service: {
         id: id,
         feed_name: feed_name,
-        type_name: type_name
+        type_name: type_name,
+        config: service_config.data
       },
       signature: "service_#{action}",
       action: action

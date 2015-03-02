@@ -1,1 +1,1 @@
-steal('components/hub-list', 'components/payments', 'components/settings', 'components/sidebar', 'components/suggestions', 'bits');
+steal('components/hub-list', 'components/payments', 'components/settings', 'components/sidebar', 'components/suggestions', 'components/analytics', 'bits');

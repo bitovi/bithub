@@ -31,7 +31,19 @@ module Supervisors::Services::Facebook
       publish preloaded_items, owner_data
     end
 
+    def cleanup
+      unsubscribe_page
+    end
+
     private
+
+    def registry
+      Actor[:subscription_registry]
+    end
+
+    def publish(events, owner_data)
+      Actor[:event_publisher].publish events, owner_data
+    end
 
     def owner_data
       OwnerData.new\
@@ -41,11 +53,7 @@ module Supervisors::Services::Facebook
         @path.embed.name,
         @path.service.id,
         'facebook',
-        'page_feed' # !!! probably irrelevant
-    end
-
-    def publish(items, owner_data)
-      Actor[:event_publisher].publish items, owner_data
+        'page'
     end
 
     def page_id
@@ -62,14 +70,23 @@ module Supervisors::Services::Facebook
 
     def subscribe_page
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'post'
+      registry.subscribe 'facebook', 'page', page_id, pack_subscription(owner_data, page_token)
     end
 
     def unsubscribe_page
+      registry.unsubscribe 'facebook', 'page', page_id, pack_subscription(owner_data, page_token)
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'delete'
     end
 
     def preloaded_items
       Fetchers::Facebook::GetFeed.fetch client, page_id
+    end
+
+    def pack_subscription(owner_data, access_token)
+      {
+        owner_data: owner_data,
+        access_token: access_token
+      }
     end
 
   end

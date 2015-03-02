@@ -15,7 +15,34 @@ function(Model, _keys){
 	var isConfigError = function(klass){
 		return (/configerror/).test(klass.toLowerCase());
 	}
+
+	var convertHexToRgb = function(hex){
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		var r, g, b;
+		if(result){
+			r = parseInt(result[1], 16);
+			g = parseInt(result[2], 16);
+			b = parseInt(result[3], 16);
+			var res = 'rgb(' + r + ',' + g + ',' + b + ')';
+			return res;
+		}
+		return 'rgb(0,0,0)';
+	}
 	
+	var GRAPH_COLORS = {
+		disqus : convertHexToRgb('#ffe842'),
+		facebook : convertHexToRgb('#80a2bd'),
+		foursquare : convertHexToRgb('#655557'),
+		github : convertHexToRgb('#191749'),
+		instagram : convertHexToRgb('#450d0b'),
+		meetup : convertHexToRgb('#062233'),
+		rss : convertHexToRgb('#183a37'),
+		stackexchange : convertHexToRgb('#95b26e'),
+		tumblr : convertHexToRgb('#c44900'),
+		twitter : convertHexToRgb('#432534')
+	}
+
+
 	var TYPES = {
 		disqus : {
 			forum : 'Forum'
@@ -126,6 +153,12 @@ function(Model, _keys){
 
 	var Service = Model.extend({
 		resource : '/api/v3/services',
+		destroyIncludingItems : function(id){
+			return $.ajax({
+				type: 'DELETE',
+				url : '/api/v3/services/' + id + '?clear_rels=true'
+			});
+		},
 		feeds : FEEDS,
 		needsOAuth : NEEDS_OAUTH,
 		createEmptyService : function(feed){
@@ -169,6 +202,7 @@ function(Model, _keys){
 					var keys = _keys(TYPES[val]);
 
 					this.attr('type_name', keys.length === 1 ? keys[0] : "");
+					this.attr('graphColor', GRAPH_COLORS[val]);
 
 					return val;
 				}
@@ -269,6 +303,12 @@ function(Model, _keys){
 		},
 		clearErrors : function(){
 			this.removeAttr('error');
+		},
+		destroyIncludingItems : function(){
+			var self = this;
+			this.constructor.destroyIncludingItems(this.attr('id')).then(function(){
+				self.destroyed();
+			});
 		}
 	});
 	
