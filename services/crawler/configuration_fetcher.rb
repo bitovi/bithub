@@ -1,7 +1,5 @@
 require 'httparty'
-require 'supervisors/support/brand_info'
-require 'supervisors/support/embed_info'
-require 'supervisors/support/service_info'
+require 'supervisors/node_types'
 
 class ConfigurationFetcher
   include Celluloid
