@@ -48,7 +48,7 @@ Celluloid.logger = logger
 class Listener < Celluloid::SupervisionGroup
   supervise SubscriptionRegistry, as: :subscription_registry
   supervise ConfigurationFetcher, as: :configurator
-  supervise CommandHandler,       as: :commander, args: [:main]
+  supervise CommandHandler,       as: :commander
   supervise EventPublisher,       as: :event_publisher
   supervise ErrorPublisher,       as: :error_publisher
   supervise HttpServer,           as: :http_server, args: [{host: '0.0.0.0'}]
