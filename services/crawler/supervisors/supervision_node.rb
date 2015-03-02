@@ -1,12 +1,8 @@
-require_relative 'node'
-require_relative 'brand_info'
-require_relative 'embed_info'
-require_relative 'service_info'
-require_relative 'endpoint_info'
+require_relative 'node_types'
 
 class SupervisionNode
   SEPARATOR = '->'
-  LEVELS = [MainNode, BrandInfo, EmbedInfo, ServiceInfo]
+  LEVELS = [MainInfo, BrandInfo, EmbedInfo, ServiceInfo]
 
   def self.from_message(nodes)
     if !(curr = nodes.pop).nil?
@@ -73,7 +69,7 @@ class SupervisionNode
 
   # Shortcuts
 
-  def main_info; find(MainNode); end
+  def main_info; find(MainInfo); end
   alias_method :brand, :main_info
 
   def brand_info; find(BrandInfo); end
