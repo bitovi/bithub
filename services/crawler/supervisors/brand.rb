@@ -1,4 +1,4 @@
-require_relative 'embed'
+require 'supervisors/embed'
 
 module Supervisors
   class Brand
@@ -7,50 +7,31 @@ module Supervisors
 
     def initialize(path, brand_info)
       @path = SupervisionNode.new(path, brand_info)
-      boot
+      @embeds = SupervisionGroup.new
     end
 
-    def boot
-      Celluloid.logger.info "Booting B #{@path.actor_name}"
-      @embeds = SupervisionGroup.new
+    def boot(brand_config)
       brand_config.fetch(:embeds).each do |e|
         ei = EmbedInfo.new(e.fetch(:id), e.fetch(:name))
-        start_embed_supervisor(ei)
+        actor_name = initialize_next_level_supervisor(ei, Supervisors::Embed)
+        Actor[actor_name].boot(e)
       end
     end
 
-    def start_embed_supervisor(ei)
-      @embeds.supervise_as(
-        @path.next_level(ei).actor_name,
-        Supervisors::Embed,
-        *[@path, ei]
-      )
-    end
-
-    def stop_embed_supervisor(ei)
-      Celluloid.logger.info "Killing E #{@path.next_level(ei).actor_name}"
-      if (a = Actor[@path.next_level(ei).actor_name])
-        a.terminate_cascading
-      end
-    end
-
-    def execute_cmd(target, action)
-      if action == :stop
-        stop_embed_supervisor(target.node)
-      elsif action == :start
-        start_embed_supervisor(target.node)
+    def handle_cmd(target, action)
+      if action == :start
+        if !among_children?(target.embed)
+          initialize_next_level_supervisor(target.embed, Supervisors::Embed)
+        end
+        propagate_cmd(target, action)
+      elsif action == :stop
+        terminate_next_level_supervisor(target.embed)
       elsif action == :restart
-        stop_embed_supervisor(target.node)
-        start_embed_supervisor(target.node)
+        propagate_cmd(target, restart)
       end
     end
 
     private
-
     def _childs; @embeds; end
-
-    def brand_config
-      Actor[:configurator].brand_config(*@path.rootless)
-    end
   end
 end

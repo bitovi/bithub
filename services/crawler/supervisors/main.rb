@@ -1,6 +1,6 @@
-require_relative 'support/propagation'
-require_relative 'support/supervision_node'
-require_relative 'brand'
+require 'supervisors/propagation'
+require 'supervisors/supervision_node'
+require 'supervisors/brand'
 
 module Supervisors
   class Main
@@ -8,51 +8,39 @@ module Supervisors
     include Propagation
 
     def initialize
-      @path = SupervisionNode.new(nil, MainNode.new)
-      boot
+      @path = SupervisionNode.new(nil, MainInfo.new)
+      @brands = SupervisionGroup.new
     end
 
     def boot
-      Celluloid.logger.info "Booting M #{@path.actor_name}"
-      @brands = SupervisionGroup.new
-      config.fetch(:brands).each do |b|
+      info "Starting ROOT/MAIN supervisor"
+      info config_tree
+
+      config_tree.fetch(:brands).each do |b|
         bi = BrandInfo.new(b.fetch(:id), b.fetch(:name))
-        start_brand_supervisor(bi)
+        actor_name = initialize_next_level_supervisor(bi, Supervisors::Brand)
+        Actor[actor_name].boot(b)
       end
     end
 
-    def start_brand_supervisor(bi)
-      @brands.supervise_as(
-        @path.next_level(bi).actor_name,
-        Supervisors::Brand,
-        *[@path, bi]
-      )
-    end
-
-    def stop_brand_supervisor(bi)
-      Celluloid.logger.info "Killing B #{@path.next_level(bi).actor_name}"
-      if (a = Actor[@path.next_level(bi).actor_name])
-        a.terminate_cascading
-      end
-    end
-
-    def execute_cmd(target, action)
-      if action == :stop
-        stop_brand_supervisor(target.node)
-      elsif action == :start
-        start_brand_supervisor(target.node)
+    def handle_cmd(target, action)
+      if action == :start
+        if !among_children?(target.brand)
+          initialize_next_level_supervisor(target.brand, Supervisors::Brand)
+        end
+        propagate_cmd(target, action)
+      elsif action == :stop
+        terminate_next_level_supervisor(target.brand)
       elsif action == :restart
-        stop_embed_supervisor(target.node)
-        start_embed_supervisor(target.node)
+        propagate_cmd(target, action)
       end
+    end
+
+    def config_tree
+      @config_tree ||= Actor[:configurator].config
     end
 
     private
-
     def _childs; @brands; end
-
-    def config
-      Actor[:configurator].config
-    end
   end
 end
