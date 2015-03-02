@@ -9,19 +9,10 @@ module Supervisors
 
     def initialize(path, service_info)
       @path = SupervisionNode.new(path, service_info)
-      boot
-    end
-
-    def boot
-      Celluloid.logger.info "Booting S #{@path.actor_name}"
-    end
-
-    def execute_cmd(action)
-      raise "Executing command on service level. Very bad. This is wrong!"
+      @endpoints = SupervisionGroup.new
     end
 
     private
-
     def _childs; @endpoints; end
 
     def static_config
@@ -29,7 +20,7 @@ module Supervisors
     end
 
     def service_config
-      @service_config ||= Actor[:configurator].service_config(*@path.rootless).fetch(:config)
+      @path.service_info.config
     end
 
     def token
