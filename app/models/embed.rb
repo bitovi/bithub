@@ -14,7 +14,6 @@ class Embed < ActiveRecord::Base
   has_many :events
 
   after_create { notify_crawler(:start) }
-  after_update { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
 
   def approved_entities
