@@ -1,6 +1,4 @@
-require_relative 'brand_info'
-require_relative 'embed_info'
-require_relative 'service_info'
+require 'supervisors/node_types'
 
 class OwnerData < Struct.new(:brand, :embed, :service)
 
