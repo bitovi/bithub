@@ -1,8 +1,8 @@
-require_relative 'node_types'
+require 'supervisors/node_types/node_types'
 
 class SupervisionNode
-  SEPARATOR = '->'
   LEVELS = [MainInfo, BrandInfo, EmbedInfo, ServiceInfo]
+  SEPARATOR = '->'
 
   def self.from_message(nodes)
     if !(curr = nodes.pop).nil?
