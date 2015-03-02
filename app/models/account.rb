@@ -3,9 +3,8 @@ class Account < ActiveRecord::Base
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :omniauthable
-
-  devise :confirmable if ENV['RAILS_ENV'] != 'development'
+         :omniauthable,
+         :confirmable
 
   rolify :role_cname => 'AccountRole'
 

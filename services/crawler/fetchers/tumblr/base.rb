@@ -11,6 +11,7 @@ module Fetchers
 
       def initialize(opts={})
         @client = create_client opts
+        @limit  = opts[:limit] || LIMIT
       end
 
       private

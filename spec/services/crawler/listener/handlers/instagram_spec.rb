@@ -1,4 +1,4 @@
-require_relative 'feeds_helper'
+require_relative 'handlers_helper'
 
 require 'events/instagram/media_event'
 require 'fetchers/instagram/tag_recent_media'
