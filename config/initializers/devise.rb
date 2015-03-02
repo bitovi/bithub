@@ -57,6 +57,7 @@ Devise.setup do |config|
   # Mailer
 
   config.mailer_sender = 'password.verifier@bithub.com'
+  Devise::Mailer.layout 'mailer'
 
   # config.case_insensitive_keys = [ :email ]
   # config.strip_whitespace_keys = [ :email ]
@@ -79,7 +80,7 @@ Devise.setup do |config|
   # Confirmable
 
   config.reconfirmable = true
-  config.allow_unconfirmed_access_for = 1.day
+  config.allow_unconfirmed_access_for = 1.hour
   # config.confirm_within = 3.days
 
   # Rememberable
