@@ -12,23 +12,24 @@ module Supervisors
 
     def boot(brand_config)
       brand_config.fetch(:embeds).each do |e|
-        ei = EmbedInfo.new(e.fetch(:id), e.fetch(:name))
+        ei = NodeTypes::EmbedInfo.new(e.fetch(:id), e.fetch(:name))
         actor_name = initialize_next_level_supervisor(ei, Supervisors::Embed)
         Actor[actor_name].boot(e)
       end
     end
 
     def handle_cmd(target, action)
-      if action == :start
-        if !among_children?(target.embed)
-          initialize_next_level_supervisor(target.embed, Supervisors::Embed)
+      if target.node.is_a?(NodeTypes::EmbedInfo)
+        if action == :start
+          initialize_next_level_supervisor(target.node, Supervisors::Embed)
+        elsif action == :stop
+          terminate_next_level_supervisor(target.node)
         end
+      else
         propagate_cmd(target, action)
-      elsif action == :stop
-        terminate_next_level_supervisor(target.embed)
-      elsif action == :restart
-        propagate_cmd(target, restart)
       end
+      # debug "#{target.embed} is #{name}'s children? #{among_children?(target.embed)}"
+      # initialize_next_level_supervisor(target.embed, Supervisors::Embed) if !among_children?(target.embed)
     end
 
     private
