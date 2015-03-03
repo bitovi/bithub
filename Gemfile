@@ -121,6 +121,7 @@ end
 # --------
 # services
 # --------
+
 gem 'celluloid', '~> 0.16'
 gem 'celluloid-io'
 gem 'nokogiri', '~> 1.6'
@@ -129,3 +130,4 @@ gem 'vetinari'
 gem 'newrelic_rpm'
 gem 'sequel'
 gem 'dotenv'
+gem 'colorize'

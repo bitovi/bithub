@@ -573,6 +573,7 @@ DEPENDENCIES
   celluloid (~> 0.16)
   celluloid-io
   codeclimate-test-reporter
+  colorize
   database_cleaner
   devise (~> 3.2)
   dotenv
