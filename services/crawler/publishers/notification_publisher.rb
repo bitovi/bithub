@@ -3,6 +3,7 @@ require 'rabbit_factory'
 
 class NotificationPublisher
   include Celluloid
+  include Celluloid::Logger
 
   def initialize
     Celluloid.logger.info 'Initializing Notification publisher'
@@ -16,13 +17,13 @@ class NotificationPublisher
   end
 
   def publish_to_frontend(notif)
-    Celluloid.logger.info "Publishing COMMAND #{notif.fetch(:payload)} to frontend"
+    info "Publishing COMMAND #{notif.fetch(:payload)} to frontend"
     @x_frontend.publish(notif.to_json, routing_key: 'services')
   end
   alias_method :publish, :publish_to_frontend
 
   def publish_to_backend(notif)
-    Celluloid.logger.info "Publishing COMMAND #{notif.fetch(:payload)} to backend"
+    info "Publishing COMMAND #{notif.fetch(:payload)} to backend"
     @x_backend.publish(notif.to_json, routing_key: 'commands')
   end
 end
