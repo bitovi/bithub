@@ -1,15 +1,15 @@
-require 'supervisors/node_types'
+require 'supervisors/node_types/node_types'
 
 class OwnerData
 
   def initialize(
-    brand_id,
-    brand_name,
-    embed_id,
-    embed_name,
-    service_id,
-    service_feed,
-    service_type
+    brand_id\
+    , brand_name\
+    , embed_id\
+    , embed_name\
+    , service_id\
+    , service_feed\
+    , service_type\
   )
 
     @brand   = BrandInfo.new brand_id.to_i, brand_name

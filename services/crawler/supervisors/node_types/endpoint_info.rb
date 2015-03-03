@@ -1,32 +1,34 @@
-class EndpointInfo < Node
-  def initialize(type = nil, id)
-    @type = type
-    @id = id
-  end
-  attr_reader :type
-  
-  def id
-    @id
-  end
-  alias_method :name, :id
+module NodeTypes
+  class EndpointInfo < Node
+    def initialize(type = nil, id)
+      @type = type
+      @id = id
+    end
+    attr_reader :type
 
-  def ==(other)
-    @id == other.id && @type == other.type
-  end
+    def id
+      @id
+    end
+    alias_method :name, :id
 
-  def to_a
-    [type, id]
-  end
+    def ==(other)
+      @id == other.id && @type == other.type
+    end
 
-  def to_s
-    [['brand', type].compact.join('/'), id].join('_')
-  end
+    def to_a
+      [type, id]
+    end
 
-  def self.from_s(str)
-    fail "shouldn't ever be here"
-  end
+    def to_s
+      [['b', type].compact.join('/'), id].join('_')
+    end
 
-  def self.from_msg(msg)
-    fail "shouldn't ever be here"
+    def self.from_s(str)
+      fail "shouldn't ever be here"
+    end
+
+    def self.from_message(msg)
+      fail "shouldn't ever be here"
+    end
   end
 end

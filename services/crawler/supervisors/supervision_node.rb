@@ -1,13 +1,23 @@
 require 'supervisors/node_types/node_types'
 
 class SupervisionNode
-  LEVELS = [MainInfo, BrandInfo, EmbedInfo, ServiceInfo]
   SEPARATOR = '->'
+  
+  def self.from_message(msg)
+    tree_from_nodes(nodes_from_message(msg))
+  end
 
-  def self.from_message(nodes)
+  def self.nodes_from_message(msg)
+    msg.merge({main: {}}).select do |key, val|
+      val.respond_to? :values
+    end.map do |key, hsh|
+      NodeTypes.const_get((key.to_s + '_info').camel_case).from_message(hsh)
+    end.compact.sort
+  end
+
+  def self.tree_from_nodes(nodes)
     if !(curr = nodes.pop).nil?
-      node = LEVELS[nodes.length].from_msg(curr)
-      SupervisionNode.new(from_message(nodes), node)
+      SupervisionNode.new(tree_from_nodes(nodes), curr)
     end
   end
 
@@ -23,6 +33,10 @@ class SupervisionNode
 
   def path
     (root? ? [@node] : @parent.path + [@node]).compact
+  end
+
+  def depth
+    path.length-1
   end
 
   def rootless(path_kind = :path)
@@ -55,15 +69,15 @@ class SupervisionNode
 
   # Shortcuts
 
-  def main_info; find(MainInfo); end
+  def main_info; find(NodeTypes::MainInfo); end
   alias_method :brand, :main_info
 
-  def brand_info; find(BrandInfo); end
+  def brand_info; find(NodeTypes::BrandInfo); end
   alias_method :brand, :brand_info
 
-  def embed_info; find(EmbedInfo); end
+  def embed_info; find(NodeTypes::EmbedInfo); end
   alias_method :embed, :embed_info
 
-  def service_info; find(ServiceInfo); end
+  def service_info; find(NodeTypes::ServiceInfo); end
   alias_method :service, :service_info
 end
