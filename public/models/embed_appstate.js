@@ -61,6 +61,9 @@ function(Map, Bit, connectLiveService){
 		isPublic : function(){
 			return !this.isAdmin();
 		},
+		showPoweredBy : function(){
+			return this.isPublic();
+		},
 		reset : function(){
 			can.batch.start();
 			this.setDefaultParams();

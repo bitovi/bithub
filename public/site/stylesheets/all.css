@@ -7573,7 +7573,7 @@ hr.feature-hr {
   /* line 174, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
   .feature-left h3, .feature-right h3 {
     margin-top: 5px;
-    font-style: oblique;
+    font-size: 90%;
     color: #666; }
 
 /* line 180, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
@@ -7666,7 +7666,8 @@ hr {
   font-size: 130%;
   border: 1px solid #dfdfdf;
   text-align: center;
-  font-family: 'Raleway', sans-serif; }
+  font-family: 'Raleway', sans-serif;
+  min-height: 503px; }
   /* line 258, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
   .pricing-wrap h3 {
     margin: 0;
@@ -7705,6 +7706,12 @@ hr {
       float: left;
       margin-left: 15px; }
 
+.pricing-wrap ul {
+  font-size: 16px;
+}
+.plan-primary .pricing-wrap ul {
+  font-size: 18px;
+}
 /* line 297, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
 .steps {
   font-family: 'Raleway', sans-serif; }
