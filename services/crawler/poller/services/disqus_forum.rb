@@ -3,11 +3,11 @@ require 'supervisors/service'
 module Supervisors::Services::Disqus
   class Forum < Supervisors::Service
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('comments', forum_url)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('comments', forum_url)).actor_name,
         Poller, *[
           @path,
           Fetchers::Disqus::Comments.new(api_key: api_key, forum: forum_url),

@@ -1,13 +1,12 @@
 require 'instagram'
 require 'active_support/core_ext/string'
-require 'supervisors/support/owner_data'
 
 module Supervisors::Services::Instagram
   class Base < Supervisors::Service
 
     VALID_OBJECTS = %w(user tag location geography)
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       begin

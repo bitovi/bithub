@@ -1,11 +1,11 @@
 module Supervisors::Services::Rss
   class Site < Supervisors::Service
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new(url)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new(url)).actor_name,
         Poller, *[
           @path,
           Fetchers::Rss::Rss.new(url),
