@@ -1,10 +1,6 @@
 class FacebookAppSubscriber
   include Celluloid
 
-  def initialize(logger)
-    @logger = logger || Celluloid.logger
-  end
-
   def client_rt
     @client_rt ||= Koala::Facebook::RealtimeUpdates.new\
       app_id: ENV['FACEBOOK_CLIENT_ID'],

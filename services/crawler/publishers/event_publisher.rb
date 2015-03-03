@@ -4,9 +4,10 @@ require 'rabbit_factory'
 
 class EventPublisher
   include Celluloid
+  include Celluloid::Logger
 
   def initialize(opts={})
-    Celluloid.logger.info 'Initializing Entity publisher'
+    info 'Initializing Entity publisher'
 
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
@@ -24,7 +25,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' #{new_events.size} Events"
+    info "Publisher for '#{owner_data.brand.name}' #{new_events.size} Events"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -42,7 +43,7 @@ class EventPublisher
       process_one e, owner_data, decorator
     end.compact
 
-    Celluloid.logger.info "Publisher for '#{owner_data.brand.name}' processed #{processed_events.count} Events"
+    info "Publisher for '#{owner_data.brand.name}' processed #{processed_events.count} Events"
     processed_events
   end
 
@@ -71,7 +72,7 @@ class EventPublisher
     decorator.decorate processed
   # TODO!!!: Publisher shouldn't be handling dispatching errors
   rescue Events::DispatchError => e
-    Celluloid.logger.error e
+    error e
     nil # if we can't disptch, return nil so it will end up filtered out
   end
 end

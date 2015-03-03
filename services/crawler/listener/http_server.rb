@@ -5,6 +5,7 @@ require_relative 'handlers/all'
 require_relative 'support/facebook_app_subscriber'
 
 class HttpServer < Reel::Server::HTTP
+  include Celluloid::Logger
 
   attr_reader :routes
 
@@ -22,7 +23,7 @@ class HttpServer < Reel::Server::HTTP
     @router    = Router.new prefix: path_prefix
 
     super(host, port, &method(:on_connection))
-    Celluloid.logger.info "HTTP server listening on #{host}:#{port}"
+    info "HTTP server listening on #{host}:#{port}"
 
     boot
   end
@@ -43,13 +44,13 @@ class HttpServer < Reel::Server::HTTP
     register_route :foursquare_handler,              ::Handlers::Foursquare.route
 
     after(5) do
-      FacebookAppSubscriber.new(@logger).subscribe
+      FacebookAppSubscriber.new.subscribe unless ENV['ENV'] == 'development'
     end
   end
 
   def on_connection(connection)
     connection.each_request do |req|
-      Celluloid.logger.info "#{req.method} #{req.path}"
+      info "#{req.method} #{req.path}"
       route req
     end
   end

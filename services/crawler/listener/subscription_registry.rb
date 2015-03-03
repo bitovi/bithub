@@ -1,4 +1,4 @@
-require 'supervisors/support/owner_data'
+require 'supervisors/owner_data'
 
 class SubscriptionRegistry
   include Celluloid
