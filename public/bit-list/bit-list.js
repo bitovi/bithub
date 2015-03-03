@@ -43,7 +43,8 @@ function(Control, initView, Bit, _map){
 
 			this.element.html(initView({
 				isLoading : this.options.isLoading,
-				columnCount : this.options.columnCount
+				columnCount : this.options.columnCount,
+				state : this.options.state
 			}));
 
 			this.__hasItemsOnTop = false;

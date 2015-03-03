@@ -61,15 +61,52 @@
 @import "/bower_components/fontawesome/less/stacked.less";
 @import "/bower_components/fontawesome/less/icons.less";
 
-@import "/style/hub/bithub-social-icons.less";
 body {
 	background: transparent;
 }
+
+.powered-by {
+	border-radius: 3px;
+	background: rgba(0,0,0,0.8);
+	color: white;
+	position: fixed;
+	bottom: 5px;
+	left: 50%;
+	width: 200px;
+	height: 30px;
+	margin-left: -100px;
+	line-height: 30px;
+	padding: 0 5px;
+	text-align: center;
+	a {
+		font-weight: bold;
+	}
+}
+
+body.dark-theme {
+	.powered-by {
+		background: rgba(255,255,255,0.8);
+		color: #333;
+		a {
+			color: #b53305;
+		}
+	}
+}
+
+body.light-theme {
+	.powered-by a:hover {
+		color: #86B7E2;
+	}
+}
+
 body.page-context {
 	&.dark-theme {
 		background: #111;
+		
 	}
 	&.light-theme {
 		background: #f6f6f6;
+		
 	}
 }
+

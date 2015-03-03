@@ -5,3 +5,9 @@
 		<i class="fa-circle-o-notch fa fa-spin"></i>
 	</div>
 {{/if}}
+
+{{#if state.showPoweredBy}}
+	<div class="powered-by">
+		Powered by <a href="http://beta.bithub.com">BitHub</a>
+	</div>
+{{/if}}
