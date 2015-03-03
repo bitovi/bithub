@@ -1,40 +1,52 @@
+require 'colorize'
+
 module Supervisors
   module Propagation
     include Celluloid::Logger
-    
+
     # Action not meant for this level,
-    # propagate further down
+    # propagate further down where routing
+    # matches (actor names ...)
     def propagate_cmd(target, action)
-      children.each do |c|
+      children.select do |c|
+        target.to_s.include?(c.name.to_s)
+      end.each do |c| 
         c.handle_cmd(target, action) if c.respond_to?(:handle_cmd, true)
       end
     end
     
     def initialize_next_level_supervisor(node_info, actor_class)
-      info "Starting next level #{@path.next_level(node_info).actor_name}"
-      @brands.supervise_as(
+      # info "Starting #{node_info.klassname} #{@path.next_level(node_info).actor_name}"
+      
+      debug "STARTING #{node_info.to_s.colorize(:red)}"
+      _childs.supervise_as(
         (actor_name = @path.next_level(node_info).actor_name),
         actor_class,
         *[@path, node_info]
       )
-      debug "#{name}: #{children_names}"
+      debug "STARTED #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
+
       actor_name
     end
     
-    def terminate_next_level_supervisor(bi)
-      info "Killing next level #{@path.next_level(bi).actor_name}"
-      if (a = Actor[@path.next_level(bi).actor_name])
+    def terminate_next_level_supervisor(node_info)
+      # info "Killing next level #{@path.next_level(bi).actor_name}"
+
+      debug "TERMINATING #{node_info.to_s.colorize(:red)}"
+      if (a = Celluloid::Actor[@path.next_level(node_info).actor_name])
         a.terminate_cascading
       end
-      debug "#{name}: #{children_names}"
+      debug "TERMINATED #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
+
+      nil
     end
 
-    def among_children?(target)
-      children_names.include?(target.actor_name)
+    def among_children?(node)
+      children_names.include?(@path.next_level(node).actor_name)
     end
     
-    def i_am_parent?(target)
-      target.parent.actor_name == name
+    def i_am_parent?(node)
+      node.parent.actor_name == name
     end
     
     def children

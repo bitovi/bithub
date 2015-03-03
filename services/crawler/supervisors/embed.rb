@@ -12,16 +12,16 @@ module Supervisors
 
     def boot(embed_config)
       embed_config.fetch(:services).each do |s|
-        si = ServiceInfo.new(
-          s.fetch(:id)
-          , s.fetch(:feed_name)
-          , s.fetch(:type_name)
-          , s.fetch(:config)
+
+        si = NodeTypes::ServiceInfo.new(
+          s.fetch(:id)\
+          , s.fetch(:feed_name)\
+          , s.fetch(:type_name)\
+          , s.fetch(:config)\
         )
 
         if (ssc = service_supervisor_class(si))
-          actor_name = initialize_next_level_supervisor(si, ssc)
-          Actor[actor_name].boot(s)
+          initialize_next_level_supervisor(si, ssc)
         else
           info "Don't know how to boot service #{si}"
         end
@@ -29,24 +29,24 @@ module Supervisors
     end
 
     def handle_cmd(target, action)
-      if (ssc = service_supervisor_class(target.service))
-        if action == :start && !among_children?(target.service)
-          initialize_next_level_supervisor(target.service, ssc)
+      if target.node.is_a?(NodeTypes::ServiceInfo) && (ssc = service_supervisor_class(target.node))
+        if action == :start
+          initialize_next_level_supervisor(target.node, ssc)
         elsif action == :stop
-          terminate_next_level_supervisor(target.service)
+          terminate_next_level_supervisor(target.node)
         elsif action == :restart
-          terminate_next_level_supervisor(target.service)
-          initialize_next_level_supervisor(target.service, ssc)
+          terminate_next_level_supervisor(target.node)
+          initialize_next_level_supervisor(target.node, ssc)
         end
       else
-        info "Don't know how to handle service #{target.service}"
+        info "Don't know how to handle commands for #{target.node}"
       end
     end
 
     private
     def _childs; @services; end
 
-    def service_supervisor(si)
+    def service_supervisor_class(si)
       feed_name = si.feed_name.camel_case.to_sym
       type_name = si.type_name.camel_case.to_sym
 
