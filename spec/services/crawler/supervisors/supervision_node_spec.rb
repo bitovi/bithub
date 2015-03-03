@@ -1,74 +1,107 @@
 require 'spec_helper'
-require 'services/crawler/supervisors/support/supervision_node'
+require 'services/crawler/supervisors/supervision_node'
 
 describe SupervisionNode do
+  let(:msg) do
+    {
+      brand: { id: 1501, name: 'bitovi' },
+      main: { watever: 'main' },
+      service: { id: 3396, feed_name: 'github', type_name: 'repo', config: {}},
+      embed: { id: 2452, name: 'code' }
+    }
+  end
+
   before do
-    @sup_tree = SupervisionNode.new(
-      SupervisionNode.new(
-        SupervisionNode.new(
-          SupervisionNode.new(
-            nil, @root = MainNode.new
-          ), @bi = BrandInfo.new(1501, 'bitovi')
-        ), @ei = EmbedInfo.new(2452, 'code')
-      ), @si = ServiceInfo.new(3396, 'github', 'repo')
+    @s_node = SupervisionNode.new(
+      @e_node = SupervisionNode.new(
+        @b_node = SupervisionNode.new(
+          @m_node = SupervisionNode.new(
+            nil, @root = NodeTypes::MainInfo.new
+          ), @bi = NodeTypes::BrandInfo.new(1501, 'bitovi')
+        ), @ei = NodeTypes::EmbedInfo.new(2452, 'code')
+      ), @si = NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
     )
   end
 
-  describe '.from_message' do
-    it 'recursively traverses the message scope, creating Tree nodes' do
-      msg_arr = [ 'main',
-        { id: 1501, name: 'bitovi' },
-        { id: 2452, name: 'code' },
-        { id: 3396, feed_name: 'github', type_name: 'repo' }
-      ]
-      tree = SupervisionNode.from_message(msg_arr)
-      expect(tree.string_path).to eq %w(main brand/1501 embed/2452 service/3396)
-      expect(tree.brand.to_s).to eq 'brand/1501'
-      expect(tree.embed.to_s).to eq 'embed/2452'
-      expect(tree.service.to_s).to eq 'service/3396'
-      expect(tree.actor_name).to eq 'main->brand/1501->embed/2452->service/3396'.to_sym
-    end
-  end
+  describe '.nodes_from_message' do
+    it 'transforms the message into an ordered array of NodeTypes' do
+    nodes = SupervisionNode.nodes_from_message(msg)
 
-  describe '#string_path' do
-    it 'recursively calculates the current path, returning the string representation of nodes' do
-      expect(@sup_tree.string_path).to eq %w(main brand/1501 embed/2452 service/3396)
+    expect(nodes).to eq([
+      NodeTypes::MainInfo.from_message(msg[:main])\
+      , NodeTypes::BrandInfo.from_message(msg[:brand])\
+      , NodeTypes::EmbedInfo.from_message(msg[:embed])\
+      , NodeTypes::ServiceInfo.from_message(msg[:service])
+    ])
     end
   end
   
-  describe 'path' do
+  describe '.tree_from_nodes' do
+    it 'given a list of NodeTypes it recursively traverses it, creating SupervisionNode nodes' do
+      nodes = SupervisionNode.nodes_from_message(msg)
+
+      leaf = SupervisionNode.tree_from_nodes(nodes)
+      expect(leaf.node).to eq NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
+      expect(leaf.string_path).to eq %w(main b/1501 e/2452 s/3396)
+      expect(leaf.brand.to_s).to eq 'b/1501'
+      expect(leaf.embed.to_s).to eq 'e/2452'
+      expect(leaf.service.to_s).to eq 's/3396'
+      expect(leaf.actor_name).to eq 'main->b/1501->e/2452->s/3396'.to_sym
+    end
+  end
+  
+  describe '#string_path' do
+    it 'recursively calculates the current path, returning the string representation of nodes' do
+      expect(@s_node.string_path).to eq %w(main b/1501 e/2452 s/3396)
+    end
+  end
+  
+  describe '#path' do
     it 'recursively calculates the current path, returning the unprocessed nodes' do
-      expect(@sup_tree.path).to eq [@root, @bi, @ei, @si]
+      expect(@s_node.path).to eq [@root, @bi, @ei, @si]
+    end
+  end
+  
+  describe '#depth' do
+    it 'calculates the tree-depth of the current node' do
+      expect(@s_node.depth).to eq 3
     end
   end
 
-  describe 'rootless' do
+  describe '#rootless' do
     it 'recursively calculates the current path, omitting the root node' do
-      expect(@sup_tree.rootless).to eq [@bi, @ei, @si]
+      expect(@s_node.rootless).to eq [@bi, @ei, @si]
+    end
+  end
+
+  describe '#root?' do
+    it 'determines whether a given node is the root node' do
+      expect(@m_node.root?).to be_truthy
     end
   end
 
   describe '#actor_name' do
     it 'converts the current path to an array of strings that identify an actor' do
-      expect(@sup_tree.actor_name).to eq :'main->brand/1501->embed/2452->service/3396'
+      expect(@s_node.actor_name).to eq :'main->b/1501->e/2452->s/3396'
     end
   end
 
   describe '#brand_info' do
     it 'finds the brand information in the tree' do
-      expect(@sup_tree.brand).to eq BrandInfo.new(1501, 'bitovi')
+      expect(@s_node.brand_info).to eq NodeTypes::BrandInfo.new(1501, 'bitovi')
     end
   end
 
   describe '#embed_info' do
     it 'finds the embed information in the tree' do
-      expect(@sup_tree.embed).to eq EmbedInfo.new(2452, 'code')
+      expect(@s_node.embed_info).to eq NodeTypes::EmbedInfo.new(2452, 'code')
     end
   end
 
   describe '#service_info' do
     it 'finds the service information in the tree' do
-      expect(@sup_tree.service).to eq ServiceInfo.new(3396, 'github', 'repo')
+      expect(@s_node.service_info).to eq NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
     end
   end
+
 end
