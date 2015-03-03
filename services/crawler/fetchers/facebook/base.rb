@@ -1,4 +1,5 @@
 require 'koala'
+require_relative '../protocol'
 
 module Fetchers
   module Facebook
