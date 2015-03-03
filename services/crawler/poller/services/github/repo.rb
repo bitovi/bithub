@@ -2,11 +2,11 @@ module Supervisors::Services::Github
   class Repo < Supervisors::Service
     include Supervisors::Services::Github::Common
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('repo_activity', repo_name)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('repo_activity', repo_name)).actor_name,
         Poller, *[
           @path,
           Fetchers::Github::RepoActivity.new(client, { user_repo: repo_name }),
@@ -14,7 +14,7 @@ module Supervisors::Services::Github
         ])
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('repo_issues', repo_name)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('repo_issues', repo_name)).actor_name,
         Poller, *[
           @path,
           Fetchers::Github::RepoIssues.new(client, { user_repo: repo_name }),
@@ -22,7 +22,7 @@ module Supervisors::Services::Github
         ])
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('repo_issue_comments', repo_name)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('repo_issue_comments', repo_name)).actor_name,
         Poller, *[
           @path,
           Fetchers::Github::RepoPullRequests.new(client, { user_repo: repo_name }),
@@ -31,7 +31,7 @@ module Supervisors::Services::Github
 
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('repo_pull_requests', repo_name)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('repo_pull_requests', repo_name)).actor_name,
         Poller, *[
           @path,
           Fetchers::Github::RepoIssuesComments.new(client, { user_repo: repo_name }),
@@ -40,7 +40,7 @@ module Supervisors::Services::Github
 
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('repo_pull_request_comments', repo_name)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('repo_pull_request_comments', repo_name)).actor_name,
         Poller, *[
           @path,
           Fetchers::Github::RepoPullRequestsComments.new(client, { user_repo: repo_name }),

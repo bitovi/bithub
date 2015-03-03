@@ -1,5 +1,4 @@
 require 'koala'
-require 'supervisors/support/owner_data'
 
 # Facebook realtime API works a bit different from the others
 # We have few types of access tokens:
@@ -18,9 +17,8 @@ require 'supervisors/support/owner_data'
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
 
-    def initialize
+    def initialize(path, service_info)
       super
-      info "Creating Facebook #{self.class} subscription #{@path.brand.name}->#{@path.embed.name} with #{service_config}"
 
       begin
         subscribe_page

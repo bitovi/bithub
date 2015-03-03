@@ -2,11 +2,11 @@ module Supervisors::Services::Twitter
   class Hashtag < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('search', hashtags.join(','))).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('search', hashtags.join(','))).actor_name,
         Poller, *[
           @path,
           Fetchers::Twitter::Hashtags.new(client, { term: term }),

@@ -1,11 +1,11 @@
 module Supervisors::Services::Tumblr
   class Tag < Supervisors::Service
 
-    def initialize
+    def initialize(path, service_info)
       super
 
       @endpoints.supervise_as(
-        @path.next_level(EndpointInfo.new('tagged', tag)).actor_name,
+        @path.next_level(NodeTypes::EndpointInfo.new('tagged', tag)).actor_name,
         Poller, *[
           @path,
           Fetchers::Tumblr::Tagged.new(tag),

@@ -1,7 +1,7 @@
 module Supervisors::Services::Foursquare
   class Venue < Supervisors::Service
 
-    def initialize
+    def initialize(path, service_info)
       super
       registry.subscribe 'foursquare', 'venue', venue_id, owner_data
     end
