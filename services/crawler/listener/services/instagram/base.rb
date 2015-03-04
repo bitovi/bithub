@@ -50,17 +50,6 @@ module Supervisors::Services::Instagram
       Actor[:event_publisher].publish events, owner_data
     end
 
-    def owner_data
-      OwnerData.new\
-        @path.brand.id,
-        @path.brand.name,
-        @path.embed.id,
-        @path.embed.name,
-        @path.service.id,
-        'instagram',
-        'media_event'
-    end
-
     def client
       @client ||= ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
     end

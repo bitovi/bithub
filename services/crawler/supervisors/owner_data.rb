@@ -10,11 +10,12 @@ class OwnerData
     , service_id\
     , service_feed\
     , service_type\
+    , service_config\
   )
 
-    @brand   = BrandInfo.new brand_id.to_i, brand_name
-    @embed   = EmbedInfo.new embed_id.to_i, embed_name
-    @service = ServiceInfo.new service_id.to_i, service_feed, service_type
+    @brand   = NodeTypes::BrandInfo.new brand_id.to_i, brand_name
+    @embed   = NodeTypes::EmbedInfo.new embed_id.to_i, embed_name
+    @service = NodeTypes::ServiceInfo.new service_id.to_i, service_feed, service_type, service_config
   end
   attr_reader :brand, :embed, :service
 

@@ -20,16 +20,5 @@ module Supervisors::Services::Foursquare
       Actor[:subscription_registry]
     end
 
-    def owner_data
-      OwnerData.new\
-        @path.brand.id,
-        @path.brand.name,
-        @path.embed.id,
-        @path.embed.name,
-        @path.service.id,
-        'foursquare',
-        'venue'
-    end
-
   end
 end

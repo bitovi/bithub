@@ -12,6 +12,19 @@ module Supervisors
       @endpoints = SupervisionGroup.new
     end
 
+    def owner_data
+      @owner_data ||= OwnerData.new(
+        @path.brand.id\
+        , @path.brand.name\
+        , @path.embed.id\
+        , @path.embed.name\
+        , @path.service.id\
+        , @path.service.feed_name\
+        , @path.service.type_name\
+        , @path.service.config\
+      )
+    end
+
     private
     def _childs; @endpoints; end
 
