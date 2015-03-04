@@ -31,16 +31,8 @@
 	<div class="bit">
 		<div class="bit-content">
 
-			{{#if isTumblrImage}}
+			{{#if images.length}}
 				<bh-image-gallery images="{images}"></bh-image-gallery>
-			{{else}}
-				{{#if images.length}}
-					<div class="image-wrap">
-						{{#each images}}
-						<img src="{{url}}">
-						{{/each}}
-					</div>
-				{{/if}}
 			{{/if}}
 
 			<bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
