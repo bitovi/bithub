@@ -86,7 +86,7 @@ class Service < ActiveRecord::Base
         id: id,
         feed_name: feed_name,
         type_name: type_name,
-        config: service_config.data
+        config: service_config.data.merge(credentials(config['id']))
       },
       signature: "service_#{action}",
       action: action
