@@ -309,15 +309,6 @@ ActiveRecord::Schema.define(version: 20150225154100) do
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
 
-  create_table "user_identities", force: true do |t|
-    t.integer "user_id"
-    t.string  "provider"
-    t.json    "source_data",           default: {}
-    t.integer "uid",         limit: 8
-  end
-
-  add_index "user_identities", ["user_id"], :name => "index_user_identities_on_user_id"
-
   create_table "users", force: true do |t|
     t.string   "name"
     t.string   "email"
@@ -360,8 +351,6 @@ ActiveRecord::Schema.define(version: 20150225154100) do
   add_foreign_key "ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "services", "public.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "user_identities", "public.users", :name => "user_identities_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "users", "public.countries", :name => "users_country_id_fk", :column => "country_id", :exclude_index => true
 

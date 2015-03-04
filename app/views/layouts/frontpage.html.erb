@@ -1,109 +1,317 @@
-<%= render partial: "layouts/head" %>
-
-<div class="top-cta-wrap">
-	<div class="container top-cta-container">
-		<div class="row col-xs-12">
-			<h1>Real time</b>, embeddable, social feeds.</h1>
-			<h2>Starting at <b><span class="small-text">$</span>19 <span class="small-text">a month</span></b></h2>
-			<a class="btn btn-primary btn-lg" href="/register">Start your <b>45 day</b> trial</a><br>
-			<a href="/#features" class="find-out-more">Find out more</a>
-		</div>
-	</div>
-</div>
-<div class="container">
-	
-	<div class="row clearfix steps">
-		
-		<div class="step">
-			<img src="/images/connect.png" alt="">
-			<h2>Connect</h2>
-			<p>Connect the content that you produce accross multiple networks.</p>
-		</div>
-
-		<div class="step">
-			<img src="/images/moderate.png" alt="">
-			<h2>Moderate</h2>
-			<p>Set up the moderation rules to keep your content focused.</p>
-		</div>
-
-		<div class="step">
-			<img src="/images/embed.png" alt="">
-			<h2>Embed</h2>
-			<p>Easily embed your customized feed to  your website or on any HTML page.</p>
-		</div>
-
-	</div>
-</div>
-
-<div class="blue-cta">
-	<div class="container">
-		<p>
-			Combine in a unified feed the content that you produce across networks.
-			<b>Build your social proof, and strengthen your community!</b>
-		</p>
-		<a href="/register">Get Started</a>
-	</div>
-</div>
-
-<div class="container last-container">
-	<div class="features" id="features">
-		<div class="feature-left row">
-			<div class="image-wrap col-xs-5 col-xs-offset-1">
-				<img src="/images/networks.png" alt="">
-			</div>
-			<div class="col-xs-5">
-				<h2>Connect</h2>
-				<h3>Aggregate everything!</h3>
-				<p>
-					BitHub has a powerful aggregation engine which allows you to collect all your content.
-				</p>
-				<p>
-					Twitter, Facebook and Tumblr are just some of the content sources we support. No matter if it’s text, image or video, we can display it in your feed. All of this works in real time.
-				</p>
-			</div>
-			
-			
-		</div>
-		<div class="feature-right row">
-			<div class="col-xs-5 col-xs-offset-1">
-				<h2>Moderate</h2>
-				<h3>Your content, your rules.</h3>
-				<p>
-					Every item we collect is automatically moderated based on the rules you set up. 
-				</p>
-				<p>
-					You can block profanities, or filter the data related to some subject. BitHub puts you in the control of data.
-				</p>
-				<p>
-					Besides the automatic moderation, you can manually moderate any item.
-				</p>
-			</div>
-			<div class="image-wrap col-xs-5">
-				<img src="/images/approve_block.png" alt="">
-			</div>
-		</div>
-		<div class="feature-left row">
-			<div class="image-wrap col-xs-5 col-xs-offset-1">
-				<img src="/images/design_embed.png" alt="">
-			</div>
-			<div class="col-xs-5">
-				<h2>Embed</h2>
-				<h3>Embed on any page.</h3>
-				<p>
-					BitHub allows you to adjust it’s design so it fits in your branding.
-				</p>
-				<p>
-					All content cards are designed to work in both full page and small area context which allows you to reuse your embeds across your site.
-				</p>
-				<p>
-					Pick your layout and theme, and just paste the code into your HTML page and you’re ready to go.
-				</p>
+<%= render partial: "layouts/head", :locals => {:narrow => true} %>
+	<div class="part">
+		<div class="container text-container">
+			<div class="row">
+				<div class="col-md-12">
+					<img src="/site/images/illustration.png" alt="" class="bithub-illustration">
+				</div>
 			</div>
 		</div>
 	</div>
-	<div id="#goregister" class="row cta">
-		<a href="/register" class="btn btn-primary btn lg">Start your 45 day trial &#8594;</a>
-	</div>
-</div>
+	<div class="part main-part">
+		<div class="container text-container">
+			<div class="row">
+				<div class="col-md-12">
 
-<%= render partial: "layouts/footer" %>
+
+					<h1>Capitalize your social proof <a href="#registration">now</a>!</h1>
+					<p>
+						Your social network activity gives you a direct connection to your fans. Time spent preparing the interesting content and posting it to Facebook, Twitter or Instagram pays off, resulting in a steady growth of your reach and influence. But, <b>what do you do with all these retweets and likes</b>?
+					</p>
+					<div class="emphasized what-if-block">
+						<p class="text-center">
+							What if you could <b>leverage the power of your social proof</b><br>to <b>convert your visitors into your customers</b>?
+						</p>
+					</div>
+					<p>
+						With BitHub you can unify all your social media content in one place. Use the <b>wisdom of crowds to strengthen your brand image and extend your influence</b>.
+					</p>
+					<p>
+						BitHub provides you with an <b>embeddable social hub</b> that gathers and displays all the content produced by you and your fans. Place it on <b>your site, landing page</b> or an <b>interactive event wall</b>. Whatever needs you have, BitHub has you covered.
+					</p>
+					<p>
+						Check out our <a href="#pricing">pricing and features</a>! Every plan comes with a 15 &dash; day trial.
+					</p>
+					<hr class="emphasized">
+					<h3 class="text-center start-using"><b>Start using BitHub</b> in three easy steps:</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="part">
+		<div class="container text-container">
+			<div class="clearfix steps">
+
+				<div class="step">
+					<img src="/site/images/connect.png" alt="">
+					<h2>Connect</h2>
+					<p>Connect the content that you produce accross multiple networks.</p>
+				</div>
+
+				<div class="step">
+					<img src="/site/images/moderate.png" alt="">
+					<h2>Moderate</h2>
+					<p>Set up the moderation rules to keep your content focused.</p>
+				</div>
+
+				<div class="step">
+					<img src="/site/images/embed.png" alt="">
+					<h2>Embed</h2>
+					<p>Easily embed your customized feed on any website.</p>
+				</div>
+
+			</div>
+			<div class="col-md-6 col-md-offset-3">
+				<h2 class="text-center cta steps-cta">Start your  <a href="#registration">15 &dash; day trial</a> &raquo;</h2>
+			</div>
+		</div>
+	</div>
+	<div class="embed-outer-wrapper">
+		<div class="container">
+			<div class="embed-wrapper">
+				<a href="http://staging.bithub.com/admin/embed?tenantName=charming_volcano_7196_1&hubId=1" data-hub-id="1" data-tenant-name="charming_volcano_7196_1" class="bithub-embed">StealJS Embed</a>
+			</div>
+			<p class="embed-caption">Example embed used by the <a href="http://stealjs.com">StealJS</a> project.</p>
+		</div>
+	</div>
+	<div class="part">
+		<div class="container text-container">
+			<div class="row">
+				<div class="col-xs-12">
+					<h2 class="big-subtitle">Your context, your rules</h2>
+					<p>How many times did you see your <b>perfectly crafted post buried under a pile of irrelevant content</b>? But, that's the nature of the social networks. What if you could <b>avoid that problem altogether</b>? What if you could have a place where <b>you control the context</b>? One place where it's everything about you.</p>
+
+					<p>Truth be told, you already have it &dash; it's your own site. With BitHub, you can <b>move the conversation</b> from social networks <b>to your own site</b>, a place where your visitors can became your customers.</p>
+					<p>And you know what you can also put on your site? <span class="convert-options"></span>
+					</p>
+					<blockquote>
+						<h3>
+							Ninety-two percent of consumers around the world say they trust earned media, such as word-of-mouth and recommendations from friends and family, above all other forms of advertising&hellip;
+						</h3>
+						<cite>Nielsen Survey 2012.</cite>
+					</blockquote>
+					<p>Studies show that social proof is one of the most important factors in consumers' decision&dash;making (Nielsen Survey 2012., CompUSA and an iPerceptions study).
+
+						<p>BitHub enables you to gather all your dispersed content in one place and present it as your <b>unified social proof</b>. And the best part? Your content is not mixed with a bunch of other, irellevant posts, tweets and pictures.</p>
+						<p>BitHub puts <b>you in control of your brand image</b>, content and context.</p>
+					</div>
+
+					<div class="col-xs-12">
+						<h2 class="big-subtitle">Some of the features we built for you:</h2>
+						<ul>
+							<li><b>Pull in any content</b> - Twitter, Facebook, Instagram, RSS - all of them are just a click away</li>
+							<li><b>Moderate and organize the content</b> - pin posts and block irrelevance</li>
+							<li><b>Live Embeds</b> - for any type of event, you can use live version that updates content in near real time</li>
+						</ul>
+						<div class="emphasized">
+							<h2 class="text-center cta">You already spend all this time to produce the right content.<br>Now take the next step and <a href="#registration">start converting!</a></h2>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<h2 class="col-xs-12 big-subtitle">So, how does it work?</h2>
+				</div>
+				<div class="features" id="features">
+					<div class="feature-left row">
+						<div class="image-wrap">
+							<img src="/site/images/networks.png" alt="">
+						</div>
+						<div class="col-xs-6">
+							<h2>Connect</h2>
+							<h3>Aggregate everything!</h3>
+							<p>
+								BitHub has a powerful aggregation engine which allows you to collect all your content.
+							</p>
+							<p>
+								Twitter, Facebook and Tumblr are just some of the content sources we support. No matter what the content is (text, image or video), we can display it in your feed. All of this works in real time.
+							</p>
+						</div>
+
+
+					</div>
+					<div class="row">
+						<hr class="col-xs-6 col-xs-offset-3 feature-hr">
+					</div>
+					<div class="feature-right row">
+						<div class="col-xs-6 col-xs-offset-6">
+							<h2>Moderate</h2>
+							<h3>Your content, your rules.</h3>
+							<p>
+								Every item we collect is automatically moderated based on the rules you set up. 
+							</p>
+							<p>
+								You can block profanities or filter the data related to some subject. BitHub puts you in control of the data.
+							</p>
+							<p>
+								Besides the automatic moderation, you can manually moderate any item.
+							</p>
+						</div>
+						<div class="image-wrap">
+							<img src="/site/images/approve_block.png" alt="">
+						</div>
+					</div>
+					<div class="row">
+						<hr class="col-xs-6 col-xs-offset-3 feature-hr">
+					</div>
+					<div class="feature-left row">
+						<div class="image-wrap">
+							<img src="/site/images/design_embed.png" alt="">
+						</div>
+						<div class="col-xs-6">
+							<h2>Embed</h2>
+							<h3>Embed on any page.</h3>
+							<p>
+								BitHub allows you to adjust its design so it fits your branding.
+							</p>
+							<p>
+								All content cards are designed to work in both full page and small area context which allow you to reuse your embeds across your site.
+							</p>
+							<p>
+								Pick your layout and theme, paste the code into your HTML page and you’re ready to go.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="video-wrap">
+					<video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="800" height="500" data-setup="{}" poster="/site/images/video_poster.png">
+						<source src="/site/images/bithub_converted.mp4" type='video/mp4' />
+						<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+					</video>
+				</div>
+
+			</div>
+		</div>
+		<div class="part">
+			<div class="container text-container">
+				<div class="row">
+					<div class="col-xs-12">
+						<h2 class="big-subtitle">Usage examples</h2>
+						<p>BitHub is designed and developed for brands and companies that already have a vibrant community. Some of the ways people use it are:</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="usage-lists clearfix">
+							<ul>
+								<li>Media wall for your event</li>
+								<li>Activity stream for your open&dash;source project</li>
+								<li>Hashtag contest</li>
+								<li>Buzz collector for your festival or concert</li>
+							</ul>
+							<ul>
+								<li>Topic stream for your news portal</li>
+								<li>Showcase of your app users</li>
+								<li>Community showcase</li>
+								<li>Landing page for your app, album or ebook</li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="examples-outer-wrapper">
+			<div class="container">
+				<h3><a href="http://stealjs.com">StealJS</a> is using BitHub to display the activity stream on its homepage</h3>
+				<div class="example-embed">
+					<a href="http://staging.bithub.com/admin/embed?tenantName=charming_volcano_7196_1&hubId=1" data-hub-id="1" data-tenant-name="charming_volcano_7196_1" class="bithub-embed">StealJS Embed</a>
+				</div>
+			</div>
+		</div>
+		<div class="part" id="registration">
+			<div class="container text-container">
+				<div class="row">
+					<div class="col-xs-12">
+						<h2 class="big-subtitle" id="pricing">Start your trial today!</h2>
+						<p>All of our plans come with a 15 &dash; day trial, and can be cancelled at any time.</p>
+						<ul class="list-unstyled pricing-list clearfix">
+							<li class="col-xs-4 plan">
+								<div class="pricing-wrap">
+									<div class="caption">
+										<img src="/site/images/lego/personal.png" alt="">
+										<h3>Startup</h3>
+										<h4>$99.00/month</h4>
+										<div class="call-to-action">
+											<a href="<%= current_account ? "/admin" : "/register/personal" %>" class="btn btn-info btn-block btn-large">Start your 15 &dash; day trial</a>
+										</div>
+										<ul class="list-unstyled">
+											<li>1 Hub</li>
+											<li>7 Unique Services</li>
+											<li>Analytics</li>
+											<li>Moderation</li>
+											<li>Embed</li>
+											<li><b>Live stream</b></li>
+										</ul>
+									</div>
+								</div>
+							</li>
+							<li class="col-xs-4 plan plan-primary">
+								<div class="pricing-wrap">
+									<div class="caption">
+										<img src="/site/images/lego/brand.png" alt="">
+										<h3>Brand</h3>
+										<h4>$349.00/month</h4>
+										<div class="call-to-action">
+											<a href="<%= current_account ? "/admin" : "/register/brand" %>" class="btn btn-info btn-block btn-lg">Start your 15 &dash; day trial</a>
+										</div>
+										<ul class="list-unstyled">
+											<li>3 Hubs</li>
+											<li>10 Services per Hub</li>
+											<li>Analytics</li>
+											<li>Moderation</li>
+											<li>Embed</li>
+											<li>Whitelabel Embed</li>
+											<li><b>Live stream</b></li>
+										</ul>
+									</div>
+								</div>
+							</li>
+							<li class="col-xs-4 plan ">
+								<div class="pricing-wrap">
+									<div class="caption">
+										<img src="/site/images/lego/agency.png" alt="">
+										<h3>Agency</h3>
+										<h4>$999.00/month</h4>
+										<div class="call-to-action">
+											<a href="#" class="btn btn-info btn-block btn-large">Coming Soon</a>
+										</div>
+										<ul class="list-unstyled">
+											<li>4 Brands</li>
+											<li>3 Hubs per brand</li>
+											<li>12 Services per Hub</li>
+											<li>Analytics</li>
+											<li>Moderation</li>
+											<li>Embed</li>
+											<li>Whitelabel Embed</li>
+											<li><b>Live stream</b></li>
+										</ul>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p>
+							<i>We offer a 30% discount for non-profits. For further information please contact us <a href="mailto:mihael@bithub.com">via email</a></i>.
+						</p>
+						<div class="faq-wrap">
+							<h2>FAQ</h2>
+							<h3>What is a service?</h3>
+							<p>A service allows you to load data from a remote source. For instance, you can load a hashtag search from Twitter, RSS URL or a Facebook page updates.</p>
+							<h3>How frequent are the stream updates?</h3>
+							<p>Most services are crawled and updated either in real time or within 1 minute intervals. Some services (like Twitter followers) are crawled with a maximum delay of 10 minutes.</p>
+							<h3>How long does the contract last?</h3>
+							<p>After your free trial period expires, we will charge you on a monthly basis.</p>
+
+							<h3>How do I sign up?</h3>
+							<p>By clicking on any of the links above, you will start your 15 &dash; day trial. When the trial expires, we will remind you to provide us with your credit card information.</p>
+
+							<h3>I want to switch plans. Can I do it?</h3>
+							<p>You can switch your plans at any time. If you have more hubs than the plan permits, we'll archive some of them and you won't lose any data. In case you want to start using them later on, upgrade your plan, and start collecting your data again (archived hubs are not publicly accessible and they don't collect the data).</p>
+
+							<p><b>Do you have any more questions?</b> Feel free to <a href="mailto:mihael@bithub.com">contact us</a>, and we'll get back to you ASAP!</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+<%= render partial: "layouts/footer", :locals => {:narrow => true} %>

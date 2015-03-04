@@ -61,6 +61,9 @@ function(Map, Bit, connectLiveService){
 		isPublic : function(){
 			return !this.isAdmin();
 		},
+		showPoweredBy : function(){
+			return this.isPublic();
+		},
 		reset : function(){
 			can.batch.start();
 			this.setDefaultParams();
@@ -98,7 +101,7 @@ function(Map, Bit, connectLiveService){
 		setDefaultParams : function(){
 			this.attr('params', {
 				offset: 0,
-				limit: 30
+				limit: 50
 			});
 		},
 		isAdmin : function(){

@@ -1,6 +1,5 @@
 <h2>{{ hub.name }} Analytics</h2>
 <select can-value="resolution" class="form-control">
-	<option value="minute">Show by minute</option>
 	<option value="hour">Show by hour</option>
 	<option value="day">Show by day</option>
 	<option value="week">Show by week</option>
