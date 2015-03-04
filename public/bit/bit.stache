@@ -45,7 +45,7 @@
 
 			<bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
 				<h4>{{{ formattedTitle title }}}</h4>
-				{{{ body }}}
+				<div class="body-inner-wrap">{{{ body }}}</div>
 			</bh-body-wrap>
 
 
