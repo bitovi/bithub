@@ -11,8 +11,13 @@
 	</div>
 	<div class="panel-footer clearfix">
 		<div class="btn-group">
-			<button class="btn btn-default" can-click="clearService">Cancel</button>
-			<button class="btn btn-danger" can-click="deleteService">Delete</button>
+			<button class="btn btn-default" can-click="cancelDelete">Cancel</button>
+			<button class="btn btn-danger" can-click="deleteService">
+				{{#if isDeleting}}
+					<i class="fa fa-spin fa-circle-o-notch"></i>
+				{{/if}}
+				Delete
+			</button>
 		</div>
 	</div>
 </div>

@@ -174,13 +174,17 @@ function(Model, _keys){
 		messageFromLiveService : function( msg ) {
 			var cb = can.noop,
 				timeout = 1,
-				self = this;
+				self = this,
+				timeoutKey;
 
 			if(typeof msg === 'string'){
 				msg = JSON.parse(msg);
 			}
 
+			timeoutKey = msg.service.id;
+
 			if(msg.service.empty_results){
+				timeoutKey = msg.service.id + '-noResults';
 				cb = function(service){
 					if(service.attr('entity_count') === 0){
 						service.hasNoResults();
@@ -189,9 +193,9 @@ function(Model, _keys){
 				timeout = 2000;
 			}
 
-			clearTimeout(RELOAD_TIMEOUTS[msg.service.id]);
+			clearTimeout(RELOAD_TIMEOUTS[timeoutKey]);
 
-			RELOAD_TIMEOUTS[msg.service.id] = setTimeout(function(){
+			RELOAD_TIMEOUTS[timeoutKey] = setTimeout(function(){
 				self.findOne({id: msg.service.id}).then(cb);
 			}, timeout);
 		}
@@ -314,7 +318,11 @@ function(Model, _keys){
 	
 	Service.on('created', function(ev, service){
 		service.attr('_isNewlyCreated', true);
-	})
+	});
+
+	Service.on('updated', function(ev, service){
+		service.attr('_isNewlyCreated', true);
+	});
 
 	return Service;
 });

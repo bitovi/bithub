@@ -124,11 +124,6 @@ function(Component, initView, Models){
 				return Models.Service.feeds[feed];
 			}
 		},
-		events : {
-			'{scope} change' : function(){
-				console.log('CHANGE', arguments)
-			}
-		},
 		helpers : {
 			'form submit' : function(){
 
