@@ -44,14 +44,16 @@ class HttpServer < Reel::Server::HTTP
     register_route :foursquare_handler,              ::Handlers::Foursquare.route
 
     after(5) do
-      FacebookAppSubscriber.new.subscribe unless ENV['ENV'] == 'development'
+      FacebookAppSubscriber.new.subscribe unless ENV['INSIDE_TEST']
     end
   end
 
   def on_connection(connection)
     connection.each_request do |req|
       info "#{req.method} #{req.path}"
-      route req
+      status, msg = route(req)
+
+      req.respond status, msg
     end
   end
 
@@ -62,12 +64,9 @@ class HttpServer < Reel::Server::HTTP
 
   def route(req)
     if handler_name = @router.route(req.path, req.method)
-      status, msg = Actor[handler_name].handle req
+      Actor[handler_name].handle req
     else
-      status, msg = :ok, 'nothing to do'
+      [:ok, 'nothing to do']
     end
-
-    req.respond status, msg
   end
-
 end

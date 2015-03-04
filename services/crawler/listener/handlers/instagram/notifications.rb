@@ -31,7 +31,6 @@ module Handlers
             if subscriptions = @proxy.registry['instagram', 'media', object_id]
               subscriptions.each do |owner_data|
                 @proxy.publish results, owner_data
-
               end
             end
           end

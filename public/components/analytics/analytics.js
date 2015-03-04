@@ -11,7 +11,7 @@ function(Component, initView, Chart, Models){
 		tag : 'bh-analytics',
 		template: initView,
 		scope : {
-			resolution: 'minute',
+			resolution: 'hour',
 			init : function(){
 				var self = this;
 				var hubId = this.attr('state.hubId');

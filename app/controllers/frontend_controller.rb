@@ -26,9 +26,7 @@ class FrontendController < ApplicationController
     def static_pages 
       @static_pages ||= {
         terms_of_service: 'Terms of Service',
-        privacy_policy: 'Privacy Policy',
-        bugs: 'Report a Bug',
-        about: 'About BitHub'
+        privacy_policy: 'Privacy Policy'
       }
     end
 

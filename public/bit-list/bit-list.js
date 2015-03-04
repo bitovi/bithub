@@ -20,12 +20,14 @@ function(Control, initView, Bit, _map){
 
 	var makeColumns = function(count){
 		return _map(Array(count), function(){
-			return $('<div class="column"></div>');
+			var c = document.createElement('div')
+			c.className = 'column';
+			return c;
 		});
 	}
 
 
-	var WINDOW_COUNT = 30;
+	var WINDOW_COUNT = 50;
 
 	return Control.extend({
 		pluginName : 'bh-bits',
@@ -43,7 +45,8 @@ function(Control, initView, Bit, _map){
 
 			this.element.html(initView({
 				isLoading : this.options.isLoading,
-				columnCount : this.options.columnCount
+				columnCount : this.options.columnCount,
+				state : this.options.state
 			}));
 
 			this.__hasItemsOnTop = false;
@@ -67,6 +70,7 @@ function(Control, initView, Bit, _map){
 					self.options.hasNextPage(false);
 				}
 
+				self.currentLimit = self.currentLimit + data.length;
 				self.partition(data);
 
 				delete self.__pendingReq;
@@ -124,7 +128,7 @@ function(Control, initView, Bit, _map){
 
 			for(var i = 0; i < bits.length; i++){
 				card = this.makeCard(bits[i]);
-				if(card){
+				if(card && can.inArray(card.parentElement, this.columns) === -1){
 					arrs[this.currentColumn].push(card);
 					this.currentColumn++;
 					if(this.currentColumn === columnLength){
@@ -133,9 +137,8 @@ function(Control, initView, Bit, _map){
 				}
 			}
 
-
 			for(var i = 0; i < arrs.length; i++){
-				this.columns[i].append(arrs[i]);
+				$(this.columns[i]).append(arrs[i]);
 			}
 		},
 		makeCard : function(bit){
@@ -154,8 +157,8 @@ function(Control, initView, Bit, _map){
 		nextPage : function(){
 			var params;
 			var bits = this.options.state.attr('bits');
+
 			if(this.currentLimit < bits.length){
-				this.currentStart = this.currentLimit;
 				this.currentLimit = this.currentLimit + WINDOW_COUNT;
 				this.partitionPart(bits);
 			} else if(!this.options.isLoading() && this.options.hasNextPage()){

@@ -42,13 +42,16 @@ function(Model, moment){
 			return moment(this.attr('thread_updated_at')).format('LL');
 		},
 		isTumblrImage : function(){
-			return this.isPhoto() && this.attr('feed_name') === 'tumblr';
+			return this.isPhoto() && this.isTumblr();
 		},
 		isInstagramImage : function(){
 			return this.isPhoto() && this.attr('feed_name') === 'instagram';
 		},
 		isPhoto : function(){
 			return this.attr('type_name') === 'photo';
+		},
+		isTumblr : function(){
+			return this.attr('feed_name') === 'tumblr';
 		},
 		isTwitterFollow : function(){
 			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
