@@ -19,13 +19,16 @@ class DigestSet < RedisSet
   def prefix
     "digests"
   end
-    
+
   def keys_path(event)
-    [event.fetch(:meta).fetch(:brand_name),
-     event.fetch(:meta).fetch(:feed_name),
-     event.fetch(:meta).fetch(:type_name)]
+    [
+      'brand/' + event.fetch(:meta).fetch(:brand_id).to_s,
+      'embed/' + event.fetch(:meta).fetch(:embed_id).to_s,
+      'service/' + event.fetch(:meta).fetch(:service_id).to_s,
+      event.fetch(:meta).fetch(:feed_name),
+      event.fetch(:meta).fetch(:type_name)
+    ]
   rescue TypeError => err
-    Celluloid.logger.debug "------------ #{event}"
     raise err
   end
 end
