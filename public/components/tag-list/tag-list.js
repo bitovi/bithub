@@ -26,6 +26,8 @@ function(Component, initView){
 				index >= 0 && tags.splice(index, 1);
 			},
 			addTag : function(tag){
+				tag = tag.replace(/[^a-zA-Z0-9-_]/g ,"");
+
 				var tags = this.attr('tags'),
 					canAddTag = tags.indexOf(tag) === -1;
 				if(canAddTag){
