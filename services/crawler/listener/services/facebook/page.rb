@@ -43,17 +43,6 @@ module Supervisors::Services::Facebook
       Actor[:event_publisher].publish events, owner_data
     end
 
-    def owner_data
-      OwnerData.new\
-        @path.brand.id,
-        @path.brand.name,
-        @path.embed.id,
-        @path.embed.name,
-        @path.service.id,
-        'facebook',
-        'page'
-    end
-
     def page_id
       service_config.fetch(:id)
     end
