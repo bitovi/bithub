@@ -14,8 +14,8 @@ Bithub::Application.routes.draw do
       resources :subscriptions, only: %i() do
         collection do
           get 'edit/plan', to: 'subscriptions#edit_plan'
-          get 'edit/cc', to: 'subscriptions#edit_cc'
-          post 'update', to: 'subscriptions#update'
+          get 'edit/cc',   to: 'subscriptions#edit_cc'
+          post 'update',   to: 'subscriptions#update'
         end
       end
     end
@@ -42,9 +42,9 @@ Bithub::Application.routes.draw do
     get 'register', to: redirect('register/starter')
 
     # RESTify some of Devise methods
-    post 'api/auth/login', to: 'api/auth/account_sessions#create'
-    delete 'api/auth/logout', to: 'api/auth/account_sessions#destroy'
-    post 'api/auth/register', to: 'api/auth/account_registrations#create'
+    post   'api/auth/login',    to: 'api/auth/account_sessions#create'
+    delete 'api/auth/logout',   to: 'api/auth/account_sessions#destroy'
+    post   'api/auth/register', to: 'api/auth/account_registrations#create'
   end
 
   # Stripe
@@ -106,7 +106,9 @@ Bithub::Application.routes.draw do
     end
   end
 
-  # TODO; add auth
+  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+    username == ENV["SIDEKIQ_USERNAME"] && password == ENV["SIDEKIQ_PASSWORD"]
+  end unless Rails.env.development?
   mount Sidekiq::Web => '/sidekiq'
 
   get '/:page', controller: 'frontend', action: 'render_page'
