@@ -41,7 +41,7 @@ class Poller
     if events.count > 0
       publish events
     else
-      notification_publisher.publish(empty_response_notif)
+      notification_publisher.publish_to_frontend(empty_response_notif)
     end
     notification_publisher.publish_to_backend(clear_service_errors_notif)
     notification_publisher.publish_to_frontend(clear_service_errors_notif)
