@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
 
   rolify :role_cname => 'AccountRole'
 
-  validate :invite_key_must_match
+  validate :invite_key_must_match, :on => :create
 
   has_and_belongs_to_many :brands
 

@@ -56,7 +56,7 @@ Devise.setup do |config|
 
   # Mailer
 
-  config.mailer_sender = 'password.verifier@bithub.com'
+  config.mailer_sender = '"NO REPLY" <no-reply@bithub.com>'
   Devise::Mailer.layout 'mailer'
 
   # config.case_insensitive_keys = [ :email ]
