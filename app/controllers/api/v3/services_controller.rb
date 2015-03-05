@@ -49,9 +49,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def destroy
     @service = Service.find(service_id)
-    @service.clear_linked_entities if clear_linked_entities?
 
-    if @service.destroy
+    if @service.delete_and_clear_relations
       render :json => msg_hash(@service, 'destroy', 'success')
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406
@@ -129,10 +128,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def api_adapter
     Support::ThirdPartyApiAdapter.new
-  end
-
-  def clear_linked_entities?
-    params[:clear_rels].present? && params[:clear_rels] == 'true'
   end
 
   def create_new_service
