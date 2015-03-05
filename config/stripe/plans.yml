@@ -1,17 +1,26 @@
 -
-  stripe_id: "starter"
-  name: "Starter"
-  amount: 1000
+  stripe_id: "startup001"
+  name: "Startup"
+  amount: 9900
   currency: 'usd'
   interval: 'month'
   interval_count: 1
-  trail_period_days: 45
+  trail_period_days: 15
 
 -
-  stripe_id: "advanced"
-  name: "Advanced"
-  amount: 4500
+  stripe_id: "brand001"
+  name: "Brand"
+  amount: 34900
   currency: 'usd'
   interval: 'month'
   interval_count: 1
-  trail_period_days: 45
+  trail_period_days: 15
+
+-
+  stripe_id: "agency001"
+  name: "Agency"
+  amount: 99900
+  currency: 'usd'
+  interval: 'month'
+  interval_count: 1
+  trail_period_days: 15

@@ -39,7 +39,7 @@ Bithub::Application.routes.draw do
     }
 
   as :account do
-    get 'register', to: redirect('register/starter')
+    get 'register', to: redirect('register/startup001')
 
     # RESTify some of Devise methods
     post   'api/auth/login',    to: 'api/auth/account_sessions#create'
