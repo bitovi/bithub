@@ -5,8 +5,9 @@ class Embed < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:brand_id]
 
   has_many :filters, dependent: :destroy
-  has_many :services, dependent: :destroy
   has_many :presets, :class_name => "EmbedPreset"
+
+  has_many :services, dependent: :destroy
 
   has_many :embed_entities
   has_many :entities, through: :embed_entities
@@ -26,6 +27,18 @@ class Embed < ActiveRecord::Base
     --------------------------
     delete from embeds
     where id = #{embed_id};
+
+    -- delete service_entities that are no longer 
+    -- valid as all services are going to be deleted
+    ------------------------------------------------------------------------------
+    delete from service_entities using embed_entities
+    where service_entities.entity_id = embed_entities.entity_id
+    and service_id in (select id from services where embed_id = #{embed_id});
+   
+    -- delete connections between entities and the embed we're deleting
+    -------------------------------------------------------------------
+    delete from embed_entities
+    where embed_id = #{embed_id}; 
 
     -- delete entities that have no connections to an embed
     -------------------------------------------------------
