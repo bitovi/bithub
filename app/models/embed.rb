@@ -16,6 +16,28 @@ class Embed < ActiveRecord::Base
   after_create { notify_crawler(:start) }
   after_destroy { notify_crawler(:stop) }
 
+  def delete_and_clear_relations
+    embed_id = self.id
+
+    query = <<-SQL
+    begin;
+
+    -- delete the embed itself
+    --------------------------
+    delete from embeds
+    where id = #{embed_id};
+
+    -- delete entities that have no connections to an embed
+    -------------------------------------------------------
+    delete from entities
+    where id not in (select distinct(entity_id) from embed_entities);
+
+    commit;
+    SQL
+
+    ActiveRecord::Base.connection.execute(query)
+  end
+
   def approved_entities
     if approving?
       embed_entities.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE').map(&:entity)

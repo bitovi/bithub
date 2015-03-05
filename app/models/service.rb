@@ -19,12 +19,40 @@ class Service < ActiveRecord::Base
     self.brand.identities.where(:provider => feed_name).all
   end
 
-  def clear_linked_entities
-    links = ServiceEntity.where(service_id: id).all 
-    links.each do |l|
-      l.entity.destroy if l.entity.has_only_one_service?
-      l.destroy
-    end
+  def delete_and_clear_relations
+    service_id = self.id
+    embed_id = embed.id
+
+    query = <<-SQL
+    begin;
+    
+    -- delete the service itself
+    ----------------------------
+    delete from services
+    where id = #{service_id};
+
+    -- delete connections between entities belonging to the service
+    -- we're currently deleting and the embed that service belongs to
+    -----------------------------------------------------------------
+    delete from embed_entities using service_entities
+    where embed_entities.entity_id = service_entities.entity_id
+    and embed_id = #{embed_id}
+    and service_id = #{service_id};
+
+    -- delete connections between entities and the service we're deleting
+    ---------------------------------------------------------------------
+    delete from service_entities
+    where service_id = #{service_id}; 
+
+    -- delete entities that have no connections to a service
+    --------------------------------------------------------
+    delete from entities
+    where id not in (select distinct(entity_id) from service_entities);
+
+    commit;
+    SQL
+
+    ActiveRecord::Base.connection.execute(query)
   end
 
   def has_errors?
