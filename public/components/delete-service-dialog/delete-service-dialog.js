@@ -11,15 +11,10 @@ function(Component, initView){
 			isDeleting : false,
 			deleteService : function(){
 				if(this.attr('isDeleting')) return;
-				var deleteItems = this.attr('deleteItems') || false;
 				var service = this.attr('service');
 
 				this.attr('isDeleting', true);
-				if(deleteItems){
-					service.destroyIncludingItems();
-				} else {
-					service.destroy();
-				}
+				service.destroy();
 			},
 			cancelDelete : function(){
 				if(this.attr('isDeleting')) return;
@@ -27,15 +22,18 @@ function(Component, initView){
 			},
 			clearService : function(){
 				this.attr('service', null);
+			},
+			serviceDestroyed : function(){
+				can.batch.start();
+				this.attr('state').resetEmbed();
+				this.attr('isDeleting', false);
+				this.clearService();
+				can.batch.stop();
 			}
 		},
 		events : {
 			'{scope.service} destroyed' : function(){
-				if(this.scope.attr('deleteItems')){
-					this.scope.attr('state').resetEmbed();
-				}
-				this.scope.attr('isDeleting', false);
-				this.scope.clearService();
+				this.scope.serviceDestroyed();
 			}
 		}
 	})

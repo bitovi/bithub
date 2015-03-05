@@ -153,12 +153,6 @@ function(Model, _keys){
 
 	var Service = Model.extend({
 		resource : '/api/v3/services',
-		destroyIncludingItems : function(id){
-			return $.ajax({
-				type: 'DELETE',
-				url : '/api/v3/services/' + id + '?clear_rels=true'
-			});
-		},
 		feeds : FEEDS,
 		needsOAuth : NEEDS_OAUTH,
 		createEmptyService : function(feed){
@@ -307,12 +301,6 @@ function(Model, _keys){
 		},
 		clearErrors : function(){
 			this.removeAttr('error');
-		},
-		destroyIncludingItems : function(){
-			var self = this;
-			this.constructor.destroyIncludingItems(this.attr('id')).then(function(){
-				self.destroyed();
-			});
 		}
 	});
 	
