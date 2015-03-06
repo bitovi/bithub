@@ -17,19 +17,14 @@ class Embed < ActiveRecord::Base
   after_create { notify_crawler(:start) }
   after_destroy { notify_crawler(:stop) }
 
-  def delete_and_clear_relations
+  def clear_relations_and_destroy
     embed_id = self.id
 
     query = <<-SQL
     begin;
 
-    -- delete the embed itself
-    --------------------------
-    delete from embeds
-    where id = #{embed_id};
-
     -- delete service_entities that are no longer 
-    -- valid as all services are going to be deleted
+    -- valid as (because the services are going to be deleted)
     ------------------------------------------------------------------------------
     delete from service_entities using embed_entities
     where service_entities.entity_id = embed_entities.entity_id
@@ -49,6 +44,8 @@ class Embed < ActiveRecord::Base
     SQL
 
     ActiveRecord::Base.connection.execute(query)
+
+    destroy
   end
 
   def approved_entities

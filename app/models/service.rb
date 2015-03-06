@@ -19,18 +19,13 @@ class Service < ActiveRecord::Base
     self.brand.identities.where(:provider => feed_name).all
   end
 
-  def delete_and_clear_relations
+  def clear_relations_and_destroy
     service_id = self.id
     embed_id = embed.id
 
     query = <<-SQL
     begin;
     
-    -- delete the service itself
-    ----------------------------
-    delete from services
-    where id = #{service_id};
-
     -- delete connections between entities belonging to the service
     -- we're currently deleting and the embed that service belongs to
     -----------------------------------------------------------------
@@ -53,6 +48,8 @@ class Service < ActiveRecord::Base
     SQL
 
     ActiveRecord::Base.connection.execute(query)
+
+    destroy
   end
 
   def has_errors?
