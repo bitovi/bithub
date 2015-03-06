@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150305180607) do
+ActiveRecord::Schema.define(version: 20150306142144) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -64,15 +64,10 @@ ActiveRecord::Schema.define(version: 20150305180607) do
 
   add_index "accounts_account_roles", ["account_id", "account_role_id"], :name => "index_accounts_account_roles_on_account_id_and_account_role_id"
 
-  create_table "accounts_brands", id: false, force: true do |t|
-    t.integer "brand_id",   null: false
-    t.integer "account_id", null: false
+  create_table "accounts_organizations", id: false, force: true do |t|
+    t.integer "account_id",      null: false
+    t.integer "organization_id", null: false
   end
-
-  add_index "accounts_brands", ["account_id", "brand_id"], :name => "index_accounts_brands_on_account_id_and_brand_id"
-  add_index "accounts_brands", ["account_id"], :name => "index_accounts_brands_on_account_id"
-  add_index "accounts_brands", ["brand_id", "account_id"], :name => "index_accounts_brands_on_brand_id_and_account_id"
-  add_index "accounts_brands", ["brand_id"], :name => "index_accounts_brands_on_brand_id"
 
   create_table "brand_identities", force: true do |t|
     t.string   "provider"
@@ -88,9 +83,10 @@ ActiveRecord::Schema.define(version: 20150305180607) do
   create_table "brands", force: true do |t|
     t.string   "name"
     t.string   "tenant_name"
-    t.hstore   "props",       default: {}
+    t.hstore   "props",           default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "organization_id"
   end
 
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
@@ -195,6 +191,12 @@ ActiveRecord::Schema.define(version: 20150305180607) do
     t.integer "filter_id"
   end
 
+  create_table "organizations", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "ownerships", force: true do |t|
     t.integer  "owner_id"
     t.integer  "entity_id"
@@ -275,8 +277,8 @@ ActiveRecord::Schema.define(version: 20150305180607) do
   end
 
   create_table "subscriptions", force: true do |t|
-    t.integer  "brand_id"
-    t.string   "plan_id"
+    t.integer  "organization_id"
+    t.string   "stripe_plan_id"
     t.string   "stripe_event_id"
     t.string   "stripe_customer_id"
     t.string   "stripe_subscription_id"
@@ -288,6 +290,7 @@ ActiveRecord::Schema.define(version: 20150305180607) do
     t.string   "card_last4",                 limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "plan_id"
   end
 
   create_table "taggings", force: true do |t|
@@ -339,9 +342,6 @@ ActiveRecord::Schema.define(version: 20150305180607) do
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
   SQL
-
-  add_foreign_key "accounts_brands", "public.accounts", :name => "accounts_brands_account_id_fk", :column => "account_id", :dependent => :delete, :exclude_index => true
-  add_foreign_key "accounts_brands", "public.brands", :name => "accounts_brands_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
 
   add_foreign_key "brand_identities", "public.brands", :name => "brand_identities_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
 

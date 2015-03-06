@@ -1,5 +1,7 @@
 class Plan < ActiveRecord::Base
 
+  has_many :subscriptions
+
   scope :stripe_ids, -> { pluck :stripe_id }
 
   def self.valid_stripe_id(stripe_id)
