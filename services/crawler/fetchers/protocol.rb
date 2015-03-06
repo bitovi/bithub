@@ -24,11 +24,6 @@ module Fetchers
       raise RateLimitError.new e.to_s
       log_and_return_empty e
 
-    # Instagram
-    rescue ::Instagram::BadRequest
-      raise ConfigError.new('User is private.')
-      log_and_return_empty
-
     # Github
     rescue ::Github::Error::Forbidden => e
       raise AuthError.new e.to_s
