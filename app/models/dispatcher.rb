@@ -22,6 +22,9 @@ class Dispatcher
     end
 
     [event.instance, entity.instance]
+  rescue Events::OrphanedEventError => err
+    @logger.error err
+    nil
   rescue Events::DispatchError => err
     @logger.error "#{err.message} | #{err.context}"
     nil
