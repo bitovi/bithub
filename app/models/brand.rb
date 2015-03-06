@@ -3,23 +3,20 @@ class Brand < ActiveRecord::Base
 
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
-  has_one  :subscription
-  has_many :payments
-
   scope :identity_from, -> (feed_name) { where(feed_name: feed_name) }
 
   has_many :embeds, dependent: :destroy
   has_many :services, through: :embeds
 
-  has_and_belongs_to_many :accounts
   has_and_belongs_to_many :users
+
+  belongs_to :organization
 
   validates :tenant_name, format: {
     with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
   after_create  :create_tenant
-  after_update  :rename_tenant_schema
   after_destroy :destroy_tenant
 
   after_create  { notify_crawler(:start) }
@@ -27,10 +24,6 @@ class Brand < ActiveRecord::Base
 
   def self.switch!(name = nil)
     Apartment::Tenant.switch! name
-  end
-
-  def self.current
-    Apartment::Tenant.current
   end
 
   def create_tenant
@@ -77,11 +70,4 @@ class Brand < ActiveRecord::Base
     }
   end
 
-  def rename_tenant_schema
-    return if !changes['tenant_name'] || !changes['tenant_name'][0]
-
-    old_name, new_name = changes['tenant_name']
-    sql = "ALTER SCHEMA \"#{old_name}\" RENAME TO \"#{new_name}\""
-    ActiveRecord::Base.connection.execute(sql)
-  end
 end

@@ -1,9 +1,10 @@
 class Subscription < ActiveRecord::Base
   include Stripe::Callbacks
 
-  belongs_to :brand
+  belongs_to :organization
+  belongs_to :plan
 
-  validates :brand_id, :plan_id, :stripe_customer_id, :stripe_subscription_id, :presence => true
+  validates :organization_id, :plan_id, :stripe_plan_id, :stripe_customer_id, :stripe_subscription_id, :presence => true
 
   before_destroy :delete_stripe_customer
 
@@ -14,12 +15,13 @@ class Subscription < ActiveRecord::Base
   def initialize(attrs={})
     super
 
-    customer = Stripe::Customer.create plan: self.plan_id
-    subscription = customer.subscriptions.data.first
+    ### TODO: on first create
+    # customer = Stripe::Customer.create plan: self.stripe_plan_id
+    # subscription = customer.subscriptions.data.first
 
-    self.stripe_customer_id = customer.id
-    self.stripe_subscription_id = subscription.id
-    self.stripe_subscription_status = subscription.status
+    # self.stripe_customer_id = customer.id
+    # self.stripe_subscription_id = subscription.id
+    # self.stripe_subscription_status = subscription.status
   end
 
   def update_card(stripe_token)
@@ -45,13 +47,13 @@ class Subscription < ActiveRecord::Base
 
     if stripe_subscription.save
       # should be updated via webhook as well, but let's make it immediately
-      update_attribute('plan_id', plan)
+      update_attribute('stripe_plan_id', plan)
     end
   end
 
   def self.update_from_subscription(subscription, opts={})
     attrs = {
-      plan_id: subscription.plan.id,
+      stripe_plan_id: subscription.plan.id,
       stripe_event_id: opts[:event_id],
       stripe_subscription_status: subscription.status,
     }
