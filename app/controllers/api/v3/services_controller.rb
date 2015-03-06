@@ -50,7 +50,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def destroy
     @service = Service.find(service_id)
 
-    if @service.delete_and_clear_relations
+    if @service.clear_relations_and_destroy
       render :json => msg_hash(@service, 'destroy', 'success')
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406
