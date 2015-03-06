@@ -12,13 +12,13 @@ class Embed < ActiveRecord::Base
   has_many :embed_entities
   has_many :entities, through: :embed_entities
 
-  has_many :events
+  has_many :events, dependent: :delete_all
 
   after_create { notify_crawler(:start) }
   after_destroy { notify_crawler(:stop) }
 
   def clear_relations_and_destroy
-    embed_id = self.id
+    embed_id = id
 
     query = <<-SQL
     begin;
@@ -39,6 +39,11 @@ class Embed < ActiveRecord::Base
     -------------------------------------------------------
     delete from entities
     where id not in (select distinct(entity_id) from embed_entities);
+
+    -- delete events that belong to this embed
+    ------------------------------------------
+    delete from events
+    where embed_id = #{embed_id};
 
     commit;
     SQL

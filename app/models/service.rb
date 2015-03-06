@@ -11,16 +11,18 @@ class Service < ActiveRecord::Base
 
   has_many :service_errors
 
+  has_many :events, dependent: :delete_all
+
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
-
+  
   def brand_identities
-    self.brand.identities.where(:provider => feed_name).all
+    brand.identities.where(provider: feed_name).all
   end
 
   def clear_relations_and_destroy
-    service_id = self.id
+    service_id = id
     embed_id = embed.id
 
     query = <<-SQL
@@ -43,6 +45,11 @@ class Service < ActiveRecord::Base
     --------------------------------------------------------
     delete from entities
     where id not in (select distinct(entity_id) from service_entities);
+    
+    -- delete events that belong to this service
+    --------------------------------------------
+    delete from events
+    where service_id = #{service_id};
 
     commit;
     SQL
