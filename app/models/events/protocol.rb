@@ -31,6 +31,7 @@ module Events
         content_digest: content_digest,
         source_data: source_data,
         embed_id: embed_id,
+        service_id: service_id,
         props: meta || {}
       })
       self
