@@ -20,9 +20,7 @@ module Fetchers
       def fetch(opts={})
         opts[:count] ||= @count
 
-        handle_errors do
-          @result = fetch_once opts
-        end
+        @result = fetch_once opts
       end
 
       def has_next?
