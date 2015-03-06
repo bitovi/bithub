@@ -14,10 +14,12 @@ pid "/home/bithub/web/shared/pids/unicorn.pid"
 logger(LoggerFactory.new('unicorn', :environment => ENV['ENV']).component_logger)
 
 before_fork do |server, worker|
+
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.connection.disconnect!
-    Rails.logger.info('Disconnected from ActiveRecord')
+    Rails.logger.info('Disconnected from Postgres (ActiveRecord)')
   end
+
   sleep 1
 end
 
@@ -28,6 +30,16 @@ after_fork do |server, worker|
 
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.establish_connection
-    Rails.logger.info('Connected to ActiveRecord')
+    Rails.logger.info('Connected to Postgres (ActiveRecord)')
+  end
+
+  if defined?(Bunny)
+    ConnectionManager.instance
+    Rails.logger.info('Connected to RabbitMQ')
+  end
+
+  if defined?(Redis)
+    ConnectionManager.instance
+    Rails.logger.info('Connected to Redis')
   end
 end
