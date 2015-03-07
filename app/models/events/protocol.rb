@@ -27,6 +27,14 @@ module Events
     end
 
     def build
+      unless ::Service.find_by_id(service_id)
+        fail OrphanedEventError.new('Event to be saved under a service that has already been deleted.')
+      end
+
+      unless ::Embed.find_by_id(embed_id)
+        fail OrphanedEventError.new('Event to be saved under an embed that has already been deleted.')
+      end
+
       @instance = ::Event.new({
         content_digest: content_digest,
         source_data: source_data,
