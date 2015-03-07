@@ -16,7 +16,7 @@ module Wrappers
 
       def images
         if data = @data[:attachments].andand[:data]
-          extract_from_attachments_by_type(data, 'photo')\
+          extract_from_attachments_by_type(data, types: ['photo', 'cover_photo'])\
             .map do |p|
             {
               url: p[:media][:image][:src]
@@ -45,10 +45,13 @@ module Wrappers
       # - attachments['data'][{ 'media' => ... }]
       # - attachments['data'][{ subattachments['data'][{ 'media' => ... }] }, ... ]
 
-      def extract_from_attachments_by_type(data, type)
+      def extract_from_attachments_by_type(data, opts={})
+        types = opts[:types] || nil
+
         data.reduce([]) do |acc, el|
 
-          if el[:type] == type
+          puts "=== #{el[:type]}, #{types}"
+          if types && types.include?(el[:type])
             acc.push el
           elsif sa_data = el[:subattachments].andand[:data]
             # handle subattachments
