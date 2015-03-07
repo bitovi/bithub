@@ -12,4 +12,5 @@ module Events
   class MappingError < BaseError; end
   class DispatchError < BaseError; end
   class ValidationError < BaseError; end
+  class OrphanedEventError < BaseError; end
 end
