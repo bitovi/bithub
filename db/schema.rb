@@ -278,7 +278,6 @@ ActiveRecord::Schema.define(version: 20150306142144) do
 
   create_table "subscriptions", force: true do |t|
     t.integer  "organization_id"
-    t.string   "stripe_plan_id"
     t.string   "stripe_event_id"
     t.string   "stripe_customer_id"
     t.string   "stripe_subscription_id"

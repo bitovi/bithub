@@ -3,13 +3,26 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     super do |account|
-      plan = params.fetch(:plan)
+      plan_name = params.fetch(:plan)
+      plan = Plan.find_by_stripe_id plan_name
 
-      brand_builder = Brands::BrandBuilder.new(account, plan)
-      brand_builder.build.save
+      # TODO: validate plan
 
-      session['tenant_name'] = brand_builder.brand.tenant_name
+      org_builder = Organizations::OrganizationBuilder.new(account, plan)
+      org_builder.build.save!
+
+      # TODO: handle multiple brands on organization
+      session['tenant_name'] = org_builder.brand.tenant_name
     end
+  end
+
+  def new
+    plan_name = params.fetch(:plan)
+    plan = Plan.find_by_stripe_id plan_name
+
+    raise ActionController::RoutingError.new('Not Found') unless plan
+
+    super
   end
 
   protected
