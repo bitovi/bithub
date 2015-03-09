@@ -4,7 +4,6 @@
 en:
   hello: "Hello world"
   api:
-
     events:
       create:
         success: "Event created."
@@ -55,7 +54,7 @@ en:
         success: "Reward deleted."
         error: "Error during reward deletion."
     
-    services:
+    embeds:
       show:
         error: "Embed not found."
       create:

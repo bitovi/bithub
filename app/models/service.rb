@@ -4,6 +4,9 @@ class Service < ActiveRecord::Base
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
 
+  validates_uniqueness_of :type_name, :scope => [:embed_id, :feed_name], message: "already created a service of this type."
+  validate :max_number_of_services
+
   belongs_to :embed
 
   has_many :service_entities
@@ -123,5 +126,11 @@ class Service < ActiveRecord::Base
       signature: "service_#{action}",
       action: action
     }
+  end
+
+  def max_number_of_services
+    if brand.services.count >= 7
+      errors.add(:count, 'max number of services reached')
+    end
   end
 end
