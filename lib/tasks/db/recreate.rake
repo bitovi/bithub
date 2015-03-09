@@ -5,5 +5,6 @@ namespace :db do
     Rake::Task["db:create"].execute
     Rake::Task["db:migrate"].execute
     Rake::Task["redis:flushdb"].execute
+	Rake::Task["data:import_plans"].execute
   end
 end
