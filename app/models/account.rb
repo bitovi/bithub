@@ -21,14 +21,4 @@ class Account < ActiveRecord::Base
       errors.add(:invite_key, "does not match")
     end
   end
-
-  def create_subscription
-    # subscription creates Stripe's customer,
-    # so call it after the brand itself is successfully cerated
-    if @brand.save && !ENV['STRIPE_DISABLE'].to_bool
-      @brand.subscription = Subscription.new(plan_id: @plan)
-      @brand.save
-    end
-  end
-
 end

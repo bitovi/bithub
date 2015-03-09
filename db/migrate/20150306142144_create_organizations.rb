@@ -9,7 +9,7 @@ class CreateOrganizations < ActiveRecord::Migration
     create_join_table :accounts, :organizations
     drop_table :accounts_brands
     rename_column :subscriptions, :brand_id, :organization_id
-    rename_column :subscriptions, :plan_id, :stripe_plan_id
+    remove_column :subscriptions, :plan_id
     add_column :subscriptions, :plan_id, :integer
     add_column :brands, :organization_id, :integer
   end
