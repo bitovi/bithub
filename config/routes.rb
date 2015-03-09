@@ -5,6 +5,8 @@ Bithub::Application.routes.draw do
   # Frontend
   root 'frontend#index'
 
+  get 'embed', to: 'admin#embed'
+
   # Admin
   resources :admin, only: %i(index) do
     collection do
@@ -39,7 +41,7 @@ Bithub::Application.routes.draw do
     }
 
   as :account do
-    get 'register', to: redirect('register/starter')
+    get 'register', to: redirect('register/startup')
 
     # RESTify some of Devise methods
     post   'api/auth/login',    to: 'api/auth/account_sessions#create'
