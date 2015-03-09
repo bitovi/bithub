@@ -17,8 +17,11 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def create
     @embed = current_brand.embeds.new(embed_params)
     @embed.name = generated_name if params[:name].blank?
-    @embed.save
-    render :show
+    if @embed.save
+      render :show
+    else
+      render :json => msg_hash(@embed, 'destroy'), :status => 406
+    end
   end
   
   def update
@@ -29,9 +32,9 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
   def destroy
     if owner_embed.clear_relations_and_destroy
-      render :json => msg_hash(@filter, 'destroy', 'success')
+      render :json => msg_hash(@embed, 'destroy', 'success')
     else
-      render :json => msg_hash(@filter, 'destroy'), :status => 406
+      render :json => msg_hash(@embed, 'destroy'), :status => 406
     end
   end
 

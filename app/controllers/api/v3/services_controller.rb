@@ -27,7 +27,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
     @service = owner_embed.services.build(service_definition)
     @service.humanize
 
-    if @embed.save
+    if @service.save
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
