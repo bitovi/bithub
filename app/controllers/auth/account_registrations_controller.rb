@@ -10,17 +10,20 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     super do |account|
-      brand_builder = Brands::BrandBuilder.new(account, plan_name)
-      brand_builder.build.save
+      if account.invite_code_valid?
+        account.invite_code.use_up_if_useable
+        brand_builder = Brands::BrandBuilder.new(account, plan_name)
+        brand_builder.build.save
 
-      session['tenant_name'] = brand_builder.brand.tenant_name
+        session['tenant_name'] = brand_builder.brand.tenant_name
+      end
     end
   end
 
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) << :invite_key
+    devise_parameter_sanitizer.for(:sign_up) << :code
   end
 
   def after_sign_up_path_for(resource)
