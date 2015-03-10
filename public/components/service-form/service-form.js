@@ -50,6 +50,7 @@ function(Component, initView, Models){
 			isHidden: false,
 			missingConfig : false,
 			errors: null,
+			typeErros: null,
 			define : {
 				service : {
 					set : function(val){
@@ -79,7 +80,8 @@ function(Component, initView, Models){
 					var attrs = {
 						isHidden: false
 					};
-					var errors;
+					var errorsResponse;
+					var errors, typeErrors;
 
 					services.splice(index, 1);
 
@@ -87,11 +89,17 @@ function(Component, initView, Models){
 						attrs.missingConfig = true;
 					} else if(error.status = 406){
 						try {
-							errors = JSON.parse(error.responseText).errors.config_attrs;
+							errorsResponse = JSON.parse(error.responseText).errors;
+							errors = errorsResponse.config_attrs;
+							typeErrors = errorsResponse.type_name;
 						} catch(e){
 							errors = {};
 						}
 						attrs.errors = errors;
+					}
+
+					if(typeErrors){
+						self.attr('typeErrors', typeErrors);
 					}
 
 					Models.Service.errored(service);
@@ -116,6 +124,7 @@ function(Component, initView, Models){
 			clearErrors : function(){
 				this.attr({
 					errors: null,
+					typeErrors: null,
 					missingConfig: false
 				});
 			},
