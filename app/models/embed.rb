@@ -3,7 +3,7 @@ class Embed < ActiveRecord::Base
 
   belongs_to :brand
   validates_uniqueness_of :name, :scope => [:brand_id]
-  validates_uniqueness_of :brand_id, message: "already have one embed."
+  validates_uniqueness_of :brand_id, message: "already has one embed."
 
   has_many :filters, dependent: :destroy
   has_many :presets, :class_name => "EmbedPreset"
