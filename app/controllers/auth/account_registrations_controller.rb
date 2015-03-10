@@ -2,6 +2,7 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
   
   POSSIBLE_PLANS = %w(startup)
+  DEFAULT_PLAN = "startup"
 
   def new
     @plan_name = plan_name
@@ -9,10 +10,11 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   end
 
   def create
+    @plan_name = plan_name
     super do |account|
       if account.invite_code_valid?
         account.invite_code.use_up_if_useable
-        brand_builder = Brands::BrandBuilder.new(account, plan_name)
+        brand_builder = Brands::BrandBuilder.new(account, @plan_name)
         brand_builder.build.save
 
         session['tenant_name'] = brand_builder.brand.tenant_name
@@ -36,9 +38,9 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def plan_name
     unless POSSIBLE_PLANS.include?(params[:plan])
-      "startup"
+      DEFAULT_PLAN
     else
-      params[:plan]
+      params[:plan] || DEFAULT_PLAN
     end
   end
 end
