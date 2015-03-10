@@ -115,6 +115,9 @@ function(Model, _keys){
 		},
 		disqus : {
 			types: ['forum']
+		},
+		instagram : {
+			types: ['tag', 'user']
 		}
 	};
 

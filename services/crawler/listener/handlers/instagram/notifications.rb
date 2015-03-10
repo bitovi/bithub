@@ -26,10 +26,12 @@ module Handlers
           method_name = "handle_postback_#{object}".to_sym
 
           if self.respond_to? method_name, true
-            results = self.send method_name.to_sym, object_id
-
             if subscriptions = @proxy.registry['instagram', 'media', object_id]
-              subscriptions.each do |owner_data|
+              subscriptions.each do |sub|
+                owner_data   = sub.fetch :owner_data
+                access_token = sub.fetch :access_token
+
+                results = self.send method_name.to_sym, object_id, access_token
                 @proxy.publish results, owner_data
               end
             end
@@ -41,20 +43,20 @@ module Handlers
 
       # Subhandlers
 
-      def handle_postback_user(object_id)
-        Fetchers::Instagram::UserRecentMedia.fetch object_id, count: 1
+      def handle_postback_user(object_id, access_token)
+        Fetchers::Instagram::UserRecentMedia.fetch object_id, count: 1, access_token: access_token
       end
 
-      def handle_postback_tag(object_id)
-        Fetchers::Instagram::TagRecentMedia.fetch object_id, count: 1
+      def handle_postback_tag(object_id, access_token)
+        Fetchers::Instagram::TagRecentMedia.fetch object_id, count: 1, access_token: access_token
       end
 
-      def handle_postback_location(object_id)
-        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      def handle_postback_location(object_id, access_token)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1, access_token: access_token
       end
 
-      def handle_postback_geography(object_id)
-        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1
+      def handle_postback_geography(object_id, access_token)
+        Fetchers::Instagram::LocationRecentMedia.fetch object_id, count: 1, access_token: access_token
       end
 
     end
