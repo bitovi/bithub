@@ -20,6 +20,10 @@ class Service < ActiveRecord::Base
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
   
+  def brand
+    embed.brand
+  end
+
   def brand_identities
     brand.identities.where(provider: feed_name).all
   end
@@ -68,10 +72,6 @@ class Service < ActiveRecord::Base
 
   def entity_count
     entities.count
-  end
-
-  def brand
-    self.embed.brand
   end
 
   def service_config
@@ -129,7 +129,7 @@ class Service < ActiveRecord::Base
   end
 
   def max_number_of_services
-    if brand.services.count >= 7
+    if Service.count >= 7
       errors.add(:count, 'max number of services reached')
     end
   end

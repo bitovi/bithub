@@ -7,7 +7,6 @@ class InviteCode < ActiveRecord::Base
   validate :has_either_remaining_uses_or_valid_until,
     :remaining_uses_gt_0, :valid_until_gt_now
 
-
   def code=(code)
     write_attribute(:code, code.downcase)
   end

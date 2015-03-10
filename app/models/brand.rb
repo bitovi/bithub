@@ -30,7 +30,7 @@ class Brand < ActiveRecord::Base
   end
 
   def self.current
-    Apartment::Tenant.current
+    where(tenant_name: Apartment::Tenant.current).first
   end
 
   def create_tenant
@@ -53,10 +53,6 @@ class Brand < ActiveRecord::Base
 
   def self.find_by_tenant_name(tenant)
     where(tenant_name: tenant).first
-  end
-
-  def self.current
-    where(tenant_name: Apartment::Tenant.current).first
   end
 
   def notify_crawler(action)
