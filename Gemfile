@@ -93,12 +93,15 @@ group :development, :test do
   gem 'evented-spec'
   gem 'database_cleaner'
   gem 'factory_girl_rails'
-  gem 'codeclimate-test-reporter', require: false
   gem 'travis', require: false
   gem 'git'
   gem 'yard'
   gem 'thin' # used by stripe-ruby-mock
   gem 'stripe-ruby-mock', '~> 2.0'
+end
+
+group :test do
+  gem 'codeclimate-test-reporter', require: nil
 end
 
 group :development do
