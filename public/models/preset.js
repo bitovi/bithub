@@ -6,7 +6,7 @@ steal(
 'can/map/backup',
 function(Model){
 
-	var EMBED_TEMPLATE = '<a href="http://{embedEndpoint}{embedUrl}" class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/admin/embed.js"></script>'
+	var EMBED_TEMPLATE = '<a href="http://{embedEndpoint}{embedUrl}" class="bithub-embed">{hubName} Embed</a><script src="http://{embedEndpoint}/embed.js"></script>'
 
 	var dasherize  = function(str) {
 		return str.replace(/[A-Z]/g, function(char, index) {
@@ -35,7 +35,7 @@ function(Model){
 		},
 		url : function(tenantName, hubId){
 			var attrs = this.embedAttrs(tenantName, hubId);
-			return '/admin/embed?' + can.param(attrs);
+			return '/embed?' + can.param(attrs);
 		},
 		embedCode : function(tenantName, hubId, hubName){
 			var attrs = this.embedAttrs(tenantName, hubId);
