@@ -16,9 +16,7 @@ module Supervisors::Services::Instagram
         info "Instagram subscription failed with #{e.message}"
       end
 
-      if self.respond_to? :preloaded_items, true
-        publish preloaded_items(service_config), owner_data
-      end
+      preload
     end
 
     def cleanup
@@ -29,6 +27,21 @@ module Supervisors::Services::Instagram
 
     def subscribe; raise NotImplementedError; end
     def preloaded_items; raise NotImplementedError; end
+
+    def preload
+      if self.respond_to? :preloaded_items, true
+        handle_errors do
+          result = preloaded_items service_config
+          publish result, owner_data
+        end
+      end
+    end
+
+    def handle_errors
+      yield
+    rescue => e
+      Actor[:error_publisher].publish e, owner_data
+    end
 
     def registry
       Actor[:subscription_registry]

@@ -4,6 +4,7 @@ module Fetchers
   module Instagram
 
     class Base
+      include Protocol
 
       COUNT = 100
 
@@ -19,7 +20,9 @@ module Fetchers
       def fetch(opts={})
         opts[:count] ||= @count
 
-        @result = fetch_once opts
+        handle_errors do
+          @result = fetch_once opts
+        end
       end
 
       def has_next?
