@@ -1,1 +1,1 @@
-json.(embed, :id, :name, :colorscheme, :approved_by_default, :layout)
+json.(embed, :id, :name, :approved_by_default)
