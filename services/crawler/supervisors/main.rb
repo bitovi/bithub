@@ -8,19 +8,18 @@ module Supervisors
     include Celluloid
     include Propagation
 
-    def initialize
+    def initialize(opts={})
       @path = SupervisionNode.new(nil, NodeTypes::MainInfo.new)
       @brands = SupervisionGroup.new
-      # Should allow the #initialize to finish
-      # then boot, but this will work for now
-      boot
+      @boot_on_init = opts.fetch(:boot_on_init) { true }
+      boot(config_tree) if boot_on_init?
     end
 
-    def boot
+    def boot(whole_config)
       info "Starting ROOT/MAIN supervisor"
-      info config_tree.to_yaml
+      info whole_config.to_yaml
 
-      config_tree.fetch(:brands).each do |b|
+      whole_config.fetch(:brands).each do |b|
         bi = NodeTypes::BrandInfo.new(b.fetch(:id), b.fetch(:name))
         actor_name = initialize_next_level_supervisor(bi, Supervisors::Brand)
         Actor[actor_name].boot(b)
