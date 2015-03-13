@@ -4,9 +4,7 @@ require 'persistent/id_set'
 module Supervisors::Services::Meetup
   class Group < Supervisors::Service
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       event_set = IdSet.new(@brand_name, "meetup", "rsvp")
 
       @endpoints.supervise_as(
