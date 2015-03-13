@@ -24,6 +24,16 @@ function(Component, initView, Models){
 	}
 
 
+	var BUTTON_LABELS = {
+		facebook   : '<i class="fa fa-facebook-square"></i> Log in with Facebook',
+		twitter    : 'Sign in with Twitter',
+		github     : 'Log in in with GitHub',
+		meetup     : 'Log in with Meetup',
+		foursquare : 'Log in with Foursquare',
+		instagram  : 'Log in with Instagram',
+		disqus     : 'Log in with Disqus'
+	}
+
 
 	return Component.extend({
 		tag : 'bh-oauthorizer',
@@ -49,6 +59,9 @@ function(Component, initView, Models){
 				}
 				return false;
 			},
+			buttonLabel : function(){
+				return BUTTON_LABELS[this.attr('feed')] || 'Authorize Service';
+			},
 			identities: null,
 			isAuthorizing : false,
 			isPending : function(){
@@ -73,6 +86,14 @@ function(Component, initView, Models){
 						});
 					});
 				});
+			}
+		},
+		helpers : {
+			ifServiceIs : function(service, opts){
+				service = can.isFunction(service) ? service() : service;
+				if(service === this.attr('feed')){
+					return opts.fn();
+				}
 			}
 		}
 	})

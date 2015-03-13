@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150309174442) do
+ActiveRecord::Schema.define(version: 20150310153414) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -131,8 +131,6 @@ ActiveRecord::Schema.define(version: 20150309174442) do
 
   create_table "embeds", force: true do |t|
     t.string  "name"
-    t.string  "colorscheme"
-    t.string  "layout"
     t.integer "brand_id"
     t.boolean "approved_by_default", default: true
   end

@@ -31,14 +31,22 @@ module Handlers
                 owner_data   = sub.fetch :owner_data
                 access_token = sub.fetch :access_token
 
-                results = self.send method_name.to_sym, object_id, access_token
-                @proxy.publish results, owner_data
+                handle_errors(owner_data) do
+                  results = self.send method_name.to_sym, object_id, access_token
+                  @proxy.publish results, owner_data
+                end
               end
             end
           end
         end
 
         [200, 'OK']
+      end
+
+      def handle_errors(owner_data)
+        yield
+      rescue => e
+        @proxy.publish_error e, owner_data
       end
 
       # Subhandlers
