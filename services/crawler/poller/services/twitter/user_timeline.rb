@@ -2,9 +2,7 @@ module Supervisors::Services::Twitter
   class UserTimeline < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new("user_timeline", user_handle)).actor_name,
         Poller, *[
