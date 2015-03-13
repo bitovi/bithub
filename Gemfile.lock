@@ -533,8 +533,6 @@ GEM
       raindrops (~> 0.7)
     uniform_notifier (1.6.2)
     vcr (2.9.3)
-    vetinari (0.2.0)
-      celluloid-io (~> 0.14)
     virtus (1.0.4)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -649,7 +647,6 @@ DEPENDENCIES
   twitter-text
   unicorn
   vcr
-  vetinari
   virtus
   webmock
   yard

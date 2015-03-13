@@ -6,7 +6,7 @@ module Supervisors
 
     # Action not meant for this level,
     # propagate further down where routing
-    # matches (actor names ...)
+    # matches (where target matches their name)
     def propagate_cmd(target, action)
       children.select do |c|
         target.to_s.include?(c.name.to_s)
@@ -16,8 +16,6 @@ module Supervisors
     end
 
     def initialize_next_level_supervisor(node_info, actor_class)
-      # info "Starting #{node_info.klassname} #{@path.next_level(node_info).actor_name}"
-
       debug "STARTING #{node_info.to_s.colorize(:red)}"
       _childs.supervise_as(
         (actor_name = @path.next_level(node_info).actor_name),
@@ -61,6 +59,10 @@ module Supervisors
       children.each { |c| c.terminate_cascading }
       self.cleanup if respond_to? :cleanup
       terminate
+    end
+
+    def boot_on_init?
+      @boot_on_init
     end
   end
 end

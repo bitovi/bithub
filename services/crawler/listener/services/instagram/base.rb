@@ -6,9 +6,7 @@ module Supervisors::Services::Instagram
 
     VALID_OBJECTS = %w(user tag location geography)
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       begin
         subscribe service_config
         register_to_handler

@@ -1,4 +1,5 @@
 require 'reel'
+require 'koala'
 require_relative 'router'
 require_relative 'handler_proxy'
 require_relative 'handlers/all'
@@ -21,6 +22,9 @@ class HttpServer < Reel::Server::HTTP
 
     @handlers  = SupervisionGroup.new
     @router    = Router.new prefix: path_prefix
+
+    # use Facebook v2.2 API
+    Koala.config.api_version = 'v2.2'
 
     super(host, port, &method(:on_connection))
     info "HTTP server listening on #{host}:#{port}"

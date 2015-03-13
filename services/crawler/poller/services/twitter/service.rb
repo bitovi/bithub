@@ -2,9 +2,7 @@ module Supervisors::Services::Twitter
   class Hashtag < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new('search', hashtags.join(','))).actor_name,
         Poller, *[
