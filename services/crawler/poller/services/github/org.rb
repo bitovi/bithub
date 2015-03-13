@@ -2,9 +2,7 @@ module Supervisors::Services::Github
   class Org < Supervisors::Service
     include Supervisors::Services::Github::Common
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new('org_activity', org_name)).actor_name,
         Poller, *[

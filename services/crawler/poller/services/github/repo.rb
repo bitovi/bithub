@@ -2,9 +2,7 @@ module Supervisors::Services::Github
   class Repo < Supervisors::Service
     include Supervisors::Services::Github::Common
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new('repo_activity', repo_name)).actor_name,
         Poller, *[
