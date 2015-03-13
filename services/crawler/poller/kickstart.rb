@@ -29,7 +29,6 @@ require 'command_handler'
 require 'publishers/error_publisher'
 require 'publishers/event_publisher'
 require 'publishers/notification_publisher'
-require 'decorators/all'
 require 'supervisors/main'
 
 # Poller
