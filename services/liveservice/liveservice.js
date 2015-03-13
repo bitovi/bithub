@@ -26,6 +26,10 @@ var indexHandler = function( req, res ) {
 var parseCookies = function( cookie ) {
 	return _.reduce( cookie.split(';'), function( acc, pair ) {
 		pair = pair.split('=');
+
+		// care only about key/value pairs
+		if( pair.length != 2 ) return acc;
+
 		var key   = pair[0].trim(),
 			value = pair[1].trim();
 
@@ -102,7 +106,7 @@ LiveService.prototype.onIoConnection = function() {
 			} else {
 				console.log('User without valid session from ' + remoteIp);
 			}
-			
+
 			return;
 		}
 

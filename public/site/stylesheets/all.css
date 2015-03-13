@@ -7508,7 +7508,17 @@ h3.start-using {
   border: 15px solid #119bbb;
   padding: 0;
   margin: -15px;
-  background: white; }
+  background: white; 
+  position: relative}
+
+.embed-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 
 /* line 124, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
 .embed-caption {
@@ -7645,7 +7655,8 @@ hr {
   .examples-outer-wrapper .example-embed {
     height: 600px;
     background: white;
-    margin: 15px 0 15px; }
+    margin: 15px 0 15px;
+    position: relative; }
 
 /* line 241, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
 .pricing-list {
@@ -7667,7 +7678,7 @@ hr {
   border: 1px solid #dfdfdf;
   text-align: center;
   font-family: 'Raleway', sans-serif;
-  min-height: 503px; }
+  min-height: 500px; }
   /* line 258, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
   .pricing-wrap h3 {
     margin: 0;
@@ -7844,3 +7855,58 @@ blockquote {
   margin-bottom: 30px;
 }
 
+.top-bar-cta {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(0,0,0,0.85);
+  border-bottom: 1px solid black;
+  z-index: 100000;
+  margin-top: -50px;
+  transition: margin-top 0.1s ease-out;
+  -webkit-transition: margin-top 0.1s ease-out;
+  -moz-transition: margin-top 0.1s ease-out;
+}
+.top-bar-cta-expanded {
+  margin-top: 0;
+}
+.top-cta-wrap {
+  color: white;
+  font-family: 'Raleway', sans-serif;
+  text-align: center;
+  line-height: 50px;
+}
+.top-cta-wrap .btn-primary {
+  background: #b53305;
+  border: none;
+  display: inline-block;
+  margin-top: -3px;
+  margin-left: 5px;
+}
+.newsletter-form-wrapper {
+  position: fixed;
+  z-index: 100000;
+  background: rgba(0,0,0,0.7);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+}
+
+.newsletter-form-wrapper .form {
+  background: white;
+  margin-top: 50px;
+  font-family: 'Raleway', sans-serif;
+  border-radius: 3px;
+}
+.newsletter-form-wrapper h2 span {
+  font-size: 14px;
+  float: right;
+  color: #b53305;
+  margin-top: 7px;
+  margin-right: 20px;
+  cursor: pointer;
+}
