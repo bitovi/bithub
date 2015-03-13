@@ -11,7 +11,7 @@ module Fetchers
         }.merge opts
 
         handle_errors do
-          @client.get_connections object_id, 'feed', args, api_version: 'v2.2'
+          @client.get_connections object_id, 'feed', args
         end
       end
 

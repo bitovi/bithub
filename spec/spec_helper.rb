@@ -11,8 +11,7 @@ $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'crawler')
 require 'rspec'
 require 'rspec/mocks'
 
-require 'celluloid'
-require 'celluloid/io'
+require 'celluloid/test'
 
 require 'lib/core_helpers'
 require 'spec/test_helper_methods'

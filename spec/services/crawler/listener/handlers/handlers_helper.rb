@@ -21,7 +21,7 @@ require 'configuration_fetcher'
 require 'connection_manager'
 #require 'publishers/event_publisher'
 require 'decorators/all'
-require 'supervisors/support/owner_data'
+require 'supervisors/owner_data'
 
 Dotenv.load
 

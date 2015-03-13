@@ -2,9 +2,7 @@ module Supervisors::Services::Twitter
   class Term < Supervisors::Service
     include Supervisors::Services::Twitter::Common
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new('term', term)).actor_name,
         Poller, *[

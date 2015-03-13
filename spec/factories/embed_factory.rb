@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :embed do
     name "an embed that embeds Internet"
-    colorscheme 'peaksea'
-    layout 'up and down'
 
     before(:create) do |embed|
       embed.class.skip_callback(:create, :after, :notify_embed_start)

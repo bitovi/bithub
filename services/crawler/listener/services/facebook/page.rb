@@ -17,9 +17,7 @@ require 'koala'
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       begin
         subscribe_page
       rescue Koala::KoalaError => e
