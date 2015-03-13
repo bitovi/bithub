@@ -12,8 +12,8 @@ class DummySet < RedisSet
 end
 
 describe DummySet do
-  before { Redis.new(:url => ENV['REDIS_URL']).flushall }
-  after { Redis.new(:url => ENV['REDIS_URL']).flushall }
+  before { Redis.new(:url => ENV['REDIS_URL']).flushdb }
+  after { Redis.new(:url => ENV['REDIS_URL']).flushdb }
 
   let(:data_set) do
     [{
