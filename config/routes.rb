@@ -115,4 +115,6 @@ Bithub::Application.routes.draw do
 
   get '/:page', controller: 'frontend', action: 'render_page'
   get '/', controller: 'frontend', action: 'index'
+
+  match '*path', via: :all, to: 'application#render_404'
 end
