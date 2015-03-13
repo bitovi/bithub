@@ -28,7 +28,5 @@ class DigestSet < RedisSet
       event.fetch(:meta).fetch(:feed_name),
       event.fetch(:meta).fetch(:type_name)
     ]
-  rescue TypeError => err
-    raise err
   end
 end
