@@ -8,6 +8,6 @@
 
 {{#if state.showPoweredBy}}
 	<div class="powered-by">
-		Powered by <a href="http://beta.bithub.com">BitHub</a>
+		Powered by <a href="http://bithub.com" target="_blank">BitHub</a>
 	</div>
 {{/if}}
