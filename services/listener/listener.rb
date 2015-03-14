@@ -23,7 +23,9 @@ require 'connection_manager'
 require 'dispatcher'
 
 # /LISTENER_DIR
-require 'handlers'
+require 'handlers/error_handler'
+require 'handlers/command_handler'
+require 'handlers/event_handler'
 
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
