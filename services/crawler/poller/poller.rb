@@ -43,17 +43,17 @@ class Poller
   end
 
   def poll
-    events = fetch_and_lock
-    info "#{fetcher_name} for brand '#{@owner_data.brand.name}', fetched #{events.count} Events"
-
-    if events.count > 0
-      info "Publishing with brand: #{@owner_data.brand}, embed: #{@owner_data.embed}, and service: #{@owner_data.service}"
-      event_publisher.publish(events, @owner_data, decorator: @decorator)
-    else
-      notification_publisher.publish_to_frontend(empty_response_notif)
+    if (events = fetch_and_lock)
+      info "#{fetcher_name} for brand '#{@owner_data.brand.name}', fetched #{events.count} Events"
+      if events.count > 0
+        info "Publishing with brand: #{@owner_data.brand}, embed: #{@owner_data.embed}, and service: #{@owner_data.service}"
+        event_publisher.publish(events, @owner_data, decorator: @decorator)
+      else
+        notification_publisher.publish_to_frontend(empty_response_notif)
+      end
+      notification_publisher.publish_to_backend(clear_service_errors_notif)
+      notification_publisher.publish_to_frontend(clear_service_errors_notif)
     end
-    notification_publisher.publish_to_backend(clear_service_errors_notif)
-    notification_publisher.publish_to_frontend(clear_service_errors_notif)
   end
 
   def lock_name(type = :polling)
