@@ -27,9 +27,8 @@ module Handlers
 
           if self.respond_to? method_name, true
             if subscriptions = @proxy.registry['instagram', 'media', object_id]
-              subscriptions.each do |sub|
-                owner_data   = sub.fetch :owner_data
-                access_token = sub.fetch :access_token
+              subscriptions.each do |owner_data|
+                access_token = owner_data.service.config[:access_token]
 
                 handle_errors(owner_data) do
                   results = self.send method_name.to_sym, object_id, access_token
