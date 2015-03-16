@@ -32,6 +32,7 @@ module Supervisors
     end
 
     private
+
     def _childs; @endpoints; end
 
     def static_config
