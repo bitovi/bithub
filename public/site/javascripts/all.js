@@ -10201,7 +10201,7 @@ $(function(){
 		var fn = function(){
 			clearTimeout(timeout);
 			var scrollTop = $window.scrollTop();
-			$ctaBar.toggleClass('top-bar-cta-expanded', scrollTop > 1000);
+			$ctaBar.toggleClass('top-bar-cta-expanded', scrollTop > 500);
 			timeout = setTimeout(fn, 500);
 		}
 		return fn;
