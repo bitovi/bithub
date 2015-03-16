@@ -55,23 +55,16 @@ module Supervisors::Services::Facebook
 
     def subscribe_page
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'post'
-      registry.subscribe 'facebook', 'page', page_id, pack_subscription(owner_data, page_token)
+      registry.subscribe 'facebook', 'page', page_id, owner_data
     end
 
     def unsubscribe_page
-      registry.unsubscribe 'facebook', 'page', page_id, pack_subscription(owner_data, page_token)
+      registry.unsubscribe 'facebook', 'page', page_id, owner_data
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'delete'
     end
 
     def preloaded_items
       Fetchers::Facebook::GetFeed.fetch client, page_id
-    end
-
-    def pack_subscription(owner_data, access_token)
-      {
-        owner_data: owner_data,
-        access_token: access_token
-      }
     end
 
   end
