@@ -45,19 +45,12 @@ module Supervisors::Services::Instagram
       Actor[:subscription_registry]
     end
 
-    def subscription
-      {
-        owner_data: owner_data,
-        access_token: service_config[:access_token]
-      }
-    end
-
     def register_to_handler
-      registry.subscribe 'instagram', 'media', instagram_object_id, subscription
+      registry.subscribe 'instagram', 'media', instagram_object_id, owner_data
     end
 
     def unregister_from_handler
-      registry.unsubscribe 'instagram', 'media', instagram_object_id, subscription
+      registry.unsubscribe 'instagram', 'media', instagram_object_id, owner_data
     end
 
     def instagram_object_id
