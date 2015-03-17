@@ -10,7 +10,9 @@
 				<%= devise_error_messages! %>
 
 				<div class="form-group"><%= f.label 'invite code' %>
-					<%= f.text_field :code, autocomplete: "off", class: 'form-control' %></div>
+					<%= f.text_field :code, autocomplete: "off", class: 'form-control' %>
+					<i><small>Don't have an invite code? Contact us via Twitter - <a href="http://twitter.com/bithubapp">@bithubapp</a>, and request one</small></i>
+				</div>
 				
 				<div class="form-group"><%= f.label :name %>
 					<%= f.text_field :name, autocomplete: "off", class: 'form-control' %></div>
@@ -30,7 +32,7 @@
 		</div>
 	</div>
 
-	<p style="text-align:center"><i>We'll notify you when your 45 day trial is close to end.</i></p>
+	<p style="text-align:center"><i>We'll notify you when your 15 day trial is close to end.</i></p>
 
 	<%= render "devise/shared/links" %>
 
