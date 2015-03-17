@@ -1,10 +1,10 @@
 #!/bin/bash
 
 TS=`date +"%Y%m%d-%H%M%S"`
-BACKUPS_PATH="/dbbackups/"
+BACKUPS_PATH="{{ pg_dump.path }}"
 FILENAME="$TS.backup"
 DUMP_PATH="$BACKUPS_PATH$FILENAME"
-DBNAME="bithub"
+DBNAME="{{ pg_dump.dbname }}"
 
 echo "Dumping '$DBNAME' to '$DUMP_PATH' in PG custom format."
 pg_dump -Fc $DBNAME > "$DUMP_PATH" && echo "Done!"
