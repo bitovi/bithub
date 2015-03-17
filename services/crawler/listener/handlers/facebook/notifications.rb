@@ -43,9 +43,8 @@ module Handlers
         return unless object_id
 
         if subscriptions = @proxy.registry['facebook', 'page', page_id]
-          subscriptions.each do |sub|
-            access_token = sub.fetch :access_token
-            owner_data   = sub.fetch :owner_data
+          subscriptions.each do |owner_data|
+            access_token = owner_data.service.config[:access_token]
 
             result = fetch_object client(access_token), object_id
             @proxy.publish result, owner_data

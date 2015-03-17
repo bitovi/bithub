@@ -4,6 +4,9 @@ class Service < ActiveRecord::Base
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
 
+  validates_uniqueness_of :type_name, :scope => [:embed_id, :feed_name], message: "already created a service of this type."
+  validate :max_number_of_services
+
   belongs_to :embed
 
   has_many :service_entities
@@ -11,20 +14,56 @@ class Service < ActiveRecord::Base
 
   has_many :service_errors
 
+  has_many :events, dependent: :delete_all
+
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
-
-  def brand_identities
-    self.brand.identities.where(:provider => feed_name).all
+  
+  def brand
+    embed.brand
   end
 
-  def clear_linked_entities
-    links = ServiceEntity.where(service_id: id).all 
-    links.each do |l|
-      l.entity.destroy if l.entity.has_only_one_service?
-      l.destroy
-    end
+  def brand_identities
+    brand.identities.where(provider: feed_name).all
+  end
+
+  def clear_relations_and_destroy
+    service_id = id
+    embed_id = embed.id
+
+    query = <<-SQL
+    begin;
+    
+    -- delete connections between entities belonging to the service
+    -- we're currently deleting and the embed that service belongs to
+    -----------------------------------------------------------------
+    delete from embed_entities using service_entities
+    where embed_entities.entity_id = service_entities.entity_id
+    and embed_id = #{embed_id}
+    and service_id = #{service_id};
+
+    -- delete connections between entities and the service we're deleting
+    ---------------------------------------------------------------------
+    delete from service_entities
+    where service_id = #{service_id}; 
+
+    -- delete entities that have no connections to a service
+    --------------------------------------------------------
+    delete from entities
+    where id not in (select distinct(entity_id) from service_entities);
+    
+    -- delete events that belong to this service
+    --------------------------------------------
+    delete from events
+    where service_id = #{service_id};
+
+    commit;
+    SQL
+
+    ActiveRecord::Base.connection.execute(query)
+
+    destroy
   end
 
   def has_errors?
@@ -33,10 +72,6 @@ class Service < ActiveRecord::Base
 
   def entity_count
     entities.count
-  end
-
-  def brand
-    self.embed.brand
   end
 
   def service_config
@@ -91,5 +126,11 @@ class Service < ActiveRecord::Base
       signature: "service_#{action}",
       action: action
     }
+  end
+
+  def max_number_of_services
+    if Service.count >= 7
+      errors.add(:count, 'max number of services reached')
+    end
   end
 end

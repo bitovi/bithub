@@ -1,5 +1,0 @@
-web: /home/bithub/web/shared/bin/unicorn_rails -c ./config/unicorn.rb
-listener: ruby ./services/listener/listener.rb
-crawler: ruby ./services/crawler/crawler.rb
-worker: /home/bithub/web/shared/bin/sidekiq
-liveservice: nodejs ./services/liveservice/server.js

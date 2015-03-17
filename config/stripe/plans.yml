@@ -1,5 +1,5 @@
 -
-  stripe_id: "startup001"
+  stripe_id: "startup"
   name: "Startup"
   amount: 9900
   currency: 'usd'
@@ -30,7 +30,7 @@
     twitter_term: 1
 
 -
-  stripe_id: "brand001"
+  stripe_id: "brand"
   name: "Brand"
   amount: 34900
   currency: 'usd'
@@ -47,7 +47,7 @@
     services_per_embed: 10
 
 -
-  stripe_id: "agency001"
+  stripe_id: "agency"
   name: "Agency"
   amount: 99900
   currency: 'usd'

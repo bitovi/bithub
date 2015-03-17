@@ -1,5 +1,4 @@
 require_relative 'handlers_helper'
-
 require 'fetchers/instagram/tag_recent_media'
 
 describe Handlers::Instagram  do
@@ -18,7 +17,7 @@ describe Handlers::Instagram  do
   describe '#handle' do
     it 'listens for postback notifs, queries API and publishes events' do
 
-      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'instagram', 'media_event'
+      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'instagram', 'media_event', {}
       notif_raw  = load_response 'instagram/notif.json'
       endpoint   = build_postback_endpoint 'instagram/media'
 

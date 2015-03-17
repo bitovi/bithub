@@ -38,6 +38,7 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			page : {
 				value : 'hub-list',
 				set : function(val){
+					this.removeAttr('customPreset');
 					setTitle(val, this);
 					return val;
 				}

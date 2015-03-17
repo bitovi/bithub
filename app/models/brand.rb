@@ -26,6 +26,10 @@ class Brand < ActiveRecord::Base
     Apartment::Tenant.switch! name
   end
 
+  def self.current
+    where(tenant_name: Apartment::Tenant.current).first
+  end
+
   def create_tenant
     Apartment::Tenant.create tenant_name
     Apartment::Tenant.switch! tenant_name
@@ -46,10 +50,6 @@ class Brand < ActiveRecord::Base
 
   def self.find_by_tenant_name(tenant)
     where(tenant_name: tenant).first
-  end
-
-  def self.current
-    where(tenant_name: Apartment::Tenant.current).first
   end
 
   def notify_crawler(action)

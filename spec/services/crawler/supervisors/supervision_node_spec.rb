@@ -103,5 +103,4 @@ describe SupervisionNode do
       expect(@s_node.service_info).to eq NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
     end
   end
-
 end

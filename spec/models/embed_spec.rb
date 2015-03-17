@@ -114,19 +114,12 @@ RSpec.describe Embed, :type => :model do
       after { Filter.delete_all; NatlangQuery.delete_all }
 
       it 'filters by tying all predicates with a logical OR' do
-        embed = FactoryGirl.create(:embed, name: "Embed for disjunctive test")
-        embed.make_link_to(FactoryGirl.create(:github_pull_request), false)
-        embed.make_link_to(FactoryGirl.create(:github_push), false)
-        embed.make_link_to(FactoryGirl.create(:github_watch), false)
-        embed.make_link_to(FactoryGirl.create(:twitter_tweet), false)
-        embed.make_link_to(FactoryGirl.create(:twitter_follow), false)
-
-        filter = FactoryGirl.create(:filter, :disjunctive, embed: embed)
+        filter = FactoryGirl.create(:filter, :disjunctive, embed: @embed)
         filter.natlang_queries << FactoryGirl.create(:natlang_query, :tagged_with_canjs)
         filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter)
 
-        embed.approve_valid
-        expect(embed.approved_entities.length).to eq 5
+        @embed.approve_valid
+        expect(@embed.approved_entities.length).to eq 5
       end
     end
   end

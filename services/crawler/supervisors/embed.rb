@@ -1,3 +1,6 @@
+require 'supervisors/propagation'
+require 'supervisors/supervision_node'
+require 'supervisors/owner_data'
 require 'supervisors/service'
 
 module Supervisors
@@ -5,9 +8,11 @@ module Supervisors
     include Celluloid
     include Propagation
 
-    def initialize(path, embed_info)
+    def initialize(path, embed_info, opts={})
       @path = SupervisionNode.new(path, embed_info)
       @services = SupervisionGroup.new
+      @boot_on_init = opts.fetch(:boot_on_init) { false }
+      boot(opts.fetch(:embed_config)) if boot_on_init?
     end
 
     def boot(embed_config)
@@ -29,7 +34,7 @@ module Supervisors
     end
 
     def handle_cmd(target, action)
-      if target.node.is_a?(NodeTypes::ServiceInfo) && (ssc = service_supervisor_class(target.node))
+      if (ssc = service_supervisor_class(target.node)) && target.node.is_a?(NodeTypes::ServiceInfo)
         if action == :start
           initialize_next_level_supervisor(target.node, ssc)
         elsif action == :stop

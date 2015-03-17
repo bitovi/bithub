@@ -1,9 +1,7 @@
 module Supervisors::Services::Stackexchange
   class Tags < Supervisors::Service
 
-    def initialize(path, service_info)
-      super
-
+    def boot
       @endpoints.supervise_as(
         @path.next_level(NodeTypes::EndpointInfo.new('questions', tags_csv)).actor_name,
         Poller, *[

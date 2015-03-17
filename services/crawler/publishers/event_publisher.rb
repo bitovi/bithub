@@ -25,7 +25,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    info "Publisher for '#{owner_data.brand.name}' #{new_events.size} Events"
+    info "Publisher for '#{owner_data.brand.name}' published #{new_events.size} Events"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')

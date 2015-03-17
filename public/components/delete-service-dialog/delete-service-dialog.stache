@@ -3,15 +3,11 @@
 		<h3 class="panel-title">Delete Service</h3>
 	</div>
 	<div class="panel-body">
-		<div class="checkbox">
-			<label>
-				<input type="checkbox" can-value="deleteItems"> Delete all the items collected by the service
-			</label>
-		</div>
+		<i class="fa fa-exclamation-triangle"></i> Warning! This will delete all the items collected by the service!
 	</div>
 	<div class="panel-footer clearfix">
 		<div class="btn-group">
-			<button class="btn btn-default" can-click="cancelDelete">Cancel</button>
+			<button class="btn btn-default" can-click="cancelDelete" {{#if isDeleting}}disabled{{/if}}>Cancel</button>
 			<button class="btn btn-danger" can-click="deleteService">
 				{{#if isDeleting}}
 					<i class="fa fa-spin fa-circle-o-notch"></i>

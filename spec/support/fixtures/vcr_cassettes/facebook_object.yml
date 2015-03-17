@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://graph.facebook.com/v2.2/778255945594351_778256535594292?access_token=do_not_change&fields=attachments,from,message,picture,link,object_id,updated_time,type,status_type
+    uri: http://graph.facebook.com/v2.2/778255945594351_778256535594292?fields=attachments,from,message,picture,link,object_id,updated_time,type,status_type
     body:
       encoding: US-ASCII
       string: ''

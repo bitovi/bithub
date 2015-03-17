@@ -16,7 +16,7 @@ describe Handlers::Foursquare  do
   describe "#handle" do
     it "listens for postbacks and publishes events" do
 
-      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'foursquare', 'checkin_event'
+      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'foursquare', 'checkin_event', {}
       post_body  = load_response 'foursquare/checkin_postback'
       endpoint   = build_postback_endpoint ::Handlers::Foursquare.route[1]
 
