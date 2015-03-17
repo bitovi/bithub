@@ -12,7 +12,7 @@
 		<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}" can-click="toggleHubEditing">
 			<b>Hub Name</b>
 			{{#if isEditing}}
-				<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="toggleHubEditing" value="{{ name }}" can-click="preventHubEditingToggle">
+				<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="saveAndToggleHubEditing" value="{{ name }}" can-click="preventHubEditingToggle">
 			{{else}}
 				<h2>{{ name }}</h2>
 				<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
