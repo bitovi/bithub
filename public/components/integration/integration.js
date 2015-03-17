@@ -116,14 +116,20 @@ function(Component, initView, Models){
 					can.batch.stop();
 				});
 			},
+			'textarea mousedown' : 'selectCode',
 			'textarea focus' : function(el, ev){
+				el.select();
+				setTimeout(function(){
+					el.select()
+				}, 1);
+			},
+			selectCode : function(el, ev){
 				ev.preventDefault();
 				if(el.is(':focus')){
 					ev.stopPropagation();
 					ev.stopImmediatePropagation();
-				} else {
-					el.select();
 				}
+				el.select();
 			},
 			'bh-preset-form clearPreset' : function(){
 				this.scope.clearPreset();
