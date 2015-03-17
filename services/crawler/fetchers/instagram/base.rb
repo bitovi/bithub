@@ -4,23 +4,25 @@ module Fetchers
   module Instagram
 
     class Base
+      include Protocol
 
       COUNT = 100
 
       attr_reader :result, :client, :count
 
       def initialize(object_id, opts={})
-        @client    = create_client
-        @object_id = object_id
-        @count     = opts[:count] || COUNT
-
-        # user_id or access_token
+        @object_id    = object_id
+        @count        = opts[:count] || COUNT
+        @access_token = opts[:access_token]
+        @client       = create_client
       end
 
       def fetch(opts={})
         opts[:count] ||= @count
 
-        @result = fetch_once opts
+        handle_errors do
+          @result = fetch_once opts
+        end
       end
 
       def has_next?
@@ -44,7 +46,11 @@ module Fetchers
       private
 
       def create_client
-        ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
+        if @access_token
+          ::Instagram.client access_token: @access_token
+        else
+          ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
+        end
       end
 
       def log_error(meta)

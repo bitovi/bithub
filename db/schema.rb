@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150306142144) do
+ActiveRecord::Schema.define(version: 20150310153414) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20150306142144) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
+    t.integer  "invite_code_id"
   end
 
   add_index "accounts", ["email"], :name => "index_accounts_on_email", :unique => true
@@ -126,8 +127,6 @@ ActiveRecord::Schema.define(version: 20150306142144) do
 
   create_table "embeds", force: true do |t|
     t.string  "name"
-    t.string  "colorscheme"
-    t.string  "layout"
     t.integer "brand_id"
     t.boolean "approved_by_default", default: true
   end
@@ -163,6 +162,7 @@ ActiveRecord::Schema.define(version: 20150306142144) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "embed_id"
+    t.integer  "service_id"
   end
 
   add_index "events", ["content_digest"], :name => "index_events_on_content_digest"
@@ -182,6 +182,12 @@ ActiveRecord::Schema.define(version: 20150306142144) do
   end
 
   add_index "histogram", ["source_type", "source_id", "measured_at"], :name => "histogram_unique_source_measured_at", :unique => true
+
+  create_table "invite_codes", force: true do |t|
+    t.string   "code"
+    t.integer  "remaining_uses"
+    t.datetime "valid_until"
+  end
 
   create_table "natlang_queries", force: true do |t|
     t.string  "attr"

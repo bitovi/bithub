@@ -11,8 +11,16 @@
 			{{#isAuthorizing}}
 				<i class="fa fa-spin fa-circle-o-notch"></i>
 			{{/isAuthorizing}}
-			Authorize Service
+			{{{buttonLabel}}}
 		</a>
+		{{#ifServiceIs 'facebook'}}
+			<div class="oauthorize-help">
+				<h4><i class="fa fa-question-circle"></i> Why do I need to log in?</h4>
+				<p>
+					We need your login info to be able to allow you to collect data from the Facebook pages you administer.
+				</p>
+			</div>
+		{{/ifServiceIs}}
 	{{/if}}
 
 {{/if}}

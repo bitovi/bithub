@@ -1,28 +1,34 @@
 require 'core_ext'
 require 'connection_manager'
+require 'types/lock'
 
 class LockManager
   include Celluloid
 
-  def initialize
-    @redis = ConnectionManager.instance.redis
+  def initialize(opts={})
+    @redis = opts.fetch(:redis) { ConnectionManager.instance.redis }
+    @booted = true
   end
 
   attr_accessor :interval
 
-  def lock(lock_info)
-    if lock_info.ttl == :infinity
-      @redis.set lock_info.name, "LOCKED"
+  def lock(lock)
+    if lock.ttl == :infinity
+      @redis.set lock.name, "LOCKED"
     else
-      @redis.setex lock_info.name, lock_info.ttl, "LOCKED"
+      @redis.setex lock.name, lock.ttl, "LOCKED"
     end
   end
 
-  def unlock(lock_info)
-    @redis.del lock_info.name
+  def unlock(lock)
+    @redis.del lock.name
   end
 
-  def locked?(lock_info)
-    !@redis.get(lock_info.name).nil?
+  def locked?(lock)
+    !@redis.get(lock.name).nil?
+  end
+
+  def available?
+    @booted
   end
 end

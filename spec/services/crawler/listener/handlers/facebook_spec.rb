@@ -18,17 +18,12 @@ describe Handlers::Facebook  do
   describe '#handle' do
     it 'listens for postback notifs, queries API and publishes events' do
 
-      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'facebook', 'page'
+      owner_data = OwnerData.new 1, 'foo', 2, 'bar', 3, 'facebook', 'page', {}
       notif_raw  = load_response 'facebook/notif.json'
       endpoint   = build_postback_endpoint ::Handlers::Facebook::Subscriptions.route[1]
 
-      subscription = {
-        owner_data: owner_data,
-        access_token: 'do_not_change'
-      }
-
       # create subscription for routing
-      Celluloid::Actor[:subscription_registry].subscribe 'facebook', 'page', '778255945594351', subscription
+      Celluloid::Actor[:subscription_registry].subscribe 'facebook', 'page', '778255945594351', owner_data
 
       # fake postback notification to the crawler
       VCR.use_cassette('facebook_object') do

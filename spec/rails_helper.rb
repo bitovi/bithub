@@ -7,9 +7,11 @@ require 'webmock/rspec'
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 # otherwise all net connects will fail
 WebMock.allow_net_connect!
-
 
 RSpec.configure do |config|
   config.before(:suite) do

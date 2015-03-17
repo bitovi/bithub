@@ -1,3 +1,5 @@
+ENV['ENV'] = 'test'
+
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
 $LOAD_PATH.unshift PROJECT_ROOT
@@ -5,26 +7,21 @@ $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'models')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'domain')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'crawler')
-
-if ENV['RAILS_ENV'] == 'testing'
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
-end
-
-ENV['ENV'] = 'test'
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'listener')
 
 require 'rspec'
 require 'rspec/mocks'
 
-require 'celluloid'
-require 'celluloid/io'
+require 'celluloid/test'
 
 require 'lib/core_helpers'
 require 'spec/test_helper_methods'
 
-
 require 'sequel'
 require 'database_cleaner'
+
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
 
 require 'dotenv'
 Dotenv.load

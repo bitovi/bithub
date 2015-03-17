@@ -6,18 +6,16 @@ module Supervisors
 
     # Action not meant for this level,
     # propagate further down where routing
-    # matches (actor names ...)
+    # matches (where target matches their name)
     def propagate_cmd(target, action)
       children.select do |c|
         target.to_s.include?(c.name.to_s)
-      end.each do |c| 
+      end.each do |c|
         c.handle_cmd(target, action) if c.respond_to?(:handle_cmd, true)
       end
     end
-    
+
     def initialize_next_level_supervisor(node_info, actor_class)
-      # info "Starting #{node_info.klassname} #{@path.next_level(node_info).actor_name}"
-      
       debug "STARTING #{node_info.to_s.colorize(:red)}"
       _childs.supervise_as(
         (actor_name = @path.next_level(node_info).actor_name),
@@ -28,7 +26,7 @@ module Supervisors
 
       actor_name
     end
-    
+
     def terminate_next_level_supervisor(node_info)
       # info "Killing next level #{@path.next_level(bi).actor_name}"
 
@@ -44,22 +42,27 @@ module Supervisors
     def among_children?(node)
       children_names.include?(@path.next_level(node).actor_name)
     end
-    
+
     def i_am_parent?(node)
       node.parent.actor_name == name
     end
-    
+
     def children
       (respond_to?(:_childs, true) && !_childs.nil?) ? _childs.actors.compact : []
     end
-    
+
     def children_names
       children.map { |a| a.name }
     end
-    
+
     def terminate_cascading
       children.each { |c| c.terminate_cascading }
+      self.cleanup if respond_to? :cleanup
       terminate
+    end
+
+    def boot_on_init?
+      @boot_on_init
     end
   end
 end

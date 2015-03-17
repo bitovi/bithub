@@ -23,7 +23,7 @@ testing:
   socket: /var/run/postgresql/.s.PGSQL.5432
   pool: 20
 
-staging:
+production:
   adapter: postgresql
   encoding: utf8
   database: bithub
@@ -32,7 +32,7 @@ staging:
   socket: /var/run/postgresql/.s.PGSQL.5432
   pool: 20
 
-production:
+bitovi:
   adapter: postgresql
   encoding: utf8
   database: bithub

@@ -10,7 +10,7 @@ module Fetchers
         }.merge opts
 
         handle_errors do
-          result = @client.get_object object_id, args, api_version: 'v2.2'
+          result = @client.get_object object_id, args
           [result]
         end
       end
