@@ -21,12 +21,17 @@ module Handlers
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
-          object      = notif['object']
-          object_id   = notif['object_id']
-          method_name = "handle_postback_#{object}".to_sym
+          object       = notif['object']
+          object_id    = notif['object_id']
+          method_name  = "handle_postback_#{object}".to_sym
 
           if self.respond_to? method_name, true
-            if subscriptions = @proxy.registry['instagram', 'media', object_id]
+            subscriptions = @proxy.registry['instagram', 'media', object_id]
+
+            if subscriptions.empty?
+              Celluloid.logger.info "Unsubscribing from Instagram service for #{object} #{object_id}"
+              unsubscribe notif['subscription_id']
+            else
               subscriptions.each do |owner_data|
                 access_token = owner_data.service.config[:access_token]
 
@@ -36,10 +41,18 @@ module Handlers
                 end
               end
             end
+
           end
         end
 
         [200, 'OK']
+      end
+
+      def unsubscribe(subscription_id)
+        client = ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
+        client.delete_subscription subscription_id
+      rescue ::Instagram::BadRequest => e
+        Celluloid.logger.info "Unsubscribing from Instagram service failed with #{e}"
       end
 
       def handle_errors(owner_data)
