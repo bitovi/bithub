@@ -7910,13 +7910,3 @@ blockquote {
   margin-right: 20px;
   cursor: pointer;
 }
-.embed-outer-wrapper {
-  background: #449624;
-}
-.embed-wrapper {
-  border-color: #4CAD26;
-}
-
-.embed-caption {
-  background: #4CAD26;
-}
