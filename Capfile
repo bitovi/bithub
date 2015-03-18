@@ -8,6 +8,10 @@ require 'capistrano/bundler'
 require 'capistrano/rails/migrations'
 require 'capistrano/console'
 
+# Record a deploy when it happens (for comparing perf. across deploys)
+require 'new_relic/recipes'
+
+
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
 
