@@ -1,5 +1,5 @@
 - name: Initial setup
-  hosts: testing
+  hosts: production
   user: root
   vars:
     domain: 'testing.bithub.com'
@@ -10,6 +10,9 @@
       version: '2.1.2'
     bithub:
       project_path: '/home/bithub'
+    pg_dump:
+      path: '/db_backups/'
+      dbname: 'bithub'
   roles:
     - { role: jessie,      tags: ['jessie'] }
     - { role: common,      tags: ['common'] }
@@ -21,3 +24,4 @@
     - { role: redis,       tags: ['redis'] }
     - { role: ruby,        tags: ['ruby'] }
     - { role: bithub_prod, tags: ['bithub'] }
+    - { role: pg_dump,     tags: ['pgdump'] }

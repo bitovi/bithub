@@ -6,6 +6,8 @@ class AdminController < ApplicationController
   def index
     unless current_account
       redirect_to :new_account_session
+    else
+      flash[:error] = flash[:errors] = flash[:notice] = nil
     end
   end
 
