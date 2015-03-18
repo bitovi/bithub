@@ -37,7 +37,7 @@ module Services
     private
 
     def virtus_class
-      validators = Services::ConfigTypes
+      validators = Services::Types
       feed = @feed_name.to_s.camelize
       type = @type_name.to_s.camelize
 
