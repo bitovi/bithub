@@ -40,16 +40,23 @@ function(Component, initView, Models){
 				this.attr('isEditing', newVal);
 				ev.stopPropagation();
 			},
+			saveAndToggleHubEditing : function(ctx, el, ev){
+				this.commitNewHubName(el);
+				this.attr('isEditing', false);
+			},
 			preventHubEditingToggle : function(ctx, el, ev){
 				ev.stopPropagation();
+			},
+			commitNewHubName : function(el){
+				this.attr('hub').attr('name', el.val());
+				this.attr('hub').save();
 			},
 			restoreOrSave : function(ctx, el, ev){
 				var key = KEYMAP[ev.which];
 
 				if(key === 'ENTER'){
-					this.attr('hub').attr('name', el.val());
-					this.attr('hub').save();
-				} else {
+					this.commitNewHubName(el);
+				} else if(key === 'ESC') {
 					this.attr('hub').restore();
 				}
 

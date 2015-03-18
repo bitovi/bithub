@@ -6,8 +6,5 @@ localhost ansible_connection=local
 [testing]
 88.80.184.65
 
-[staging]
-173.230.136.135
-
 [production]
-# 69.164.216.88
+173.230.136.135
