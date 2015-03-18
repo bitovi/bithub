@@ -7,10 +7,20 @@ class CreateOrganizations < ActiveRecord::Migration
 
     # remapping
     create_join_table :accounts, :organizations
-    drop_table :accounts_brands
-    rename_column :subscriptions, :brand_id, :organization_id
-    remove_column :subscriptions, :plan_id
-    add_column :subscriptions, :plan_id, :integer
-    add_column :brands, :organization_id, :integer
+
+    drop_table :accounts_brands \
+      if table_exists? 'public.account_brands'
+
+    rename_column :subscriptions, :brand_id, :organization_id \
+      if column_exists? 'public.subscriptions', 'brand_id'
+
+    remove_column :subscriptions, :plan_id \
+      if column_exists? 'public.subscriptions', 'plan_id'
+
+    add_column :subscriptions, :plan_id, :integer \
+      unless column_exists? 'public.subscriptions', 'plan_id'
+
+    add_column :brands, :organization_id, :integer \
+      unless column_exists? 'public.subscriptions', 'organization_id'
   end
 end
