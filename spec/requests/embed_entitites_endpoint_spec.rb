@@ -4,20 +4,19 @@ require_relative 'request_helpers'
 RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
+  before do
+    @invite_code = FactoryGirl.create(:invite_code)
+    @startup_plan = FactoryGirl.create(:plan)
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+  end
+
   context 'given a certain embed id' do
-
     context 'assuming the request requires admin privileges' do
-
-      before(:each) do
-        post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-        post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-        @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
-      end
 
       describe 'GET /embed/1/entities' do
         it 'gets all entities belonging to an embed' do
-
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
           embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
           embed.make_link_to(FactoryGirl.create(:github_issue), false)
 
@@ -29,7 +28,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       context 'and the user is managing the state of individual entities' do
         before(:each) do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand)
+          @embed = FactoryGirl.create(:embed, brand: Brand.current)
           @entity = FactoryGirl.create(:twitter_tweet)
           @embed.make_link_to(@entity)
         end
@@ -80,7 +79,7 @@ RSpec.describe 'Filter endpoints', type: :request do
     context 'assuming the request is public' do
       context 'and the embed is blocking' do
         it 'gets all explicitly approved entities' do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: false)
+          @embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: false)
           @embed.make_link_to(FactoryGirl.create(:github_watch))
           @embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
           @embed.make_link_to(FactoryGirl.create(:github_issue), false)
@@ -93,7 +92,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       context 'and the embed is approving' do
         it 'gets all entities not explictly blocked' do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: true)
+          @embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: true)
           @embed.make_link_to(FactoryGirl.create(:github_watch))
           @embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
           @embed.make_link_to(FactoryGirl.create(:github_issue), false)

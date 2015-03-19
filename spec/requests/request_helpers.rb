@@ -1,11 +1,13 @@
 require 'stripe_mock'
 
 RSpec.configure do |config|
-  config.after(:suite) do
-    FactoryGirl.create(:invite_code)
+  config.before(:suite) do
+    InviteCode.delete_all
+    Plan.delete_all
   end
   config.after(:suite) do
     InviteCode.delete_all
+    Plan.delete_all
   end
 end
 
@@ -45,9 +47,9 @@ module AuthTestData
   }
 
   ACCOUNT_REGISTRATION_DATA = {
-    name: 'neektza',
     email: 'neektza@gmail.com',
-    code: 'mamatijejama',
+    code: 'mamatijetest',
+    name: 'neektza',
     password: 'foobar123',
     password_confirmation: 'foobar123'
   }

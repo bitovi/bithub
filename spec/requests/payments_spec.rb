@@ -11,25 +11,21 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
     }
   end
 
-
   before do
     ENV['STRIPE_DISABLE'] = 'false'
     StripeMock.start
-    stripe_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
+    stripe_helper.create_plan(id: 'startup', amount: 1000, trial_period_days: 45)
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
   end
+
   after do
     StripeMock.stop
     ENV['STRIPE_DISABLE'] = 'true'
   end
 
-  before(:each) do
-    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
-  end
-
   describe 'handling Stripe webhook event invoice.payment_succeeded ' do
     it 'creates new payment' do
-      cus_id = @current_brand.subscription.stripe_customer_id
+      cus_id = Brand.current.subscription.stripe_customer_id
       event = StripeMock.mock_webhook_event('invoice.payment_succeeded', customer: cus_id)
       invoice = event.data.object
 
@@ -49,7 +45,7 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
 
   describe 'handling Stripe webhook event customer.subscription.updated ' do
     it 'updated subscription' do
-      cus_id = @current_brand.subscription.stripe_customer_id
+      cus_id = Brand.current.subscription.stripe_customer_id
       event = StripeMock.mock_webhook_event('customer.subscription.updated', customer: cus_id)
       stripe_sub = event.data.object
 
@@ -62,5 +58,4 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
       expect(sub.stripe_subscription_status).to eq(stripe_sub.status)
     end
   end
-
 end
