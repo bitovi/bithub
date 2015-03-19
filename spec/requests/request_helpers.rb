@@ -1,5 +1,14 @@
 require 'stripe_mock'
 
+RSpec.configure do |config|
+  config.after(:suite) do
+    FactoryGirl.create(:invite_code)
+  end
+  config.after(:suite) do
+    InviteCode.delete_all
+  end
+end
+
 StripeMock.webhook_fixture_path = './spec/support/fixtures/stripe_webhooks'
 
 OmniAuth.config.test_mode = true
@@ -38,13 +47,13 @@ module AuthTestData
   ACCOUNT_REGISTRATION_DATA = {
     name: 'neektza',
     email: 'neektza@gmail.com',
-    invite_key: 'mamatijejama',
+    code: 'mamatijejama',
     password: 'foobar123',
     password_confirmation: 'foobar123'
   }
 
   ACCOUNT_LOGIN_DATA = {
-    name: 'neektza',
+    email: 'neektza@gmail.com',
     password: 'foobar123',
     remember_me: '0'
   }
