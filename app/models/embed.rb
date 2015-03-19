@@ -22,7 +22,6 @@ class Embed < ActiveRecord::Base
     embed_id = id
 
     query = <<-SQL
-    begin;
 
     -- delete service_entities that are no longer 
     -- valid as (because the services are going to be deleted)
@@ -46,10 +45,11 @@ class Embed < ActiveRecord::Base
     delete from events
     where embed_id = #{embed_id};
 
-    commit;
     SQL
 
-    ActiveRecord::Base.connection.execute(query)
+    ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute(query)
+    end
 
     destroy
   end
