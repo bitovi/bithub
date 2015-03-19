@@ -10242,5 +10242,15 @@ $(function(){
 	});
 
 	$(window).on('scroll', throttle(expandTopBarCta, 200));
+
+	$('.same-page-link').on('click', function(){
+		var $link = $(this);
+		var selector = '#' + $link.attr('href').split('#').pop();
+		var $scrollToEl = $(selector);
+		var $offset = $scrollToEl.offset().top;
+		$(window).scrollTop($offset - 100);
+		return false;
+	});
+
 	expandTopBarCta();
 });
