@@ -1,39 +1,26 @@
 class Auth::AccountRegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
-  POSSIBLE_PLANS = %w(startup)
-  DEFAULT_PLAN = "startup"
-
-  def new
-    @plan_name = plan_name
-    super
-  end
-
   def create
-    @plan_name = plan_name
-    super do |account|
-      if account.invite_code_valid?
-        account.invite_code.use_up_if_useable
+    @plan = find_plan
 
-        plan_name = params.fetch(:plan)
-        plan = Plan.find_by_stripe_id plan_name
+    ActiveRecord::Base.transaction do
+      super do |account|
+        if account.invite_code_valid?
+          account.invite_code.use_up_if_useable
 
-        # TODO: validate plan
-        org_builder = Organizations::OrganizationBuilder.new(account, plan)
-        org_builder.build.save!
+          org_builder = Organizations::OrganizationBuilder.new(account, @plan)
+          org_builder.build.save!
 
-        # TODO: handle multiple brands on organization
-        session['tenant_name'] = org_builder.brand.tenant_name
+          # TODO: handle multiple brands on organization
+          session['tenant_name'] = org_builder.brand.tenant_name
+        end
       end
     end
   end
 
   def new
-    plan_name = params.fetch(:plan)
-    plan = Plan.find_by_stripe_id plan_name
-
-    raise ActionController::RoutingError.new('Not Found') unless plan
-
+    @plan = find_plan
     super
   end
 
@@ -51,11 +38,13 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
     admin_index_path
   end
 
-  def plan_name
-    unless POSSIBLE_PLANS.include?(params[:plan])
-      DEFAULT_PLAN
+  def find_plan
+    plan_name = params[:plan]
+
+    if plan = Plan.find_by_stripe_id(plan_name)
+      plan
     else
-      params[:plan] || DEFAULT_PLAN
+      Plan.find_by_name('startup') || Plan.first
     end
   end
 end
