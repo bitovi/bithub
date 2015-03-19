@@ -38,3 +38,5 @@ set :user, "bithub"
 # 'foreman' command should be prefixed with 'rbenv exec' and 'bundle exec'
 set :rbenv_map_bins, fetch(:rbenv_map_bins, []).push('foreman')
 set :bundle_bins, fetch(:bundle_bins, []).push('foreman')
+
+after 'deploy:updated', 'newrelic:notice_deployment'
