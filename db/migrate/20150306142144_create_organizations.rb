@@ -21,6 +21,6 @@ class CreateOrganizations < ActiveRecord::Migration
       unless column_exists? 'public.subscriptions', 'plan_id'
 
     add_column :brands, :organization_id, :integer \
-      unless column_exists? 'public.subscriptions', 'organization_id'
+      unless column_exists? 'public.brands', 'organization_id'
   end
 end
