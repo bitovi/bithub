@@ -5,9 +5,6 @@ RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    StripeMock.start
-    @invite_code = FactoryGirl.create(:invite_code)
-    @startup_plan = FactoryGirl.create(:plan)
     post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @embed = FactoryGirl.create(:embed, brand: Brand.current)
