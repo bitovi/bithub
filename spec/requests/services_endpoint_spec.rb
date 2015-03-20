@@ -1,26 +1,24 @@
 require 'rails_helper'
 require_relative 'request_helpers'
 
-SERVICE_POST_DATA = {
-  feed_name: 'twitter',
-  embed_id: 1
-}
-
 RSpec.describe 'Service creation', type: :request do
   let(:api_version) { 'v3' }
+
+  let(:service_creation_data) {
+    {
+      feed_name: 'twitter',
+      type_name: 'user_timeline',
+      config: {
+        handle: 'canjs'
+      }
+    }
+  }
   
-  before(:each) do
-    StripeMock.start
-    @invite_code = FactoryGirl.create(:invite_code)
-    @startup_plan = FactoryGirl.create(:plan)
+  before do
     post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
     @embed = FactoryGirl.create(:embed, brand: Brand.current)
     get_via_redirect '/auth/twitter'
-  end
-
-  after do
-    StripeMock.stop
   end
 
   context 'given the account is logged in and the brand is determined' do
@@ -48,13 +46,7 @@ RSpec.describe 'Service creation', type: :request do
         it 'creates a new service' do
 
           post "/api/#{api_version}/services", {
-            service: {
-              feed_name: 'twitter',
-              type_name: 'user_timeline',
-              config: {
-                handle: 'canjs'
-              }
-            },
+            service: service_creation_data,
             embed_id: @embed.id
           }.to_json, AuthTestData::POST_HEADERS
 
@@ -87,14 +79,8 @@ RSpec.describe 'Service creation', type: :request do
         it 'creates a new service' do
 
           post "/api/#{api_version}/services", {
-            service: {
-              feed_name: 'twitter',
-              type_name: 'user_timeline',
-              config: {
-                handle: 'canjs'
-              },
-              embed_id: @embed.id,
-            }
+            service: service_creation_data,
+            embed_id: @embed.id
           }.to_json, AuthTestData::POST_HEADERS
 
           expect(response).to be_success

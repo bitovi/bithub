@@ -3,16 +3,6 @@ require_relative 'request_helpers'
 
 RSpec.describe 'Account login', type: :request do
 
-  before do
-    StripeMock.start
-    @invite_code = FactoryGirl.create(:invite_code)
-    @startup_plan = FactoryGirl.create(:plan)
-  end
-
-  after do
-    StripeMock.stop
-  end
-
   describe 'POST /login' do
     it 'creates an account session (logs the account in)' do
       post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }

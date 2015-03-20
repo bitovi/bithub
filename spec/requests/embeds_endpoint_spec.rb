@@ -5,22 +5,12 @@ RSpec.describe 'Embed endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   let(:embed_creation_data) {
-    {
-      name: 'some name',
-      approved_by_default: true
-    }
+    { name: 'some name', approved_by_default: true }
   }
 
   before do
-    StripeMock.start
-    @invite_code = FactoryGirl.create(:invite_code)
-    @startup_plan = FactoryGirl.create(:plan)
     post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-  end
-
-  after do
-    StripeMock.stop
   end
 
   context 'given the account is logged in and the brand is determined' do
