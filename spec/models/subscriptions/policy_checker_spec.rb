@@ -33,8 +33,8 @@ describe Subscriptions::PolicyChecker do
 
   describe '#can_create_service?' do
     it 'checks service limit per feed/type pair' do
-      FactoryGirl.create :twitter_service, embed: @embed
-      FactoryGirl.create :twitter_service, embed: @embed
+      FactoryGirl.create :twitter_service, type_name: 'user_timeline', embed: @embed
+      FactoryGirl.create :twitter_service, type_name: 'followers', embed: @embed
 
       checker = Subscriptions::PolicyChecker.new @subscription
       expect( checker.can_create_service?(@embed, 'twitter', 'user_timeline') ).to eq false

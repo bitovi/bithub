@@ -1,7 +1,7 @@
 module Organizations
   class OrganizationBuilder
 
-    attr_reader :account, :organization, :plan, :brand
+    attr_reader :account, :organization, :plan, :brand, :subscription
 
     def initialize(account, plan)
       @account = account
