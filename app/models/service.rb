@@ -33,8 +33,7 @@ class Service < ActiveRecord::Base
     embed_id = embed.id
 
     query = <<-SQL
-    begin;
-    
+
     -- delete connections between entities belonging to the service
     -- we're currently deleting and the embed that service belongs to
     -----------------------------------------------------------------
@@ -58,10 +57,11 @@ class Service < ActiveRecord::Base
     delete from events
     where service_id = #{service_id};
 
-    commit;
     SQL
 
-    ActiveRecord::Base.connection.execute(query)
+    ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute(query)
+    end
 
     destroy
   end
