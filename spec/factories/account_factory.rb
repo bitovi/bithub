@@ -3,6 +3,7 @@ FactoryGirl.define do
     email "kikica@gmail.com"
     password "coobar123"
     password_confirmation "coobar123"
+    association :invite_code, factory: :invite_code
   end
 end
 
