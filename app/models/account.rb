@@ -20,10 +20,6 @@ class Account < ActiveRecord::Base
     self.invite_code = InviteCode.find_by_code(code.downcase)
   end
 
-  def current_brand
-    brands.first
-  end
-
   def active_for_authentication?
     super && invite_code_valid?
   end

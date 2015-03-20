@@ -6,17 +6,15 @@ RSpec.describe 'Filter endpoints', type: :request do
 
   before do
     StripeMock.start
-    StripeMock.create_test_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
-  end
-  after do
-    StripeMock.stop
+    @invite_code = FactoryGirl.create(:invite_code)
+    @startup_plan = FactoryGirl.create(:plan)
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    @embed = FactoryGirl.create(:embed, brand: Brand.current)
   end
 
-  before(:each) do
-    post "/register/starter", { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
-    @embed = FactoryGirl.create(:embed, brand: @current_brand)
+  after do
+    StripeMock.stop
   end
 
   context 'given the account is logged in and the brand is determined' do

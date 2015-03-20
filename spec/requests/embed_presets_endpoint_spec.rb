@@ -4,10 +4,11 @@ require_relative 'request_helpers'
 RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
-  before(:each) do
-    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+  before do
+    @invite_code = FactoryGirl.create(:invite_code)
+    @startup_plan = FactoryGirl.create(:plan)
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   context 'given the account is logged in and the brand is determined' do
@@ -15,7 +16,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'GET /presets' do
         it 'gets all entities belonging to an embed' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
           FactoryGirl.create(:embed_preset, name: 'preset1', embed: embed)
           FactoryGirl.create(:embed_preset, name: 'preset2', embed: embed)
 
@@ -27,7 +28,7 @@ RSpec.describe 'Filter endpoints', type: :request do
       
       describe 'GET /presets/1' do
         it 'gets a specific preset' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
           FactoryGirl.create(:embed_preset, name: 'preset1', embed: embed)
 
           get "/api/#{api_version}/presets/1?embed_id=#{embed.id}"
@@ -38,7 +39,7 @@ RSpec.describe 'Filter endpoints', type: :request do
       
       describe 'POST /presets' do
         it 'gets all entities belonging to an embed' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
 
           post "/api/#{api_version}/presets", {
             preset: {
@@ -57,7 +58,7 @@ RSpec.describe 'Filter endpoints', type: :request do
       
       describe 'PUT /presets/1' do
         it 'update a specific preset' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
           FactoryGirl.create(:embed_preset, name: 'original name', embed: embed)
 
           put "/api/#{api_version}/presets/1?embed_id=#{embed.id}", {
@@ -71,7 +72,7 @@ RSpec.describe 'Filter endpoints', type: :request do
       
       describe 'DELETE /presets/1' do
         it 'deletes a specific preset' do
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
+          embed = FactoryGirl.create(:embed, brand: Brand.current)
           preset = FactoryGirl.create(:embed_preset, name: 'a preset', embed: embed)
 
           delete "/api/v3/presets/#{preset.id}"
