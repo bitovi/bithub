@@ -10252,5 +10252,11 @@ $(function(){
 		return false;
 	});
 
+	var hashtag = window.location.hash;
+
+	if(hashtag === "#newsletter-form"){
+		$('.newsletter-form-wrapper').show();
+	}
+
 	expandTopBarCta();
 });
