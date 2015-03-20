@@ -28,8 +28,6 @@ RSpec.describe 'Embed endpoints', type: :request do
       it 'responds with all embeds' do
         embeds = []
         embeds << FactoryGirl.create(:embed, name: "First embed", brand: Brand.current)
-        embeds << FactoryGirl.create(:embed, name: "Second embed", brand: Brand.current)
-        embeds << FactoryGirl.create(:embed, name: "Third embed", brand: Brand.current)
 
         get "/api/#{api_version}/embeds"
         expect(response).to be_success
