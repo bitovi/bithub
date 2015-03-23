@@ -17,13 +17,20 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def create
     @embed = current_brand.embeds.new(embed_params)
     @embed.name = generated_name if params[:name].blank?
-    if @embed.save
+
+    brand = Brand.current
+
+    permited = Subscriptions::PolicyChecker
+      .new(brand.organization.subscription)
+      .can_create_embed?(brand)
+
+    if permited && @embed.save
       render :show
     else
       render :json => msg_hash(@embed, 'destroy'), :status => 406
     end
   end
-  
+
   def update
     if owner_embed.update_attributes(embed_params)
       render :show

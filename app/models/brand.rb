@@ -69,5 +69,4 @@ class Brand < ActiveRecord::Base
       action: action
     }
   end
-
 end

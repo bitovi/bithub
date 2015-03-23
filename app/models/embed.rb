@@ -3,7 +3,6 @@ class Embed < ActiveRecord::Base
 
   belongs_to :brand
   validates_uniqueness_of :name, :scope => [:brand_id]
-  validates_uniqueness_of :brand_id, message: "already has one embed."
 
   has_many :filters, dependent: :destroy
   has_many :presets, :class_name => "EmbedPreset"
@@ -23,17 +22,17 @@ class Embed < ActiveRecord::Base
 
     query = <<-SQL
 
-    -- delete service_entities that are no longer 
+    -- delete service_entities that are no longer
     -- valid as (because the services are going to be deleted)
     ------------------------------------------------------------------------------
     delete from service_entities using embed_entities
     where service_entities.entity_id = embed_entities.entity_id
     and service_id in (select id from services where embed_id = #{embed_id});
-   
+
     -- delete connections between entities and the embed we're deleting
     -------------------------------------------------------------------
     delete from embed_entities
-    where embed_id = #{embed_id}; 
+    where embed_id = #{embed_id};
 
     -- delete entities that have no connections to an embed
     -------------------------------------------------------
@@ -104,7 +103,7 @@ class Embed < ActiveRecord::Base
     embed_entities.create(entity: entity, is_approved: is_approved)
   end
 
-  private 
+  private
 
   def notify_crawler(action)
     unless ENV['RAILS_ENV'] == 'test'
