@@ -4,6 +4,6 @@ class ApplicationController < ActionController::Base
   rescue_from ActionView::MissingTemplate, with: :render_404
 
   def render_404
-    render plain: '404 not found', status: 404
+    render "frontend/404", layout: false
   end
 end
