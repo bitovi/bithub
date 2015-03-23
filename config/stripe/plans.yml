@@ -1,17 +1,64 @@
 -
-  stripe_id: "starter"
-  name: "Starter"
-  amount: 1000
+  stripe_id: "startup"
+  name: "Startup"
+  amount: 9900
   currency: 'usd'
   interval: 'month'
   interval_count: 1
-  trail_period_days: 45
+  trail_period_days: 15
+  grace_period: 15
+  features: {}
+  limits:
+    brands: 1
+    embeds_per_brand: 1
+    services_per_embed: 7
+    disqus_forum: 1
+    facebook_page: 1
+    foursquare_venue: 1
+    github_org: 1
+    github_repo: 1
+    instagram_tag: 1
+    instagram_user: 1
+    meetup_group: 1
+    rss_site: 1
+    stackexchange_tags: 1
+    tumblr_blog: 1
+    tumblr_tag: 1
+    twitter_followers: 1
+    twitter_hashtag: 1
+    twitter_user_timeline: 1
+    twitter_term: 1
 
 -
-  stripe_id: "advanced"
-  name: "Advanced"
-  amount: 4500
+  stripe_id: "brand"
+  name: "Brand"
+  amount: 34900
   currency: 'usd'
   interval: 'month'
   interval_count: 1
-  trail_period_days: 45
+  trail_period_days: 15
+  grace_period: 15
+  features:
+    automoderation: true
+    whitelabel: true
+  limits:
+    brands: 1
+    embeds_per_brand: 3
+    services_per_embed: 10
+
+-
+  stripe_id: "agency"
+  name: "Agency"
+  amount: 99900
+  currency: 'usd'
+  interval: 'month'
+  interval_count: 1
+  trail_period_days: 15
+  grace_period: 15
+  features:
+    automoderation: true
+    whitelabel: true
+  limits:
+    brands: 4
+    embeds_per_brand: 3
+    services_per_embed: 12
