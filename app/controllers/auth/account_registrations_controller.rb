@@ -1,9 +1,17 @@
 class Auth::AccountRegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
+  PROMO_CODE = 'ymip412'
+
+  def new
+    @plan = find_plan
+    super
+  end
+
   def create
     @plan = find_plan
 
+    @invite_code = InviteCode.where(code: PROMO_CODE).first
     ActiveRecord::Base.transaction do
       super do |account|
         if account.invite_code_valid?
@@ -17,11 +25,6 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
         end
       end
     end
-  end
-
-  def new
-    @plan = find_plan
-    super
   end
 
   protected
