@@ -7735,6 +7735,10 @@ hr {
     color: #4f4f4f; }
     .steps .step img {
       width: 87px;
+      display: inline-block;
+    }
+    .steps .step a {
+      outline: none;
     }
     /* line 305, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
     .steps .step h2 {
@@ -7784,7 +7788,7 @@ blockquote {
 
 /* line 354, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
 .video-wrap {
-  margin: 70px 0; }
+  margin: 70px 0 0 -15px; }
 
 /* line 357, /Users/retro/Projects/bithub-marketing/source/stylesheets/all.scss */
 .bithub-illustration {
@@ -7909,4 +7913,13 @@ blockquote {
   margin-top: 7px;
   margin-right: 20px;
   cursor: pointer;
+}
+.top-video {
+  margin-top: 0;
+  margin-bottom: 50px;
+}
+.top-video .video-js {
+  box-shadow: 0 0 30px rgba(0,0,0,0.1);
+  -webkit-box-shadow: 0 0 30px rgba(0,0,0,0.1);
+  -moz-box-shadow: 0 0 30px rgba(0,0,0,0.1);
 }

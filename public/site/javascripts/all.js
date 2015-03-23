@@ -1012,15 +1012,15 @@ rootjQuery = jQuery(document);
  */
  (function( window, undefined ) {
 
- 	var i,
- 	support,
- 	cachedruns,
- 	Expr,
- 	getText,
- 	isXML,
- 	compile,
- 	outermostContext,
- 	sortInput,
+	var i,
+	support,
+	cachedruns,
+	Expr,
+	getText,
+	isXML,
+	compile,
+	outermostContext,
+	sortInput,
 
 	// Local document vars
 	setDocument,
@@ -1297,9 +1297,9 @@ function Sizzle( selector, context, results, seed ) {
  *	deleting the oldest entry
  */
  function createCache() {
- 	var keys = [];
+	var keys = [];
 
- 	function cache( key, value ) {
+	function cache( key, value ) {
 		// Use (key + " ") to avoid collision with native prototype properties (see Issue #157)
 		if ( keys.push( key += " " ) > Expr.cacheLength ) {
 			// Only keep the most recent entries
@@ -1315,8 +1315,8 @@ function Sizzle( selector, context, results, seed ) {
  * @param {Function} fn The function to mark
  */
  function markFunction( fn ) {
- 	fn[ expando ] = true;
- 	return fn;
+	fn[ expando ] = true;
+	return fn;
  }
 
 /**
@@ -1324,13 +1324,13 @@ function Sizzle( selector, context, results, seed ) {
  * @param {Function} fn Passed the created div and expects a boolean result
  */
  function assert( fn ) {
- 	var div = document.createElement("div");
+	var div = document.createElement("div");
 
- 	try {
- 		return !!fn( div );
- 	} catch (e) {
- 		return false;
- 	} finally {
+	try {
+		return !!fn( div );
+	} catch (e) {
+		return false;
+	} finally {
 		// Remove from its parent by default
 		if ( div.parentNode ) {
 			div.parentNode.removeChild( div );
@@ -1346,12 +1346,12 @@ function Sizzle( selector, context, results, seed ) {
  * @param {Function} handler The method that will be applied
  */
  function addHandle( attrs, handler ) {
- 	var arr = attrs.split("|"),
- 	i = attrs.length;
+	var arr = attrs.split("|"),
+	i = attrs.length;
 
- 	while ( i-- ) {
- 		Expr.attrHandle[ arr[i] ] = handler;
- 	}
+	while ( i-- ) {
+		Expr.attrHandle[ arr[i] ] = handler;
+	}
  }
 
 /**
@@ -1361,10 +1361,10 @@ function Sizzle( selector, context, results, seed ) {
  * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
  */
  function siblingCheck( a, b ) {
- 	var cur = b && a,
- 	diff = cur && a.nodeType === 1 && b.nodeType === 1 &&
- 	( ~b.sourceIndex || MAX_NEGATIVE ) -
- 	( ~a.sourceIndex || MAX_NEGATIVE );
+	var cur = b && a,
+	diff = cur && a.nodeType === 1 && b.nodeType === 1 &&
+	( ~b.sourceIndex || MAX_NEGATIVE ) -
+	( ~a.sourceIndex || MAX_NEGATIVE );
 
 	// Use IE sourceIndex if available on both nodes
 	if ( diff ) {
@@ -1388,10 +1388,10 @@ function Sizzle( selector, context, results, seed ) {
  * @param {String} type
  */
  function createInputPseudo( type ) {
- 	return function( elem ) {
- 		var name = elem.nodeName.toLowerCase();
- 		return name === "input" && elem.type === type;
- 	};
+	return function( elem ) {
+		var name = elem.nodeName.toLowerCase();
+		return name === "input" && elem.type === type;
+	};
  }
 
 /**
@@ -1399,10 +1399,10 @@ function Sizzle( selector, context, results, seed ) {
  * @param {String} type
  */
  function createButtonPseudo( type ) {
- 	return function( elem ) {
- 		var name = elem.nodeName.toLowerCase();
- 		return (name === "input" || name === "button") && elem.type === type;
- 	};
+	return function( elem ) {
+		var name = elem.nodeName.toLowerCase();
+		return (name === "input" || name === "button") && elem.type === type;
+	};
  }
 
 /**
@@ -1410,12 +1410,12 @@ function Sizzle( selector, context, results, seed ) {
  * @param {Function} fn
  */
  function createPositionalPseudo( fn ) {
- 	return markFunction(function( argument ) {
- 		argument = +argument;
- 		return markFunction(function( seed, matches ) {
- 			var j,
- 			matchIndexes = fn( [], seed.length, argument ),
- 			i = matchIndexes.length;
+	return markFunction(function( argument ) {
+		argument = +argument;
+		return markFunction(function( seed, matches ) {
+			var j,
+			matchIndexes = fn( [], seed.length, argument ),
+			i = matchIndexes.length;
 
 			// Match elements found at the specified indexes
 			while ( i-- ) {
@@ -1424,7 +1424,7 @@ function Sizzle( selector, context, results, seed ) {
 				}
 			}
 		});
- 	});
+	});
  }
 
 /**
@@ -1447,8 +1447,8 @@ support = Sizzle.support = {};
  * @returns {Object} Returns the current document
  */
  setDocument = Sizzle.setDocument = function( node ) {
- 	var doc = node ? node.ownerDocument || node : preferredDoc,
- 	parent = doc.defaultView;
+	var doc = node ? node.ownerDocument || node : preferredDoc,
+	parent = doc.defaultView;
 
 	// If no document and documentElement is available, return
 	if ( doc === document || doc.nodeType !== 9 || !doc.documentElement ) {
@@ -1856,10 +1856,10 @@ Sizzle.attr = function( elem, name ) {
  * @param {ArrayLike} results
  */
  Sizzle.uniqueSort = function( results ) {
- 	var elem,
- 	duplicates = [],
- 	j = 0,
- 	i = 0;
+	var elem,
+	duplicates = [],
+	j = 0,
+	i = 0;
 
 	// Unless we *know* we can detect duplicates, assume their presence
 	hasDuplicate = !support.detectDuplicates;
@@ -1885,12 +1885,12 @@ Sizzle.attr = function( elem, name ) {
  * @param {Array|Element} elem
  */
  getText = Sizzle.getText = function( elem ) {
- 	var node,
- 	ret = "",
- 	i = 0,
- 	nodeType = elem.nodeType;
+	var node,
+	ret = "",
+	i = 0,
+	nodeType = elem.nodeType;
 
- 	if ( !nodeType ) {
+	if ( !nodeType ) {
 		// If no nodeType, this is expected to be an array
 		for ( ; (node = elem[i]); i++ ) {
 			// Do not traverse comment nodes
@@ -4730,13 +4730,13 @@ function safeActiveElement() {
  */
  jQuery.event = {
 
- 	global: {},
+	global: {},
 
- 	add: function( elem, types, handler, data, selector ) {
- 		var tmp, events, t, handleObjIn,
- 		special, eventHandle, handleObj,
- 		handlers, type, namespaces, origType,
- 		elemData = jQuery._data( elem );
+	add: function( elem, types, handler, data, selector ) {
+		var tmp, events, t, handleObjIn,
+		special, eventHandle, handleObj,
+		handlers, type, namespaces, origType,
+		elemData = jQuery._data( elem );
 
 		// Don't attach events to noData or text/comment nodes (but allow plain objects)
 		if ( !elemData ) {
@@ -8295,9 +8295,9 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
  * - returns the corresponding response
  */
  function ajaxHandleResponses( s, jqXHR, responses ) {
- 	var firstDataType, ct, finalDataType, type,
- 	contents = s.contents,
- 	dataTypes = s.dataTypes;
+	var firstDataType, ct, finalDataType, type,
+	contents = s.contents,
+	dataTypes = s.dataTypes;
 
 	// Remove auto dataType and get content-type in the process
 	while( dataTypes[ 0 ] === "*" ) {
@@ -8350,8 +8350,8 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
  * Also sets the responseXXX fields on the jqXHR instance
  */
  function ajaxConvert( s, response, jqXHR, isSuccess ) {
- 	var conv2, current, conv, tmp, prev,
- 	converters = {},
+	var conv2, current, conv, tmp, prev,
+	converters = {},
 		// Work with a copy of dataTypes in case we need to modify it for conversion
 		dataTypes = s.dataTypes.slice();
 
@@ -8639,7 +8639,7 @@ jQuery.ajaxSettings.xhr = window.ActiveXObject ?
 	 * we need a fallback.
 	 */
 	 function() {
-	 	return !this.isLocal && createStandardXHR() || createActiveXHR();
+		return !this.isLocal && createStandardXHR() || createActiveXHR();
 	 } :
 	// For all other browsers, use the standard XMLHttpRequest object
 	createStandardXHR;
@@ -10257,6 +10257,34 @@ $(function(){
 	if(hashtag === "#newsletter-form"){
 		$('.newsletter-form-wrapper').show();
 	}
+
+	videojs('connect-moderate-embed').ready(function() {
+		var myPlayer = this;
+		var $el = $('#connect-moderate-embed');
+		var $offset = $el.offset().top;
+		
+		var scrollToVideo = function(){
+			$(window).scrollTop($offset - 100);
+		}
+
+
+		$('.play-connect-step').on('click', function(){
+			scrollToVideo();
+			myPlayer.play();
+		});
+
+		$('.play-moderate-step').on('click', function(){
+			scrollToVideo();
+			myPlayer.play();
+			myPlayer.currentTime(15);
+		});
+
+		$('.play-embed-step').on('click', function(){
+			scrollToVideo();
+			myPlayer.play();
+			myPlayer.currentTime(41);
+		});
+	});
 
 	expandTopBarCta();
 });
