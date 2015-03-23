@@ -27,7 +27,15 @@ class Api::V3::ServicesController < Api::V3::BaseController
     @service = owner_embed.services.build(service_definition)
     @service.humanize
 
-    if @service.save
+    brand = Brand.current
+    feed_name = service_kind[:feed_name]
+    type_name = service_kind[:type_name]
+
+    permited = Subscriptions::PolicyChecker
+      .new(brand.organization.subscription)
+      .can_create_service?(owner_embed, feed_name, type_name)
+
+    if permited && @service.save
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
