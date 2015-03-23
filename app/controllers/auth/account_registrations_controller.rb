@@ -21,6 +21,7 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
           org_builder.build.save!
 
           # TODO: handle multiple brands on organization
+          session['organization_name'] = org_builder.organization.name
           session['tenant_name'] = org_builder.brand.tenant_name
         end
       end
