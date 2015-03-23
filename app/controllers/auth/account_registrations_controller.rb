@@ -2,15 +2,18 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
   
   POSSIBLE_PLANS = %w(startup)
-  DEFAULT_PLAN = "startup"
+  DEFAULT_PLAN = 'startup'
+  PROMO_CODE = 'ymip412'
 
   def new
     @plan_name = plan_name
+    @invite_code = InviteCode.where(code: PROMO_CODE).first
     super
   end
 
   def create
     @plan_name = plan_name
+    @invite_code = InviteCode.where(code: PROMO_CODE).first
     super do |account|
       if account.invite_code_valid?
         account.invite_code.use_up_if_useable
