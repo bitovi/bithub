@@ -9,5 +9,5 @@
   sudo: yes
   sudo_user: 'postgres'
 
-- name: Create crontab job
-  cron: name="Dump {{ pg_dump.dbname }} to {{ pg_dump.path }}" hour="2,14" job="/opt/pg_dump.sh" user=postgres
+- name: Create cron job that runs every second hour
+  cron: name="Dump {{ pg_dump.dbname }} to {{ pg_dump.path }}" minute="5" hour="0-23/2" job="/opt/pg_dump.sh" user=postgres

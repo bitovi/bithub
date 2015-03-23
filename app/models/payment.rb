@@ -1,7 +1,7 @@
 class Payment < ActiveRecord::Base
   include Stripe::Callbacks
 
-  belongs_to :brand
+  belongs_to :organization
 
   after_invoice_payment_succeeded! do |invoice, event|
     if new_invoice = self.new_from_invoice(invoice, event_id: event.id)
@@ -13,7 +13,7 @@ class Payment < ActiveRecord::Base
 
   def self.new_from_invoice(invoice, opts={})
     subscription = Subscription.find_by_customer_id(invoice.customer)
-    brand = subscription.andand.brand
+    brand = subscription.andand.organization.brands.first
     plan  = invoice.lines.data.first.plan
 
     unless brand
