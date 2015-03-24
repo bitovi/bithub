@@ -34,11 +34,17 @@ function(Component, initView, Models){
 		disqus     : 'Log in with Disqus'
 	}
 
+	var compareIdentities = function(a, b){
+		if(a.created_at_timestamp > b.created_at_timestamp) return -1;
+		if(a.created_at_timestamp < b.created_at_timestamp) return 1;
+		return 0;
+	}
 
 	return Component.extend({
 		tag : 'bh-oauthorizer',
 		template : initView,
 		scope : {
+			selectedService : null,
 			init : function(){
 				var self = this;
 				Models.Identity.findAll({}).then(function(identities){
@@ -47,6 +53,12 @@ function(Component, initView, Models){
 			},
 			isAuthorized : function(){
 				return this.hasIdentityForService(this.attr('feed'));
+			},
+			identitiesForCurrentService : function(){
+				var currentService = this.attr('feed');
+				return can.grep(this.attr('identities'), function(identity){
+					return identity.attr('provider') === currentService;
+				});
 			},
 			hasIdentityForService : function(service){
 				var identities = this.attr('identities'),
@@ -79,7 +91,6 @@ function(Component, initView, Models){
 
 				OAuthConnect(feed).then(function(){
 					Models.Identity.findAll({}).then(function(identities){
-						console.log(identities)
 						self.attr({
 							identities : identities,
 							isAuthorizing : false
@@ -88,12 +99,28 @@ function(Component, initView, Models){
 				});
 			}
 		},
+		events : {
+			"{scope} isAuthorizing" : function(){
+				var self = this;
+				setTimeout(function(){
+					var identities = self.scope.identitiesForCurrentService();
+					if(identities.length){
+						identities.sort(compareIdentities);
+						self.element.find('select.service-brand').val(identities[0].id).trigger('change');
+					}
+				}, 10);
+			}
+		},
 		helpers : {
 			ifServiceIs : function(service, opts){
 				service = can.isFunction(service) ? service() : service;
 				if(service === this.attr('feed')){
 					return opts.fn();
 				}
+			},
+			withSelectedService : function(opts){
+				var selectedService = this.attr('service').attr('brand_identity_id');
+				return selectedService && opts.fn();
 			}
 		}
 	})
