@@ -1,11 +1,12 @@
 module Services
   class ServiceConfig
 
-    def initialize(feed_name, type_name, config)
-      @feed_name = feed_name
-      @type_name = type_name
+    def initialize(service)
+      @service = service
+      @feed_name = service.feed_name
+      @type_name = service.type_name
       @errors    = []
-      @config    = virtus_class.new(config)
+      @config    = virtus_class.new(service.config)
     rescue => e
       @errors.push({ klass: e.class, message: e.message })
     end
@@ -19,34 +20,47 @@ module Services
       @errors.empty?
     end
 
-    def humanize(brand_ident)
-      @config.humanized_name = brand_ident.config.humanized_name(@config.id) if @config.respond_to?(:'humanized_name=')
-      @config
+    def humanized_config
+      @config.humanized_name = @service
+        .brand_identity.config
+        .humanized_name(@config.id) if @config.respond_to?(:'humanized_name=')
+      @config.to_h
     end
 
     def error_msg
-      res = @errors.reduce({}) do |memo, e|
-        memo[e[:attr]] = [] if memo[e[:attr]].nil?
-        memo[e[:attr]] << e[:msg]
-        memo
-      end
-      Rails.logger.info res
-      res
+      @errors.map {|err| err[:message]}
     end
 
     private
 
     def virtus_class
-      validators = Services::Types
+      types = Services::Types
       feed = @feed_name.to_s.camelize
       type = @type_name.to_s.camelize
 
-      if validators.const_defined?(feed, false) && validators.const_get(feed).const_defined?(type, false)
-        validators.const_get(feed).const_get(type)
+      if types.const_defined?(feed, false) && types.const_get(feed).const_defined?(type, false)
+        types.const_get(feed).const_get(type)
       else
         fail NameError.new("unknown feed/type, feed: #{feed}, type: #{type}" )
       end
     end
-
   end
 end
+
+# god damned auto loading
+Services::Types::Disqus::Forum
+Services::Types::Facebook::Page
+Services::Types::Foursquare::Venue
+Services::Types::Github::Org
+Services::Types::Github::Repo
+Services::Types::Instagram::Tag
+Services::Types::Instagram::User
+Services::Types::Meetup::Group
+Services::Types::Rss::Site
+Services::Types::Stackexchange::Tags
+Services::Types::Tumblr::Blog
+Services::Types::Tumblr::Tag
+Services::Types::Twitter::Followers
+Services::Types::Twitter::Hashtag
+Services::Types::Twitter::Term
+Services::Types::Twitter::UserTimeline
