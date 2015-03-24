@@ -7,4 +7,7 @@ class BrandIdentity < ActiveRecord::Base
   end
   alias_attribute :provider_name, :provider
 
+  def credentials(property_id = nil)
+    config.credentials(property_id)
+  end
 end

@@ -5,17 +5,8 @@ RSpec.describe 'Brand endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    StripeMock.start
-    StripeMock.create_test_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
-  end
-  after do
-    StripeMock.stop
-  end
-
-  before(:each) do
-    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
   end
 
   describe 'GET /brands/current' do

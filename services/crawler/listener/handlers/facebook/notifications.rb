@@ -30,7 +30,6 @@ module Handlers
           changes = entry.fetch('changes') { [] }
 
           Celluloid.logger.info "Facbook postback notification for page #{page_id}"
-
           changes.each {|c| process_change page_id, c}
         end
 
@@ -46,10 +45,18 @@ module Handlers
           subscriptions.each do |owner_data|
             access_token = owner_data.service.config[:access_token]
 
-            result = fetch_object client(access_token), object_id
-            @proxy.publish result, owner_data
+            handle_errors(owner_data) do
+              result = fetch_object client(access_token), object_id
+              @proxy.publish result, owner_data
+            end
           end
         end
+      end
+
+      def handle_errors(owner_data)
+        yield
+      rescue => e
+        @proxy.publish_error e, owner_data
       end
 
       def client(access_token)
