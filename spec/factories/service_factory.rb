@@ -64,6 +64,10 @@ FactoryGirl.define do
         'name', 'bitovi/bithub',
         'tracking', Hash['issues', true, 'pull_requests', true]
       ]
+
+      trait :invalid do
+        config Hash['wat', 'qua']
+      end
     end
 
     after(:create) do |service|
