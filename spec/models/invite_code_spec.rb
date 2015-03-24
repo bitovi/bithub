@@ -4,7 +4,7 @@ RSpec.describe InviteCode, type: :model do
   let(:code) do
     FactoryGirl.create(
       :invite_code,
-      code: 'mamatijetest',
+      code: 'mamatijetestzainvitecode',
       remaining_uses: 5,
       valid_until: 1.year.from_now
     )
@@ -33,7 +33,7 @@ RSpec.describe InviteCode, type: :model do
 
   describe '#either_has_uses_or_validity' do
     it 'check that the invite code has valid_until or remaining_uses' do
-      code = InviteCode.create(code: 'mamatijetest')
+      code = InviteCode.create(code: 'mamatijetestzainvitecode')
       expect(code).not_to be_valid
       expect(code.errors.messages.keys.length).to eq 2
     end

@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
 
   validate :account_with_valid_invite_code
 
-  has_and_belongs_to_many :brands
+  has_and_belongs_to_many :organizations #, through: :accounts_organizations
 
   def code
     self.invite_code.andand.code || ""
@@ -18,10 +18,6 @@ class Account < ActiveRecord::Base
 
   def code=(code)
     self.invite_code = InviteCode.find_by_code(code.downcase)
-  end
-
-  def current_brand
-    brands.first
   end
 
   def active_for_authentication?

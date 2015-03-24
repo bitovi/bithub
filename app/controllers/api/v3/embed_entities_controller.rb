@@ -9,27 +9,36 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   helper_method :list_cache_key
 
   def index
-    @visibility = current_account ? params[:view] : 'public'
+    @visibility = current_account ? (params[:view] || 'public') : 'public'
 
     if (tn = (params[:tenant_name] || Apartment::Tenant.current))
       tn = nil unless Apartment.tenant_names.include?(tn)
       Apartment::Tenant.switch(tn) do
         scope = build_scope
-        @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
+        @entities = EntityDecorator.decorate_collection(
+          scope.all,
+          context: { embed: owner_embed }
+        )
         render :index
       end
     end
   end
 
   def show
-    @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
+    @entity = EntityDecorator.decorate(
+      entity_from_relation,
+      context: { embed: owner_embed }
+    )
     render :show
   end
 
   def approve
     @visibility = 'admin'
     if (@relation = embed_entity_relation).approve
-      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
+      @entity = EntityDecorator.decorate(
+        entity_from_relation,
+        context: { embed: owner_embed }
+      )
       render :show
     else
       render text: "error", status: 406
@@ -39,7 +48,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   def block
     @visibility = 'admin'
     if (@relation = embed_entity_relation).block
-      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
+      @entity = EntityDecorator.decorate(
+        entity_from_relation,
+        context: { embed: owner_embed }
+      )
       render :show
     else
       render text: "error", status: 406
@@ -50,7 +62,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   def pin
     @visibility = 'admin'
     if (@relation = embed_entity_relation).pin
-      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
+      @entity = EntityDecorator.decorate(
+        entity_from_relation,
+        context: { embed: owner_embed }
+      )
       render :show
     else
       render text: "error", status: 406
@@ -60,7 +75,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   def unpin
     @visibility = 'admin'
     if (@relation = embed_entity_relation).unpin
-      @entity = EntityDecorator.decorate(entity_from_relation, context: { embed: owner_embed })
+      @entity = EntityDecorator.decorate(
+        entity_from_relation,
+        context: { embed: owner_embed }
+      )
       render :show
     else
       render text: "error", status: 406
@@ -89,7 +107,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       elsif owner_embed.blocking?
         scope = scope.where('embed_entities.is_approved = TRUE')
       end
-    elsif show_only_blocked? 
+    elsif show_only_blocked?
       if owner_embed.approving?
         scope = scope.where('embed_entities.is_approved = FALSE')
       elsif owner_embed.blocking?
@@ -105,7 +123,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     elsif params[:order] == 'preview'
       params[:order] = ['is_pinned:desc', 'thread_updated_ts:desc']
     end
-
+      
     scope = scope
       .where("entities.is_pending" => false)
       .includes(:parent)
