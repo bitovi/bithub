@@ -1,12 +1,11 @@
 class Api::V3::ServicesController < Api::V3::BaseController
   include Api::EmbedScoped
 
-  # before_filter :authenticate_account!, :except => [:tree]
-  # before_filter :create_new_service, only: [:create]
+  before_filter :authenticate_account!, :except => [:tree]
   # load_and_authorize_resource except: [:tree]
 
   def index
-    if params[:embed_id]
+    if embed_id
       @services = owner_embed.services
     else
       @services = Service.all
@@ -25,7 +24,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def create
     @service = owner_embed.services.build(service_definition)
-    @service.humanize
+    @service.brand_identity = BrandIdentity.where(provider: service_kind[:feed_name]).first
+    # waiting for front-end changes
+    # @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
+    @service.humanized_config
 
     brand = Brand.current
     feed_name = service_kind[:feed_name]
@@ -46,7 +48,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
     @service = Service.find_by_id(service_id)
     @service.assign_attributes(service_definition)
     @service.service_errors.destroy_all
-    @service.humanize
+    @service.humanized_config
 
     if @service.save
       render 'api/v3/services/show'
@@ -83,7 +85,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
                     :id, s.id,
                     :feed_name, s.feed_name,
                     :type_name, s.type_name,
-                    :config, s.service_config.data.merge(s.credentials(s.config['id']))
+                    :config, s.config_with_credentials
                   ]
                 end
               ]
@@ -114,7 +116,11 @@ class Api::V3::ServicesController < Api::V3::BaseController
   private
 
   def embed_id
-    params[:embed_id] || params[:service].andand[:embed_id]
+    params[:embed_id] || params[:service][:embed_id]
+  end
+
+  def brand_identity_id
+    params[:brand_identity_id] || params[:service][:brand_identity_id]
   end
 
   def service_id
@@ -136,10 +142,5 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def api_adapter
     Support::ThirdPartyApiAdapter.new
-  end
-
-  def create_new_service
-    embed = current_brand.embeds.find(embed_id)
-    @service = embed.services.build(service_definition)
   end
 end
