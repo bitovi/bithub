@@ -116,7 +116,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   private
 
   def embed_id
-    params[:embed_id] || params[:service][:embed_id]
+    params[:embed_id] || params[:service].andand[:embed_id]
   end
 
   def brand_identity_id
