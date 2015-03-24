@@ -13,13 +13,7 @@ class Payment < ActiveRecord::Base
 
   def self.new_from_invoice(invoice, opts={})
     subscription = Subscription.find_by_customer_id(invoice.customer)
-    brand = subscription.andand.organization.brands.first
-    plan  = invoice.lines.data.first.plan
-
-    unless brand
-      Rails.logger.warn "[Stripe Webhook] Unmatched brand for customer #{invoice.customer}"
-      return false
-    end
+    plan = invoice.lines.data.first.plan
 
     unless plan
       Rails.logger.warn "[Stripe Webhook] Updating subscription from invoice without plan for customer #{invoice.customer}"
@@ -40,7 +34,7 @@ class Payment < ActiveRecord::Base
       stripe_customer_id: invoice.customer,
       stripe_subscription_id: invoice.subscription,
 
-      brand_id: brand.id
+      subscription_id: subscription.id
     }
 
     self.new(attrs)
