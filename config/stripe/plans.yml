@@ -1,4 +1,16 @@
 -
+  stripe_id: "daily"
+  name: "Daily"
+  amount: 99
+  currency: 'usd'
+  interval: 'day'
+  interval_count: 1
+  trail_period_days: 1
+  available: true
+  features: {}
+  limits: {}
+
+-
   stripe_id: "startup"
   name: "Startup"
   amount: 9900
@@ -7,6 +19,7 @@
   interval_count: 1
   trail_period_days: 15
   grace_period: 15
+  available: true
   features: {}
   limits:
     brands: 1
@@ -38,6 +51,7 @@
   interval_count: 1
   trail_period_days: 15
   grace_period: 15
+  available: true
   features:
     automoderation: true
     whitelabel: true
@@ -55,6 +69,7 @@
   interval_count: 1
   trail_period_days: 15
   grace_period: 15
+  available: true
   features:
     automoderation: true
     whitelabel: true
