@@ -19,12 +19,13 @@
 					or
 				</div>
 				<div class="oauth-wrap form-group">
-					<a href="javascript://" class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
+					<button class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizingOrHasIdentity}}disabled{{/isAuthorizingOrHasIdentity}}>
 						{{#isAuthorizing}}
 							<i class="fa fa-spin fa-circle-o-notch"></i>
 						{{/isAuthorizing}}
 						{{{buttonLabel}}
-					</a>
+					</button>
+					<p class="help-block login-again-help">This will add another account.</p>
 				</div>
 			</div>
 		{{/if}}
@@ -32,12 +33,12 @@
 			<content></content>
 		{{/withSelectedService}}
 	{{else}}
-		<a href="javascript://" class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
+		<button class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
 			{{#isAuthorizing}}
 				<i class="fa fa-spin fa-circle-o-notch"></i>
 			{{/isAuthorizing}}
 			{{{buttonLabel}}}
-		</a>
+		</button>
 		{{#ifServiceIs 'facebook'}}
 			<div class="oauthorize-help">
 				<h4><i class="fa fa-question-circle"></i> Why do I need to log in?</h4>
