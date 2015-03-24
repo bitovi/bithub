@@ -60,6 +60,7 @@ gem 'dotenv-rails'
 gem 'log4r', '~> 1.1'
 
 gem 'sass'
+gem 'bootstrap-sass', '~> 3.3.4'
 
 gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
