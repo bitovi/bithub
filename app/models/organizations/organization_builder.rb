@@ -21,6 +21,8 @@ module Organizations
 
     def save!
       @organization.save!
+      @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool
+      self
     end
 
     def organization_name

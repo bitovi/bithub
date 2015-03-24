@@ -3,7 +3,7 @@ require_relative 'request_helpers'
 
 RSpec.describe 'Subscriptions', type: :request do
 
-  before do
+  before(:each) do
     StripeMock.start
     ENV['STRIPE_ENABLE'] = 'true'
     @stripe_helper = StripeMock.create_test_helper
@@ -12,7 +12,7 @@ RSpec.describe 'Subscriptions', type: :request do
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
   end
 
-  after do
+  after(:each) do
     ENV['STRIPE_ENABLE'] = 'false'
     StripeMock.stop
   end

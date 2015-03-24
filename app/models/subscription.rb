@@ -6,7 +6,6 @@ class Subscription < ActiveRecord::Base
 
   validates :plan_id, :presence => true
 
-  before_create :create_stripe_customer
   before_destroy :delete_stripe_customer
 
   after_customer_subscription_updated! do |subscription, event|
@@ -68,25 +67,30 @@ class Subscription < ActiveRecord::Base
     Brand.find_by_tenant_name( Apartment::Tenant.current ).organization.subscription
   end
 
-  private
+  def create_stripe_customer!
+    if stripe_customer_id
+      customer = Stripe::Customer.retrieve stripe_customer_id
+      Rails.logger.info "Stripe customer #{customer.id} already exists for org #{organization.name}"
+    else
+      Rails.logger.info "Creating Stripe customer for org #{organization.name}"
+      customer = Stripe::Customer.create plan: plan.stripe_id
+    end
 
-  def delete_stripe_customer
-    return unless ENV['STRIPE_ENABLE'].to_bool
-
-    Rails.logger.info "Deleting subscription for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
-
-    stripe_customer = Stripe::Customer.retrieve stripe_customer_id
-    stripe_customer.delete
-  end
-
-  def create_stripe_customer
-    return unless ENV['STRIPE_ENABLE'].to_bool
-
-    customer = Stripe::Customer.create plan: plan.stripe_id
     subscription = customer.subscriptions.data.first
 
     self.stripe_customer_id = customer.id
     self.stripe_subscription_id = subscription.id
     self.stripe_subscription_status = subscription.status
+    self.save!
   end
+
+  def delete_stripe_customer
+    if stripe_customer_id
+      Rails.logger.info "Deleting Stripe customer for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
+
+      stripe_customer = Stripe::Customer.retrieve stripe_customer_id
+      stripe_customer.delete
+    end
+  end
+
 end

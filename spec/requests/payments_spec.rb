@@ -10,7 +10,7 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
     }
   end
 
-  before do
+  before(:each) do
     StripeMock.start
     ENV['STRIPE_ENABLE'] = 'true'
     stripe_helper = StripeMock.create_test_helper
@@ -19,7 +19,7 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
     post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
   end
 
-  after do
+  after(:each) do
     ENV['STRIPE_ENABLE'] = 'false'
     StripeMock.stop
   end
