@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150310153414) do
+ActiveRecord::Schema.define(version: 20150323224322) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -83,10 +83,11 @@ ActiveRecord::Schema.define(version: 20150310153414) do
   create_table "brand_identities", force: true do |t|
     t.string   "provider"
     t.string   "uid"
-    t.json     "source_data", default: {}
+    t.json     "source_data",    default: {}
     t.integer  "brand_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.json     "extracted_data"
   end
 
   add_index "brand_identities", ["brand_id"], :name => "index_brand_identities_on_brand_id"
@@ -280,6 +281,7 @@ ActiveRecord::Schema.define(version: 20150310153414) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
+    t.integer  "brand_identity_id"
   end
 
   add_index "services", ["embed_id"], :name => "index_services_on_embed_id"
