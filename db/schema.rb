@@ -83,11 +83,10 @@ ActiveRecord::Schema.define(version: 20150323224322) do
   create_table "brand_identities", force: true do |t|
     t.string   "provider"
     t.string   "uid"
-    t.json     "source_data",    default: {}
+    t.json     "source_data", default: {}
     t.integer  "brand_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.json     "extracted_data"
   end
 
   add_index "brand_identities", ["brand_id"], :name => "index_brand_identities_on_brand_id"
