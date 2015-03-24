@@ -3,7 +3,6 @@ require_relative 'request_helpers'
 
 RSpec.describe 'Stripe Webhook handlers', type: :request do
 
-  let(:stripe_helper) { StripeMock.create_test_helper }
   let(:request_headers) do
     {
       "Accept" => "application/json",
@@ -11,25 +10,23 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
     }
   end
 
-
-  before do
-    ENV['STRIPE_DISABLE'] = 'false'
-    StripeMock.start
-    stripe_helper.create_plan(id: 'starter', amount: 1000, trial_period_days: 45)
-  end
-  after do
-    StripeMock.stop
-    ENV['STRIPE_DISABLE'] = 'true'
-  end
-
   before(:each) do
-    post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
+    StripeMock.start
+    ENV['STRIPE_ENABLE'] = 'true'
+    stripe_helper = StripeMock.create_test_helper
+    stripe_helper.create_plan(id: 'a_plan', amount: 99999999, trial_period_days: 45)
+    post '/register/agency', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+  end
+
+  after(:each) do
+    ENV['STRIPE_ENABLE'] = 'false'
+    StripeMock.stop
   end
 
   describe 'handling Stripe webhook event invoice.payment_succeeded ' do
     it 'creates new payment' do
-      cus_id = @current_brand.subscription.stripe_customer_id
+      cus_id = Brand.current.organization.subscription.stripe_customer_id
       event = StripeMock.mock_webhook_event('invoice.payment_succeeded', customer: cus_id)
       invoice = event.data.object
 
@@ -49,7 +46,7 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
 
   describe 'handling Stripe webhook event customer.subscription.updated ' do
     it 'updated subscription' do
-      cus_id = @current_brand.subscription.stripe_customer_id
+      cus_id = Brand.current.organization.subscription.stripe_customer_id
       event = StripeMock.mock_webhook_event('customer.subscription.updated', customer: cus_id)
       stripe_sub = event.data.object
 
@@ -57,10 +54,8 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
 
       sub = Subscription.first.reload
 
-      expect(sub.plan_id).to eq(stripe_sub.plan.id)
       expect(sub.stripe_event_id).to eq(event.id)
       expect(sub.stripe_subscription_status).to eq(stripe_sub.status)
     end
   end
-
 end

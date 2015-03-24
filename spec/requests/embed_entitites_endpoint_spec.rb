@@ -4,32 +4,17 @@ require_relative 'request_helpers'
 RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
+  before do
+    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+  end
+
   context 'given a certain embed id' do
-
     context 'assuming the request requires admin privileges' do
-
-      before(:each) do
-        post '/register/starter', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-        post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
-        @current_brand = Account.find_by_email(AuthTestData::ACCOUNT_REGISTRATION_DATA[:email]).brands.first
-      end
-
-      describe 'GET /embed/1/entities' do
-        it 'gets all entities belonging to an embed' do
-
-          embed = FactoryGirl.create(:embed, brand: @current_brand)
-          embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
-          embed.make_link_to(FactoryGirl.create(:github_issue), false)
-
-          get "/api/#{api_version}/embeds/#{embed.id}/entities"
-          expect(response).to be_success
-          expect(json['data'].length).to eq(2)
-        end
-      end
-
       context 'and the user is managing the state of individual entities' do
-        before(:each) do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand)
+
+        before do
+          @embed = FactoryGirl.create(:embed, brand: Brand.current)
           @entity = FactoryGirl.create(:twitter_tweet)
           @embed.make_link_to(@entity)
         end
@@ -78,29 +63,31 @@ RSpec.describe 'Filter endpoints', type: :request do
     end
 
     context 'assuming the request is public' do
-      context 'and the embed is blocking' do
-        it 'gets all explicitly approved entities' do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: false)
-          @embed.make_link_to(FactoryGirl.create(:github_watch))
-          @embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
-          @embed.make_link_to(FactoryGirl.create(:github_issue), false)
+      describe 'GET /embed/1/entities' do
+        context 'when the embed is blocking' do
+          it 'gets all explicitly approved entities' do
+            embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: false)
+            embed.make_link_to(FactoryGirl.create(:github_watch))
+            embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
+            embed.make_link_to(FactoryGirl.create(:github_issue), false)
 
-          get "/api/#{api_version}/embeds/#{@embed.id}/entities?tenant_name=testy"
-          expect(response).to be_success
-          expect(json['data'].length).to eq(1)
+            get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
+            expect(response).to be_success
+            expect(json['data'].length).to eq(1)
+          end
         end
-      end
 
-      context 'and the embed is approving' do
-        it 'gets all entities not explictly blocked' do
-          @embed = FactoryGirl.create(:embed, brand: @current_brand, approved_by_default: true)
-          @embed.make_link_to(FactoryGirl.create(:github_watch))
-          @embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
-          @embed.make_link_to(FactoryGirl.create(:github_issue), false)
-
-          get "/api/#{api_version}/embeds/#{@embed.id}/entities?tenant_name=testy"
-          expect(response).to be_success
-          expect(json['data'].length).to eq(2)
+        context 'when the embed is approving' do
+          it 'gets all entities not explictly blocked' do
+            embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: true)
+            embed.make_link_to(FactoryGirl.create(:github_watch))
+            embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
+            embed.make_link_to(FactoryGirl.create(:github_issue), false)
+            
+            get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
+            expect(response).to be_success
+            expect(json['data'].length).to eq(2)
+          end
         end
       end
     end

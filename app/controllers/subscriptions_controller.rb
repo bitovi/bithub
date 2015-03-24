@@ -1,11 +1,10 @@
 class SubscriptionsController < ApplicationController
 
-  def edit_plan
-    current_brand = Brand.find_by_tenant_name(session['tenant_name'])
-    subscription = current_brand.subscription
+  # TODO: do auth
 
-    @plan = subscription.plan_id
-    @plans = Subscription.available_plans
+  def edit_plan
+    @plan = Subscription.current.plan
+    @plans = Plan.all
 
     render :edit_plan, layout: 'admin'
   end
@@ -15,8 +14,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def update
-    current_brand = Brand.find_by_tenant_name(session['tenant_name'])
-    subscription = current_brand.subscription
+    subscription = Subscription.current
 
     if stripe_token = params['stripe_token']
       subscription.update_card stripe_token
