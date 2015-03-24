@@ -4,10 +4,9 @@ class Service < ActiveRecord::Base
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
 
-  validates_uniqueness_of :type_name, :scope => [:embed_id, :feed_name], message: "already created a service of this type."
-  validate :max_number_of_services
-
   belongs_to :embed
+  belongs_to :brand_identity
+  alias_method :bi, :brand_identity
 
   has_many :service_entities
   has_many :entities, through: :service_entities
@@ -19,13 +18,9 @@ class Service < ActiveRecord::Base
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
-  
+
   def brand
     embed.brand
-  end
-
-  def brand_identities
-    brand.identities.where(provider: feed_name).all
   end
 
   def clear_relations_and_destroy
@@ -33,8 +28,7 @@ class Service < ActiveRecord::Base
     embed_id = embed.id
 
     query = <<-SQL
-    begin;
-    
+
     -- delete connections between entities belonging to the service
     -- we're currently deleting and the embed that service belongs to
     -----------------------------------------------------------------
@@ -46,22 +40,23 @@ class Service < ActiveRecord::Base
     -- delete connections between entities and the service we're deleting
     ---------------------------------------------------------------------
     delete from service_entities
-    where service_id = #{service_id}; 
+    where service_id = #{service_id};
 
     -- delete entities that have no connections to a service
     --------------------------------------------------------
     delete from entities
     where id not in (select distinct(entity_id) from service_entities);
-    
+
     -- delete events that belong to this service
     --------------------------------------------
     delete from events
     where service_id = #{service_id};
 
-    commit;
     SQL
 
-    ActiveRecord::Base.connection.execute(query)
+    ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute(query)
+    end
 
     destroy
   end
@@ -75,26 +70,27 @@ class Service < ActiveRecord::Base
   end
 
   def service_config
-    @config ||= Services::ServiceConfig.new(feed_name, type_name, config)
+    @config ||= Services::ServiceConfig.new(self)
   end
 
-  def humanize
-    (bi = brand_identities.first) ? service_config.humanize(bi) : nil
-    self.config = service_config.data
+  def humanized_config
+    self.config = service_config.humanized_config
   end
-
+  
   def make_link_to(entity)
     self.entities << entity
   end
 
-  def credentials(argument = nil)
-    (bi = brand_identities.first) ? bi.config.credentials(argument) : {}
+  def config_with_credentials
+    service_config.data.merge(
+      brand_identity.credentials(
+        config['id']))
   end
 
   # private
 
   def service_config_validator
-    unless service_config.valid?
+    if !service_config.valid?
       errors.set(:config_attrs, service_config.error_msg)
     end
   end
@@ -121,16 +117,10 @@ class Service < ActiveRecord::Base
         id: id,
         feed_name: feed_name,
         type_name: type_name,
-        config: service_config.data.merge(credentials(config['id']))
+        config: config_with_credentials
       },
       signature: "service_#{action}",
       action: action
     }
-  end
-
-  def max_number_of_services
-    if Service.count >= 7
-      errors.add(:count, 'max number of services reached')
-    end
   end
 end

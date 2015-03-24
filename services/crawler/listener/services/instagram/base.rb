@@ -30,7 +30,11 @@ module Supervisors::Services::Instagram
       if self.respond_to? :preloaded_items, true
         handle_errors do
           result = preloaded_items service_config
-          publish result, owner_data
+          if result.empty?
+            notify_frontend owner_data
+          else
+            publish result, owner_data
+          end
         end
       end
     end
@@ -59,6 +63,23 @@ module Supervisors::Services::Instagram
 
     def publish(events, owner_data)
       Actor[:event_publisher].publish events, owner_data
+    end
+
+    # todo: unify with poller
+    def notify_frontend(owner_data)
+      notif = {
+        meta: {
+          brand_name: owner_data.brand.name,
+          embed_id: owner_data.embed.id
+        },
+        payload: {
+          service: {
+            id: owner_data.service.id,
+            empty_results: true,
+          }
+        }
+      }
+      Actor[:notification_publisher].publish_to_frontend notif
     end
 
     def client

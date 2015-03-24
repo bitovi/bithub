@@ -1,6 +1,6 @@
 namespace :data do
   desc "Imports or updates Stripe plans from YAML file"
-  task :import_or_update_plans => :environment do
+  task :import_plans => :environment do
 
     Rails.logger.info "---"
     Rails.logger.info "Importing plan definitions"
@@ -9,18 +9,14 @@ namespace :data do
 
     plans.each do |attrs|
 
-      if plan = Plan.find_by_stripe_id(attrs['stripe_id'])
-        if plan.update_attributes(attrs)
-          Rails.logger.info "Updating plan '#{attrs['stripe_id']}' successful"
-        else
-          Rails.logger.info "Updating plan '#{attrs['stripe_id']}' failed"
-        end
-      else
+      unless plan = Plan.find_by_stripe_id(attrs['stripe_id'])
         if Plan.new(attrs).save
           Rails.logger.info "Saving plan '#{attrs['stripe_id']}' successful"
         else
           Rails.logger.info "Saving plan '#{attrs['stripe_id']}' failed"
         end
+      else
+        Rails.logger.info "[skipping] Plan '#{attrs['stripe_id']}' already exists!"
       end
     end
 

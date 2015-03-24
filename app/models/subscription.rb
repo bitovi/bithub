@@ -1,25 +1,15 @@
 class Subscription < ActiveRecord::Base
   include Stripe::Callbacks
 
-  belongs_to :brand
+  belongs_to :organization
+  belongs_to :plan
 
-  validates :brand_id, :plan_id, :stripe_customer_id, :stripe_subscription_id, :presence => true
+  validates :plan_id, :presence => true
 
   before_destroy :delete_stripe_customer
 
   after_customer_subscription_updated! do |subscription, event|
     self.update_from_subscription(subscription, event_id: event.id)
-  end
-
-  def initialize(attrs={})
-    super
-
-    customer = Stripe::Customer.create plan: self.plan_id
-    subscription = customer.subscriptions.data.first
-
-    self.stripe_customer_id = customer.id
-    self.stripe_subscription_id = subscription.id
-    self.stripe_subscription_status = subscription.status
   end
 
   def update_card(stripe_token)
@@ -38,20 +28,20 @@ class Subscription < ActiveRecord::Base
     end
   end
 
-  def update_plan(plan)
+  def update_plan(stripe_plan_id)
     stripe_customer = Stripe::Customer.retrieve self.stripe_customer_id
     stripe_subscription = stripe_customer.subscriptions.retrieve self.stripe_subscription_id
-    stripe_subscription.plan = plan
+    stripe_subscription.plan = stripe_plan_id
 
     if stripe_subscription.save
-      # should be updated via webhook as well, but let's make it immediately
-      update_attribute('plan_id', plan)
+      if plan = Plan.find_by_stripe_id(stripe_plan_id)
+        update_attributes!({plan: plan})
+      end
     end
   end
 
   def self.update_from_subscription(subscription, opts={})
     attrs = {
-      plan_id: subscription.plan.id,
       stripe_event_id: opts[:event_id],
       stripe_subscription_status: subscription.status,
     }
@@ -73,13 +63,34 @@ class Subscription < ActiveRecord::Base
     Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
   end
 
-  private
+  def self.current
+    Brand.find_by_tenant_name( Apartment::Tenant.current ).organization.subscription
+  end
+
+  def create_stripe_customer!
+    if stripe_customer_id
+      customer = Stripe::Customer.retrieve stripe_customer_id
+      Rails.logger.info "Stripe customer #{customer.id} already exists for org #{organization.name}"
+    else
+      Rails.logger.info "Creating Stripe customer for org #{organization.name}"
+      customer = Stripe::Customer.create plan: plan.stripe_id
+    end
+
+    subscription = customer.subscriptions.data.first
+
+    self.stripe_customer_id = customer.id
+    self.stripe_subscription_id = subscription.id
+    self.stripe_subscription_status = subscription.status
+    self.save!
+  end
 
   def delete_stripe_customer
-    Rails.logger.info "Deleting subscription #{self}"
+    if stripe_customer_id
+      Rails.logger.info "Deleting Stripe customer for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
 
-    stripe_customer = Stripe::Customer.retrieve stripe_customer_id
-    stripe_customer.delete
+      stripe_customer = Stripe::Customer.retrieve stripe_customer_id
+      stripe_customer.delete
+    end
   end
 
 end

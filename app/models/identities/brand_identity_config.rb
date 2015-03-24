@@ -40,6 +40,5 @@ module Identities
     def credentials(argument = nil)
       builder.credentials(argument)
     end
-
   end
 end

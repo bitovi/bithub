@@ -81,7 +81,8 @@ gem 'reel', '~> 0.5'
 
 # Payments
 gem 'stripe', '~> 1.16'
-gem 'stripe-rails', '~> 0.3'
+#gem 'stripe-rails', '~> 0.3'
+gem 'stripe-rails', :git => "git://github.com/vdragsic/stripe-rails.git", :branch => 'daily_plan'
 
 # https://github.com/tumblr/tumblr_client/issues/39
 gem 'simple_oauth', '~> 0.2'

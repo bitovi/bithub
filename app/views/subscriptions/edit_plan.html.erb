@@ -9,7 +9,7 @@
 
 	  <div class="form-row">
 		<label>
-		  <span>Current plan: <%= @plan %></span>
+		  <span>Current plan: <%= @plan.name %></span>
 		</label>
 	  </div>
 
@@ -18,7 +18,7 @@
 		  <span>Available plans:</span>
 		  <select id="plan_id" name="plan">
 			<% @plans.each do |p| %>
-			<option value="<%= p %>"><%= p %></option>
+			<option value="<%= p.stripe_id %>" <%= (@plan.stripe_id == p.stripe_id) ? 'selected' : '' %>><%= p.name %></option>
 			<% end %>
 		  </select>
 		</label>
