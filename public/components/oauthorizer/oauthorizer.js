@@ -76,12 +76,20 @@ function(Component, initView, Models){
 			},
 			identities: null,
 			isAuthorizing : false,
+			isAuthorizingOrHasIdentity : function(){
+				var hasIdentity = !!this.attr('service.brand_identity_id');
+				return this.attr('isAuthorizing') || hasIdentity;
+			},
 			isPending : function(){
 				return this.attr('identities') === null;
 			},
 			oauthorize : function(ctx, el, ev){
 				var self = this,
 					feed = this.attr('feed');
+
+				ev.preventDefault();
+
+				if(this.attr('service.brand_identity_id')) return;
 
 				if(!feed){
 					throw "You must initialize bh-oauthorizer component with the `feed` attribute";
@@ -106,7 +114,8 @@ function(Component, initView, Models){
 					var identities = self.scope.identitiesForCurrentService();
 					if(identities.length){
 						identities.sort(compareIdentities);
-						self.element.find('select.service-brand').val(identities[0].id).trigger('change');
+						self.scope.attr('service').attr('brand_identity_id', parseInt(identities[0].id));
+						self.element.find('select.service-brand').val(identities[0].id);
 					}
 				}, 10);
 			}
