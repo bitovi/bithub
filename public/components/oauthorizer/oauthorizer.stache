@@ -4,8 +4,33 @@
 	</div>
 {{else}}
 
-	{{#if isAuthorized}}
-		<content></content>
+	{{#if identitiesForCurrentService.length}}
+		{{#if service.isNew}}
+			<div class="select-identity-or-oauth clearfix">
+				<div class="select-wrap form-group">
+					<select class="form-control service-brand" can-value="service.brand_identity_id">
+						<option value="">Select Existing Account</option>
+						{{#each identitiesForCurrentService}}
+							<option value="{{ id }}">{{ name }}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="or-wrap">
+					or
+				</div>
+				<div class="oauth-wrap form-group">
+					<a href="javascript://" class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
+						{{#isAuthorizing}}
+							<i class="fa fa-spin fa-circle-o-notch"></i>
+						{{/isAuthorizing}}
+						{{{buttonLabel}}
+					</a>
+				</div>
+			</div>
+		{{/if}}
+		{{#withSelectedService}}
+			<content></content>
+		{{/withSelectedService}}
 	{{else}}
 		<a href="javascript://" class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
 			{{#isAuthorizing}}

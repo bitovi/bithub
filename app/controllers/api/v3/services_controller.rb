@@ -24,9 +24,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def create
     @service = owner_embed.services.build(service_definition)
-    @service.brand_identity = BrandIdentity.where(provider: service_kind[:feed_name]).first
-    # waiting for front-end changes
-    # @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
+    @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
     @service.humanized_config
 
     brand = Brand.current
