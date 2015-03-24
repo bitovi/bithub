@@ -4,6 +4,7 @@ class Auth::AccountSessionsController < Devise::SessionsController
 
   def after_sign_in_path_for(account)
     # TODO: choose organization and choose brand
+    session['organization_name'] = account.organizations.first
     session['tenant_name'] = account.organizations.first.brands.first.tenant_name
 
     admin_index_path

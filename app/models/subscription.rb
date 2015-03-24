@@ -6,8 +6,7 @@ class Subscription < ActiveRecord::Base
 
   validates :plan_id, :presence => true
 
-  before_create :create_stripe_customer  if !ENV['STRIPE_DISABLE'].to_bool
-  before_destroy :delete_stripe_customer  if !ENV['STRIPE_DISABLE'].to_bool
+  before_destroy :delete_stripe_customer
 
   after_customer_subscription_updated! do |subscription, event|
     self.update_from_subscription(subscription, event_id: event.id)
@@ -29,20 +28,20 @@ class Subscription < ActiveRecord::Base
     end
   end
 
-  def update_plan(plan)
+  def update_plan(stripe_plan_id)
     stripe_customer = Stripe::Customer.retrieve self.stripe_customer_id
     stripe_subscription = stripe_customer.subscriptions.retrieve self.stripe_subscription_id
-    stripe_subscription.plan = plan
+    stripe_subscription.plan = stripe_plan_id
 
     if stripe_subscription.save
-      # should be updated via webhook as well, but let's make it immediately
-      update_attribute('stripe_plan_id', plan)
+      if plan = Plan.find_by_stripe_id(stripe_plan_id)
+        update_attributes!({plan: plan})
+      end
     end
   end
 
   def self.update_from_subscription(subscription, opts={})
     attrs = {
-      stripe_plan_id: subscription.plan.id,
       stripe_event_id: opts[:event_id],
       stripe_subscription_status: subscription.status,
     }
@@ -64,21 +63,34 @@ class Subscription < ActiveRecord::Base
     Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
   end
 
-  private
-
-  def delete_stripe_customer
-    Rails.logger.info "Deleting subscription for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
-
-    stripe_customer = Stripe::Customer.retrieve stripe_customer_id
-    stripe_customer.delete
+  def self.current
+    Brand.find_by_tenant_name( Apartment::Tenant.current ).organization.subscription
   end
 
-  def create_stripe_customer
-    customer = Stripe::Customer.create plan: plan.stripe_id
+  def create_stripe_customer!
+    if stripe_customer_id
+      customer = Stripe::Customer.retrieve stripe_customer_id
+      Rails.logger.info "Stripe customer #{customer.id} already exists for org #{organization.name}"
+    else
+      Rails.logger.info "Creating Stripe customer for org #{organization.name}"
+      customer = Stripe::Customer.create plan: plan.stripe_id
+    end
+
     subscription = customer.subscriptions.data.first
 
     self.stripe_customer_id = customer.id
     self.stripe_subscription_id = subscription.id
     self.stripe_subscription_status = subscription.status
+    self.save!
   end
+
+  def delete_stripe_customer
+    if stripe_customer_id
+      Rails.logger.info "Deleting Stripe customer for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
+
+      stripe_customer = Stripe::Customer.retrieve stripe_customer_id
+      stripe_customer.delete
+    end
+  end
+
 end
