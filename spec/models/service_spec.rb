@@ -22,4 +22,8 @@ RSpec.describe Service, :type => :model do
     end
   end
 
+  describe '#config_with_credentials' do
+    it 'knows how to merge the config with the credentials from the associated brand_identity'
+  end
+
 end
