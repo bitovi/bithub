@@ -1,19 +1,5 @@
 class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  # force autoload
-  Identities::Builders::Github
-  Identities::Builders::Twitter
-  Identities::Builders::Tumblr
-  Identities::Builders::Instagram
-  Identities::Builders::Facebook
-  Identities::Builders::Foursquare
-  Identities::Builders::Meetup
-  Identities::Builders::Disqus
-  Identities::Builders::Stackexchange
-
-  # rescue_from Exception, :with => :show_auth_error
-  # rescue_from RuntimeError, :with => :show_auth_error
-
   def github
     oauthorize "github"
   end
@@ -61,20 +47,22 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def oauthorize(provider)
-    unless brand = Brand.find_by_tenant_name(session['tenant_name'])
-      raise 'Unknown tenant'
-    end
-
+    raise 'Unknown tenant' unless current_brand
     uid = oauth_data[:uid].to_s
-    source_data = Identities::BrandIdentityConfig.new({oauth: oauth_data}, provider).build.data
 
-    if identity = brand.identities.where(provider: provider, uid: uid).first
-      identity.source_data = source_data
+    if identity_exists?(provider, uid)
+      @identity.source_data = oauth_data
     else
-      identity = brand.identities.build({provider: provider, uid: oauth_data[:uid], source_data: source_data})
+      @identity = BrandIdentity.new({
+        brand: current_brand,
+        provider: provider,
+        uid: oauth_data[:uid],
+        source_data: oauth_data
+      })
     end
+    @identity.extracted_data = @identity.builder.extracted_data
 
-    if identity.save
+    if @identity.save
       render :template => 'special/close_oauth_popup.html'
     else
       render :json => { message: 'error'}, :status => 406
@@ -85,4 +73,11 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     env["omniauth.auth"]
   end
 
+  def identity_exists?(provider, uid)
+    @identity = current_brand.identities.where(provider: provider, uid: uid).first
+  end
+  
+  def current_brand
+    @current_brand ||= Brand.where(tenant_name: session['tenant_name']).first
+  end
 end
