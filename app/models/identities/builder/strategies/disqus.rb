@@ -3,14 +3,11 @@ module Identities
     module Strategies
       class Disqus < Identities::Builder::Protocol
 
-        DISQUS_API_DOMAIN = 'disqus.com'
-
         def extract_credentials
-          @result[:credentials] = {
-            access_token: @source_data.fetch(:credentials).fetch(:token),
+          @result[:credentials] = super.merge({
             refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token),
             expires_at: @source_data.fetch(:credentials).fetch(:expires_at)
-          }
+          })
         end
 
         def fetch_forums
@@ -20,11 +17,11 @@ module Identities
         end
 
         def refresh_credentials
-          if new_credentials = credentials_over_http
+          if (creds = credentials_over_http)
             @result[:credentials] = {
-              access_token: new_credentials.fetch(:access_token),
-              refresh_token: new_credentials.fetch(:refresh_token),
-              expires_at: Time.now.to_i + new_credentials.fetch[:expires_in]
+              access_token: creds.fetch(:access_token),
+              refresh_token: creds.fetch(:refresh_token),
+              expires_at: Time.now.to_i + creds.fetch[:expires_in]
             }
           end
         end
@@ -67,10 +64,10 @@ module Identities
           end
         end
 
+        DISQUS_API_DOMAIN = 'disqus.com'
         def https_client
           if !@https_client 
-            domain = DISQUS_API_DOMAIN
-            http = Net::HTTP.new domain, 443
+            http = Net::HTTP.new DISQUS_API_DOMAIN, 443
             http.use_ssl = true
             @https_client = http
           else
