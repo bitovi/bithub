@@ -11,8 +11,8 @@ class BrandIdentity < ActiveRecord::Base
     facade.property_name_for_id(property_id)
   end
 
-  def property_id_name_pairs
-    facade.property_id_name_pairs
+  def property_id_name_pairs(property_type = nil)
+    facade.property_id_name_pairs(property_type)
   end
   
   def builder

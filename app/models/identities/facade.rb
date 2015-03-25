@@ -18,10 +18,10 @@ module Identities
       end
     end
 
-    def property_id_name_pairs(type = nil)
-      if @provider_name == 'github' && type == 'repo'
+    def property_id_name_pairs(property_type = nil)
+      if @provider_name == 'github' && property_type== 'repo'
         @facade.repo_ids_and_names
-      elsif @provider_name == 'github' && type == 'org'
+      elsif @provider_name == 'github' && property_type == 'org'
         @facade.org_ids_and_names
       elsif @provider_name == 'disqus'
         @facade.forum_ids_and_names

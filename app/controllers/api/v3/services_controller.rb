@@ -103,8 +103,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
         suggestions += api_adapter.user_from_instagram(params[:username])
       
       # VISE IDENTITETA
-      elsif bi = current_brand.identities.find_by_provider(feed_name)
-        suggestions += bi.property_id_name_pairs
+      elsif bi = current_brand.identities.where(id: brand_identity_id, provider: feed_name).first
+        suggestions += bi.property_id_name_pairs(params[:feed_type])
       end
 
       render json: suggestions
