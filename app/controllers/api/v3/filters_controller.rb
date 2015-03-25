@@ -1,6 +1,6 @@
 class Api::V3::FiltersController < Api::V3::BaseController
   before_filter :authenticate_account!
-  # load_and_authorize_resource
+  load_and_authorize_resource
 
   def index
     embed = current_brand.embeds.find(embed_id)
@@ -54,7 +54,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
   def filter_id
     params[:filter_id] || params[:id]
   end
-    
+
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:filter).permit(:id, :is_conj, :classification)

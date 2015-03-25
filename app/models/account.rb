@@ -12,6 +12,12 @@ class Account < ActiveRecord::Base
 
   has_and_belongs_to_many :organizations #, through: :accounts_organizations
 
+  def brand_ids
+    organizations.reduce([]) do |a,o|
+      a.push *o.brand_ids; a
+    end
+  end
+
   def code
     self.invite_code.andand.code || ""
   end

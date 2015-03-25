@@ -4,6 +4,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!
+  load_and_authorize_resource
 
   def index
     @presets = owner_embed.presets.all
@@ -22,7 +23,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
       render :json => msg_hash(@preset, 'create'), :status => 406
     end
   end
-  
+
   def update
     @preset = find_preset
     if (@preset.update_attributes(embed_preset_params))
@@ -46,7 +47,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   def find_preset
     EmbedPreset.find(preset_id)
   end
-  
+
   def embed_preset_params
     params.require(:preset).permit(:name, :embed_id, config: [:live, :theme])
   end

@@ -2,7 +2,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, :except => [:tree]
-  # load_and_authorize_resource except: [:tree]
+  load_and_authorize_resource except: [:tree]
 
   def index
     if embed_id
