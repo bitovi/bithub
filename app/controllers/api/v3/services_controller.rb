@@ -2,7 +2,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, :except => [:tree]
-  # load_and_authorize_resource except: [:tree]
+  load_and_authorize_resource except: [:tree], param_method: :service_definition
 
   def index
     if embed_id
@@ -99,10 +99,12 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def suggestions
     if feed_name = params[:feed_name]
       suggestions = []
-      if feed_name == 'instagram' && (username = params[:username])
+      if params[:feed_name] == 'instagram' && (username = params[:username])
         suggestions += api_adapter.user_from_instagram(params[:username])
+      
+      # VISE IDENTITETA
       elsif bi = current_brand.identities.find_by_provider(feed_name)
-        suggestions += bi.config.suggestions params[:feed_type]
+        suggestions += bi.property_id_name_pairs
       end
 
       render json: suggestions

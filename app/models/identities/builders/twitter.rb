@@ -1,22 +1,17 @@
 module Identities
   module Builders
-    class Twitter < Base
+    class Twitter < Builder::Protocol
 
-      def credentials(argument = nil)
-        {
-          access_token: access_token,
-          access_secret: access_secret
-        }
+      def run
+        credentials
+        self
       end
 
-      def access_token
-        oauth.fetch(:credentials).fetch(:token)
+      def credentials
+        @storage[:credentials] = super.merge({
+          access_secret: @source_data.fetch(:credentials).fetch(:secret)
+        })
       end
-
-      def access_secret
-        oauth.fetch(:credentials).fetch(:secret)
-      end
-
     end
   end
 end

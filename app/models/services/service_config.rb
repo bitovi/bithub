@@ -16,6 +16,10 @@ module Services
       @config.to_h if valid?
     end
 
+    def property_id
+      @config.id
+    end
+
     def valid?
       @errors.empty?
     end
