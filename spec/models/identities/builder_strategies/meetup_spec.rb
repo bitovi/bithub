@@ -36,19 +36,7 @@ describe Identities::BuilderStrategies::Meetup do
       end
 
       expect(b.result).to include(:groups)
-      expect(b.result[:groups].first).to include(:id, :name)
-    end
-  end
-  
-  describe '#refresh_credentials' do
-    it 'fetches the user\'s owned repos from Github\'s API' do
-      b = Identities::BuilderStrategies::Meetup.new(oauth_data)
-      VCR.use_cassette('builder_meetup_refresh_credentials') do
-        b.refresh_credentials
-      end
-
-      expect(b.result).to include(:credentials)
-      expect(b.result[:credentials][:expires_at]).to > Time.now
+      expect(b.result[:groups].first).to include(:id, :name, :urlname)
     end
   end
 end

@@ -28,18 +28,6 @@ describe Identities::BuilderStrategies::Disqus do
     end
   end
 
-  describe '#refresh_credentials' do
-    it 'refreshes the user\'s access tokens' do
-      b = Identities::BuilderStrategies::Disqus.new(oauth_data)
-      VCR.use_cassette('builder_disqus_refresh_credentials') do
-        b.refresh_credentials
-      end
-
-      expect(b.result).to include(:credentials)
-      expect(b.result[:credentials][:expires_at]).to > Time.now
-    end
-  end
-
   describe '#fetch_forums' do
     it 'fetches the user\'s forums from the Disqus API' do
       b = Identities::BuilderStrategies::Disqus.new(oauth_data)

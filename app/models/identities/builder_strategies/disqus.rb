@@ -1,6 +1,6 @@
 module Identities
   module BuilderStrategies
-    class Disqus < Protocol
+    class Disqus < Builder::StrategyProtocol
       DISQUS_API_DOMAIN = 'disqus.com'
 
       def run
@@ -21,16 +21,6 @@ module Identities
         end
       end
 
-      def refresh_credentials
-        if creds = credentials_over_https
-          @result[:credentials] = {
-            access_token: creds.fetch(:access_token),
-            refresh_token: creds.fetch(:refresh_token),
-            expires_at: Time.now.to_i + creds.fetch[:expires_in]
-          }
-        end
-      end
-
       private
       def forums_over_https
         params = {
@@ -46,24 +36,6 @@ module Identities
           JSON.parse(response.body)['response'].map{|f| HashWithIndifferentAccess.new(f)}
         else
           fail "Fetching Disqus forums failed with #{response.code} #{response.body.inspect}"
-          nil
-        end
-      end
-
-      def credentials_over_https
-        params = {
-          grant_type: 'refresh_token',
-          client_id: ENV['DISQUS_CLIENT_ID'],
-          client_secret: ENV['DISQUS_CLIENT_SECRET'],
-          refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token)
-        }
-
-        response = https_client(DISQUS_API_DOMAIN).post "/api/oauth/2.0/access_token/", URI.encode_www_form(params)
-
-        if response.code == "200"
-          HashWithIndifferentAccess.new(JSON.parse(response.body))
-        else
-          fail "Disqus Identity Builder: refreshing access tokens failed with #{response.code} #{response.body.inspect}"
           nil
         end
       end
