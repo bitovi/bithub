@@ -3,6 +3,10 @@ class BrandIdentity < ActiveRecord::Base
   has_many :services
   alias_attribute :provider_name, :provider
 
+  def name
+    facade.name
+  end
+
   def credentials(property_id = nil)
     facade.credentials(property_id)
   end
