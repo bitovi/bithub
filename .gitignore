@@ -10,6 +10,7 @@ bithub-client/
 public/bower_components/
 tags
 stripe-mock-server.log
+.sass-cache
 .sass-cache/
 .yardoc
 node_modules
