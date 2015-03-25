@@ -4,14 +4,15 @@ env:
   - RABBITMQ_URI=amqp://guest:guest@localhost/%2F REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
 script:
   - "bundle exec rake spec:models && bundle exec rake spec:services && bundle exec rake spec:requests"
+  - "cd services/liveservice && mocha ./test/test.js"
 notifications:
   slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4
   webhooks:
     - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
-    - veljko@kset.org
-    - neektza@gmail.com
-    - konjevic@gmail.com
+    - veljko@bitovi.com
+    - nikica@bitovi.com
+    - mihael@bitovi.com
 services:
   - redis-server
   - rabbitmq
@@ -25,3 +26,4 @@ before_script:
   - "cp ./.travis_database.yml ./config/database.yml"
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
+  - "cd services/liveservice && npm install"
