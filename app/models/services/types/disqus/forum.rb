@@ -5,6 +5,7 @@ module Services
         include Virtus.model(:strict => true)
         attribute :url, String
         attribute :display_name, String, default: lambda { |obj, attr| obj.url }
+        def id; url; end
       end
     end
   end

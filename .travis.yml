@@ -9,9 +9,9 @@ notifications:
   webhooks:
     - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
-    - veljko@kset.org
-    - neektza@gmail.com
-    - konjevic@gmail.com
+    - veljko@bitovi.com
+    - nikica@bitovi.com
+    - mihael@bitovi.com
 services:
   - redis-server
   - rabbitmq
