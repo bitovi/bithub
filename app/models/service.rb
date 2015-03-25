@@ -65,8 +65,8 @@ class Service < ActiveRecord::Base
     service_errors.present?
   end
 
-  def entity_count
-    entities.count
+  def property_id
+    service_config.property_id
   end
 
   def service_config
@@ -82,9 +82,7 @@ class Service < ActiveRecord::Base
   end
 
   def config_with_credentials
-    service_config.data.merge(
-      brand_identity.credentials(
-        config['id']))
+    service_config.data.merge(brand_identity.credentials)
   end
 
   # private
@@ -123,4 +121,11 @@ class Service < ActiveRecord::Base
       action: action
     }
   end
+
+  ['disqus', 'facebook', 'foursquare', 'github', 'instagram', 'meetup', 'rss', 'stackexchange', 'tumblr', 'twitter'].each do |fn|
+    define_method "is_#{fn}?" do
+      fn ==  feed_name
+    end
+  end
+
 end
