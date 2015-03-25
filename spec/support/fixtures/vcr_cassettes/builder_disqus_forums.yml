@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://disqus.com/api/3.0/users/listForums.json?api_key=14eupdLR9C9zeRT55CAYChpxMSN8524luj1uFZrcfLATo36uLnzRJyd9RyPZpaPK&limit=100&user=32150332
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 24 Mar 2015 21:08:33 GMT
+      Server:
+      - nginx
+      Content-Type:
+      - application/json
+      X-Ratelimit-Remaining:
+      - '1000'
+      X-Ratelimit-Limit:
+      - '1000'
+      X-Frame-Options:
+      - SAMEORIGIN
+      P3p:
+      - CP="DSP IDC CUR ADM DELi STP NAV COM UNI INT PHY DEM"
+      X-Ratelimit-Reset:
+      - '1427234400'
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      Vary:
+      - Accept-Encoding,Cookie
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '{"cursor":{"prev":null,"hasNext":false,"next":"2485300:100:0","hasPrev":false,"total":null,"id":"2485300:100:0","more":false},"code":0,"response":[{"category":null,"description":"<p>My
+        blog about programming.</p>","founder":"32150332","settings":{"canEnableSponsoredComments":false,"hasCustomAvatar":false,"allowAnonPost":false,"allowMedia":true,"disable3rdPartyTrackers":false,"allowAnonVotes":false,"ssoRequired":false,"discoveryLocked":false,"audienceSyncEnabled":false,"isVIP":false,"sponsoredCommentsEnabled":false},"url":"http://pltconfusion.com/","guidelines":null,"favicon":{"permalink":"https://disqus.com/api/forums/favicons/pltconfusion.jpg","cache":"//a.disquscdn.com/1426724942/images/favicon-default.png"},"language":"en","avatar":{"small":{"permalink":"https://disqus.com/api/forums/avatars/pltconfusion.jpg?size=32","cache":"//a.disquscdn.com/1426724942/images/noavatar32.png"},"large":{"permalink":"https://disqus.com/api/forums/avatars/pltconfusion.jpg?size=92","cache":"//a.disquscdn.com/1426724942/images/noavatar92.png"}},"pk":2485300,"signedUrl":"http://disq.us/?url=http%3A%2F%2Fpltconfusion.com%2F&key=kv8sWlhKtQa0_oKY5T7rfw","raw_guidelines":null,"id":"pltconfusion","channel":null,"name":"PLT
+        Confusion"}]}'
+    http_version: 
+  recorded_at: Tue, 24 Mar 2015 21:08:32 GMT
+recorded_with: VCR 2.9.3
