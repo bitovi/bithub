@@ -2,6 +2,7 @@ module Identities
   class Builder
     module Strategies
       class Disqus < Identities::Builder::Protocol
+        DISQUS_API_DOMAIN = 'disqus.com'
 
         def extract_credentials
           @result[:credentials] = super.merge({
@@ -11,13 +12,13 @@ module Identities
         end
 
         def fetch_forums
-          if forums = forums_over_http
+          if forums = forums_over_https
             @result[:forums] = forums
           end
         end
 
         def refresh_credentials
-          if (creds = credentials_over_http)
+          if creds = credentials_over_https
             @result[:credentials] = {
               access_token: creds.fetch(:access_token),
               refresh_token: creds.fetch(:refresh_token),
@@ -27,7 +28,7 @@ module Identities
         end
 
         private
-        def forums_over_http
+        def forums_over_https
           params = {
             limit: 100,
             user: @source_data[:uid],
@@ -35,18 +36,17 @@ module Identities
           }
 
           path = "/api/3.0/users/listForums.json?" + URI.encode_www_form(params)
-
-          response = https_client.get path
+          response = https_client(DISQUS_API_DOMAIN).get path
 
           if response.code == "200"
-            JSON.parse(response.body)['response']
+            JSON.parse(response.body)['response'].map{|f| HashWithIndifferentAccess.new(f)}
           else
-            Rails.logger.error "Disqus, fetching forums failed with #{response.code} #{response.body.inspect}"
+            fail "Fetching Disqus forums failed with #{response.code} #{response.body.inspect}"
             nil
           end
         end
 
-        def credentials_over_http
+        def credentials_over_https
           params = {
             grant_type: 'refresh_token',
             client_id: ENV['DISQUS_CLIENT_ID'],
@@ -54,24 +54,13 @@ module Identities
             refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token)
           }
 
-          response = https_client.post "/api/oauth/2.0/access_token/", URI.encode_www_form(params)
+          response = https_client(DISQUS_API_DOMAIN).post "/api/oauth/2.0/access_token/", URI.encode_www_form(params)
 
           if response.code == "200"
             HashWithIndifferentAccess.new(JSON.parse(response.body))
           else
-            Rails.logger.error "Disqus, refreshing access tokens failed with #{response.code} #{response.body.inspect}"
+            fail "Disqus Identity Builder: refreshing access tokens failed with #{response.code} #{response.body.inspect}"
             nil
-          end
-        end
-
-        DISQUS_API_DOMAIN = 'disqus.com'
-        def https_client
-          if !@https_client 
-            http = Net::HTTP.new DISQUS_API_DOMAIN, 443
-            http.use_ssl = true
-            @https_client = http
-          else
-            @https_client
           end
         end
       end

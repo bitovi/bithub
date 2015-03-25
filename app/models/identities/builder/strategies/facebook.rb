@@ -5,13 +5,6 @@ module Identities
     module Strategies
       class Facebook < Identities::Builder::Protocol
 
-        # fills @result[:credentials] with user's regular token
-        def extract_credentials
-          @result[:credentials] = {
-            access_token: @source_data.fetch(:credentials).fetch(:token)
-          }
-        end
-        
         # fills @result[:credentials] with user's long lived token
         def fetch_long_lived_access_token
           if (llt = long_lived_access_token_over_http)
