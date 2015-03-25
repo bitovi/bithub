@@ -13,6 +13,7 @@ module Organizations
       @brand         = Brand.new name: brand_name, tenant_name: brand_name
       @subscription  = Subscription.new plan: @plan
 
+      @account.organizations << @organization
       @organization.accounts << @account
       @organization.brands   << @brand
       @organization.subscription = @subscription
