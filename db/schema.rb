@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150323224322) do
+ActiveRecord::Schema.define(version: 20150324150405) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -236,7 +236,7 @@ ActiveRecord::Schema.define(version: 20150323224322) do
     t.string   "stripe_customer_id"
     t.string   "stripe_subscription_id"
     t.hstore   "props"
-    t.integer  "brand_id"
+    t.integer  "subscription_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -253,6 +253,7 @@ ActiveRecord::Schema.define(version: 20150323224322) do
     t.integer "grace_period",      default: 15,      null: false
     t.json    "limits",            default: {},      null: false
     t.json    "features",          default: {},      null: false
+    t.boolean "available",         default: false
   end
 
   create_table "service_entities", force: true do |t|
