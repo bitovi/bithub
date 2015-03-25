@@ -1,30 +1,31 @@
 require 'andand'
 
 module Identities
-  module BuilderStrategies
-    class Facebook < Protocol
+  module Builders
+    class Facebook < Builder::Protocol
 
       def run
-        extract_credentials
-        fetch_long_lived_access_token
-        fetch_pages
+        credentials
+        long_lived_access_token
+        pages
+        self
       end
 
-      # fills @result[:credentials] with user's long lived token
-      def fetch_long_lived_access_token
-        if (llt = long_lived_access_token_over_http)
-          @result[:credentials] = {} if @result[:credentials].nil?
-          @result[:credentials][:long_lived_access_token] = llt
+      # fills @storage[:credentials] with user's long lived token
+      def long_lived_access_token
+        if llt = long_lived_access_token_over_http
+          @storage[:credentials] = {} unless @storage[:credentials]
+          @storage[:credentials][:long_lived_access_token] = llt
         end
       end
 
-      # if @result[:long_lived_access_token] has been
+      # if @storage[:long_lived_access_token] has been
       # successfully set by `fetch_long_lived_access_token`
       # page objects should contain no-expiry tokens
       # if not, pages contain tokens that expire
-      def fetch_pages
-        if (pages = pages_over_http)
-          @result[:pages] = pages
+      def pages
+        if (ps = pages_over_http)
+          @storage[:pages] = ps
         end
       end
 
@@ -49,7 +50,7 @@ module Identities
       end
 
       def long_lived_or_regular_token
-        @result.fetch(:long_lived_access_token) {
+        @storage.fetch(:long_lived_access_token) {
           @source_data.fetch(:credentials).fetch(:token)
         }
       end

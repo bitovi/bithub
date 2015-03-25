@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::BuilderStrategies::Github do
+describe Identities::Builders::Github do
   let(:oauth_data) do
     {
       "credentials"=>{
@@ -12,26 +12,19 @@ describe Identities::BuilderStrategies::Github do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::BuilderStrategies::Github.new(oauth_data)
-      b.extract_credentials
-
-      expect(b.result).to eq({
-        credentials: {
-          access_token: oauth_data.fetch('credentials').fetch('token'),
-        }
+      b = Identities::Builders::Github.new(oauth_data)
+      expect(b.credentials).to eq({
+        access_token: oauth_data.fetch('credentials').fetch('token'),
       })
     end
   end
   
   describe '#fetch_repos' do
     it 'fetches the user\'s owned repos from Github\'s API' do
-      b = Identities::BuilderStrategies::Github.new(oauth_data)
+      b = Identities::Builders::Github.new(oauth_data)
       VCR.use_cassette('builder_github_repos') do
-        b.fetch_repos
+        expect(b.repos.first).to include(:id, :name)
       end
-
-      expect(b.result).to include(:repos)
-      expect(b.result[:repos].first).to include(:id, :name)
     end
   end
 end

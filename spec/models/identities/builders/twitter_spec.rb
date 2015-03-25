@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::BuilderStrategies::Twitter do
+describe Identities::Builders::Twitter do
   let(:oauth_data) do
     {
       "uid"=>"532573905",
@@ -13,14 +13,11 @@ describe Identities::BuilderStrategies::Twitter do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::BuilderStrategies::Twitter.new(oauth_data)
-      b.extract_credentials
+      b = Identities::Builders::Twitter.new(oauth_data)
 
-      expect(b.result).to eq({
-        credentials: {
-          access_token: oauth_data.fetch('credentials').fetch('token'),
-          access_secret: oauth_data.fetch('credentials').fetch('secret')
-        }
+      expect(b.credentials).to eq({
+        access_token: oauth_data.fetch('credentials').fetch('token'),
+        access_secret: oauth_data.fetch('credentials').fetch('secret')
       })
     end
   end

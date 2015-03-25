@@ -1,24 +1,25 @@
 require 'octokit'
 
 module Identities
-  module BuilderStrategies
-    class Github < Protocol
+  module Builders
+    class Github < Builder::Protocol
 
       def run
-        extract_credentials
-        fetch_repos
-        fetch_orgs
+        credentials
+        repos
+        orgs
+        self
       end
 
-      def fetch_repos
-        if (repos = repos_over_http)
-          @result[:repos] = repos.map(&:to_h)
+      def repos
+        if rs = repos_over_http
+          @storage[:repos] = rs.map(&:to_h)
         end
       end
 
-      def fetch_orgs
-        if (orgs = orgs_over_http)
-          @result[:orgs] = orgs.map(&:to_h)
+      def orgs
+        if os = orgs_over_http
+          @storage[:orgs] = os.map(&:to_h)
         end
       end
 

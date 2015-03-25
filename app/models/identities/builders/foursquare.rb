@@ -1,15 +1,16 @@
 module Identities
-  module BuilderStrategies
-    class Foursquare < Protocol
+  module Builders
+    class Foursquare < Builder::Protocol
 
       def run
-        extract_credentials
-        fetch_venues
+        credentials
+        venues
+        self
       end
 
-      def fetch_venues
-        if (venues = venues_over_http)
-          @result[:venues] = venues
+      def venues
+        if vs = venues_over_http
+          @storage[:venues] = vs
         end
       end
 

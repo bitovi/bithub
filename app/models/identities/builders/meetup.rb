@@ -1,25 +1,26 @@
 require 'rmeetup'
 
 module Identities
-  module BuilderStrategies
-    class Meetup < Builder::StrategyProtocol
+  module Builders
+    class Meetup < Builder::Protocol
       MEETUP_API_DOMAIN = 'secure.meetup.com'
 
       def run
-        extract_credentials
-        fetch_groups
+        credentials
+        groups
+        self
       end
 
-      def extract_credentials
-        @result[:credentials] = super.merge({
+      def credentials
+        @storage[:credentials] = super.merge({
           refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token),
           expires_at: @source_data.fetch(:credentials).fetch(:expires_at)
         })
       end
 
-      def fetch_groups
-        if (groups = groups_via_http)
-          @result[:groups] = groups_to_hashes(groups)
+      def groups
+        if gs = groups_via_http
+          @storage[:groups] = groups_to_hashes(gs)
         end
       end
 

@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::BuilderStrategies::Instagram do
+describe Identities::Builders::Instagram do
   let(:oauth_data) do
     {
       "uid"=>"532573905",
@@ -13,13 +13,9 @@ describe Identities::BuilderStrategies::Instagram do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::BuilderStrategies::Instagram.new(oauth_data)
-      b.extract_credentials
-
-      expect(b.result).to eq({
-        credentials: {
-          access_token: oauth_data.fetch('credentials').fetch('token')
-        }
+      b = Identities::Builders::Instagram.new(oauth_data)
+      expect(b.credentials).to eq({
+        access_token: oauth_data.fetch('credentials').fetch('token')
       })
     end
   end

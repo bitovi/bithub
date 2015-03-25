@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::BuilderStrategies::Facebook do
+describe Identities::Builders::Facebook do
 
   let(:oauth_data) do
     { 
@@ -13,38 +13,28 @@ describe Identities::BuilderStrategies::Facebook do
 
   describe '#extract_credentials' do
     it 'extracts the user\'s regular token from OAuth data' do
-
-      b = Identities::BuilderStrategies::Facebook.new(oauth_data)
-      b.extract_credentials
-      
-      expect(b.result).to eq({
-        credentials: { access_token: oauth_data.fetch('credentials').fetch('token') }
+      b = Identities::Builders::Facebook.new(oauth_data)
+      expect(b.credentials).to eq({
+        access_token: oauth_data.fetch('credentials').fetch('token')
       })
     end
   end
   
   describe '#fetch_long_lived_access_token' do
     it 'fetches the user\'s long lived token from Facebook\'s OAuth API' do
-      b = Identities::BuilderStrategies::Facebook.new(oauth_data)
+      b = Identities::Builders::Facebook.new(oauth_data)
       VCR.use_cassette('builder_facebook_long_lived_token') do
-        b.fetch_long_lived_access_token
+        expect(b.long_lived_access_token).to be
       end
-
-      expect(b.result).to include(:credentials)
-      expect(b.result[:credentials][:long_lived_access_token]).to be
     end
   end
   
   describe '#fetch_pages' do
     it 'fetches all user\'s pages from Facebook\s graph API' do
-      b = Identities::BuilderStrategies::Facebook.new(oauth_data)
-
+      b = Identities::Builders::Facebook.new(oauth_data)
       VCR.use_cassette('builder_facebook_pages') do
-        b.fetch_pages
+        expect(b.pages.first).to include('id', 'name', 'access_token')
       end
-
-      expect(b.result).to include(:pages)
-      expect(b.result[:pages].first).to include('id', 'name', 'access_token')
     end
   end
 end
