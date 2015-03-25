@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::Builder::Strategies::Disqus do
+describe Identities::BuilderStrategies::Disqus do
   let(:oauth_data) do
     {
       'uid'=>32150332,
@@ -15,7 +15,7 @@ describe Identities::Builder::Strategies::Disqus do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::Builder::Strategies::Disqus.new(oauth_data)
+      b = Identities::BuilderStrategies::Disqus.new(oauth_data)
       b.extract_credentials
 
       expect(b.result).to eq({
@@ -30,7 +30,7 @@ describe Identities::Builder::Strategies::Disqus do
 
   describe '#refresh_credentials' do
     it 'refreshes the user\'s access tokens' do
-      b = Identities::Builder::Strategies::Disqus.new(oauth_data)
+      b = Identities::BuilderStrategies::Disqus.new(oauth_data)
       VCR.use_cassette('builder_disqus_refresh_credentials') do
         b.refresh_credentials
       end
@@ -42,7 +42,7 @@ describe Identities::Builder::Strategies::Disqus do
 
   describe '#fetch_forums' do
     it 'fetches the user\'s forums from the Disqus API' do
-      b = Identities::Builder::Strategies::Disqus.new(oauth_data)
+      b = Identities::BuilderStrategies::Disqus.new(oauth_data)
 
       VCR.use_cassette('builder_disqus_forums') do
         b.fetch_forums

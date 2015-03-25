@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::Builder::Strategies::Meetup do
+describe Identities::BuilderStrategies::Meetup do
   let(:oauth_data) do
     {
       "uid"=>90485442,
@@ -15,7 +15,7 @@ describe Identities::Builder::Strategies::Meetup do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::Builder::Strategies::Meetup.new(oauth_data)
+      b = Identities::BuilderStrategies::Meetup.new(oauth_data)
       b.extract_credentials
 
       expect(b.result).to eq({
@@ -30,7 +30,7 @@ describe Identities::Builder::Strategies::Meetup do
   
   describe '#fetch_groups' do
     it 'fetches the user\'s managed group from Meetup\'s API' do
-      b = Identities::Builder::Strategies::Meetup.new(oauth_data)
+      b = Identities::BuilderStrategies::Meetup.new(oauth_data)
       VCR.use_cassette('builder_meetup_groups') do
         b.fetch_groups
       end
@@ -42,7 +42,7 @@ describe Identities::Builder::Strategies::Meetup do
   
   describe '#refresh_credentials' do
     it 'fetches the user\'s owned repos from Github\'s API' do
-      b = Identities::Builder::Strategies::Meetup.new(oauth_data)
+      b = Identities::BuilderStrategies::Meetup.new(oauth_data)
       VCR.use_cassette('builder_meetup_refresh_credentials') do
         b.refresh_credentials
       end

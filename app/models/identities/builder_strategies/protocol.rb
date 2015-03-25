@@ -1,5 +1,5 @@
 module Identities
-  class Builder
+  module BuilderStrategies
     class Protocol
 
       def initialize(source_data)

@@ -1,6 +1,6 @@
 require 'models/identities/builder_spec_helper'
 
-describe Identities::Builder::Strategies::Foursquare do
+describe Identities::BuilderStrategies::Foursquare do
   let(:oauth_data) do
     {
       "credentials" => {
@@ -12,7 +12,7 @@ describe Identities::Builder::Strategies::Foursquare do
 
   describe '#extract_credentials' do
     it 'extracts the tokens from the OAuth response' do
-      b = Identities::Builder::Strategies::Foursquare.new(oauth_data)
+      b = Identities::BuilderStrategies::Foursquare.new(oauth_data)
       b.extract_credentials
 
       expect(b.result).to eq({
@@ -25,7 +25,7 @@ describe Identities::Builder::Strategies::Foursquare do
   
   describe '#fetch_venues' do
     it 'fetches the user\'s managed venues from Foursquare\'s API' do
-      b = Identities::Builder::Strategies::Foursquare.new(oauth_data)
+      b = Identities::BuilderStrategies::Foursquare.new(oauth_data)
       VCR.use_cassette('builder_foursquare_venues') do
         b.fetch_venues
       end
