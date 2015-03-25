@@ -1,16 +1,24 @@
 module Identities
-  module BuilderStrategies
-    class Protocol
+  class Builder
 
+    def initialize(strategy, source_data)
+      @provider_builder = strategy.new(source_data)
+    end
+
+    def extracted_data
+      @provider_builder.run.storage
+    end
+
+    class Protocol
       def initialize(source_data)
-        @source_data = HashWithIndifferentAccess.new source_data
-        @result = {}
+        @source_data = HashWithIndifferentAccess.new(source_data)
+        @storage = {}
       end
-      attr_reader :result
+      attr_reader :storage
 
       # fills @result[:credentials] with user's token
-      def extract_credentials
-        @result[:credentials] = {
+      def credentials
+        @storage[:credentials] = {
           access_token: @source_data.fetch(:credentials).fetch(:token)
         }
       end

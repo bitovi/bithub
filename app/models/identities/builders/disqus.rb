@@ -1,23 +1,24 @@
 module Identities
-  module BuilderStrategies
-    class Disqus < Builder::StrategyProtocol
+  module Builders
+    class Disqus < Builder::Protocol
       DISQUS_API_DOMAIN = 'disqus.com'
 
       def run
-        extract_credentials
-        fetch_forums
+        credentials
+        forums
+        self
       end
 
-      def extract_credentials
-        @result[:credentials] = super.merge({
+      def credentials
+        @storage[:credentials] = super.merge({
           refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token),
           expires_at: @source_data.fetch(:credentials).fetch(:expires_at)
         })
       end
 
-      def fetch_forums
-        if forums = forums_over_https
-          @result[:forums] = forums
+      def forums
+        if fs = forums_over_https
+          @storage[:forums] = fs
         end
       end
 
