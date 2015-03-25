@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://graph.facebook.com/v2.2/oauth/access_token
+    body:
+      encoding: US-ASCII
+      string: client_id=722630357768085&client_secret=a3ebdfa62ce824601dabd37434ed510f&grant_type=fb_exchange_token&fb_exchange_token=CAAKROn3HV5UBAMV92p4WY4VHk9PhNXaTtyLtvfxN6DdObrPZCAkhm71JZAilOVqBlYze8YuFapNoWXrsBlsGb2rKnXp88WEX6H713FrTlikq7wGwOSxsebq6RtD58MiyRRAjCUZA3EdhzXaJZBwbXd36GxP0uWw0oWYFddnak0sO6qy2TQs7WtyQbK0u7FjEfunomdw89QKq34CZCnHDW
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Fb-Rev:
+      - '1655994'
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Facebook-Api-Version:
+      - v2.2
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      X-Fb-Debug:
+      - u0Xxc8c/CqOh4Godxos/Wt6Vx4h/uvlKDxyo0oJNysDblK12R1+e6IReMlw5LRvuZQpOp6KqKGLvLYrdczRRsw==
+      Date:
+      - Tue, 24 Mar 2015 22:51:50 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '212'
+    body:
+      encoding: UTF-8
+      string: access_token=CAAKROn3HV5UBAJKzYFCaCxrZAFFyjPDgizD4qzI7CHv5V91suNFKHeQ7T5AMVjWkwiFtPDAtXYeohVSacFviP0bZBWqw5ZCRObGrNvTdGV6K1AUdWazuZABheVZABrZAmf9rFtTMLpcThgZAe1IIkJXQXbUOZBZAr8o2yFv8brGbiVeQ30JQ7SmAeBXfC5s1CIpsZD
+    http_version: 
+  recorded_at: Tue, 24 Mar 2015 22:51:50 GMT
+- request:
+    method: get
+    uri: https://graph.facebook.com/v2.2/me/accounts?access_token=CAAKROn3HV5UBAMV92p4WY4VHk9PhNXaTtyLtvfxN6DdObrPZCAkhm71JZAilOVqBlYze8YuFapNoWXrsBlsGb2rKnXp88WEX6H713FrTlikq7wGwOSxsebq6RtD58MiyRRAjCUZA3EdhzXaJZBwbXd36GxP0uWw0oWYFddnak0sO6qy2TQs7WtyQbK0u7FjEfunomdw89QKq34CZCnHDW
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Fb-Rev:
+      - '1655994'
+      Etag:
+      - '"8ddcce9393df83ba9a2bcbfa4e6337c90f0b45b8"'
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Facebook-Api-Version:
+      - v2.2
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Vary:
+      - Accept-Encoding
+      X-Fb-Debug:
+      - 5ZRgvePQcJTrCJbC/6ZxVDw4nAL/VbmDGceVDNUO+/qnrIF+YRx7wW+jf8HOuf125Q/btAvfWWyy4R0Y5sfmow==
+      Date:
+      - Tue, 24 Mar 2015 22:51:51 GMT
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '683'
+    body:
+      encoding: UTF-8
+      string: '{"data":[{"access_token":"CAAKROn3HV5UBAA4rcdzi00gOFemXCOtF4uZCsqd7Jq1sY1xL2VMj89fthm0VOZBVYZCUv6rYkNNoZB317ikVRYZCsGYIFKGGfaoUqAUoeWGdZBmYURSjhuDI5ZCztyWVVVxw8Q3KP0xmtgCWheLXPPbZAyCfdZCmQ9V91RA5gK8um4MacQDjDG19QJn37EBGhvJcZD","category":"Internet\/software","name":"Floating
+        Point","id":"778255945594351","perms":["ADMINISTER","EDIT_PROFILE","CREATE_CONTENT","MODERATE_CONTENT","CREATE_ADS","BASIC_ADMIN"]},{"access_token":"CAAKROn3HV5UBABQbqZAYgCz5UwZBmeE0NfSVftEXeGI8VfJCPyYXkpzZBD2yPXTOYZBiRszzs4ZCwGTn3VQcZA70ylhTJL1u6BwWbee0wBdrq4pqtSXDaZCIR9R4WlwpZCPsvPjikgthKtMINbl7VMae7YTEOqoZAyhUk3IumqZA5Y4aBY5gLSCVAZBpZC2ls5N8L1IZD","category":"Sports\/recreation\/activities","category_list":[{"id":"198325860180715","name":"Martial
+        Arts"},{"id":"189018581118681","name":"Sports Club"}],"name":"Koryu Bujutsu
+        Zagreb","id":"487939194652299","perms":["ADMINISTER","EDIT_PROFILE","CREATE_CONTENT","MODERATE_CONTENT","CREATE_ADS","BASIC_ADMIN"]}],"paging":{"cursors":{"before":"Nzc4MjU1OTQ1NTk0MzUx","after":"NDg3OTM5MTk0NjUyMjk5"}}}'
+    http_version: 
+  recorded_at: Tue, 24 Mar 2015 22:51:50 GMT
+recorded_with: VCR 2.9.3
