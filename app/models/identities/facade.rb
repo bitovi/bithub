@@ -8,6 +8,14 @@ module Identities
       @extracted_data = ed
     end
 
+    def name
+      if %w(github).include? @provider_name
+        @source_data['info']['nickname']
+      elsif %w(facebook disqus meetup foursquare).include? @provider_name
+        @source_data['info']['name']
+      end
+    end
+
     def credentials(property_id = nil)
       if @provider_name == 'facebook' && (page_id = property_id)
         { access_token: @facade.page_token(page_id) }
