@@ -23,11 +23,11 @@ module Identities
       end
 
       def repos
-        @data.fetch(:repos)
+        @extracted_data[:repos] || []
       end
 
       def orgs
-        @data.fetch(:orgs)
+        @extracted_data[:orgs] || []
       end
     end
   end
