@@ -1,6 +1,7 @@
 class Api::V3::AnalyticsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  
+  load_and_authorize_resource :histogram, only: [:show]
+
   def show
     source
 
@@ -41,7 +42,7 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
     when 'month' then 12
     end
   end
-  
+
   def source
     if source_type == 'embeds' && embed_id
       @source = Embed.find(embed_id)
@@ -57,5 +58,5 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   def service_id; params[:service_id]; end
   def embed_id; params[:embed_id]; end
   def resolution; params[:resolution]; end
-  def source_type; params[:source_type]; end 
+  def source_type; params[:source_type]; end
 end
