@@ -1,5 +1,6 @@
-json.(service, :id, :feed_name, :type_name, :entity_count, :brand_identity_id)
+json.(service, :id, :feed_name, :type_name, :brand_identity_id)
 
+json.entity_count service.entities.count
 json.config service.service_config.data
 
 if service.has_errors?
