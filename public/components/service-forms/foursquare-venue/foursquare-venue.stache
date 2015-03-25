@@ -1,4 +1,4 @@
 <div class="form-group form-group-without-margin suggestions-wrapper">
-	<bh-suggestions service="foursquare" val="{map.config.id}" pick-suggestion-label="Select a venue"></bh-suggestions>
+	<bh-suggestions service="foursquare" brand-identity-id="{map.brand_identity_id}" val="{map.config.id}" pick-suggestion-label="Select a venue"></bh-suggestions>
 	{{{configErrors errors 'id'}}}
 </div>
