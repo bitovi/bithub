@@ -4,6 +4,7 @@ module Identities
   class Builder
     module Strategies
       class Meetup < Identities::Builder::Protocol
+        MEETUP_API_DOMAIN = 'secure.meetup.com'
 
         def extract_credentials
           @result[:credentials] = super.merge({
@@ -55,21 +56,14 @@ module Identities
             refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token)
           }
 
-          response = https_client.post "/oauth2/access", URI.encode_www_form(params)
+          response = https_client(MEETUP_API_DOMAIN).post "/oauth2/access", URI.encode_www_form(params)
 
           if response.code == "200"
             HashWithIndifferentAccess.new(JSON.parse(response.body))
           else
-            Rails.logger.error "Meetup, refreshing access tokens failed with #{response.code} #{response.body.inspect}"
+            fail "Meetup Identity Builder, refreshing access tokens failed with #{response.code} #{response.body.inspect}"
             nil
           end
-        end
-        
-        MEETUP_API_DOMAIN = 'secure.meetup.com'
-        def https_client
-          client = Net::HTTP.new MEETUP_API_DOMAIN, 443
-          client.use_ssl = true
-          client
         end
       end
     end

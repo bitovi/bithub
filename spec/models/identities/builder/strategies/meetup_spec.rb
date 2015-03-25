@@ -7,7 +7,8 @@ describe Identities::Builder::Strategies::Meetup do
       "credentials"=>{
         "token"=>"49d58f4a8082390d1ab61da05fd11ea8",
         "refresh_token"=>"f3fbcdde8d27554c8ea02facd52258e0",
-        "expires_at"=>1427264292, "expires"=>true
+        "expires_at"=>1427264292,
+        "expires"=>true
       }
     }
   end
