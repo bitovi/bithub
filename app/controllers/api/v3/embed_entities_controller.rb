@@ -4,6 +4,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, except: [:index]
+  load_and_authorize_resource except: [:index]
 
   helper_method :custom_cache_key
   helper_method :list_cache_key
@@ -71,7 +72,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       render text: "error", status: 406
     end
   end
-  
+
   def unpin
     @visibility = 'admin'
     if (@relation = embed_entity_relation).unpin
@@ -117,13 +118,13 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       scope = scope.where('embed_entities.is_pinned = TRUE')
     end
 
-    if public_visibility? 
+    if public_visibility?
       scope = scope.order('embed_entities.is_pinned DESC, entities.thread_updated_ts DESC')
       params.delete(:order)
     elsif params[:order] == 'preview'
       params[:order] = ['is_pinned:desc', 'thread_updated_ts:desc']
     end
-      
+
     scope = scope
       .where("entities.is_pending" => false)
       .includes(:parent)
@@ -136,7 +137,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .apply_tag_based_params_to_scope
       .apply_order_to_scope
       .result
-    
+
     scope
   end
 

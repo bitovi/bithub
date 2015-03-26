@@ -2,7 +2,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, :except => [:tree]
-  # load_and_authorize_resource except: [:tree]
+  load_and_authorize_resource except: [:tree], param_method: :service_definition
 
   def index
     if embed_id
@@ -24,9 +24,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def create
     @service = owner_embed.services.build(service_definition)
-    @service.brand_identity = BrandIdentity.where(provider: service_kind[:feed_name]).first
-    # waiting for front-end changes
-    # @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
+    @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
     @service.humanized_config
 
     brand = Brand.current
@@ -101,10 +99,12 @@ class Api::V3::ServicesController < Api::V3::BaseController
   def suggestions
     if feed_name = params[:feed_name]
       suggestions = []
-      if feed_name == 'instagram' && (username = params[:username])
+      if params[:feed_name] == 'instagram' && (username = params[:username])
         suggestions += api_adapter.user_from_instagram(params[:username])
-      elsif bi = current_brand.identities.find_by_provider(feed_name)
-        suggestions += bi.config.suggestions params[:feed_type]
+      
+      # VISE IDENTITETA
+      elsif bi = current_brand.identities.where(id: brand_identity_id, provider: feed_name).first
+        suggestions += bi.property_id_name_pairs(params[:feed_type])
       end
 
       render json: suggestions
