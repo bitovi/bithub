@@ -18,7 +18,7 @@ class BrandIdentity < ActiveRecord::Base
   def property_id_name_pairs(property_type = nil)
     facade.property_id_name_pairs(property_type)
   end
-  
+
   def builder
     Identities::Builder.new(
       Identities::Builders.const_get(
