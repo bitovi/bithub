@@ -16,11 +16,8 @@ module Identities
       end
       attr_reader :storage
 
-      # fills @result[:credentials] with user's token
-      def credentials
-        @storage[:credentials] = {
-          access_token: @source_data.fetch(:credentials).fetch(:token)
-        }
+      def token
+        @source_data.fetch(:credentials).fetch(:token)
       end
 
       private

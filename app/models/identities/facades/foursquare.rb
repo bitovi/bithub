@@ -1,6 +1,10 @@
 module Identities
   module Facades
     class Foursquare < Facade::Protocol
+      
+      def property_id_name_pairs
+        venue_ids_and_names
+      end
 
       def venue_ids_and_names
         venues.map do |v|
@@ -17,7 +21,6 @@ module Identities
       def venues
         @extracted_data[:venues] || []
       end
-
     end
   end
 end

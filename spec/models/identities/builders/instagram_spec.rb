@@ -11,12 +11,10 @@ describe Identities::Builders::Instagram do
     }
   end
 
-  describe '#extract_credentials' do
+  describe '#token' do
     it 'extracts the tokens from the OAuth response' do
       b = Identities::Builders::Instagram.new(oauth_data)
-      expect(b.credentials).to eq({
-        access_token: oauth_data.fetch('credentials').fetch('token')
-      })
+      expect(b.token).to eq(oauth_data.fetch('credentials').fetch('token'))
     end
   end
 end

@@ -11,16 +11,14 @@ describe Identities::Builders::Facebook do
     }
   end
 
-  describe '#extract_credentials' do
+  describe '#token' do
     it 'extracts the user\'s regular token from OAuth data' do
       b = Identities::Builders::Facebook.new(oauth_data)
-      expect(b.credentials).to eq({
-        access_token: oauth_data.fetch('credentials').fetch('token')
-      })
+      expect(b.token).to eq(oauth_data.fetch('credentials').fetch('token'))
     end
   end
   
-  describe '#fetch_long_lived_access_token' do
+  describe '#long_lived_access_token' do
     it 'fetches the user\'s long lived token from Facebook\'s OAuth API' do
       b = Identities::Builders::Facebook.new(oauth_data)
       VCR.use_cassette('builder_facebook_long_lived_token') do
@@ -29,7 +27,7 @@ describe Identities::Builders::Facebook do
     end
   end
   
-  describe '#fetch_pages' do
+  describe '#pages' do
     it 'fetches all user\'s pages from Facebook\s graph API' do
       b = Identities::Builders::Facebook.new(oauth_data)
       VCR.use_cassette('builder_facebook_pages') do

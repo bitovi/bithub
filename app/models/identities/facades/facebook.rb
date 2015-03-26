@@ -1,6 +1,11 @@
 module Identities
   module Facades
     class Facebook < Facade::Protocol
+
+      def property_id_name_pairs
+        page_ids_and_names
+      end
+
       def page_ids_and_names
         pages.map do |p|
           { id: p['id'], name: p['name'] }

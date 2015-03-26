@@ -4,16 +4,8 @@ module Identities
       DISQUS_API_DOMAIN = 'disqus.com'
 
       def run
-        credentials
         forums
         self
-      end
-
-      def credentials
-        @storage[:credentials] = super.merge({
-          refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token),
-          expires_at: @source_data.fetch(:credentials).fetch(:expires_at)
-        })
       end
 
       def forums

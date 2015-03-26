@@ -5,7 +5,6 @@ module Identities
     class Facebook < Builder::Protocol
 
       def run
-        credentials
         long_lived_access_token
         pages
         self
@@ -14,8 +13,7 @@ module Identities
       # fills @storage[:credentials] with user's long lived token
       def long_lived_access_token
         if llt = long_lived_access_token_over_http
-          @storage[:credentials] = {} unless @storage[:credentials]
-          @storage[:credentials][:long_lived_access_token] = llt
+          @storage[:long_lived_access_token] = llt
         end
       end
 
@@ -35,8 +33,7 @@ module Identities
       end
 
       def long_lived_access_token_over_http
-        if (response = facebook_oauth_client.exchange_access_token_info(
-            @source_data.fetch(:credentials).fetch(:token)))
+        if (response = facebook_oauth_client.exchange_access_token_info(token))
           response['access_token']
         end
       end
@@ -50,10 +47,9 @@ module Identities
       end
 
       def long_lived_or_regular_token
-        @storage.fetch(:long_lived_access_token) {
-          @source_data.fetch(:credentials).fetch(:token)
-        }
+        @storage.fetch(:long_lived_access_token) { token }
       end
+
     end
   end
 end

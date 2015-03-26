@@ -6,16 +6,8 @@ module Identities
       MEETUP_API_DOMAIN = 'secure.meetup.com'
 
       def run
-        credentials
         groups
         self
-      end
-
-      def credentials
-        @storage[:credentials] = super.merge({
-          refresh_token: @source_data.fetch(:credentials).fetch(:refresh_token),
-          expires_at: @source_data.fetch(:credentials).fetch(:expires_at)
-        })
       end
 
       def groups
@@ -26,7 +18,7 @@ module Identities
 
       private
       def groups_via_http
-        client = RMeetup::Client.new :access_token => @source_data.fetch(:credentials).fetch(:token)
+        client = RMeetup::Client.new :access_token => token
         client.fetch :groups, :member_id => @source_data.fetch(:uid)
       end
 
@@ -42,6 +34,7 @@ module Identities
           }
         end
       end
+
     end
   end
 end
