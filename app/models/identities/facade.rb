@@ -20,8 +20,10 @@ module Identities
         { access_token: @provider_facade.page_token(page_id) }
       elsif @provider_facade.provider_name == 'twitter'
         { access_token: access_token, access_secret: @provider_facade.access_secret }
-      else
+      elsif @source_data[:credentials]
         { access_token: access_token }
+      else
+        {}
       end
     end
 
@@ -58,6 +60,7 @@ module Identities
     end
 
     private
+
     def access_token
       @source_data.fetch(:credentials).fetch(:token)
     end
