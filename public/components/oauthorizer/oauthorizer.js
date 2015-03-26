@@ -59,6 +59,8 @@ function(Component, initView, Models){
 					set : function(val){
 						if(val === 'new'){
 							this.attr('service').attr('brand_identity_id', null);
+						} else {
+							this.attr('identities') && this.selectFirstIdentity();
 						}
 						return val;
 					}
@@ -98,7 +100,7 @@ function(Component, initView, Models){
 			},
 			selectFirstIdentity : function(){
 				var identities = this.identitiesForCurrentService();
-				this.setServiceBrandIdentityId(identities[0].id);''
+				this.setServiceBrandIdentityId(identities[0].id);
 			},
 			identitiesForCurrentService : function(){
 				var currentService = this.attr('feed');
