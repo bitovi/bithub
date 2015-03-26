@@ -12,6 +12,14 @@ server {
         root {{ bithub.project_path }}/web/current/public;
         index index.html;
 
+		# defined in blacklist.conf
+		if ($bad_bot) {
+		        return 403;
+		}
+		if ($bad_referer) {
+                return 403;
+   		}
+
         location /socket.io/ {
                 proxy_pass http://127.0.0.1:3002;
                 proxy_http_version 1.1;
