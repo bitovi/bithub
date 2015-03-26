@@ -138,5 +138,8 @@ describe Identities::Facade do
   end
 
   describe '#property_name_for_id' do
+    context 'given a property id' do
+      it 'looks up the property\'s name'
+    end
   end
 end
