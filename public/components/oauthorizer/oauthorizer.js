@@ -100,8 +100,10 @@ function(Component, initView, Models){
 			},
 			selectFirstIdentity : function(){
 				var identities = this.identitiesForCurrentService();
-				this.setServiceBrandIdentityId(identities[0].id);
-			},
+        if(identities.length){
+				  this.setServiceBrandIdentityId(identities[0].id);
+			  }
+      },
 			identitiesForCurrentService : function(){
 				var currentService = this.attr('feed');
 				return can.grep(this.attr('identities'), function(identity){
