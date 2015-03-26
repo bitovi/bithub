@@ -15,7 +15,7 @@
 						<div class="form-group"><%= f.label 'invite code' %>
 							<%= f.text_field :code, autocomplete: "off", class: 'form-control' %>
 							<% if @invite_code && @invite_code.remaining_uses > 0 %>
-								<i><small>Don't have an invite code? Use <b><%= @invite_code.code.upcase %></b> (<%= (27 - @invite_code.remaining_uses) + 123 %> / 150 used)</small></i>
+								<i><small>Don't have an invite code? Use <b><%= @invite_code.code.upcase %></b> (<%= (27 - @invite_code.remaining_uses) + 123 %> / 150 used)</small> and get 2 months for free</i>
 							<% else %>
 								<i><small>Don't have an invite code? Contact us via Twitter - <a href="http://twitter.com/bithubapp">@bithubapp</a>, and request one</small></i>
 							<% end %>
