@@ -82,7 +82,11 @@ class Service < ActiveRecord::Base
   end
 
   def config_with_credentials
-    service_config.data.merge(brand_identity.credentials)
+    if brand_identity
+      service_config.data.merge(brand_identity.credentials)
+    else
+      service_config.data
+    end
   end
 
   # private
