@@ -16,7 +16,6 @@ namespace :data do
     end
     puts "facebook total: #{facebook_total}, done: #{facebook_done}"
 
-
     github_total = 0; github_done = 0;
     BrandIdentity.where(provider: 'github').each do |ident|
       ident.extracted_data = {} unless ident.extracted_data
