@@ -34,6 +34,16 @@ function(Component, initView, Models){
 		disqus     : 'Log in with Disqus'
 	}
 
+	var SERVICE_LABELS = {
+		facebook   : 'Facebook',
+		twitter    : 'Twitter',
+		github     : 'GitHub',
+		meetup     : 'Meetup',
+		foursquare : 'Foursquare',
+		instagram  : 'Instagram',
+		disqus     : 'Disqus',
+	}
+
 	var compareIdentities = function(a, b){
 		if(a.created_at_timestamp > b.created_at_timestamp) return -1;
 		if(a.created_at_timestamp < b.created_at_timestamp) return 1;
@@ -44,15 +54,51 @@ function(Component, initView, Models){
 		tag : 'bh-oauthorizer',
 		template : initView,
 		scope : {
+			define : {
+				accountType : {
+					set : function(val){
+						if(val === 'new'){
+							this.attr('service').attr('brand_identity_id', null);
+						}
+						return val;
+					}
+				}
+			},
 			selectedService : null,
+			accountType : 'existing',
 			init : function(){
 				var self = this;
 				Models.Identity.findAll({}).then(function(identities){
-					self.attr('identities', identities);
+					can.batch.start();
+					self.attr({
+						accountType: 'existing',
+						identities: identities,
+					});
+					self.selectFirstIdentity();;
+					can.batch.stop();
 				});
+			},
+			serviceLabel : function(){
+				return SERVICE_LABELS[this.attr('feed')];
+			},
+			useExistingAccount : function(){
+				return this.attr('accountType') === 'existing';
+			},
+			addNewAccount : function(){
+				return this.attr('accountType') === 'new';
+			},
+			toggleAccountType : function(ctx, el){
+				this.attr('accountType', el.data('accountType'))
 			},
 			isAuthorized : function(){
 				return this.hasIdentityForService(this.attr('feed'));
+			},
+			setServiceBrandIdentityId : function(id){
+				this.attr('service').attr('brand_identity_id', parseInt(id, 10));
+			},
+			selectFirstIdentity : function(){
+				var identities = this.identitiesForCurrentService();
+				this.setServiceBrandIdentityId(identities[0].id);''
 			},
 			identitiesForCurrentService : function(){
 				var currentService = this.attr('feed');
@@ -101,20 +147,24 @@ function(Component, initView, Models){
 					Models.Identity.findAll({}).then(function(identities){
 						self.attr({
 							identities : identities,
-							isAuthorizing : false
+							isAuthorizing : false,
+							accountType: 'existing'
 						});
 					});
 				});
 			}
 		},
 		events : {
-			"{scope} isAuthorizing" : function(){
+			"{scope} isAuthorizing" : function(scope, ev, newVal){
 				var self = this;
+
+				if(newVal) return;
+
 				setTimeout(function(){
 					var identities = self.scope.identitiesForCurrentService();
 					if(identities.length){
 						identities.sort(compareIdentities);
-						self.scope.attr('service').attr('brand_identity_id', parseInt(identities[0].id));
+						self.scope.setServiceBrandIdentityId(identities[0].id);
 						self.element.find('select.service-brand').val(identities[0].id);
 					}
 				}, 10);
