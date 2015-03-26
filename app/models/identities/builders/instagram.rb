@@ -3,7 +3,6 @@ module Identities
     class Instagram < Builder::Protocol
 
       def run
-        credentials
         self
       end
 

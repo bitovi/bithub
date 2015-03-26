@@ -5,7 +5,6 @@ module Identities
     class Github < Builder::Protocol
 
       def run
-        credentials
         repos
         orgs
         self
@@ -34,10 +33,9 @@ module Identities
       end
 
       def github_client
-        ::Octokit::Client.new \
-          :access_token => @source_data.fetch(:credentials).fetch(:token),
-          :auto_paginate => true
+        ::Octokit::Client.new :access_token => token, :auto_paginate => true
       end
+
     end
   end
 end

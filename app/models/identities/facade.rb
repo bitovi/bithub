@@ -2,70 +2,64 @@ module Identities
   class Facade
 
     def initialize(facade, sd, ed)
-      @facade = facade.new(ed)
-      @provider_name = facade.name.gsub('Identities::Facades::', '').downcase
-      @source_data = sd
-      @extracted_data = ed
+      @source_data = HashWithIndifferentAccess.new sd
+      @extracted_data = HashWithIndifferentAccess.new ed
+      @provider_facade = facade.new(@source_data, @extracted_data)
     end
 
     def name
-      if %w(github twitter).include? @provider_name
+      if %w(github twitter).include? @provider_facade.provider_name
         @source_data['info']['nickname']
-      elsif %w(facebook disqus meetup foursquare).include? @provider_name
+      elsif %w(facebook disqus meetup foursquare).include? @provider_facade.provider_name
         @source_data['info']['name']
       end
     end
 
     def credentials(property_id = nil)
-      if @provider_name == 'facebook' && (page_id = property_id)
-        { access_token: @facade.page_token(page_id) }
-      elsif @provider_name == 'twitter'
-        { access_token: access_token, access_secret: access_secret }
+      if @provider_facade.provider_name == 'facebook' && (page_id = property_id)
+        { access_token: @provider_facade.page_token(page_id) }
+      elsif @provider_facade.provider_name == 'twitter'
+        { access_token: access_token, access_secret: @provider_facade.access_secret }
       else
         { access_token: access_token }
       end
     end
 
     def property_id_name_pairs(property_type = nil)
-      if @provider_name == 'github' && property_type== 'repo'
-        @facade.repo_ids_and_names
-      elsif @provider_name == 'github' && property_type == 'org'
-        @facade.org_ids_and_names
-      elsif @provider_name == 'disqus'
-        @facade.forum_ids_and_names
-      elsif @provider_name == 'facebook'
-        @facade.page_ids_and_names
-      elsif @provider_name == 'meetup'
-        @facade.group_ids_and_names
-      elsif @provider_name == 'foursquare'
-        @facade.venue_ids_and_names
+      if @provider_facade.provider_name == 'github' && property_type== 'repo'
+        @provider_facade.repo_ids_and_names
+      elsif @provider_facade.provider_name == 'github' && property_type == 'org'
+        @provider_facade.org_ids_and_names
+      else
+        @provider_facade.property_id_name_pairs
       end
     end
 
     def property_name_for_id(id)
-      case @provider_name
+      case @provider_facade.provider_name
       when 'facebook'
-        @facade.page_name_for_id(id)
+        @provider_facade.page_name_for_id(id)
       when 'meetup'
-        @facade.group_name_for_id(id)
+        @provider_facade.group_name_for_id(id)
       when 'foursquare'
-        @facade.venue_name_for_id(id)
+        @provider_facade.venue_name_for_id(id)
       end
     end
 
     class Protocol
-      def initialize(ed)
+      def initialize(sd, ed)
+        @source_data = HashWithIndifferentAccess.new sd
         @extracted_data = HashWithIndifferentAccess.new ed
+      end
+
+      def provider_name
+        self.class.to_s.gsub('Identities::Facades::', '').downcase
       end
     end
 
     private
     def access_token
-      @extracted_data[:access_token]
-    end
-
-    def access_secret
-      @extracted_data[:access_secret]
+      @source_data.fetch(:credentials).fetch(:token)
     end
   end
 end

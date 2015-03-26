@@ -13,15 +13,10 @@ describe Identities::Builders::Disqus do
     }
   end
 
-  describe '#extract_credentials' do
-    it 'extracts the tokens from the OAuth response' do
+  describe '#token' do
+    it 'extracts the token from the OAuth response' do
       b = Identities::Builders::Disqus.new(oauth_data)
-
-      expect(b.credentials).to eq({
-        access_token: oauth_data.fetch('credentials').fetch('token'),
-        refresh_token: oauth_data.fetch('credentials').fetch('refresh_token'),
-        expires_at: oauth_data.fetch('credentials').fetch('expires_at')
-      })
+      expect(b.token).to eq(oauth_data.fetch('credentials').fetch('token'))
     end
   end
 

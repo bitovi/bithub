@@ -3,7 +3,6 @@ module Identities
     class Foursquare < Builder::Protocol
 
       def run
-        credentials
         venues
         self
       end
@@ -22,9 +21,10 @@ module Identities
       def client
         Foursquare2::Client.new(
           api_version: '20141111',
-          oauth_token: @source_data.fetch(:credentials).fetch(:token)
+          oauth_token: token
         )
       end
+
     end
   end
 end
