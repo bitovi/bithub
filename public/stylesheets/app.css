@@ -5689,13 +5689,13 @@ h1, h2, h3, h4, h5, h6 {
 
 h3.start-using {
   font-weight: normal;
-  margin: 50px 0; }
+  margin: 0px 0 20px; }
 
 .part h1 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   margin-top: 5px;
-  font-size: 48px;
+  font-size: 44px;
   font-weight: bold;
   color: #333; }
   .part h1 a {
@@ -5843,12 +5843,22 @@ hr {
   margin-top: 10px; }
   .usage-lists ul {
     width: 50%;
-    float: left; }
+    float: left;
+    list-style: none;
+    padding: 0; }
     @media (max-width: 47.99em) {
       .usage-lists ul {
         float: none;
         width: 100%;
         margin-bottom: 0; } }
+    .usage-lists ul li {
+      background: url(/site/images/checkmark.png);
+      background-size: 16px 16px;
+      background-repeat: no-repeat;
+      background-position: 0 6px;
+      line-height: 30px;
+      padding-left: 24px;
+      margin: 0; }
 
 .examples-outer-wrapper {
   margin: 50px 0;
@@ -5925,6 +5935,8 @@ hr {
   border-top: 1px solid #ccc;
   margin-top: 30px;
   padding: 30px 0; }
+  .footer small {
+    font-size: 70%; }
   .footer ul {
     float: right; }
     .footer ul li {
@@ -6014,7 +6026,7 @@ blockquote {
 
 .bithub-illustration {
   width: 100%;
-  margin: 20px 0 60px; }
+  margin: 20px 0 40px; }
 
 .devise-links {
   text-align: center; }
@@ -6128,5 +6140,58 @@ blockquote {
 
 .vjs-fullscreen {
   padding-top: 0; }
+
+ul.usage {
+  background: #fafafa;
+  padding: 20px;
+  list-style: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px; }
+  ul.usage li {
+    background: url(/site/images/checkmark.png);
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: 0 6px;
+    line-height: 30px;
+    padding-left: 24px;
+    width: 50%;
+    float: left; }
+    @media (max-width: 47.99em) {
+      ul.usage li {
+        width: 100%;
+        float: none; } }
+
+.plan-and-form-wrap {
+  position: relative;
+  margin: 20px 0; }
+  .plan-and-form-wrap .panel {
+    margin-bottom: 0; }
+
+.pricing-registration-page {
+  width: 300px;
+  width: 38.2%;
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0; }
+  .pricing-registration-page .pricing-wrap {
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    border-right: none;
+    -webkit-border-top-right-radius: 0;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    -moz-border-radius-bottomright: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0; }
+
+.registration-heading {
+  text-align: center; }
+
+.registration-panel {
+  float: right;
+  width: 61.8%; }
 
 /*# sourceMappingURL=app.css.map */

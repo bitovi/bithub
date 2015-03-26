@@ -19,7 +19,7 @@ gem 'redis'
 gem 'redis-rails'
 gem 'redis-session-store'
 gem 'redis-namespace'
-gem 'cancan'
+gem 'cancancan'
 gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'

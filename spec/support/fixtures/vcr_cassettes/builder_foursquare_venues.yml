@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.foursquare.com/v2/venues/managed?oauth_token=22PI511OSAJQDCUZT1JUAH3MIXCHCA24PJL04WPAB0HODUVM&v=20141111
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby gem
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 24 Mar 2015 23:10:57 GMT
+      Server:
+      - nginx
+      Content-Type:
+      - application/json; charset=utf-8
+      Access-Control-Allow-Origin:
+      - "*"
+      Tracer-Time:
+      - '13'
+      X-Ratelimit-Limit:
+      - '500'
+      X-Ratelimit-Remaining:
+      - '497'
+      Strict-Transport-Security:
+      - max-age=864000
+      X-Ex:
+      - fastly_cdn
+      Accept-Ranges:
+      - bytes
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-dfw1828-DFW
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      Vary:
+      - Accept-Encoding,User-Agent,Accept-Language
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '{"meta":{"code":200},"notifications":[{"type":"notificationTray","item":{"unreadCount":0}}],"response":{"venues":{"count":1,"items":[{"id":"4b4b7060f964a520b09b26e3","name":"KSET","contact":{"phone":"016129758","formattedPhone":"01
+        6129 758"},"location":{"address":"Unska 3","lat":45.801217553249806,"lng":15.971599817276001,"postalCode":"10000","cc":"HR","city":"Zagreb","state":"Grad
+        Zagreb","country":"Hrvatska","formattedAddress":["Unska 3","10000 Zagreb"]},"categories":[{"id":"4bf58dd8d48988d11f941735","name":"Nightclub","pluralName":"Nightclubs","shortName":"Nightclub","icon":{"prefix":"https:\/\/ss3.4sqi.net\/img\/categories_v2\/nightlife\/nightclub_","suffix":".png"},"primary":true}],"verified":true,"stats":{"checkinsCount":3614,"usersCount":599,"tipCount":11},"url":"http:\/\/www.kset.org","venuePage":{"id":"57634084"}}]}}}'
+    http_version: 
+  recorded_at: Tue, 24 Mar 2015 23:10:57 GMT
+recorded_with: VCR 2.9.3

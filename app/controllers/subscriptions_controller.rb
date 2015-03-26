@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
-
-  # TODO: do auth
+  before_filter :authenticate_account!
+  load_and_authorize_resource
 
   def edit_plan
     @plan = Subscription.current.plan

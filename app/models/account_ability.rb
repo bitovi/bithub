@@ -5,19 +5,41 @@ class AccountAbility
     if (account.has_role? :admin) || (ENV['RAILS_ENV'] == 'test')
       can :manage, :all
     else
-      can [:read, :read_tags_tree], Tag
-      can [:read, :update], Brand #, id: account.brand.id
-      can [:read, :destroy], BrandIdentity #, brand_id: account.brand.id
+      # manage it's own account
       can :manage, Account, id: account.id
+
+      # update and leave organization
+      can [:read, :update], Organization, id: account.organization_ids
+      can :destroy, AccountsOrganization, account_id: account.id
+
+      # create new a brand or read/update/delete owned brands
+      can :create, Brand, organization_id: account.organization_ids
+      can [:read, :update, :destroy], Brand, organization_id: account.organization_ids
+
+      # read/destroy owned brand identities
+      can [:read, :destroy], BrandIdentity, brand_id: account.brand_ids
+
+      # countries list
       can :read, Country
-      can :read, User # TODO check somehow if user is present in current tenant
-      can :read, Payment
+
+      # read plans, owned subscriptions with payments
+      can :read, Plan
+      can :read, Subscription, organization_id: account.organization_ids
+      can :read, Payment, subscription: {organization_id: account.organization_ids}
+
+      ### Models locked inside tenants
       can :manage, Embed
-      can :manage, Filter
-      can :manage, Service #, brand_id: account.brand.id
-      can :manage_roles_on_user, User
+      can :manage, EmbedEntity
+      can :manage, EmbedFilter
+      can :manage, EmbedPreset
       can :manage, Entity
+      can :manage, EntityRelations
+      can :manage, Filter
+      can :manage, Grouping
+      can :manage, Histogram
+      can :manage, Service
+      can :manage, ServiceEntity
+      can :manage, User
     end
   end
-
 end
