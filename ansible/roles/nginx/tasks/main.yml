@@ -5,3 +5,8 @@
   file: path=/etc/nginx/sites-enabled/default state=absent
   notify:
     - restart nginx
+
+- name: Include blacklist.conf
+  copy: src=blacklist.conf dest=/etc/nginx/conf.d/blacklist.conf
+  notify:
+    - restart nginx
