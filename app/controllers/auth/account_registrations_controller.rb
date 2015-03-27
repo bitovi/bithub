@@ -4,6 +4,7 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   PROMO_CODE = 'ymip412'
 
   def new
+    @invite_code = InviteCode.where(code: PROMO_CODE).first
     @plan = find_plan
     super
   end
