@@ -3,7 +3,9 @@
 	<div class="alert alert-info">Loading...</div>
 {{else}}
 	{{#if hubs.length}}
-		<button class="btn btn-primary btn-add-hub" can-click="createAndEditHub">Add Hub</button>
+		{{#ifCanAddHub hubs}}
+			<button class="btn btn-primary btn-add-hub" can-click="createAndEditHub">Add Hub</button>
+		{{/ifCanAddHub}}
 		<table class="table table-striped">
 			<thead>
 				<tr>
