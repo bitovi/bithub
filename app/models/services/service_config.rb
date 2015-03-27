@@ -16,14 +16,18 @@ module Services
       @config.to_h if valid?
     end
 
+    def property_id
+      @config.id
+    end
+
     def valid?
       @errors.empty?
     end
 
     def humanized_config
-      @config.humanized_name = @service
-        .brand_identity.config
-        .humanized_name(@config.id) if @config.respond_to?(:'humanized_name=')
+      if @config.respond_to?(:'humanized_name=')
+        @config.humanized_name = @service.brand_identity.property_name_for_id(property_id)
+      end
       @config.to_h
     end
 

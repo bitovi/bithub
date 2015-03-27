@@ -1,0 +1,27 @@
+<div class="pricing-wrap">
+	<div class="caption">
+		<img src="/site/images/lego/agency.png" alt="">
+		<h3>Agency</h3>
+		<h4>$999.00/month</h4>
+		<% if context == 'frontpage' %>
+			<div class="call-to-action">
+				<%# <a href="<%= current_account ? "/admin" : "/register/agency " %1>" class="btn btn-info btn-block">Start your 15 - day trial</a> %>
+				<a href="#" class="btn btn-info btn-block">Coming Soon</a>
+			</div>
+		<% end %>
+		<ul class="list-unstyled">
+			<li>4 Brands</li>
+			<li>3 Hubs per brand</li>
+			<li>12 Services per Hub</li>
+			<li>Analytics</li>
+			<li>Moderation</li>
+			<li>Embed</li>
+			<li>Whitelabel Embed</li>
+			<li><b>Live stream</b></li>
+			<% if context == 'registration' %>
+				<li><hr></li>
+				<li><a href="/#registration">Pick a different plan</a></li>
+			<% end %>
+		</ul>
+	</div>
+</div>

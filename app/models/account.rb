@@ -10,7 +10,14 @@ class Account < ActiveRecord::Base
 
   validate :account_with_valid_invite_code
 
-  has_and_belongs_to_many :organizations #, through: :accounts_organizations
+  has_many :organizations, through: :accounts_organizations
+  has_many :accounts_organizations, dependent: :destroy
+
+  def brand_ids
+    organizations.reduce([]) do |a,o|
+      a.push *o.brand_ids; a
+    end
+  end
 
   def code
     self.invite_code.andand.code || ""

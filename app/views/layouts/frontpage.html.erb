@@ -3,42 +3,16 @@
 		<div class="container text-container">
 			<div class="row">
 				<div class="col-md-12">
+					<h1>Capitalize on your social proof <a href="#registration" class="same-page-link">now</a>!</h1>
+					<p class="text-center">Real time, embeddable, social hubs for <b>websites and interactive event walls</b></p>
 					<img src="/site/images/illustration.png" alt="" class="bithub-illustration">
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="part main-part">
-		<div class="container text-container">
-			<div class="row">
-				<div class="col-md-12">
-
-					<h1>Capitalize your social proof <a href="#registration" class="same-page-link">now</a>!</h1>
-					<p>
-						Your social network activity gives you a direct connection to your fans. Time spent preparing the interesting content and posting it to Facebook, Twitter or Instagram pays off, resulting in a steady growth of your reach and influence. But, <b>what do you do with all these retweets and likes</b>?
-					</p>
-					<div class="emphasized what-if-block">
-						<p class="text-center">
-							<b>What if you could leverage the power of your social proof<br> to convert your visitors into your customers</b>?
-						</p>
-					</div>
-					<p>
-						With BitHub you can unify all your social media content in one place. Use the <b>wisdom of crowds to strengthen your brand image and extend your influence</b>.
-					</p>
-					<p>
-						BitHub provides you with an <b>embeddable social hub</b> that gathers and displays all the content produced by you and your fans. Place it on <b>your site, landing page</b> or an <b>interactive event wall</b>. Whatever needs you have, BitHub has you covered.
-					</p>
-					<p>
-						Check out our <a href="#pricing" class="same-page-link">pricing and features</a>! Every plan comes with a 15 - day trial.
-					</p>
-					<hr class="emphasized">
-					<h3 class="text-center start-using"><b><a href="#pricing" class="same-page-link">Start using BitHub</a></b> in three easy steps:</h3>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="part">
 		<div class="container text-container">
+			<h3 class="text-center start-using"><b><a href="#pricing" class="same-page-link">Start using BitHub</a></b> in three easy steps:</h3>
 				<div class="video-wrap top-video">
 					<video id="connect-moderate-embed" class="video-js vjs-default-skin" controls preload="auto" width="auto" height="auto" data-setup="{}" poster="/site/images/connect-moderate-embed-cover.png">
 						<source src="/site/images/bithub-connect-moderate-embed.mp4" type='video/mp4' />
@@ -72,7 +46,46 @@
 
 			</div>
 			<div class="col-md-6 col-md-offset-3">
+				<h2 class="text-center cta steps-cta">Start your  <a href="/register/startup" class="same-page-link">15 - day trial</a> &raquo;</h2>
+			</div>
+		</div>
+	</div>
+	<div class="part main-part">
+		<div class="container text-container">
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="emphasized">
+					<p>
+						Producing the quality social media content takes time and effort, but it's the only way to connect with your fans. It pays off, your influence is steadily growing, but <b>what do you do with all these retweets and likes</b>?
+					</p>
+					<div class="emphasized what-if-block">
+						<p class="text-center">
+							<b>What if you could leverage the power of your social proof<br> to convert your visitors into your customers</b>?
+						</p>
+					</div>
+					<p>
+						Use BitHub to unify all your social media content in one place. Strengthen your brand image through the wisdom of crowds and extend your influence.
+					</p>
+					<p>
+						BitHub provides you with an <b>embeddable social hub</b> that collects all the content produced by you and your fans. Use it for:
+					</p>
+					<ul class="usage clearfix">
+						<li>Social hub on your site</li>
+						<li>Interactive event wall</li>
+						<li>Landing page</li>
+						<li>Hash tag contest</li>
+						<li>Community showcase</li>
+						<li>Activity stream for your project</li>
+					</ul>
+					<p>Whatever needs you have, BitHub has you covered.</p>
+					<p>
+						Check out our <a href="/register/startup" class="same-page-link">pricing and features</a>! Every plan comes with a 15 - day trial.
+					</p>
+					
+				</div>
+				<div class="col-md-6 col-md-offset-3">
 				<h2 class="text-center cta steps-cta">Start your  <a href="#registration" class="same-page-link">15 - day trial</a> &raquo;</h2>
+			</div>
 			</div>
 		</div>
 	</div>
@@ -238,68 +251,13 @@
 						<p>All of our plans come with a 15 - day trial, and can be cancelled at any time.</p>
 						<ul class="list-unstyled pricing-list clearfix">
 							<li class="col-sm-4 col-xs-10 col-xs-offset-1 col-sm-offset-0 plan">
-								<div class="pricing-wrap">
-									<div class="caption">
-										<img src="/site/images/lego/startup.png" alt="">
-										<h3>Startup</h3>
-										<h4>$99.00/month</h4>
-										<div class="call-to-action">
-											<a href="<%= current_account ? "/admin" : "/register/startup" %>" class="btn btn-info btn-block btn-large">Start your 15 - day trial</a>
-										</div>
-										<ul class="list-unstyled">
-											<li>1 Hub</li>
-											<li>7 Unique Services</li>
-											<li>Analytics</li>
-											<li>Moderation</li>
-											<li>Embed</li>
-											<li><b>Live stream</b></li>
-										</ul>
-									</div>
-								</div>
+								<%= render :partial => 'pricing/startup', :locals => {context: 'frontpage'} %>
 							</li>
 							<li class="col-sm-4 col-xs-10 col-xs-offset-1 col-sm-offset-0 plan plan-primary">
-								<div class="pricing-wrap">
-									<div class="caption">
-										<img src="/site/images/lego/brand.png" alt="">
-										<h3>Brand</h3>
-										<h4>$349.00/month</h4>
-										<div class="call-to-action">
-											<%# <a href="<%= current_account ? "/admin" : "/register/brand" %1>" class="btn btn-info btn-block btn-lg">Start your 15 - day trial</a> %>
-											<a href="#" class="btn btn-info btn-block btn-lg">Coming Soon</a>
-										</div>
-										<ul class="list-unstyled">
-											<li>3 Hubs</li>
-											<li>10 Services per Hub</li>
-											<li>Analytics</li>
-											<li>Moderation</li>
-											<li>Embed</li>
-											<li>Whitelabel Embed</li>
-											<li><b>Live stream</b></li>
-										</ul>
-									</div>
-								</div>
+								<%= render :partial => 'pricing/brand', :locals => {context: 'frontpage'} %>
 							</li>
 							<li class="col-sm-4 col-xs-10 col-xs-offset-1 col-sm-offset-0 plan ">
-								<div class="pricing-wrap">
-									<div class="caption">
-										<img src="/site/images/lego/agency.png" alt="">
-										<h3>Agency</h3>
-										<h4>$999.00/month</h4>
-										<div class="call-to-action">
-											<a href="#" class="btn btn-info btn-block btn-large">Coming Soon</a>
-										</div>
-										<ul class="list-unstyled">
-											<li>4 Brands</li>
-											<li>3 Hubs per brand</li>
-											<li>12 Services per Hub</li>
-											<li>Analytics</li>
-											<li>Moderation</li>
-											<li>Embed</li>
-											<li>Whitelabel Embed</li>
-											<li><b>Live stream</b></li>
-										</ul>
-									</div>
-								</div>
+								<%= render :partial => 'pricing/agency', :locals => {context: 'frontpage'} %>
 							</li>
 						</ul>
 						<p>

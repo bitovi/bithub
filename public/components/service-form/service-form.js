@@ -34,7 +34,7 @@ function(Component, initView, Models){
 
 		if(needsOAuth){
 			template = [
-				'<bh-oauthorizer feed="' + feed + '">',
+				'<bh-oauthorizer feed="' + feed + '" service="{service}">',
 				template,
 				'</bh-oauthorizer>'
 			].join('');
