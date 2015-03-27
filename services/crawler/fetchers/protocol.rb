@@ -14,6 +14,8 @@ module Fetchers
   class RateLimitError < ServiceError; end
 
   module Protocol
+    include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+    add_transaction_tracer :fetch, :category => 'OtherTransaction/Fetchers/'
 
     def handle_errors
       yield

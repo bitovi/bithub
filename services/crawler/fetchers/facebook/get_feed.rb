@@ -5,6 +5,7 @@ module Fetchers
     class GetFeed < Base
 
       def fetch(object_id, opts={})
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Facebook/feed')
         args = {
           fields: FIELDS,
           limit: LIMIT

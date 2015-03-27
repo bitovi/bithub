@@ -12,6 +12,7 @@ module Fetchers
       end
       
       def fetch
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/search')
         handle_errors do
           @client.search(@term, :count => 100).take(100)
         end
