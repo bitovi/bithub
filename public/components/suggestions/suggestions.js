@@ -13,7 +13,10 @@ function(Component, initView, Models){
 			isLoading : true,
 			init : function(){
 				var self = this;
-				Models.Suggestion.findAll({service: this.attr('service')}).then(function(data){
+				Models.Suggestion.findAll({
+					service: this.attr('service'),
+					brandIdentityId: this.attr('brandIdentityId')
+				}).then(function(data){
 					self.attr({
 						suggestions: data,
 						isLoading : false

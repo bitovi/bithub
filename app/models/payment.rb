@@ -1,7 +1,7 @@
 class Payment < ActiveRecord::Base
   include Stripe::Callbacks
 
-  belongs_to :organization
+  belongs_to :subscription
 
   after_invoice_payment_succeeded! do |invoice, event|
     if new_invoice = self.new_from_invoice(invoice, event_id: event.id)

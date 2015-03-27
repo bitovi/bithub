@@ -6,7 +6,7 @@ class Api::V3::BrandsController < Api::V3::BaseController
     if @brand = current_brand
       render :show
     else
-      render json: msg_hash(@brand, 'update'), status: 406
+      render json: msg_hash(@brand, 'show'), status: 404
     end
   end
 

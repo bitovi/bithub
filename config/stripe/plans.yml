@@ -1,18 +1,39 @@
 -
-  stripe_id: "daily"
-  name: "Daily"
+  stripe_id: 'daily'
+  name: 'Daily'
   amount: 99
   currency: 'usd'
   interval: 'day'
   interval_count: 1
   trail_period_days: 1
-  available: true
-  features: {}
-  limits: {}
+  available: false
 
 -
-  stripe_id: "startup"
-  name: "Startup"
+  stripe_id: 'weekly'
+  name: 'Weekly'
+  amount: 99
+  currency: 'usd'
+  interval: 'week'
+  interval_count: 1
+  trail_period_days: 1
+  grace_period: 1
+  available: false
+
+-
+  name: 'Unlimited'
+  amount: 0
+  currency: 'usd'
+  interval: 'month'
+  interval_count: 1
+  trail_period_days: 0
+  grace_period: 0
+  available: false
+
+### For customers
+
+-
+  stripe_id: 'startup'
+  name: 'Startup'
   amount: 9900
   currency: 'usd'
   interval: 'month'
@@ -43,8 +64,8 @@
     twitter_term: 1
 
 -
-  stripe_id: "brand"
-  name: "Brand"
+  stripe_id: 'brand'
+  name: 'Brand'
   amount: 34900
   currency: 'usd'
   interval: 'month'
@@ -61,8 +82,8 @@
     services_per_embed: 10
 
 -
-  stripe_id: "agency"
-  name: "Agency"
+  stripe_id: 'agency'
+  name: 'Agency'
   amount: 99900
   currency: 'usd'
   interval: 'month'

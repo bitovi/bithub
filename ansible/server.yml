@@ -1,5 +1,5 @@
 - name: Initial setup
-  hosts: production
+  hosts: testing
   user: root
   vars:
     domain: 'testing.bithub.com'
