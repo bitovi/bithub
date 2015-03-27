@@ -22,16 +22,23 @@ module Organizations
 
     def save!
       @organization.save!
-      @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool
+      @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool && @plan.stripe_id
       self
     end
 
     def organization_name
-      @brand_name ||= Bazaar.heroku.gsub('-','_')
+      @organization_name ||= pretty_name
     end
 
     def brand_name
-      @brand_name ||= Bazaar.heroku.gsub('-','_')
+      @brand_name ||= pretty_name
     end
+
+    private
+
+    def pretty_name
+      Bazaar.heroku.gsub('-','_')
+    end
+
   end
 end

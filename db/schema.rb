@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326153335) do
+ActiveRecord::Schema.define(version: 20150327032000) do
 
   create_schema "pleasant_summer_49_1"
 
@@ -244,7 +244,7 @@ ActiveRecord::Schema.define(version: 20150326153335) do
   end
 
   create_table "plans", force: true do |t|
-    t.string  "stripe_id",                           null: false
+    t.string  "stripe_id"
     t.string  "name",                                null: false
     t.text    "description"
     t.integer "amount",                              null: false
@@ -256,6 +256,11 @@ ActiveRecord::Schema.define(version: 20150326153335) do
     t.json    "limits",            default: {},      null: false
     t.json    "features",          default: {},      null: false
     t.boolean "available",         default: false
+  end
+
+  create_table "pleasant_summer_49_1.accounts_organizations", id: false, force: true do |t|
+    t.integer "account_id",      null: false
+    t.integer "organization_id", null: false
   end
 
   create_table "pleasant_summer_49_1.embed_entities", force: true do |t|
@@ -339,6 +344,12 @@ ActiveRecord::Schema.define(version: 20150326153335) do
     t.integer "filter_id"
   end
 
+  create_table "pleasant_summer_49_1.organizations", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "pleasant_summer_49_1.ownerships", force: true do |t|
     t.integer  "owner_id"
     t.integer  "entity_id"
@@ -382,6 +393,7 @@ ActiveRecord::Schema.define(version: 20150326153335) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
+    t.integer  "brand_identity_id"
   end
 
   add_index "pleasant_summer_49_1.services", ["embed_id"], :name => "index_services_on_embed_id"
@@ -502,6 +514,11 @@ ActiveRecord::Schema.define(version: 20150326153335) do
   add_index "users", ["country_id"], :name => "index_users_on_country_id"
   add_index "users", ["email"], :name => "index_users_on_email"
 
+  create_table "pleasant_summer_49_1.accounts_organizations", id: false, force: true do |t|
+    t.integer "account_id",      null: false
+    t.integer "organization_id", null: false
+  end
+
   create_table "pleasant_summer_49_1.embed_entities", force: true do |t|
     t.integer "embed_id"
     t.integer "entity_id"
@@ -583,6 +600,12 @@ ActiveRecord::Schema.define(version: 20150326153335) do
     t.integer "filter_id"
   end
 
+  create_table "pleasant_summer_49_1.organizations", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "pleasant_summer_49_1.ownerships", force: true do |t|
     t.integer  "owner_id"
     t.integer  "entity_id"
@@ -626,6 +649,7 @@ ActiveRecord::Schema.define(version: 20150326153335) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
+    t.integer  "brand_identity_id"
   end
 
   add_index "pleasant_summer_49_1.services", ["embed_id"], :name => "index_services_on_embed_id"
