@@ -14,6 +14,7 @@ module Fetchers
       end
 
       def fetch
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Tumblr/tags')
         handle_errors do
           @result = @client.tagged @tag
         end
