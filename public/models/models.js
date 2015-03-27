@@ -7,7 +7,8 @@ steal(
 './brand.js',
 './preset.js',
 './analytics.js',
-function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics){
+'./subscription.js',
+function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subscription){
 	return {
 		Hub : Hub,
 		Service : Service,
@@ -16,6 +17,7 @@ function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics){
 		Suggestion : Suggestion,
 		Brand : Brand,
 		Preset: Preset,
-		Analytics : Analytics
+		Analytics : Analytics,
+		Subscription : Subscription
 	}
 })
