@@ -12,6 +12,7 @@ module Fetchers
       end
 
       def fetch
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/user_timeline')
         handle_errors do
           @client.user_timeline(@handle)
         end

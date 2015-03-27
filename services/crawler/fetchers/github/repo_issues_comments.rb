@@ -7,6 +7,7 @@ module Fetchers
       include Protocol
 
       def initialize(client, opts)
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Github/repo_issue_comments')
         @client = client
         @user, @repo = opts.fetch(:user_repo).split('/')
       end
