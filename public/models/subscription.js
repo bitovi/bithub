@@ -10,15 +10,16 @@ steal('can/model', function(Model){
 		canAddService : function(services, feed, type){
 			var currentLength = services.attr('length');
 			var limit = this.attr('plan.limits.services_per_embed') || Infinity;
-			var limitCurrentTypeFeed = this.attr('plan.limits').attr(currentTypeFeed) || Infinity;
 			var currentTypeFeed = [feed, type].join('_');
+			var limitCurrentTypeFeed = this.attr('plan.limits').attr(currentTypeFeed) || Infinity;
 			var servicesWithCurrentTypeFeed = services.filter(function(s){
 				return s.attr('feed_name') === feed && s.attr('type_name') === type;
 			}); 
+
 			if(currentLength >= limit){
 				return false;
 			}
-			if(servicesWithCurrentTypeFeed.length >= limitCurrentTypeFeed){
+			if(servicesWithCurrentTypeFeed.attr('length') >= limitCurrentTypeFeed){
 				return false;
 			}
 			return true;
