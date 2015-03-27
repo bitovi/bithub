@@ -49,6 +49,9 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 					return val;
 				}
 			},
+			currentSubscription : {
+				serialize: false
+			},
 			hubId : {
 				set : function(val){
 					var liveService = connectLiveService(val);
