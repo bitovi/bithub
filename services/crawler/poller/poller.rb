@@ -40,6 +40,7 @@ class Poller
     end
   rescue => e
     error_publisher.publish(e, @owner_data)
+    nil
   end
 
   def poll
