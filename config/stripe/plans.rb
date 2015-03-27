@@ -1,6 +1,6 @@
 # Run `rake stripe:prepare` to update plans on stripe.com
 
-Plan.table_exists? && Plan.all.each do |p|
+Plan.table_exists? && Plan.where.not(stripe_id: nil).each do |p|
   Stripe.plan p.stripe_id.to_sym do |plan|
     plan.name = p.name
     plan.amount = p.amount
