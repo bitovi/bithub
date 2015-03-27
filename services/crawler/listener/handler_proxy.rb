@@ -1,7 +1,6 @@
 class HandlerProxy
   include Celluloid
   include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
-  add_transaction_tracer :handle, :category => 'OtherTransaction/Handlers/'
 
   attr_reader :handler
 
@@ -18,6 +17,7 @@ class HandlerProxy
   def handle(req)
     @handler.handle req
   end
+  add_transaction_tracer :handle, :category => 'OtherTransaction/Handlers/'
 
   def registry
     Actor[@registry_name]
