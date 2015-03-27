@@ -102,7 +102,11 @@ Bithub::Application.routes.draw do
 
       resources :brand_identities, path: 'identities', only: %i(index show destroy)
       resources :services, except: %i(new edit update)
-      resources :subscriptions, only: %i(show)
+      resources :subscriptions, only: %i(show) do
+        collection do
+          get 'current', to: 'subscriptions#current'
+        end
+      end
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
       resources :plans, only: %i(show index)
