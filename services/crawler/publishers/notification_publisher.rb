@@ -4,6 +4,8 @@ require 'rabbit_factory'
 class NotificationPublisher
   include Celluloid
   include Celluloid::Logger
+  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+  add_transaction_tracer :publish, :category => 'OtherTransaction/Publishers'
 
   def initialize
     Celluloid.logger.info 'Initializing Notification publisher'
