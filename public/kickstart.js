@@ -35,10 +35,12 @@ steal(
 				}
 			});
 
-			Models.Brand.findOne({}).then(function(brand){
+			$.when(Models.Brand.findOne({}), Models.Subscription.findOne({})).done(function(brand, subscription){
+
 				
 				var appState = new AppState({
-					currentBrand: brand
+					currentBrand: brand,
+					currentSubscription: subscription
 				});
 
 				new PresetChangeUpdater(document.documentElement, {
@@ -59,6 +61,22 @@ steal(
 
 				var $window = $(window);
 
+				stache.registerHelper('ifCanAddHub', function(hubs, opts){
+					hubs = can.isFunction(hubs) ? hubs() : hubs;
+					var canAddHub = appState.attr('currentSubscription').canAddHub(hubs);
+					return canAddHub ? opts.fn() : opts.inverse();
+				});
+
+				stache.registerHelper('ifCanAddService', function(services, feed, type, opts){
+					feed = can.isFunction(feed) ? feed() : feed;
+					type = can.isFunction(type) ? type() : type;
+					services = can.isFunction(services) ? services() : services;
+					var canAddService = appState.attr('currentSubscription').canAddService(services, feed, type);
+
+					return canAddService ? opts.fn() : opts.inverse();
+				})
+
+
 				$(selector).html(initView({
 					state: appState
 				}, {
@@ -68,7 +86,7 @@ steal(
 					},
 					renderPage : function(){
 						var page = can.route.attr('page') || "hub-list",
-						template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
+								template = can.stache('<bh-' + page + ' state="{state}"></bh-' + page + '>');
 
 						return template(this);
 					},
@@ -77,9 +95,9 @@ steal(
 						title = can.isFunction(title) ? title() : title;
 
 						var currentPage = can.route.attr('page'),
-						props = {
-							'class' : 'btn '
-						};
+								props = {
+									'class' : 'btn '
+								};
 
 						props['class'] += page === currentPage ? 'btn-default' : 'btn-link';
 
