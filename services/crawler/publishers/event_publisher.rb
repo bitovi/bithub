@@ -5,6 +5,8 @@ require 'rabbit_factory'
 class EventPublisher
   include Celluloid
   include Celluloid::Logger
+  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+  add_transaction_tracer :publish, :category => 'OtherTransaction/Publishers'
 
   def initialize(opts={})
     info 'Initializing Entity publisher'
