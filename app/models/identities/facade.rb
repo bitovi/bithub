@@ -8,7 +8,7 @@ module Identities
     end
 
     def name
-      if %w(github twitter).include? @provider_facade.provider_name
+      if %w(github twitter instagram).include? @provider_facade.provider_name
         @source_data['info']['nickname']
       elsif %w(facebook disqus meetup foursquare).include? @provider_facade.provider_name
         @source_data['info']['name']
