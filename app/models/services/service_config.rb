@@ -17,7 +17,7 @@ module Services
     end
 
     def property_id
-      @config.id
+      @config.id if @config.respond_to? :id
     end
 
     def valid?

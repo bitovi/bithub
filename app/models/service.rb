@@ -76,14 +76,14 @@ class Service < ActiveRecord::Base
   def humanized_config
     self.config = service_config.humanized_config
   end
-  
+
   def make_link_to(entity)
     self.entities << entity
   end
 
   def config_with_credentials
     if brand_identity
-      service_config.data.merge(brand_identity.credentials)
+      service_config.data.merge(brand_identity.credentials(property_id))
     else
       service_config.data
     end
