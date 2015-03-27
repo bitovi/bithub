@@ -64,6 +64,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def self.current
+    # TODO: determine through organization
     Brand.find_by_tenant_name( Apartment::Tenant.current ).organization.subscription
   end
 
