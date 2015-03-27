@@ -3,6 +3,9 @@ require 'rabbit_factory'
 
 class ErrorPublisher
   include Celluloid
+  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+  add_transaction_tracer :publish, :category => 'OtherTransaction/Publishers'
+
 
   def initialize
     Celluloid.logger.info 'Initializing Error publisher'
