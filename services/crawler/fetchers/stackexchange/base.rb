@@ -10,6 +10,7 @@ module Fetchers
       end
 
       def fetch
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/Stackexchange/any')
         handle_errors do
           pluck_items(HTTParty.get url, :query => tagged\
             .merge(static)

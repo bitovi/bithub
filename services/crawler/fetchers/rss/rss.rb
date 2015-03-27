@@ -12,6 +12,7 @@ module Fetchers
       end
 
       def fetch
+        ::NewRelic::Agent.increment_metric('Custom/Fetches/RSS/feed')
         x = Feedjira::Feed.fetch_and_parse(@url)
         raise_error(x) if x.is_a? Numeric
         to_hashes(x.entries)
