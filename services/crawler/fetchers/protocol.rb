@@ -15,7 +15,6 @@ module Fetchers
 
   module Protocol
     include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
-    add_transaction_tracer :fetch, :category => 'OtherTransaction/Fetchers/'
 
     def handle_errors
       yield
@@ -72,5 +71,7 @@ module Fetchers
       []
     end
 
+    def fetch; end
+    add_transaction_tracer :fetch, :category => 'OtherTransaction/Fetchers'
   end
 end
