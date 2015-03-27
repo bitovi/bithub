@@ -1,10 +1,10 @@
 class Api::V3::PlansController < Api::V3::BaseController
-  before_filter :authenticate_account!
+  before_filter :authenticate_account!, except: [:index, :show]
   load_and_authorize_resource
 
   def index
     @plans = Plan.all
-    render 'api/v3/plans/index'
+    render :index
   end
 
   def show
