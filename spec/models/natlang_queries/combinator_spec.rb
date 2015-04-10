@@ -22,19 +22,14 @@ describe NatlangQueries::Combinator do
         NatlangQueries::Translator.new(
           double(:natlang_query, attr: 'content', op: 'contains', val: 'found this error', negated?: false),
           DummyARClass
-        ),
-        NatlangQueries::Translator.new(
-          double(:natlang_query, attr: 'itself', op: 'tagged_with', val: 'canjs,jquerypp', negated?: false),
-          DummyARClass
         )
       ]
 
-      nlqc = NatlangQueries::Combinator.new(nlqs, true)
+      nlqc = NatlangQueries::Combinator.new(nlqs)
 
       expect(nlqc.combine).to eq [
         {:method=>:where, :arg=>["title = ?", "canjs"]},
-        {:method=>:basic_search, :arg=>"found this error"},
-        {:method=>:tagged_with, :arg=>["canjs", "jquerypp"]}
+        {:method=>:basic_search, :arg=>"found this error"}
       ]
 
     end

@@ -1,4 +1,4 @@
-json.(filter, :id, :is_conj, :classification)
+json.(filter, :id, :action)
 
 json.queries do
   json.array! filter.natlang_queries do |c|

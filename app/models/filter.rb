@@ -3,32 +3,32 @@ class Filter < ActiveRecord::Base
   belongs_to :embed
   has_many :natlang_queries, :dependent => :destroy
 
-  validates_presence_of :classification #, :is_conj ? acts weird
-  validates_uniqueness_of :classification, scope: :embed_id
-  validate :classification_type
+  VALID_ACTIONS = %w(approve block)
+
+  validate :validate_action_value
 
   def combined_queries
-    NatlangQueries::Combinator.new(natlang_queries.all, is_conj).combine
+    NatlangQueries::Combinator.new(natlang_queries.all).combine
   end
 
-  def all?
-    is_conj
+  def blocks?
+    action == 'block'
   end
 
-  def any?
-    not(is_conj)
+  def approves?
+    action == 'approve'
   end
 
-  def classification_type
-    if (classification != 'blocking' && classification != 'approving')
-      errors.add(:classification, 'must be either "blocking", "approving"')
+  def apply(entity)
+    NatlangQueries::Applier.new(self, Entity).scope.where(id: entity.id).first
+  end
+
+  private
+
+  def validate_action_value
+    unless VALID_ACTIONS.include? action
+      errors.add :action, "must be one of #{VALID_ACTIONS.join(', ')}"
     end
   end
 
-  def detects?
-    true # TODO
-  end
-
-  alias_method :blocks?, :detects?
-  alias_method :approves?, :detects?
 end

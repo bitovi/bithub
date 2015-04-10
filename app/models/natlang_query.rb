@@ -3,7 +3,7 @@ class NatlangQuery < ActiveRecord::Base
 
   belongs_to :filter
   validates_presence_of :val, :op
-  validate :possible_verbs
+  validate :possible_ops
 
   def to_ar_query
     NatlangQueries::Translator.new(self).to_ar_query
@@ -13,9 +13,11 @@ class NatlangQuery < ActiveRecord::Base
     is_negated
   end
 
-  def possible_verbs
-    unless (verbs = NatlangQueries::POSSIBLE_VERBS).include? op
-      errors.add(:op, "must be one of #{verbs.join(', ')}")
+  private
+
+  def possible_ops
+    unless (ops = NatlangQueries::VALID_OPS).include? op
+      errors.add :op, "must be one of #{ops.join(', ')}"
     end
   end
 end
