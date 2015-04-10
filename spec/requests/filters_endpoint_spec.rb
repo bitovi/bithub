@@ -19,8 +19,8 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'GET /embeds/1/filters' do
         it 'gets all filters' do
-          @embed.filters.create!(classification: 'approving')
-          @embed.filters.create!(classification: 'blocking')
+          @embed.filters.create!(action: 'approve')
+          @embed.filters.create!(action: 'block')
 
           get "/api/#{api_version}/embeds/#{@embed.id}/filters"
           expect(response).to be_success
@@ -30,12 +30,12 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'GET /embeds/1/filters/1' do
         it 'gets a specific filter' do
-          f1 = @embed.filters.create(classification: 'approving')
-          @embed.filters.create(classification: 'blocking')
+          f1 = @embed.filters.create(action: 'approve')
+          @embed.filters.create(action: 'block')
 
           get "/api/#{api_version}/embeds/#{@embed.id}/filters/#{f1.id}"
           expect(response).to be_success
-          expect(json.keys).to include('is_conj', 'classification')
+          expect(json.keys).to include('action')
         end
       end
 
@@ -45,8 +45,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
             post "/api/#{api_version}/embeds/#{@embed.id}/filters", {
               filter: {
-                is_conj: true,
-                classification: 'approving',
+                action: 'approve',
                 natlang_queries: [{
                   is_negated: false,
                   attr: 'content',
@@ -55,14 +54,14 @@ RSpec.describe 'Filter endpoints', type: :request do
                 }, {
                   is_negated: true,
                   attr: '',
-                  op: 'tagged_with',
+                  op: 'is',
                   val: 'canjs'
                 }]
               }
             }.to_json, AuthTestData::POST_HEADERS
 
             expect(response).to be_success
-            expect(json.keys).to include('is_conj', 'classification', 'queries')
+            expect(json.keys).to include('action', 'queries')
           end
         end
 
@@ -70,8 +69,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           it 'refuses to create the filter' do
             post "/api/#{api_version}/embeds/#{@embed.id}/filters", {
               filter: {
-                is_conj: true,
-                classification: 'approving',
+                action: 'approve',
                 natlang_queries: [{
                   is_negated: false,
                   attr: 'what',
@@ -88,7 +86,7 @@ RSpec.describe 'Filter endpoints', type: :request do
 
       describe 'DELETE /embeds/1/filters/2' do
         it 'destroys an existing filter' do
-          filter = @embed.filters.create(classification: 'approving')
+          filter = @embed.filters.create(action: 'approve')
 
           delete "/api/#{api_version}/embeds/#{@embed.id}/filters/#{filter.id}"
           expect(Filter.count).to eq 0

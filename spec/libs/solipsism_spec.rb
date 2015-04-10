@@ -9,7 +9,7 @@ RSpec.describe Solipsism, :type => :lib do
     describe ".has_an_attribute?" do
       context "symbol given" do
         it "confirms that the Entity model indeed has an attribute" do
-          expect(Filter.has_an_attribute?(:is_conj)).to be_truthy
+          expect(Filter.has_an_attribute?(:action)).to be_truthy
         end
 
         it "denies that the Entity model has a non-existent attribute" do
@@ -19,7 +19,7 @@ RSpec.describe Solipsism, :type => :lib do
 
       context "string given" do
         it "confirms that the Entity model indeed has an attribute" do
-          expect(Filter.has_an_attribute?("classification")).to be_truthy
+          expect(Filter.has_an_attribute?("action")).to be_truthy
         end
 
         it "denies that the Entity model has a non-existent attribute" do
@@ -27,5 +27,5 @@ RSpec.describe Solipsism, :type => :lib do
         end
       end
     end
-  
+
 end

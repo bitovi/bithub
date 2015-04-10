@@ -1,8 +1,7 @@
 module NatlangQueries
   class Combinator
-    def initialize(qs, are_conj)
+    def initialize(qs)
       @qs = qs
-      @are_conj = are_conj
     end
 
     def combine

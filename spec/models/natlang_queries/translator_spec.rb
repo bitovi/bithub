@@ -16,12 +16,6 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       expect(nlqt.verb).to eq(:basic_search)
     end
 
-    it 'transforms the "tagged_with" operator to acts_as_taggable "tagged_with" method' do
-      nlq = double(:natlang_query, attr: 'content', op: 'tagged_with', val: 'canjs,jquerypp', negated?: false)
-      nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.verb).to eq(:tagged_with)
-    end
-    
     it 'transforms the "is" operator to a :where (an AR compatible method)' do
       nlq = double(:natlang_query, attr: 'title', op: 'is', val: 'simple', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
@@ -50,12 +44,6 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       expect(nlqt.object).to eq('canjs,jquerypp')
     end
 
-    it 'keeps the value as string if the verb is about text search (because textacular expects strings)' do
-      nlq = double(:natlang_query, attr: 'title', op: 'tagged_with', val: 'canjs,jquerypp', negated?: false)
-      nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.object).to eq(%w(canjs jquerypp))
-    end
-    
     it 'transforms the "is" verb to a plain AR array query' do
       nlq = double(:natlang_query, attr: 'title', op: 'is', val: 'canjs', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)

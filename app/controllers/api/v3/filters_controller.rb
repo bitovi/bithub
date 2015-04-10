@@ -57,7 +57,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
 
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:filter).permit(:id, :is_conj, :classification)
+    @json.require(:filter).permit(:id, :action)
   end
 
   def queries_params

@@ -78,11 +78,11 @@ class Embed < ActiveRecord::Base
   end
 
   def blocking_filter
-    self.filters.where(classification: 'blocking').first
+    self.filters.where(action: 'block').first
   end
 
   def approving_filter
-    self.filters.where(classification: 'approving').first
+    self.filters.where(action: 'approve').first
   end
 
   def valid_services

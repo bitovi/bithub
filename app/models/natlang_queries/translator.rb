@@ -1,5 +1,6 @@
 module NatlangQueries
-  POSSIBLE_VERBS = %w(tagged_with contains is)
+
+  VALID_OPS = %w(contains is)
 
   class Translator
     def initialize(query, klass = Entity)
@@ -14,8 +15,6 @@ module NatlangQueries
     def verb
       if @q.op == 'contains'
         :basic_search
-      elsif @q.op == 'tagged_with'
-        :tagged_with
       elsif @q.op == 'is'
         :where
       end
@@ -32,8 +31,6 @@ module NatlangQueries
     def object
       if verb == :basic_search
         @q.val
-      elsif verb == :tagged_with
-        translated_tagged_with
       elsif verb == :where
         translated_where
       end
@@ -44,14 +41,6 @@ module NatlangQueries
         ["#{subject} <> ?", @q.val]
       else
         ["#{subject} = ?", @q.val]
-      end
-    end
-
-    def translated_tagged_with
-      if @q.negated?
-        [@q.val.split(','), { exclude: true }]
-      else
-        @q.val.split(',')
       end
     end
   end

@@ -3,28 +3,13 @@ require 'models/filter'
 
 RSpec.describe Filter, type: :model do
 
-  describe '#classification_type validator' do
-    it 'validates the three possible states of the filter' do
+  describe '#validate_action_value' do
+    it 'validates the two possible states of the filter' do
       e = FactoryGirl.create(:embed)
       expect do
-        e.filters.create!(classification: 'non_existent', is_conj: true)
+        e.filters.create!(action: 'non_existent')
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
-  describe '#all?' do
-    it 'tells whether the queries are conjunctive' do
-      f = FactoryGirl.build(:filter, is_conj: true)
-      expect(f.all?).to be_truthy
-      expect(f.any?).to be_falsey
-    end
-  end
-
-  describe '#any?' do
-    it 'tells whether the queries are disjunctive' do
-      f = FactoryGirl.build(:filter, is_conj: false)
-      expect(f.any?).to be_truthy
-      expect(f.all?).to be_falsey
-    end
-  end
 end
