@@ -4,6 +4,9 @@
 - name: Add bithub.loc to hosts
   lineinfile: dest=/etc/hosts line="127.0.0.1 bithub.loc"
 
+- name: Add bithub.dev to hosts
+  lineinfile: dest=/etc/hosts line="127.0.0.1 bithub.dev"
+
 - name: Create bithub user
   user: name=bithub password=bithub shell=/bin/bash group=vagrant groups=sudo append=yes
 
@@ -12,7 +15,7 @@
   ignore_errors: True
 
 - name: Upon login chdir bithub user to the shared dir /vagrant
-  template: src=.bash_profile dest=/home/bithub/.bash_profile owner=bithub group=vagrant
+  template: src=bash_profile dest=/home/bithub/.bash_profile owner=bithub group=vagrant
 
 ### Configure nginx vhost
 

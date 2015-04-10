@@ -27,7 +27,6 @@
   gem: name={{ item }} user_install=false state=present
   with_items:
     - bundler
-    - jekyll
     - pry
     - pry-doc
     - rb-readline
@@ -38,6 +37,5 @@
   with_items:
     - bundle
     - bundler
-    - jekyll
     - pry
     - foreman

@@ -14,9 +14,9 @@
     - { role: jessie,      tags: ['jessie'] }
     - { role: grub,        tags: ['grub'] }
     - { role: common,      tags: ['common'] }
+    - { role: postgresql,  tags: ['postgresql'] }
     - { role: nodejs,      tags: ['nodejs'] }
     - { role: nginx,       tags: ['nginx'] }
-    - { role: postgresql,  tags: ['postgresql'] }
     - { role: rabbitmq,    tags: ['rabbitmq'] }
     - { role: redis,       tags: ['redis'] }
     - { role: ruby,        tags: ['ruby'] }
