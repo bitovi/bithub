@@ -9,14 +9,14 @@ namespace :data do
 
     plans.each do |attrs|
 
-      unless plan = Plan.find_by_stripe_id(attrs['stripe_id'])
+      unless plan = Plan.find_by_name(attrs['name'])
         if Plan.new(attrs).save
-          Rails.logger.info "Saving plan '#{attrs['stripe_id']}' successful"
+          Rails.logger.info "Saving plan '#{attrs['name']}' successful"
         else
-          Rails.logger.info "Saving plan '#{attrs['stripe_id']}' failed"
+          Rails.logger.info "Saving plan '#{attrs['name']}' failed"
         end
       else
-        Rails.logger.info "[skipping] Plan '#{attrs['stripe_id']}' already exists!"
+        Rails.logger.info "[skipping] Plan '#{attrs['name']}' already exists!"
       end
     end
 
