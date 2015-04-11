@@ -124,8 +124,9 @@ ActiveRecord::Schema.define(version: 20150409172243) do
   create_table "embed_entities", force: true do |t|
     t.integer "embed_id"
     t.integer "entity_id"
-    t.boolean "is_approved"
-    t.boolean "is_pinned",   default: false, null: false
+    t.boolean "is_approved_manually"
+    t.boolean "is_pinned",                 default: false, null: false
+    t.boolean "is_approved_automatically"
   end
 
   create_table "embed_presets", force: true do |t|

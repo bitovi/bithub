@@ -30,7 +30,6 @@ class AccountAbility
       ### Models locked inside tenants
       can :manage, Embed
       can :manage, EmbedEntity
-      can :manage, EmbedFilter
       can :manage, EmbedPreset
       can :manage, Entity
       can :manage, EntityRelations
