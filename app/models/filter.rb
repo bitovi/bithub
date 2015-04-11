@@ -19,7 +19,7 @@ class Filter < ActiveRecord::Base
     action == 'approve'
   end
 
-  def apply(entity)
+  def detects?(entity)
     NatlangQueries::Applier.new(self, Entity).scope.where(id: entity.id).first
   end
 

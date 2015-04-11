@@ -55,17 +55,17 @@ class Embed < ActiveRecord::Base
 
   def approved_entities
     if approving?
-      embed_entities.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = TRUE').map(&:entity)
+      embed_entities.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = TRUE').map(&:entity)
     elsif blocking?
-      embed_entities.where('embed_entities.is_approved = TRUE').map(&:entity)
+      embed_entities.where('embed_entities.is_approved_manually = TRUE').map(&:entity)
     end
   end
 
   def blocked_entities
     if approving?
-      embed_entities.where('embed_entities.is_approved = FALSE').map(&:entity)
+      embed_entities.where('embed_entities.is_approved_manually = FALSE').map(&:entity)
     elsif blocking?
-      embed_entities.where('embed_entities.is_approved IS NULL OR embed_entities.is_approved = FALSE').map(&:entity)
+      embed_entities.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = FALSE').map(&:entity)
     end
   end
 
@@ -91,16 +91,21 @@ class Embed < ActiveRecord::Base
 
   def block_invalid
     entity_ids = entities.satisfying(blocking_filter).pluck(:id)
-    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved: false, is_pinned: false)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved_manually: false, is_pinned: false)
   end
 
   def approve_valid
     entity_ids = entities.satisfying(approving_filter).pluck(:id)
-    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved: true)
+    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved_manually: true)
   end
 
-  def make_link_to(entity, is_approved = nil)
-    embed_entities.create(entity: entity, is_approved: is_approved)
+  def make_link_to(entity)
+    ee = embed_entities.build \
+      entity: entity,
+      is_approved_manually: false,
+      is_approved_automatically: determine_state(entity)
+
+    ee.save
   end
 
   private
@@ -125,5 +130,16 @@ class Embed < ActiveRecord::Base
       signature: "embed_#{action}",
       action: action
     }
+  end
+
+  def determine_state(entity)
+    state = approved_by_default
+
+    filters
+      .order("(case when action = 'approve' then 1 when action = 'block' then 2 end)")
+      .reduce(state) do |s,f|
+        s = !!f.approves? if f.detects?(entity)
+        s
+      end
   end
 end

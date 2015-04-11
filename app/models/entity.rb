@@ -14,7 +14,7 @@ class Entity < ActiveRecord::Base
 
   has_many :embed_entities, dependent: :destroy
   has_many :embeds, through: :embed_entities
-  
+
   has_many :service_entities, dependent: :destroy
   has_many :services, through: :service_entities
 
@@ -97,13 +97,13 @@ class Entity < ActiveRecord::Base
 
   # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_approved(embed = nil)
-    if has_attribute?(:is_approved)
-      read_attribute(:is_approved)
+    if has_attribute?(:is_approved_manually)
+      read_attribute(:is_approved_manually)
     else
       return nil if embed.nil?
       memoize('is_approved', embed.id) do
         # don't use the `is_approved?` method here (with the question mark) because
-        # it always return boolean and we need to check if it's nil and return the 
+        # it always return boolean and we need to check if it's nil and return the
         # embed default in that case
         ee_is_approved = embed_entities.where(:embed_id => embed.id).first.is_approved
         ee_is_approved.nil? ? embed.approved_by_default : ee_is_approved
@@ -225,7 +225,7 @@ class Entity < ActiveRecord::Base
       x('x.liveservice').publish(message, routing_key: 'entities')
       unless is_approved(embed)
         # if the entity is not approved we don't want to send publicly
-        # the whole entity, but we need to send just enough so it can 
+        # the whole entity, but we need to send just enough so it can
         # be removed from an active embed. This way live embeds (like on
         # event media walls) can be moderated and updated
         x('x.liveservice').publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
