@@ -23,12 +23,12 @@ RSpec.describe Embed, :type => :model do
 
     before do
       @embed = FactoryGirl.create(:embed)
-      @embed.make_link_to(FactoryGirl.create(:github_pull_request), false)
-      @embed.make_link_to(FactoryGirl.create(:github_push), false)
-      @embed.make_link_to(FactoryGirl.create(:github_watch), false)
-      @embed.make_link_to(FactoryGirl.create(:twitter_tweet), false)
-      @embed.make_link_to(FactoryGirl.create(:twitter_follow), false)
-      @embed.make_link_to(FactoryGirl.create(:meetup_entity, :event), false)
+      @embed.make_link_to(FactoryGirl.create(:github_pull_request))
+      @embed.make_link_to(FactoryGirl.create(:github_push))
+      @embed.make_link_to(FactoryGirl.create(:github_watch))
+      @embed.make_link_to(FactoryGirl.create(:twitter_tweet))
+      @embed.make_link_to(FactoryGirl.create(:twitter_follow))
+      @embed.make_link_to(FactoryGirl.create(:meetup_entity, :event))
     end
 
     context 'given a filter with a single query' do
