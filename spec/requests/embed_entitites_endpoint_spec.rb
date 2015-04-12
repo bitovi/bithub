@@ -68,8 +68,8 @@ RSpec.describe 'Filter endpoints', type: :request do
           it 'gets all explicitly approved entities' do
             embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: false)
             embed.make_link_to(FactoryGirl.create(:github_watch))
-            embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
-            embed.make_link_to(FactoryGirl.create(:github_issue), false)
+            embed.make_link_to(FactoryGirl.create(:twitter_tweet))
+            embed.make_link_to(FactoryGirl.create(:github_issue))
 
             get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
             expect(response).to be_success
@@ -81,8 +81,8 @@ RSpec.describe 'Filter endpoints', type: :request do
           it 'gets all entities not explictly blocked' do
             embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: true)
             embed.make_link_to(FactoryGirl.create(:github_watch))
-            embed.make_link_to(FactoryGirl.create(:twitter_tweet), true)
-            embed.make_link_to(FactoryGirl.create(:github_issue), false)
+            embed.make_link_to(FactoryGirl.create(:twitter_tweet))
+            embed.make_link_to(FactoryGirl.create(:github_issue))
             
             get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
             expect(response).to be_success
