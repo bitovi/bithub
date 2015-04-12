@@ -1,3 +1,5 @@
+require 'newrelic_rpm'
+
 class HandlerProxy
   include Celluloid
   include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation

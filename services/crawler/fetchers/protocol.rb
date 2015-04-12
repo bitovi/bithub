@@ -2,6 +2,7 @@ require 'twitter'
 require 'github_api'
 require 'koala'
 require 'instagram'
+require 'newrelic_rpm'
 
 module Fetchers
 

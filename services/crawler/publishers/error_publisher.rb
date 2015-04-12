@@ -1,5 +1,6 @@
 require 'connection_manager'
 require 'rabbit_factory'
+require 'newrelic_rpm'
 
 class ErrorPublisher
   include Celluloid
