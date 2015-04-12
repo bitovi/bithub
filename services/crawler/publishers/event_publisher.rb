@@ -1,6 +1,7 @@
 require 'persistent/digest_set'
 require 'connection_manager'
 require 'rabbit_factory'
+require 'newrelic_rpm'
 
 class EventPublisher
   include Celluloid
