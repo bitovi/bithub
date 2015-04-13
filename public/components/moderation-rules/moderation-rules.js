@@ -17,8 +17,9 @@ function(Component, initView, Models){
 			addFilter : function(){
 				this.attr('filters').addFilter(this.attr('hub.id'));
 			},
-			removeFilter : function(filter){
-				this.attr('filters').removeFilter(filter);
+			removeFilter : function(filter, el, ev){
+				ev.preventDefault();
+				filter.destroy();
 			},
 			title : function(){
 				return TITLES[this.attr('filters.action')];
