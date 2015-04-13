@@ -18,6 +18,5 @@ module NatlangQueries
     def method_scope(q, skope = Entity)
       skope.send(q[:method], q[:arg])
     end
-
   end
 end

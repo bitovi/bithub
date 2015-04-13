@@ -53,50 +53,43 @@ class Embed < ActiveRecord::Base
     destroy
   end
 
+  def blocking_filters; filters.where(action: 'block').all; end
+  def approving_filters; filters.where(action: 'approve').all; end
+  def permissive?; approved_by_default; end
+  def restrictive?; !approved_by_default; end
+
   def approved_entities
-    if approving?
-      embed_entities.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = TRUE').map(&:entity)
-    elsif blocking?
-      embed_entities.where('embed_entities.is_approved_manually = TRUE').map(&:entity)
-    end
+    sql = 'embed_entities.is_approved_manually = TRUE OR embed_entities.is_approved_automatically = TRUE'
+    embed_entities.where(sql).map(&:entity)
   end
 
   def blocked_entities
-    if approving?
-      embed_entities.where('embed_entities.is_approved_manually = FALSE').map(&:entity)
-    elsif blocking?
-      embed_entities.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = FALSE').map(&:entity)
+    sql = 'embed_entities.is_approved_manually = FALSE OR embed_entities.is_approved_automatically = FALSE'
+    embed_entities.where(sql).map(&:entity) 
+  end
+  
+  def block_invalid
+    blocking_filters.each do |f|
+      # don't use pluck because it modifies the SQL SELECT query
+      entity_ids = f.detected_entities.all.map { |e| e.id }
+      EmbedEntity\
+        .where({embed_id: self.id, entity_id: entity_ids})\
+        .update_all(is_approved_automatically: false, is_pinned: false)
     end
   end
 
-  def approving?
-    approved_by_default
-  end
-
-  def blocking?
-    !approved_by_default
-  end
-
-  def blocking_filter
-    self.filters.where(action: 'block').first
-  end
-
-  def approving_filter
-    self.filters.where(action: 'approve').first
+  def approve_valid
+    approving_filters.each do |f|
+      # don't use pluck because it modifies the SQL SELECT query
+      entity_ids = f.detected_entities.all.map { |e| e.id }
+      EmbedEntity\
+        .where({embed_id: self.id, entity_id: entity_ids})\
+        .update_all(is_approved_automatically: true)
+    end
   end
 
   def valid_services
     services.all.select { |s| s.service_config.valid? }
-  end
-
-  def block_invalid
-    entity_ids = entities.satisfying(blocking_filter).pluck(:id)
-    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved_manually: false, is_pinned: false)
-  end
-
-  def approve_valid
-    entity_ids = entities.satisfying(approving_filter).pluck(:id)
-    EmbedEntity.where({embed_id: self.id, entity_id: entity_ids}).update_all(is_approved_manually: true)
   end
 
   def make_link_to(entity)
@@ -105,9 +98,20 @@ class Embed < ActiveRecord::Base
       is_approved_manually: false,
       is_approved_automatically: determine_state(entity)
 
-    ee.save
+    ee.save!
   end
 
+  def determine_state(entity)
+    state_according_to_filters = filters\
+      .sorted_in_application_order.select do|f|
+      f.detects?(entity)
+    end.reduce(approved_by_default) do |s,f|
+      f.resulting_state
+    end
+
+    (state_according_to_filters.nil?) ? approved_by_default : state_according_to_filters
+  end
+  
   private
 
   def notify_crawler(action)
@@ -130,16 +134,5 @@ class Embed < ActiveRecord::Base
       signature: "embed_#{action}",
       action: action
     }
-  end
-
-  def determine_state(entity)
-    state = approved_by_default
-
-    filters
-      .order("(case when action = 'approve' then 1 when action = 'block' then 2 end)")
-      .reduce(state) do |s,f|
-        s = !!f.approves? if f.detects?(entity)
-        s
-      end
   end
 end

@@ -1,6 +1,7 @@
 class Api::V3::FiltersController < Api::V3::BaseController
+  include Api::EmbedScoped
+
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def index
     embed = current_brand.embeds.find(embed_id)
@@ -19,11 +20,10 @@ class Api::V3::FiltersController < Api::V3::BaseController
   end
 
   def create
-    embed = current_brand.embeds.find(embed_id)
-    @filter = embed.filters.build(filter_params)
+    @filter = owner_embed.filters.build(filter_params)
     @filter.natlang_queries.build(queries_params)
 
-    if embed.save && @filter.save
+    if owner_embed.save && @filter.save
       render 'api/v3/filters/show'
     else
       render :json => msg_hash(@filter, 'create'), :status => 406
@@ -48,7 +48,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
   private
 
   def embed_id
-    params[:filter].andand[:embed_id] ||  params[:embed_id]
+    params[:embed_id] || params[:filter].andand[:embed_id]
   end
 
   def filter_id
@@ -57,11 +57,11 @@ class Api::V3::FiltersController < Api::V3::BaseController
 
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:filter).permit(:id, :action)
+    @json.require(:filter).permit(:id, :action, :embed_id)
   end
 
   def queries_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:filter).permit(natlang_queries: %i(is_negated attr op val)).require(:natlang_queries)
+    @json.require(:filter).permit(natlang_queries: %i(is_negated attr_name op val)).require(:natlang_queries)
   end
 end

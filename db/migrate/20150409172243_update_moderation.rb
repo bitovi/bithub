@@ -4,7 +4,7 @@ class UpdateModeration < ActiveRecord::Migration
     remove_column :filters, :classification
     add_column    :filters, :action, :string, null: false
 
-    rename_column :embed_entities, :is_approved, :is_approved_manually
-    add_column    :embed_entities, :is_approved_automatically, :boolean
+    add_column            :embed_entities, :is_approved_automatically, :boolean
+    rename_column         :embed_entities, :is_approved, :is_approved_manually
   end
 end
