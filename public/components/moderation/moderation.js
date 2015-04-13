@@ -23,8 +23,18 @@ function(Component, initView, Models){
 			init : function(){
 				var self = this;
 				Models.Filter.findAll({embed_id: this.attr('hub.id')}, function(filters){
-					self.attr('blockingFilters', filters.blocking());
-					self.attr('approvingFilters', filters.approving());
+					var blocking = filters.blocking();
+					var approving = filters.approving();
+					var approveSomeAutomatically = approving.attr('length') > 0;
+					var blockSomeAutomatically = blocking.attr('length') > 0;
+					
+					self.attr({
+						blockingFilters: blocking,
+						approvingFilters: approving,
+						approveSomeAutomatically: approveSomeAutomatically,
+						blockSomeAutomatically: blockSomeAutomatically
+					});
+
 				})
 			},
 			toggleApprovedByDefault : function(ctx, el){

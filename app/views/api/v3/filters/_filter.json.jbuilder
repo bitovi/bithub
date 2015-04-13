@@ -1,6 +1,6 @@
 json.(filter, :id, :action)
 
-json.queries do
+json.natlang_queries do
   json.array! filter.natlang_queries do |c|
     json.attr_name c.attr_name
     json.op c.op
