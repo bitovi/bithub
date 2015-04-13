@@ -48,12 +48,12 @@ RSpec.describe 'Filter endpoints', type: :request do
                 action: 'approve',
                 natlang_queries: [{
                   is_negated: false,
-                  attr: 'content',
+                  attr_name: 'content',
                   op: 'contains',
                   val: 'canjs'
                 }, {
                   is_negated: true,
-                  attr: '',
+                  attr_name: '',
                   op: 'is',
                   val: 'canjs'
                 }]
@@ -61,7 +61,7 @@ RSpec.describe 'Filter endpoints', type: :request do
             }.to_json, AuthTestData::POST_HEADERS
 
             expect(response).to be_success
-            expect(json.keys).to include('action', 'queries')
+            expect(json.keys).to include('action', 'natlang_queries')
           end
         end
 
@@ -72,7 +72,7 @@ RSpec.describe 'Filter endpoints', type: :request do
                 action: 'approve',
                 natlang_queries: [{
                   is_negated: false,
-                  attr: 'what',
+                  attr_name: 'what',
                   op: 'even',
                   val: 'dat'
                 }]
