@@ -48,7 +48,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
   private
 
   def embed_id
-    params.require(:embed_id)
+    params[:filter].andand[:embed_id] ||  params[:embed_id]
   end
 
   def filter_id

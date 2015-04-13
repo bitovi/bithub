@@ -14,6 +14,44 @@
 			</label>
 		</div>
 	</div>
+  {{#unless hub.approved_by_default}}
+  <h4>Do you want <b>some</b> of the items automatically <b>approved and made public</b>?</h4>
+  <div class="options-wrapper">
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#if approveSomeAutomatically}}checked{{/if}} value="1" can-change="toggleSomeApprovedAutomatically">
+				<b>Yes</b>. Automatically approve some items.
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#unless approveSomeAutomatically}}checked{{/unless}} value="0" can-change="toggleSomeApprovedAutomatically">
+				<b>No</b>.
+			</label>
+		</div>
+	</div>
+  {{#if isApproveSomeAutomatically}}
+  <bh-moderation-rules filters="{approvingFilters}" hub="{hub}"></bh-moderation-rules>
+  {{/if}}
+  {{/unless}}
+  <h4>Do you want <b>some</b> of the items automatically <b>blocked and hidden</b>?</h4>
+  <div class="options-wrapper">
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#if blockSomeAutomatically}}checked{{/if}} value="1" can-change="toggleSomeBlockedAutomatically">
+				<b>Yes</b>. Automatically Block some items.
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="text" type="radio" {{#unless blockSomeAutomatically}}checked{{/unless}} value="0" can-change="toggleSomeBlockedAutomatically">
+				<b>No</b>.
+			</label>
+		</div>
+	</div>
+  {{#if isBlockSomeAutomatically}}
+  <bh-moderation-rules filters="{blockingFilters}" hub="{hub}"></bh-moderation-rules>
+  {{/if}}
 	{{#isSaving}}
 		<div class="alert alert-info">
 			<i class="fa fa-spin fa-circle-o-notch"></i> Saving&hellip;
