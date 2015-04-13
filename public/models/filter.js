@@ -1,0 +1,72 @@
+steal(
+'can/model',
+'./natlang-query.js',
+'can/map/define',
+'can/construct/super',
+function(Model, NatlangQuery){
+	var ModerationRuleset =  Model.extend({
+		resource : "/api/v3/filters"
+	}, {
+		define : {
+			natlang_queries: {
+				Value : NatlangQuery.List
+			},
+		},
+		addQuery : function(){
+			this.natlang_queries.push(new NatlangQuery);
+		},
+		removeQuery : function(filter){
+			var natlang = this.attr('natlang_queries');
+			var index = natlang.indexOf(filter);
+			if(index > -1){
+				natlang.splice(index, 1)
+
+			}
+		},
+		serialize : function(){
+			var data = this._super.apply(this, arguments);
+			return {
+				filter: data
+			}
+		}
+	});
+
+	ModerationRuleset.List = ModerationRuleset.List.extend({
+		blocking : function(){
+			return this.filtersByAction('block');
+		},
+		approving : function(){
+			return this.filtersByAction('approve');
+		},
+		filtersByAction : function(action){
+			var list = new this.constructor;
+			var length = this.attr('length');
+			var current;
+			for(var i = 0; i < length; i++){
+				current = this.attr(i);
+				if(current.attr('action') === action){
+					list.push(current);
+				}
+			}
+			list.attr('action', action);
+			return list;
+		},
+		addFilter : function(embedId){
+			var filter = new ModerationRuleset({action: this.attr('action'), embed_id: embedId});
+			filter.addQuery();
+			this.push(filter)
+		},
+		removeFilter : function(filter){
+			var index = this.indexOf(filter);
+			if(index > -1){
+				this.splice(index, 1);
+			}
+		},
+		save : function(){
+			return $.when.apply($, can.map(this, function(f){
+				f.save();
+			}));
+		}
+	});
+	return ModerationRuleset;
+});

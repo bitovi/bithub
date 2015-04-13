@@ -1,0 +1,43 @@
+<div class="form-group">
+  <label>{{ title }}</label>
+  <div>
+    {{#each filters}}
+
+    
+    <div class="filter-wrap clearfix">
+      <div class="remove-filter-wrap">
+        <button class="btn btn-default" can-click="removeFilter">
+          <i class="fa fa-trash-o"></i>
+        </button>
+      </div>
+      {{#each natlang_queries}}
+      <div class="attr-wrap">
+        <select class="form-control" can-value="attr_name">
+          <option value="content">Content</option>
+          <option value="title">Title</option>
+          <option value="author">Author</option>
+        </select>
+      </div>
+      <div class="op-wrap">
+        <select class="form-control"  can-value="operation">
+          <option value="pos:contains_all">Contains all</option>
+          <option value="neg:contains_all">Doesn't contain all</option>
+          <option value="pos:contains_any">Contains any</option>
+          <option value="neg:contains_any">Doesn't contain any</option>
+          <option value="pos:is">Is</option>
+          <option value="neg:is">Isn't</option>
+        </select>
+      </div>
+      <div class="val-wrap">
+        <textarea class="form-control" can-value="val"></textarea>
+      </div>
+      {{/each}}
+    </div>
+    
+    
+    {{/each}}
+  </div>
+  <div>
+    <button class="btn btn-primary" can-click="addFilter">Add Filter</button>
+  </div>
+</div>
