@@ -60,28 +60,28 @@ RSpec.describe Embed, :type => :model do
       end
       
       it 'performs a full text search by one attribute' do
-        FactoryGirl.create(:natlang_query, attr: 'title', op: 'contains', val: 'haskell,eventmachine', filter: @filter)
+        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains', val: 'haskell,eventmachine', filter: @filter)
 
         @embed.approve_valid
         expect(@embed.approved_entities.length).to eq 1
       end
       
       it 'performs a full text search on all attributes by conjunctively combining multiple terms' do
-        FactoryGirl.create(:natlang_query, attr: 'content', op: 'contains_all', val: 'haskell,eventmachine', filter: @filter)
+        FactoryGirl.create(:natlang_query, attr_name: 'content', op: 'contains_all', val: 'haskell,eventmachine', filter: @filter)
 
         @embed.approve_valid
         expect(@embed.approved_entities.length).to eq 1
       end
       
       it 'performs a full text search on all attributes by disjunctively combining multiple terms' do
-        FactoryGirl.create(:natlang_query, attr: 'content', op: 'contains_any', val: 'haskell,eventmachine', filter: @filter)
+        FactoryGirl.create(:natlang_query, attr_name: 'content', op: 'contains_any', val: 'haskell,eventmachine', filter: @filter)
 
         @embed.approve_valid
         expect(@embed.approved_entities.length).to eq 3
       end
       
       it 'performs a full text search with negation' do
-        FactoryGirl.create(:natlang_query, attr: 'title', op: 'contains_all', val: '!haskell', filter: @filter)
+        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_all', val: '!haskell', filter: @filter)
 
         @embed.approve_valid
         expect(@embed.approved_entities.length).to eq 4

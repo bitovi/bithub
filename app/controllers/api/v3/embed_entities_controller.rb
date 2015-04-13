@@ -97,25 +97,24 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   private
 
   def build_scope
+    select_sql_statement = <<-SQL
+      entities.*,
+      embed_entities.is_approved_automatically AS is_approved_automatically,
+      embed_entities.is_approved_manually AS is_approved_manually,
+      embed_entities.is_pinned AS is_pinned
+    SQL
+
     scope = Entity\
-      .select('entities.*, embed_entities.is_approved_manually AS is_approved_manually, embed_entities.is_pinned AS is_pinned')
+      .select(select_sql_statement)
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
     if public_visibility? || show_only_visible?
-      if owner_embed.approving?
-        scope = scope.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = TRUE')
-      elsif owner_embed.blocking?
-        scope = scope.where('embed_entities.is_approved_manually = TRUE')
-      end
+      scope = owner_embed.approved_entities(scope)
     elsif show_only_blocked?
-      if owner_embed.approving?
-        scope = scope.where('embed_entities.is_approved_manually = FALSE')
-      elsif owner_embed.blocking?
-        scope = scope.where('embed_entities.is_approved_manually IS NULL OR embed_entities.is_approved_manually = FALSE')
-      end
+      scope = owner_embed.blocked_entities(scope)
     elsif show_only_pinned?
-      scope = scope.where('embed_entities.is_pinned = TRUE')
+      scope = owner_embed.pinned_entitites(scope)
     end
 
     if public_visibility?

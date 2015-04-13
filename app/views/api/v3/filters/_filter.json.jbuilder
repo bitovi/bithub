@@ -5,5 +5,6 @@ json.natlang_queries do
     json.attr_name c.attr_name
     json.op c.op
     json.val c.val
+    json.is_negated c.is_negated
   end
 end
