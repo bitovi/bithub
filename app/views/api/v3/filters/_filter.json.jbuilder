@@ -1,4 +1,4 @@
-json.(filter, :id, :action)
+json.(filter, :id, :action, :embed_id)
 
 json.natlang_queries do
   json.array! filter.natlang_queries do |c|

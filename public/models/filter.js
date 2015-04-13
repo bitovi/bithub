@@ -5,7 +5,13 @@ steal(
 'can/construct/super',
 function(Model, NatlangQuery){
 	var ModerationRuleset =  Model.extend({
-		resource : "/api/v3/filters"
+		resource : "/api/v3/filters",
+		destroy : function(id, data){
+			return $.ajax({
+				url : "/api/v3/filters/" + id + "?embed_id=" + data.filter.embed_id,
+				type : "DELETE"
+			});
+		}
 	}, {
 		define : {
 			natlang_queries: {
@@ -58,6 +64,7 @@ function(Model, NatlangQuery){
 		},
 		removeFilter : function(filter){
 			var index = this.indexOf(filter);
+
 			if(index > -1){
 				this.splice(index, 1);
 			}
