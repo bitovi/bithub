@@ -7,8 +7,14 @@ class Filter < ActiveRecord::Base
 
   validate :validate_action_value
 
+  def self.sorted_in_application_order
+    order("(case when action = 'approve' then 1 when action = 'block' then 2 end)")
+  end
+
   def combined_queries
-    NatlangQueries::Combinator.new(natlang_queries.all).combine
+    natlang_queries.all.map do |q|
+      q.to_ar_query
+    end
   end
 
   def blocks?
@@ -18,6 +24,12 @@ class Filter < ActiveRecord::Base
   def approves?
     action == 'approve'
   end
+  alias_method :resulting_state, :'approves?'
+
+  def detected
+    NatlangQueries::Applier.new(self, Entity).scope.all
+  end
+  alias_method :detected_entities, :detected
 
   def detects?(entity)
     NatlangQueries::Applier.new(self, Entity).scope.where(id: entity.id).first

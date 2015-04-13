@@ -1,6 +1,6 @@
 module NatlangQueries
 
-  VALID_OPS = %w(contains is)
+  VALID_OPS = %w(contains contains_any contains_all is)
 
   class Translator
     def initialize(query, klass = Entity)
@@ -13,26 +13,34 @@ module NatlangQueries
     end
 
     def verb
-      if @q.op == 'contains'
-        :basic_search
+      if full_text_search?
+        :advanced_search
       elsif @q.op == 'is'
         :where
       end
     end
 
     def subject
-      if @q.attr == 'content'
+      if @q.attr_name == 'content'
         :whole
-      elsif @klass.has_an_attribute?(@q.attr)
-        @q.attr.to_sym
+      elsif @klass.has_an_attribute?(@q.attr_name)
+        @q.attr_name.to_sym
       end
     end
 
     def object
-      if verb == :basic_search
-        @q.val
-      elsif verb == :where
+      if full_text_search?
+        translated_advanced_search
+      elsif @q.op == 'is'
         translated_where
+      end
+    end
+
+    def translated_advanced_search
+      if @q.attr_name == 'content'
+        full_text_op_to_object
+      else
+        h = { }; h[@q.attr_name] = full_text_op_to_object; h
       end
     end
 
@@ -42,6 +50,18 @@ module NatlangQueries
       else
         ["#{subject} = ?", @q.val]
       end
+    end
+
+    def full_text_op_to_object
+      if @q.op == 'contains_all' || @q.op == 'contains'
+        @q.val.gsub(',','&')
+      elsif @q.op == 'contains_any'
+        @q.val.gsub(',','|')
+      end
+    end
+
+    def full_text_search?
+      %w(contains contains_all contains_any).include? @q.op
     end
   end
 end

@@ -73,14 +73,6 @@ class Entity < ActiveRecord::Base
 
   after_validation :reformat_uniqueness_validation
 
-  def self.satisfying(filter)
-    NatlangQueries::Applier.new(filter, Entity).scope
-  end
-
-  # def props
-  #   @props ||= HashWithIndifferentAccess.new super
-  # end
-
   def state
     props.andand['state']
   end

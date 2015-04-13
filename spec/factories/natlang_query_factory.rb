@@ -4,14 +4,8 @@ FactoryGirl.define do
     
     trait :contains_haskell do
       attr 'content'
-      op 'contains'
+      op 'contains_all'
       val 'haskell'
-    end
-
-    trait :tagged_with_canjs do
-      attr ''
-      op 'tagged_with'
-      val 'canjs'
     end
 
     trait :is_from_twitter do
