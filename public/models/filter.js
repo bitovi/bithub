@@ -15,6 +15,7 @@ function(Model, NatlangQuery){
 	}, {
 		define : {
 			natlang_queries: {
+				Value : NatlangQuery.List,
 				set : function(val){
 					return new NatlangQuery.List(can.map(val, function(v){
 						return NatlangQuery.model(v);
