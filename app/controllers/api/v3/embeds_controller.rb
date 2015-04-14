@@ -46,7 +46,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def moderate
-    owner_embed.approve_valid && owner_embed.block_invalid
+    owner_embed.moderate
   end
 
   private
