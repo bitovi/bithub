@@ -57,6 +57,7 @@ Bithub::Application.routes.draw do
 
     namespace :v3 do
       resources :embeds, except: %i(new edit) do
+        post :moderate, on: :member
 
         resources :entities, to: 'embed_entities', only: %i(index show destroy) do
           put :approve, on: :member
