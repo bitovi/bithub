@@ -15,7 +15,11 @@ function(Model, NatlangQuery){
 	}, {
 		define : {
 			natlang_queries: {
-				Value : NatlangQuery.List
+				set : function(val){
+					return new NatlangQuery.List(can.map(val, function(v){
+						return NatlangQuery.model(v);
+					}));
+				}
 			},
 		},
 		addQuery : function(){
@@ -34,6 +38,15 @@ function(Model, NatlangQuery){
 			return {
 				filter: data
 			}
+		},
+		markToDestroy : function(){
+			this.attr('__shouldDelete', true);
+		},
+		saveOrDestroy : function(){
+			if(this.attr('__shouldDelete')){
+				return this.destroy();
+			}
+			return this.save();
 		}
 	});
 
@@ -69,9 +82,9 @@ function(Model, NatlangQuery){
 				this.splice(index, 1);
 			}
 		},
-		save : function(){
+		saveOrDestroy : function(){
 			return $.when.apply($, can.map(this, function(f){
-				f.save();
+				f.saveOrDestroy();
 			}));
 		}
 	});

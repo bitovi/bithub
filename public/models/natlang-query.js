@@ -1,8 +1,8 @@
 steal(
-'can/map',
+'can/model',
 'can/map/define',
-function(Map){
-	return Map.extend({
+function(Model){
+	return Model.extend({
 		define : {
 			operation : {
 				set : function(val){
@@ -25,7 +25,10 @@ function(Map){
 				value : 'content'
 			},
 			op : {
-				value : 'contains_all'
+				value : 'contains_all',
+				set : function(val){
+					return val;
+				}
 			},
 			is_negated : {
 				value : false
