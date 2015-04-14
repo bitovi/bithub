@@ -28,6 +28,8 @@ function(Component, initView, Models){
 					var approveSomeAutomatically = approving.attr('length') > 0;
 					var blockSomeAutomatically = blocking.attr('length') > 0;
 					
+					
+
 					self.attr({
 						blockingFilters: blocking,
 						approvingFilters: approving,
@@ -47,12 +49,14 @@ function(Component, initView, Models){
 					isSaving: true
 				});
 
-				var blockingSave = self.attr('blockingFilters').save();
-				var approvingSave = self.attr('approvingFilters').save();
+				var blockingSave = self.attr('blockingFilters').saveOrDestroy();
+				var approvingSave = self.attr('approvingFilters').saveOrDestroy();
 				
 				$.when(this.attr('hub').save(), blockingSave, approvingSave).then(function(){
 					self.attr('isSaving', false);
-					self.attr('state').resetEmbed();
+					self.attr('hub').moderate().then(function(){
+						self.attr('state').resetEmbed();
+					})
 				}, function(){
 					self.attr('hasErrors', true);
 				})

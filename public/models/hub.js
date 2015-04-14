@@ -7,7 +7,7 @@ steal(
 'can/map/define',
 function(Model, ServiceModel){
 	return Model.extend({
-		resource : '/api/v3/embeds'
+		resource : '/api/v3/embeds',
 	}, {
 		define : {
 			services : {
@@ -20,6 +20,12 @@ function(Model, ServiceModel){
 			return {
 				embed : this._super.apply(this, arguments)
 			}
+		},
+		moderate : function(){
+			return $.ajax({
+				type : 'POST',
+				url : '/api/v3/embeds/' + this.attr('id') + '/moderate'
+			})
 		}
 	});
 });

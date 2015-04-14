@@ -1,12 +1,12 @@
 <div class="form-group">
   <label>{{ title }}</label>
   <div>
-    {{#each filters}}
+    {{#each filtersNotMarkedForDelete}}
 
     
     <div class="filter-wrap clearfix">
       <div class="remove-filter-wrap">
-        <button class="btn btn-default" can-click="removeFilter">
+        <button class="btn btn-default" can-click="markToDestroy">
           <i class="fa fa-trash-o"></i>
         </button>
       </div>
@@ -19,11 +19,9 @@
         </select>
       </div>
       <div class="op-wrap">
-        <select class="form-control"  can-value="operation">
+        <select class="form-control" can-value="operation">
           <option value="pos:contains_all">Contains all</option>
-          <option value="neg:contains_all">Doesn't contain all</option>
           <option value="pos:contains_any">Contains any</option>
-          <option value="neg:contains_any">Doesn't contain any</option>
           <option value="pos:is">Is</option>
           <option value="neg:is">Isn't</option>
         </select>

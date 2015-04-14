@@ -16,6 +16,8 @@ function(Component, initView, Chart, Models){
 				var self = this;
 				var hubId = this.attr('state.hubId');
 
+				
+
 				$.when(
 					Models.Analytics.findAll({hubId: hubId, resolution: this.attr('resolution')}),
 					Models.Hub.findOne({id: hubId})

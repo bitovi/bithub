@@ -17,12 +17,19 @@ function(Component, initView, Models){
 			addFilter : function(){
 				this.attr('filters').addFilter(this.attr('hub.id'));
 			},
-			removeFilter : function(filter, el, ev){
+			markToDestroy : function(filter, el, ev){
 				ev.preventDefault();
-				filter.destroy();
+				filter.markToDestroy();
 			},
 			title : function(){
 				return TITLES[this.attr('filters.action')];
+			},
+			filtersNotMarkedForDelete : function(){
+				var filters = this.attr('filters');
+				filters.attr('length');
+				return can.grep(filters, function(f){
+					return !f.attr('__shouldDelete');
+				});
 			}
 		},
 		events : {

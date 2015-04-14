@@ -47,6 +47,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
   def moderate
     owner_embed.moderate
+    render :json => msg_hash(@embed, 'moderate')
   end
 
   private
