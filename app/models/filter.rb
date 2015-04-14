@@ -26,8 +26,8 @@ class Filter < ActiveRecord::Base
   end
   alias_method :resulting_state, :'approves?'
 
-  def detected
-    NatlangQueries::Applier.new(self, Entity).scope.all
+  def detected(select_values = nil)
+    NatlangQueries::Applier.new(self, Entity).scope(select_values).all
   end
   alias_method :detected_entities, :detected
 

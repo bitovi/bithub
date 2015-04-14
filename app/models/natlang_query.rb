@@ -1,5 +1,7 @@
 class NatlangQuery < ActiveRecord::Base
   ::NatlangQueries::Translator # force auto-load
+  
+  before_save :format_val_for_contains
 
   belongs_to :filter
   validates_presence_of :val, :op
@@ -14,6 +16,12 @@ class NatlangQuery < ActiveRecord::Base
   end
 
   private
+
+  def format_val_for_contains
+    if %w(contains_any contains_all).include?(op)
+      self.val = val.strip.gsub(/\s+/, ',')
+    end
+  end
 
   def possible_ops
     unless (ops = NatlangQueries::VALID_OPS).include? op

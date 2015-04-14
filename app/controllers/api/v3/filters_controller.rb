@@ -23,7 +23,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
     @filter = owner_embed.filters.build(filter_params)
     @filter.natlang_queries.build(queries_params)
 
-    if owner_embed.save && @filter.save
+    if @filter.save
       render 'api/v3/filters/show'
     else
       render :json => msg_hash(@filter, 'create'), :status => 406
@@ -31,7 +31,20 @@ class Api::V3::FiltersController < Api::V3::BaseController
   end
 
   def update
-    # TODO
+    @filter = owner_embed.filters.find(filter_id)
+    queries_params.each do |q|
+      if (nlq = @filter.natlang_queries.find(q[:id]))
+        nlq.update_attributes(q)
+      else
+        @filter.natlang_queries.build(q)
+      end
+    end
+
+    if @filter.save
+      render 'api/v3/filters/show'
+    else
+      render :json => msg_hash(@filter, 'create'), :status => 406
+    end
   end
 
   def destroy
@@ -62,6 +75,6 @@ class Api::V3::FiltersController < Api::V3::BaseController
 
   def queries_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:filter).permit(natlang_queries: %i(is_negated attr_name op val)).require(:natlang_queries)
+    @json.require(:filter).permit(natlang_queries: %i(id is_negated attr_name op val)).require(:natlang_queries)
   end
 end
