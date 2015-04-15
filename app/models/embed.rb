@@ -93,10 +93,9 @@ class Embed < ActiveRecord::Base
   def make_link_to(entity)
     ee = embed_entities.build \
       entity: entity,
-      is_approved_manually: false,
       is_approved_automatically: determine_state(entity)
 
-    ee.save!
+    ee.save
   end
 
   def determine_state(entity)

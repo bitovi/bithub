@@ -2,8 +2,9 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :embed
   belongs_to :entity
 
-  scope :approved, lambda { where(is_approved_manually: true) }
-  scope :waitlisted, lambda { where(is_approved_manually: false) }
+  def is_approved
+    read_attribute(:is_approved_manually).present? ? is_approved_manually? : is_approved_automatically?
+  end
 
   def approve
     update_attribute(:is_approved_manually, true)

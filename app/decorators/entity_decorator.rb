@@ -34,11 +34,7 @@ class EntityDecorator < Draper::Decorator
 
   def is_approved
     current_embed = context.fetch(:embed)
-    if source.is_approved(current_embed).nil?
-      current_embed.approved_by_default
-    else
-      source.is_approved(current_embed)
-    end
+    source.is_approved(current_embed)
   end
 
   def is_pinned
