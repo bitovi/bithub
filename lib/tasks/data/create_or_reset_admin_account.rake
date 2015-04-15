@@ -1,12 +1,12 @@
 namespace :data do
   desc "Creates or resets Account with :admin role"
   task :create_or_reset_admin_account => :environment do
+    puts "--- BEGIN data:create_or_reset_admin_account"
 
-	DEFAULT_USERNAME = 'admin@bithub.com'
-
+    DEFAULT_USERNAME = 'admin@bithub.com'
     STDOUT.puts "Email/Username [#{DEFAULT_USERNAME}]:"
     username = STDIN.gets.chomp
-	username = DEFAULT_USERNAME if username.empty?
+    username = DEFAULT_USERNAME if username.empty?
 
     if admin = Account.where(email: username).first
       puts "Username '#{username}' already exists! Adding 'admin' role..."
@@ -38,5 +38,6 @@ namespace :data do
       end
     end
 
+    puts "--- END data:create_or_reset_admin_account"
   end
 end

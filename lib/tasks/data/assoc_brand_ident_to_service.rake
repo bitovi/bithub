@@ -1,9 +1,7 @@
 namespace :data do
   desc "Builds a relation between a service and a brand ident"
   task :assoc_brand_ident_to_service => :environment do
-
-    puts "---"
-    puts "Linking existing Services to BrandIdentities"
+    puts "--- BEGIN data:assoc_brand_ident_to_service"
 
     Brand.all.each do |b|
       Apartment::Tenant.switch(b.name) do
@@ -17,5 +15,7 @@ namespace :data do
         puts "For brand #{b.name}: services: #{service_total}, services done: #{service_done}"
       end
     end
+    
+    puts "--- END data:assoc_brand_ident_to_service"
   end
 end
