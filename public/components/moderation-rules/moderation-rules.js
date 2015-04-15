@@ -6,8 +6,8 @@ steal(
 function(Component, initView, Models){
 	
 	var TITLES = {
-		approve : "Approving Filters",
-		block   : "Blocking Filters"
+		approve : "<b>Automatically approve items</b> matching the following rules:",
+		block   : "<b>Automatically block items</b> matching the following rules"
 	}
 
 	return Component.extend({
@@ -16,10 +16,6 @@ function(Component, initView, Models){
 		scope: {
 			addFilter : function(){
 				this.attr('filters').addFilter(this.attr('hub.id'));
-			},
-			markToDestroy : function(filter, el, ev){
-				ev.preventDefault();
-				filter.markToDestroy();
 			},
 			title : function(){
 				return TITLES[this.attr('filters.action')];
@@ -30,12 +26,20 @@ function(Component, initView, Models){
 				return can.grep(filters, function(f){
 					return !f.attr('__shouldDelete');
 				});
-			}
+			},
 		},
 		events : {
-			"[can-click=addFilter],[can-click=removeFilter] click" : function(el, ev){
+			"[can-click=addFilter],[can-click=markToDestroy] click" : function(el, ev){
 				ev.preventDefault();
 			}
+		},
+		helpers : {
+				isContainsFilter : function(query, opts){
+					var check;
+					query = can.isFunction(query) ? query() : query;
+					check =  query.attr('op') === 'contains_any' || query.attr('op') === 'contains_all';
+					return check ? opts.fn() : opts.inverse();
+				}
 		}
 	});
 });

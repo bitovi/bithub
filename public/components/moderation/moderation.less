@@ -12,4 +12,30 @@ bh-moderation {
 		padding: 15px 25px 0;
 		border-top: 1px solid #ddd;
 	}
+
+  bh-moderation-rules {
+      h4 {
+          margin-left: -25px;
+          border-left: 3px solid green;
+          padding-left: 22px;
+      }
+  }
+
+  bh-moderation-rules.approving {
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+      h4 b {
+          color: green;
+      }
+  }
+
+  bh-moderation-rules.blocking {
+      h4 {
+          border-left-color: red;
+          b {
+              color: red;
+          }
+      }
+  }
+
 }

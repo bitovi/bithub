@@ -2,7 +2,7 @@ steal(
 'can/model',
 'can/map/define',
 function(Model){
-	return Model.extend({
+	return Model.extend({}, {
 		define : {
 			operation : {
 				set : function(val){
