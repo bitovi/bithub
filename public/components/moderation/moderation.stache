@@ -1,4 +1,4 @@
-<h4>Do you want all items approved and public by default?</h4>
+<h4>Do you want <b>all items approved and public</b> by default?</h4>
 <form class="form">
 	<div class="options-wrapper">
 		<div class="radio">
@@ -10,47 +10,17 @@
 		<div class="radio">
 			<label>
 				<input type="text" type="radio" {{#unless hub.approved_by_default}}checked{{/unless}} value="0" can-change="toggleApprovedByDefault">
-				<b>No</b>. I will manualy approve each item.
+				<b>No</b>. I want all items blocked by default.
 			</label>
 		</div>
 	</div>
   {{#unless hub.approved_by_default}}
-  <h4>Do you want <b>some</b> of the items automatically <b>approved and made public</b>?</h4>
-  <div class="options-wrapper">
-		<div class="radio">
-			<label>
-				<input type="text" type="radio" {{#if approveSomeAutomatically}}checked{{/if}} value="1" can-change="toggleSomeApprovedAutomatically">
-				<b>Yes</b>. Automatically approve some items.
-			</label>
-		</div>
-		<div class="radio">
-			<label>
-				<input type="text" type="radio" {{#unless approveSomeAutomatically}}checked{{/unless}} value="0" can-change="toggleSomeApprovedAutomatically">
-				<b>No</b>.
-			</label>
-		</div>
-	</div>
-  {{#if isApproveSomeAutomatically}}
-  <bh-moderation-rules filters="{approvingFilters}" hub="{hub}"></bh-moderation-rules>
+  {{#if approvingFilters}}
+  <bh-moderation-rules filters="{approvingFilters}" hub="{hub}" class="approving clearfix"></bh-moderation-rules>
   {{/if}}
   {{/unless}}
-  <h4>Do you want <b>some</b> of the items automatically <b>blocked and hidden</b>?</h4>
-  <div class="options-wrapper">
-		<div class="radio">
-			<label>
-				<input type="text" type="radio" {{#if blockSomeAutomatically}}checked{{/if}} value="1" can-change="toggleSomeBlockedAutomatically">
-				<b>Yes</b>. Automatically Block some items.
-			</label>
-		</div>
-		<div class="radio">
-			<label>
-				<input type="text" type="radio" {{#unless blockSomeAutomatically}}checked{{/unless}} value="0" can-change="toggleSomeBlockedAutomatically">
-				<b>No</b>.
-			</label>
-		</div>
-	</div>
-  {{#if isBlockSomeAutomatically}}
-  <bh-moderation-rules filters="{blockingFilters}" hub="{hub}"></bh-moderation-rules>
+  {{#if blockingFilters}}
+  <bh-moderation-rules filters="{blockingFilters}" hub="{hub}" class="blocking clearfix"></bh-moderation-rules>
   {{/if}}
 	{{#isSaving}}
 		<div class="alert alert-info">
@@ -63,6 +33,6 @@
 		</div>
 	{{/hasErrors}}
 	<div class="buttons-wrapper">
-		<button class="btn btn-primary pull-right">Update moderation settings</button>
+		<button class="btn btn-primary pull-right">Save moderation rules</button>
 	</div>
 </form>

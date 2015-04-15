@@ -1,41 +1,48 @@
-<div class="form-group">
-  <label>{{ title }}</label>
-  <div>
-    {{#each filtersNotMarkedForDelete}}
+<h4>{{{ title }}}</h4>
 
-    
-    <div class="filter-wrap clearfix">
-      <div class="remove-filter-wrap">
-        <button class="btn btn-default" can-click="markToDestroy">
-          <i class="fa fa-trash-o"></i>
-        </button>
-      </div>
-      {{#each natlang_queries}}
-      <div class="attr-wrap">
-        <select class="form-control" can-value="attr_name">
-          <option value="content">Content</option>
-          <option value="title">Title</option>
-          <option value="author">Author</option>
-        </select>
-      </div>
-      <div class="op-wrap">
-        <select class="form-control" can-value="operation">
-          <option value="pos:contains_all">Contains all</option>
-          <option value="pos:contains_any">Contains any</option>
-          <option value="pos:is">Is</option>
-          <option value="neg:is">Isn't</option>
-        </select>
-      </div>
-      <div class="val-wrap">
-        <textarea class="form-control" can-value="val"></textarea>
-      </div>
-      {{/each}}
-    </div>
-    
-    
-    {{/each}}
-  </div>
-  <div>
-    <button class="btn btn-primary" can-click="addFilter">Add Filter</button>
-  </div>
+<button class="btn btn-primary btn-sm btn-add-rule" can-click="addFilter">Add Rule</button>
+<div class="form-group">
+
+        <div>
+            {{#each filtersNotMarkedForDelete}}
+
+            
+            <div class="filter-wrap clearfix">
+                <div class="remove-filter-wrap">
+                    <button class="btn btn-default" can-click="markToDestroy">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </div>
+                {{#each natlang_queries}}
+                <div class="attr-wrap">
+                    <select class="form-control" can-value="attr_name">
+                        <option value="content">Content</option>
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                    </select>
+                </div>
+                <div class="op-wrap">
+                    <select class="form-control" can-value="operation">
+                        <option value="pos:contains_all">Contains all words</option>
+                        <option value="pos:contains_any">Contains any word</option>
+                        <option value="pos:is">Is equal to</option>
+                        <option value="neg:is">Isn't equal to</option>
+                    </select>
+                </div>
+                <div class="val-wrap">
+                    {{#isContainsFilter this}}
+                    <textarea class="form-control" can-value="val"></textarea>
+                    <p class="help-block">Separate the words with spaces</p>
+                    {{else}}
+                    <input class="form-control" type="text" can-value="val"/>
+                    <p class="help-block">Whole phrase will be matched</p>
+                    {{/isContainsFilter}}
+                </div>
+                {{/each}}
+            </div>
+            
+            
+            {{/each}}
+        </div>
 </div>
+
