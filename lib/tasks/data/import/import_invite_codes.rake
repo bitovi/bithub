@@ -1,9 +1,7 @@
 namespace :data do
   desc "Imports funnel determinations from YAML file"
   task :import_invite_codes => :environment do
-
-    Rails.logger.info "---"
-    Rails.logger.info "Importing invite code definitions"
+    Rails.logger.info "--- BEGIN data:import_invite_codes"
 
     definitions = YAML::load_file('config/invite_code_definitions.yml')
     existing    = InviteCode.pluck :code
@@ -23,6 +21,7 @@ namespace :data do
         end
       end
     end
-
+    
+    Rails.logger.info "--- END data:import_invite_codes"
   end
 end
