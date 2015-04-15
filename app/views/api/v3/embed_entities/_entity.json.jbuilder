@@ -10,7 +10,5 @@ end
 
 json.service_ids entity.services.map {|s| s.id}
 
-#if visibility == 'admin'
-json.is_approved (entity.is_approved || entity.is_approved_automatically?)
+json.is_approved entity.is_approved
 json.is_pinned entity.is_pinned
-#end

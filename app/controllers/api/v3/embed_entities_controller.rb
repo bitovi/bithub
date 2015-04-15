@@ -153,8 +153,15 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def entity_from_relation
+    select_sql = <<-SQL
+      entities.*,
+      embed_entities.is_approved_automatically AS is_approved_automatically,
+      embed_entities.is_approved_manually AS is_approved_manually,
+      embed_entities.is_pinned AS is_pinned
+    SQL
+
     Entity.joins(:embed_entities)\
-      .select('entities.*, embed_entities.is_approved_manually AS is_approved_manually, embed_entities.is_pinned AS is_pinned')
+      .select(select_sql)
       .where('embed_entities.embed_id' => embed_id)\
       .where('entities.id' => entity_id).first
   end

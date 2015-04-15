@@ -87,18 +87,18 @@ class Entity < ActiveRecord::Base
     services.count == 1
   end
 
-  # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_approved(embed = nil)
-    if has_attribute?(:is_approved_manually)
-      read_attribute(:is_approved_manually)
+    # Used when entities are decorated with attributes from embed_entities,
+    # ie. is_approved_manually and is_approved_automatically
+    if has_attribute?(:is_approved_manually) && has_attribute?(:is_approved_automatically)
+      (read_attribute(:is_approved_manually).present?) ? is_approved_manually? : is_approved_automatically?
+
+    # If entity doesn't have these attributes (is_approved_*), then given an embed,
+    # find the appropriate embed_entities record and read that info from it
     else
       return nil if embed.nil?
       memoize('is_approved', embed.id) do
-        # don't use the `is_approved?` method here (with the question mark) because
-        # it always return boolean and we need to check if it's nil and return the
-        # embed default in that case
-        ee_is_approved = embed_entities.where(:embed_id => embed.id).first.is_approved
-        ee_is_approved.nil? ? embed.approved_by_default : ee_is_approved
+        embed_entities.find_by_embed_id(embed.id).is_approved
       end
     end
   end
@@ -201,7 +201,7 @@ class Entity < ActiveRecord::Base
     Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)
   end
 
-  private
+  # private
 
   def reformat_uniqueness_validation
     if errors[:hash_key]
