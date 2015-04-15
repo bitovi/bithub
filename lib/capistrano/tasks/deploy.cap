@@ -36,7 +36,7 @@ namespace :deploy do
     task :npm_install do
       on roles(:all) do |host|
         within release_path.join('services/liveservice') do
-          execute :npm, 'install', '--production', '--silent'
+          execute :npm, 'install', '--production', '--silent', '--no-spin'
         end
       end
     end
@@ -47,7 +47,7 @@ namespace :deploy do
     task :npm_install do
       on roles(:all) do |host|
         within release_path.join('public') do
-          execute :npm, 'install', '--production', '--silent'
+          execute :npm, 'install', '--production', '--silent', '--no-spin'
         end
       end
     end
