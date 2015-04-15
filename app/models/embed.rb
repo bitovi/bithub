@@ -82,7 +82,7 @@ class Embed < ActiveRecord::Base
       entity_ids = f.detected_entities('id').all.map { |e| e.id }
       EmbedEntity\
         .where({embed_id: self.id, entity_id: entity_ids})\
-        .update_all(is_approved_automatically: true)
+        .update_all(is_approved_automatically: f.resulting_state)
     end
   end
 
