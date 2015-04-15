@@ -1,7 +1,10 @@
 class UpdateManualModeration < ActiveRecord::Migration
+
   def up
+    EmbedEntity.where(is_approved_manually: nil).update_all(is_approved_manually: false)
     change_column_default :embed_entities, :is_approved_manually, false
     change_column_null :embed_entities, :is_approved_manually, false
+
   end
   
   def down
