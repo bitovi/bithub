@@ -17,8 +17,8 @@ end
 namespace :data do
   desc "Updates tweets that don't have a user assigned with new profile images"
   task :update_tweets_with_new_profile_imgs => :environment do
-    puts "---"
-    puts "Refreshing profile images in props and source_data"
+    puts "--- BEGIN update_tweets_with_new_profile_imgs"
     refresh_tweet_origin_avatar_urls(new_profile_imgs)
+    puts "--- END update_tweets_with_new_profile_imgs"
   end
 end

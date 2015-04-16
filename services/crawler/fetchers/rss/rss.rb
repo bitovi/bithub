@@ -13,9 +13,9 @@ module Fetchers
 
       def fetch
         ::NewRelic::Agent.increment_metric('Custom/Fetches/RSS/feed')
-        x = Feedjira::Feed.fetch_and_parse(@url)
-        raise_error(x) if x.is_a? Numeric
-        to_hashes(x.entries)
+        feed = Feedjira::Feed.fetch_and_parse(@url)
+        raise_error(feed) if feed.is_a? Numeric
+        to_hashes feed
       end
 
       def raise_error(x)
@@ -28,13 +28,30 @@ module Fetchers
         end
       end
 
-      def to_hashes(entries)
-        entries.map do |e|
-          Hash[e.map { |f, v| [f, v] }]
+      private
+
+      def to_hashes(feed)
+        meta = extract_meta(feed)
+
+        extract_entries(feed.entries).map do |e|
+          e['feed'] = meta
+          e
         end
       end
+
+      def extract_meta(feed)
+        %i(feed_url title url).reduce({}) do |acc, f|
+          acc[f.to_s] = feed.send(f) if feed.respond_to?(f)
+          acc
+        end
+      end
+
+      def extract_entries(entries)
+        entries.map do |e|
+          Hash[e.map {|f, v| [f, v]}]
+        end
+      end
+
     end
   end
 end
-
-

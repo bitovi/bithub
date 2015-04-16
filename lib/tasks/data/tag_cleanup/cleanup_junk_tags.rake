@@ -1,14 +1,10 @@
 namespace :data do
   desc "Cleans junk tags that ended up in the system"
   task :cleanup_junk_tags=> :environment do
-
-    puts "---"
-    puts "Cleaning up junk tags (undefined in tag_definitions.yml)"
+    puts "--- BEGIN data:cleanup_junk_tags"
     
     tags = YAML::load_file('config/tag_definitions.yml')
-    matched = []
-    unmatched = []
-    deleted =  []
+    matched = []; unmatched = []; deleted = []
 
     uncategorized = Tag.find_by_name('uncategorized')
 
@@ -52,5 +48,6 @@ namespace :data do
     puts "  #{unmatched.length} tags NOT matched"
     puts "  #{deleted.length} tags DELETED"
     
+    puts "--- END data:cleanup_junk_tags"
   end
 end

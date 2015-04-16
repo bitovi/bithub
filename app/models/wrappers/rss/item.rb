@@ -14,6 +14,10 @@ module Wrappers
         @data = symbolize_keys(item)
       end
 
+      def author
+        @data[:author] || @data[:feed][:title]
+      end
+
       def published
         if @data[:published]
           Time.parse(@data[:published]).utc
