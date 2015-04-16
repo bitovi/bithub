@@ -1,9 +1,9 @@
 namespace :data do
   desc "Cleans possible tag duplicates"
   task :cleanup_tag_duplicates => :environment do
+    puts "--- BEGIN data:cleanup_tag_duplicates"
 
     def alias_exists?(tags, name)
-
       tags.each do |tag|
         return tag if tag[:name] != name and tag[:aliases] and tag[:aliases].include?(name)
       end
@@ -47,5 +47,6 @@ namespace :data do
       end
     end
 
+    puts "--- END data:cleanup_tag_duplicates"
   end
 end

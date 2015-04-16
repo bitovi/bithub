@@ -1,14 +1,10 @@
 namespace :data do
   desc "Create/update countries"
   task :import_or_update_countries => :environment do
-
-    Rails.logger.info "---"
-    Rails.logger.info "Importing/updating countries"
+    Rails.logger.info "--- BEGIN data:import_or_update_countries"
 
     countries = YAML::load_file('config/countries.yml')
-    updated = []
-    imported = []
-    failed = []
+    updated = []; imported = []; failed = []
     
     countries.each do |code, data|
       if country = Country.where({:iso => code}).first
@@ -23,5 +19,6 @@ namespace :data do
     Rails.logger.info "  #{updated.length} countries updated"
     Rails.logger.info "  #{failed.length} countries failed: #{failed.to_s}"
 
+    Rails.logger.info "--- END data:import_or_update_countries"
   end
 end
