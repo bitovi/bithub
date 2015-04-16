@@ -4,7 +4,7 @@ module Events
     class PostEvent < Protocol
       extend Forwardable
 
-      def_delegators :@item, :title, :link, :categories, :summary, :published
+      def_delegators :@item, :title, :link, :categories, :summary, :published, :author
       attr_reader :item
 
       def digest_seed

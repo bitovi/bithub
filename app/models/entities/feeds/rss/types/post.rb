@@ -13,6 +13,9 @@ module Entities
           body: @event.description,
           url: @event.link,
           origin_ts: @event.published || Time.now.utc,
+          props: {
+            origin_author_name: @event.author
+          }
         })
       end
 
