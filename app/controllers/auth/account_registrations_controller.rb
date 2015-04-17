@@ -19,7 +19,13 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
           account.invite_code.use_up_if_useable
 
           org_builder = Organizations::OrganizationBuilder.new(account, @plan)
-          org_builder.build.save!
+
+          begin
+            org_builder.build.save!
+          rescue ActiveRecord::RecordInvalid => e
+            # catch exception on account validation
+            # errors will be displayed on register form
+          end
 
           # TODO: handle multiple brands on organization
           session['organization_name'] = org_builder.organization.name
