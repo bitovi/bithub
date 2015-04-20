@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
-  #before_filter :authenticate_account!
-  #load_and_authorize_resource
+  before_filter :authenticate_account!
+  load_and_authorize_resource
 
   after_action :allow_iframe, only: [:edit_cc, :edit_plan]
 
