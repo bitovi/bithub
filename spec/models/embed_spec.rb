@@ -29,77 +29,62 @@ RSpec.describe Embed, :type => :model do
     end
   end
 
-  describe '#approve_valid' do
+  describe '#moderate' do
     before do
       @embed = FactoryGirl.create(:embed, :restrictive)
-      @embed.make_link_to(FactoryGirl.create :github_push)
-      @embed.make_link_to(FactoryGirl.create :github_issue, title: 'eventmachine and haskell')
-      @embed.make_link_to(FactoryGirl.create :twitter_tweet, title: 'eventmachine is bad')
-      @embed.make_link_to(FactoryGirl.create :twitter_follow)
-      @embed.make_link_to(FactoryGirl.create :github_pull_request)
-      @embed.make_link_to(FactoryGirl.create(:meetup_entity, :event, title: "a haskell meetup"))
+      @embed.make_link_to(@e1 = FactoryGirl.create(:github_push))
+      @embed.make_link_to(@e2 = FactoryGirl.create(:github_issue, title: 'eventmachine and haskell'))
+      @embed.make_link_to(@e3 = FactoryGirl.create(:twitter_tweet, title: 'eventmachine is bad'))
+      @embed.make_link_to(@e4 = FactoryGirl.create(:twitter_follow))
+      @embed.make_link_to(@e5 = FactoryGirl.create(:github_pull_request, url: 'http://this-is-also.searchable.com'))
+      @embed.make_link_to(@e6 = FactoryGirl.create(:meetup_entity, :event, title: "a haskell meetup"))
     end
 
-    context 'given a filter with a single query' do
-      before(:each) do
-        @filter = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
-      end
+    context 'given a filter with a single "where" query' do
+      it 'performs a where query and approves all items it detects' do
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        FactoryGirl.create(:natlang_query, :is_from_twitter, filter: @approving)
 
-      it 'filters by a regular attribute (feed_name, type_name, etc.)' do
-        FactoryGirl.create(:natlang_query, :is_from_twitter, filter: @filter)
-
-        @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 2
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e3, @e4]
       end
 
       it 'filters by negated regular attribute (feed_name, type_name, etc.)' do
-        FactoryGirl.create(:natlang_query, :is_from_twitter, :negated, filter: @filter)
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        FactoryGirl.create(:natlang_query, :is_from_twitter, :negated, filter: @approving)
 
-        @embed.approve_valid
-        expect(@embed.approved_entities.count).to eq 4
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e1, @e2, @e5, @e6]
       end
+    end
       
-      it 'performs a full text search by one attribute' do
-        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains', val: 'haskell,eventmachine', filter: @filter)
+    context 'given a filter with a single full-text search query' do
+      it 'performs a full text search on all attributes by conjunctively combining multiple terms and approves all items it detects' do
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'haskell,eventmachine', filter: @approving)
 
-        @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 1
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e2]
       end
-      
-      it 'performs a full text search on all attributes by conjunctively combining multiple terms' do
-        FactoryGirl.create(:natlang_query, attr_name: 'content', op: 'contains_all', val: 'haskell,eventmachine', filter: @filter)
 
-        @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 1
-      end
-      
-      it 'performs a full text search on all attributes by disjunctively combining multiple terms' do
-        FactoryGirl.create(:natlang_query, attr_name: 'content', op: 'contains_any', val: 'haskell,eventmachine', filter: @filter)
+      it 'performs a full text search on all attributes by disjunctively combining multiple terms and approves all items it detects' do
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_any', val: 'haskell,eventmachine', filter: @approving)
 
-        @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 3
-      end
-      
-      it 'performs a full text search with negation' do
-        FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_all', val: '!haskell', filter: @filter)
-
-        @embed.approve_valid
-        expect(@embed.approved_entities.length).to eq 4
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e2, @e3, @e6]
       end
     end
 
-    # context 'given a filter with multiple queries' do
-    #   after { Filter.delete_all; NatlangQuery.delete_all }
+    context 'given a filter with multiple queries' do
+      it 'filters by tying :contains and :is_a predicates with a logical AND' do
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        FactoryGirl.create(:natlang_query, :contains_haskell, filter: @approving)
+        FactoryGirl.create(:natlang_query, :is_from_twitter, :negated, filter: @approving)
 
-    #   it 'filters by tying :contains and :is_a predicates with a logical AND' do
-    #     embed = FactoryGirl.create(:embed, name: "Embed for AND test", approved_by_default: true)
-    #     filter = FactoryGirl.create(:filter, embed: embed)
-    #     filter.natlang_queries << FactoryGirl.create(:natlang_query, :contains_haskell)
-    #     filter.natlang_queries << FactoryGirl.create(:natlang_query, :is_from_twitter, :negated)
-
-    #     embed.approve_valid
-    #     expect(embed.approved_entities.length).to eq 1
-    #   end
-    # end
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e2, @e6]
+      end
+    end
   end
 end

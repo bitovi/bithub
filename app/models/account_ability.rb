@@ -24,7 +24,7 @@ class AccountAbility
 
       # read plans, owned subscriptions with payments
       can :read, Plan
-      can [:read, :current], Subscription, organization_id: account.organization_ids
+      can :manage, Subscription, organization_id: account.organization_ids # [:read, :current]
       can :read, Payment, subscription: {organization_id: account.organization_ids}
 
       ### Models locked inside tenants
