@@ -41,6 +41,7 @@
 					{{#if state.isAnalyticsPageActive}}
 						<li><a href="{{pageUrl 'analytics' hubId=state.hubId}}" class="btn btn-default">Analytics</a></li>
 					{{/if}}
+            <li>{{{pageLink 'payments' 'Payments'}}}</li>
 					<li><a href="/logout" class="btn btn-link">Logout</a></li>
 				</ul>
 			</div>
