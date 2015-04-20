@@ -84,7 +84,7 @@ RSpec.describe 'Filter endpoints', type: :request do
             
             get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
             expect(response).to be_success
-            expect(json['data'].length).to eq(0)
+            expect(json['data'].length).to eq(2)
           end
         end
         
