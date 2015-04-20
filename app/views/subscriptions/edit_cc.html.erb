@@ -9,7 +9,7 @@
 
 	  <div class="form-group">
 		  <label>Card Number
-		    
+
 		  </label>
       <input id="cc_number" type="text" size="20" data-stripe="number" class="form-control"/>
 	  </div>
@@ -23,7 +23,7 @@
 
 	  <div class="form-row">
 		  <label>Expiration (MM/YYYY)</label>
-    <input id="cc_exp_month" type="text" size="2" data-stripe="exp-month" class="form-control" style="width: 50px; display: inline-block;"/> / 
+    <input id="cc_exp_month" type="text" size="2" data-stripe="exp-month" class="form-control" style="width: 50px; display: inline-block;"/> /
 		<input id="cc_exp_year" type="text" size="4" data-stripe="exp-year" class="form-control" style="width: 60px; display: inline-block;"/>
 	  </div>
     <hr>
@@ -53,7 +53,7 @@ function stripeResponseHandler(status, response) {
 };
 
 jQuery(function($) {
-  $('#edit-cc').submit(function(event) {
+  $('#edit_cc').submit(function(event) {
     var $form = $(this);
 
     // Disable the submit button to prevent repeated clicks
