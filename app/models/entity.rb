@@ -91,8 +91,7 @@ class Entity < ActiveRecord::Base
     # Used when entities are decorated with attributes from embed_entities,
     # ie. is_approved_manually and is_approved_automatically
     if has_attribute?(:is_approved_manually) && has_attribute?(:is_approved_automatically)
-      (read_attribute(:is_approved_manually).present?) ? is_approved_manually? : is_approved_automatically?
-
+      (!read_attribute(:is_approved_manually).nil?) ? is_approved_manually? : is_approved_automatically?
     # If entity doesn't have these attributes (is_approved_*), then given an embed,
     # find the appropriate embed_entities record and read that info from it
     else
