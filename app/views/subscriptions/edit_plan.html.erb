@@ -6,25 +6,18 @@
 
 	<form action="/admin/subscriptions/update" method="POST" id="edit_plan">
 	  <span class="choose-plan-errors"></span>
-
+    <h4>Current plan: <%= @plan.name %></h4>
+	  
 	  <div class="form-row">
-		<label>
-		  <span>Current plan: <%= @plan.name %></span>
-		</label>
-	  </div>
-
-	  <div class="form-row">
-		<label>
-		  <span>Available plans:</span>
-		  <select id="plan_id" name="plan">
+		<label>Available plans</label>
+    <select id="plan_id" name="plan" class="form-control">
 			<% @plans.each do |p| %>
 			<option value="<%= p.stripe_id %>" <%= (@plan.stripe_id == p.stripe_id) ? 'selected' : '' %>><%= p.name %></option>
 			<% end %>
 		  </select>
-		</label>
 	  </div>
-
-	  <button type="submit">Submit</button>
+    <hr/>
+	  <button type="submit" class="btn btn-primary pull-right">Save Plan</button>
 	</form>
 
   </div>

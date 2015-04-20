@@ -16,7 +16,8 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 		'services' : 'Services',
 		'integration' : 'Integration',
 		'moderation' : 'Moderation',
-		'analytics' : 'Analytics'
+		'analytics' : 'Analytics',
+		'payments' : 'Payments'
 	};
 
 	var getPageTitle = function(val, appState){

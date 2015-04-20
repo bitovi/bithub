@@ -1,6 +1,8 @@
 class SubscriptionsController < ApplicationController
-  before_filter :authenticate_account!
-  load_and_authorize_resource
+  #before_filter :authenticate_account!
+  #load_and_authorize_resource
+
+  after_action :allow_iframe, only: [:edit_cc, :edit_plan]
 
   def edit_plan
     @plan = Subscription.current.plan
@@ -24,7 +26,7 @@ class SubscriptionsController < ApplicationController
       subscription.update_plan plan
     end
 
-    render html: 'OK', layout: 'admin'
+    render :success_info, layout: 'admin'
   end
 
   private
@@ -33,5 +35,11 @@ class SubscriptionsController < ApplicationController
     params.require(:plan)
     params.require(:stripe_token)
     params
+  end
+
+  
+
+  def allow_iframe
+    response.headers.except! 'X-Frame-Options'
   end
 end
