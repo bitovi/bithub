@@ -13,10 +13,10 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404
-    render "frontend/404", layout: false
+    render "frontend/404", status: 404, layout: false
   end
 
   def render_401
-    render text: "401 Forbidden"
+    render text: "401 Forbidden", status: 401
   end
 end
