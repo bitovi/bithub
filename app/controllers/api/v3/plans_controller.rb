@@ -3,7 +3,7 @@ class Api::V3::PlansController < Api::V3::BaseController
   load_and_authorize_resource
 
   def index
-    @plans = Plan.all
+    @plans = Plan.where(available: true).all
     render :index
   end
 
