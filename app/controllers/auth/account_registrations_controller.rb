@@ -1,10 +1,7 @@
 class Auth::AccountRegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
-  PROMO_CODE = 'ymip412'
-
   def new
-    @invite_code = InviteCode.where(code: PROMO_CODE).first
     @plan = find_plan
     super
   end
@@ -12,25 +9,20 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   def create
     @plan = find_plan
 
-    @invite_code = InviteCode.where(code: PROMO_CODE).first
     ActiveRecord::Base.transaction do
       super do |account|
-        if account.invite_code_valid?
-          account.invite_code.use_up_if_useable
+        org_builder = Organizations::OrganizationBuilder.new(account, @plan)
 
-          org_builder = Organizations::OrganizationBuilder.new(account, @plan)
-
-          begin
-            org_builder.build.save!
-          rescue ActiveRecord::RecordInvalid => e
-            # catch exception on account validation
-            # errors will be displayed on register form
-          end
-
-          # TODO: handle multiple brands on organization
-          session['organization_name'] = org_builder.organization.name
-          session['tenant_name'] = org_builder.brand.tenant_name
+        begin
+          org_builder.build.save!
+        rescue ActiveRecord::RecordInvalid => e
+          # catch exception on account validation
+          # errors will be displayed on register form
         end
+
+        # TODO: handle multiple brands on organization
+        session['organization_name'] = org_builder.organization.name
+        session['tenant_name'] = org_builder.brand.tenant_name
       end
     end
   end
@@ -38,7 +30,7 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up).push(:name, :code)
+    devise_parameter_sanitizer.for(:sign_up).push(:name)
   end
 
   def after_sign_up_path_for(resource)
