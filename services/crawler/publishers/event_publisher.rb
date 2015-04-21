@@ -20,14 +20,13 @@ class EventPublisher
   end
 
   def publish(events, owner_data, opts={})
-    # fail ArgumentError.new('First argument (events) must be an Array') if !events.is_a?(Array)
     decorator = opts.fetch(:decorator) { Decorators::Basic.new }
 
     # reject previously sent events
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    info "Publisher for '#{owner_data.brand.name}' published #{new_events.size} Events"
+    info "#{owner_data.to_log_format} Published #{new_events.size} new events out of total #{events.size}"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -42,12 +41,9 @@ class EventPublisher
   end
 
   def processed(events, owner_data, decorator)
-    processed_events = events.map do |e|
+    events.map do |e|
       process_one e, owner_data, decorator
     end.compact
-
-    info "Publisher for '#{owner_data.brand.name}' processed #{processed_events.count} Events"
-    processed_events
   end
 
   def process_one(event, owner_data, decorator)
@@ -57,7 +53,6 @@ class EventPublisher
 
     dispatched = Events::Dispatcher.dispatch(event, feed)
 
-    # todo: move this to separate decorator?
     processed = {
       meta: {
         type_name: dispatched.type_name.snake_case,
@@ -73,9 +68,8 @@ class EventPublisher
     }
 
     decorator.decorate processed
-  # TODO!!!: Publisher shouldn't be handling dispatching errors
   rescue Events::DispatchError => e
-    error e
-    nil # if we can't disptch, return nil so it will end up filtered out
+    error "#{owner_data.to_log_format} #{e}"
+    nil # if we can't dispatch, return nil so it will end up filtered out
   end
 end

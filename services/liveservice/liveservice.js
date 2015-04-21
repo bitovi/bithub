@@ -39,6 +39,11 @@ var parseCookies = function( cookie ) {
 	}, {} );
 };
 
+var meta_to_log_format = function( meta ) {
+	var msg = [meta.brand_name, meta.embed_id, meta.is_public].join(' ');
+	return '[' + msg + ']';
+};
+
 var LiveService = function( opts ) {
 	opts = opts || {};
 
@@ -74,7 +79,7 @@ LiveService.prototype.registerEndpoints = function() {
 
 	_.each( self.endpoints, function( endpoint ) {
 		self.listener.bindConsumer(endpoint, function( data ) {
-			self.quite || console.info( 'New message from MQ', data );
+			self.quite || console.info( ['New message from channel', endpoint, meta_to_log_format(data.meta)].join(' ') );
 
 			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
 			self.router.publish( key, data );
@@ -95,15 +100,13 @@ LiveService.prototype.onIoConnection = function() {
 		if( session_id == undefined ) {
 			// Handle public entities
 			if(params.tenant_name){
-				var publicKey = ['entities', params.tenant_name, params.embed_id].join('.')
+				var publicKey = ['entities', params.tenant_name, params.embed_id].join('.');
 				self.router.subscribe(publicKey, function(data){
-					console.log('PUBLIC MSG', data)
 					if(data.meta.is_public){
-						console.log('Public message', data.payload)
 						socket.emit('entities', data.payload);
 					}
 				});
-				console.log('Connecting public entities for tenant: ' + params.tenant_name)
+				console.log('Connecting public entities for tenant: ' + params.tenant_name);
 			} else {
 				console.log('User without valid session from ' + remoteIp);
 			}
@@ -125,7 +128,6 @@ LiveService.prototype.onIoConnection = function() {
 
 					self.router.subscribe( key, function( data ) {
 						var message = data.payload;
-						console.log(endpoint, message);
 						socket.emit( endpoint, message );
 					});
 				});

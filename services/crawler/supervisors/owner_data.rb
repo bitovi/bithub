@@ -22,4 +22,8 @@ class OwnerData
   def to_s
     "#{@brand} / #{@embed} / #{@service}"
   end
+
+  def to_log_format
+    "[#{@brand.name} #{@embed.name} #{@service.id} #{@service.feed_name} #{@service.type_name}]"
+  end
 end

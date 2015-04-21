@@ -3,7 +3,7 @@ require 'handlers/handler'
 class EventHandler < Handler
   def handle(packet)
     bn, en, fn, tn = destruct(packet)
-    Celluloid.logger.info "New EVENT received: '#{fn}/#{tn}', brand: '#{bn}', embed: '#{en}'"
+    Celluloid.logger.info "#{meta_to_log_format(packet)} New Event received"
 
     @listener.handle_errors do
       Apartment::Tenant.switch(bn) do
