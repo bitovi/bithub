@@ -115,7 +115,7 @@ class Entity < ActiveRecord::Base
   end
 
   def is_child?
-    parent_id.present?
+    !parent_id.nil? || !source_data['retweeted_status'].nil?
   end
 
   def label_names
@@ -214,7 +214,7 @@ class Entity < ActiveRecord::Base
     embeds.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice').publish(message, routing_key: 'entities')
-      unless is_approved(embed)
+      if !is_approved(embed)
         # if the entity is not approved we don't want to send publicly
         # the whole entity, but we need to send just enough so it can
         # be removed from an active embed. This way live embeds (like on
