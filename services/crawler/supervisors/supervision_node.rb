@@ -2,7 +2,7 @@ require 'supervisors/node_types/node_types'
 
 class SupervisionNode
   SEPARATOR = '->'
-  
+
   def self.from_message(msg)
     tree_from_nodes(nodes_from_message(msg))
   end
@@ -65,6 +65,10 @@ class SupervisionNode
 
   def to_s
     string_path.join(SEPARATOR)
+  end
+
+  def to_log_format
+    "[#{brand.name} #{embed.name} #{service.id} #{service.feed_name} #{service.type_name}]"
   end
 
   # Shortcuts
