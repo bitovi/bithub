@@ -784,4 +784,7 @@ ul.usage {
 .registration-panel {
   float: right;
   width: 61.8%;
+  .panel-body {
+      padding: 75px 15px;
+  }
 }
