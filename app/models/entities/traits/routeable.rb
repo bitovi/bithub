@@ -22,7 +22,6 @@ module Entities
     end
 
     def notify_client
-
       RabbitFactory.new(ConnectionManager.instance.rabbit)\
         .x('x.liveservice')\
         .publish(JSON.generate(client_msg), routing_key: 'services')
