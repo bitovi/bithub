@@ -6193,5 +6193,7 @@ ul.usage {
 .registration-panel {
   float: right;
   width: 61.8%; }
+  .registration-panel .panel-body {
+    padding: 75px 15px; }
 
 /*# sourceMappingURL=app.css.map */
