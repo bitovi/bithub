@@ -6,7 +6,7 @@ class SubscriptionsController < ApplicationController
 
   def edit_plan
     @plan = Subscription.current.plan
-    @plans = Plan.all
+    @plans = Plan.where(available: true).all
 
     render :edit_plan, layout: 'admin'
   end
@@ -37,7 +37,7 @@ class SubscriptionsController < ApplicationController
     params
   end
 
-  
+
 
   def allow_iframe
     response.headers.except! 'X-Frame-Options'
