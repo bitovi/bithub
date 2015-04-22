@@ -3,14 +3,11 @@ require 'rails_helper'
 
 RSpec.configure do |config|
   config.before(:suite) do
-    InviteCode.delete_all
     Plan.delete_all
-    FactoryGirl.create(:invite_code)
     FactoryGirl.create(:plan)
   end
 
   config.after(:suite) do
-    InviteCode.delete_all
     Plan.delete_all
   end
 end
