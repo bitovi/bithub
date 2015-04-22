@@ -129,18 +129,24 @@ function(Component, initView, Models){
 				});
 			},
 			currentServiceFeedName : function(){
-				var feed = this.attr('service').attr('feed_name');
+				var service = this.attr('service');
+				if(!service) { 
+					return
+				}
+				var feed = service.attr('feed_name');
 				return Models.Service.feeds[feed];
 			}
 		},
 		helpers : {
-			'form submit' : function(){
-
-			},
 			renderForm : function(opts){
-				var service = this.attr('service'),
-					feed = service.attr('feed_name'),
-					type = service.attr('type_name');
+				var service = this.attr('service'), feed, type;
+				
+				if(!service){ 
+					return;
+				}
+
+				feed = service.attr('feed_name'),
+				type = service.attr('type_name');
 
 				if(type && feed){
 					return makeTemplate(feed, type)(opts.scope, {
