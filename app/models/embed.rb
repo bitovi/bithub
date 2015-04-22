@@ -34,11 +34,6 @@ class Embed < ActiveRecord::Base
     delete from embed_entities
     where embed_id = #{embed_id};
 
-    -- delete entities that have no connections to an embed
-    -------------------------------------------------------
-    delete from entities
-    where id not in (select distinct(entity_id) from embed_entities);
-
     -- delete events that belong to this embed
     ------------------------------------------
     delete from events
