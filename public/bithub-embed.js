@@ -42,8 +42,11 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 		//can.route.map(appState);
 		//can.route.ready();
 
+
+
 		appState.attr('hub', hub);
 		appState.setAttrs(params);
+		appState.connectLiveService();
 
 		Bit.on('lifecycle', function(ev, bit){
 			var serviceIds = bit.attr('service_ids');
