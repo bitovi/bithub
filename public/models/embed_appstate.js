@@ -20,16 +20,6 @@ function(Map, Bit, connectLiveService){
 
 	return Map.extend({
 		define : {
-			hubId : {
-				set : function(val){
-					var tenant = this.isPublic() ? this.attr('tenant') : null;
-					liveService = connectLiveService(val, tenant);
-					if(liveService){
-						liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
-					}
-					return val;
-				}
-			},
 			live : {
 				set : function(val){
 					return (val === true || val === 'true');
@@ -75,6 +65,14 @@ function(Map, Bit, connectLiveService){
 				return 'admin';
 			}
 			return 'public';
+		},
+		connectLiveService : function(){
+			var tenant = this.isPublic() ? this.attr('tenant') : null;
+			var hubId = this.attr('hubId');
+			liveService = connectLiveService(hubId, tenant);
+			if(liveService){
+				liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
+			}
 		},
 		getParams: function(){
 			var hubId = this.attr('hubId');
