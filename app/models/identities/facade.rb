@@ -17,8 +17,8 @@ module Identities
 
     def credentials(property_id = nil)
       if @provider_facade.provider_name == 'facebook' && (page_id = property_id)
-        access_token = @provider_facade.page_token(page_id) || @provider_facade.user_long_lived_token
-        { access_token: access_token }
+        _access_token = (@provider_facade.page_token(page_id) || @provider_facade.user_long_lived_token)
+        { access_token: _access_token }
       elsif @provider_facade.provider_name == 'twitter'
         { access_token: access_token, access_secret: @provider_facade.access_secret }
       elsif @source_data[:credentials]
