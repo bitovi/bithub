@@ -1,0 +1,19 @@
+require 'rails_helper'
+
+describe Entities::Github::IssueComment do
+  describe 'data' do
+    it 'prepares the data for building/updating' do
+      issue_comment_event = Events::Github::IssueCommentEvent.new(
+        raw_data(response_path: 'github/events/issue_comment_event.json'))
+
+      entity_wrapper = Entities::Github::IssueComment.new(issue_comment_event)
+
+      expect(entity_wrapper.data.keys).to include(
+        :title, :body, :url, :origin_ts, :origin_id)
+
+      expect(entity_wrapper.data[:props].keys).to include(
+        :origin_author_id, :origin_author_username, :origin_author_avatar_url,
+        :repo_name, :number)
+    end
+  end
+end
