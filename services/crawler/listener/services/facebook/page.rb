@@ -17,9 +17,13 @@ require 'koala'
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
 
+    ### Current hack
+    # if there is no (page) access token in service use app token,
+    # skip RT subscription and only preload data from the page
+
     def boot
       begin
-        subscribe_page
+        subscribe_page if has_page_token?
       rescue Koala::KoalaError => e
         info "Facebook subscription failed with #{e.message}"
       end
@@ -51,7 +55,11 @@ module Supervisors::Services::Facebook
     end
 
     def page_token
-      service_config.fetch(:access_token)
+      service_config[:access_token] || "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"
+    end
+
+    def has_page_token?
+      service_config[:access_token]
     end
 
     def client
