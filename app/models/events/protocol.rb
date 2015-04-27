@@ -4,11 +4,18 @@ require_relative 'traits/serializable'
 require_relative 'traits/validatable'
 require_relative 'traits/normalizable'
 
-Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
-  require f.gsub('app/models/', '')
-end
-
 module Events
+
+  module Disqus; end
+  module Github; end
+  module Twitter; end
+  module Meetup; end
+  module Stackexchange; end
+  module Facebook; end
+  module Instagram; end
+  module Tumblr; end
+  module Foursquare; end
+  module Rss; end
 
   class Protocol
     include CoreHelpers
@@ -102,3 +109,51 @@ module Events
     end
   end
 end
+
+# Disqus
+require_relative 'disqus/post_event'
+
+# Facebook
+require_relative 'facebook/photo_event'
+require_relative 'facebook/status_event'
+
+# Foursquare
+require_relative 'foursquare/checkin_event'
+
+# Github
+require_relative 'github/commit_comment_event'
+require_relative 'github/create_event'
+require_relative 'github/custom_issue_event'
+require_relative 'github/delete_event'
+require_relative 'github/fork_event'
+require_relative 'github/github_event_accessors'
+require_relative 'github/issue_comment_event'
+require_relative 'github/issue_event'
+require_relative 'github/pull_request_event'
+require_relative 'github/pull_request_review_comment_event'
+require_relative 'github/push_event'
+require_relative 'github/reference'
+require_relative 'github/watch_event'
+
+# Instagram
+require_relative 'instagram/media_event'
+
+# Meetup
+require_relative 'meetup/event_event'
+require_relative 'meetup/rsvp_event'
+
+# Rss
+require_relative 'rss/post_event'
+
+# Stackexchange
+require_relative 'stackexchange/answer_event'
+require_relative 'stackexchange/comment_event'
+require_relative 'stackexchange/question_event'
+
+# Tumblr
+require_relative 'tumblr/post'
+
+# Twitter
+require_relative 'twitter/fake_follow_event'
+require_relative 'twitter/follow_event'
+require_relative 'twitter/tweet_event'
