@@ -6,6 +6,7 @@ steal(
 'can/map/define',
 'components/service-forms/disqus-forum',
 'components/service-forms/facebook-page',
+'components/service-forms/facebook-public-page',
 'components/service-forms/foursquare-venue',
 'components/service-forms/github-org',
 'components/service-forms/github-repo',
@@ -56,6 +57,7 @@ function(Component, initView, Models){
 			missingConfig : false,
 			errors: null,
 			typeErros: null,
+			saveDisabled : false,
 			define : {
 				service : {
 					set : function(val){
@@ -123,7 +125,10 @@ function(Component, initView, Models){
 			},
 			clearService : function(){
 				can.batch.start();
-				this.attr('service', null);
+				this.attr({
+					saveDisabled: false,
+					service: null
+				});
 				this.clearErrors();
 				can.batch.stop();
 			},
@@ -143,6 +148,21 @@ function(Component, initView, Models){
 				return Models.Service.feeds[feed];
 			}
 		},
+		events : {
+			"service:saveDisabled" : function(){
+				var self = this;
+				setTimeout(function(){
+					self.element.find('button.save-service').prop('disabled', true);
+				}, 1);
+				
+			},
+			"service:saveEnabled" : function(){
+				var self = this;
+				setTimeout(function(){
+					self.element.find('button.save-service').prop('disabled', false);
+				}, 1);
+			}
+		},
 		helpers : {
 			renderForm : function(opts){
 				var service = this.attr('service'), feed, type;
@@ -153,6 +173,7 @@ function(Component, initView, Models){
 
 				feed = service.attr('feed_name'),
 				type = service.attr('type_name');
+
 
 				if(type && feed){
 					return makeTemplate(feed, type)(opts.scope, {
