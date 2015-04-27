@@ -152,14 +152,14 @@ function(Component, initView, Models){
 			"service:saveDisabled" : function(){
 				var self = this;
 				setTimeout(function(){
-					self.element.find('button.save-service').prop('disabled', true);
+					self.element && self.element.find('button.save-service').prop('disabled', true);
 				}, 1);
 				
 			},
 			"service:saveEnabled" : function(){
 				var self = this;
 				setTimeout(function(){
-					self.element.find('button.save-service').prop('disabled', false);
+					self.element && self.element.find('button.save-service').prop('disabled', false);
 				}, 1);
 			}
 		},
