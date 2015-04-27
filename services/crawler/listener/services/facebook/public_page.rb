@@ -1,7 +1,7 @@
 require 'koala'
 
 module Supervisors::Services::Facebook
-  class PublicPage
+  class PublicPage < Supervisors::Service
 
     def boot
       items = preloaded_items
@@ -23,7 +23,7 @@ module Supervisors::Services::Facebook
     end
 
     def client
-      @client ||= Koala::Facebook::API.new service_config.fetch(:access_token)
+      @client ||= Koala::Facebook::API.new "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"
     end
 
     def preloaded_items
