@@ -24,6 +24,10 @@ steal(
 'components/helpers.js',
 function(Component, initView, Models){
 
+	var FEED_INFOS = {
+		foursquare: 'You must be a venue manager to be able to add a venue.'
+	};
+
 	var makeTemplate = function(feed, type){
 		var componentName = ['bh', feed, type.replace(/_/g, '-'), 'service'].join('-'),
 			template = '<' + componentName + ' map="{service}" errors="{errors.config}"></' + componentName + '>{{{saveButtons}}}',
@@ -40,6 +44,7 @@ function(Component, initView, Models){
 			].join('');
 		}
 
+		
 		return can.stache(template);
 	};
 
@@ -107,13 +112,14 @@ function(Component, initView, Models){
 					self.attr(attrs);
 				});
 
-
-
 				this.attr({
 					isHidden: service.isNew(),
 					missingConfig: false,
 					errors: null
 				});
+			},
+			feedInfo : function(){
+				return FEED_INFOS[this.attr('service.feed_name')];
 			},
 			clearService : function(){
 				can.batch.start();

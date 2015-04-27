@@ -40,7 +40,8 @@ steal(
 				
 				var appState = new AppState({
 					currentBrand: brand,
-					currentSubscription: subscription
+					currentSubscription: subscription,
+					embedType : 'admin'
 				});
 
 				new PresetChangeUpdater(document.documentElement, {
