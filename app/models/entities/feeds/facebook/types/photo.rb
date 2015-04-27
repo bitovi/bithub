@@ -2,6 +2,7 @@ module Entities
   module Facebook
 
     class Photo < Protocol
+      include Facebook::SharedBuilders
 
       def find
         @event.photo.id && find_by_photo_id.first
@@ -14,30 +15,23 @@ module Entities
         .where(origin_id: @event.photo.id.to_s)
       end
 
-      def build
-        Entity.new({
-          title: title,
-          body: @event.message,
-          url: @event.link,
-          origin_id: @event.id,
-          origin_ts: @event.created_time,
+      def data
+        with_commons({
           props: {
-            origin_id: @event.id,
             origin_object_id: @event.photo_id,
-            origin_author_id: @event.from.id,
-            origin_author_name: @event.from.name,
             photos: JSON.generate(@event.images)
           }
         })
       end
 
-      private
+      def build
+        Entity.new(data)
+      end
 
-      def title
-        "#{@event.from.name} posted: #{@event.type}"
+      def update
+        @instance.props[:origin_author_name] = @event.from.name
       end
 
     end
-
   end
 end

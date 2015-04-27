@@ -7,8 +7,8 @@ module Entities
         @event.id && find_by_instagram_id.first
       end
 
-      def build
-        Entity.new({
+      def data
+        {
           title: caption,
           url: @event.link,
           origin_ts: @event.created_at,
@@ -16,10 +16,21 @@ module Entities
           props: {
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.full_name,
+            origin_author_username: @event.user.username,
             origin_author_avatar_url: @event.user.profile_picture,
             image_url: image_url
           }
-        })
+        }
+      end
+
+      def build
+        Entity.new(data)
+      end
+      
+      def update
+        @instance.props[:origin_author_name] = @event.user.full_name
+        @instance.props[:origin_author_username] = @event.user.username
+        self
       end
 
       def caption

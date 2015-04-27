@@ -2,6 +2,7 @@ module Entities
   module Facebook
 
     class Status < Protocol
+      include Facebook::SharedBuilders
 
       def find
         @event.status.id && find_by_status_id.first
@@ -14,19 +15,16 @@ module Entities
         .where(origin_id: @event.status.id.to_s)
       end
 
+      def data
+        with_commons({})
+      end
+
       def build
-        Entity.new({
-          title: title,
-          body: @event.message,
-          url: @event.link,
-          origin_id: @event.id,
-          origin_ts: @event.created_time,
-          props: {
-            origin_id: @event.id,
-            origin_author_id: @event.from.id,
-            origin_author_name: @event.from.name,
-          }
-        })
+        Entity.new(data)
+      end
+      
+      def update
+        @instance.props[:origin_author_name] = @event.from.name
       end
 
       def build_children
@@ -40,13 +38,6 @@ module Entities
         end if @event.comments
       end
 
-      private
-
-      def title
-        "#{@event.from.name} posted: #{@event.type}"
-      end
-
     end
-
   end
 end
