@@ -23,7 +23,7 @@ module Supervisors::Services::Facebook
 
     def boot
       begin
-        subscribe_page if has_page_token?
+        subscribe_page
       rescue Koala::KoalaError => e
         info "Facebook subscription failed with #{e.message}"
       end
@@ -55,11 +55,7 @@ module Supervisors::Services::Facebook
     end
 
     def page_token
-      service_config[:access_token] || "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"
-    end
-
-    def has_page_token?
-      service_config[:access_token]
+      service_config.fetch(:access_token)
     end
 
     def client

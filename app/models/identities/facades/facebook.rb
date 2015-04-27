@@ -24,6 +24,10 @@ module Identities
         end
       end
 
+      def user_long_lived_token
+        @extracted_data.fetch :long_lived_access_token
+      end
+
       def pages
         @extracted_data[:pages] || []
       end
