@@ -8,24 +8,28 @@ module Entities
           (find_by_event_url.first || find_by_event_id.first)
       end
 
-      def build
-        Entity.new({
+      def data
+        {
           title: @event.name,
           body: @event.description,
           url: @event.url,
-          origin_ts: @event.created_at,
           origin_id: @event.url,
+          origin_ts: @event.created_at,
           props: {
-            location: "", #@event.venue.composite_location,
             status: @event.status,
             venue: @event.venue,
             scheduled_at: @event.scheduled_at,
-            latitude: "", #@event.venue.lat,
-            longitude: "", #@event.venue.lon,
             event_hosts: JSON.generate(@event.hosts),
             event_host_ids: @event.host_ids_csv,
+            location: "", #@event.venue.composite_location,
+            latitude: "", #@event.venue.lat,
+            longitude: "", #@event.venue.lon,
           }
-        })
+        }
+      end
+
+      def build
+        Entity.new(data)
       end
 
       def update

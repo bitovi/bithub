@@ -7,8 +7,8 @@ module Entities
         @event.post.id && find_by_post_id.first
       end
 
-      def build
-        Entity.new({
+      def data
+        {
           title: @event.thread.title,
           body: @event.post.message,
           url: @event.post.url,
@@ -18,7 +18,11 @@ module Entities
             origin_author_id: @event.author.id,
             origin_author_name: @event.author.name,
           }
-        })
+        }
+      end
+
+      def build
+        Entity.new(data)
       end
 
       # Finders
