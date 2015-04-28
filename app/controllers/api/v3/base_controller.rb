@@ -31,4 +31,8 @@ class Api::V3::BaseController < ActionController::Base
   def current_brand
     Brand.where(tenant_name: session['tenant_name']).first
   end
+  
+  def current_brand!
+    Brand.where(tenant_name: session['tenant_name']).first!
+  end
 end

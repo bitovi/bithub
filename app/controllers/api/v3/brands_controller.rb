@@ -1,17 +1,15 @@
 class Api::V3::BrandsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def show
-    if @brand = current_brand
-      render :show
-    else
-      render json: msg_hash(@brand, 'show'), status: 404
-    end
+    authorize! :show, (@brand = current_brand!)
+    render :show
   end
 
   def create
+    authorize! :create, Brand
     @brand = Brand.new brand_params
+
     if @brand.save
       render :show
     else
@@ -20,8 +18,9 @@ class Api::V3::BrandsController < Api::V3::BaseController
   end
 
   def update
-    if @brand = current_brand
-      @brand.update_attributes brand_params
+    authorize! :update, (@brand = current_brand!)
+
+    if @brand.update_attributes brand_params
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 406
@@ -29,7 +28,8 @@ class Api::V3::BrandsController < Api::V3::BaseController
   end
 
   def destroy
-    @brand = Brand.find(params[:id])
+    authorize!(:destroy, @brand = Brand.find(params[:id]))
+    
     if @brand.destroy
       render :json => msg_hash(@brand, 'destroy', 'success'), :status => 200
     else
