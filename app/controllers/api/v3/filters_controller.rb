@@ -10,8 +10,8 @@ class Api::V3::FiltersController < Api::V3::BaseController
   end
 
   def show
-    authorize! :show, Filter
-    if @filter = owner_embed.filters.find(filter_id)
+    authorize! :show, a_filter
+    if @filter
       render 'api/v3/filters/show'
     else
       render :json => msg_hash(@filter, 'show'), :status => 404
@@ -58,6 +58,10 @@ class Api::V3::FiltersController < Api::V3::BaseController
   end
 
   private
+  
+  def a_filter
+    @filter = Filter.find(filter_id)
+  end
 
   def embed_id
     params[:embed_id] || params[:filter].andand[:embed_id]

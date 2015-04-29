@@ -7,6 +7,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
 
   def index
     authorize! :index, EmbedPreset
+    all_presets
     render :index
   end
 
@@ -37,11 +38,10 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
 
   def destroy
     authorize! :destroy, a_preset
-
     if @preset.destroy
-      render :json => msg_hash(@preset, 'destroy', 'success'), :status => 204
+      render :json => msg_hash(EmbedPreset, 'destroy', 'success'), :status => 204
     else
-      render :json => msg_hash(@preset, 'destroy'), :status => 422
+      render :json => msg_hash(EmbedPreset, 'destroy'), :status => 422
     end
   end
 
@@ -51,7 +51,7 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   end
 
   def a_preset
-    @preset = owner_embed.presets.find(preset_id)
+    @preset = EmbedPreset.find(preset_id)
   end
 
   def embed_preset_params
