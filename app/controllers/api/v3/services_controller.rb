@@ -64,7 +64,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def tree
-    #TODO manage with authorize!
     raise CanCan::AccessDenied unless params['secret'] == ENV['CRAWLER_SECRET_KEY']
 
     big_hash = Hash[
