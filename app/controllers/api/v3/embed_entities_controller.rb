@@ -155,7 +155,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def decorate_entity
     @entity = EntityDecorator.decorate(
-      @relation, context: { embed: owner_embed })
+      @relation.entity, context: { embed: owner_embed })
   end
 
   def entity_id

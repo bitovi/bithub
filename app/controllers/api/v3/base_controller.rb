@@ -29,10 +29,10 @@ class Api::V3::BaseController < ActionController::Base
   end
 
   def current_brand
-    @brand = Brand.where(tenant_name: session['tenant_name']).first
+    @brand ||= Brand.where(tenant_name: session['tenant_name']).first
   end
   
   def current_brand!
-    @brand = Brand.where(tenant_name: session['tenant_name']).first!
+    @brand ||= Brand.where(tenant_name: session['tenant_name']).first!
   end
 end
