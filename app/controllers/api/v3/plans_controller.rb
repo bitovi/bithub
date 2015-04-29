@@ -3,16 +3,24 @@ class Api::V3::PlansController < Api::V3::BaseController
   load_and_authorize_resource
 
   def index
-    @plans = Plan.where(available: true).all
+    authorize! :index, Plan
     render :index
   end
 
   def show
-    @plan = Plan.find plan_id
+    authorize! :show, a_plan
     render :show
   end
 
   private
+
+  def all_plans
+    @plans = Plan.where(available: true).all
+  end
+
+  def a_plan
+    @plan = Plan.find plan_id
+  end
 
   def plan_id
     params.require(:id)

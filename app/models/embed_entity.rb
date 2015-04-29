@@ -7,27 +7,27 @@ class EmbedEntity < ActiveRecord::Base
   end
 
   def approve
-    update_attribute(:is_approved_manually, true)
-    entity.touch
+    returning(update_attribute(:is_approved_manually, true)) do
+      entity.touch
+    end
   end
 
   def block
-    update_attributes({is_approved_manually: false, is_pinned: false})
-    entity.touch
+    returning(update_attributes({is_approved_manually: false, is_pinned: false})) do
+      entity.touch
+    end
   end
   alias_method :disapprove, :block
 
   def pin
-    update_attributes({is_pinned: true, is_approved_manually: true})
-    entity.touch
+    returning(update_attributes({is_pinned: true, is_approved_manually: true})) do
+      entity.touch
+    end
   end
 
   def unpin
-    update_attribute(:is_pinned, false)
-    entity.touch
-  end
-
-  def disconnect
-    destroy
+    returning(update_attribute(:is_pinned, false)) do
+      entity.touch
+    end
   end
 end

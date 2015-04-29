@@ -23,46 +23,60 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def show
-    if (@rel = entity_from_relation!) && (authorize! :show, @rel)
+    if @relation = entity_from_relation!
+      authorize! :show, @relation
       decorate_entity
       render :show
     end
   end
 
   def approve
-    if (@rel = embed_entity_relation!) && (authorize! :approve, @rel)
-      @rel.approve; decorate_entity
-      render :show
+    if @relation = embed_entity_relation!
+      authorize! :approve, @relation
+      if @relation.approve
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def block
-    if (@rel = embed_entity_relation!) && (authorize! :block, @rel)
-      @rel.block; decorate_entity
-      render :show
+    if @relation = embed_entity_relation!
+      authorize! :block, @relation
+      if @relation.block
+        decorate_entity
+        render :show
+      end
     end
   end
   alias_method :disapprove, :block
 
   def pin
-    if (@rel = embed_entity_relation!) && (authorize! :pin, @rel)
-      @rel.pin; decorate_entity
-      render :show
+    if @relation = embed_entity_relation!
+      authorize! :pin, @relation
+      if @relation.pin
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def unpin
-    if (@rel = embed_entity_relation!) && (authorize! :unpin, @rel)
-      @rel.unpin; decorate_entity
-      render :show
+    if @relation = embed_entity_relation!
+      authorize! :unpin, @relation
+      if @relation.unpin
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def destroy
-    if (@rel = embed_entity_relation!) && @rel.destroy
-      render :json => msg_hash(@relation, 'destroy', 'success')
-    else
-      render :json => msg_hash(@relation, 'destroy'), :status => 406
+    if @relation = embed_entity_relation!
+      authorize! :destroy, @relation
+      if @relation.destroy
+        render :json => msg_hash(EmbedEntity, 'destroy', 'success'), :status => 204
+      end
     end
   end
 
@@ -141,7 +155,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def decorate_entity
     @entity = EntityDecorator.decorate(
-      @rel, context: { embed: owner_embed })
+      @relation, context: { embed: owner_embed })
   end
 
   def entity_id
