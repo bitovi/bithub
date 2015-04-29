@@ -2,6 +2,8 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :embed
   belongs_to :entity
 
+  validates_uniqueness_of :embed_id, scope: [:entity_id]
+
   def is_approved
     (read_attribute(:is_approved_manually) != nil) ? is_approved_manually? : is_approved_automatically?
   end
