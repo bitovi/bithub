@@ -11,6 +11,7 @@ require 'poller/services/twitter/term'
 require 'poller/services/tumblr/blog'
 require 'poller/services/tumblr/tag'
 
+require 'poller/services/facebook/public_page'
 require 'poller/services/disqus_forum'
 require 'poller/services/meetup_group'
 require 'poller/services/rss_site'
