@@ -2,7 +2,6 @@ class Api::V3::BrandIdentitiesController < Api::V3::BaseController
   before_filter :authenticate_account!
 
   def index
-    # TODO how to authorize index?
     authorize! :index, BrandIdentity
     @identities = provider ? my_identities.where(provider: provider) : my_identities
     render :index
