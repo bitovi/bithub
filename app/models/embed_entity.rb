@@ -3,7 +3,7 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :entity
 
   def is_approved
-    read_attribute(:is_approved_manually).present? ? is_approved_manually? : is_approved_automatically?
+    (read_attribute(:is_approved_manually) != nil) ? is_approved_manually? : is_approved_automatically?
   end
 
   def approve
