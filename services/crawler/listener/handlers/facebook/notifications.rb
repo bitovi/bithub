@@ -64,7 +64,7 @@ module Handlers
       end
 
       def fetch_object(client, object_id)
-        Fetchers::Facebook::GetObject.new(client).fetch object_id
+        Fetchers::Facebook::GetObject.new(client, {object_id: object_id}).fetch
       end
 
     end
