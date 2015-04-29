@@ -54,12 +54,12 @@ class Embed < ActiveRecord::Base
   def restrictive?; !approved_by_default; end
 
   def approved_entities(scope = nil)
-    sql = 'embed_entities.is_approved_manually = TRUE OR embed_entities.is_approved_automatically = TRUE'
+    sql = 'embed_entities.is_approved_manually = TRUE OR (embed_entities.is_approved_automatically = TRUE AND embed_entities.is_approved_manually IS NULL)'
     scope ? scope.where(sql) : embed_entities.where(sql).map(&:entity)
   end
 
   def blocked_entities(scope = nil)
-    sql = 'embed_entities.is_approved_manually = FALSE OR embed_entities.is_approved_automatically = FALSE'
+    sql = 'embed_entities.is_approved_manually = FALSE OR (embed_entities.is_approved_automatically = FALSE AND embed_entities.is_approved_manually IS NULL)'
     scope ? scope.where(sql) : embed_entities.where(sql).map(&:entity) 
   end
 
