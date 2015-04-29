@@ -5,52 +5,66 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   load_and_authorize_resource
 
   def index
+    authorize! :index, Embed
     @embeds = Embed.all
     render :index
   end
 
   def show
-    @embed = owner_embed
+    authorize! :show, owner_embed
     render :show
   end
 
   def create
-    @embed = current_brand.embeds.new(embed_params)
-    @embed.name = generated_name if params[:name].blank?
+    authorize! :create, built_embed
 
-    brand = Brand.current
+    @embed.name = generated_name if params[:name].blank?
 
     permited = Subscriptions::PolicyChecker
       .new(brand.organization.subscription)
-      .can_create_embed?(brand)
+      .can_create_embed?(current_brand)
 
-    if permited && @embed.save
-      render :show
+    if permited
+      if @embed.save
+        render :show
+      else
+        render :json => msg_hash(@embed, 'create'), :status => 422
+      end
     else
-      render :json => msg_hash(@embed, 'destroy'), :status => 406
+      render :json => msg_hash(@embed, 'create'), :status => 403
     end
   end
 
   def update
-    if owner_embed.update_attributes(embed_params)
+    authorize! :update, owner_embed
+
+    if @embed.update_attributes(embed_params)
       render :show
     end
   end
 
   def destroy
-    if owner_embed.clear_relations_and_destroy
-      render :json => msg_hash(@embed, 'destroy', 'success')
+    authorize! :destroy, owner_embed
+
+    if @embed.clear_relations_and_destroy
+      render :json => msg_hash(@embed, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@embed, 'destroy'), :status => 406
     end
   end
 
   def moderate
-    owner_embed.moderate
+    authorize! :moderate, owner_embed
+
+    @embed.moderate
     render :json => msg_hash(@embed, 'moderate')
   end
 
   private
+
+  def built_embed
+    @embed = current_brand.embeds.build(embed_params)
+  end
 
   def embed_params
     params.require(:embed).permit(:name, :colorscheme, :layout, :approved_by_default)

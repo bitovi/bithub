@@ -27,20 +27,24 @@ class AccountAbility
       can :manage, Subscription, organization_id: account.organization_ids # [:read, :current]
       can :read, Payment, subscription: {organization_id: account.organization_ids}
 
-      # can :block   , EmbedEntity
-      # can :approve , EmbedEntity
-      # can :pin     , EmbedEntity
-      # can :unpin   , EmbedEntity
+      can :block   , EmbedEntity
+      can :approve , EmbedEntity
+      can :pin     , EmbedEntity
+      can :unpin   , EmbedEntity
 
-      ### Models locked inside tenants
+      # models locked inside tenants
       can :manage, Embed
+      can :moderate, Embed
+      
+      can :manage, Service
+      can :suggest, Service
+
       can :manage, EmbedEntity
       can :manage, EmbedPreset
       can :manage, Entity
       can :manage, Filter
       can :manage, Grouping
       can :manage, Histogram
-      can :manage, Service
       can :manage, ServiceEntity
       can :manage, User
     end
