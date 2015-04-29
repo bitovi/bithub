@@ -18,7 +18,7 @@ module Supervisors::Services::Facebook
     end
 
     def access_token
-      service_config.fetch(:access_token) # { "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}" }
+      service_config.fetch(:access_token) { "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}" }
     end
 
     def page_id
