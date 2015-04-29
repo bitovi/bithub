@@ -3,6 +3,7 @@ class Subscription < ActiveRecord::Base
 
   belongs_to :organization
   belongs_to :plan
+  has_many :payments
 
   validates :plan_id, :presence => true
 
