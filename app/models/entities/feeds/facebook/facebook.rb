@@ -3,12 +3,16 @@ module Entities
 
     module SharedBuilders
 
-      def title_body_url
+      def base_attributes
         {
           title: "#{@event.from.name} posted: #{@event.type}",
           body: @event.message,
           url: @event.link,
         }
+      end
+
+      def author_meta_attribute
+        { author: @event.from.name }
       end
 
       def origin_data
@@ -29,7 +33,7 @@ module Entities
 
       def with_commons(data)
         data
-          .deep_merge(title_body_url)
+          .deep_merge(base_attributes)
           .deep_merge(origin_data)
           .deep_merge(props_origin_author_data)
       end

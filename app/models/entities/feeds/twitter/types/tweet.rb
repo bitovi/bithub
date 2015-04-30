@@ -15,7 +15,6 @@ module Entities
           origin_ts: @event.created_at,
           origin_id: @event.id_str,
           props: {
-            origin_author_username: @event.user.screen_name,
             origin_author_avatar_url: @event.user.profile_image_url,
             entities_urls: JSON.generate(@event.entities.urls),
             entities_media: JSON.generate(@event.entities.media)
@@ -24,10 +23,6 @@ module Entities
 
         prepared[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
         with_commons(prepared)
-      end
-
-      def build
-        Entity.new(data)
       end
 
       def find_parent

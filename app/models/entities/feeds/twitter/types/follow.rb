@@ -22,10 +22,6 @@ module Entities
         })
       end
 
-      def build
-        Entity.new(data)
-      end
-
       private
 
       def fake_origin_ts

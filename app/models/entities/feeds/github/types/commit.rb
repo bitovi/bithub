@@ -1,7 +1,10 @@
+require 'entities/protocol'
+
 module Entities
   module Github
 
     class Commit < Protocol
+      include Github::SharedBuilders
 
       def initialize(event, commit_wrapper)
         @event = event
@@ -12,18 +15,13 @@ module Entities
         @commit.sha && find_by_commit_sha.first
       end
 
-      def build
-        Entity.new({
+      def data
+        with_commons({
           title: title,
           body: @commit.message,
           url: @commit.url,
           origin_id: @commit.sha,
-          origin_ts: @event.origin_timestamp,
           props: {
-            origin_author_id: @event.actor.id,
-            origin_author_name: @event.actor.login,
-            origin_author_avatar_url: @event.actor.avatar_url,
-            repo_name: @event.repo.name,
             sha: @commit.sha,
           }
         })

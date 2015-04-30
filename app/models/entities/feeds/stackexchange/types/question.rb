@@ -7,17 +7,11 @@ module Entities
         @event.question_id && find_by_question_id
       end
 
-      def build
-        Entity.new({
+      def data
+        with_commons({
           title: @event.title,
-          body: @event.body_markdown,
-          url: @event.link,
-          origin_ts: @event.creation_date,
           origin_id: @event.question_id.to_s,
           props: {
-            origin_author_id: @event.owner.id,
-            origin_author_name: @event.owner.name,
-            origin_author_avatar_url: @event.owner.profile_image,
             score: @event.score,
             accepted_answer_id: @event.accepted_answer_id,
             upvote_count: @event.upvote_count,

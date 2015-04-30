@@ -14,15 +14,12 @@ module Entities
           url: @event.post.url,
           origin_id: @event.post.id,
           origin_ts: @event.post.created_at,
+          author: @event.author.name,
           props: {
             origin_author_id: @event.author.id,
             origin_author_name: @event.author.name,
           }
         }
-      end
-
-      def build
-        Entity.new(data)
       end
 
       # Finders

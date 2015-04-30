@@ -28,10 +28,6 @@ module Entities
         }
       end
 
-      def build
-        Entity.new(data)
-      end
-
       def update
         @instance.title = @event.name
         @instance.body = @event.description

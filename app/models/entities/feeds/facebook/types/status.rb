@@ -19,10 +19,6 @@ module Entities
         with_commons({})
       end
 
-      def build
-        Entity.new(data)
-      end
-      
       def update
         @instance.props[:origin_author_name] = @event.from.name
       end

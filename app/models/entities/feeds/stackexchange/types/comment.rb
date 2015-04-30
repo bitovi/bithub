@@ -7,17 +7,11 @@ module Entities
         @event.comment_id && find_by_origin_id
       end
 
-      def build
-        Entity.new({
+      def data
+        with_commons({
           title: "commented #{@event.post_type} ##{@event.post_id}",
-          body: @event.body_markdown,
-          url: @event.link,
-          origin_ts: @event.creation_date,
           origin_id: @event.comment_id.to_s,
           props: {
-            origin_author_id: @event.owner.id,
-            origin_author_name: @event.owner.name,
-            origin_author_avatar_url: @event.owner.profile_image,
             score: @event.score,
             post_id: @event.post_id,
             post_type: @event.post_type,
@@ -26,7 +20,7 @@ module Entities
       end
 
       def update
-        @instance
+        nil
       end
 
       private
@@ -39,8 +33,6 @@ module Entities
           .first
       end
 
-
     end
-
   end
 end

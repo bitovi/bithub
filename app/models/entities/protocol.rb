@@ -43,6 +43,15 @@ module Entities
     end
     attr_reader :instance
 
+    def build
+      Entity.new(data)
+    end
+
+    def rebuild
+      @instance.assign_attributes(data)
+      self
+    end
+
     def update_if_found
       update unless @instance.new_record?
       self
