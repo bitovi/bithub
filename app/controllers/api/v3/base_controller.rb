@@ -10,7 +10,7 @@ class Api::V3::BaseController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
-  rescue_from CanCan::AccessDenied, with: :show_401
+  rescue_from CanCan::AccessDenied, with: :show_403
 
   respond_to :json
 
@@ -29,6 +29,10 @@ class Api::V3::BaseController < ActionController::Base
   end
 
   def current_brand
-    Brand.where(tenant_name: session['tenant_name']).first
+    @brand ||= Brand.where(tenant_name: session['tenant_name']).first
+  end
+  
+  def current_brand!
+    @brand ||= Brand.where(tenant_name: session['tenant_name']).first!
   end
 end

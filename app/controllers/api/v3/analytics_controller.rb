@@ -3,23 +3,20 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   load_and_authorize_resource :histogram, only: [:show]
 
   def show
-    source
+    authorize!(:read, source)
 
     if @source
       @timepoints = Histogram.stats_by_source_type(source_type, resolution)
         .where(:source_id => @source.id)
         .limit(last)
 
-      response = {
-        source: @source,
-        timepoints: @timepoints
-      }
+      response = { source: @source, timepoints: @timepoints }
     elsif @sources
       response = @sources.map do |s|
-        @timepoints = Histogram.stats_by_source_type(source_type, resolution)
+        @timepoints = Histogram\
+          .stats_by_source_type(source_type, resolution)
           .where(:source_id => s.id)
           .limit(last)
-
         { source: s, timepoints: @timepoints }
       end
     end

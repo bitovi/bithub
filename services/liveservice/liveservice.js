@@ -121,42 +121,41 @@ LiveService.prototype.onIoConnection = function() {
 			};
 		});
 
-		if( session_id == undefined ) {
-			if( !params.tenant_name ) return;
-
-			var routingKey = ['entities', params.tenant_name, params.embed_id].join('.');
-			var emitter  = function(data){
-				if(data.meta.is_public){
-					socket.emit('entities', data.payload);
-				}
+		self.sessions.read( session_id, function( err, result ) {
+			if( err ) {
+				console.log( err );
+				return;
 			};
 
-			self.quite || _logNewSubscription( routingKey, 'public' );
-			self.router.subscribe(routingKey, emitter );
-			subscriptions.push( {routingKey: routingKey, emitter: emitter} );
-		} else {
-			self.sessions.read( session_id, function( err, result ) {
-				if( err ) {
-					console.error( err );
-				} else {
-					if( result == null ) {
-						console.log('No session data for session ' + session_id + ' from ' + remoteIp);
-						return;
+			if( result && result.tenant_name ) {
+				// AUTHORIZED USER
+
+				_.each( self.endpoints, function( endpoint ) {
+					var routingKey = [endpoint, result.tenant_name, params.embed_id].join('.');
+					var emitter  = function( data ) {
+						socket.emit( endpoint, data.payload );
+					};
+
+					self.quite || _logNewSubscription( routingKey, session_id );
+					self.router.subscribe( routingKey, emitter );
+					subscriptions.push( {routingKey: routingKey, emitter: emitter} );
+				});
+			} else {
+				// PUBLIC CONNECTION
+
+				var routingKey = ['entities', params.tenant_name, params.embed_id].join('.');
+				var emitter  = function(data){
+					if(data.meta.is_public){
+						socket.emit('entities', data.payload);
 					}
+				};
 
-					_.each( self.endpoints, function( endpoint ) {
-						var routingKey = [endpoint, result.tenant_name, params.embed_id].join('.');
-						var emitter  = function( data ) {
-							socket.emit( endpoint, data.payload );
-						};
+				self.quite || _logNewSubscription( routingKey, 'public' );
+				self.router.subscribe(routingKey, emitter );
+				subscriptions.push( {routingKey: routingKey, emitter: emitter} );
+			}
+		});
 
-						self.quite || _logNewSubscription( routingKey, session_id );
-						self.router.subscribe( routingKey, emitter );
-						subscriptions.push( {routingKey: routingKey, emitter: emitter} );
-					});
-				}
-			});
-		}
 	});
 };
 
