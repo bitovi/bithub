@@ -14,14 +14,19 @@ module Entities
       def props_tags
         { props: { tags: @event.tags } }
       end
+        
+      def author_meta_attribute
+        { author: @event.blog_name }
+      end
 
       def props_author_data
-        { props: { origin_author_username: @event.blog_name } }
+        { props: { origin_author_name: @event.blog_name } }
       end
 
       def with_commons(data)
         data.merge(url)
           .merge(origin_id_and_ts)
+          .merge(author_meta_attribute)
           .deep_merge(props_tags)
           .deep_merge(props_author_data)
       end

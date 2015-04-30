@@ -4,6 +4,11 @@ require 'events/traits/serializable'
 require 'events/traits/validatable'
 require 'events/traits/normalizable'
 
+# require Wrappers
+Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
+  require f.gsub('app/models/', '')
+end
+
 module Events
   module Disqus; end
   module Github; end

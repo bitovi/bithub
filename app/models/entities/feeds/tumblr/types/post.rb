@@ -11,10 +11,6 @@ module Entities
           .feed('tumblr')
           .where(origin_id: @event.id)
       end
-
-      def build
-        Entity.new(data)
-      end
     end
   end
 end

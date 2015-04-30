@@ -7,17 +7,11 @@ module Entities
         @event.answer_id && find_by_origin_id
       end
 
-      def build
-        Entity.new({
-          title: "answered ##{@event.question_id}", # @event.title
-          body: @event.body_markdown,
-          url: @event.link,
-          origin_ts: @event.creation_date,
+      def data
+        with_commons({
+          title: @event.title,
           origin_id: @event.answer_id.to_s,
           props: {
-            origin_author_id: @event.owner.id,
-            origin_author_name: @event.owner.name,
-            origin_author_avatar_url: @event.owner.profile_image,
             score: @event.score,
             is_accepted: @event.accepted?,
             upvote_count: @event.upvote_count,

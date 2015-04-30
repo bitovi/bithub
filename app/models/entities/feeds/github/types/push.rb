@@ -2,29 +2,23 @@ module Entities
   module Github
 
     class Push < Protocol
+      include Github::SharedBuilders
 
       def find
         @event.push_id && find_by_push_id.where(:parent_id => nil).first
       end
 
-      def build
-        Entity.new({
+      def data
+        with_commons({
           title: "pushed to #{@event.repo.name}",
           url: "https://github.com/#{@event.repo.name}/commit/#{@event.head}",
           origin_id: @event.push_id.to_s,
-          origin_ts: @event.origin_timestamp,
           body: format_body,
           props: {
-            origin_author_id: @event.actor.id,
-            origin_author_name: @event.actor.login,
-            origin_author_avatar_url: @event.actor.avatar_url,
-            repo_name: @event.repo.name,
             commit_shas: @event.commit_shas_csv,
           }
         })
       end
-
-      # Finders
 
       def find_by_push_id
         Entity

@@ -31,7 +31,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
         render :json => msg_hash(@embed, 'create'), :status => 422
       end
     else
-      render :json => msg_hash(@embed, 'create'), :status => 403
+      render :json => msg_hash(@embed, 'create'), :status => 406
     end
   end
 

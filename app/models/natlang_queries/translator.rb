@@ -20,7 +20,7 @@ module NatlangQueries
       if op_is_contains? && @q.attr_name != 'author'
         :advanced_search
       elsif op_is_contains? && @q.attr_name == 'author'
-        :where
+        :advanced_search
       elsif @q.op == 'is'
         :where
       end
@@ -30,7 +30,7 @@ module NatlangQueries
       if op_is_contains? && @q.attr_name != 'author'
         search_arguments
       elsif op_is_contains? && @q.attr_name == 'author'
-        where_arguments
+        search_arguments
       elsif @q.op == 'is'
         where_arguments
       end
@@ -38,6 +38,8 @@ module NatlangQueries
 
     def search_arguments
       if @q.attr_name == 'content'
+        search_value
+      elsif @q.attr_name == 'author'
         search_value
       else
         h = { }; h[@q.attr_name] = search_value; h
@@ -49,11 +51,7 @@ module NatlangQueries
     end
     
     def where_column
-      if @q.attr_name == 'author'
-        "props -> 'origin_author_name'"
-      elsif @klass.has_an_attribute?(@q.attr_name)
-        @q.attr_name
-      end
+      @q.attr_name
     end
 
     def where_op
