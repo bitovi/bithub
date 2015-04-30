@@ -32,4 +32,10 @@ class EmbedEntity < ActiveRecord::Base
       entity.touch
     end
   end
+
+  private
+  def returning(exp)
+    yield(exp)
+    exp
+  end
 end
