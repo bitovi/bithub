@@ -1,7 +1,12 @@
 module Api::V3::Helpers
   module Common
+
     def show_401(exception)
       render json: { message: exception.message }, status: 401
+    end
+    
+    def show_403(exception)
+      render json: { message: exception.message }, status: 403
     end
 
     def show_404(exception)

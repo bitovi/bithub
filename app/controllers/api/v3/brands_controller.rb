@@ -1,43 +1,50 @@
 class Api::V3::BrandsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def show
-    if @brand = current_brand
-      render :show
-    else
-      render json: msg_hash(@brand, 'show'), status: 404
-    end
+    authorize! :show, current_brand
+    render :show
   end
 
   def create
-    @brand = Brand.new brand_params
+    authorize! :create, built_brand
+
     if @brand.save
       render :show
     else
-      render :json => msg_hash(@brand, 'create'), :status => 406
+      render :json => msg_hash(@brand, 'create'), :status => 422
     end
   end
 
   def update
-    if @brand = current_brand
-      @brand.update_attributes brand_params
+    authorize! :update, current_brand
+
+    if @brand.update_attributes brand_params
       render :show
     else
-      render json: msg_hash(@brand, 'update'), status: 406
+      render json: msg_hash(@brand, 'update'), status: 422
     end
   end
 
   def destroy
-    @brand = Brand.find(params[:id])
+    authorize! :destroy, a_brand
+    
     if @brand.destroy
-      render :json => msg_hash(@brand, 'destroy', 'success'), :status => 200
+      render :json => msg_hash(@brand, 'destroy', 'success'), :status => 204
     else
-      render :json => msg_hash(@brand, 'destroy'), :status => 406
+      render :json => msg_hash(@brand, 'destroy'), :status => 422
     end
   end
 
   private
+
+  def a_brand
+    @brand = Brand.find(params[:id])
+  end
+  
+  def built_brand
+    @brand = Brand.new(brand_params)
+  end
 
   def brand_params
     params.require(:brand).permit(:name, :tenant_name)

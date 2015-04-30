@@ -4,7 +4,6 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, except: [:index]
-  load_and_authorize_resource except: [:index]
 
   helper_method :custom_cache_key
   helper_method :list_cache_key
@@ -17,80 +16,67 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       Apartment::Tenant.switch(tn) do
         scope = build_scope
         @entities = EntityDecorator.decorate_collection(
-          scope.all,
-          context: { embed: owner_embed }
-        )
+          scope.all, context: { embed: owner_embed })
         render :index
       end
     end
   end
 
   def show
-    @entity = EntityDecorator.decorate(
-      entity_from_relation,
-      context: { embed: owner_embed }
-    )
-    render :show
+    if @relation = entity_from_relation!
+      authorize! :show, @relation
+      decorate_entity
+      render :show
+    end
   end
 
   def approve
-    @visibility = 'admin'
-    if (@relation = embed_entity_relation).approve
-      @entity = EntityDecorator.decorate(
-        entity_from_relation,
-        context: { embed: owner_embed }
-      )
-      render :show
-    else
-      render text: "error", status: 406
+    if @relation = embed_entity_relation!
+      authorize! :approve, @relation
+      if @relation.approve
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def block
-    @visibility = 'admin'
-    if (@relation = embed_entity_relation).block
-      @entity = EntityDecorator.decorate(
-        entity_from_relation,
-        context: { embed: owner_embed }
-      )
-      render :show
-    else
-      render text: "error", status: 406
+    if @relation = embed_entity_relation!
+      authorize! :block, @relation
+      if @relation.block
+        decorate_entity
+        render :show
+      end
     end
   end
   alias_method :disapprove, :block
 
   def pin
-    @visibility = 'admin'
-    if (@relation = embed_entity_relation).pin
-      @entity = EntityDecorator.decorate(
-        entity_from_relation,
-        context: { embed: owner_embed }
-      )
-      render :show
-    else
-      render text: "error", status: 406
+    if @relation = embed_entity_relation!
+      authorize! :pin, @relation
+      if @relation.pin
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def unpin
-    @visibility = 'admin'
-    if (@relation = embed_entity_relation).unpin
-      @entity = EntityDecorator.decorate(
-        entity_from_relation,
-        context: { embed: owner_embed }
-      )
-      render :show
-    else
-      render text: "error", status: 406
+    if @relation = embed_entity_relation!
+      authorize! :unpin, @relation
+      if @relation.unpin
+        decorate_entity
+        render :show
+      end
     end
   end
 
   def destroy
-    if (@relation = embed_entity_relation).destroy
-      render :json => msg_hash(@relation, 'destroy', 'success')
-    else
-      render :json => msg_hash(@relation, 'destroy'), :status => 406
+    if @relation = embed_entity_relation!
+      authorize! :destroy, @relation
+      if @relation.destroy
+        render :json => msg_hash(EmbedEntity, 'destroy', 'success'), :status => 204
+      end
     end
   end
 
@@ -148,11 +134,11 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     ScopeApplier.new((current_scope || Entity), query_logic)
   end
 
-  def embed_entity_relation
-    owner_embed.embed_entities.where(entity_id: entity_id, embed_id: embed_id).first
+  def embed_entity_relation!
+    owner_embed.embed_entities.where(entity_id: entity_id).first!
   end
 
-  def entity_from_relation
+  def entity_from_relation!
     select_sql = <<-SQL
       entities.*,
       embed_entities.is_approved_automatically AS is_approved_automatically,
@@ -163,7 +149,13 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
     Entity.joins(:embed_entities)\
       .select(select_sql)
       .where('embed_entities.embed_id' => embed_id)\
-      .where('entities.id' => entity_id).first
+      .where('entities.id' => entity_id)
+      .first!
+  end
+
+  def decorate_entity
+    @entity = EntityDecorator.decorate(
+      @relation.entity, context: { embed: owner_embed })
   end
 
   def entity_id

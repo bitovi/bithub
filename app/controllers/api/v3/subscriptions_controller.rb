@@ -1,9 +1,8 @@
 class Api::V3::SubscriptionsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def show
-    @subscription = Subscription.find subscription_id
+    authorize! :show, a_subscription
     render :show
   end
 
@@ -13,6 +12,10 @@ class Api::V3::SubscriptionsController < Api::V3::BaseController
   end
 
   private
+
+  def a_subscription
+    @subscription = Subscription.find subscription_id
+  end
 
   def subscription_id
     params.require(:id)

@@ -73,7 +73,7 @@ module Supervisors::Services::Facebook
     end
 
     def preloaded_items
-      Fetchers::Facebook::GetFeed.fetch client, page_id
+      Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }).fetch
     end
 
     # todo: unify with poller
