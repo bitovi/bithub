@@ -7,13 +7,10 @@ describe Entities::Meetup::Event do
         raw_data(response_path: 'meetup/2_events.json')['results'][0])
 
       entity_wrapper = Entities::Meetup::Event.new(event_event)
+      instance = entity_wrapper.procure.instance
 
-      expect(entity_wrapper.data.keys).to include(
-        :title, :body, :url, :origin_id, :origin_ts)
-
-      expect(entity_wrapper.data[:props].keys).to include(
-        :location, :status, :venue, :scheduled_at, :latitude,
-        :longitude, :event_hosts, :event_host_ids)
+      expect(instance.attributes.keys).to include( 'title', 'body', 'url', 'origin_id', 'origin_ts')
+      expect(instance.props.keys).to include( 'location', 'status', 'venue', 'scheduled_at', 'latitude', 'longitude', 'event_hosts', 'event_host_ids')
     end
   end
 end

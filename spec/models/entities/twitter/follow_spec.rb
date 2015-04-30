@@ -7,11 +7,10 @@ describe Entities::Twitter::Follow do
         raw_data(response_path: 'twitter/fake_follow_event.json'))
 
       entity_wrapper = Entities::Twitter::Follow.new(fake_follow_event)
+      instance = entity_wrapper.procure.instance
 
-      expect(entity_wrapper.data.keys).to include(:title, :origin_ts, :is_pending)
-
-      expect(entity_wrapper.data[:props].keys).to include(
-        :origin_author_id, :origin_author_name, :target_id, :target_name)
+      expect(instance.attributes.keys).to include('title', 'origin_ts', 'is_pending')
+      expect(instance.props.keys).to include('origin_author_id', 'origin_author_name', 'target_id', 'target_name')
     end
   end
 end

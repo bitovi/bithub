@@ -7,12 +7,10 @@ describe Entities::Disqus::Post do
         raw_data(response_path: 'disqus/comment_list.json')['response'][1])
 
       entity_wrapper = Entities::Disqus::Post.new(post_event)
+      instance = entity_wrapper.procure.instance
 
-      expect(entity_wrapper.data.keys).to include(
-        :title, :body, :url, :origin_id, :origin_ts)
-
-      expect(entity_wrapper.data[:props].keys).to include(
-        :origin_author_id, :origin_author_name)
+      expect(instance.attributes.keys).to include('title', 'body', 'url', 'origin_id', 'origin_ts')
+      expect(instance.props.keys).to include('origin_author_id', 'origin_author_name')
     end
   end
 end

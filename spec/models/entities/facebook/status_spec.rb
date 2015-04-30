@@ -7,12 +7,10 @@ describe Entities::Facebook::Status do
         raw_data(response_path: 'facebook/feed.json')[0])
 
       entity_wrapper = Entities::Facebook::Status.new(status_event)
+      instance = entity_wrapper.procure.instance
 
-      expect(entity_wrapper.data.keys).to include(
-        :title, :body, :url, :origin_ts, :origin_id)
-
-      expect(entity_wrapper.data[:props].keys).to include(
-        :origin_author_id, :origin_author_name)
+      expect(instance.attributes.keys).to include( 'title', 'body', 'url', 'origin_ts', 'origin_id')
+      expect(instance.props.keys).to include( 'origin_author_id', 'origin_author_name')
     end
   end
 end
