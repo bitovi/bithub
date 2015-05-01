@@ -1,8 +1,8 @@
 {{#bit}}
-	{{#if state.isAdmin}}
+	{{#if showAdminPanel}}
 		<div class="admin-panel">
 			<div class="disapprove-approve" can-click="toggleApproveBit">
-				<i class="fa fa-thumbs-{{#is_approved}}down{{else}}up{{/is_approved}}"></i>
+        <img alt="" src="/images/moderation/{{#is_approved}}block{{else}}approve{{/is_approved}}.png"/>
 				<div class="action-is">
 					{{#is_approved}}
 						Block
@@ -13,10 +13,7 @@
 			</div>
 		
 			<div class="pin" can-click="togglePinBit">
-				<i class="fa-thumb-tack fa"></i>
-				{{#is_pinned}}
-					<i class="fa fa-remove"></i>
-				{{/is_pinned}}
+        <img alt="" src="/images/moderation/{{#is_pinned}}unpin{{else}}pin{{/is_pinned}}.png"/>
 				<div class="action-is">
 					{{#is_pinned}}
 						Unpin
@@ -67,4 +64,10 @@
 			</a>
 		</footer>
 	</div>
+  {{#if actionFail}}
+  <div class="action-fail-alert">
+      <i class="fa fa-times" can-click="removeFailNotice"></i>
+      <div>Oops, we were not able to <b>{{actionFailTitle}}</b> this item<br> Please try again later.</div>
+  </div>
+  {{/if}}
 {{/bit}}
