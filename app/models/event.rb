@@ -12,4 +12,19 @@ class Event < ActiveRecord::Base
   def deserialize
     Events::Dispatcher.deserialize(self)
   end
+
+  def wrapped
+    wrapper_class.new(source_data, {
+      embed_id: embed.id,
+      embed_name: embed.name,
+      service_id: service.id
+    })
+  end
+
+  def wrapper_class
+    fn = feed_name.camelize.to_sym; tn = type_name.camelize.to_sym
+    if ::Events.constants.include?(fn) && ::Events.const_get(fn).constants.include?(tn)
+      ::Events.const_get(fn).const_get(tn)
+    end
+  end
 end
