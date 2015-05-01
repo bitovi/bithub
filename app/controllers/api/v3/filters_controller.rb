@@ -21,6 +21,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
   def create
     @filter = owner_embed.filters.build(filter_params)
     @filter.natlang_queries.build(queries_params)
+    @filter.natlang_queries.map(&:clean)
 
     if @filter.save
       render 'api/v3/filters/show'
