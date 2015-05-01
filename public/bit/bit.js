@@ -20,18 +20,34 @@ function(Component, initView, _map, Bit){
 	}
 
 	var scope = {
+		actionFail: null,
 		toggleApproveBit : function(){
 			this.attr('bit.is_approved') ? this.disapproveBit() : this.approveBit();
 		},
 		togglePinBit : function(){
 			this.attr('bit.is_pinned') ? this.unpinBit() : this.pinBit();
+		},
+		actionFailTitle : function(){
+			var actionFail = this.attr('actionFail');
+			if(actionFail === 'disapprove') return 'block';
+			return actionFail;
+		},
+		removeFailNotice : function(){
+			this.attr('actionFail', null);
+		},
+		showAdminPanel : function(){
+			return !!this.attr('state').isAdmin() && !(this.attr('actionFail'));
 		}
 	};
 
 	for(var i = 0; i < Bit.ACTIONS.length; i++){
 		scope[Bit.ACTIONS[i] + 'Bit'] = (function(action){
 			return function(){
-				this.attr('bit')[action](this.attr('state.hubId'));
+				var self = this;
+				var def = this.attr('bit')[action](this.attr('state.hubId'));
+				def.fail(function(){
+					self.attr('actionFail', action);
+				})
 			}
 		})(Bit.ACTIONS[i]);
 	}
