@@ -1,14 +1,16 @@
-json.(entity, :id, :title, :body, :feed_name, :type_name, :url, :images, :created_at, :updated_at)
+json.cache! ['v3', entity] do
+  json.(entity, :id, :title, :body, :feed_name, :type_name, :url, :images, :created_at, :updated_at)
 
-json.thread_updated_ts entity.thread_updated_ts.to_i
-json.thread_updated_at entity.thread_updated_ts
+  json.thread_updated_ts entity.thread_updated_ts.to_i
+  json.thread_updated_at entity.thread_updated_ts
 
-json.author do
-  json.id entity.props['origin_author_name']
-  json.avatar_url entity.props['origin_author_avatar_url']
+  json.author do
+    json.id entity.props['origin_author_name']
+    json.avatar_url entity.props['origin_author_avatar_url']
+  end
+
+  json.service_ids entity.services.map {|s| s.id}
+
+  json.is_approved entity.is_approved
+  json.is_pinned entity.is_pinned
 end
-
-json.service_ids entity.services.map {|s| s.id}
-
-json.is_approved entity.is_approved
-json.is_pinned entity.is_pinned
