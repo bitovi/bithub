@@ -34,7 +34,9 @@ class Api::V3::FiltersController < Api::V3::BaseController
     @filter = owner_embed.filters.find(filter_id)
     queries_params.each do |q|
       if (nlq = @filter.natlang_queries.find(q[:id]))
-        nlq.update_attributes(q)
+        nlq.assign_attributes(q)
+        nlq.clean
+        nlq.save
       else
         @filter.natlang_queries.build(q)
       end
