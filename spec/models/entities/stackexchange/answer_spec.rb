@@ -4,7 +4,7 @@ describe Entities::Stackexchange::Answer do
   describe 'data' do
     it 'prepares the data for building/updating' do
       answer_event = Events::Stackexchange::AnswerEvent.new(
-        raw_data(response_path: 'stackexchange/response.json')['items'][0]['answers'][0])
+        raw_data(response_path: 'stackexchange/search.json')['items'][0]['answers'][0])
 
       entity_wrapper = Entities::Stackexchange::Answer.new(answer_event)
       instance = entity_wrapper.procure.instance
