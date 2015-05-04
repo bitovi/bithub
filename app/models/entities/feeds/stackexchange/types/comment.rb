@@ -2,6 +2,7 @@ module Entities
   module Stackexchange
 
     class Comment < Protocol
+      include SharedBuilders
 
       def find
         @event.comment_id && find_by_origin_id
