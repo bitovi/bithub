@@ -4,7 +4,7 @@ describe Entities::Tumblr::Text do
   describe 'data' do
     it 'prepares the data for building/updating' do
       post_event = Events::Tumblr::Post.new(
-        raw_data(response_path: 'tumblr/response.json')['response'][9])
+        raw_data(response_path: 'tumblr/tagged.json')['response'][9])
 
       entity_wrapper = Entities::Tumblr::Text.new(post_event)
       instance = entity_wrapper.procure.instance

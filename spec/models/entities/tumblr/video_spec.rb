@@ -4,7 +4,7 @@ describe Entities::Tumblr::Video do
   describe 'data' do
     it 'prepares the data for building/updating' do
       post_event = Events::Tumblr::Post.new(
-        raw_data(response_path: 'tumblr/response.json')['response'][0])
+        raw_data(response_path: 'tumblr/tagged.json')['response'][0])
 
       entity_wrapper = Entities::Tumblr::Video.new(post_event)
       instance = entity_wrapper.procure.instance
