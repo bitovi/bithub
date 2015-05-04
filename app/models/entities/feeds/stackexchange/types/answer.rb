@@ -2,6 +2,7 @@ module Entities
   module Stackexchange
 
     class Answer < Protocol
+      include SharedBuilders
 
       def find
         @event.answer_id && find_by_origin_id

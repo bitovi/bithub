@@ -2,6 +2,7 @@ module Entities
   module Stackexchange
 
     class Question < Protocol
+      include SharedBuilders
 
       def find
         @event.question_id && find_by_question_id
