@@ -4,7 +4,7 @@ describe Entities::Stackexchange::Question do
   describe 'data' do
     it 'prepares the data for building/updating' do
       question_event = Events::Stackexchange::QuestionEvent.new(
-        raw_data(response_path: 'stackexchange/response.json')['items'][0])
+        raw_data(response_path: 'stackexchange/search.json')['items'][0])
 
       entity_wrapper = Entities::Stackexchange::Question.new(question_event)
       instance = entity_wrapper.procure.instance

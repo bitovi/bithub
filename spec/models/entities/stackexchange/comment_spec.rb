@@ -4,7 +4,7 @@ describe Entities::Stackexchange::Comment do
   describe 'data' do
     it 'prepares the data for building/updating' do
       comment_event = Events::Stackexchange::CommentEvent.new(
-        raw_data(response_path: 'stackexchange/response.json')['items'][0]['answers'][0]['comments'][0])
+        raw_data(response_path: 'stackexchange/search.json')['items'][0]['answers'][0]['comments'][0])
 
       entity_wrapper = Entities::Stackexchange::Comment.new(comment_event)
       instance = entity_wrapper.procure.instance
