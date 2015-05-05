@@ -137,12 +137,6 @@ LiveService.prototype.onIoConnection = function() {
 				_.each( self.endpoints, function( endpoint ) {
 					var routingKey = [endpoint, result.tenant_name, params.embed_id].join('.');
 					var emitter  = function( data ) {
-						// tmp for debugging
-                        if( endpoint == 'entities' ) {
-                            var payload = JSON.parse(data.payload);
-                            console.log('EMIT', socket.id, payload.author.id);
-                        } //
-
 						socket.emit( endpoint, data.payload );
 					};
 
@@ -156,11 +150,6 @@ LiveService.prototype.onIoConnection = function() {
 				var routingKey = ['entities', params.tenant_name, params.embed_id].join('.');
 				var emitter  = function(data){
 					if(data.meta.is_public){
-						// tmp for debugging
-                        var payload = JSON.parse(data.payload);
-                        console.log('EMIT', socket.id, payload.author.id);
-						//
-
 						socket.emit('entities', data.payload);
 					}
 				};
