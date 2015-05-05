@@ -32,6 +32,10 @@ steal(function(){
 				console.log('DISCONNECTION!', msg);
 			});
 
+			currentSocket.on('entities', function( entity ) {
+				console.log('NEW ENTITY!', entity.id );
+			});
+
 			return currentSocket;
 		}
 	}
