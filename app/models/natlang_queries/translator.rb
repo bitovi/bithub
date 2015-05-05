@@ -1,6 +1,6 @@
 module NatlangQueries
 
-  VALID_OPS = %w(contains contains_any contains_all is)
+  VALID_OPS = %w(contains contains_phrase contains_any contains_all is)
 
   class Translator
     def initialize(query, klass = Entity)
@@ -12,26 +12,34 @@ module NatlangQueries
       { :method => tmethod, :arg => targuments }
     end
 
-    def op_is_contains?
+    def op_translated_to_full_text_search?
       %w(contains contains_all contains_any).include? @q.op
     end
 
+    def op_translated_to_like?
+      %w(contains_phrase like starts_with ends_with).include? @q.op
+    end
+
+    def attribute_defined?
+      @klass.has_an_attribute?(@q.attr_name)
+    end
+
+    def attribute_is_string?
+      %i(string text).include? @klass.columns_hash[@q.attr_name].type
+    end
+
     def tmethod
-      if op_is_contains? && @q.attr_name != 'author'
+      if op_translated_to_full_text_search?
         :advanced_search
-      elsif op_is_contains? && @q.attr_name == 'author'
-        :advanced_search
-      elsif @q.op == 'is'
+      elsif @q.op == 'is' || op_translated_to_like?
         :where
       end
     end
 
     def targuments
-      if op_is_contains? && @q.attr_name != 'author'
+      if op_translated_to_full_text_search?
         search_arguments
-      elsif op_is_contains? && @q.attr_name == 'author'
-        search_arguments
-      elsif @q.op == 'is'
+      elsif @q.op == 'is' || op_translated_to_like?
         where_arguments
       end
     end
@@ -39,10 +47,8 @@ module NatlangQueries
     def search_arguments
       if @q.attr_name == 'content'
         search_value
-      elsif @q.attr_name == 'author'
-        search_value
       else
-        h = { }; h[@q.attr_name] = search_value; h
+        Hash[@q.attr_name, search_value]
       end
     end
 
@@ -51,20 +57,28 @@ module NatlangQueries
     end
     
     def where_column
-      @q.attr_name
+      if attribute_defined?
+        @q.attr_name
+      end
     end
 
     def where_op
       if @q.op == 'is'
         @q.negated? ? '<>' : '='
-      elsif @q.op =~ /contains/
-        @q.negated? ? 'NOT LIKE' : 'LIKE'
+      elsif op_translated_to_like?
+        @q.negated? ? 'NOT ILIKE' : 'ILIKE'
       end
     end
 
     def where_value
-      if @q.attr_name == 'author' && @q.op =~ /contains/
-        '%' + @q.val + '%'
+      if (x = attribute_defined?) && (y = attribute_is_string?) && (z = op_translated_to_like?)
+        if @q.op == 'like' || @q.op == 'contains_phrase'
+          '%' + @q.val + '%'
+        elsif @q.op == 'starts_with'
+          @q.val + '%'
+        elsif @q.op == 'ends_with'
+          '%' + @q.val
+        end
       else
         @q.val
       end

@@ -1,9 +1,25 @@
 require 'spec_helper'
 require 'models/natlang_queries/translator'
 
+class PGColumn
+  def initialize(type)
+    @type = type
+  end
+  attr_reader :type
+end
+
 class DummyARClass
   def self.has_an_attribute?(whatever)
     true
+  end
+
+  def self.columns_hash
+    Hash[
+      'title', PGColumn.new(:string),
+      'author', PGColumn.new(:string),
+      'feed_name', PGColumn.new(:string),
+      'type_name', PGColumn.new(:string)
+    ]
   end
 end
 
@@ -22,63 +38,40 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
         nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
         expect(nlqt.tmethod).to eq(:where)
       end
-    end
 
-    context 'given an "author" as attr_name' do
-      it 'translates the "contains" op to AR.where' do
-        nlq = double(:natlang_query, attr_name: 'author', op: 'contains', val: 'canjs', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.tmethod).to eq(:where)
+      it 'translates the "starts_with", "ends_with" and "like" op to a AR.where' do
+        nlq1 = double(:natlang_query, attr_name: 'title', op: 'like', val: 'simple', negated?: false)
+        nlq2 = double(:natlang_query, attr_name: 'title', op: 'starts_with', val: 'simple', negated?: false)
+        nlq3 = double(:natlang_query, attr_name: 'title', op: 'ends_with', val: 'simple', negated?: false)
+        nlqt1 = NatlangQueries::Translator.new(nlq1, DummyARClass)
+        nlqt2 = NatlangQueries::Translator.new(nlq2, DummyARClass)
+        nlqt3 = NatlangQueries::Translator.new(nlq3, DummyARClass)
+        expect(nlqt1.tmethod).to eq(:where)
+        expect(nlqt2.tmethod).to eq(:where)
+        expect(nlqt3.tmethod).to eq(:where)
       end
     end
   end
 
   describe '#targuments' do
-    it 'translates the "contains_all" op to AR.advanced_search compatible argument' do
+    it 'translates the "contains" op to AR.advanced_search compatible argument' do
       nlq = double(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'canjs,jquerypp', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq({ 'title' => 'canjs&jquerypp' })
-    end
-
-    it 'translates the "contains_any" op to AR.advanced_search compatible argument' do
-      nlq = double(:natlang_query, attr_name: 'title', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
-      nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq({ 'title' => 'canjs|jquerypp' })
+      expect(nlqt.targuments).to eq({'title' => 'canjs&jquerypp'})
     end
 
     it 'translates the "is" op to a AR.where compatible argument' do
       nlq = double(:natlang_query, attr_name: 'title', op: 'is', val: 'canjs', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq ["title = ?", 'canjs']
+      expect(nlqt.targuments).to eq(["title = ?", 'canjs'])
+    end
+    
+    it 'translates the "starts_with", "ends_with" and "like" op to a AR.where compatible argument' do
+      nlq = double(:natlang_query, attr_name: 'author', op: 'starts_with', val: 'nik', negated?: false)
+      nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+      expect(nlqt.targuments).to eq(["author ILIKE ?", 'nik%'])
     end
 
-    context 'given an "author" as a attr' do
-      it 'translates the "is" op to a "where =" SQL query' do
-        nlq = double(:natlang_query, attr_name: 'author', op: 'is', val: 'nikica', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.targuments).to eq ["props -> 'origin_author_name' = ?", 'nikica']
-      end
-
-      it 'translates the "contains*" op to a "where LIKE" SQL query' do
-        nlq = double(:natlang_query, attr_name: 'author', op: 'contains', val: 'nikica', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.targuments).to eq(["props -> 'origin_author_name' LIKE ?", '%nikica%'])
-      end
-
-      context 'and the query is negative' do
-        it 'translates the "is" op to a "where <>" SQL query' do
-          nlq = double(:natlang_query, attr_name: 'author', op: 'is', val: 'nikica', negated?: true)
-          nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.targuments).to eq ["props -> 'origin_author_name' <> ?", 'nikica']
-        end
-
-        it 'translates the "contains*" op to a "where NOT LIKE" SQL query' do
-          nlq = double(:natlang_query, attr_name: 'author', op: 'contains', val: 'nikica', negated?: true)
-          nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.targuments).to eq(["props -> 'origin_author_name' NOT LIKE ?", '%nikica%'])
-        end
-      end
-    end
   end
 
   describe '#where_column' do
@@ -86,14 +79,6 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       nlq = double(:natlang_query, attr_name: 'title', op: 'is', val: 'canjs', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
       expect(nlqt.where_column).to eq('title')
-    end
-
-    context 'given an attribute that is stored in props (Hstore)' do
-      it 'translates the attr to target the hstore property' do
-        nlq = double(:natlang_query, attr_name: 'author', op: 'is', val: 'canjs', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.where_column).to eq("props -> 'origin_author_name'")
-      end
     end
   end
 
@@ -116,29 +101,51 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       end
     end
 
-    context 'given the op is "contains*"' do
+    context 'given the op is regex based"' do
       context ' and the query is affirmative' do
-        it 'translates the op to "LIKE" ' do
-          nlq = double(:natlang_query, attr_name: 'title', op: 'contains', val: 'canjs', negated?: false)
+        it 'translates the op to "ILIKE"' do
+          nlq = double(:natlang_query, attr_name: 'title', op: 'like', val: 'canjs', negated?: false)
           nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.where_op).to eq('LIKE')
+          expect(nlqt.where_op).to eq('ILIKE')
         end
       end
 
       context ' and the query is negative' do
-        it 'translates the op to "NOT LIKE"' do
-          nlq = double(:natlang_query, attr_name: 'title', op: 'contains', val: 'canjs', negated?: true)
+        it 'translates the op to "NOT ILIKE"' do
+          nlq = double(:natlang_query, attr_name: 'title', op: 'like', val: 'canjs', negated?: true)
           nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.where_op).to eq('NOT LIKE')
+          expect(nlqt.where_op).to eq('NOT ILIKE')
         end
       end
     end
   end
 
   describe '#where_value' do
-    context 'when the attr is "author" and op is "contains"' do
+    context 'when op is "like"' do
       it 'wraps the value in "%"' do
-        nlq = double(:natlang_query, attr_name: 'author', op: 'contains', val: 'canjs', negated?: false)
+        nlq = double(:natlang_query, attr_name: 'author', op: 'like', val: 'canjs', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.where_value).to eq('%canjs%')
+      end
+    end
+    context 'when op is "starts_with"' do
+      it 'appends "%" to value' do
+        nlq = double(:natlang_query, attr_name: 'author', op: 'starts_with', val: 'canjs', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.where_value).to eq('canjs%')
+      end
+    end
+    context 'when op is "ends_with"' do
+      it 'prepends "%" to value' do
+        nlq = double(:natlang_query, attr_name: 'author', op: 'ends_with', val: 'canjs', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.where_value).to eq('%canjs')
+      end
+    end
+    
+    context 'when op is "contains_phrase"' do
+      it 'wraps the value in "%"' do
+        nlq = double(:natlang_query, attr_name: 'author', op: 'contains_phrase', val: 'canjs', negated?: false)
         nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
         expect(nlqt.where_value).to eq('%canjs%')
       end
