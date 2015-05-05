@@ -6,7 +6,7 @@ steal(function(){
 	});
 
 	var url = '/?embed_id={embedId}';
-	var publicUrl = '/?embed_id={embedId}&tenant_name={tenantName}'
+	var publicUrl = '/?embed_id={embedId}&tenant_name={tenantName}';
 
 	return function(hubId, tenantName){
 
@@ -20,17 +20,18 @@ steal(function(){
 				tenantName : tenantName
 			}), { multiplex: false });
 
-			/*currentSocket.on('connect', function() {
-				console.log('CONNECTED!');
+			currentSocket.on('connect', function() {
+				console.log('CONNECTED!', currentSocket.id);
 			});
 
-			currentSocket.on('connect_error', function() {
-				console.log('CONNECTION ERROR!');
+			currentSocket.on('connect_error', function( err ) {
+				console.log('CONNECTION ERROR!', err.description, err.message, err.type);
 			});
 
-			currentSocket.on('moderation', function( msg ) {
-				console.log( 'New message from moderation', msg );
-			});*/
+			currentSocket.on('disconnect', function( msg ) {
+				console.log('DISCONNECTION!', msg);
+			});
+
 			return currentSocket;
 		}
 	}

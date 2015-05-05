@@ -111,19 +111,23 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && _parseCookies( cookie )._session_id);
 		var subscriptions = [];
 
+		console.log( 'CONNECTED, SID: ', socket.id );
+
 		socket.on('disconnect', function() {
+			self.quite || console.log( 'DISCONNECTED, SID: ', socket.id );
+
 			while(subscriptions.length > 0) {
 				var sub = subscriptions.shift();
 				self.router.unsubscribe(sub.routingKey, sub.emitter);
 
 				self.quite || console.log( 'Unsubscribed from ' + sub.routingKey );
-				self.quite || _logRouterState( self.router );
+				//self.quite || _logRouterState( self.router );
 			};
 		});
 
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
-				console.log( err );
+				console.log( 'ERROR reading session', session_id, 'from Redis', err );
 				return;
 			};
 
@@ -152,7 +156,7 @@ LiveService.prototype.onIoConnection = function() {
 
 				self.quite || _logNewSubscription( routingKey, 'public' );
 				self.router.subscribe(routingKey, emitter );
-				subscriptions.push( {routingKey: routingKey, emitter: emitter} );
+				subscriptions.push( {routingKey: routingKey, sid: socket.id, emitter: emitter} );
 			}
 		});
 
