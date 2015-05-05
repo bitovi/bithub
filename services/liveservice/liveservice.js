@@ -111,7 +111,13 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && _parseCookies( cookie )._session_id);
 		var subscriptions = [];
 
-		console.log( 'CONNECTED, SID: ', socket.id );
+		if( params.embed_id && params.tenant_name) {
+			self.quite || console.log( 'CONNECTED, SID: ', socket.id );
+		} else {
+			self.quite || console.log( 'FORCE DISCONNECT, malformed request from', remoteIp );
+			socket.disconnect();
+			return;
+		}
 
 		socket.on('disconnect', function() {
 			self.quite || console.log( 'DISCONNECTED, SID: ', socket.id );
@@ -128,14 +134,13 @@ LiveService.prototype.onIoConnection = function() {
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
 				console.log( 'ERROR reading session', session_id, 'from Redis', err );
-				return;
 			};
 
-			if( result && result.tenant_name ) {
+			if( result && (result.tenant_name == params.tenant_name) ) {
 				// AUTHORIZED USER
 
 				_.each( self.endpoints, function( endpoint ) {
-					var routingKey = [endpoint, result.tenant_name, params.embed_id].join('.');
+					var routingKey = [endpoint, params.tenant_name, params.embed_id].join('.');
 					var emitter  = function( data ) {
 						socket.emit( endpoint, data.payload );
 					};
