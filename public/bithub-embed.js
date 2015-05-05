@@ -64,7 +64,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 			triggerPartition(bits);
 
-			if(serviceIds){
+			if( serviceIds && (params.view != 'public') ){
 				communicator.send('loadedBits', serviceIds);
 			}
 
