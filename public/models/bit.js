@@ -90,8 +90,6 @@ function(Model, moment){
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
 
-			console.log('BIT - ENTITY RECIEVED', parsed.author.id);
-
 			if(this.store[parsed.id]){
 				this.store[parsed.id].attr(parsed);
 			} else {

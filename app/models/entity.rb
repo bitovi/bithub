@@ -115,7 +115,7 @@ class Entity < ActiveRecord::Base
   end
 
   def is_child?
-    !parent_id.nil? || !source_data['retweeted_status'].nil?
+    !parent_id.nil?
   end
 
   def label_names
