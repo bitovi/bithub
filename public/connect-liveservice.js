@@ -32,6 +32,10 @@ steal(function(){
 				console.log('DISCONNECTION!', msg);
 			});
 
+			currentSocket.on('entities', function( msg ) {
+				console.log('NEW ENTITY FROM WS');
+			});
+
 			return currentSocket;
 		}
 	}

@@ -4,7 +4,7 @@ steal(
 'can/list/promise',
 'can/map/define',
 function(Model, moment){
-	
+
 	var buffer = (function(){
 		var _buffer = [];
 		var _currentSweeper;
@@ -90,6 +90,8 @@ function(Model, moment){
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
 
+			console.log('BIT - ENTITY RECIEVED', parsed.author.id);
+
 			if(this.store[parsed.id]){
 				this.store[parsed.id].attr(parsed);
 			} else {
@@ -126,11 +128,10 @@ function(Model, moment){
 				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
 			}
 
-			
+
 			this.splice(index, 0, bit);
 		}
 	});
 
 	return Bit;
 })
-

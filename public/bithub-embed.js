@@ -54,6 +54,8 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 			var index;
 			var isLive = appState.isLive();
 
+			console.log('LIFECYCLE - ENTITY RECIEVED', bit.author.id);
+
 			if(appState.isPublic()){
 				isLive && bit.attr('is_approved') && bits.place(bit);
 			} else {
@@ -61,7 +63,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 					bits.unshift(bit);
 				}
 			}
-			
+
 			triggerPartition(bits);
 
 			if(serviceIds){
@@ -82,7 +84,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 		var initApp = function(){
 			var div = $('<div id="app" />');
-			
+
 			$('#app-wrapper').html(div);
 
 			new BitList(div, {
