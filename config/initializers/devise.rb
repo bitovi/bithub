@@ -6,6 +6,7 @@ require 'omniauth-meetup'
 require 'omniauth-stackexchange'
 require 'omniauth-facebook'
 require 'omniauth-disqus'
+require 'omniauth-google-oauth2'
 
 Devise.setup do |config|
   config.secret_key = '2aa637d41eb2b387b2bb19211702de5bafd653317bc8df921ffa1279c6f73c81418e49aa1fea745a22f322439311b9cd4b92320a12cadab54a6069b4763272f5'
@@ -51,6 +52,13 @@ Devise.setup do |config|
   config.omniauth :tumblr,
     ENV.fetch('TUMBLR_CLIENT_ID'),
     ENV.fetch('TUMBLR_CLIENT_SECRET')
+
+  config.omniauth :google_oauth2,
+    ENV.fetch('GOOGLE_CLIENT_ID'),
+    ENV.fetch('GOOGLE_CLIENT_SECRET'),
+    prompt: 'select_account consent',
+    scope: 'email, profile, https://www.googleapis.com/auth/youtube.readonly',
+    access_type: 'offline'
 
   config.sign_out_via = [:delete, :get]
 

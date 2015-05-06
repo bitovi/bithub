@@ -36,6 +36,10 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     oauthorize "tumblr"
   end
 
+  def google_oauth2
+    oauthorize "google_oauth2"
+  end
+
   def show_auth_error
     render :template => 'oauth/auth_error.html.erb'
   end
@@ -76,7 +80,7 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def identity_exists?(provider, uid)
     @identity = current_brand.identities.where(provider: provider, uid: uid).first
   end
-  
+
   def current_brand
     @current_brand ||= Brand.where(tenant_name: session['tenant_name']).first
   end
