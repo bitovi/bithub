@@ -19,12 +19,14 @@
                         <option value="content">Content</option>
                         <option value="title">Title</option>
                         <option value="author">Author</option>
+                        <option value="feed_name">Feed</option>
                     </select>
                 </div>
                 <div class="op-wrap">
                     <select class="form-control" can-value="operation">
                         <option value="pos:contains_all">Contains all words</option>
                         <option value="pos:contains_any">Contains any word</option>
+                        <option value="pos:contains_phrase">Contains a phrase</option>
                         <option value="pos:is">Is equal to</option>
                         <option value="neg:is">Isn't equal to</option>
                     </select>
