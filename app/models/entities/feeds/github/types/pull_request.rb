@@ -2,33 +2,24 @@ module Entities
   module Github
 
     class PullRequest < Protocol
+      include Github::SharedBuilders
 
       def find
         @event.pull_request.id && find_by_pull_request_id.first
       end
 
-      def build
-        built = Entity.new({
+      def data
+        with_commons({
           title: @event.pull_request.title,
           body: @event.pull_request.body,
           url: @event.pull_request.html_url,
-          origin_ts: @event.pull_request.created_at,
           origin_id: @event.pull_request.id.to_s,
           props: {
-            repo_name: @event.repo.name,
             number: @event.pull_request.number,
             state: @event.pull_request.state,
             label_names: @event.pull_request.labels.names_csv,
           }
         })
-
-        if @event.actor
-          built.props[:origin_author_id] = @event.actor.id
-          built.props[:origin_author_name] = @event.actor.login
-          built.props[:origin_author_avatar_url] = @event.actor.avatar_url
-        end
-
-        built
       end
 
       def find_children

@@ -61,10 +61,10 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 					bits.unshift(bit);
 				}
 			}
-			
+
 			triggerPartition(bits);
 
-			if(serviceIds){
+			if( serviceIds && (params.view != 'public') ){
 				communicator.send('loadedBits', serviceIds);
 			}
 
@@ -82,7 +82,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 		var initApp = function(){
 			var div = $('<div id="app" />');
-			
+
 			$('#app-wrapper').html(div);
 
 			new BitList(div, {
