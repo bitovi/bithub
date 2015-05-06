@@ -80,6 +80,14 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
       expect(nlqt.where_column).to eq('title')
     end
+
+    context 'when attr_name is equal to \'content\'' do
+      it 'translates it to the \'body\' column' do
+        nlq = double(:natlang_query, attr_name: 'content', op: 'contains_phrase', val: 'canjs', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.where_column).to eq('body')
+      end
+    end
   end
 
   describe '#where_op' do
@@ -168,6 +176,37 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
           nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
           expect(nlqt.search_value).to eq('canjs&jquerypp')
         end
+      end
+    end
+  end
+
+  describe '#op_translated_to_full_text_search?' do
+    context 'when op is along the lines of contains*' do
+      it 'confirms that the query should be translated to something Textacular can deal with' do
+        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'canjs,jquerypp', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.op_translated_to_full_text_search?).to be_truthy
+      end
+    end
+  end
+  
+  describe '#op_translated_to_like?' do
+    context 'when op is about phrasing or starts/ends with' do
+      it 'confirms that the query should be translated to something SQL ILIKE predicate can deal with' do
+        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_phrase', val: 'canjs is better than jquerypp', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.op_translated_to_like?).to be_truthy
+      end
+    end
+  end
+  
+  describe '#op_translated_to_like?' do
+    context 'when attr_name is equal to \'content\'' do
+      it 'considers that attr_name defined and treats it as a string column' do
+        nlq = double(:natlang_query, attr_name: 'content', op: 'contains_phrase', val: 'canjs is better than jquerypp', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.attribute_defined?).to be_truthy
+        expect(nlqt.attribute_is_string?).to be_truthy
       end
     end
   end
