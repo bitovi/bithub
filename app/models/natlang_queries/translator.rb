@@ -21,11 +21,11 @@ module NatlangQueries
     end
 
     def attribute_defined?
-      @klass.has_an_attribute?(@q.attr_name)
+      @q.attr_name == 'content' || @klass.has_an_attribute?(@q.attr_name)
     end
 
     def attribute_is_string?
-      %i(string text).include? @klass.columns_hash[@q.attr_name].type
+      @q.attr_name == 'content' || (%i(string text).include? @klass.columns_hash[@q.attr_name].type)
     end
 
     def tmethod
@@ -57,7 +57,11 @@ module NatlangQueries
     end
     
     def where_column
-      if attribute_defined?
+      # "Full text search" doesn't care about attr_name so it doesn't matter what it's value is
+      # In case of "ILIKE search" we translate 'content' to 'body'
+      if @q.attr_name == 'content'
+        'body'
+      elsif attribute_defined?
         @q.attr_name
       end
     end
