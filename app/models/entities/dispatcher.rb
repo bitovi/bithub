@@ -288,6 +288,8 @@ module Entities
         end
       end
 
+      # Tumblr sends a type attribute in the response,
+      # which we read and use to determine the type_name
       def type_name
         @event.source_data.fetch(:type).capitalize.to_sym
       end

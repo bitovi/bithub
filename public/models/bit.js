@@ -4,7 +4,7 @@ steal(
 'can/list/promise',
 'can/map/define',
 function(Model, moment){
-	
+
 	var buffer = (function(){
 		var _buffer = [];
 		var _currentSweeper;
@@ -126,11 +126,10 @@ function(Model, moment){
 				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
 			}
 
-			
+
 			this.splice(index, 0, bit);
 		}
 	});
 
 	return Bit;
 })
-

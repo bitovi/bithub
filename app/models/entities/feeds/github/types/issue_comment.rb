@@ -1,6 +1,8 @@
 module Entities
   module Github
+
     class IssueComment < Protocol
+      include Github::SharedBuilders
 
       def find
         @event.comment.id && find_by_comment_id.first
@@ -15,22 +17,16 @@ module Entities
         end.compact.first
       end
 
-      # Builder
-      def build
-        Entity.new(
+      def data
+        with_commons({
           title: "Comment on issue ##{@event.ipr.number}",
           body: @event.comment.body,
           url: @event.comment.html_url,
-          origin_ts: @event.comment.created_at,
           origin_id: @event.comment.id.to_s,
           props: {
-            origin_author_id: @event.actor.id,
-            origin_author_name: @event.actor.login,
-            origin_author_avatar_url: @event.actor.avatar_url,
-            repo_name: @event.repo.name,
             number: @event.ipr.number
           }
-        )
+        })
       end
 
       def update

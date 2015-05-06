@@ -12,12 +12,13 @@ module Entities
         @event.rsvp_id && find_by_rsvp_id.first
       end
       
-      def build
-        Entity.new({
+      def data
+        {
           title: "#{@event.member.name} RSVPd: #{@event.response}",
           body: @event.comment,
-          origin_ts: @event.created_at,
           origin_id: @event.rsvp_id,
+          origin_ts: @event.created_at,
+          author: @event.member.name,
           props: {
             origin_author_id: @event.member.id,
             origin_author_name: @event.member.name,
@@ -25,9 +26,9 @@ module Entities
             event_id: @event.event.id,
             response: @event.response,
           }
-        })
+        }
       end
-      
+
       def find_parent
         if @event.event.url
           Entities::Meetup::Event.find_by_origin_id(@event.event.url).first

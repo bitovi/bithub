@@ -1,14 +1,25 @@
-require_relative 'errors'
-require_relative 'traits/persistable'
-require_relative 'traits/serializable'
-require_relative 'traits/validatable'
-require_relative 'traits/normalizable'
+require 'events/errors'
+require 'events/traits/persistable'
+require 'events/traits/serializable'
+require 'events/traits/validatable'
+require 'events/traits/normalizable'
 
+# require Wrappers
 Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
   require f.gsub('app/models/', '')
 end
 
 module Events
+  module Disqus; end
+  module Github; end
+  module Twitter; end
+  module Meetup; end
+  module Stackexchange; end
+  module Facebook; end
+  module Instagram; end
+  module Tumblr; end
+  module Foursquare; end
+  module Rss; end
 
   class Protocol
     include CoreHelpers
@@ -102,3 +113,51 @@ module Events
     end
   end
 end
+
+# Disqus
+require 'events/disqus/post_event'
+
+# Facebook
+require 'events/facebook/photo_event'
+require 'events/facebook/status_event'
+
+# Foursquare
+require 'events/foursquare/checkin_event'
+
+# Github
+require 'events/github/commit_comment_event'
+require 'events/github/create_event'
+require 'events/github/custom_issue_event'
+require 'events/github/delete_event'
+require 'events/github/fork_event'
+require 'events/github/github_event_accessors'
+require 'events/github/issue_comment_event'
+require 'events/github/issue_event'
+require 'events/github/pull_request_event'
+require 'events/github/pull_request_review_comment_event'
+require 'events/github/push_event'
+require 'events/github/reference'
+require 'events/github/watch_event'
+
+# Instagram
+require 'events/instagram/media_event'
+
+# Meetup
+require 'events/meetup/event_event'
+require 'events/meetup/rsvp_event'
+
+# Rss
+require 'events/rss/post_event'
+
+# Stackexchange
+require 'events/stackexchange/answer_event'
+require 'events/stackexchange/comment_event'
+require 'events/stackexchange/question_event'
+
+# Tumblr
+require 'events/tumblr/post'
+
+# Twitter
+require 'events/twitter/fake_follow_event'
+require 'events/twitter/follow_event'
+require 'events/twitter/tweet_event'

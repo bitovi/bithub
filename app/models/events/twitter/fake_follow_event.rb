@@ -24,6 +24,7 @@ module Events
         self
       end
       attr_reader :source, :target
+      def user; @source; end
 
       alias_method :origin_author_id, :source_id
     end

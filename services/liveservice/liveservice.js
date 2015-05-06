@@ -111,27 +111,36 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && _parseCookies( cookie )._session_id);
 		var subscriptions = [];
 
+		if( params.embed_id && params.tenant_name) {
+			self.quite || console.log( 'CONNECTED, SID: ', socket.id );
+		} else {
+			self.quite || console.log( 'FORCE DISCONNECT, malformed request from', remoteIp );
+			socket.disconnect();
+			return;
+		}
+
 		socket.on('disconnect', function() {
+			self.quite || console.log( 'DISCONNECTED, SID: ', socket.id );
+
 			while(subscriptions.length > 0) {
 				var sub = subscriptions.shift();
 				self.router.unsubscribe(sub.routingKey, sub.emitter);
 
 				self.quite || console.log( 'Unsubscribed from ' + sub.routingKey );
-				self.quite || _logRouterState( self.router );
+				//self.quite || _logRouterState( self.router );
 			};
 		});
 
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
-				console.log( err );
-				return;
+				console.log( 'ERROR reading session', session_id, 'from Redis', err );
 			};
 
-			if( result && result.tenant_name ) {
+			if( result && (result.tenant_name == params.tenant_name) ) {
 				// AUTHORIZED USER
 
 				_.each( self.endpoints, function( endpoint ) {
-					var routingKey = [endpoint, result.tenant_name, params.embed_id].join('.');
+					var routingKey = [endpoint, params.tenant_name, params.embed_id].join('.');
 					var emitter  = function( data ) {
 						socket.emit( endpoint, data.payload );
 					};
