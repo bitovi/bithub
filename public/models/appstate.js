@@ -55,7 +55,7 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			},
 			hubId : {
 				set : function(val){
-					var liveService = connectLiveService(val);
+					var liveService = connectLiveService(val, this.attr('currentBrand').attr('tenant_name'));
 					var self = this;
 
 					this.attr('bits').splice(0);
