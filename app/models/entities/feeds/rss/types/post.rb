@@ -7,7 +7,7 @@ module Entities
         @event.link && find_by_link.first
       end
 
-      def build
+      def data
         {
           title: @event.title,
           body: @event.description,
