@@ -61,6 +61,8 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 					this.attr('bits').splice(0);
 
 					if(liveService){
+
+
 						liveService.on('services', can.proxy(Models.Service.messageFromLiveService, Models.Service));
 
 						liveService.on('services', function(msg){
