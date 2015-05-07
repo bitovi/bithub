@@ -67,10 +67,13 @@ function(Map, Bit, connectLiveService){
 			return 'public';
 		},
 		connectLiveService : function(){
-			var tenant = this.isPublic() ? this.attr('tenant') : null;
+
 			var hubId = this.attr('hubId');
-			liveService = connectLiveService(hubId, tenant);
+			liveService = connectLiveService(hubId, this.attr('tenant'));
+
 			if(liveService){
+				console.log('LIVESERVICE ENTITIES', liveService);
+
 				liveService.on('entities', can.proxy(Bit.messageFromLiveService, Bit));
 			}
 		},

@@ -87,6 +87,10 @@ function(Model, moment){
 		ACTIONS: BIT_ACTIONS,
 		resource : '/api/v3/embeds/{hubId}/entities',
 		messageFromLiveService : function(msg){
+
+
+			console.log('MSG FROM LIVESERVICE', msg);
+
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
 
