@@ -1,8 +1,6 @@
-json.cache! account do
-  json.(account, :id, :email, :name)
-  json.set! :brands do
-    json.array! account.brands do |b|
-      json.partial! "api/v3/brands/brand", brand: b
-    end
+json.(account, :id, :email, :name)
+json.set! :brands do
+  json.array! account.brands do |b|
+    json.partial! "api/v3/brands/brand", brand: b
   end
 end

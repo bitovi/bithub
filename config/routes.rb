@@ -24,29 +24,23 @@ Bithub::Application.routes.draw do
   end
 
   # Devise
-  devise_for :accounts, path: '/',
+  devise_for :accounts,
     controllers: {
-      sessions: 'auth/account_sessions',
-      registrations: 'auth/account_registrations',
+      sessions: 'auth/sessions',
+      registrations: 'auth/registrations',
+      confirmations: 'auth/confirmations',
       omniauth_callbacks: 'auth/omniauth_callbacks'
-    },
-    path_names: {
-      sign_in: 'login',
-      sign_out: 'logout',
-      registration: 'register/:plan',
-      sign_up: '', # points to '/register'
-      password: 'secret',
-      confirmation: 'verification',
-      # unlock: 'unblock',
     }
 
   as :account do
-    get 'register', to: redirect('register/startup')
-
-    # RESTify some of Devise methods
-    post   'api/auth/login',    to: 'api/auth/account_sessions#create'
-    delete 'api/auth/logout',   to: 'api/auth/account_sessions#destroy'
-    post   'api/auth/register', to: 'api/auth/account_registrations#create'
+    get 'register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
+    get 'register', to: redirect('/accounts/sign_up')
+    get 'login', to: redirect('/accounts/sign_in')
+    get 'logout', to: redirect('/accounts/sign_out')
+    
+    get '/accounts/login', to: redirect('/accounts/sign_in')
+    get '/accounts/logout', to: redirect('/accounts/sign_out')
+    get '/accounts/register', to: redirect('/accounts/sign_up')
   end
 
   # Stripe

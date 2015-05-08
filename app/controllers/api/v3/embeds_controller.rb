@@ -56,8 +56,11 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def moderate
     authorize! :moderate, owner_embed
 
-    @embed.moderate
-    render :json => msg_hash(@embed, 'moderate')
+    if @embed.moderate
+      render :json => msg_hash(@embed, 'moderate')
+    else
+      render :json => msg_hash(@embed, 'moderate', 'error')
+    end
   end
 
   private
