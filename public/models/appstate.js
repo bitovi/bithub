@@ -55,12 +55,14 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			},
 			hubId : {
 				set : function(val){
-					var liveService = connectLiveService(val);
+					var liveService = connectLiveService(val, this.attr('currentBrand').attr('tenant_name'));
 					var self = this;
 
 					this.attr('bits').splice(0);
 
 					if(liveService){
+
+
 						liveService.on('services', can.proxy(Models.Service.messageFromLiveService, Models.Service));
 
 						liveService.on('services', function(msg){

@@ -2,20 +2,17 @@ class Api::V3::ServicesController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!, :except => [:tree]
-  load_and_authorize_resource except: [:tree], param_method: :service_definition
 
   def index
-    if embed_id
-      @services = owner_embed.services
-    else
-      @services = Service.all
-    end
-
+    authorize! :index, Service
+    all_services
     render 'api/v3/services/index'
   end
 
   def show
-    if @service = Service.find(service_id)
+    authorize! :show, a_service
+
+    if @service
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'show'), :status => 404
@@ -23,16 +20,16 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def create
-    @service = owner_embed.services.build(service_definition)
+    authorize! :create, built_service
+
     @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
     @service.humanized_config
 
-    brand = Brand.current
     feed_name = service_kind[:feed_name]
     type_name = service_kind[:type_name]
 
     permited = Subscriptions::PolicyChecker
-      .new(brand.organization.subscription)
+      .new(current_brand.organization.subscription)
       .can_create_service?(owner_embed, feed_name, type_name)
 
     if permited && @service.save
@@ -43,7 +40,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def update
-    @service = Service.find_by_id(service_id)
+    authorize! :update, a_service
+
     @service.assign_attributes(service_definition)
     @service.service_errors.destroy_all
     @service.humanized_config
@@ -56,10 +54,10 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def destroy
-    @service = Service.find(service_id)
+    authorize! :destroy, a_service
 
     if @service.clear_relations_and_destroy
-      render :json => msg_hash(@service, 'destroy', 'success')
+      render :json => msg_hash(@service, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406
     end
@@ -97,6 +95,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def suggestions
+    authorize! :suggest, Service
+
     if feed_name = params[:feed_name]
       suggestions = []
       if params[:feed_name] == 'instagram' && (username = params[:username])
@@ -114,6 +114,18 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   private
+
+  def all_services
+    @services = embed_id ? owner_embed.services : Service.all
+  end
+
+  def a_service
+    @service = Service.find(service_id)
+  end
+
+  def built_service
+    @service = owner_embed.services.build(service_definition)
+  end
 
   def embed_id
     params[:embed_id] || params[:service].andand[:embed_id]

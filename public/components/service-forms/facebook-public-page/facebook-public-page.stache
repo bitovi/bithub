@@ -1,0 +1,23 @@
+<div class="form-group">
+    <label>Facebook Page URL</label>
+    <div class="input-group">
+        <input can-value="pageUrl" can-enter="loadPage" class="form-control">
+        <div class="input-group-btn">
+            <button class="btn btn-default" can-click="loadPage">Test Page URL</button>            
+        </div>
+    </div>
+	{{{configErrors errors 'id'}}}
+</div>
+<div class="result">
+    {{#if loading}}
+    <div class="alert alert-info">Loading {{{ this.attr('loading') }}}</div>
+    {{/if}}
+
+    {{#if error}}
+    <div class="alert alert-danger">{{ error }}</div>
+    {{/if}}
+
+    {{#if loadedPage}}
+    <div class="alert alert-info">The <b>{{loadedPage.name}}</b> page is exists. The service can be saved.</div>
+    {{/if}}
+</div>

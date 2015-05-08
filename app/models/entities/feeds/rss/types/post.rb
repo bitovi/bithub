@@ -7,16 +7,17 @@ module Entities
         @event.link && find_by_link.first
       end
 
-      def build
-        Entity.new({
+      def data
+        {
           title: @event.title,
           body: @event.description,
           url: @event.link,
+          author: @event.author,
           origin_ts: @event.published || Time.now.utc,
           props: {
             origin_author_name: @event.author
           }
-        })
+        }
       end
 
       # Finders

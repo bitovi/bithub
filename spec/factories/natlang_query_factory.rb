@@ -14,6 +14,11 @@ FactoryGirl.define do
       val 'twitter'
     end
 
+    trait :contains_phrase do
+      attr_name 'title'
+      op 'contains_phrase'
+    end
+
     trait :negated do
       is_negated true
     end

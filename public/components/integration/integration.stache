@@ -27,6 +27,7 @@
 					<td class="preset-embed-code" colspan="32">
 						<textarea class="form-control embed-code" can-value="defaultIntegrationCode" readonly></textarea>
 						<p class="instructions">Paste this code in the HTML source of your page</p>
+            <p>You can access the embed directly by going to: <a href="{{ defaultPresetUrl }}" target="_blank">{{ defaultPresetUrl}} </a></p>
 					</td>
 				</tr>
 			{{/if}}
@@ -51,6 +52,7 @@
 							{{ else }}
 								<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
 								<p class="instructions">Paste this code in the HTML source of your page</p>
+                <p>You can access the embed directly by going to: <a href="{{ currentPresetUrl }}" target="_blank">{{ currentPresetUrl}} </a></p>
 							{{/ifCurrentlyEditingPreset}}
 						</td>
 					</tr>

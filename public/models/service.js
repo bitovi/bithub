@@ -48,7 +48,8 @@ function(Model, _keys){
 			forum : 'Forum'
 		},
 		facebook : {
-			page : 'Page'
+			page : 'Page',
+			public_page : 'Public Page'
 		},
 		foursquare : {
 			venue : 'Venue'
@@ -227,7 +228,7 @@ function(Model, _keys){
 		serialize : function(){
 			var data = this._super.apply(this, arguments);
 
-			if(!(data.feed_name === 'instagram' && data.type_name === 'user')){
+			if(!(data.feed_name === 'instagram' && data.type_name === 'user') && !(data.feed_name === 'facebook' && data.type_name === 'public_page')){
 				if(data.config){
 					delete data.config.display_name;
 				}

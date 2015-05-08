@@ -42,8 +42,11 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 		//can.route.map(appState);
 		//can.route.ready();
 
+
+
 		appState.attr('hub', hub);
 		appState.setAttrs(params);
+		appState.connectLiveService();
 
 		Bit.on('lifecycle', function(ev, bit){
 			var serviceIds = bit.attr('service_ids');
@@ -58,10 +61,10 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 					bits.unshift(bit);
 				}
 			}
-			
+
 			triggerPartition(bits);
 
-			if(serviceIds){
+			if( serviceIds && (params.view != 'public') ){
 				communicator.send('loadedBits', serviceIds);
 			}
 
@@ -79,7 +82,7 @@ function(AppState, embedView, Bit, Hub, BitList, Communicator){
 
 		var initApp = function(){
 			var div = $('<div id="app" />');
-			
+
 			$('#app-wrapper').html(div);
 
 			new BitList(div, {

@@ -1,6 +1,5 @@
 module Events
   module Disqus
-
     class PostEvent < Protocol
       extend Forwardable
 

@@ -4,48 +4,54 @@ class Api::V3::EmbedPresetsController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def index
-    @presets = owner_embed.presets.all
+    authorize! :index, EmbedPreset
+    all_presets
     render :index
   end
 
   def show
-    @preset = find_preset
+    authorize! :show, a_preset
     render :show
   end
 
   def create
-    if (@preset = EmbedPreset.create(embed_preset_params))
+    authorize! :create, EmbedPreset
+
+    if @preset = EmbedPreset.create(embed_preset_params)
       render :show
     else
-      render :json => msg_hash(@preset, 'create'), :status => 406
+      render :json => msg_hash(@preset, 'create'), :status => 422
     end
   end
 
   def update
-    @preset = find_preset
-    if (@preset.update_attributes(embed_preset_params))
+    authorize! :update, a_preset
+
+    if @preset.update_attributes(embed_preset_params)
       render :show
     else
-      render :json => msg_hash(@preset, 'create'), :status => 406
+      render :json => msg_hash(@preset, 'update'), :status => 422
     end
   end
 
   def destroy
-    @preset = find_preset
-    if (@preset.destroy)
-      render :json => msg_hash(@preset, 'destroy', 'success')
+    authorize! :destroy, a_preset
+    if @preset.destroy
+      render :json => msg_hash(EmbedPreset, 'destroy', 'success'), :status => 204
     else
-      render :json => msg_hash(@preset, 'destroy'), :status => 406
+      render :json => msg_hash(EmbedPreset, 'destroy'), :status => 422
     end
   end
 
   private
+  def all_presets
+    @presets = owner_embed.presets.all
+  end
 
-  def find_preset
-    EmbedPreset.find(preset_id)
+  def a_preset
+    @preset = EmbedPreset.find(preset_id)
   end
 
   def embed_preset_params

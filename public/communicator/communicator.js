@@ -34,10 +34,14 @@ steal('can/control', function(Control){
 			frame = frame.contentWindow ? frame.contentWindow : frame;
 
 			if(frame && frame.postMessage){
-				frame.postMessage({
-					type: type,
-					payload: preparePayload(payload)
-				}, 'http://' + EMBED_ENDPOINT);
+				try {
+					frame.postMessage({
+						type: type,
+						payload: preparePayload(payload)
+					}, 'http://' + EMBED_ENDPOINT);
+				} catch (e) {
+					console.log( e );
+				}
 			}
 		},
 		'{window} message' : 'receive'

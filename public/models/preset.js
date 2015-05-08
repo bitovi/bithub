@@ -37,6 +37,12 @@ function(Model){
 			var attrs = this.embedAttrs(tenantName, hubId);
 			return '/embed?' + can.param(attrs);
 		},
+		fullUrl : function(tenantName, hubId){
+			return can.sub("http://{embedEndpoint}{embedUrl}", {
+				embedEndpoint: EMBED_ENDPOINT,
+				embedUrl: this.url(tenantName, hubId)
+			});
+		},
 		embedCode : function(tenantName, hubId, hubName){
 			var attrs = this.embedAttrs(tenantName, hubId);
 
