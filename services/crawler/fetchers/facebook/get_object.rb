@@ -4,14 +4,14 @@ module Fetchers
   module Facebook
     class GetObject < Base
 
-      def fetch(object_id, opts={})
+      def fetch(opts={})
         ::NewRelic::Agent.increment_metric('Custom/Fetches/Facebook/objects')
         args = {
           fields: FIELDS
         }.merge opts
 
         handle_errors do
-          result = @client.get_object object_id, args
+          result = @client.get_object @object_id, args, api_version: 'v2.2'
           [result]
         end
       end

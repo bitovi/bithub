@@ -1,3 +1,5 @@
+process.env.ENV = 'test';
+
 var assert       = require('assert'),
 	dotenv       = require('dotenv'),
 	Q            = require('q'),
@@ -7,9 +9,11 @@ var assert       = require('assert'),
 	AmqpListener = require('../amqp_listener.js'),
 	LiveService  = require('../liveservice.js');
 
+
 // load .env so we don't have to set connection params manually
 dotenv._getKeysAndValuesFromEnvFilePath('../../.env');
 dotenv._setEnvs();
+
 
 describe('The Universe', function() {
 	var sessions = SessionStore.createClient( process.env.REDIS_URL, { quite: true } ),
@@ -147,6 +151,41 @@ describe('MessageRouter', function() {
 		router.publish( 'baz', 'msg4baz' ); // should not route
 
 		count == 2 && done();
+	});
+
+	it('subscribes/unsubscribes correctly', function( done ) {
+		var router = new Router(),
+			cb_1   = function cb_1() { return 1; },
+			cb_2   = function cb_2() { return 2; },
+			cb_3   = function cb_3() { return 3; };
+
+		router.subscribe('foo_key', cb_1);
+		router.subscribe('foo_key', cb_2);
+		router.subscribe('bar_key', cb_1);
+		router.subscribe('bar_key', cb_2);
+		router.subscribe('bar_key', cb_3);
+
+		assert.equal( router.channels.length, 2);
+		assert.equal( router.subscriptions('foo_key').length, 2);
+		assert.equal( router.subscriptions('bar_key').length, 3);
+		assert.equal( router.subscriptions('non_existing_key'), undefined);
+
+		// removing from all channels
+		router.unsubscribe(null, cb_2);
+		assert.equal( router.subscriptions('foo_key').length, 1);
+		assert.equal( router.subscriptions('bar_key').length, 2);
+
+		// removing from channel by the key
+		router.unsubscribe('bar_key', cb_1);
+		assert.equal( router.subscriptions('foo_key').length, 1);
+		assert.equal( router.subscriptions('bar_key').length, 1);
+
+		// after removing last the channel should be destroyed
+		router.unsubscribe('foo_key', cb_1);
+		assert.equal( router.subscriptions('foo_key'), undefined);
+		assert.equal( router.channels.length, 1);
+
+		done();
 	});
 });
 

@@ -6,6 +6,10 @@
 	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
 {{/isFeedAndType}}
 
+{{#isFeedAndType 'facebook' 'public_page'}}
+	<b>Facebook Page </b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
 {{#isFeedAndType 'foursquare' 'venue'}}
 	<b>{{service.printFeed}} {{service.printType}} </b> {{service.config.display_name}}
 {{/isFeedAndType}}

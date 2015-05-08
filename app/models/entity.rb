@@ -91,7 +91,7 @@ class Entity < ActiveRecord::Base
     # Used when entities are decorated with attributes from embed_entities,
     # ie. is_approved_manually and is_approved_automatically
     if has_attribute?(:is_approved_manually) && has_attribute?(:is_approved_automatically)
-      (!read_attribute(:is_approved_manually).nil?) ? is_approved_manually? : is_approved_automatically?
+      (read_attribute(:is_approved_manually) != nil) ? is_approved_manually? : is_approved_automatically?
     # If entity doesn't have these attributes (is_approved_*), then given an embed,
     # find the appropriate embed_entities record and read that info from it
     else
@@ -115,7 +115,7 @@ class Entity < ActiveRecord::Base
   end
 
   def is_child?
-    !parent_id.nil? || !source_data['retweeted_status'].nil?
+    !parent_id.nil?
   end
 
   def label_names
@@ -200,6 +200,10 @@ class Entity < ActiveRecord::Base
     Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)
   end
 
+  def wrapped
+    wrapper_class.new(last_modified_by.wrapped)
+  end
+
   # private
 
   def reformat_uniqueness_validation
@@ -245,11 +249,18 @@ class Entity < ActiveRecord::Base
   def msg(embed)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     entity = EntityDecorator.decorate(self, context: {embed: embed})
-    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
+    payload = view.render('api/v3/embed_entities/entity', {entity: entity, skip_caching: true})
 
     {
       meta: meta_msg(embed, is_approved(embed)),
       payload: payload
     }
+  end
+
+  def wrapper_class
+    fn = feed_name.camelize.to_sym; tn = type_name.camelize.to_sym
+    if ::Entities.constants.include?(fn) && ::Entities.const_get(fn).constants.include?(tn)
+      ::Entities.const_get(fn).const_get(tn)
+    end
   end
 end

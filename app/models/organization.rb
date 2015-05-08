@@ -7,5 +7,4 @@ class Organization < ActiveRecord::Base
 
   ### TODO: ENSURE UNSUBSCRIBE FROM STRIPE !!!!
   has_one  :subscription
-  has_many :payments
 end

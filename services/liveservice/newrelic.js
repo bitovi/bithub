@@ -1,5 +1,5 @@
 var env = process.env.ENV,
-	agent_enabled = (env != 'development');
+	agent_enabled = (env != 'development' && env != 'test');
 
 exports.config = {
 	agent_enabled: agent_enabled,

@@ -15,6 +15,10 @@ class NatlangQuery < ActiveRecord::Base
     is_negated
   end
 
+  def clean
+    self.val = val.gsub(/([^0-9a-z])+/i, ' ')
+  end
+
   private
 
   def format_val_for_contains

@@ -28,6 +28,17 @@ function(Component, initView, Models){
 					);
 				}
 			},
+			defaultPresetUrl : function(){
+				return this.urlForPreset(Models.Preset.PREVIEW);
+			},
+			currentPresetUrl : function(){
+				return this.urlForPreset(this.currentPreset());
+			},
+			urlForPreset : function(preset){
+				var currentBrand = this.attr('state.currentBrand');
+				var hub = this.attr('hub');
+				return preset.fullUrl(currentBrand.attr('tenant_name'), hub.attr('id'));
+			},
 			defaultIntegrationCode : function(){
 				return this.integrationCodeForPreset(Models.Preset.PREVIEW);
 			},

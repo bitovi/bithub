@@ -41,6 +41,10 @@
 					<div class="alert alert-danger">Service config has some errors</div>
 				{{/if}}
 
+          {{#if feedInfo }}
+          <div class="alert alert-info">{{ feedInfo }}</div>
+          {{/if}}
+
 				{{#renderForm}}
 					<div class="clearfix buttons-wrap">
 						<button class="btn btn-primary pull-right save-service">Save Service</button>

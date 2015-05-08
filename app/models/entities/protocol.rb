@@ -1,10 +1,10 @@
-require_relative 'errors'
-require_relative 'traits/determinable'
-require_relative 'traits/groupable'
-require_relative 'traits/normalizable'
-require_relative 'traits/persistable'
-require_relative 'traits/validatable'
-require_relative 'traits/routeable'
+require 'entities/errors'
+require 'entities/traits/determinable'
+require 'entities/traits/groupable'
+require 'entities/traits/normalizable'
+require 'entities/traits/persistable'
+require 'entities/traits/validatable'
+require 'entities/traits/routeable'
 
 Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
   require f.gsub('app/models/', '')
@@ -12,18 +12,16 @@ end
 
 module Entities
 
-  module Bithub; end
-  module Blog; end
   module Disqus; end
   module Github; end
-  module Irc; end
-  module Meetup; end
   module Twitter; end
+  module Meetup; end
   module Stackexchange; end
   module Facebook; end
-  module Foursquare; end
   module Instagram; end
   module Tumblr; end
+  module Foursquare; end
+  module Rss; end
 
   class Protocol
     include Validatable
@@ -33,15 +31,24 @@ module Entities
     include Persistable
     include Routable
 
-    attr_reader :instance
-
     def initialize(payload)
       @payload = payload
       @event = @payload
     end
+    attr_reader :event
 
     def procure
       @instance = (e = find) ? e : build
+      self
+    end
+    attr_reader :instance
+
+    def build
+      Entity.new(data)
+    end
+
+    def rebuild
+      @instance.assign_attributes(data)
       self
     end
 
@@ -97,13 +104,10 @@ module Entities
   end
 end
 
-require_relative 'feeds/blog/blog'
 require_relative 'feeds/disqus/disqus'
 require_relative 'feeds/github/github'
 require_relative 'feeds/twitter/twitter'
 require_relative 'feeds/meetup/meetup'
-require_relative 'feeds/irc/irc'
-require_relative 'feeds/bithub/bithub'
 require_relative 'feeds/stackexchange/stackexchange'
 require_relative 'feeds/facebook/facebook'
 require_relative 'feeds/rss/rss'

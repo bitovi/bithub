@@ -4,14 +4,13 @@ class Api::V3::FiltersController < Api::V3::BaseController
   before_filter :authenticate_account!
 
   def index
-    embed = current_brand.embeds.find(embed_id)
-    @filters = embed.filters
+    authorize! :index, Filter
+    @filters = owner_embed.filters
     render 'api/v3/filters/index'
   end
 
   def show
-    embed = current_brand.embeds.find(embed_id)
-    @filter = embed.filters.find(filter_id)
+    authorize! :show, a_filter
     if @filter
       render 'api/v3/filters/show'
     else
@@ -21,7 +20,8 @@ class Api::V3::FiltersController < Api::V3::BaseController
 
   def create
     @filter = owner_embed.filters.build(filter_params)
-    @filter.natlang_queries.build(queries_params)
+    @filter.natlang_queries.build(normalized_queries)
+    @filter.natlang_queries.map(&:clean)
 
     if @filter.save
       render 'api/v3/filters/show'
@@ -34,7 +34,9 @@ class Api::V3::FiltersController < Api::V3::BaseController
     @filter = owner_embed.filters.find(filter_id)
     queries_params.each do |q|
       if (nlq = @filter.natlang_queries.find(q[:id]))
-        nlq.update_attributes(q)
+        nlq.assign_attributes(q)
+        nlq.clean
+        nlq.save
       else
         @filter.natlang_queries.build(q)
       end
@@ -52,13 +54,17 @@ class Api::V3::FiltersController < Api::V3::BaseController
     @filter = embed.filters.find(filter_id)
 
     if @filter.destroy
-      render :json => msg_hash(@filter, 'destroy', 'success')
+      render :json => msg_hash(@filter, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@filter, 'destroy'), :status => 406
     end
   end
 
   private
+  
+  def a_filter
+    @filter = Filter.find(filter_id)
+  end
 
   def embed_id
     params[:embed_id] || params[:filter].andand[:embed_id]
@@ -71,6 +77,10 @@ class Api::V3::FiltersController < Api::V3::BaseController
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:filter).permit(:id, :action, :embed_id)
+  end
+
+  def normalized_queries
+    NatlangQueries::Normalizer.new(queries_params).normalized
   end
 
   def queries_params

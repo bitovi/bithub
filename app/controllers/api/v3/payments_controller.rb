@@ -1,9 +1,13 @@
 class Api::V3::PaymentsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def index
-    @payments = current_brand.payments.order(created_at: :desc)
+    authorize! :index, Payment
+    @payments = my_payments.order(created_at: :desc)
     render :index
+  end
+
+  def my_payments
+    current_brand.organization.subscription.payments
   end
 end

@@ -17,6 +17,10 @@ require 'koala'
 module Supervisors::Services::Facebook
   class Page < Supervisors::Service
 
+    ### Current hack
+    # if there is no (page) access token in service use app token,
+    # skip RT subscription and only preload data from the page
+
     def boot
       begin
         subscribe_page
@@ -69,7 +73,7 @@ module Supervisors::Services::Facebook
     end
 
     def preloaded_items
-      Fetchers::Facebook::GetFeed.fetch client, page_id
+      Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }).fetch
     end
 
     # todo: unify with poller

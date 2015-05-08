@@ -54,6 +54,7 @@ end
 # god damned auto loading
 Services::Types::Disqus::Forum
 Services::Types::Facebook::Page
+Services::Types::Facebook::PublicPage
 Services::Types::Foursquare::Venue
 Services::Types::Github::Org
 Services::Types::Github::Repo

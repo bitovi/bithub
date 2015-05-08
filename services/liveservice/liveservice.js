@@ -24,7 +24,7 @@ var indexHandler = function( req, res ) {
 		});
 };
 
-var parseCookies = function( cookie ) {
+var _parseCookies = function( cookie ) {
 	return _.reduce( cookie.split(';'), function( acc, pair ) {
 		pair = pair.split('=');
 
@@ -39,9 +39,22 @@ var parseCookies = function( cookie ) {
 	}, {} );
 };
 
-var meta_to_log_format = function( meta ) {
-	var msg = [meta.brand_name, meta.embed_id, meta.is_public].join(' ');
-	return '[' + msg + ']';
+var _logNewMessage = function( endpoint, message ) {
+	var meta = message.meta;
+	var output = [endpoint, meta.brand_name, meta.embed_id, meta.is_public].join(' ');
+
+	console.log( 'New message from MQ (endpoint, brand, embed, public?): [' + output + ']' );
+};
+
+var _logNewSubscription = function( routingKey, session ) {
+	console.log( 'New subscription (routingKey, session): [' + routingKey + ' ' + session + ']' );
+};
+
+var _logRouterState = function( router ) {
+	console.log( 'Router channels state (routingKey, subscribersCount) -----------');
+	_.each( router.channels, function( ch ) {
+		console.log( ch.routingKey, ch.subscribers.length );
+	});
 };
 
 var LiveService = function( opts ) {
@@ -59,7 +72,7 @@ var LiveService = function( opts ) {
 
 	this.sessions = sessionStore.createClient( this.redisUrl, {quite: this.quite} ),
 	this.listener = amqpListener.createClient( this.rabbitmqUri, {quite: this.quite} ),
-	this.router   = new messageRouter( {quite: this.quite} );
+	this.router   = new messageRouter();
 };
 
 LiveService.prototype.listen = function() {
@@ -79,7 +92,7 @@ LiveService.prototype.registerEndpoints = function() {
 
 	_.each( self.endpoints, function( endpoint ) {
 		self.listener.bindConsumer(endpoint, function( data ) {
-			self.quite || console.info( ['New message from channel', endpoint, meta_to_log_format(data.meta)].join(' ') );
+			self.quite || _logNewMessage( endpoint, data );
 
 			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
 			self.router.publish( key, data );
@@ -90,47 +103,65 @@ LiveService.prototype.registerEndpoints = function() {
 LiveService.prototype.onIoConnection = function() {
 	var self = this;
 
-	this.io.on('connection', function (socket) {
+	this.io.on('connection', function(socket) {
 		var	params   = socket.handshake.query,
 			cookie   = socket.conn.request.headers.cookie,
 			remoteIp = socket.conn.remoteAddress;
 
-		var session_id = params.session_id || (cookie && parseCookies( cookie )._session_id);
+		var session_id = params.session_id || (cookie && _parseCookies( cookie )._session_id);
+		var subscriptions = [];
 
-		if( session_id == undefined ) {
-			// Handle public entities
-			if(params.tenant_name){
-				var publicKey = ['entities', params.tenant_name, params.embed_id].join('.');
-				self.router.subscribe(publicKey, function(data){
-					if(data.meta.is_public){
-						socket.emit('entities', data.payload);
-					}
-				});
-				console.log('Connecting public entities for tenant: ' + params.tenant_name);
-			} else {
-				console.log('User without valid session from ' + remoteIp);
-			}
-
+		if( params.embed_id && params.tenant_name) {
+			self.quite || console.log( 'CONNECTED, SID: ', socket.id );
+		} else {
+			self.quite || console.log( 'FORCE DISCONNECT, malformed request from', remoteIp );
+			socket.disconnect();
 			return;
 		}
 
+		socket.on('disconnect', function() {
+			self.quite || console.log( 'DISCONNECTED, SID: ', socket.id );
+
+			while(subscriptions.length > 0) {
+				var sub = subscriptions.shift();
+				self.router.unsubscribe(sub.routingKey, sub.emitter);
+
+				self.quite || console.log( 'Unsubscribed from ' + sub.routingKey );
+				//self.quite || _logRouterState( self.router );
+			};
+		});
+
 		self.sessions.read( session_id, function( err, result ) {
 			if( err ) {
-				console.error( err );
-			} else {
-				if( result == null ) {
-					console.log('No session data for session ' + session_id + ' from ' + remoteIp);
-					return;
-				}
+				console.log( 'ERROR reading session', session_id, 'from Redis', err );
+			};
+
+			if( result && (result.tenant_name == params.tenant_name) ) {
+				// AUTHORIZED USER
 
 				_.each( self.endpoints, function( endpoint ) {
-					var key = [endpoint, result.tenant_name, params.embed_id].join('.');
+					var routingKey = [endpoint, params.tenant_name, params.embed_id].join('.');
+					var emitter  = function( data ) {
+						socket.emit( endpoint, data.payload );
+					};
 
-					self.router.subscribe( key, function( data ) {
-						var message = data.payload;
-						socket.emit( endpoint, message );
-					});
+					self.quite || _logNewSubscription( routingKey, session_id );
+					self.router.subscribe( routingKey, emitter );
+					subscriptions.push( {routingKey: routingKey, emitter: emitter} );
 				});
+			} else {
+				// PUBLIC CONNECTION
+
+				var routingKey = ['entities', params.tenant_name, params.embed_id].join('.');
+				var emitter  = function(data){
+					if(data.meta.is_public){
+						socket.emit('entities', data.payload);
+					}
+				};
+
+				self.quite || _logNewSubscription( routingKey, 'public' );
+				self.router.subscribe(routingKey, emitter );
+				subscriptions.push( {routingKey: routingKey, emitter: emitter} );
 			}
 		});
 

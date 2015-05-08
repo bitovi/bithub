@@ -6,6 +6,7 @@ steal(
 'can/map/define',
 'components/service-forms/disqus-forum',
 'components/service-forms/facebook-page',
+'components/service-forms/facebook-public-page',
 'components/service-forms/foursquare-venue',
 'components/service-forms/github-org',
 'components/service-forms/github-repo',
@@ -24,6 +25,10 @@ steal(
 'components/helpers.js',
 function(Component, initView, Models){
 
+	var FEED_INFOS = {
+		foursquare: 'You must be a venue manager to be able to add a venue.'
+	};
+
 	var makeTemplate = function(feed, type){
 		var componentName = ['bh', feed, type.replace(/_/g, '-'), 'service'].join('-'),
 			template = '<' + componentName + ' map="{service}" errors="{errors.config}"></' + componentName + '>{{{saveButtons}}}',
@@ -40,6 +45,7 @@ function(Component, initView, Models){
 			].join('');
 		}
 
+		
 		return can.stache(template);
 	};
 
@@ -51,6 +57,7 @@ function(Component, initView, Models){
 			missingConfig : false,
 			errors: null,
 			typeErros: null,
+			saveDisabled : false,
 			define : {
 				service : {
 					set : function(val){
@@ -107,17 +114,21 @@ function(Component, initView, Models){
 					self.attr(attrs);
 				});
 
-
-
 				this.attr({
 					isHidden: service.isNew(),
 					missingConfig: false,
 					errors: null
 				});
 			},
+			feedInfo : function(){
+				return FEED_INFOS[this.attr('service.feed_name')];
+			},
 			clearService : function(){
 				can.batch.start();
-				this.attr('service', null);
+				this.attr({
+					saveDisabled: false,
+					service: null
+				});
 				this.clearErrors();
 				can.batch.stop();
 			},
@@ -129,18 +140,40 @@ function(Component, initView, Models){
 				});
 			},
 			currentServiceFeedName : function(){
-				var feed = this.attr('service').attr('feed_name');
+				var service = this.attr('service');
+				if(!service) { 
+					return
+				}
+				var feed = service.attr('feed_name');
 				return Models.Service.feeds[feed];
 			}
 		},
-		helpers : {
-			'form submit' : function(){
-
+		events : {
+			"service:saveDisabled" : function(){
+				var self = this;
+				setTimeout(function(){
+					self.element && self.element.find('button.save-service').prop('disabled', true);
+				}, 1);
+				
 			},
+			"service:saveEnabled" : function(){
+				var self = this;
+				setTimeout(function(){
+					self.element && self.element.find('button.save-service').prop('disabled', false);
+				}, 1);
+			}
+		},
+		helpers : {
 			renderForm : function(opts){
-				var service = this.attr('service'),
-					feed = service.attr('feed_name'),
-					type = service.attr('type_name');
+				var service = this.attr('service'), feed, type;
+				
+				if(!service){ 
+					return;
+				}
+
+				feed = service.attr('feed_name'),
+				type = service.attr('type_name');
+
 
 				if(type && feed){
 					return makeTemplate(feed, type)(opts.scope, {
