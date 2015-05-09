@@ -33,10 +33,10 @@ Bithub::Application.routes.draw do
     }
 
   as :account do
-    get 'register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
-    get 'register', to: redirect('/accounts/sign_up')
-    get 'login', to: redirect('/accounts/sign_in')
-    get 'logout', to: redirect('/accounts/sign_out')
+    get '/register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
+    get '/register', to: redirect('/accounts/sign_up')
+    get '/login', to: redirect('/accounts/sign_in')
+    get '/logout', to: redirect('/accounts/sign_out')
     
     get '/accounts/login', to: redirect('/accounts/sign_in')
     get '/accounts/logout', to: redirect('/accounts/sign_out')
