@@ -11,7 +11,7 @@ function(Component, initView, Models){
 		var windowPropsStr     = "width=800,height=600,scrollbars=yes",
 			title              = "OAuth Login",
 			host               = window.location.host.split('.'),
-			url                = '/accounts/auth/' + feed,
+			url                = '/auth/' + feed,
 			oauthWindow        = window.open(url, title, windowPropsStr),
 			def                = can.Deferred(),
 			oauthWindowSweeper = window.setInterval(function() {
