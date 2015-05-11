@@ -42,6 +42,7 @@ function(Control, initView, Bit, _map){
 		},
 		init : function(){
 			this.__timeouts = {};
+			this.__minHeight = 0;
 
 			this.element.html(initView({
 				isLoading : this.options.isLoading,
@@ -140,6 +141,7 @@ function(Control, initView, Bit, _map){
 			for(var i = 0; i < arrs.length; i++){
 				$(this.columns[i]).append(arrs[i]);
 			}
+			this.calculateMinHeight();
 		},
 		makeCard : function(bit){
 			var id = bit.attr('id');
@@ -173,8 +175,8 @@ function(Control, initView, Bit, _map){
 			
 			this.setTimeout('appendContent', 100, function(){
 				var scrollTop = self.element.scrollTop();
-				var scrollHeight = self.element.prop('scrollHeight');
-				var height = self.element.height();
+				var scrollHeight = self.__minHeight || self.element.prop('scrollHeight');
+				var height =  self.element.height();
 
 				self.options.currentScrollTop(scrollTop);
 
@@ -203,6 +205,14 @@ function(Control, initView, Bit, _map){
 		destroy : function(){
 			this.clearAllTimeouts();
 			return this._super.apply(this, arguments);
+		},
+		"bit:loaded" : 'calculateMinHeight',
+		calculateMinHeight : function(){
+			var heights = can.map(this.columns, function(c){
+				return $(c).height();
+			});
+			var minHeight = Math.min.apply(Math, heights);
+			this.__minHeight = minHeight;
 		}
 	});
 })
