@@ -16,7 +16,7 @@ class NatlangQuery < ActiveRecord::Base
   end
 
   def clean
-    if @op =~ /contains/
+    if @op != 'contains_phrase' && @op =~ /contains/
       self.val = val.gsub(/([^0-9a-z])+/i, ' ')
     end
   end
