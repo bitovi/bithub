@@ -35,12 +35,13 @@ steal(
 				}
 			});
 
-			$.when(Models.Brand.findOne({}), Models.Subscription.findOne({})).done(function(brand, subscription){
+			$.when(Models.Brand.findOne({}), Models.Subscription.findOne({}), Models.Account.current()).done(function(brand, subscription, account){
 
-				
+				console.log(account)
 				var appState = new AppState({
 					currentBrand: brand,
 					currentSubscription: subscription,
+					currentAccount: account,
 					embedType : 'admin'
 				});
 
