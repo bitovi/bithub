@@ -16,7 +16,9 @@ class NatlangQuery < ActiveRecord::Base
   end
 
   def clean
-    self.val = val.gsub(/([^0-9a-z])+/i, ' ')
+    if @op =~ /contains/
+      self.val = val.gsub(/([^0-9a-z])+/i, ' ')
+    end
   end
 
   private
