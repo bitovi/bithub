@@ -53,6 +53,9 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			currentSubscription : {
 				serialize: false
 			},
+			currentAccount: {
+				serialize: false
+			},
 			hubId : {
 				set : function(val){
 					var liveService = connectLiveService(val, this.attr('currentBrand').attr('tenant_name'));

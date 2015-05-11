@@ -133,6 +133,7 @@ function(Component, initView, _map, Bit){
 			},
 			removeExplicitHeight : function(){
 				this.element.removeClass('animate-height').css('height', 'auto');
+				this.element.trigger('bit:loaded');
 			},
 			destroy : function(){
 				clearTimeout(this.__imgSweeperTimeout);
