@@ -2,8 +2,14 @@ module Identities
   module Facades
     class Github < Facade::Protocol
 
-      def property_id_name_pairs
-        repo_ids_and_names
+      def property_id_name_pairs(type=nil)
+        if type == 'repo'
+          repo_ids_and_names
+        elsif type == 'org'
+          org_ids_and_names
+        else
+          []
+        end
       end
 
       def repo_ids_and_names
@@ -17,7 +23,7 @@ module Identities
           { id: o, name: o }
         end
       end
-      
+
       def repo_names
         repos.map {|r| r[:full_name]}
       end
