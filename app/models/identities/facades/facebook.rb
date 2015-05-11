@@ -2,7 +2,7 @@ module Identities
   module Facades
     class Facebook < Facade::Protocol
 
-      def property_id_name_pairs
+      def property_id_name_pairs(type=nil)
         page_ids_and_names
       end
 

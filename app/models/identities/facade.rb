@@ -10,7 +10,7 @@ module Identities
     def name
       if %w(github twitter instagram).include? @provider_facade.provider_name
         @source_data['info']['nickname']
-      elsif %w(facebook disqus meetup foursquare).include? @provider_facade.provider_name
+      elsif %w(facebook disqus meetup foursquare google_oauth2).include? @provider_facade.provider_name
         @source_data['info']['name']
       end
     end
@@ -28,14 +28,8 @@ module Identities
       end
     end
 
-    def property_id_name_pairs(property_type = nil)
-      if @provider_facade.provider_name == 'github' && property_type== 'repo'
-        @provider_facade.repo_ids_and_names
-      elsif @provider_facade.provider_name == 'github' && property_type == 'org'
-        @provider_facade.org_ids_and_names
-      else
-        @provider_facade.property_id_name_pairs
-      end
+    def property_id_name_pairs(property_type=nil)
+      @provider_facade.property_id_name_pairs property_type
     end
 
     def property_name_for_id(id)
