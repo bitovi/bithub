@@ -152,7 +152,29 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 						return customPreset || this.attr('defaultPreviewPreset');
 					}
 				},
-				serialize: false,
+				set : function(val){
+					var embedType            = this.embedType();
+					var adminPreset          = this.attr('adminPreset');
+
+					if(embedType === 'admin'){
+						adminPreset.attr('config').attr(val.attr ? val.attr() : val);
+						return val;
+					}
+				},
+				serialize : function(){
+					var embedType            = this.embedType();
+					var adminPreset          = this.attr('adminPreset');
+					var preset;
+
+					adminPreset && adminPreset.attr();
+
+					if(embedType === 'admin'){
+						return {
+							order: adminPreset.attr('config.order'),
+							filter: adminPreset.attr('config.filter')
+						}
+					}
+				}
 			},
 			customPreset: {
 				serialize: false
