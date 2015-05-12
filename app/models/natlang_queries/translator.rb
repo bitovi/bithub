@@ -1,6 +1,7 @@
 module NatlangQueries
 
   VALID_OPS = %w(contains starts_with ends_with contains_phrase contains_any contains_all is)
+  SEARCHABLE_ATTRIBUTES = %w(content title body author)
 
   class Translator
     def initialize(query, klass = Entity)
@@ -45,10 +46,10 @@ module NatlangQueries
     end
 
     def search_arguments
-      if @q.attr_name == 'content'
-        search_value
+      if SEARCHABLE_ATTRIBUTES.include? @q.attr_name
+        Hash[search_attr, search_value]
       else
-        Hash[@q.attr_name, search_value]
+        search_value
       end
     end
 
@@ -85,6 +86,12 @@ module NatlangQueries
         end
       else
         @q.val
+      end
+    end
+
+    def search_attr
+      if SEARCHABLE_ATTRIBUTES.include? @q.attr_name
+        'searchable_' + @q.attr_name
       end
     end
 

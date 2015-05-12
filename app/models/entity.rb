@@ -31,6 +31,7 @@ class Entity < ActiveRecord::Base
     :tag_list
 
   # Hooks
+  before_save :assign_searchable_attributes
   after_commit :notify_liveservice
 
   # Basic
@@ -163,6 +164,14 @@ class Entity < ActiveRecord::Base
     children.order("origin_ts DESC").first.andand.origin_ts
   end
 
+  def assign_searchable_attributes
+    assign_attributes({
+      searchable_content: sanitized_content,
+      searchable_title: sanitized_title,
+      searchable_body: sanitized_body,
+    })
+  end
+
   def top_level_parent
     if parent
       parent.top_level_parent
@@ -194,6 +203,18 @@ class Entity < ActiveRecord::Base
     else
       "#{self.class.model_name.cache_key}/#{id}"
     end
+  end
+
+  def sanitized_content
+    [sanitized_title, sanitized_body, url, feed_name, type_name, image, cached_tag_list].join(' ')
+  end
+
+  def sanitized_title
+    Sanitize.fragment(self.title, Sanitize::Config::RESTRICTED).strip
+  end
+
+  def sanitized_body
+    Sanitize.fragment(self.body, Sanitize::Config::RESTRICTED).strip
   end
 
   def deserialize
