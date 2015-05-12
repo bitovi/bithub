@@ -45,4 +45,9 @@ class EntityImagesMapper
       }
     end
   end
+
+  def youtube_video
+    { caption: 'Thumbnail', url: @source.image }
+  end
+
 end
