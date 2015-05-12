@@ -57,7 +57,7 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
     it 'translates the "contains" op to AR.advanced_search compatible argument' do
       nlq = double(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'canjs,jquerypp', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq({'title' => 'canjs&jquerypp'})
+      expect(nlqt.targuments).to eq({'searchable_title' => 'canjs&jquerypp'})
     end
 
     it 'translates the "is" op to a AR.where compatible argument' do
@@ -150,7 +150,7 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
         expect(nlqt.where_value).to eq('%canjs')
       end
     end
-    
+
     context 'when op is "contains_phrase"' do
       it 'wraps the value in "%"' do
         nlq = double(:natlang_query, attr_name: 'author', op: 'contains_phrase', val: 'canjs', negated?: false)
@@ -159,6 +159,25 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
       end
     end
   end
+
+  describe '#search_attr' do
+    context 'given the search_attr is searchable' do
+      it 'translates the attr_name to it\s searchable couterpart' do
+        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.search_attr).to eq('searchable_title')
+      end
+    end
+
+    context 'givent the search_attr is un-searchable' do
+      it 'doesn\t translate the attr_name (returns nil)' do
+        nlq = double(:natlang_query, attr_name: 'feed_name', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.search_attr).to be_nil
+      end
+    end
+  end
+
 
   describe '#search_value' do
     context 'given a value with comma separated values' do
