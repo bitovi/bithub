@@ -16,7 +16,7 @@ module Entities
       end
         
       def author_meta_attribute
-        { author: @event.blog_name }
+        { searchable_author: @event.blog_name }
       end
 
       def props_author_data

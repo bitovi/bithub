@@ -18,7 +18,7 @@ module Entities
           body: @event.comment,
           origin_id: @event.rsvp_id,
           origin_ts: @event.created_at,
-          author: @event.member.name,
+          searchable_author: @event.member.name,
           props: {
             origin_author_id: @event.member.id,
             origin_author_name: @event.member.name,
