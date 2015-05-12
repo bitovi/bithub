@@ -4,7 +4,7 @@ module Entities
     module SharedBuilders
             
       def author_meta_attribute
-        { author: @event.user.name + ' ' + @event.user.screen_name }
+        { searchable_author: @event.user.name + ' ' + @event.user.screen_name }
       end
 
       def origin_author_data
