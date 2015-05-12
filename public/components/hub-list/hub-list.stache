@@ -1,4 +1,4 @@
-<h2>Bitovi Hubs</h2>
+<h2>Your Hubs</h2>
 {{#if hubs.isPending}}
 	<div class="alert alert-info">Loading...</div>
 {{else}}
