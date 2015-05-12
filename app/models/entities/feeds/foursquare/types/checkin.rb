@@ -16,7 +16,7 @@ module Entities
           title: title,
           origin_id: @event.id,
           origin_ts: @event.created_at,
-          author: @event.user.firstName,
+          searchable_author: @event.user.firstName,
           props: {
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.firstName,

@@ -8,7 +8,7 @@ module Entities
           body: @event.body_markdown,
           url: @event.link,
           origin_ts: @event.creation_date,
-          author: @event.owner.name
+          searchable_author: @event.owner.name
         }
       end
 
