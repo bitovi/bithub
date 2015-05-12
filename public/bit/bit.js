@@ -130,10 +130,15 @@ function(Component, initView, _map, Bit){
 				this.element.height(this.element.find('.bit').height());
 				this.element.removeClass('loading');
 				this.element.trigger('loaded');
+
+				this.scope.attr('bit').attr('@isLoaded', true);
 			},
 			removeExplicitHeight : function(){
 				this.element.removeClass('animate-height').css('height', 'auto');
 				this.element.trigger('bit:loaded');
+
+				this.scope.attr('bit').attr('@hasExplicitHeight', true);
+				
 			},
 			destroy : function(){
 				clearTimeout(this.__imgSweeperTimeout);

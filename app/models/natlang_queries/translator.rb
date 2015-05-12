@@ -1,6 +1,6 @@
 module NatlangQueries
 
-  VALID_OPS = %w(contains contains_phrase contains_any contains_all is)
+  VALID_OPS = %w(contains starts_with ends_with contains_phrase contains_any contains_all is)
 
   class Translator
     def initialize(query, klass = Entity)

@@ -1,4 +1,13 @@
-<div class="column-wrapper clearfix columns-{{columnCount}}"></div>
+<div class="column-wrapper clearfix columns-{{columnCount}}">
+    {{#each columns}}
+    <div class="column">
+        {{#each this}}
+        <bh-bit bit="{.}" state="{state}" class="{{#unless @hasExplicitHeight}}animate-height{{/unless}} {{#unless @isLoaded}}loading{{/unless}}"></bh-bit>
+        {{/each}}
+    </div>
+    {{/each}}
+
+</div>
 
 {{#if isLoading}}
 	<div class="loader">
