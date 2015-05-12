@@ -2,6 +2,12 @@ module Identities
   module Facades
     class Facebook < Facade::Protocol
 
+      def credentials(page_id)
+        access_token = page_token(page_id) || user_long_lived_token
+
+        { access_token: access_token }
+      end
+
       def property_id_name_pairs(type=nil)
         page_ids_and_names
       end
