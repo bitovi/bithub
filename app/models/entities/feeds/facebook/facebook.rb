@@ -12,7 +12,7 @@ module Entities
       end
 
       def author_meta_attribute
-        { author: @event.from.name }
+        { searchable_author: @event.from.name }
       end
 
       def origin_data
