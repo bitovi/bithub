@@ -1,15 +1,14 @@
 class Api::V3::AnalyticsController < Api::V3::BaseController
   before_filter :authenticate_account!
-  load_and_authorize_resource :histogram, only: [:show]
 
   def show
-    authorize!(:read, source)
+    authorize!(:read, Histogram)
+    source
 
     if @source
       @timepoints = Histogram.stats_by_source_type(source_type, resolution)
         .where(:source_id => @source.id)
         .limit(last)
-
       response = { source: @source, timepoints: @timepoints }
     elsif @sources
       response = @sources.map do |s|
@@ -19,6 +18,8 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
           .limit(last)
         { source: s, timepoints: @timepoints }
       end
+    else
+      fail ArgumentError.new('Missing params.')
     end
 
     render :json => response
