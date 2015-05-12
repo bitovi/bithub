@@ -40,7 +40,7 @@
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
-			"can/*": "bower_components/canjs/*.js",
+			"can/*": "bower_components/canjs/steal/can/*.js",
 			"lodash/*": "bower_components/lodash-amd/modern/*.js",
 			"can-form" : "bower_components/can-form/can-form.js",
 			'lib/validator' : 'bower_components/can-form/lib/validator.js',
