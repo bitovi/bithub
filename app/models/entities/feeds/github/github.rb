@@ -7,7 +7,7 @@ module Entities
       end
 
       def author_meta_attribute
-        { author: @event.actor.login }
+        { searchable_author: @event.actor.login }
       end
 
       def repo_name
