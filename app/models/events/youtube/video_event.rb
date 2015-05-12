@@ -4,7 +4,7 @@ module Events
     class VideoEvent < Protocol
       extend Forwardable
 
-      def_delegators :@video, :id, :title, :description, :channel_title, :channel_id, :thumbnail
+      def_delegators :@video, :id, :title, :description, :created_time, :channel_title, :channel_id, :thumbnail
 
       attr_accessor :video
 

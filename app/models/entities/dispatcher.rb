@@ -294,4 +294,12 @@ module Entities
     end
   end
 
+  module Youtube
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Entities::Youtube::Video
+      end
+    end
+  end
+
 end

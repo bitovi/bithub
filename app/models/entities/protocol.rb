@@ -24,6 +24,7 @@ module Entities
   module Foursquare; end
   module Instagram; end
   module Tumblr; end
+  module Youtube; end
 
   class Protocol
     include Validatable
@@ -110,3 +111,4 @@ require_relative 'feeds/rss/rss'
 require_relative 'feeds/foursquare/foursquare'
 require_relative 'feeds/instagram/instagram'
 require_relative 'feeds/tumblr/tumblr'
+require_relative 'feeds/youtube/youtube'
