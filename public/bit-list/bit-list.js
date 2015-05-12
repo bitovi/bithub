@@ -20,12 +20,9 @@ function(Control, initView, Bit, _map){
 
 	var makeColumns = function(count){
 		return _map(Array(count), function(){
-			var c = document.createElement('div')
-			c.className = 'column';
-			return c;
+			return new can.List;
 		});
 	}
-
 
 	var WINDOW_COUNT = 50;
 
@@ -44,10 +41,13 @@ function(Control, initView, Bit, _map){
 			this.__timeouts = {};
 			this.__minHeight = 0;
 
+			this.columns = new can.List();
+
 			this.element.html(initView({
 				isLoading : this.options.isLoading,
 				columnCount : this.options.columnCount,
-				state : this.options.state
+				state : this.options.state,
+				columns : this.columns
 			}));
 
 			this.__hasItemsOnTop = false;
@@ -95,73 +95,79 @@ function(Control, initView, Bit, _map){
 			}
 		},
 		"{currentScrollTop} change" : function(currentScrollTop, ev, newVal){
-			if(newVal === 0){
-				this.resetColumns(this.options.columnCount());
-			}
-		},
-		resetColumns : function(columnCount){
-			this.columns = makeColumns(columnCount);
+			if(newVal !== 0) return;
+			var columnCount = this.options.columnCount();
+			var perColumns = can.map(new Array(columnCount), function(){ return 0 });
+			var currentCount = 0;
+			
 			this.currentColumn = 0;
-			this.partitionFromTop(this.options.state.attr('bits'));
-			this.element.find('.column-wrapper').html(this.columns);
-		},
-		'{state.bits} remove' : function(bits, ev, removed){
-			for(var i = 0; i < removed.length; i++){
-				$(this.__cardCache[removed[i].id]).remove();
-				delete this.__cardCache[removed[i].id];
-			}
-		},
-		partitionFromTop : function(bits){
-			this.currentStart = 0;
-			this.currentLimit = WINDOW_COUNT;
-			this.partitionPart(bits);
-		},
-		partitionPart : function(bits){
-			this.partition(bits.slice(this.currentStart, this.currentLimit));
-		},
-		partition : function(bits){
 
-			var columnLength = this.columns.length;
-			var arrs = _map(Array(columnLength), function(){
-				return [];
-			});
-			var card;
-
-			for(var i = 0; i < bits.length; i++){
-				card = this.makeCard(bits[i]);
-				if(card && can.inArray(card.parentElement, this.columns) === -1){
-					arrs[this.currentColumn].push(card);
-					this.currentColumn++;
-					if(this.currentColumn === columnLength){
-						this.currentColumn = 0;
-					}
+			for(var i = 0; i < WINDOW_COUNT; i++){
+				perColumns[this.currentColumn]++;
+				this.currentColumn++;
+				currentCount++;
+				if(this.currentColumn === columnCount){
+					this.currentColumn = 0;
 				}
 			}
 
-			for(var i = 0; i < arrs.length; i++){
-				$(this.columns[i]).append(arrs[i]);
+			can.batch.start();
+			for(var i = 0; i < columnCount; i++){
+				this.columns[i].splice(perColumns[i], this.columns[i].length);
 			}
-			this.calculateMinHeight();
+			can.batch.stop();
+			this.currentLimit = currentCount;
+			setTimeout(this.proxy('calculateMinHeight'), 1);
 		},
-		makeCard : function(bit){
-			var id = bit.attr('id');
+		resetColumns : function(columnCount){
+			this.columns.replace(makeColumns(columnCount));
+			this.currentColumn = 0;
+			this.partitionFromTop(this.options.state.attr('bits'));
+		},
+		partitionFromTop : function(bits){
+			this.currentLimit = 0;
+			this.partitionPart(bits);
+		},
+		partitionPart : function(bits){
+			this.partition(bits.slice(this.currentLimit, this.currentLimit + WINDOW_COUNT));
+			this.currentLimit = this.currentLimit + WINDOW_COUNT;
+		},
+		partition : function(bits){
+			var columnLength = this.columns.length;
+			var self = this;
+			var start = 0;
+			var partitionFn = function(){
+				var end = start + 5;
 
-			this.__cardCache = this.__cardCache || {};
+				if(bits.length < end){
+					end = bits.length;
+				}
 
-			if(!this.__cardCache[id]){
-				this.__cardCache[id] = CARD_TEMPLATE({
-					bit: bit,
-					state: this.options.state
-				}).firstChild;
+				can.batch.start();
+				for(var i = start; i < end; i++){
+					self.columns[self.currentColumn].push(bits[i]);
+					self.currentColumn++;
+					if(self.currentColumn === columnLength){
+						self.currentColumn = 0;
+					}
+				}
+				can.batch.stop();
+				
+				if(end < bits.length){
+					start = end;
+					setTimeout(partitionFn, 1);
+				}
+				self.calculateMinHeight();
 			}
-			return this.__cardCache[id];
+
+			partitionFn();
+
 		},
 		nextPage : function(){
 			var params;
 			var bits = this.options.state.attr('bits');
 
 			if(this.currentLimit < bits.length){
-				this.currentLimit = this.currentLimit + WINDOW_COUNT;
 				this.partitionPart(bits);
 			} else if(!this.options.isLoading() && this.options.hasNextPage()){
 				params = this.options.state.attr('params');
@@ -208,7 +214,9 @@ function(Control, initView, Bit, _map){
 		},
 		"bit:loaded" : 'calculateMinHeight',
 		calculateMinHeight : function(){
-			var heights = can.map(this.columns, function(c){
+			if(!this.element) return;
+
+			var heights = can.map(this.element.find('.column'), function(c){
 				return $(c).height();
 			});
 			var minHeight = Math.min.apply(Math, heights);
