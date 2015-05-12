@@ -313,4 +313,12 @@ module Events
     end
   end
 
+  module Youtube
+    class Dispatcher < BasicTypeDispatcher
+      def type
+        Events::Youtube::VideoEvent
+      end
+    end
+  end
+
 end
