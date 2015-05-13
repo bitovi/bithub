@@ -53,14 +53,19 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 			currentSubscription : {
 				serialize: false
 			},
+			currentAccount: {
+				serialize: false
+			},
 			hubId : {
 				set : function(val){
-					var liveService = connectLiveService(val);
+					var liveService = connectLiveService(val, this.attr('currentBrand').attr('tenant_name'));
 					var self = this;
 
 					this.attr('bits').splice(0);
 
 					if(liveService){
+
+
 						liveService.on('services', can.proxy(Models.Service.messageFromLiveService, Models.Service));
 
 						liveService.on('services', function(msg){
@@ -147,7 +152,29 @@ function(Map, Models, _reduce, connectLiveService, Communicator){
 						return customPreset || this.attr('defaultPreviewPreset');
 					}
 				},
-				serialize: false,
+				set : function(val){
+					var embedType            = this.embedType();
+					var adminPreset          = this.attr('adminPreset');
+
+					if(embedType === 'admin'){
+						adminPreset.attr('config').attr(val.attr ? val.attr() : val);
+						return val;
+					}
+				},
+				serialize : function(){
+					var embedType            = this.embedType();
+					var adminPreset          = this.attr('adminPreset');
+					var preset;
+
+					adminPreset && adminPreset.attr();
+
+					if(embedType === 'admin'){
+						return {
+							order: adminPreset.attr('config.order'),
+							filter: adminPreset.attr('config.filter')
+						}
+					}
+				}
 			},
 			customPreset: {
 				serialize: false

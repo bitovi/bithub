@@ -7,18 +7,19 @@ module Entities
         @event.post.id && find_by_post_id.first
       end
 
-      def build
-        Entity.new({
+      def data
+        {
           title: @event.thread.title,
           body: @event.post.message,
           url: @event.post.url,
           origin_id: @event.post.id,
           origin_ts: @event.post.created_at,
+          author: @event.author.name,
           props: {
             origin_author_id: @event.author.id,
             origin_author_name: @event.author.name,
           }
-        })
+        }
       end
 
       # Finders

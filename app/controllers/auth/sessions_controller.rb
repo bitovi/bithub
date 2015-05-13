@@ -1,4 +1,4 @@
-class Auth::AccountSessionsController < Devise::SessionsController
+class Auth::SessionsController < Devise::SessionsController
 
   protected
 
@@ -6,7 +6,6 @@ class Auth::AccountSessionsController < Devise::SessionsController
     # TODO: choose organization and choose brand
     session['organization_name'] = account.organizations.first
     session['tenant_name'] = account.organizations.first.brands.first.tenant_name
-
     admin_index_path
   end
 

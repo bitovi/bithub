@@ -6,6 +6,7 @@ steal(
 './bit.less!',
 'components/image-gallery',
 'components/body-wrap',
+'components/share-bit',
 'can/construct/super',
 function(Component, initView, _map, Bit){
 
@@ -21,6 +22,7 @@ function(Component, initView, _map, Bit){
 
 	var scope = {
 		actionFail: null,
+		sharePanelOpen: false,
 		toggleApproveBit : function(){
 			this.attr('bit.is_approved') ? this.disapproveBit() : this.approveBit();
 		},
@@ -37,6 +39,9 @@ function(Component, initView, _map, Bit){
 		},
 		showAdminPanel : function(){
 			return !!this.attr('state').isAdmin() && !(this.attr('actionFail'));
+		},
+		sharePanelToggle : function(){
+			this.attr('sharePanelOpen', !this.attr('sharePanelOpen'));
 		}
 	};
 
@@ -125,9 +130,15 @@ function(Component, initView, _map, Bit){
 				this.element.height(this.element.find('.bit').height());
 				this.element.removeClass('loading');
 				this.element.trigger('loaded');
+
+				this.scope.attr('bit').attr('@isLoaded', true);
 			},
 			removeExplicitHeight : function(){
 				this.element.removeClass('animate-height').css('height', 'auto');
+				this.element.trigger('bit:loaded');
+
+				this.scope.attr('bit').attr('@hasExplicitHeight', true);
+				
 			},
 			destroy : function(){
 				clearTimeout(this.__imgSweeperTimeout);

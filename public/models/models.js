@@ -9,7 +9,8 @@ steal(
 './analytics.js',
 './subscription.js',
 './filter.js',
-function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subscription, Filter){
+'./account.js',
+function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subscription, Filter, Account){
 	return {
 		Hub : Hub,
 		Service : Service,
@@ -20,6 +21,7 @@ function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subs
 		Preset: Preset,
 		Analytics : Analytics,
 		Subscription : Subscription,
-		Filter : Filter
+		Filter : Filter,
+		Account : Account
 	}
 })

@@ -1,4 +1,4 @@
-json.cache! ['v3', entity] do
+json.cache_if! !defined?(skip_caching),['v3', entity] do
   json.(entity, :id, :title, :body, :feed_name, :type_name, :url, :images, :created_at, :updated_at)
 
   json.thread_updated_ts entity.thread_updated_ts.to_i

@@ -13,7 +13,7 @@ module Fetchers
       def fetch
         ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/mentions')
         handle_errors do
-          @client.mentions_timeline
+          @client.mentions_timeline(:count => 200)
         end
       end
     end

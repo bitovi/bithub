@@ -35,18 +35,26 @@ RSpec.describe Embed, :type => :model do
       @embed.make_link_to(@e1 = FactoryGirl.create(:github_push))
       @embed.make_link_to(@e2 = FactoryGirl.create(:github_issue, title: 'eventmachine and haskell'))
       @embed.make_link_to(@e3 = FactoryGirl.create(:twitter_tweet, title: 'eventmachine is bad'))
-      @embed.make_link_to(@e4 = FactoryGirl.create(:twitter_follow))
+      @embed.make_link_to(@e4 = FactoryGirl.create(:twitter_follow, title: 'Smile!! 😃 I\'ve found that if I do my plank pretty soon after waking up it is slightly easier 😜. 3 minutes up, 2 mins on my forearms no breaks. Finished up with superman & downward facing dog to loosen up my back.'))
       @embed.make_link_to(@e5 = FactoryGirl.create(:github_pull_request, url: 'http://this-is-also.searchable.com'))
       @embed.make_link_to(@e6 = FactoryGirl.create(:meetup_entity, :event, title: "a haskell meetup"))
     end
 
-    context 'given a filter with a single "where" query' do
+    context 'given a filter that translates to a "where" query' do
       it 'performs a where query and approves all items it detects' do
         @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
         FactoryGirl.create(:natlang_query, :is_from_twitter, filter: @approving)
 
         @embed.moderate
         expect(@embed.approved_entities).to match_array [@e3, @e4]
+      end
+
+      it 'filters by a given phrase' do
+        @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
+        f = FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_phrase', val: 'pretty soon after', filter: @approving)
+
+        @embed.moderate
+        expect(@embed.approved_entities).to match_array [@e4]
       end
 
       it 'filters by negated regular attribute (feed_name, type_name, etc.)' do
@@ -58,7 +66,7 @@ RSpec.describe Embed, :type => :model do
       end
     end
       
-    context 'given a filter with a single full-text search query' do
+    context 'given a filter that translates to a full-text search query' do
       it 'performs a full text search on all attributes by conjunctively combining multiple terms and approves all items it detects' do
         @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
         FactoryGirl.create(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'haskell,eventmachine', filter: @approving)

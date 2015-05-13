@@ -1,6 +1,9 @@
 module Entities
   module Github
+
     class IssueAction < Protocol
+      include Github::SharedBuilders
+
       def find
         nil
       end
@@ -14,24 +17,16 @@ module Entities
         end.compact.first
       end
 
-      # Builder
-      def build
-        built = Entity.new(
+      def data
+        with_commons({
           title: "#{@event.nice_name} ##{@event.number} #{@event.action}",
-          origin_ts: @event.created_at,
           props: {
-            origin_author_id: @event.actor.id,
-            origin_author_name: @event.actor.login,
-            origin_author_avatar_url: @event.actor.avatar_url,
-            repo_name: @event.repo.name,
             number: @event.number,
             state: @event.state,
-            action: @event.action
+            action: @event.action,
+            label_names: @event.labels.andand.names_csv,
           }
-        )
-
-        built.props[:label_names] = @event.labels.andand.names_csv
-        built
+        })
       end
 
       def update_parent

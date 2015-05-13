@@ -1,22 +1,18 @@
 module Entities
   module Github
+
     class Fork < Protocol
+      include Github::SharedBuilders
+
       def find
         @event.event_id && find_by_actor_and_repo_name.first
       end
 
-      def build
-        Entity.new(
+      def data
+        with_commons({
           title: "forked #{@event.repo.name}",
-          origin_ts: @event.created_at,
           origin_id: @event.fork_id.to_s,
-          props: {
-            origin_author_id: @event.actor.id,
-            origin_author_name: @event.actor.login,
-            origin_author_avatar_url: @event.actor.avatar_url,
-            repo_name: @event.repo.name
-          }
-        )
+        })
       end
 
       def find_by_origin_id
