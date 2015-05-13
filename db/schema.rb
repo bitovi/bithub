@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150413162317) do
+ActiveRecord::Schema.define(version: 20150427144234) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -162,6 +162,7 @@ ActiveRecord::Schema.define(version: 20150413162317) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_pending",        default: false
+    t.string   "author"
   end
 
   create_table "events", force: true do |t|

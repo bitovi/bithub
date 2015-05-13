@@ -1,7 +1,19 @@
-<p>Welcome <%= @email %></p>
+<h2>Welcome to BitHub <%= @resource.name || @resource.email %></h2>
 
-<p>You are getting this email because you registered for the <a href="http://bithub.com">BitHub</a> account.</p>
+<p>Creating a social hub via BitHub is quick and easy. Here is how to do it:</p>
 
-<p>You can confirm your account email through the link below:</p>
+<ul>
+	<li>Log in to your BitHub Account: www.bithub.com</li>
+	<li>Click on “Add Hub”</li>
+	<li>Name your hub</li>
+	<li>Add Services such as Twitter or Facebook.</li>
+	<li>Add moderation rules</li>
+	<li>Select Integration &amp; Design to find the embed code and quick link for your hub.</li>
+	<li>Place the embed code in your page to showcase your hub to everyone!</li>
+</ul>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p><b>Before you start using Bithub please <%= link_to 'confirm your account', confirmation_url(@resource, confirmation_token: @token) %>.</b></p> 
+
+<p>Check out our online support topics at the bottom right of the page or email us at <a href="mailto:support@bithub.com">support@bithub.com</a> with any questions.</p>
+
+<p>Looking forward to seeing your customized hub!</p>

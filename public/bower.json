@@ -17,7 +17,7 @@
   "dependencies": {
     "selectize": "~0.12.0",
     "steal": "~0.4.0",
-    "canjs": "git@github.com:bitovi/canjs.git#minor",
+    "canjs": "~2.2.5",
     "bootstrap": "~3.3.0",
     "can-form": "retro/can-form",
     "lodash": "~2.4.1",

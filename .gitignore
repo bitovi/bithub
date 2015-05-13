@@ -9,6 +9,7 @@ public/uploads
 bithub-client/
 public/bower_components/
 tags
+gems.tags
 stripe-mock-server.log
 .sass-cache
 .sass-cache/

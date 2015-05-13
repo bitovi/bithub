@@ -16,27 +16,36 @@
                 {{#each natlang_queries}}
                 <div class="attr-wrap">
                     <select class="form-control" can-value="attr_name">
-                        <option value="content">Content</option>
-                        <option value="title">Title</option>
-                        <option value="author">Author</option>
+                        {{#each availableFilters}}
+                        <option value="{{@key}}">{{.}}</option>
+                        {{/each}}
                     </select>
                 </div>
                 <div class="op-wrap">
                     <select class="form-control" can-value="operation">
-                        <option value="pos:contains_all">Contains all words</option>
-                        <option value="pos:contains_any">Contains any word</option>
-                        <option value="pos:is">Is equal to</option>
-                        <option value="neg:is">Isn't equal to</option>
+                        {{#verbsForQuery this}}
+                        <option value="{{ filter }}">{{ name }}<option>
+                        {{/verbsForQuery}}
                     </select>
                 </div>
                 <div class="val-wrap">
-                    {{#isContainsFilter this}}
+                    {{#templateIs 'textarea' this}}
                     <textarea class="form-control" can-value="val"></textarea>
                     <p class="help-block">Separate the words with spaces</p>
-                    {{else}}
+                    {{/templateIs}}
+
+                    {{#templateIs 'input' this}}
                     <input class="form-control" type="text" can-value="val"/>
                     <p class="help-block">Whole phrase will be matched</p>
-                    {{/isContainsFilter}}
+                    {{/templateIs}}
+
+                    {{#templateIs 'feed_select' this}}
+                    <select can-value="val" class="form-control">
+                        {{#each feeds}}
+                        <option value="{{@key}}">{{ . }}</option>
+                        {{/each}}
+                    </select>
+                    {{/templateIs}}
                 </div>
                 {{/each}}
             </div>

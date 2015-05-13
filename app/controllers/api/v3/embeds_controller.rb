@@ -31,7 +31,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
         render :json => msg_hash(@embed, 'create'), :status => 422
       end
     else
-      render :json => msg_hash(@embed, 'create'), :status => 403
+      render :json => msg_hash(@embed, 'create'), :status => 406
     end
   end
 
@@ -56,8 +56,11 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def moderate
     authorize! :moderate, owner_embed
 
-    @embed.moderate
-    render :json => msg_hash(@embed, 'moderate')
+    if @embed.moderate
+      render :json => msg_hash(@embed, 'moderate')
+    else
+      render :json => msg_hash(@embed, 'moderate', 'error')
+    end
   end
 
   private

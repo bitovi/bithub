@@ -20,7 +20,7 @@ class Api::V3::FiltersController < Api::V3::BaseController
 
   def create
     @filter = owner_embed.filters.build(filter_params)
-    @filter.natlang_queries.build(queries_params)
+    @filter.natlang_queries.build(normalized_queries)
     @filter.natlang_queries.map(&:clean)
 
     if @filter.save
@@ -77,6 +77,10 @@ class Api::V3::FiltersController < Api::V3::BaseController
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
     @json.require(:filter).permit(:id, :action, :embed_id)
+  end
+
+  def normalized_queries
+    NatlangQueries::Normalizer.new(queries_params).normalized
   end
 
   def queries_params

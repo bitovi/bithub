@@ -1,4 +1,4 @@
-class Auth::AccountRegistrationsController < Devise::RegistrationsController
+class Auth::RegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
   def new
@@ -8,7 +8,6 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
 
   def create
     @plan = find_plan
-
     ActiveRecord::Base.transaction do
       super do |account|
         org_builder = Organizations::OrganizationBuilder.new(account, @plan)
@@ -42,12 +41,14 @@ class Auth::AccountRegistrationsController < Devise::RegistrationsController
   end
 
   def find_plan
-    plan_name = params[:plan]
-
-    if plan = Plan.find_by_stripe_id(plan_name)
-      plan
+    if plan_name
+      Plan.find_by_stripe_id(plan_name)
     else
-      Plan.find_by_name('startup') || Plan.first
+      Plan.find_by_stripe_id('startup')
     end
+  end
+
+  def plan_name
+    params[:plan]
   end
 end

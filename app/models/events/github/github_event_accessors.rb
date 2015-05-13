@@ -14,7 +14,7 @@ module Events
       def origin_timestamp
         Time.parse(source_data.fetch(:created_at)).utc
       end
-      alias_method :origin_ts,  :origin_timestamp
+      alias_method :origin_ts, :origin_timestamp
 
       def created_at
         origin_timestamp

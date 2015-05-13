@@ -2,27 +2,27 @@ module Entities
   module Twitter
 
     class Tweet < Protocol
+      include Twitter::SharedBuilders
 
       def find
         @event.id && find_by_tweet_id.first
       end
 
-      def build
-        built = Entity.new({
+      def data
+        prepared = {
           title: @event.text,
           url: @event.html_url,
           origin_ts: @event.created_at,
           origin_id: @event.id_str,
           props: {
-            origin_author_id: @event.user.id,
-            origin_author_name: @event.user.screen_name,
             origin_author_avatar_url: @event.user.profile_image_url,
             entities_urls: JSON.generate(@event.entities.urls),
             entities_media: JSON.generate(@event.entities.media)
           }
-        })
-        built[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
-        built
+        }
+
+        prepared[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
+        with_commons(prepared)
       end
 
       def find_parent
