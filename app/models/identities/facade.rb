@@ -10,7 +10,7 @@ module Identities
     def name
       if %w(github twitter instagram).include? @provider_facade.provider_name
         @source_data['info']['nickname']
-      elsif %w(facebook disqus meetup foursquare google_oauth2).include? @provider_facade.provider_name
+      elsif %w(facebook disqus meetup foursquare googleoauth2).include? @provider_facade.provider_name
         @source_data['info']['name']
       end
     end
