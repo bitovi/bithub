@@ -2,8 +2,8 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
-  # Frontend
-  root 'frontend#index'
+  get '/admin', to: 'kickstart#admin'
+  get '/embed', to: 'kickstart#embed'
 
   get 'embed', to: 'admin#embed'
 
@@ -113,8 +113,9 @@ Bithub::Application.routes.draw do
   end unless Rails.env.development?
   mount Sidekiq::Web => '/sidekiq'
 
-  get '/:page', controller: 'frontend', action: 'render_page'
-  get '/', controller: 'frontend', action: 'index'
+  get '/:page', to: 'static_pages#render_page'
+  root 'static_pages#index'
+
 
   match '*path', via: :all, to: 'application#render_404'
 end
