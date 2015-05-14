@@ -12,7 +12,10 @@ module Wrappers
       end
 
       def id
-        _id.fetch :videoId
+        # 'id.videoId' for results from search.list
+        # 'snippet.resourceId.videoId' for results from playlist_items.list
+
+        @data[:id].class == Hash ? @data[:id][:videoId] : snippet[:resourceId][:videoId]
       end
 
       def title
@@ -40,10 +43,6 @@ module Wrappers
       end
 
       private
-
-      def _id
-        @data.fetch :id
-      end
 
       def snippet
         @data.fetch :snippet

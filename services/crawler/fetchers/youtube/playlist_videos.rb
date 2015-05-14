@@ -8,8 +8,8 @@ module Fetchers
 
         super do
           @client.execute\
-            api_method: youtube_api.playlistItems.list,
-            parameters: {part: 'id,snippet', playlistlId: playlist_id, maxResults: 50}
+            api_method: youtube_api.playlist_items.list,
+            parameters: {part: 'id,snippet', playlistId: playlist_id, maxResults: 50}
         end
       end
 
