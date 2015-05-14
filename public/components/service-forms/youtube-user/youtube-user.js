@@ -1,7 +1,7 @@
 steal(
 'can/component',
-'./youtube-channel.stache!',
-'./youtube-channel.less!',
+'./youtube-user.stache!',
+'./youtube-user.less!',
 function(Component, initView){
   return Component.extend({
     tag : 'bh-youtube-user-service',
