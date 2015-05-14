@@ -6,12 +6,19 @@ steal(
 'can/map/define',
 function(Component, initView, Models){
 
+	var OAuthURL = function(feed){
+		if(feed === 'youtube'){
+			return '/auth/google_oauth2';
+		}
+		return '/auth/' + feed;
+	}
+
 
 	var OAuthConnect = function(feed) {
 		var windowPropsStr     = "width=800,height=600,scrollbars=yes",
 			title              = "OAuth Login",
 			host               = window.location.host.split('.'),
-			url                = '/auth/' + feed,
+			url                = OAuthURL(feed),
 			oauthWindow        = window.open(url, title, windowPropsStr),
 			def                = can.Deferred(),
 			oauthWindowSweeper = window.setInterval(function() {
