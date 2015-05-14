@@ -1,7 +1,7 @@
 require 'google/api_client'
 
 module Supervisors::Services::Youtube
-  class Playlist < Supervisors::Service
+  class User < Supervisors::Service
     include Common
 
     def boot

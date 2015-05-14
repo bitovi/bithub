@@ -1,20 +1,39 @@
 module Fetchers
   module Youtube
 
+    class BadRequestError < StandardError; end
+    class ForbiddenError < StandardError; end
+    class QuotaExceeded < StandardError; end
+
     class Base
       include Protocol
 
-      def initialize(client, opts)
+      def initialize(client, opts={})
         @client = client
         @opts   = opts
       end
 
       def fetch(&block)
-        result = yield if block_given?
+        handle_errors do
+          result = yield if block_given?
 
-        # TODO: handle errors
+          if result.error?
+            err_code = result.data.error['code']
+            err_msg  = result.data.error['message']
+            msg      = "#{err_code} #{err_msg}"
 
-        result.data.items.map {|i| i.to_hash}
+            case err_code
+            when 400
+              raise BadRequestError.new msg
+            when 403
+              raise (/.*quota.*/i.match(err_msg) ? QuotaExceeded.new(msg) : ForbiddenError.new(msg))
+            else
+              raise msg
+            end
+          else
+            result.data.items.map {|i| i.to_hash}
+          end
+        end
       end
 
       def youtube_api
