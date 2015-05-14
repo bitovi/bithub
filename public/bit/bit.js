@@ -71,13 +71,25 @@ function(Component, initView, _map, Bit){
 			}
 		},
 		events : {
-			init : function(){
+			inserted : function(){
 
 				var self = this;
 
 				this.element.trigger('loading');
 
-				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+				if(!this.scope.attr('bit').attr('@isLoaded')){
+					this.element.addClass('loading');
+				}
+
+				
+
+				if(!this.scope.attr('bit').attr('@hasHeight')){
+					this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+				this.element.addClass('animate-height');
+					
+				} else {
+					this.removeExplicitHeight();
+				}
 
 				if(this.scope.attr('state').isAdmin()){
 					if(!this.scope.attr('bit.is_approved')){
@@ -127,17 +139,26 @@ function(Component, initView, _map, Bit){
 			},
 			updateVisibility : function(){
 				var self = this;
-				this.element.height(this.element.find('.bit').height());
+				
+
+				if(this.element.hasClass('animate-height')){
+					this.element.height(this.element.find('.bit').height());
+				}
+
 				this.element.removeClass('loading');
+
 				this.element.trigger('loaded');
 
 				this.scope.attr('bit').attr('@isLoaded', true);
+
 			},
 			removeExplicitHeight : function(){
-				this.element.removeClass('animate-height').css('height', 'auto');
-				this.element.trigger('bit:loaded');
-
-				this.scope.attr('bit').attr('@hasExplicitHeight', true);
+				var self = this;
+				setTimeout(function(){
+					//self.element.removeClass('animate-height').css('height', 'auto');
+					self.element.trigger('bit:loaded');				
+					self.scope.attr('bit').attr('@hasHeight', true);
+				}, 1)
 				
 			},
 			destroy : function(){
