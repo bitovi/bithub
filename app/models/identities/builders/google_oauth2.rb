@@ -69,6 +69,7 @@ module Identities
           :parameters => { part: 'id,snippet', mine: true, maxResults: 50 }
 
         if result.error?
+          error = result.data.error
           Rails.logger.warn "Fetching YouTube channels for #{@source_data['name']} failed with:  #{error['code']}, #{error['message']}"
         end
 
@@ -81,6 +82,7 @@ module Identities
           :parameters => { part: 'id,snippet', mine: true, maxResults: 50 }
 
         if result.error?
+          error = result.data.error
           Rails.logger.warn "Fetching YouTube playlists for #{@source_data['name']} failed with:  #{error['code']}, #{error['message']}"
         end
 
