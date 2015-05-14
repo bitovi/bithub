@@ -1,7 +1,7 @@
 steal(
 'can/component',
-'./youtube-channel.stache!',
-'./youtube-channel.less!',
+'./youtube-playlist.stache!',
+'./youtube-playlist.less!',
 function(Component, initView){
   return Component.extend({
     tag : 'bh-youtube-playlist-service',
