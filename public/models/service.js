@@ -82,6 +82,11 @@ function(Model, _keys){
 			hashtag : 'Hashtag',
 			user_timeline : 'User Timeline',
 			term : 'Search'
+		},
+		youtube : {
+			channel : "Channel",
+			playlist: "Playlist",
+			user : "User"
 		}
 	};
 
@@ -95,7 +100,8 @@ function(Model, _keys){
 		rss           : 'RSS',
 		stackexchange : 'StackExchange',
 		tumblr        : 'Tumblr',
-		twitter       : 'Twitter'
+		twitter       : 'Twitter',
+		youtube       : 'YouTube'
 	};
 
 	var NEEDS_OAUTH = {
@@ -119,6 +125,9 @@ function(Model, _keys){
 		},
 		instagram : {
 			types: ['tag', 'user']
+		},
+		youtube : {
+			types: ['channel', 'playlist', 'user']
 		}
 	};
 
