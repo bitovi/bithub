@@ -2,7 +2,7 @@
     {{#each columns}}
     <div class="column">
         {{#each this}}
-        <bh-bit bit="{.}" state="{state}" class="{{#unless @hasExplicitHeight}}animate-height{{/unless}} {{#unless @isLoaded}}loading{{/unless}}"></bh-bit>
+        <bh-bit bit="{.}" state="{state}"></bh-bit>
         {{/each}}
     </div>
     {{/each}}
