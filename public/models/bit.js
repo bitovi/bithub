@@ -60,7 +60,7 @@ function(Model, moment){
 			return this.attr('feed_name') === 'youtube';
 		},
 		youtubeEmbedURL : function(){
-			var url = this.attr('url').replace(/watch\?v=/, 'embed/');
+			return this.attr('url').replace(/watch\?v=/, 'embed/');
 		}
 	};
 
