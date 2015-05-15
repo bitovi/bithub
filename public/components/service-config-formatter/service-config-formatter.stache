@@ -65,3 +65,15 @@
 {{#isFeedAndType 'twitter' 'term'}}
 	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
 {{/isFeedAndType}}
+
+{{#isFeedAndType 'youtube' 'channel'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'youtube' 'playlist'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'youtube' 'user'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
+{{/isFeedAndType}}
