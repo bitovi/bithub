@@ -35,7 +35,7 @@
 
         {{#if isYoutube}}
         <div class="youtube-embed-container">
-            <iframe src="{{ url }}" frameborder="0" allowfullscreen>
+            <iframe src="{{ youtubeEmbedURL }}" frameborder="0" allowfullscreen>
         </div>
         {{/if}}
 
