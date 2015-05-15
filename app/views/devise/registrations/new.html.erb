@@ -1,39 +1,46 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-		<h2 class="static-page-heading registration-heading">Sign up for the <b><%= @plan.name.capitalize %></b> plan.</h2>
+	<h2 class="static-page-heading registration-heading">Sign up for the <b><%= @plan.name.capitalize %></b> plan.</h2>
 
-		<div class="plan-and-form-wrap clearfix">
-			<div class="pricing-registration-page">
-				<%= render :partial => 'pricing/' + @plan.name.underscore, :locals => {context: 'registration'} %>
-			</div>
+	<div class="plan-and-form-wrap clearfix">
+		<div class="pricing-registration-page">
+			<%= render :partial => 'pricing/' + @plan.name.underscore, :locals => {context: 'registration'} %>
+		</div>
 
-			<div class="panel panel-default registration-panel">
-				<div class="panel-body">
+		<div class="panel panel-default registration-panel">
+			<div class="panel-body">
 
-						<%= devise_error_messages! %>
+				<%= devise_error_messages! %>
 
-						<div class="form-group"><%= f.label :name %>
-							<%= f.text_field :name, autofocus: true, autocomplete: "off", class: 'form-control' %></div>
-
-						<div class="form-group"><%= f.label :email %>
-							<%= f.email_field :email, class: 'form-control' %></div>
-
-						<div class="form-group"><%= f.label :password %> <% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %>
-							<%= f.password_field :password, autocomplete: "off", class: 'form-control' %></div>
-
-						<div class="form-group"><%= f.label :password_confirmation %>
-							<%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %></div>
-
-
-						<div><%= f.submit "Sign up", class: 'btn btn-primary' %></div>
-
+				<div class="form-group">
+					<%= f.label :name %>
+					<%= f.text_field :name, autofocus: true, autocomplete: "off", class: 'form-control' %>
 				</div>
+
+				<div class="form-group">
+					<%= f.label :email %>
+					<%= f.email_field :email, class: 'form-control' %>
+				</div>
+
+				<div class="form-group">
+					<%= f.label :password %><% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %>
+					<%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
+				</div>
+
+				<div class="form-group">
+					<%= f.label :password_confirmation %>
+					<%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
+				</div>
+
+				<div><%= f.submit "Sign up", class: 'btn btn-primary' %></div>
+
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10 col-md-offset-1">
-		<p style="text-align:center"><i>We'll notify you when your 15 day trial is close to end.</i></p>
+</div>
+
+<div class="col-md-10 col-md-offset-1">
+	<p style="text-align:center"><i>We'll notify you when your 15 day trial is close to end.</i></p>
 
 	<%= render "devise/shared/links" %>
-
 <% end %>
