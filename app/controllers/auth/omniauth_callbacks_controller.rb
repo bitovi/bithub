@@ -82,6 +82,6 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def current_brand
-    @current_brand ||= Brand.where(tenant_name: session['tenant_name']).first
+    @current_brand ||= Brand.find_by_tenant_name(session['tenant_name'])
   end
 end

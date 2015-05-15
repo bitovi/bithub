@@ -3,8 +3,14 @@ class OrganizationAccountsController < ApplicationController
   before_filter :authenticate_account!
   layout 'backend_admin'
 
+  def index
+    # authorize!(:manage, Organization)
+    @members = current_organization.account_organizations.where.not(invitation_accepted_at: nil).map(&:account)
+    render :index
+  end
+
   def choices
-    if current_account.organizations.count == 1
+    if current_account.account_organizations.where.not(invitation_accepted_at: nil).count == 1
       session['organization_name'] = current_account.organizations.first.name
       redirect_to choices_brand_path
     else

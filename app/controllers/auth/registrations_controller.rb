@@ -13,7 +13,9 @@ class Auth::RegistrationsController < Devise::RegistrationsController
         org_builder = Organizations::OrganizationBuilder.new(account, @plan)
 
         begin
-          org_builder.build.save!
+          ActiveRecord::Base.transaction do
+            org_builder.build.save!
+          end
         rescue ActiveRecord::RecordInvalid => e
           # catch exception on account validation
           # errors will be displayed on register form
@@ -25,19 +27,22 @@ class Auth::RegistrationsController < Devise::RegistrationsController
       end
     end
   end
-
+  
   protected
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:sign_up).push(:name)
+    devise_parameter_sanitizer.for(:account_update).push(:name)
+    devise_parameter_sanitizer.for(:invite).push(:name)
+    devise_parameter_sanitizer.for(:accept_invitation).push(:name)
   end
 
   def after_sign_up_path_for(resource)
-    admin_index_path
+    admin_path
   end
 
   def after_inactive_sign_up_path_for(resource)
-    admin_index_path
+    admin_path
   end
 
   def find_plan

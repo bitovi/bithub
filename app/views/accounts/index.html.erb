@@ -1,0 +1,9 @@
+<ul>
+	<% @accounts.each do |a| %>
+	<li>
+	Name: <%= a.name %><br/>
+	Email: <%= a.email %><br/>
+	Last sign-in at: <%= a.last_sign_in_at %>
+	</li>
+	<% end %>
+</ul>

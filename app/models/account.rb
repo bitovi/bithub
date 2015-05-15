@@ -1,13 +1,12 @@
 class Account < ActiveRecord::Base
-  devise :database_authenticatable, :registerable,
+  devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :omniauthable,
-         :confirmable
+         :omniauthable, :confirmable, :invitable
 
   rolify :role_cname => 'AccountRole'
 
-  has_many :organizations, through: :accounts_organizations
-  has_many :accounts_organizations, dependent: :destroy
+  has_many :organizations, through: :account_organizations
+  has_many :account_organizations, dependent: :destroy
 
   def brand_ids
     organizations.map do |o|

@@ -10,7 +10,7 @@ class AccountAbility
 
       # update and leave organization
       can [:read, :update], Organization, id: account.organization_ids
-      can :destroy, AccountsOrganization, account_id: account.id
+      can [:read, :destroy], AccountOrganization, account_id: account.id
 
       # create new a brand or read/update/delete owned brands
       can :create, Brand, organization_id: account.organization_ids
