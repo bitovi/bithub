@@ -4,14 +4,18 @@ module Services
       class Channel
         include Virtus.model(:strict => true)
         attribute :id, String
+        attribute :target, String
         attribute :display_name, String, :default => ''
 
-        def url=(url)
-          if channel_id = channel_id_from_url(url)
+        def target=(target)
+          if channel_id = channel_id_from_url(target)
             self.id = channel_id
+            self.display_name = target
+          elsif /^[a-zA-Z0-9_-]*$/.match target
+            self.id = target
           end
 
-          self.display_name = url
+          super target
         end
 
         def channel_id_from_url(url)
