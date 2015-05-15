@@ -31,7 +31,7 @@
   "resolutions": {
     "steal": "~0.4.0",
     "jquery": ">= 1.9.1",
-    "canjs": "minor",
+    "canjs": "~2.2.5",
     "traceur": "0.0.58",
     "qunit": "~1.16.0"
   },
