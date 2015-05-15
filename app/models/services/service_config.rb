@@ -69,3 +69,6 @@ Services::Types::Twitter::Followers
 Services::Types::Twitter::Hashtag
 Services::Types::Twitter::Term
 Services::Types::Twitter::UserTimeline
+Services::Types::Youtube::Channel
+Services::Types::Youtube::Playlist
+Services::Types::Youtube::User

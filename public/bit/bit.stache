@@ -33,6 +33,12 @@
 				<bh-image-gallery images="{images}"></bh-image-gallery>
 			{{/if}}
 
+        {{#if isYoutube}}
+        <div class="youtube-embed-container">
+            <iframe src="{{ youtubeEmbedURL }}" frameborder="0" allowfullscreen>
+        </div>
+        {{/if}}
+
 			<bh-body-wrap class="{{#if images.length}}short{{else}}tall{{/if}}">
 				<h4>{{{ formattedTitle title }}}</h4>
         {{#if body}}

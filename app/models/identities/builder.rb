@@ -17,12 +17,17 @@ module Identities
       attr_reader :storage
 
       def token
-        @source_data.fetch(:credentials).fetch(:token)
+        credentials.fetch :token
+      end
+
+      def credentials
+        @source_data.fetch :credentials
       end
 
       private
+
       def https_client(domain)
-        if !@https_client 
+        if !@https_client
           client = Net::HTTP.new domain, 443
           client.use_ssl = true
           @https_client = client

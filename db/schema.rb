@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427144234) do
+ActiveRecord::Schema.define(version: 20150507163229) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -122,11 +122,13 @@ ActiveRecord::Schema.define(version: 20150427144234) do
   end
 
   create_table "embed_entities", force: true do |t|
-    t.integer "embed_id"
-    t.integer "entity_id"
-    t.boolean "is_approved_manually"
-    t.boolean "is_pinned",                 default: false, null: false
-    t.boolean "is_approved_automatically"
+    t.integer  "embed_id"
+    t.integer  "entity_id"
+    t.boolean  "is_approved_manually"
+    t.boolean  "is_pinned",                 default: false, null: false
+    t.boolean  "is_approved_automatically"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "embed_presets", force: true do |t|

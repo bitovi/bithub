@@ -10,17 +10,14 @@ module Identities
     def name
       if %w(github twitter instagram).include? @provider_facade.provider_name
         @source_data['info']['nickname']
-      elsif %w(facebook disqus meetup foursquare).include? @provider_facade.provider_name
+      elsif %w(facebook disqus meetup foursquare googleoauth2).include? @provider_facade.provider_name
         @source_data['info']['name']
       end
     end
 
     def credentials(property_id = nil)
-      if @provider_facade.provider_name == 'facebook' && (page_id = property_id)
-        _access_token = (@provider_facade.page_token(page_id) || @provider_facade.user_long_lived_token)
-        { access_token: _access_token }
-      elsif @provider_facade.provider_name == 'twitter'
-        { access_token: access_token, access_secret: @provider_facade.access_secret }
+      if @provider_facade.respond_to? :credentials
+        @provider_facade.credentials property_id
       elsif @source_data[:credentials]
         { access_token: access_token }
       else
@@ -28,14 +25,8 @@ module Identities
       end
     end
 
-    def property_id_name_pairs(property_type = nil)
-      if @provider_facade.provider_name == 'github' && property_type== 'repo'
-        @provider_facade.repo_ids_and_names
-      elsif @provider_facade.provider_name == 'github' && property_type == 'org'
-        @provider_facade.org_ids_and_names
-      else
-        @provider_facade.property_id_name_pairs
-      end
+    def property_id_name_pairs(property_type=nil)
+      @provider_facade.property_id_name_pairs property_type
     end
 
     def property_name_for_id(id)

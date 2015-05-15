@@ -20,6 +20,7 @@ module Entities
   module Facebook; end
   module Instagram; end
   module Tumblr; end
+  module Youtube; end
   module Foursquare; end
   module Rss; end
 
@@ -114,3 +115,4 @@ require_relative 'feeds/rss/rss'
 require_relative 'feeds/foursquare/foursquare'
 require_relative 'feeds/instagram/instagram'
 require_relative 'feeds/tumblr/tumblr'
+require_relative 'feeds/youtube/youtube'
