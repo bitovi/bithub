@@ -1,0 +1,4 @@
+<div class="form-group">
+	<bh-suggestions service="youtube/channel" brand-identity-id="{map.brand_identity_id}" val="{map.config.target}" allow-extra="true" pick-suggestion-label="Pick a channel" enter-your-own-label="Or enter any public channel"></bh-suggestions>
+	{{{configErrors errors 'name'}}}
+</div>

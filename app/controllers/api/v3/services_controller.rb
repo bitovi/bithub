@@ -101,7 +101,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
       suggestions = []
       if params[:feed_name] == 'instagram' && (username = params[:username])
         suggestions += api_adapter.user_from_instagram(params[:username])
-      
+
       # VISE IDENTITETA
       elsif bi = current_brand.identities.where(id: brand_identity_id, provider: feed_name).first
         suggestions += bi.property_id_name_pairs(params[:feed_type])
@@ -132,7 +132,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def brand_identity_id
-    params[:brand_identity_id] || params[:service][:brand_identity_id]
+    params[:brand_identity_id] || params[:service].andand[:brand_identity_id]
   end
 
   def service_id

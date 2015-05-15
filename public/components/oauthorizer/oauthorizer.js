@@ -6,12 +6,23 @@ steal(
 'can/map/define',
 function(Component, initView, Models){
 
+	var OAuthURL = function(feed){
+		return '/auth/' + getIdentityProvider(feed);
+	}
+
+
+	var getIdentityProvider = function(feed){
+		if(feed === 'youtube'){
+			return 'google_oauth2';
+		}
+		return feed;
+	}
 
 	var OAuthConnect = function(feed) {
 		var windowPropsStr     = "width=800,height=600,scrollbars=yes",
 			title              = "OAuth Login",
 			host               = window.location.host.split('.'),
-			url                = '/auth/' + feed,
+			url                = OAuthURL(feed),
 			oauthWindow        = window.open(url, title, windowPropsStr),
 			def                = can.Deferred(),
 			oauthWindowSweeper = window.setInterval(function() {
@@ -107,7 +118,7 @@ function(Component, initView, Models){
 			identitiesForCurrentService : function(){
 				var currentService = this.attr('feed');
 				return can.grep(this.attr('identities'), function(identity){
-					return identity.attr('provider') === currentService;
+					return identity.attr('provider') === getIdentityProvider(currentService);
 				});
 			},
 			hasIdentityForService : function(service){
@@ -115,7 +126,7 @@ function(Component, initView, Models){
 					length = identities.attr('length');
 
 				for(var i = 0; i < length; i++){
-					if(identities.attr(i + '.provider') === service){
+					if(identities.attr(i + '.provider') === getIdentityProvider(service)){
 						return true;
 					}
 				}
