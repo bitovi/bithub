@@ -55,6 +55,9 @@ function(Model, moment){
 		},
 		isTwitterFollow : function(){
 			return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
+		},
+		isYoutube : function(){
+			return this.attr('feed_name') === 'youtube';
 		}
 	};
 

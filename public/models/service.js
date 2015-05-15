@@ -85,8 +85,8 @@ function(Model, _keys){
 		},
 		youtube : {
 			channel : "Channel",
-			playlist: "Playlist",
-			user : "User"
+			playlist: "Playlist"/*,
+			user : "User"*/
 		}
 	};
 
