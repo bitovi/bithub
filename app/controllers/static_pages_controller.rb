@@ -6,11 +6,15 @@ class StaticPagesController < ApplicationController
   def render_page
     template = (params[:page] || "").gsub(/[^a-z_]+/, '')
 
-    @current_page_title = static_pages[params[:page].to_sym]
+    if template_exists? "static_pages/#{params[:page]}"
+      @current_page_title = static_page_titles[params[:page].to_sym]
 
-    respond_to do |format|
-      format.html { render "frontend/#{template}" }
-      format.any  { head :not_found }
+      respond_to do |format|
+        format.html { render "static_pages/#{template}" }
+        format.any  { head :not_found }
+      end
+    else
+      render_404
     end
   end
 
@@ -22,7 +26,7 @@ class StaticPagesController < ApplicationController
     return "application" if static_pages.keys.include?(params[:page].to_sym)
   end
 
-  def static_pages 
+  def static_page_titles
     @static_pages ||= {
       terms_of_service: 'Terms of Service',
       privacy_policy: 'Privacy Policy'
