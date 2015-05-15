@@ -3,7 +3,7 @@ module Supervisors::Services::Youtube
 
     def client
       @client ||= Google::APIClient.new\
-        application_name: 'Bithub (dev)',
+        application_name: 'Bithub',
         application_version: '0.0.1'
 
       if access_token && refresh_token
