@@ -35,3 +35,8 @@ require_relative 'instagram/geography_recent_media'
 
 require_relative 'tumblr/posts'
 require_relative 'tumblr/tagged'
+
+require_relative 'youtube/base'
+require_relative 'youtube/channel_videos'
+require_relative 'youtube/playlist_videos'
+require_relative 'youtube/user_videos'

@@ -2,6 +2,7 @@ require 'twitter'
 require 'github_api'
 require 'koala'
 require 'instagram'
+require 'google/api_client'
 require 'newrelic_rpm'
 
 module Fetchers
@@ -43,6 +44,20 @@ module Fetchers
 
     # Facebook
     rescue Koala::KoalaError => e
+      log_and_return_empty e
+
+    # Youtube
+    rescue Google::APIClient::TransmissionError => e
+      raise RemoteError.new e.to_s
+      log_and_return_empty e
+    rescue Fetchers::Youtube::BadRequestError => e
+      raise ConfigError.new e.to_s
+      log_and_return_empty e
+    rescue Fetchers::Youtube::QuotaExceededError => e
+      raise RateLimitError.new e.to_s
+      log_and_return_empty e
+    rescue Fetchers::Youtube::ForbiddenError => e
+      raise AuthError.new e.to_s
       log_and_return_empty e
 
     # Instagram

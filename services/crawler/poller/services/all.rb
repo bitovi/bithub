@@ -11,6 +11,11 @@ require 'poller/services/twitter/term'
 require 'poller/services/tumblr/blog'
 require 'poller/services/tumblr/tag'
 
+require 'poller/services/youtube/common'
+require 'poller/services/youtube/channel'
+require 'poller/services/youtube/playlist'
+require 'poller/services/youtube/user'
+
 require 'poller/services/facebook/public_page'
 require 'poller/services/disqus_forum'
 require 'poller/services/meetup_group'

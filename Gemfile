@@ -49,6 +49,7 @@ gem 'omniauth-disqus', :github => 'influitive/omniauth-disqus'
 gem 'omniauth-foursquare'
 gem 'omniauth-instagram'
 gem 'omniauth-tumblr'
+gem 'omniauth-google-oauth2'
 
 gem 'redcarpet'
 
@@ -76,6 +77,7 @@ gem 'rMeetup'
 gem 'httparty'
 gem 'feedjira'
 gem 'twitter-text'
+gem 'google-api-client'
 
 gem 'reel', '~> 0.5'
 
