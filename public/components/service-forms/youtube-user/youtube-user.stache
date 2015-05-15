@@ -1,4 +1,4 @@
 <div class="form-group">
-	<bh-suggestions service="youtube/user" brand-identity-id="{map.brand_identity_id}" val="{map.config.target}" allow-extra="true" pick-suggestion-label="Pick a user" enter-your-own-label="Or enter any public user"></bh-suggestions>
+	<bh-suggestions service="youtube/user" brand-identity-id="{map.brand_identity_id}" val="{map.config.target}" pick-suggestion-label="Pick a user"></bh-suggestions>
 	{{{configErrors errors 'name'}}}
 </div>
