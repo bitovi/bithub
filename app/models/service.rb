@@ -126,7 +126,7 @@ class Service < ActiveRecord::Base
     }
   end
 
-  ['disqus', 'facebook', 'foursquare', 'github', 'instagram', 'meetup', 'rss', 'stackexchange', 'tumblr', 'twitter'].each do |fn|
+  ['disqus', 'facebook', 'foursquare', 'github', 'instagram', 'meetup', 'rss', 'stackexchange', 'tumblr', 'twitter', 'youtube'].each do |fn|
     define_method "is_#{fn}?" do
       fn ==  feed_name
     end

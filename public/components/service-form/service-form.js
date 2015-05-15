@@ -21,6 +21,9 @@ steal(
 'components/service-forms/twitter-hashtag',
 'components/service-forms/twitter-term',
 'components/service-forms/twitter-user-timeline',
+'components/service-forms/youtube-channel',
+'components/service-forms/youtube-playlist',
+'components/service-forms/youtube-user',
 'components/oauthorizer',
 'components/helpers.js',
 function(Component, initView, Models){

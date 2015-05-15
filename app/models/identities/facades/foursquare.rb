@@ -1,8 +1,8 @@
 module Identities
   module Facades
     class Foursquare < Facade::Protocol
-      
-      def property_id_name_pairs
+
+      def property_id_name_pairs(type=nil)
         venue_ids_and_names
       end
 

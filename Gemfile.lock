@@ -80,6 +80,10 @@ GEM
     ast (2.0.0)
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
+    autoparse (0.3.3)
+      addressable (>= 2.3.1)
+      extlib (>= 0.9.15)
+      multi_json (>= 1.0.0)
     autoprefixer-rails (5.1.7.1)
       execjs
       json
@@ -179,6 +183,7 @@ GEM
     evented-spec (0.9.0)
     eventmachine (1.0.6)
     execjs (2.4.0)
+    extlib (0.9.16)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.5.0)
@@ -216,6 +221,16 @@ GEM
       multi_json (>= 1.7.5, < 2.0)
       nokogiri (~> 1.6.0)
       oauth2
+    google-api-client (0.8.2)
+      activesupport (>= 3.2)
+      addressable (~> 2.3)
+      autoparse (~> 0.3)
+      extlib (~> 0.9)
+      faraday (~> 0.9)
+      launchy (~> 2.4)
+      multi_json (~> 1.10)
+      retriable (~> 1.4)
+      signet (~> 0.6)
     hashie (2.1.2)
     highline (1.6.21)
     hike (1.2.3)
@@ -301,6 +316,9 @@ GEM
       omniauth-oauth2 (~> 1.0)
     omniauth-github (1.1.2)
       omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.1)
+    omniauth-google-oauth2 (0.2.6)
+      omniauth (> 1.0)
       omniauth-oauth2 (~> 1.1)
     omniauth-instagram (1.0.1)
       omniauth (~> 1.0)
@@ -405,6 +423,7 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    retriable (1.4.1)
     rmagick (2.13.4)
     rolify (3.5.2)
     rspec (3.2.0)
@@ -456,6 +475,12 @@ GEM
       celluloid (>= 0.14.1)
       ice_cube (= 0.11.1)
       sidekiq (>= 3.0.0)
+    signet (0.6.0)
+      addressable (~> 2.3)
+      extlib (~> 0.9)
+      faraday (~> 0.9)
+      jwt (~> 1.0)
+      multi_json (~> 1.10)
     simple_oauth (0.3.1)
     simplecov (0.9.1)
       docile (~> 1.1.0)
@@ -599,6 +624,7 @@ DEPENDENCIES
   foursquare2 (~> 2.0)
   git
   github_api (~> 0.11)
+  google-api-client
   htmlentities
   httparty
   instagram (~> 1.1)
@@ -616,6 +642,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-foursquare
   omniauth-github
+  omniauth-google-oauth2
   omniauth-instagram
   omniauth-meetup
   omniauth-stackexchange!

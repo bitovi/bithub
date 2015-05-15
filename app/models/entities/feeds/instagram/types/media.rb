@@ -13,7 +13,7 @@ module Entities
           url: @event.link,
           origin_ts: @event.created_at,
           origin_id: @event.id,
-          author: (@event.user.username + ' ' + @event.user.full_name).strip,
+          searchable_author: (@event.user.username + ' ' + @event.user.full_name).strip,
           props: {
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.username,
