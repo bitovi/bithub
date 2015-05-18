@@ -93,10 +93,6 @@ function(Model, moment){
 		ACTIONS: BIT_ACTIONS,
 		resource : '/api/v3/embeds/{hubId}/entities',
 		messageFromLiveService : function(msg){
-
-
-			console.log('MSG FROM LIVESERVICE', msg);
-
 			var parsed = JSON.parse(msg);
 			parsed._isFromLiveService = true;
 
@@ -135,7 +131,6 @@ function(Model, moment){
 					currentBit = this.attr(index);
 				} while(checkIfBitIsBelowCurrentBit(bit, currentBit));
 			}
-
 
 			this.splice(index, 0, bit);
 		}
