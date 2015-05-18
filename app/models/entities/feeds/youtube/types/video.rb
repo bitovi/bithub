@@ -22,6 +22,7 @@ module Entities
           origin_id: @event.id,
           origin_ts: @event.created_time,
           image: @event.thumbnail,
+          searchable_author: @event.channel_title,
           props: {
             origin_author_id: @event.channel_id,
             origin_author_name: @event.channel_title,
