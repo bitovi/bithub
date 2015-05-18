@@ -4,12 +4,13 @@ steal(
 'lodash/collections/map.js',
 'models/bit.js',
 './bit.less!',
-'components/image-gallery',
-'components/body-wrap',
-'components/share-bit',
+'./image-gallery/image-gallery.js',
+'./body-wrap/body-wrap.js',
+'./share-bit/share-bit.js',
 'can/construct/super',
 function(Component, initView, _map, Bit){
-
+	
+	// check image's status. It's either still loading, loaded or errored
 	var imageStatus = function(img){
 		if(!img.complete){
 			return 'LOADING';
@@ -71,14 +72,32 @@ function(Component, initView, _map, Bit){
 			}
 		},
 		events : {
-			init : function(){
+			inserted : function(){
 
 				var self = this;
 
 				this.element.trigger('loading');
 
-				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+				// If this bit wasn't loaded yet add `loading` class
+				if(!this.scope.attr('bit').attr('@isLoaded')){
+					this.element.addClass('loading');
+				}
 
+				// We need to wait until the bit was loaded to calculate it's height
+				// When the bit is loaded the `animate-height` class is removed from the bit
+				// which will cause the height transition. After the transition is done
+				// we remove the explicit height so bit can be resized based on user's actions.
+				// If bit was already on the page we don't have to wait for all images to load
+				// before removing the height.
+				if(!this.scope.attr('bit').attr('@resolvedHeight')){
+					this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+					this.element.addClass('animate-height');
+					
+				} else {
+					this.removeExplicitHeight();
+				}
+
+				// When user is admin we want to indicate blocked and pinned items
 				if(this.scope.attr('state').isAdmin()){
 					if(!this.scope.attr('bit.is_approved')){
 						this.element.addClass('blocked');
@@ -86,7 +105,8 @@ function(Component, initView, _map, Bit){
 						this.element.addClass('pinned');
 					}
 				}
-
+				
+				// Wait for all images to load or to error before removing the `loading` class
 				this.__initTimeout = setTimeout(function(){
 					self.imgs = self.element.find('img').toArray();
 					self.imagesToLoadCount = self.imgs.length;
@@ -94,7 +114,7 @@ function(Component, initView, _map, Bit){
 					if(self.imgs.length){
 						self.__imgSweeperTimeout = setTimeout(self.proxy('imgSweeper'), 500);
 					} else {
-						self.updateVisibility();
+						self.doneLoading();
 					}
 				}, 1);
 			},
@@ -108,14 +128,17 @@ function(Component, initView, _map, Bit){
 				ev.preventDefault();
 				window.open(el.attr('href'));
 			},
+			// Go through all images and make sure all are loaded or errored
+			// Before calling the `doneLoading` function which will remove the loading class
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);
 				var errored;
 
+				// If any image is still loading, check again in 500ms
 				if(can.inArray('LOADING', statuses) > -1){
 					this.__imgSweeperTimeout = setTimeout(this.proxy('imgSweeper'), 500);
 				} else {
-					this.updateVisibility();
+					this.doneLoading();
 				}
 
 				for(var i = 0; i < statuses.length; i++){
@@ -125,21 +148,31 @@ function(Component, initView, _map, Bit){
 					}
 				}
 			},
-			updateVisibility : function(){
+			// All images in bit are loaded and we can calculate it's height. We set the explicit height
+			// to make sure that that the transition animation runs.
+			doneLoading : function(){
 				var self = this;
-				this.element.height(this.element.find('.bit').height());
+
+				if(this.element.hasClass('animate-height')){
+					this.element.height(this.element.find('.bit').height());
+				}
+
 				this.element.removeClass('loading');
 				this.element.trigger('loaded');
-
 				this.scope.attr('bit').attr('@isLoaded', true);
-			},
-			removeExplicitHeight : function(){
-				this.element.removeClass('animate-height').css('height', 'auto');
-				this.element.trigger('bit:loaded');
 
-				this.scope.attr('bit').attr('@hasExplicitHeight', true);
+			},
+			// When we're done with the height transition remove the explicit height
+			// and mark the bit's height as resolved
+			removeExplicitHeight : function(){
+				var self = this;
+				setTimeout(function(){
+					self.element && self.element.trigger('bit:loaded');				
+					self.scope.attr('bit').attr('@resolvedHeight', true);
+				}, 1)
 				
 			},
+			// Clean up the timeouts
 			destroy : function(){
 				clearTimeout(this.__imgSweeperTimeout);
 				clearTimeout(this.__initTimeout);

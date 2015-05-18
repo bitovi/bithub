@@ -147,7 +147,7 @@ function(Control, initView, Bit, _map){
 				for(var i = start; i < end; i++){
 					self.columns[self.currentColumn].push(bits[i]);
 					self.currentColumn++;
-					if(self.currentColumn === columnLength){
+					if(self.currentColumn >= columnLength){
 						self.currentColumn = 0;
 					}
 				}
