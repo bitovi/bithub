@@ -49,7 +49,9 @@ module Identities
       end
 
       def client
-        @client ||= Google::APIClient.new
+        @client ||= Google::APIClient.new\
+          application_name: 'Bithub',
+          application_version: '0.0.1'
 
         @client.authorization.access_token  = token
         @client.authorization.refresh_token = refresh_token
