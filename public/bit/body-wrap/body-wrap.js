@@ -55,7 +55,7 @@ function(Component, initView){
 				})
 			},
 			recalculateHeight : function(){
-				if(this.scope.attr('isExpanded')) return;
+				if(this.scope.attr('isExpanded') || !this.element) return;
 
 				var wrap = this.element.find('.body-wrap');
 				var scrollHeight = wrap[0].scrollHeight;
