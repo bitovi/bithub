@@ -7,16 +7,15 @@ function(Component, initView){
 
 	var calculateRatioPercentage = function(width, height){
 		return (height/width) * 100;
-	}
+	};
 
 	var getIframeRatioClass = function(width, height){
 		var ratioPercentage = calculateRatioPercentage(width, height);
-		
 		if(ratioPercentage - 56 < 5){
 			return 'iframe-16-9';
 		}
 		return 'iframe-4-3';
-	}
+	};
 
 	return Component.extend({
 		tag: 'bh-body-wrap',
@@ -38,8 +37,8 @@ function(Component, initView){
 					var $img = $(this);
 					if(!$img.parent().is('.img-wrap')){
 						$img.wrap('<div class="img-wrap"></div>');
-					};
-				})
+					}
+				});
 				imgs.on('load', this.proxy('recalculateHeight'));
 			},
 			wrapIframes : function(){
@@ -52,10 +51,12 @@ function(Component, initView){
 					if(!$iframe.parent().is('.iframe-wrap')){
 						$iframe.wrap('<div class="iframe-wrap ' + iframeRatioClass + '"></div>');
 					}
-				})
+				});
 			},
 			recalculateHeight : function(){
-				if(this.scope.attr('isExpanded') || !this.element) return;
+				if(this.scope.attr('isExpanded') || !this.element){
+					return;
+				}
 
 				var wrap = this.element.find('.body-wrap');
 				var scrollHeight = wrap[0].scrollHeight;
@@ -64,5 +65,5 @@ function(Component, initView){
 				this.scope.attr('isTooTall', height < scrollHeight);
 			}
 		}
-	})
-})
+	});
+});
