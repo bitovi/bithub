@@ -20,7 +20,8 @@
 <script>
 	window.EMBED_ENDPOINT = '<%= ENV["EMBED_ENDPOINT"] %>';
 </script>
-<script src='/bower_components/steal/steal.js' data-main='bithub-social' data-env="<%= Rails.env == 'development' ? 'development' : 'production' %>"></script>
+<script src='/bower_components/steal/steal.js' data-main='bithub-social' data-env="<%= Rails.env == 'development' ? 'development' : 'production' %>" config="./stealconfig.js"></script>
+
 <div id="app"></div>
 </body>
 </html>
