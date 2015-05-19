@@ -167,9 +167,11 @@ function(Component, initView, _map, Bit){
 			removeExplicitHeight : function(){
 				var self = this;
 				setTimeout(function(){
-					self.element && self.element.trigger('bit:loaded');
+					if(self.element){
+						self.element.trigger('bit:loaded');
+						self.element.css('height', 'auto');
+					}
 					self.scope.attr('bit').attr('@resolvedHeight', true);
-					self.element.css('height', 'auto');
 				}, 1)
 				
 			},
