@@ -1,7 +1,7 @@
-update entities set searchable_title = trim(regexp_replace(regexp_replace(title, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
-update entities set searchable_body = trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
-update entities set searchable_content = coalesce(searchable_title, '') || ' ' || coalesce(searchable_body, '') || ' ' || coalesce(url, '');
-update entities set searchable_author = props -> 'origin_author_name';
+update entities set searchable_title = trim(regexp_replace(regexp_replace(title, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g')) where searchable_title is null;
+update entities set searchable_body = trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g')) where searchable_body is null;
+update entities set searchable_content = coalesce(searchable_title, '') || ' ' || coalesce(searchable_body, '') || ' ' || coalesce(url, '') where searchable_content is null;
+update entities set searchable_author = props -> 'origin_author_name' where searchable_author is null;
 
 drop table if exists latest_events;
 
@@ -18,15 +18,18 @@ where le.entity_id is not null and le.rn = 1;
 
 update entities set searchable_author = instagram_name
 from latest_events where latest_events.entity_id = entities.id
-and feed_name = 'instagram' and type_name = 'media';
+and feed_name = 'instagram' and type_name = 'media'
+and searchable_author is null;
 
 update entities set searchable_author = twitter_name
 from latest_events where latest_events.entity_id = entities.id
-and feed_name = 'twitter' and type_name = 'tweet';
+and feed_name = 'twitter' and type_name = 'tweet'
+and searchable_author is null;
 
 update entities set searchable_author = youtube_name
 from latest_events where latest_events.entity_id = entities.id
-and feed_name = 'youtube';
+and feed_name = 'youtube'
+and searchable_author is null;
 
 drop table if exists latest_events;
 
