@@ -1,3 +1,9 @@
+namespace :data do
+  desc "Fills searchable_* fields with cleaned-up content"
+  task :fill_searchable_fields => :environment do
+    puts "--- BEGIN fill_searchable_fields"
+
+    command = <<-SQL
 update entities set searchable_title = trim(regexp_replace(regexp_replace(title, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
 update entities set searchable_body = trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
 update entities set searchable_content = coalesce(searchable_title, '') || ' ' || coalesce(searchable_body, '') || ' ' || coalesce(url, '');
@@ -31,3 +37,15 @@ and feed_name = 'youtube';
 drop table if exists latest_events;
 
 update entities set searchable_author = regexp_replace(searchable_author, '"', '', 'g');
+    SQL
+
+    Brand.all.map do |b|
+      puts "Executing for tenant: #{b.name}"
+      Apartment::Tenant.switch(b.name) do
+        ActiveRecord::Base.connection.execute(command)
+      end
+    end
+
+    puts "--- END fill_searchable_fields"
+  end
+end
