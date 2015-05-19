@@ -1,10 +1,19 @@
+<<<<<<< HEAD
 update entities set searchable_title = trim(regexp_replace(regexp_replace(title, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
 update entities set searchable_body = trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'));
 update entities set searchable_content = coalesce(searchable_title, '') || ' ' || coalesce(searchable_body, '') || ' ' || coalesce(url, '');
 update entities set searchable_author = props -> 'origin_author_name';
+=======
+update entities
+set searchable_body = (select trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g'))
+	from entities as inner_entities
+	where inner_entities.id = entities.id
+);
+>>>>>>> dev
 
 drop table if exists latest_events;
 
+<<<<<<< HEAD
 create temp table latest_events as
 select entity_id, twitter_name, instagram_name, youtube_name
 from (select entity_id,
@@ -31,3 +40,11 @@ and feed_name = 'youtube';
 drop table if exists latest_events;
 
 update entities set searchable_author = regexp_replace(searchable_author, '"', '', 'g');
+=======
+update entities
+set searchable_title = (
+	select trim(regexp_replace(regexp_replace(title, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g')) || ' ' || trim(regexp_replace(regexp_replace(body, E'<.*?>', '', 'g' ), '[\s]+', ' ', 'g')) || ' ' || url
+	from entities as inner_entities
+	where inner_entities.id = entities.id
+);
+>>>>>>> dev
