@@ -179,9 +179,9 @@ steal(
 					setTimeout(function(){
 						if(self.element){
 							self.element.trigger('bit:loaded');
+							self.element.css('height', 'auto');
 						}
 						self.scope.attr('bit').attr('@resolvedHeight', true);
-						self.element.css('height', 'auto');
 					}, 1);
 					
 				},
