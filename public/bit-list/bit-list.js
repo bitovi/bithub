@@ -8,7 +8,6 @@ steal(
 function(Control, initView, Bit, _map){
 
 	var CARD_MIN_WIDTH = 300;
-	var CARD_TEMPLATE = can.stache('<bh-bit bit="{bit}" state="{state}" class="animate-height loading"></bh-bit>');
 
 	var calculateColumnCount = function(el){
 		var width = el.width();
@@ -16,13 +15,13 @@ function(Control, initView, Bit, _map){
 			return 1;
 		}
 		return Math.min(5, Math.floor(width / CARD_MIN_WIDTH));
-	}
+	};
 
 	var makeColumns = function(count){
-		return _map(Array(count), function(){
-			return new can.List;
+		return _map(new Array(count), function(){
+			return new can.List();
 		});
-	}
+	};
 
 	var WINDOW_COUNT = 50;
 
@@ -95,14 +94,17 @@ function(Control, initView, Bit, _map){
 			}
 		},
 		"{currentScrollTop} change" : function(currentScrollTop, ev, newVal){
-			if(newVal !== 0) return;
+			if(newVal !== 0){
+				return;
+			}
 			var columnCount = this.options.columnCount();
-			var perColumns = can.map(new Array(columnCount), function(){ return 0 });
+			var perColumns = can.map(new Array(columnCount), function(){ return 0; });
 			var currentCount = 0;
+			var i;
 			
 			this.currentColumn = 0;
 
-			for(var i = 0; i < WINDOW_COUNT; i++){
+			for(i = 0; i < WINDOW_COUNT; i++){
 				perColumns[this.currentColumn]++;
 				this.currentColumn++;
 				currentCount++;
@@ -112,10 +114,11 @@ function(Control, initView, Bit, _map){
 			}
 
 			can.batch.start();
-			for(var i = 0; i < columnCount; i++){
+			for(i = 0; i < columnCount; i++){
 				this.columns[i].splice(perColumns[i], this.columns[i].length);
 			}
 			can.batch.stop();
+			
 			this.currentLimit = currentCount;
 			setTimeout(this.proxy('calculateMinHeight'), 1);
 		},
@@ -158,7 +161,7 @@ function(Control, initView, Bit, _map){
 					setTimeout(partitionFn, 1);
 				}
 				self.calculateMinHeight();
-			}
+			};
 
 			partitionFn();
 
@@ -186,7 +189,9 @@ function(Control, initView, Bit, _map){
 
 				self.options.currentScrollTop(scrollTop);
 
-				(scrollHeight - scrollTop - height < 500) && self.nextPage();
+				if(scrollHeight - scrollTop - height < 500){
+					self.nextPage();
+				}
 			});
 		},
 		scroll : 'appendContent',
@@ -206,7 +211,9 @@ function(Control, initView, Bit, _map){
 			}
 		},
 		clearPendingReq : function(){
-			this.__pendingReq && this.__pendingReq.abort();
+			if(this.__pendingReq){
+				this.__pendingReq.abort();
+			}
 		},
 		destroy : function(){
 			this.clearAllTimeouts();
@@ -214,7 +221,9 @@ function(Control, initView, Bit, _map){
 		},
 		"bit:loaded" : 'calculateMinHeight',
 		calculateMinHeight : function(){
-			if(!this.element) return;
+			if(!this.element){
+				return;
+			}
 
 			var heights = can.map(this.element.find('.column'), function(c){
 				return $(c).height();
@@ -223,4 +232,4 @@ function(Control, initView, Bit, _map){
 			this.__minHeight = minHeight;
 		}
 	});
-})
+});
