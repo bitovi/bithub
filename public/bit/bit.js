@@ -90,7 +90,7 @@ function(Component, initView, _map, Bit){
 				// If bit was already on the page we don't have to wait for all images to load
 				// before removing the height.
 				if(!this.scope.attr('bit').attr('@resolvedHeight')){
-					this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
+						this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
 					this.element.addClass('animate-height');
 					
 				} else {
@@ -133,7 +133,7 @@ function(Component, initView, _map, Bit){
 			imgSweeper : function(){
 				var statuses = _map(this.imgs, imageStatus);
 				var errored;
-
+				
 				// If any image is still loading, check again in 500ms
 				if(can.inArray('LOADING', statuses) > -1){
 					this.__imgSweeperTimeout = setTimeout(this.proxy('imgSweeper'), 500);
@@ -167,8 +167,9 @@ function(Component, initView, _map, Bit){
 			removeExplicitHeight : function(){
 				var self = this;
 				setTimeout(function(){
-					self.element && self.element.trigger('bit:loaded');				
+					self.element && self.element.trigger('bit:loaded');
 					self.scope.attr('bit').attr('@resolvedHeight', true);
+					self.element.css('height', 'auto');
 				}, 1)
 				
 			},
