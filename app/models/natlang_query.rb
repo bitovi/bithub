@@ -21,6 +21,16 @@ class NatlangQuery < ActiveRecord::Base
     end
   end
 
+  def attr_name
+    if %w(content title body author).include?(read_attribute(:attr_name).to_s)
+      "searchable_#{read_attribute(:attr_name)}"
+    end
+  end
+  
+  def raw_attr_name
+    read_attribute(:attr_name)
+  end
+
   private
 
   def format_val_for_contains
