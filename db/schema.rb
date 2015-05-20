@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507163229) do
+ActiveRecord::Schema.define(version: 20150511180040) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -155,16 +155,19 @@ ActiveRecord::Schema.define(version: 20150507163229) do
     t.string   "feed_name"
     t.string   "type_name"
     t.integer  "parent_id"
-    t.datetime "origin_ts",                         null: false
-    t.datetime "thread_updated_ts",                 null: false
+    t.datetime "origin_ts",                          null: false
+    t.datetime "thread_updated_ts",                  null: false
     t.string   "image"
     t.string   "cached_tag_list"
     t.integer  "total_upvotes"
-    t.hstore   "props",             default: {}
+    t.hstore   "props",              default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "is_pending",        default: false
-    t.string   "author"
+    t.boolean  "is_pending",         default: false
+    t.text     "searchable_content"
+    t.text     "searchable_title"
+    t.text     "searchable_body"
+    t.text     "searchable_author"
   end
 
   create_table "events", force: true do |t|

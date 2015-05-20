@@ -270,7 +270,7 @@ class Entity < ActiveRecord::Base
   def msg(embed)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     entity = EntityDecorator.decorate(self, context: {embed: embed})
-    payload = view.render('api/v3/embed_entities/entity', {entity: entity, skip_caching: true})
+    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
 
     {
       meta: meta_msg(embed, is_approved(embed)),
