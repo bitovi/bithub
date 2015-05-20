@@ -34,7 +34,6 @@
 		map: {
 			"can/util/util": "can/util/jquery/jquery",
 			"jquery/jquery": "jquery",
-			'qunit/qunit' : 'qunit',
 			'funcunit/funcunit' : 'funcunit',
 			"moment/moment" : "moment",
 			"selectize/selectize" : "selectize",
@@ -47,7 +46,6 @@
 			"jquery": "bower_components/jquery/jquery.js",
 			"can/*": "bower_components/canjs/steal/can/*.js",
 			"lodash/*": "bower_components/lodash-amd/modern/*.js",
-			'qunit' : 'bower_components/qunit/qunit/qunit.js',
 			'funcunit' : 'bower_components/funcunit/dist/funcunit.js',
 			"moment" : "bower_components/moment/moment.js",
 			"sifter" : 'bower_components/sifter/sifter.js',
