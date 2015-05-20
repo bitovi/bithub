@@ -1,13 +1,16 @@
 class Histogram < ActiveRecord::Base
-  VALID_SOURCE_TYPES = %w(embeds services users)
   VALID_RESOLUTIONS = %w(minute hour day week month)
+  VALID_TYPES = %w(embeds services users)
+
+  validates_presence_of :source_type, :source_id
+  validate :source_type_is_of_valid_type
 
   self.table_name = 'histogram'
-  self.primary_key = :source_id
+  self.primary_key = :measured_at
 
   def self.stats_by_source_type(source_type, resolution)
-    fail ArgumentError.new("source_type must be one of #{VALID_SOURCE_TYPES.join(', ')}") if !VALID_SOURCE_TYPES.include? source_type
     fail ArgumentError.new("resolution must be one of #{VALID_RESOLUTIONS.join(', ')}") if !VALID_RESOLUTIONS.include? resolution
+    fail ArgumentError.new("type must be one of #{VALID_TYPES.join(', ')}") if !VALID_TYPES.include? source_type
 
     Histogram\
       .select("source_id, max(volume) as volume, sum(delta) as delta, date_trunc('#{resolution}', measured_at) as measured_at")
@@ -21,7 +24,7 @@ class Histogram < ActiveRecord::Base
     fill_embed_stats(recurrence)
   end
   
-  def self.fill_service_stats(recurrence)
+  def self.fill_service_stats(recurrence = 'minute')
     ActiveRecord::Base.connection.execute <<-SQL
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
@@ -54,9 +57,12 @@ class Histogram < ActiveRecord::Base
       from whole_diffed
       where (now() - measured_at) < '1 #{recurrence}'::interval;
     SQL
+  rescue ActiveRecord::RecordNotUnique => e
+    Rails.logger.error "Histogram service data should be filled only once each #{recurrence}"
+    nil
   end
 
-  def self.fill_embed_stats(recurrence)
+  def self.fill_embed_stats(recurrence = 'minute')
     ActiveRecord::Base.connection.execute <<-SQL
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
@@ -89,5 +95,14 @@ class Histogram < ActiveRecord::Base
       from whole_diffed
       where (now() - measured_at) < '1 #{recurrence}'::interval;
     SQL
+  rescue ActiveRecord::RecordNotUnique => e
+    Rails.logger.error "Histogram embed data should be filled only once each #{recurrence}"
+    nil
+  end
+
+  def source_type_is_of_valid_type
+    unless VALID_TYPES.include?(source_type)
+      errors.add(:source_type, "must by one of #{VALID_TYPES.join(', ')}")
+    end
   end
 end
