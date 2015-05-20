@@ -18,8 +18,6 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
           .limit(last)
         { source: s, timepoints: @timepoints }
       end
-    else
-      fail ArgumentError.new('Missing params.')
     end
 
     render :json => response
@@ -42,19 +40,32 @@ class Api::V3::AnalyticsController < Api::V3::BaseController
   end
 
   def source
-    if source_type == 'embeds' && embed_id
-      @source = Embed.find(embed_id)
-    elsif source_type == 'services' && service_id
-      @source = Service.find(service_id)
-    elsif source_type == 'services' && embed_id
-      @sources = Embed.find(embed_id).services
+    if source_type == 'services' && owner_id
+      @sources = Embed.find(owner_id).services
+    elsif source_type == 'services' && source_id
+      @source = Service.find(source_id)
+    elsif source_type == 'embeds' && source_id
+      @source = Embed.find(source_id)
     else
-      fail ArgumentError.new('wrong combination of params')
+      fail ArgumentError.new("Missing params.")
     end
   end
+  
+  private
+  
+  def resolution
+    params['resolution'] || 'hour'
+  end
 
-  def service_id; params[:service_id]; end
-  def embed_id; params[:embed_id]; end
-  def resolution; params[:resolution]; end
-  def source_type; params[:source_type]; end
+  def source_type
+    params[:source_type]
+  end
+
+  def source_id
+    params['source_id']
+  end
+
+  def owner_id
+    params['owner_id']
+  end
 end
