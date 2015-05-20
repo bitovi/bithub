@@ -37,7 +37,7 @@
 	"trailing": true,
 	"maxdepth": 4,
 	"boss" : true,
-
+  "esnext" : true,
 	"eqnull": true,
 	"evil": true,
 	"loopfunc": true,
