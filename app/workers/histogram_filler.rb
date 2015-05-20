@@ -9,13 +9,7 @@ module Workers
     def perform
       Brand.pluck(:name).each do |name|
         Apartment::Tenant.switch name do
-          begin
-            Histogram.fill_stats
-          rescue ActiveRecord::RecordNotUnique => e
-            Rails.logger.info "Job for filling the the Histogram table started too soon"
-          rescue ActiveRecord::StatementInvalid => e
-            Rails.logger.error e.message
-          end
+          Histogram.fill_stats
         end
       end
     end
