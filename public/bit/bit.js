@@ -169,7 +169,7 @@ function(Component, initView, _map, Bit){
 				setTimeout(function(){
 					if(self.element){
 						self.element.trigger('bit:loaded');
-						self.element.css('height', 'auto');
+						self.element.css('height', 'auto').removeClass('animate-height');
 					}
 					self.scope.attr('bit').attr('@resolvedHeight', true);
 				}, 1)
