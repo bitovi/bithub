@@ -180,7 +180,7 @@ can.Component.extend({
 			this.__removeExplicitHeightTimeout = setTimeout(function(){
 				if(self.element){
 					self.element.trigger('bit:loaded');
-					self.element.css('height', 'auto');
+					self.element.removeClass('animate-height').css('height', 'auto');
 				}
 				self.scope.attr('bit').attr('@resolvedHeight', true);
 			}, 1);
