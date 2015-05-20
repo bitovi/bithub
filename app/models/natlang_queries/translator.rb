@@ -47,7 +47,7 @@ module NatlangQueries
 
     def search_arguments
       if SEARCHABLE_ATTRIBUTES.include? @q.attr_name
-        Hash[search_attr, search_value]
+        Hash[@q.attr_name, search_value]
       else
         search_value
       end
@@ -86,12 +86,6 @@ module NatlangQueries
         end
       else
         @q.val
-      end
-    end
-
-    def search_attr
-      if SEARCHABLE_ATTRIBUTES.include? @q.attr_name
-        'searchable_' + @q.attr_name
       end
     end
 
