@@ -15,10 +15,14 @@ class DummyARClass
 
   def self.columns_hash
     Hash[
-      'title', PGColumn.new(:string),
-      'author', PGColumn.new(:string),
       'feed_name', PGColumn.new(:string),
-      'type_name', PGColumn.new(:string)
+      'type_name', PGColumn.new(:string),
+      'title', PGColumn.new(:string),
+      'body', PGColumn.new(:text),
+      'searchable_title', PGColumn.new(:string),
+      'searchable_body', PGColumn.new(:text),
+      'searchable_content', PGColumn.new(:text),
+      'searchable_author', PGColumn.new(:string)
     ]
   end
 end
@@ -63,29 +67,31 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
     it 'translates the "is" op to a AR.where compatible argument' do
       nlq = double(:natlang_query, attr_name: 'title', op: 'is', val: 'canjs', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq(["title = ?", 'canjs'])
+      expect(nlqt.targuments).to eq(["searchable_title = ?", 'canjs'])
     end
     
     it 'translates the "starts_with", "ends_with" and "like" op to a AR.where compatible argument' do
       nlq = double(:natlang_query, attr_name: 'author', op: 'starts_with', val: 'nik', negated?: false)
       nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.targuments).to eq(["author ILIKE ?", 'nik%'])
+      expect(nlqt.targuments).to eq(["searchable_author ILIKE ?", 'nik%'])
     end
 
   end
 
   describe '#where_column' do
-    it 'translates the attr_name to itself when it exists in the provided AR klass' do
-      nlq = double(:natlang_query, attr_name: 'title', op: 'is', val: 'canjs', negated?: false)
-      nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-      expect(nlqt.where_column).to eq('title')
+    context 'when the searchable variant exists in the provided AR class' do
+      it 'translates the attr_name to it\'s searchable variant' do
+        nlq = double(:natlang_query, attr_name: 'title', op: 'is', val: 'canjs', negated?: false)
+        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
+        expect(nlqt.where_column).to eq('searchable_title')
+      end
     end
 
-    context 'when attr_name is equal to \'content\'' do
-      it 'translates it to the \'body\' column' do
-        nlq = double(:natlang_query, attr_name: 'content', op: 'contains_phrase', val: 'canjs', negated?: false)
+    context 'when there is no searchable variant doesn\'t exist' do
+      it 'translates the attr_name to itself' do
+        nlq = double(:natlang_query, attr_name: 'url', op: 'is', val: 'canjs', negated?: false)
         nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.where_column).to eq('body')
+        expect(nlqt.where_column).to eq('url')
       end
     end
   end
@@ -156,76 +162,6 @@ RSpec.describe NatlangQueries::Translator, :type => :model do
         nlq = double(:natlang_query, attr_name: 'author', op: 'contains_phrase', val: 'canjs', negated?: false)
         nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
         expect(nlqt.where_value).to eq('%canjs%')
-      end
-    end
-  end
-
-  describe '#search_attr' do
-    context 'given the search_attr is searchable' do
-      it 'translates the attr_name to it\s searchable couterpart' do
-        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.search_attr).to eq('searchable_title')
-      end
-    end
-
-    context 'givent the search_attr is un-searchable' do
-      it 'doesn\t translate the attr_name (returns nil)' do
-        nlq = double(:natlang_query, attr_name: 'feed_name', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.search_attr).to be_nil
-      end
-    end
-  end
-
-
-  describe '#search_value' do
-    context 'given a value with comma separated values' do
-      context 'and the op is "contains_any"' do
-        it 'translates the value to "|" separated values' do
-          nlq = double(:natlang_query, attr_name: 'title', op: 'contains_any', val: 'canjs,jquerypp', negated?: false)
-          nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.search_value).to eq('canjs|jquerypp')
-        end
-      end
-
-      context 'and the op is "contains_all"' do
-        it 'translates the value to "&" separated values' do
-          nlq = double(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'canjs,jquerypp', negated?: false)
-          nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-          expect(nlqt.search_value).to eq('canjs&jquerypp')
-        end
-      end
-    end
-  end
-
-  describe '#op_translated_to_full_text_search?' do
-    context 'when op is along the lines of contains*' do
-      it 'confirms that the query should be translated to something Textacular can deal with' do
-        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_all', val: 'canjs,jquerypp', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.op_translated_to_full_text_search?).to be_truthy
-      end
-    end
-  end
-  
-  describe '#op_translated_to_like?' do
-    context 'when op is about phrasing or starts/ends with' do
-      it 'confirms that the query should be translated to something SQL ILIKE predicate can deal with' do
-        nlq = double(:natlang_query, attr_name: 'title', op: 'contains_phrase', val: 'canjs is better than jquerypp', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.op_translated_to_like?).to be_truthy
-      end
-    end
-  end
-  
-  describe '#op_translated_to_like?' do
-    context 'when attr_name is equal to \'content\'' do
-      it 'considers that attr_name defined and treats it as a string column' do
-        nlq = double(:natlang_query, attr_name: 'content', op: 'contains_phrase', val: 'canjs is better than jquerypp', negated?: false)
-        nlqt = NatlangQueries::Translator.new(nlq, DummyARClass)
-        expect(nlqt.attribute_defined?).to be_truthy
-        expect(nlqt.attribute_is_string?).to be_truthy
       end
     end
   end
