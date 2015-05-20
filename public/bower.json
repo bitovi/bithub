@@ -19,21 +19,23 @@
     "steal": "~0.10.5",
     "canjs": "~2.2.5",
     "bootstrap": "~3.3.0",
-    "lodash": "~2.4.1",
+    "lodash-amd": "~2.4.1",
     "fontawesome": "~4.2.0",
-    "funcunit": "~2.0.4",
-    "qunit": "~1.16.0",
+    "qunit": "~1.18.0",
     "moment": "~2.9.0",
     "Chart.js": "~1.0.1",
     "randomcolor": "~0.2.0",
-    "system-bower": "~0.2.2"
+    "system-bower": "~0.2.2",
+    "system-json": "https://github.com/stealjs/system-json.git",
+		"steal-qunit": "~0.0.4",
+		"funcunit": "~2.0.4"
   },
   "resolutions": {
     "steal": "~0.10.5",
     "jquery": ">= 1.9.1",
     "canjs": "~2.2.5",
     "traceur": "0.0.58",
-    "qunit": "~1.16.0"
+    "qunit": "~1.18.0"
   },
   "main": "bithub-social.js"
 }
