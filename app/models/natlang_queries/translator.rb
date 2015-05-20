@@ -1,7 +1,7 @@
 module NatlangQueries
 
   VALID_OPS = %w(contains starts_with ends_with contains_phrase contains_any contains_all is)
-  SEARCHABLE_ATTRIBUTES = %w(content title body author)
+  SEARCHABLE_ATTRIBUTES = %w(title body searchable_title searchable_body searchable_content searchable_author)
 
   class Translator
     def initialize(query, klass = Entity)
@@ -18,15 +18,15 @@ module NatlangQueries
     end
 
     def op_translated_to_like?
-      %w(contains_phrase like starts_with ends_with).include? @q.op
+      %w(contains_phrase like starts_with ends_with).include?(@q.op) || (@q.op == 'is' && @q.raw_attr_name == 'author')
     end
 
     def attribute_defined?
-      @q.attr_name == 'content' || @klass.has_an_attribute?(@q.attr_name)
+      @klass.has_an_attribute?(@q.attr_name)
     end
 
     def attribute_is_string?
-      @q.attr_name == 'content' || (%i(string text).include? @klass.columns_hash[@q.attr_name].type)
+      %i(string text).include?(@klass.columns_hash[@q.attr_name].type)
     end
 
     def tmethod
@@ -60,24 +60,24 @@ module NatlangQueries
     def where_column
       # "Full text search" doesn't care about attr_name so it doesn't matter what it's value is
       # In case of "ILIKE search" we translate 'content' to 'body'
-      if @q.attr_name == 'content'
-        'body'
-      elsif attribute_defined?
+      if attribute_defined?
         @q.attr_name
       end
     end
 
     def where_op
-      if @q.op == 'is'
-        @q.negated? ? '<>' : '='
-      elsif op_translated_to_like?
+      if op_translated_to_like?
         @q.negated? ? 'NOT ILIKE' : 'ILIKE'
+      elsif @q.op == 'is'
+        @q.negated? ? '<>' : '='
       end
     end
 
     def where_value
-      if (x = attribute_defined?) && (y = attribute_is_string?) && (z = op_translated_to_like?)
+      if attribute_defined? && attribute_is_string? && op_translated_to_like?
         if @q.op == 'like' || @q.op == 'contains_phrase'
+          '%' + @q.val + '%'
+        elsif @q.op == 'is' && @q.attr_name =~ /author/
           '%' + @q.val + '%'
         elsif @q.op == 'starts_with'
           @q.val + '%'
