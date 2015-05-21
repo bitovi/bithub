@@ -270,6 +270,10 @@ GEM
     levenshtein-ffi (1.1.0)
       ffi (~> 1.9)
     log4r (1.1.10)
+    lograge (0.3.2)
+      actionpack (>= 3)
+      activesupport (>= 3)
+      railties (>= 3)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -632,6 +636,7 @@ DEPENDENCIES
   koala (~> 1.11)
   levenshtein-ffi
   log4r (~> 1.1)
+  lograge
   muster!
   newrelic_rpm
   nokogiri (~> 1.6)
