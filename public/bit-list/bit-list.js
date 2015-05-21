@@ -2,10 +2,11 @@ steal(
 'can/control',
 './bit-list.stache!',
 'models/bit.js',
+'models/interaction_event.js',
 'lodash/collections/map.js',
 'can/construct/super',
 'can/construct/proxy',
-function(Control, initView, Bit, _map){
+function(Control, initView, Bit, InteractionEvent, _map){
 
 	var CARD_MIN_WIDTH = 300;
 
@@ -181,6 +182,11 @@ function(Control, initView, Bit, _map){
 		appendContent : function(){
 			var self = this;
 			this.clearTimeout('appendContent');
+
+			if(!this.__scrollInteractionRecorded && !this.options.state.isAdmin()){
+				this.__scrollInteractionRecorded = true;
+				InteractionEvent.createScrollInteraction(this.options.state.attr('hubId'));
+			}
 			
 			this.setTimeout('appendContent', 100, function(){
 				var scrollTop = self.element.scrollTop();
@@ -230,6 +236,16 @@ function(Control, initView, Bit, _map){
 			});
 			var minHeight = Math.min.apply(Math, heights);
 			this.__minHeight = minHeight;
+		},
+		'interaction:link' : function(el, ev, hubId, entityId){
+			if(!this.options.state.isAdmin()){
+				InteractionEvent.createLinkClickedInteraction(hubId, entityId);
+			}
+		},
+		'interaction:share' : function(el, ev, hubId, entityId, target){
+			if(!this.options.state.isAdmin()){
+				InteractionEvent.createEntitySharedInteraction(hubId, entityId, target);
+			}
 		}
 	});
 });
