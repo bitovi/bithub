@@ -28,6 +28,7 @@ Bithub::Application.configure do
   config.logger = lf.component_logger
   config.action_controller.logger = lf.ac_logger
   config.active_record.logger = lf.ar_logger
+  config.lograge.enabled = true
   config.log_level = :info
 
   # Mandrill as default mailer
