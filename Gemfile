@@ -25,7 +25,7 @@ gem 'draper'
 gem 'carrierwave'
 gem 'virtus'
 gem 'bazaar'
-
+gem "lograge"
 gem 'textacular'
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
