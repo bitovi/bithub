@@ -30,7 +30,7 @@ steal('can/model', 'can/construct/super', function(Model){
 				secondary_source_id: entityId,
 				secondary_source_type: 'Entity',
 				event_type: 'share',
-				event_subtype: 'target'
+				event_subtype: target
 			}));
 		}
 	}, {});
