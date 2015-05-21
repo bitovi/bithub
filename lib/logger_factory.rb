@@ -19,6 +19,7 @@ class LoggerFactory
 
     @loggers = Log4r::Logger
   end
+  attr_reader :loggers
 
   def component_logger
     @loggers['component']
