@@ -140,6 +140,7 @@ can.Component.extend({
 		'a click' : function(el, ev){
 			ev.preventDefault();
 			window.open(el.attr('href'));
+			this.element.trigger('interaction:link', [this.scope.attr('state.hubId'), this.scope.attr('bit.id')]);
 		},
 		// Go through all images and make sure all are loaded or errored
 		// Before calling the `doneLoading` function which will remove the loading class
@@ -169,7 +170,6 @@ can.Component.extend({
 			if(this.element.hasClass('animate-height')){
 				this.element.height(this.element.find('.bit').height());
 			}
-
 			this.element.removeClass('loading');
 			this.scope.attr('bit').attr('@isLoaded', true);
 		},
@@ -184,7 +184,6 @@ can.Component.extend({
 				}
 				self.scope.attr('bit').attr('@resolvedHeight', true);
 			}, 1);
-			
 		},
 		// Clean up the timeouts
 		destroy : function(){
