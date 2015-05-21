@@ -46,7 +46,7 @@
 			{{/if}}
 			</bh-body-wrap>
 			
-			<bh-share-bit class="{{#if sharePanelOpen}}expanded{{/if}}" card-title="{title}" media="{images.0.url}" url="{url}"></bh-share-bit>
+			<bh-share-bit class="{{#if sharePanelOpen}}expanded{{/if}}" card-title="{title}" media="{images.0.url}" url="{url}" bit="{.}" state="{state}"></bh-share-bit>
 		</div>
 		
 		<footer class="bit-footer col-sm-12">

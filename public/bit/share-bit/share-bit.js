@@ -91,6 +91,7 @@ can.Component.extend({
 				title = title.replace(/#/g, '');
 			}
 
+			this.element.trigger('interaction:share', [this.scope.attr('state.hubId'), this.scope.attr('bit.id'), this.scope.media]);
 			popup[network]({
 				title: title,
 				media: this.scope.media,
