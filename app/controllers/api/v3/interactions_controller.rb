@@ -13,12 +13,12 @@ class Api::V3::InteractionsController < Api::V3::BaseController
   def create
     @interaction = Interaction.new(interaction_params)
     @interaction.save
-    respond_with(@interaction)
+    render json: @interaction
   end
 
   def destroy
     @interaction.destroy
-    respond_with(@interaction)
+    render json: @interaction
   end
 
   private
