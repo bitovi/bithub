@@ -1,57 +1,45 @@
 class Interaction < ActiveRecord::Base
   VALID_RESOLUTIONS = %w(minute hour day week month)
-  VALID_TYPES = %w(embeds cards)
+  
+  belongs_to :primary_source, polymorphic: true
+  belongs_to :secondary_source, polymorphic: true
 
-  validates_presence_of :source_type, :source_id
-  validate :source_type_is_of_valid_type
+  validates_presence_of :primary_source, :event_type
   
   self.primary_key = :created_at
 
-  def self.stats(resolution, source_type = nil, source_id = nil)
+  def self.stats(resolution, zoom = 'detailed', filter = {})
     fail ArgumentError.new("resolution must be one of #{VALID_RESOLUTIONS.join(', ')}") if !VALID_RESOLUTIONS.include?(resolution)
 
-    if source_type && !VALID_TYPES.include?(source_type)
-      fail ArgumentError.new("source_type must be one of #{VALID_TYPES.join(', ')}")
-    end
-
     query = Interaction\
-      .select(select_statement(resolution, source_type, source_id))
-      .group(group_statement(resolution, source_type, source_id))
+      .select(select_statement(resolution, zoom))
+      .group(group_statement(resolution, zoom))
       .order(order_statement(resolution))
 
-    if source_type
-      query = query.where(source_type: source_type)
+    if !filter.empty?
+      query = query.where(filter)
     end
 
     query
   end
 
-  def self.select_statement(resolution, source_type = nil, source_id = nil)
-    statement = ""
-    statement += "date_trunc('#{resolution}', created_at) as created_at"
-    statement += ', source_type' if source_type
-    statement += ', source_id' if source_id
-    statement += ', event_type'
-    statement += ', count(*) as volume'
-    statement
+  def self.select_statement(resolution, zoom = 'detailed')
+    if zoom == 'detailed'
+      "date_trunc('#{resolution}', created_at) as created_at, primary_source_type, primary_source_id, secondary_source_type, secondary_source_id, event_type, event_subtype, count(*) as volume"
+    elsif zoom == 'rough'
+      "date_trunc('#{resolution}', created_at) as created_at, primary_source_type, primary_source_id, event_type, count(*) as volume"
+    end
   end
 
-  def self.group_statement(resolution, source_type = nil, source_id = nil)
-    statement = ""
-    statement += "date_trunc('#{resolution}', created_at)"
-    statement += ', source_type' if source_type
-    statement += ', source_id' if source_id
-    statement += ', event_type'
-    statement
+  def self.group_statement(resolution, zoom = 'detailed')
+    if zoom == 'detailed'
+      "date_trunc('#{resolution}', created_at), primary_source_type, primary_source_id, secondary_source_type, secondary_source_id, event_type, event_subtype"
+    elsif zoom == 'rough'
+      "date_trunc('#{resolution}', created_at), primary_source_type, primary_source_id, event_type"
+    end
   end
 
   def self.order_statement(resolution)
     statement = "date_trunc('#{resolution}', created_at) asc"
-  end
-  
-  def source_type_is_of_valid_type
-    unless VALID_TYPES.include?(source_type)
-      errors.add(:source_type, "must by one of #{VALID_TYPES.join(', ')}")
-    end
   end
 end
