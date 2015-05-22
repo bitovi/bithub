@@ -5,21 +5,29 @@ Bithub::Application.routes.draw do
   get '/admin', to: 'kickstart#admin'
   get '/embed', to: 'kickstart#embed'
 
-  get 'embed', to: 'admin#embed'
+  resources :accounts, only: %i(index)
 
-  # Admin
-  resources :admin, only: %i(index) do
+  resource :organization, only: %i(edit update), to: 'organization' do
+    root to: 'organization#current'
+
+    resources :accounts, only: %i(index destroy), to: 'organization_accounts'
+    resources :invitations, only: %i(index new create update destroy), to: 'organization_invitations'
+
+    get 'choices', to: 'organization_accounts#choices'
+    post 'choose', to: 'organization_accounts#choose'
+  end
+
+  resource :brand, only: %i(show edit update) do
+    get 'choices', to: 'brand_accounts#choices'
+    post 'choose', to: 'brand_accounts#choose'
+  end
+
+  resources :subscriptions, only: %i(show) do
     collection do
-      get 'embed', to: 'admin#embed'
-      get 'choose_brand', to: 'admin#choose_brand'
-
-      resources :subscriptions, only: %i() do
-        collection do
-          get 'edit/plan', to: 'subscriptions#edit_plan'
-          get 'edit/cc',   to: 'subscriptions#edit_cc'
-          post 'update',   to: 'subscriptions#update'
-        end
-      end
+      get 'current', to: 'subscriptions#current'
+      get 'edit/plan', to: 'subscriptions#edit_plan'
+      get 'edit/cc',   to: 'subscriptions#edit_cc'
+      post 'update',   to: 'subscriptions#update'
     end
   end
 
@@ -29,10 +37,13 @@ Bithub::Application.routes.draw do
       sessions: 'auth/sessions',
       registrations: 'auth/registrations',
       confirmations: 'auth/confirmations',
+      invitations: 'auth/invitations',
       omniauth_callbacks: 'auth/omniauth_callbacks'
     }
 
   as :account do
+    get '/account', to: redirect('/accounts/edit')
+
     get '/register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
     get '/register', to: redirect('/accounts/sign_up')
     get '/login', to: redirect('/accounts/sign_in')
