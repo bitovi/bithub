@@ -31,24 +31,24 @@ function(Model, Service, moment){
 			
 		}
 		return points;
-	}
+	};
 
 	var alphaVersion = function(color){
 		return 'rgba' + color.substring(3, color.length - 1) + ', .2)';
-	}
+	};
 
 	Analytics.List = Analytics.List.extend({
 		graphData : function(type){
 			var length = this.attr('length');
-			var dates = [];
 			var serviceTimepoints = {};
 			var service;
 			var timepoints;
 			var isLongest = false;
 			var data = [];
 			var longestPointsLengthLabels = [];
+			var i;
 
-			for(var i = 0; i < length; i++){
+			for(i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				timepoints = this.attr(i + '.timepoints');
 
@@ -73,7 +73,7 @@ function(Model, Service, moment){
 				serviceTimepoints[k] = fillInMissingTimepoints(serviceTimepoints[k], longestPointsLengthLabels.length);
 			}
 
-			for(var i = 0; i < length; i++){
+			for(i = 0; i < length; i++){
 				service = this.attr(i + '.source');
 				data.push({
 					label : can.trim(TOOLTIP(service).firstChild.innerText),
@@ -89,7 +89,7 @@ function(Model, Service, moment){
 			return {
 				labels : longestPointsLengthLabels,
 				datasets: data
-			}
+			};
 		}
 	});
 

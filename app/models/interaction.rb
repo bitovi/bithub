@@ -25,7 +25,7 @@ class Interaction < ActiveRecord::Base
 
   def self.select_statement(resolution, zoom = 'detailed')
     if zoom == 'detailed'
-      "date_trunc('#{resolution}', created_at) as created_at, primary_source_type, primary_source_id, secondary_source_type, secondary_source_id, event_type, event_subtype, count(*) as volume"
+      "date_trunc('#{resolution}', created_at) as created_at, primary_source_type, primary_source_id, event_type, event_subtype, count(*) as volume"
     elsif zoom == 'rough'
       "date_trunc('#{resolution}', created_at) as created_at, primary_source_type, primary_source_id, event_type, count(*) as volume"
     end
@@ -33,7 +33,7 @@ class Interaction < ActiveRecord::Base
 
   def self.group_statement(resolution, zoom = 'detailed')
     if zoom == 'detailed'
-      "date_trunc('#{resolution}', created_at), primary_source_type, primary_source_id, secondary_source_type, secondary_source_id, event_type, event_subtype"
+      "date_trunc('#{resolution}', created_at), primary_source_type, primary_source_id, event_type, event_subtype"
     elsif zoom == 'rough'
       "date_trunc('#{resolution}', created_at), primary_source_type, primary_source_id, event_type"
     end
