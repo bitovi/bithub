@@ -1,0 +1,16 @@
+{{#if totalShareInteractions}}
+<h3>Total ammount of shares</h3>
+<canvas  width="1140" height="400" {{renderGraph 'totalShareInteractions'}}></canvas>
+{{/if}}
+{{#if perNetworkShareInteractions}}
+<h3>Share ammount per network</h3>
+<canvas width="1140" height="400" {{renderGraph 'perNetworkShareInteractions'}}></canvas>
+{{/if}}
+{{#if linkInteractions}}
+<h3>Link clicks</h3>
+<canvas width="1140" height="400" {{renderGraph 'linkInteractions'}}></canvas>
+{{/if}}
+{{#if scrollInteractions}}
+<h3>Scrolls</h3>
+<canvas width="1140" height="400" {{renderGraph 'scrollInteractions'}}></canvas>
+{{/if}}
