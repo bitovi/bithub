@@ -1,23 +1,23 @@
-<%= form_for(@invitation, url: organization_invitations_path) do |f| %>
+<h2 class="static-page-heading">Invite an account to organization: "<%= @invitation.organization.name %>"</h2>
 
-	<h2 class="static-page-heading registration-heading">Invite an account to organization: "<%= @invitation.organization.name %>"</h2>
+<div class="panel panel-default">
+	<div class="panel-body">
 
-	<%= flash['error'] %>
-
-	<div class="plan-and-form-wrap clearfix">
-
-		<div class="panel panel-default registration-panel">
-			<div class="panel-body">
-
-				<div class="form-group">
-					Email: <%= email_field 'account', 'email' %>
-				</div>
+		<%= form_for(@invitation, url: organization_invitations_path) do |f| %>
 
 
-				<div><%= submit_tag "Invite", class: 'btn btn-primary' %></div>
+			<%= flash['error'] %>
+
+
+			<div class="form-group">
+				Email: <%= email_field 'account', 'email', class: 'form-control' %>
 			</div>
-		</div>
+
+
+			<div>
+				<%= submit_tag "Invite", class: 'btn btn-primary' %>
+			</div>
+
+		<% end %>
 	</div>
 </div>
-
-<% end %>
