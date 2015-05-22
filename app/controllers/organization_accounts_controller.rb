@@ -11,7 +11,7 @@ class OrganizationAccountsController < ApplicationController
 
   def choices
     if current_account.account_organizations.where.not(invitation_accepted_at: nil).count == 1
-      session['organization_name'] = current_account.organizations.first.name
+      session['organization_id'] = current_account.organizations.first.id
       redirect_to choices_brand_path
     else
       @organizations = current_account.organizations
@@ -21,7 +21,7 @@ class OrganizationAccountsController < ApplicationController
 
   def choose
     if org = current_account.organizations.find(org_id)
-      session['organization_name'] = org.name
+      session['organization_id'] = org.id
       redirect_to choices_brand_path
     else
       render text: 'error'
