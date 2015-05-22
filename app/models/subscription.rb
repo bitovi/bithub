@@ -64,11 +64,6 @@ class Subscription < ActiveRecord::Base
     Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
   end
 
-  def self.current
-    # TODO: determine through organization
-    Brand.find_by_tenant_name( Apartment::Tenant.current ).organization.subscription
-  end
-
   def create_stripe_customer!
     if stripe_customer_id
       customer = Stripe::Customer.retrieve stripe_customer_id
