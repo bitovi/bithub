@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   end
   
   def current_organization
-    Organization.find_by_name(session['organization_name'])
+    Organization.find(session['organization_id'])
   end
 
   def render_404
