@@ -9,7 +9,7 @@ function(Model, Service, moment){
 	var TOOLTIP = can.stache('<bh-service-config-formatter service="{this}"></bh-service-config-formatter>');
 
 	var Analytics = Model.extend({
-		findAll : '/api/v3/analytics?source_type={sourceType}&resolution=minute&owner_id={ownerId}'
+		findAll : '/api/v3/analytics?source_type={sourceType}&resolution={resolution}&owner_id={ownerId}'
 	}, {
 		define : {
 			source : {
