@@ -40,12 +40,14 @@ class OrganizationInvitationsController < ApplicationController
       })
 
       if @invitation.save
-        render text: 'invitation created'
+        flash[:info] = 'Invitation created.'
+        redirect_to organization_accounts_path
       else
-        render text: 'invitation creation failed'
+        flash[:error] = 'Invitation creation failed.'
+        redirect_to new_organization_invitation_path
       end
     else
-      flash['error'] = 'Non-existent user.'
+      flash[:error] = 'Non-existent user.'
       redirect_to new_organization_invitation_path
     end
   end
