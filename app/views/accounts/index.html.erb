@@ -1,9 +1,36 @@
-<ul>
-	<% @accounts.each do |a| %>
-	<li>
-	Name: <%= a.name %><br/>
-	Email: <%= a.email %><br/>
-	Last sign-in at: <%= a.last_sign_in_at %>
-	</li>
-	<% end %>
-</ul>
+<h2 class="static-page-heading">BitHub Accounts</h2>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Last sign-in at</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<% @accounts.each do |a| %>
+				<tr>
+					
+					<td>
+						<%= a.name %>
+					</td>
+
+					<td>
+						<%= a.email %><br/>
+					</td>
+
+					<td>
+						<%= a.last_sign_in_at %>
+					</td>
+				</tr>
+				<% end %>
+				
+			</tbody>
+		</table>
+		Total accounts: <b><%= @accounts.count %></b>
+	</div>
+</div>
