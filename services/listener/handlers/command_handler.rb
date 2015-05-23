@@ -2,17 +2,18 @@ require 'handlers/handler'
 
 class CommandHandler < Handler
   def handle(packet)
-    bn, sid = destruct(packet)
-    Celluloid.logger.info "New COMMAND received: #{packet.fetch('payload')}, brand: '#{bn}'"
+    b_id, s_id = destruct(packet)
+    Celluloid.logger.info "[#{meta_to_log_format(packet)}][COMMAND_LISTENER] New command received: #{packet.fetch('payload')}"
 
     @listener.handle_errors do
-      Apartment::Tenant.switch(bn) do
-        ServiceError.where(service_id: sid).destroy_all
+      Apartment::Tenant.switch(Brand.find(b_id).name) do
+        ServiceError.where(service_id: s_id).destroy_all
       end
     end
   end
 
   def destruct(packet)
-    [ packet.fetch('meta').fetch('brand_name'), packet.fetch('payload').fetch('service').fetch('id') ]
+    meta = packet.fetch('meta')
+    [ meta.fetch('brand_id'), meta.fetch('service_id')]
   end
 end
