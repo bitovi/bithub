@@ -1,85 +1,84 @@
-steal(
-'can/component',
-'./moderation.stache!',
-'models',
-'style',
-'./moderation.less!',
-'can/map/define',
-'components/moderation-rules',
-function(Component, initView, Models){
+import can from "can/";
+import initView from "./moderation.stache!";
+import Models from "models/";
 
-	var parseTruthy = function(el){
-		return !!parseInt(el.val(), 10);
-	}
+import "style/";
+import "./moderation.less!";
+import "can/map/define/";
+import "components/moderation-rules/";
 
-	Component.extend({
-		tag : 'bh-moderation',
-		template : initView,
-		scope : {
-			isSaving : false,
+var parseTruthy = function(el){
+	return !!parseInt(el.val(), 10);
+};
+
+var ModerationVM = can.Map.extend({
+	isSaving : false,
+	hasErrors: false,
+	approveSomeAutomatically: false,
+	blockSomeAutomatically: false,
+	init : function(){
+		var self = this;
+		var id = this.attr('state.hub.id');
+		Models.Filter.findAll({embed_id: id}, function(filters){
+			var blocking = filters.blocking();
+			var approving = filters.approving();
+			var approveSomeAutomatically = approving.attr('length') > 0;
+			var blockSomeAutomatically = blocking.attr('length') > 0;
+			
+			self.attr({
+				blockingFilters: blocking,
+				approvingFilters: approving,
+				approveSomeAutomatically: approveSomeAutomatically,
+				blockSomeAutomatically: blockSomeAutomatically
+			});
+		});
+	},
+	saveHub : function(ctx, el, ev){
+		var self = this;
+		this.attr({
 			hasErrors: false,
-			approveSomeAutomatically: false,
-			blockSomeAutomatically: false,
-			init : function(){
-				var self = this;
-				Models.Filter.findAll({embed_id: this.attr('hub.id')}, function(filters){
-					var blocking = filters.blocking();
-					var approving = filters.approving();
-					var approveSomeAutomatically = approving.attr('length') > 0;
-					var blockSomeAutomatically = blocking.attr('length') > 0;
-					
-					
+			isSaving: true
+		});
 
-					self.attr({
-						blockingFilters: blocking,
-						approvingFilters: approving,
-						approveSomeAutomatically: approveSomeAutomatically,
-						blockSomeAutomatically: blockSomeAutomatically
-					});
+		$.when(
+			this.attr('state.hub').save(),
+			this.attr('blockingFilters').saveOrDestroy(),
+			this.attr('approvingFilters').saveOrDestroy()
+		).then(function(){
+			self.attr('isSaving', false);
+			self.attr('state.hub').moderate().then(function(){
+				self.attr('state').resetEmbed();
+			});
+		}, function(){
+			self.attr('hasErrors', true);
+		});
+	},
+	
+	toggleApprovedByDefault : function(ctx, el){
+		this.attr('state.hub.approved_by_default', parseTruthy(el));
+	},
+	toggleSomeApprovedAutomatically : function(ctx, el){
+		this.attr('approveSomeAutomatically', parseTruthy(el));
+	},
+	toggleSomeBlockedAutomatically : function(ctx, el){
+		this.attr('blockSomeAutomatically', parseTruthy(el));
+	},
+	isApproveSomeAutomatically : function(){
+		var hasApproveSomeAutomatically = this.attr('approveSomeAutomatically');
+		var hasApprovingFilters = this.attr('approvingFilters.length');
+		
+		return hasApproveSomeAutomatically || hasApprovingFilters;
+	},
+	isBlockSomeAutomatically: function(){
+		var hasBlockSomeAutomatically = this.attr('blockSomeAutomatically');
+		var hasBlockingFilters = this.attr('blockingFilters.length');
+		
+		return hasBlockSomeAutomatically || hasBlockingFilters;
+	}
+});
 
-				})
-			},
-			toggleApprovedByDefault : function(ctx, el){
-				this.attr('hub.approved_by_default', parseTruthy(el));
-			},
-			saveHub : function(){
-				var self = this;
-				this.attr({
-					hasErrors: false,
-					isSaving: true
-				});
-
-				var blockingSave = self.attr('blockingFilters').saveOrDestroy();
-				var approvingSave = self.attr('approvingFilters').saveOrDestroy();
-				
-				$.when(this.attr('hub').save(), blockingSave, approvingSave).then(function(){
-					self.attr('isSaving', false);
-					self.attr('hub').moderate().then(function(){
-						self.attr('state').resetEmbed();
-					})
-				}, function(){
-					self.attr('hasErrors', true);
-				})
-			},
-			toggleSomeApprovedAutomatically : function(ctx, el){
-				this.attr('approveSomeAutomatically', parseTruthy(el));
-			},
-			toggleSomeBlockedAutomatically : function(ctx, el){
-				this.attr('blockSomeAutomatically', parseTruthy(el));
-			},
-			isApproveSomeAutomatically : function(){
-				return this.attr('approveSomeAutomatically') || this.attr('approvingFilters.length');
-			},
-			isBlockSomeAutomatically: function(){
-				return this.attr('blockSomeAutomatically') || this.attr('blockingFilters.length');
-			}
-		},
-		events : {
-			'form submit' : function(el, ev){
-				this.scope.saveHub();
-				ev.preventDefault();
-			}
-		}
-	});
-
-})
+can.Component.extend({
+	tag : 'bh-moderation',
+	template : initView,
+	scope : ModerationVM
+});

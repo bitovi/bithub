@@ -49,7 +49,7 @@
 						<td class="{{#unless isEditing}}preset-embed-code{{/unless}}" colspan="2">
 							{{#ifCurrentlyEditingPreset this}}
 								<bh-preset-form preset="{this}" class="bithub-form new-preset-form"></bh-preset-form>
-							{{ else }}
+							  {{ else }}
 								<textarea class="form-control embed-code" can-value="currentPresetIntegrationCode" readonly></textarea>
 								<p class="instructions">Paste this code in the HTML source of your page</p>
                 <p>You can access the embed directly by going to: <a href="{{ currentPresetUrl }}" target="_blank">{{ currentPresetUrl}} </a></p>

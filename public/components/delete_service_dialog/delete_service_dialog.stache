@@ -8,7 +8,7 @@
 	<div class="panel-footer clearfix">
 		<div class="btn-group">
 			<button class="btn btn-default" can-click="cancelDelete" {{#if isDeleting}}disabled{{/if}}>Cancel</button>
-			<button class="btn btn-danger" can-click="deleteService">
+			<button class="btn btn-danger" can-click="deleteService" {{#if isDeleting}}disabled{{/if}}>
 				{{#if isDeleting}}
 					<i class="fa fa-spin fa-circle-o-notch"></i>
 				{{/if}}
