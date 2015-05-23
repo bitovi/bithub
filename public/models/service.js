@@ -1,5 +1,5 @@
 import can from "can/";
-import _keys from "lodash/objects/keys";
+import _keys from "lodash/object/keys";
 
 import 'can/list/promise/';
 import 'can/map/define/';
@@ -39,8 +39,9 @@ var GRAPH_COLORS = {
 	stackexchange : convertHexToRgb('#95b26e'),
 	tumblr : convertHexToRgb('#c44900'),
 	twitter : convertHexToRgb('#432534'),
-	youtube : convertHexToRgb('#432834')
+youtube : convertHexToRgb('#432834')
 };
+
 
 var TYPES = {
 	disqus : {
@@ -85,7 +86,7 @@ var TYPES = {
 	youtube : {
 		channel : "Channel",
 		playlist: "Playlist"/*,
-													user : "User"*/
+		user : "User"*/
 	}
 };
 
@@ -181,9 +182,9 @@ var Service = can.Model.extend({
 	},
 	messageFromLiveService : function( msg ) {
 		var cb = can.noop,
-				timeout = 1,
-				self = this,
-				timeoutKey;
+			timeout = 1,
+			self = this,
+			timeoutKey;
 
 		if(typeof msg === 'string'){
 			msg = JSON.parse(msg);
@@ -250,7 +251,7 @@ var Service = can.Model.extend({
 	},
 	typesForFeed : function(){
 		var currentFeed = this.attr('feed_name'),
-				types = TYPES[currentFeed];
+			types = TYPES[currentFeed];
 
 		return types;
 	},
@@ -266,7 +267,7 @@ var Service = can.Model.extend({
 	},
 	printConfig: function() {
 		var output = [],
-				config = this.attr('config');
+			config = this.attr('config');
 
 		config = config ? config.attr() : config;
 
