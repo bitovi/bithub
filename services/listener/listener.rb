@@ -57,9 +57,7 @@ class Listener
   def handle_errors
     yield
   rescue => err
-    Celluloid.logger.error "Error: #{err.class}, #{err.message}"
-    Celluloid.logger.error "Backtrace: ----------"
-    Celluloid.logger.error err.backtrace.join("\n")
+    Celluloid.logger.error err
   ensure
     Apartment::Tenant.switch! # either way switch back to public
   end
