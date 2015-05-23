@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./tumblr-blog.stache!',
-'./tumblr-blog.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-tumblr-blog-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './tumblr-blog.stache!';
+import './tumblr-blog.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-tumblr-blog-service',
+	template : initView
 });

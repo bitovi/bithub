@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./instagram-tag.stache!',
-'./instagram-tag.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-instagram-tag-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './instagram-tag.stache!';
+import './instagram-tag.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-instagram-tag-service',
+	template : initView
 });
