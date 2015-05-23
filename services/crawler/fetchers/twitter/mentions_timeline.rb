@@ -11,7 +11,8 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/mentions')
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/MentionsTimeline"
+
         handle_errors do
           @client.mentions_timeline(:count => 200)
         end

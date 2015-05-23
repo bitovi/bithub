@@ -10,7 +10,7 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Meetup/rsvps')
+        Celluloid.logger.info "[FETCHER] Fetching Instagram/Rsvps"
         handle_errors do
           @client.fetch(:rsvps, event_id: event_ids) if event_ids && event_ids.length > 0
         end

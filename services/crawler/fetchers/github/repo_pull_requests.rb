@@ -5,12 +5,13 @@ module Fetchers
       include Protocol
 
       def initialize(client, opts)
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Github/repo_pull_reqs')
         @client = client
         @user, @repo = opts.fetch(:user_repo).split('/')
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Github/RepoPullRequests"
+
         handle_errors do
           @client.pull_requests.list(user: @user, repo: @repo)
         end

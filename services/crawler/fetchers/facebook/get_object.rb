@@ -5,7 +5,8 @@ module Fetchers
     class GetObject < Base
 
       def fetch(opts={})
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Facebook/objects')
+        Celluloid.logger.info "[FETCHER] Fetching Facebook/GetObject"
+
         args = {
           fields: FIELDS
         }.merge opts

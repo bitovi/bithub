@@ -14,7 +14,8 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Tumblr/tags')
+        Celluloid.logger.info "[FETCHER] Fetching Tumblr/Tagged"
+
         handle_errors do
           @result = @client.tagged @tag
         end

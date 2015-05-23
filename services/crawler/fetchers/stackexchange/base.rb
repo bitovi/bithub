@@ -10,7 +10,8 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Stackexchange/any')
+        Celluloid.logger.info "[FETCHER] Fetching Stackexchange/_"
+
         handle_errors do
           pluck_items(HTTParty.get url, :query => tagged\
             .merge(static)

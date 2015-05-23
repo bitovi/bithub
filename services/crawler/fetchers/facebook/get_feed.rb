@@ -5,7 +5,8 @@ module Fetchers
     class GetFeed < Base
 
       def fetch(opts={})
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Facebook/feed')
+        Celluloid.logger.info "[FETCHER] Fetching Facebook/GetFeed"
+
         args = {
           fields: FIELDS,
           limit: LIMIT

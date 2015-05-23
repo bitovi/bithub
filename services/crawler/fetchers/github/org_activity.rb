@@ -12,6 +12,8 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Github/OrgActivity"
+
         handle_errors do
           @client.activity.events.auto_pagination = false
           @client.activity.events.org(@org)

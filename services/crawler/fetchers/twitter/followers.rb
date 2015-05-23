@@ -11,7 +11,8 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/followers')
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/Followers"
+
         handle_errors do
           @client.follower_ids(@user_handle).map do |uid| 
             {
