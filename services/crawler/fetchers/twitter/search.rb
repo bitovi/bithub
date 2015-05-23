@@ -12,7 +12,8 @@ module Fetchers
       end
       
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Twitter/search')
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/Search"
+
         handle_errors do
           @client.search(@term, :count => 100).take(100)
         end

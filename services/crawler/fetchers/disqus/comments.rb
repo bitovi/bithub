@@ -12,7 +12,8 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Disqus/comments')
+        Celluloid.logger.info "[FETCHER] Fetching Disqus/Comments"
+
         handle_errors do
           resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
           pluck(resp)

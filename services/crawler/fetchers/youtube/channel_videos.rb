@@ -4,8 +4,9 @@ module Fetchers
     class ChannelVideos < Base
 
       def fetch
-        channel_id = @opts.fetch :channel_id
+        Celluloid.logger.info "[FETCHER] Fetching Youtube/ChannelVideos"
 
+        channel_id = @opts.fetch :channel_id
         super do
           @client.execute\
             api_method: youtube_api.search.list,
