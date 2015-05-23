@@ -1,20 +1,19 @@
-steal(
-'can/model',
-'lodash/objects/keys.js',
-'can/list/promise',
-'can/map/define',
-'can/construct/super',
-function(Model, _keys){
+import can from "can/";
+import _keys from "lodash/objects/keys";
+
+import 'can/list/promise/';
+import 'can/map/define/';
+import 'can/construct/super/';
 
 	var RELOAD_TIMEOUTS = {};
 
 	var isCelluloidError = function(klass){
 		return (/celluloid/).test(klass.toLowerCase());
-	}
+	};
 
 	var isConfigError = function(klass){
 		return (/configerror/).test(klass.toLowerCase());
-	}
+	};
 
 	var convertHexToRgb = function(hex){
 		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -27,7 +26,7 @@ function(Model, _keys){
 			return res;
 		}
 		return 'rgb(0,0,0)';
-	}
+	};
 	
 	var GRAPH_COLORS = {
 		disqus : convertHexToRgb('#ffe842'),
@@ -40,7 +39,7 @@ function(Model, _keys){
 		stackexchange : convertHexToRgb('#95b26e'),
 		tumblr : convertHexToRgb('#c44900'),
 		twitter : convertHexToRgb('#432534')
-	}
+	};
 
 
 	var TYPES = {
@@ -132,9 +131,11 @@ function(Model, _keys){
 	};
 
 	var formatKey = function(key){
-		if(key === 'url') return 'URL';
+		if(key === 'url'){
+			return 'URL';
+		}
 		return can.capitalize(key.replace(/_/g, ' '));
-	}
+	};
 
 	var formatConfig = function(config){
 		var res = ['<ul class="config">'];
@@ -147,9 +148,9 @@ function(Model, _keys){
 			}
 			res.push('</li>');
 		}
-		res.push('</ul>')
+		res.push('</ul>');
 		return res.join('');
-	}
+	};
 
 	var emptyConfigForService = function(feed){
 		var config = {};
@@ -162,9 +163,9 @@ function(Model, _keys){
 			config.tags = [];
 		}
 		return config;
-	}
+	};
 
-	var Service = Model.extend({
+	var Service = can.Model.extend({
 		resource : '/api/v3/services',
 		feeds : FEEDS,
 		needsOAuth : NEEDS_OAUTH,
@@ -196,7 +197,7 @@ function(Model, _keys){
 					if(service.attr('entity_count') === 0){
 						service.hasNoResults();
 					}
-				}
+				};
 				timeout = 2000;
 			}
 
@@ -283,7 +284,7 @@ function(Model, _keys){
 		hasNoResults : function(){
 			can.batch.start();
 			if(this.attr('_isNewlyCreated')){
-				this.attr('noResults', true)
+				this.attr('noResults', true);
 			}
 			this.attr({
 				error: null
@@ -325,5 +326,4 @@ function(Model, _keys){
 		service.attr('_isNewlyCreated', true);
 	});
 
-	return Service;
-});
+	export default Service;

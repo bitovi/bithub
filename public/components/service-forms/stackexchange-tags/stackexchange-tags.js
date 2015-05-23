@@ -1,14 +1,9 @@
-steal(
-'can/component',
-'./stackexchange-tags.stache!',
-'./stackexchange-tags.less!',
-'components/tag-list',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-stackexchange-tags-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './stackexchange-tags.stache!';
+import './stackexchange-tags.less!';
+import'components/tag-list/';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-stackexchange-tags-service',
+	template : initView,
 });

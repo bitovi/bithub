@@ -1,32 +1,22 @@
-steal('funcunit', 'models/appstate.js', './hub-list.js', function(F, AppState){
-	QUnit.module('Hub List', {
-		beforeEach : function(){
-			var template = can.stache('<bh-hub-list state="{state}"></bh-hub-list>');
-			$('#qunit-fixture').html(template({
-				state : new AppState({
-					page : 'hub-list'
-				})
-			}));
-		},
-		afterEach : function(){
+import "./hub-list";
+import can from "can/";
+import QUnit from "steal-qunit";
+import F from "funcunit";
+import $ from "jquery";
 
-		}
-	});
+var template = can.stache("<bh-hub-list state='{state}'></bh-hub-list>");
 
-	QUnit.test('Hub List is shown', 1, function(assert){
-		QUnit.stop();
-		F('bh-hub-list').exists(function(){
-			assert.ok(true);
-			QUnit.start();
-		});
-	});
+var renderTemplate = function(data){
+	$('#qunit-fixture').html(template(data));
+};
 
-	QUnit.test('Expand button works', 1, function(assert){
-		QUnit.stop();
-		F('bh-hub-list [can-click=toggleExpandedRow]').exists().click();
-		F('bh-hub-list .expanded-services').exists(function(){
-			assert.ok(true);
-			QUnit.start();
-		});
+QUnit.module('Hub List');
+
+QUnit.test('Hub List', 1, function(assert){
+	renderTemplate({
+		state: new can.Map()
 	});
+	F('bh-hub-list').exists();
+	F('bh-hub-list [can-click=toggleExpandedRow]').exists().click();
+	F('bh-hub-list .expanded-services').exists('Expand button exists');
 });
