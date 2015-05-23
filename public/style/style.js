@@ -1,1 +1,1 @@
-steal('./style.less!');
+import "./style.less!";

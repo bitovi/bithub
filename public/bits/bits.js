@@ -6,7 +6,6 @@ steal(
 'lodash/collections/reduce.js',
 './bits.less!',
 'can/map/define',
-'components/service-loader',
 'bit',
 'can/construct/proxy',
 function(Component, initView, Models, _map, _reduce){
