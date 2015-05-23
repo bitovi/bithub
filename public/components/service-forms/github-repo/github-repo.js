@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./github-repo.stache!',
-'./github-repo.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-github-repo-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './github-repo.stache!';
+import './github-repo.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-github-repo-service',
+	template : initView
 });

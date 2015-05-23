@@ -1,17 +1,16 @@
-steal(
-'./hub.js',
-'./service.js',
-'./bit.js',
-'./identity.js',
-'./suggestion.js',
-'./brand.js',
-'./preset.js',
-'./analytics.js',
-'./subscription.js',
-'./filter.js',
-'./account.js',
-function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subscription, Filter, Account){
-	return {
+import Hub from './hub';
+import Service from './service';
+import Bit from './bit';
+import Identity from './identity';
+import Suggestion from './suggestion';
+import Brand from './brand';
+import Preset from './preset';
+import Analytics from './analytics';
+import Subscription from './subscription';
+import Filter from './filter';
+import Account from './account';
+
+export default {
 		Hub : Hub,
 		Service : Service,
 		Bit : Bit,
@@ -23,5 +22,4 @@ function(Hub, Service, Bit, Identity, Suggestion, Brand, Preset, Analytics, Subs
 		Subscription : Subscription,
 		Filter : Filter,
 		Account : Account
-	}
-})
+	};

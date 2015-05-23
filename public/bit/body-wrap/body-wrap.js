@@ -1,7 +1,7 @@
 import can from "can/";
 import initView from "./body-wrap.stache!";
 import "./body-wrap.less!";
-import "can/construct/proxy/proxy";
+import "can/construct/proxy/";
 
 var calculateRatioPercentage = function(width, height){
 	return (height/width) * 100;

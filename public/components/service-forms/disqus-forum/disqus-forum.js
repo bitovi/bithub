@@ -1,14 +1,10 @@
-steal(
-'can/component',
-'./disqus-forum.stache!',
-'./disqus-forum.less!',
-'components/suggestions',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-disqus-forum-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from "./disqus-forum.stache!";
 
-    }
-  });
+import "./disqus-forum.less!";
+import "components/suggestions/";
+
+can.Component.extend({
+	tag : 'bh-disqus-forum-service',
+	template : initView
 });
