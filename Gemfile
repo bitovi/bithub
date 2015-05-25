@@ -129,7 +129,7 @@ end
 # services
 # --------
 
-gem 'celluloid', '~> 0.16'
+gem 'celluloid', '~> 0.17.0.pre15'
 gem 'celluloid-io'
 gem 'nokogiri', '~> 1.6'
 gem 'nori', '~> 2.3'

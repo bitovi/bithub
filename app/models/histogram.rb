@@ -1,12 +1,12 @@
 class Histogram < ActiveRecord::Base
-  VALID_SOURCE_TYPES = %w(embeds services users)
   VALID_RESOLUTIONS = %w(minute hour day week month)
 
+  belongs_to :source, polymorphic: true
+
   self.table_name = 'histogram'
-  self.primary_key = :source_id
+  self.primary_key = :measured_at
 
   def self.stats_by_source_type(source_type, resolution)
-    fail ArgumentError.new("source_type must be one of #{VALID_SOURCE_TYPES.join(', ')}") if !VALID_SOURCE_TYPES.include? source_type
     fail ArgumentError.new("resolution must be one of #{VALID_RESOLUTIONS.join(', ')}") if !VALID_RESOLUTIONS.include? resolution
 
     Histogram\
@@ -21,7 +21,7 @@ class Histogram < ActiveRecord::Base
     fill_embed_stats(recurrence)
   end
   
-  def self.fill_service_stats(recurrence)
+  def self.fill_service_stats(recurrence = 'minute')
     ActiveRecord::Base.connection.execute <<-SQL
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
@@ -35,7 +35,7 @@ class Histogram < ActiveRecord::Base
         union (
           select source_id, volume, measured_at
           from histogram
-          where source_type = 'services'
+          where source_type = 'Service'
           order by measured_at desc
           limit (select count (distinct (services.id)) from services))
         order by source_id, measured_at asc
@@ -46,7 +46,7 @@ class Histogram < ActiveRecord::Base
              , measured_at
         from whole
         window w as (partition by source_id order by measured_at asc)
-      ) select 'services' source_type
+      ) select 'Service' source_type
            , source_id
            , volume
            , delta
@@ -54,9 +54,12 @@ class Histogram < ActiveRecord::Base
       from whole_diffed
       where (now() - measured_at) < '1 #{recurrence}'::interval;
     SQL
+  rescue ActiveRecord::RecordNotUnique => e
+    Rails.logger.error "Histogram service data should be filled only once each #{recurrence}"
+    nil
   end
 
-  def self.fill_embed_stats(recurrence)
+  def self.fill_embed_stats(recurrence = 'minute')
     ActiveRecord::Base.connection.execute <<-SQL
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
@@ -70,7 +73,7 @@ class Histogram < ActiveRecord::Base
         union (
           select source_id, volume, measured_at
           from histogram
-          where source_type = 'embeds'
+          where source_type = 'Embed'
           order by measured_at desc
           limit (select count (distinct (embeds.id)) from embeds))
         order by source_id, measured_at asc
@@ -81,7 +84,7 @@ class Histogram < ActiveRecord::Base
              , measured_at
         from whole
         window w as (partition by source_id order by measured_at asc)
-      ) select 'embeds' source_type
+      ) select 'Embed' source_type
            , source_id
            , volume
            , delta
@@ -89,5 +92,8 @@ class Histogram < ActiveRecord::Base
       from whole_diffed
       where (now() - measured_at) < '1 #{recurrence}'::interval;
     SQL
+  rescue ActiveRecord::RecordNotUnique => e
+    Rails.logger.error "Histogram embed data should be filled only once each #{recurrence}"
+    nil
   end
 end

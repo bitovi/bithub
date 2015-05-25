@@ -1,175 +1,161 @@
-### Web API
-
-namespace :web do
-  desc "Stop web"
-  task :stop do
-    on roles(:all) do |host|
-      capture("sudo systemctl stop bithub-web-1.service")
-    end
-  end
-
+namespace :start do
+  
   desc "Start web"
-  task :start do
+  task :web do
     on roles(:all) do |host|
       capture("sudo systemctl start bithub-web-1.service")
     end
   end
-
-  desc "Restart web"
-  task :restart do
-    on roles(:all) do |host|
-      capture("sudo systemctl restart bithub-web-1.service")
-    end
-  end
-end
-
-
-### Crawler
-
-namespace :crawler do
-  namespace :listener do
-    desc "Stop crawler listener"
-    task :stop do
-      on roles(:all) do |host|
-        capture("sudo systemctl stop bithub-crawler_listener-1.service")
-      end
-    end
-
-    desc "Start crawler listener"
-    task :start do
-      on roles(:all) do |host|
-        capture("sudo systemctl start bithub-crawler_listener-1.service")
-      end
-    end
-
-    desc "Restart crawler listener"
-    task :restart do
-      on roles(:all) do |host|
-        capture("sudo systemctl restart bithub-crawler_listener-1.service")
-      end
-    end
-  end
-
-  namespace :poller do
-    desc "Stop crawler poller"
-    task :stop do
-      on roles(:all) do |host|
-        capture("sudo systemctl stop bithub-crawler_poller-1.service")
-      end
-    end
-
-    desc "Start crawler poller"
-    task :start do
-      on roles(:all) do |host|
-        capture("sudo systemctl start bithub-crawler_poller-1.service")
-      end
-    end
-
-    desc "Restart crawler poller"
-    task :restart do
-      on roles(:all) do |host|
-        capture("sudo systemctl restart bithub-crawler_poller-1.service")
-      end
-    end
-  end
-
-  namespace :streamer do
-    desc "Stop crawler streamer"
-    task :stop do
-      on roles(:all) do |host|
-        capture("sudo systemctl stop bithub-crawler_streamer-1.service")
-      end
-    end
-
-    desc "Start crawler poller"
-    task :start do
-      on roles(:all) do |host|
-        capture("sudo systemctl start bithub-crawler_streamer-1.service")
-      end
-    end
-
-    desc "Restart crawler poller"
-    task :restart do
-      on roles(:all) do |host|
-        capture("sudo systemctl restart bithub-crawler_streamer-1.service")
-      end
-    end
-  end
-end
-
-
-### Listener
-
-namespace :listener do
-  desc "Stop listener"
-  task :stop do
-    on roles(:all) do |host|
-      capture("sudo systemctl stop bithub-listener-1.service")
-    end
-  end
-
-  desc "Start listener"
-  task :start do
-    on roles(:all) do |host|
-      capture("sudo systemctl start bithub-listener-1.service")
-    end
-  end
-
-  desc "Restart listener"
-  task :restart do
-    on roles(:all) do |host|
-      capture("sudo systemctl restart bithub-listener-1.service")
-    end
-  end
-end
-
-
-### Sidekiq worker
-
-namespace :worker do
-  desc "Stop sidekiq worker"
-  task :stop do
-    on roles(:all) do |host|
-      capture("sudo systemctl stop bithub-worker-1.service")
-    end
-  end
-
-  desc "Start sidekiq worker"
-  task :start do
+  
+  desc "Start worker"
+  task :worker do
     on roles(:all) do |host|
       capture("sudo systemctl start bithub-worker-1.service")
     end
   end
 
-  desc "Restart sidekiq worker"
-  task :restart do
+  desc "Start listener"
+  task :listener do
     on roles(:all) do |host|
-      capture("sudo systemctl restart bithub-worker-1.service")
+      capture("sudo systemctl start bithub-listener-1.service")
+    end
+  end
+
+  desc "Start liveservice"
+  task :liveservice do
+    on roles(:all) do |host|
+      capture("sudo systemctl start bithub-liveservice-1.service")
+    end
+  end
+  
+  namespace :crawler do
+    desc "Start crawler poller"
+    task :poller do
+      on roles(:all) do |host|
+        capture("sudo systemctl start bithub-crawler_poller-1.service")
+      end
+    end
+
+    desc "Start crawler streamer"
+    task :streamer do
+      on roles(:all) do |host|
+        capture("sudo systemctl start bithub-crawler_streamer-1.service")
+      end
+    end
+
+    desc "Start crawler listener"
+    task :listener do
+      on roles(:all) do |host|
+        capture("sudo systemctl start bithub-crawler_listener-1.service")
+      end
     end
   end
 end
 
-### Live service
+namespace :stop do
 
-namespace :liveservice do
-  desc "Stop live systemctl"
-  task :stop do
+  desc "Stop web"
+  task :web do
+    on roles(:all) do |host|
+      capture("sudo systemctl stop bithub-web-1.service")
+    end
+  end
+  
+  desc "Stop worker"
+  task :worker do
+    on roles(:all) do |host|
+      capture("sudo systemctl stop bithub-worker-1.service")
+    end
+  end
+  
+  desc "Stop listener"
+  task :listener do
+    on roles(:all) do |host|
+      capture("sudo systemctl stop bithub-listener-1.service")
+    end
+  end
+  
+  desc "Stop liveservice"
+  task :liveservice do
     on roles(:all) do |host|
       capture("sudo systemctl stop bithub-liveservice-1.service")
     end
   end
 
-  desc "Start live systemctl"
-  task :start do
+  namespace :crawler do
+    desc "Stop crawler listener"
+    task :listener do
+      on roles(:all) do |host|
+        capture("sudo systemctl stop bithub-crawler_listener-1.service")
+      end
+    end
+
+    desc "Stop crawler poller"
+    task :poller do
+      on roles(:all) do |host|
+        capture("sudo systemctl stop bithub-crawler_poller-1.service")
+      end
+    end
+
+    desc "Stop crawler streamer"
+    task :streamer do
+      on roles(:all) do |host|
+        capture("sudo systemctl stop bithub-crawler_streamer-1.service")
+      end
+    end
+  end
+end
+
+namespace :restart do
+
+  desc "Restart web"
+  task :web do
     on roles(:all) do |host|
-      capture("sudo systemctl start bithub-liveservice-1.service")
+      capture("sudo systemctl restart bithub-web-1.service")
+    end
+  end
+  
+  desc "Restart worker"
+  task :worker do
+    on roles(:all) do |host|
+      capture("sudo systemctl restart bithub-worker-1.service")
+    end
+  end
+  
+  desc "Restart listener"
+  task :listener do
+    on roles(:all) do |host|
+      capture("sudo systemctl restart bithub-listener-1.service")
     end
   end
 
-  desc "Restart live systemctl"
-  task :restart do
+  desc "Restart liveservice"
+  task :liveservice do
     on roles(:all) do |host|
       capture("sudo systemctl restart bithub-liveservice-1.service")
+    end
+  end
+  
+  namespace :crawler do
+    desc "Restart crawler poller"
+    task :poller do
+      on roles(:all) do |host|
+        capture("sudo systemctl restart bithub-crawler_poller-1.service")
+      end
+    end
+
+    desc "Restart crawler streamer"
+    task :streamer do
+      on roles(:all) do |host|
+        capture("sudo systemctl restart bithub-crawler_streamer-1.service")
+      end
+    end
+
+    desc "Restart crawler listener"
+    task :listener do
+      on roles(:all) do |host|
+        capture("sudo systemctl restart bithub-crawler_listener-1.service")
+      end
     end
   end
 end

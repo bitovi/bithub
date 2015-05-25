@@ -3,28 +3,28 @@ namespace :log do
   desc "Tail listener log"
   task :listener do
     on roles(:app) do |host|
-      execute 'sudo journalctl -f -u bithub-listener-1'
+      execute 'sudo journalctl --follow --unit=bithub-listener-1'
     end
   end
 
   desc "Tail worker log"
   task :worker do
     on roles(:app) do |host|
-      execute 'sudo journalctl -f -u bithub-worker-1'
+      execute 'sudo journalctl --follow --unit=bithub-worker-1'
     end
   end
 
   desc "Tail liveservice log"
   task :liveservice do
     on roles(:app) do |host|
-      execute 'sudo journalctl -f -u bithub-liveservice-1'
+      execute 'sudo journalctl --follow --unit=bithub-liveservice-1'
     end
   end
 
   desc "Tail rails log"
   task :web do
     on roles(:app) do |host|
-      execute 'sudo journalctl -f -u bithub-web-1'
+      execute 'sudo journalctl --follow --unit=bithub-web-1'
     end
   end
 
@@ -32,21 +32,21 @@ namespace :log do
     desc "Tail crawler listener"
     task :listener do
       on roles(:app) do |host|
-        execute 'sudo journalctl -f -u bithub-crawler_listener-1'
+        execute 'sudo journalctl --follow --unit=bithub-crawler_listener-1'
       end
     end
 
     desc "Tail crawler poller"
     task :poller do
       on roles(:app) do |host|
-        execute 'sudo journalctl -f -u bithub-crawler_poller-1'
+        execute 'sudo journalctl --follow --unit=bithub-crawler_poller-1'
       end
     end
 
     desc "Tail crawler streamer"
     task :streamer do
       on roles(:app) do |host|
-        execute 'sudo journalctl -f -u bithub-crawler_streamer-1'
+        execute 'sudo journalctl --follow --unit=bithub-crawler_streamer-1'
       end
     end
   end

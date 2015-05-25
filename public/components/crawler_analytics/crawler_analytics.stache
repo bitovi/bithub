@@ -1,0 +1,26 @@
+<select can-value="resolution" class="form-control">
+	<option value="hour">Show by hour</option>
+	<option value="day">Show by day</option>
+	<option value="week">Show by week</option>
+	<option value="month">Show by month</option>
+</select>
+{{#if analytics}}
+	<ul class="list-unstyled clearfix">
+		{{#each analytics}}
+			<li class="clearfix">
+				<span style="background: {{source.graphColor}}"></span>
+				<bh-service-config-formatter service="{source}"></bh-service-config-formatter>
+				({{finalCount timepoints}} items)
+			</li>
+		{{/each}}
+	</ul>
+	{{#hasEnoughData}}
+		<h3>Total amount of items</h3>
+		<canvas width="1140" height="400" {{renderGraph 'volume'}}></canvas>
+		<hr>
+		<h3>Amount of items crawled at time</h3>
+		<canvas width="1140" height="400" {{renderGraph 'delta'}}></canvas>
+	{{else}}
+		<div class="alert alert-info">We don't have enough data to plot the graph.</div>
+	{{/hasEnoughData}}
+{{/if}}
