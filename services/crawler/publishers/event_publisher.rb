@@ -6,7 +6,6 @@ require 'newrelic_rpm'
 class EventPublisher
   include Celluloid
   include Celluloid::Logger
-  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
   def initialize(opts={})
     info 'Initializing Entity publisher'
@@ -26,7 +25,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    info "#{owner_data.to_log_format} Published #{new_events.size} new events out of total #{events.size}"
+    info "[#{owner_data.to_log_format}][EVENT_PUBLISHER] Published #{new_events.size} new events out of total #{events.size}"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -54,22 +53,14 @@ class EventPublisher
     dispatched = Events::Dispatcher.dispatch(event, feed)
 
     processed = {
-      meta: {
-        type_name: dispatched.type_name.snake_case,
-        brand_id: owner_data.brand.id,
-        embed_id: owner_data.embed.id,
-        service_id: owner_data.service.id,
-        brand_name: owner_data.brand.name,
-        embed_name: owner_data.embed.name,
-        feed_name: feed
-      },
+      meta: owner_data.to_h,
       content_digest: dispatched.content_digest,
       source_data: event
     }
 
     decorator.decorate processed
   rescue Events::DispatchError => e
-    error "#{owner_data.to_log_format} #{e}"
+    error "[#{owner_data.to_log_format}] #{e}"
     nil # if we can't dispatch, return nil so it will end up filtered out
   end
 end
