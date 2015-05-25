@@ -4,8 +4,6 @@ require 'types/lock'
 
 class Poller
   include Celluloid
-  include Celluloid::Logger
-
   HEARTBEAT_INTERVAL = 1
 
   def initialize(owner_data, fetcher, opts={})
@@ -48,10 +46,10 @@ class Poller
       if events.count > 0
         event_publisher.publish(events, @owner_data, decorator: @decorator)
       else
-        notification_publisher.publish_to_frontend(empty_response_notif)
+        notification_publisher.publish_to_frontend(empty_response_notif, @owner_data)
       end
-      notification_publisher.publish_to_backend(clear_service_errors_notif)
-      notification_publisher.publish_to_frontend(clear_service_errors_notif)
+      notification_publisher.publish_to_backend(clear_service_errors_notif, @owner_data)
+      notification_publisher.publish_to_frontend(clear_service_errors_notif, @owner_data)
     end
   end
 
@@ -65,10 +63,7 @@ class Poller
 
   def empty_response_notif
     {
-      meta: {
-        brand_name: @owner_data.brand.name,
-        embed_id: @owner_data.embed.id
-      },
+      meta: @owner_data.to_h,
       payload: {
         service: {
           id: @owner_data.service.id,
@@ -80,10 +75,7 @@ class Poller
 
   def clear_service_errors_notif
     {
-      meta: {
-        brand_name: @owner_data.brand.name,
-        embed_id: @owner_data.embed.id,
-      },
+      meta: @owner_data.to_h,
       payload: {
         service: {
           id: @owner_data.service.id,
