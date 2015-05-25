@@ -30,7 +30,7 @@ gem 'textacular'
 gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
 gem 'enumerize'
 gem 'sinatra'
-gem 'sidekiq'
+gem 'sidekiq', '~> 3.2'
 gem 'sidetiq'
 gem 'acts-as-taggable-on'
 gem 'ranked-model'
@@ -129,8 +129,9 @@ end
 # services
 # --------
 
-gem 'celluloid', '~> 0.17.0.pre15'
+gem 'celluloid', '0.15.2'
 gem 'celluloid-io'
+
 gem 'nokogiri', '~> 1.6'
 gem 'nori', '~> 2.3'
 gem 'newrelic_rpm'
