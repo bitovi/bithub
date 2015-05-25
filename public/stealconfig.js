@@ -1,25 +1,7 @@
 (function () {
 
-	// Console-polyfill. MIT license.
-	// https://github.com/paulmillr/console-polyfill
-	// Make it safe to do console.log() always.
-	if(typeof window !== 'undefined'){
-		(function(global) {
-		'use strict';
-			global.console = global.console || {};
-			var con = global.console;
-			var prop, method;
-			var empty = {};
-			var dummy = function() {};
-			var properties = 'memory'.split(',');
-			var methods = ('assert,clear,count,debug,dir,dirxml,error,exception,group,' +
-										 'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' +
-										 'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',');
-			while (prop = properties.pop()) if (!con[prop]) con[prop] = empty;
-			while (method = methods.pop()) if (!con[method]) con[method] = dummy;
-		})(typeof window === 'undefined' ? this : window);
-	}
-	
+	require('./bower.json!bower');
+
 	// Using `this` for web workers while maintaining compatibility with browser
 	// targeted script loaders such as Browserify or Webpack where the only way to
 	// get to the global object is via `window`.
@@ -52,8 +34,6 @@
 		map: {
 			"can/util/util": "can/util/jquery/jquery",
 			"jquery/jquery": "jquery",
-			'can-form/can-form' : 'can-form',
-			'qunit/qunit' : 'qunit',
 			'funcunit/funcunit' : 'funcunit',
 			"moment/moment" : "moment",
 			"selectize/selectize" : "selectize",
@@ -66,10 +46,6 @@
 			"jquery": "bower_components/jquery/jquery.js",
 			"can/*": "bower_components/canjs/steal/can/*.js",
 			"lodash/*": "bower_components/lodash-amd/modern/*.js",
-			"can-form" : "bower_components/can-form/can-form.js",
-			'lib/validator' : 'bower_components/can-form/lib/validator.js',
-			'lib/form_component' : 'bower_components/can-form/lib/form_component.js',
-			'qunit' : 'bower_components/qunit/qunit/qunit.js',
 			'funcunit' : 'bower_components/funcunit/dist/funcunit.js',
 			"moment" : "bower_components/moment/moment.js",
 			"sifter" : 'bower_components/sifter/sifter.js',

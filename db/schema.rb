@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511180040) do
+ActiveRecord::Schema.define(version: 20150519141558) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -199,6 +199,16 @@ ActiveRecord::Schema.define(version: 20150511180040) do
   end
 
   add_index "histogram", ["source_type", "source_id", "measured_at"], :name => "histogram_unique_source_measured_at", :unique => true
+
+  create_table "interactions", id: false, force: true do |t|
+    t.string   "event_type"
+    t.string   "event_subtype"
+    t.integer  "primary_source_id"
+    t.string   "primary_source_type"
+    t.integer  "secondary_source_id"
+    t.string   "secondary_source_type"
+    t.datetime "created_at"
+  end
 
   create_table "invite_codes", force: true do |t|
     t.string   "code"

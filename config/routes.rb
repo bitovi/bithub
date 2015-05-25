@@ -2,6 +2,7 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 
+
   # Frontend
   root 'frontend#index'
 
@@ -93,7 +94,8 @@ Bithub::Application.routes.draw do
         end
       end
 
-      get 'analytics/:source_type', to: 'analytics#show'
+      get 'analytics', to: 'analytics#show'
+      get 'interactions', to: 'interactions#index'
 
       resources :brand_identities, path: 'identities', only: %i(index show destroy)
       resources :services, except: %i(new edit update)
@@ -105,6 +107,7 @@ Bithub::Application.routes.draw do
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
       resources :plans, only: %i(show index)
+      resources :interactions, only: %i(index show create)
     end
   end
 
