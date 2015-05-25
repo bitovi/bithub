@@ -30,7 +30,7 @@ require 'handlers/event_handler'
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
 
-logger = LoggerFactory.new('listener', :environment => $env).component_logger
+logger = LoggerFactory.new('listener', :environment => $env).logger
 Celluloid.logger = logger
 
 class Listener
