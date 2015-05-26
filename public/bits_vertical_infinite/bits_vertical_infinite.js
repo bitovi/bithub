@@ -23,7 +23,6 @@ var makeColumns = function(count){
 	return _map(Array(count), () => { return []; });
 };
 
-
 var makeCalculateCurrent = function(currentColumn, columnCount){
 	return function(){
 		currentColumn++;
@@ -61,6 +60,9 @@ export var PartitionedColumnList = can.Map.extend({
 			__limit : Infinity
 		});
 	},
+	addPending : function(item){
+		return item;
+	},
 	append : function(newData){
 		var currentColumn = this.attr('__currentColumn');
 		var columnCount = this.attr('__columnCount');
@@ -80,10 +82,9 @@ export var PartitionedColumnList = can.Map.extend({
 			appendingData = allData;
 		}
 
-
 		for(var i = 0; i < appendingData.length; i++){
 			if(limit === Infinity || totalCount(columns) < limit){
-				columns[currentColumn].push(appendingData[i]);
+				columns[currentColumn].push(this.addPending(appendingData[i]));
 				currentColumn = calculateCurrent();
 			}
 		}
@@ -102,7 +103,7 @@ export var PartitionedColumnList = can.Map.extend({
 
 		can.batch.start();
 		for(var i = 0; i < newData.length; i++){
-			columns[currentColumn].unshift(newData[i]);
+			columns[currentColumn].unshift(this.addPending(newData[i]));
 			currentColumn++;
 			if(currentColumn === columnCount){
 				currentColumn = 0;
@@ -118,7 +119,10 @@ export var PartitionedColumnList = can.Map.extend({
 		return this.attr('__columnCount');
 	},
 	limit : function(){
-		return this.attr('limit');
+		return this.attr('__limit');
+	},
+	hasPending : function(){
+		return !this.__pendingItems || this.__pendingItems.length === 0;
 	},
 	appendCb : function(){
 		return (data) => { this.append(data); };
@@ -151,18 +155,18 @@ export var PartitionedColumnList = can.Map.extend({
 		var allData = this.attr('__allData');
 		var appendUntil = limit > allData.length ? allData.length : limit;
 		var perColumnAmount, i;
-
-		console.log('APPEND UNTIL', appendUntil);
-		//return;
-		
+	
 		can.batch.start();
 		if(appendUntil >= currentLimit){
 			for(i = currentLimit; i < appendUntil; i++){
-				columns[currentColumn].push(allData[i]);
+				columns[currentColumn].push(this.addPending(allData[i]));
 				currentColumn = calculateCurrent();
 			}
 			this.attr('__currentColumn', currentColumn);
 		} else {
+			// Mutate column lists in place so we wouldn't trigger
+			// CanJS live binding for columns. This way items that stay
+			// in page won't be removed and then inserted again.
 			perColumnAmount = makePerColumnAmount(columnCount, appendUntil);
 			for(i = 0; i < columnCount; i++){
 				columns[i].splice(perColumnAmount[i], columns[i].length);
@@ -177,15 +181,50 @@ export var PartitionedColumnList = can.Map.extend({
 		var length = allData.length;
 		var limit = this.attr('__limit');
 		
-		console.log('HAS DATA AFTER', (length - firstIndex - limit > 0))
-
 		return (length - firstIndex - limit > 0);
+	}
+});
+
+
+var PartitionedColumnListWithDeferredRendering = PartitionedColumnList.extend({
+	addPending : function(item){
+		can.batch.start();
+		item.attr('@pendingRender', true);
+		
+		this.__pendingItems = this.__pendingItems || [];
+		this.__pendingItems.push(item);
+		
+		clearTimeout(this.__renderPendingTimeout);
+		this.__renderPendingTimeout = setTimeout(this.proxy('renderPending'), 1);
+		can.batch.stop();
+		return item;
+	},
+	renderPending : function(){
+		var items = this.__pendingItems || [];
+		var start = 0;
+		var renderFn = function(){
+			// We render items in batches of 5 so live binding setup
+			// wouldn't block the scrolling.
+			var end = start + 5;
+			if(end > items.length){
+				end = items.length;
+			}
+			can.batch.start();
+			for(start; start < end; start++){
+				items[start].attr('@pendingRender', false);
+			}
+			can.batch.stop();
+			if(end < items.length){
+				setTimeout(renderFn, 1);
+			}
+		};
+		setTimeout(renderFn, 1);
 	}
 });
 
 export var BitsVerticalInfiniteVM = can.Map.extend({
 	init : function(){
-		this.attr('partitionedList', new PartitionedColumnList());
+		this.attr('partitionedList', new PartitionedColumnListWithDeferredRendering());
 	}
 });
 
@@ -218,6 +257,9 @@ can.Component.extend({
 		},
 		nextPage : function(){
 			var partitionedList = this.scope.attr('partitionedList');
+			
+			delete this.__minHeight;
+
 			if(partitionedList.hasDataAfterLimit()){
 				partitionedList.setLimit(partitionedList.limit() + PER_PAGE);
 			} else {
@@ -231,27 +273,33 @@ can.Component.extend({
 				this.__minHeight || this.element.prop('scrollHeight')
 			);
 			var height =  this.element.height();
-
-			if(scrollHeight - scrollTop - height < 500){
+			var partitionedList = this.scope.attr('partitionedList');
+			
+			if(scrollTop === 0){
+				this.scope.attr('partitionedList').setLimit(PER_PAGE);
+				setTimeout(this.proxy('calculateMinHeight'), 1);
+			} else if(scrollHeight - scrollTop - height < 400 && !partitionedList.hasPending()){
 				this.nextPage();
 			}
 		},
-		"bit:loaded" : function(){
+		calculateMinHeight : function(){
 			if(!this.element){
 				return;
 			}
 			var heights = can.map(this.element.find('.column'), function(c){
 				return $(c).height();
 			});
+
 			var minHeight = Math.min.apply(Math, heights);
 			this.__minHeight = minHeight;
-		}
+		},
+		"bit:loaded" : 'calculateMinHeight'
 	},
 	helpers : {
 		eachColumn : function(opts){
 			var partitioned = this.attr('partitionedList');
 			var columns = partitioned.columns();
-			var columnCount = partitioned.columnCount(); 
+			var columnCount = partitioned.columnCount();
 			var result = [];
 			for(var i = 0; i < columnCount; i++){
 				result.push(opts.fn(opts.scope.add({items: columns[i]})));
