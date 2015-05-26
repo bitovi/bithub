@@ -1,14 +1,4 @@
-<div class="column-wrapper clearfix columns-{{columnCount}}">
-    {{#each columns}}
-    <div class="column">
-        {{#each this}}
-        <bh-bit bit="{.}" state="{state}"></bh-bit>
-        {{/each}}
-    </div>
-    {{/each}}
-
-</div>
-
+<bh-bits-vertical-infinite></bh-bits-vertical-infinite>
 {{#if isLoading}}
 	<div class="loader">
 		<i class="fa-circle-o-notch fa fa-spin"></i>
