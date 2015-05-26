@@ -8,6 +8,8 @@ $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'lib'))
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
+require 'rbtrace'
+
 # theirs
 require 'bundler/setup'
 require 'rubygems'
