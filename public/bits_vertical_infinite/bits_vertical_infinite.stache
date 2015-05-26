@@ -1,0 +1,9 @@
+<div class="column-wrapper clearfix columns-{{partitionedList.columnCount}}">
+	{{#eachColumn}}
+		<div class="column">
+			{{#each items}}
+				<bh-bit bit="{.}" state="{state}"></bh-bit>
+			{{/each}}
+		</div>
+	{{/eachColumn}}
+</div>
