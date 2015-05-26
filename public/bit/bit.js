@@ -56,6 +56,9 @@ export var BitVM = can.Map.extend({
 	},
 	sharePanelToggle : function(){
 		this.attr('sharePanelOpen', !this.attr('sharePanelOpen'));
+	},
+	shouldRender : function(){
+		return this.attr('bit') && !this.attr('bit.@pendingRender');
 	}
 });
 
@@ -88,11 +91,17 @@ can.Component.extend({
 	},
 	events : {
 		inserted : function(){
-			var self = this;
+			var bit = this.scope.attr('bit');
 
 			// If this bit wasn't loaded yet add `loading` class
-			if(!this.scope.attr('bit').attr('@isLoaded')){
+			if(!bit.attr('@isLoaded')){
 				this.element.addClass('loading');
+			}
+
+			if(bit.attr('@pendingRender')){
+				this.element.addClass('pending-render');
+			} else {
+				this.__initTimeout = setTimeout(this.proxy('initImages'));
 			}
 
 			// We need to wait until the bit was loaded to calculate it's height
@@ -101,7 +110,7 @@ can.Component.extend({
 			// we remove the explicit height so bit can be resized based on user's actions.
 			// If bit was already on the page we don't have to wait for all images to load
 			// before removing the height.
-			if(!this.scope.attr('bit').attr('@resolvedHeight')){
+			if(!bit.attr('@resolvedHeight')){
 				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
 				this.element.addClass('animate-height');
 
@@ -110,22 +119,12 @@ can.Component.extend({
 			}
 			// When user is admin we want to indicate blocked and pinned items
 			if(this.scope.attr('state').isAdmin()){
-				if(!this.scope.attr('bit.is_approved')){
+				if(!bit.attr('is_approved')){
 					this.element.addClass('blocked');
-				} else if(this.scope.attr('bit.is_pinned')){
+				} else if(bit.attr('is_pinned')){
 					this.element.addClass('pinned');
 				}
 			}
-			// Wait for all images to load or to error before removing the `loading` class
-			this.__initTimeout = setTimeout(function(){
-				self.imgs = self.element.find('img').toArray();
-				self.imagesToLoadCount = self.imgs.length;
-				if(self.imgs.length){
-					self.__imgSweeperTimeout = setTimeout(self.proxy('imgSweeper'), 500);
-				} else {
-					self.doneLoading();
-				}
-			}, 1);
 		},
 		'{bit} is_approved' : function(bit, ev, newVal){
 			if(this.scope.attr('state').isAdmin()){
@@ -135,6 +134,23 @@ can.Component.extend({
 		'{bit} is_pinned' : function(bit, ev, newVal){
 			if(this.scope.attr('state').isAdmin()){
 				this.element.toggleClass('pinned', newVal);
+			}
+		},
+		'{bit} @pendingRender' : function(bit, ev, newVal){
+			if(newVal === false){
+				this.element.removeClass('pending-render');
+				this.__initTimeout = setTimeout(this.proxy('initImages'));
+				this.bitLoadedAndRendered();
+			}
+		},
+		initImages : function(){
+			this.imgs = this.element.find('img').toArray();
+			this.imagesToLoadCount = this.imgs.length;
+
+			if(this.imgs.length){
+				this.__imgSweeperTimeout = setTimeout(this.proxy('imgSweeper'), 500);
+			} else {
+				this.doneLoading();
 			}
 		},
 		'a click' : function(el, ev){
@@ -172,18 +188,28 @@ can.Component.extend({
 			}
 			this.element.removeClass('loading');
 			this.scope.attr('bit').attr('@isLoaded', true);
+			this.bitLoadedAndRendered();
 		},
 		// When we're done with the height transition remove the explicit height
 		// and mark the bit's height as resolved
 		removeExplicitHeight : function(){
 			var self = this;
 			this.__removeExplicitHeightTimeout = setTimeout(function(){
-				if(self.element){
-					self.element.trigger('bit:loaded');
-					self.element.removeClass('animate-height').css('height', 'auto');
-				}
 				self.scope.attr('bit').attr('@resolvedHeight', true);
+				if(self.element){
+					self.element.removeClass('animate-height').css('height', 'auto');
+					self.bitLoadedAndRendered();
+				}
 			}, 1);
+		},
+		bitLoadedAndRendered : function(){
+			var bit = this.scope.attr('bit');
+			var check = bit.attr('@resolvedHeight') && bit.attr('@isLoaded') && !bit.attr('@pendingRender');
+
+			if(check){
+				this.element.trigger('bit:loaded');
+			}
+					
 		},
 		// Clean up the timeouts
 		destroy : function(){
