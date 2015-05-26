@@ -7,6 +7,7 @@ import _map from "lodash/collections/map";
 import "can/construct/super/";
 import "can/construct/proxy/";
 import "bit/";
+import "bits_vertical_infinite/";
 
 var CARD_MIN_WIDTH = 300;
 
@@ -31,7 +32,6 @@ export default can.Control.extend({
 }, {
 	setup : function(el, opts){
 		opts = opts || {};
-		opts.columnCount = can.compute(0);
 		opts.isLoading   = can.compute(false);
 		opts.hasNextPage = can.compute(true);
 		opts.currentScrollTop = can.compute(0);
@@ -39,32 +39,24 @@ export default can.Control.extend({
 	},
 	init : function(){
 		this.__timeouts = {};
-		this.__minHeight = 0;
 
-		this.columns = new can.List();
 
 		this.element.html(initView({
 			isLoading : this.options.isLoading,
-			columnCount : this.options.columnCount,
 			state : this.options.state,
-			columns : this.columns
 		}));
 
 		this.__hasItemsOnTop = false;
 
-		this.updateColumnCount();
-		this.load();
 	},
-	load : function(){
+	load : function(cb){
 		var self = this;
 		this.options.isLoading(true);
 
 		this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
-			var bits = self.options.state.attr('bits');
 
 			can.batch.start();
 
-			bits.push.apply(bits, data);
 			self.options.isLoading(false);
 
 			if(data.length < self.options.state.attr('params.limit')){
@@ -72,13 +64,26 @@ export default can.Control.extend({
 			}
 
 			self.currentLimit = self.currentLimit + data.length;
-			self.partition(data);
 
 			delete self.__pendingReq;
+			cb(data);
 
 			can.batch.stop();
 		});
 	},
+	"bits:loadData" : function(el, ev, cb){
+		this.load(cb);
+	},
+	"bits:nextPage" : function(el, ev, cb){
+		var params;
+		if(this.options.isLoading()){
+			return;
+		}
+		params = this.options.state.attr('params');
+		params.attr('offset', this.options.state.attr('bits.length'));
+		this.load(cb);
+	},
+	/* =
 	updateColumnCount : function(){
 		this.options.columnCount(calculateColumnCount(this.element));
 	},
@@ -201,7 +206,7 @@ export default can.Control.extend({
 			}
 		});
 	},
-	scroll : 'appendContent',
+	scroll : 'appendContent',*/
 	clearTimeout : function(name){
 		clearTimeout(this.__timeouts[name]);
 		delete this.__timeouts[name];
