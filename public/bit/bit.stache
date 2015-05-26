@@ -1,3 +1,4 @@
+{{#if shouldRender}}
 {{#bit}}
   
 	{{#if showAdminPanel}}
@@ -80,3 +81,4 @@
 	</div>
 	{{/if}}
 {{/bit}}
+{{/if}}
