@@ -40,6 +40,7 @@ export default can.Control.extend({
 	init : function(){
 		this.__timeouts = {};
 
+		this.currentOffset = can.compute(0);
 
 		this.element.html(initView({
 			isLoading : this.options.isLoading,
@@ -52,6 +53,8 @@ export default can.Control.extend({
 	load : function(cb){
 		var self = this;
 		this.options.isLoading(true);
+
+		console.log(this.options.state.getParams())
 
 		this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
 
@@ -68,6 +71,8 @@ export default can.Control.extend({
 			delete self.__pendingReq;
 			cb(data);
 
+			self.currentOffset(self.currentOffset() + data.length);
+
 			can.batch.stop();
 		});
 	},
@@ -76,11 +81,12 @@ export default can.Control.extend({
 	},
 	"bits:nextPage" : function(el, ev, cb){
 		var params;
-		if(this.options.isLoading()){
+		if(this.options.isLoading() || !this.options.hasNextPage()){
 			return;
 		}
 		params = this.options.state.attr('params');
-		params.attr('offset', this.options.state.attr('bits.length'));
+		params.attr('offset', this.currentOffset());
+		
 		this.load(cb);
 	},
 	/* =
