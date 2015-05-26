@@ -90,6 +90,84 @@ export default can.Control.extend({
 		this.load(cb);
 	},
 	/* =
+=======
+
+import "can/construct/super/";
+import "can/construct/proxy/";
+import "bit/";
+
+var CARD_MIN_WIDTH = 300;
+
+var calculateColumnCount = function(el){
+	var width = el.width();
+	if(width < CARD_MIN_WIDTH) {
+		return 1;
+	}
+	return Math.min(5, Math.floor(width / CARD_MIN_WIDTH));
+};
+
+var makeColumns = function(count){
+	return _map(new Array(count), function(){
+		return new can.List();
+	});
+};
+
+var WINDOW_COUNT = 50;
+
+export default can.Control.extend({
+	pluginName : 'bh-bits',
+}, {
+	setup : function(el, opts){
+		opts = opts || {};
+		opts.columnCount = can.compute(0);
+		opts.isLoading   = can.compute(false);
+		opts.hasNextPage = can.compute(true);
+		opts.currentScrollTop = can.compute(0);
+		return this._super(el, opts);
+	},
+	init : function(){
+		this.__timeouts = {};
+		this.__minHeight = 0;
+
+		this.columns = new can.List();
+
+		this.element.html(initView({
+			isLoading : this.options.isLoading,
+			columnCount : this.options.columnCount,
+			state : this.options.state,
+			columns : this.columns
+		}));
+
+		this.__hasItemsOnTop = false;
+
+		this.updateColumnCount();
+		this.load();
+	},
+	load : function(){
+		var self = this;
+		this.options.isLoading(true);
+
+		this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
+			var bits = self.options.state.attr('bits');
+
+			can.batch.start();
+
+			bits.push.apply(bits, data);
+			self.options.isLoading(false);
+
+			if(data.length < self.options.state.attr('params.limit')){
+				self.options.hasNextPage(false);
+			}
+
+			self.currentLimit = self.currentLimit + data.length;
+			self.partition(data);
+
+			delete self.__pendingReq;
+
+			can.batch.stop();
+		});
+	},
+>>>>>>> 1202d983204d8a64199f6cfe235d45a46b689d20
 	updateColumnCount : function(){
 		this.options.columnCount(calculateColumnCount(this.element));
 	},
@@ -175,6 +253,7 @@ export default can.Control.extend({
 			}
 			self.calculateMinHeight();
 		};
+<<<<<<< HEAD
 
 		partitionFn();
 
