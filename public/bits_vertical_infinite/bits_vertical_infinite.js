@@ -51,14 +51,41 @@ var totalCount = function(columns){
 };
 
 export var PartitionedColumnList = can.Map.extend({
-	init : function(){
+	init : function(source){
 		this.attr({
-			__allData : [],
+			__allData : source || [],
 			__columns : [],
 			__currentColumn : 0,
 			__columnCount : 0,
 			__limit : Infinity
 		});
+
+		if(source){
+			source.on('change', this.proxy('replicateChangesFromSource'));
+		}
+	},
+	replicateChangesFromSource : function(ev, index, what, newVal){
+		var isTail = this.__allData.length - newVal.length === parseInt(index, 10);
+
+		if(isTail){
+			this.append(newVal);
+		}
+
+	},
+	columns : function(){
+		return this.attr('__columns');
+	},
+	columnCount : function(){
+		return this.attr('__columnCount');
+	},
+	limit : function(){
+		return this.attr('__limit');
+	},
+	hasPending : function(){
+		return !this.__pendingItems || this.__pendingItems.length === 0;
+	},
+	source : function(){
+		return this.attr('__allData');
 	},
 	addPending : function(item){
 		return item;
@@ -76,7 +103,7 @@ export var PartitionedColumnList = can.Map.extend({
 		
 		if(newData){
 			// First we append all data to the internal list
-			allData.push.apply(allData, newData);
+			//allData.push.apply(allData, newData);
 			appendingData = newData;
 		} else {
 			appendingData = allData;
@@ -111,18 +138,6 @@ export var PartitionedColumnList = can.Map.extend({
 		}
 		this.prepend(newData);
 		can.batch.stop();
-	},
-	columns : function(){
-		return this.attr('__columns');
-	},
-	columnCount : function(){
-		return this.attr('__columnCount');
-	},
-	limit : function(){
-		return this.attr('__limit');
-	},
-	hasPending : function(){
-		return !this.__pendingItems || this.__pendingItems.length === 0;
 	},
 	appendCb : function(){
 		return (data) => { this.append(data); };

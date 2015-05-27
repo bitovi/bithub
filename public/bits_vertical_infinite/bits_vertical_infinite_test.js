@@ -85,8 +85,6 @@ QUnit.test('List Partitioning', function(){
 
 	list.setLimit(20);
 
-	console.log(list.attr('__allData'))
-
 	QUnit.deepEqual(
 		list.columns().attr(),
 		[[2001, 2004, 2007, 1003, 3, 6, 9], [2002, 2005, 1001, 1, 4, 7, 10], [2003, 2006, 1002, 2, 5, 8]],
@@ -102,3 +100,23 @@ QUnit.test('List Partitioning', function(){
 	);
 });
 
+QUnit.test('PartitionedColumnList knows to be in sync with the source List', function(){
+	var sourceList = new can.List();
+	var partitionedList = new PartitionedColumnList(sourceList);
+
+	partitionedList.resetColumns(3);
+
+	QUnit.equal(sourceList, partitionedList.source(), 'PartitionedColumnList keeps pointer to the sourceList');
+	
+	sourceList.push(1,2,3,4,5);
+
+	QUnit.equal(
+		partitionedList.columns().attr(),
+		[[1, 4], [2, 5], [3]]
+	);
+
+	
+	
+
+
+});
