@@ -12,7 +12,6 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Disqus/comments')
         handle_errors do
           resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
           pluck(resp)

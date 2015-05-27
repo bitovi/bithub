@@ -13,7 +13,6 @@ require 'bundler/setup'
 require 'rubygems'
 require 'celluloid'
 require 'celluloid/io'
-require 'newrelic_rpm'
 
 # /lib
 require 'core_ext'

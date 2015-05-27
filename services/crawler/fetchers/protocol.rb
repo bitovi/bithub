@@ -3,7 +3,6 @@ require 'github_api'
 require 'koala'
 require 'instagram'
 require 'google/api_client'
-require 'newrelic_rpm'
 
 module Fetchers
 
@@ -16,8 +15,6 @@ module Fetchers
   class RateLimitError < ServiceError; end
 
   module Protocol
-    include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
-
     def handle_errors
       yield
 
@@ -88,6 +85,5 @@ module Fetchers
     end
 
     def fetch; end
-    add_transaction_tracer :fetch, :category => 'OtherTransaction/Fetchers'
   end
 end

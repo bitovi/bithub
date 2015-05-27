@@ -10,7 +10,6 @@ module Fetchers
       end
 
       def fetch
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Meetup/open_events')
         handle_errors do
           events = @client.fetch :open_events, { text: search_params, status: "upcoming", fields: "event_hosts" }
           events.map {|e| e.to_h}

@@ -1,12 +1,10 @@
 require 'persistent/digest_set'
 require 'connection_manager'
 require 'rabbit_factory'
-require 'newrelic_rpm'
 
 class EventPublisher
   include Celluloid
   include Celluloid::Logger
-  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
   def initialize(opts={})
     info 'Initializing Entity publisher'
@@ -32,7 +30,6 @@ class EventPublisher
       @x.publish(e.to_json, routing_key: 'events')
     end
   end
-  add_transaction_tracer :publish, :category => 'OtherTransaction/Publishers'
 
   private
 
