@@ -10,7 +10,6 @@ module Fetchers
       end
 
       def fetch(opts)
-        ::NewRelic::Agent.increment_metric('Custom/Fetches/Instagram/media')
         @result = @client.media_item @media_id
       end
 
