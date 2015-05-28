@@ -58,7 +58,20 @@ export var BitVM = can.Map.extend({
 		this.attr('sharePanelOpen', !this.attr('sharePanelOpen'));
 	},
 	shouldRender : function(){
-		return this.attr('bit') && !this.attr('bit.@pendingRender');
+		var bit = this.attr('bit');
+		return bit && !bit.attr('@pendingRender');
+	},
+	blockedClass : function(){
+		if(!!this.attr('state').isAdmin() && !this.attr('bit').attr('is_approved')){
+			return 'blocked';
+		}
+		return "";
+	},
+	pinnedClass : function(){
+		if(!!this.attr('state').isAdmin() && this.attr('bit').attr('is_pinned')){
+			return 'pinned';
+		}
+		return "";
 	}
 });
 
@@ -93,14 +106,7 @@ can.Component.extend({
 		inserted : function(){
 			var bit = this.scope.attr('bit');
 
-			// If this bit wasn't loaded yet add `loading` class
-			if(!bit.attr('@isLoaded')){
-				this.element.addClass('loading');
-			}
-
-			if(bit.attr('@pendingRender')){
-				this.element.addClass('pending-render');
-			} else {
+			if(!bit.attr('@pendingRender')){
 				this.__initTimeout = setTimeout(this.proxy('initImages'));
 			}
 
@@ -112,35 +118,19 @@ can.Component.extend({
 			// before removing the height.
 			if(!bit.attr('@resolvedHeight')){
 				this.element.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('removeExplicitHeight'));
-				this.element.addClass('animate-height');
 				
 			} else {
 				this.removeExplicitHeight();
 			}
-			// When user is admin we want to indicate blocked and pinned items
-			if(this.scope.attr('state').isAdmin()){
-				if(!bit.attr('is_approved')){
-					this.element.addClass('blocked');
-				} else if(bit.attr('is_pinned')){
-					this.element.addClass('pinned');
-				}
-			}
-		},
-		'{bit} is_approved' : function(bit, ev, newVal){
-			if(this.scope.attr('state').isAdmin()){
-				this.element.toggleClass('blocked', !newVal);
-			}
-		},
-		'{bit} is_pinned' : function(bit, ev, newVal){
-			if(this.scope.attr('state').isAdmin()){
-				this.element.toggleClass('pinned', newVal);
-			}
 		},
 		'{bit} @pendingRender' : function(bit, ev, newVal){
 			if(newVal === false){
-				this.element.removeClass('pending-render');
-				this.__initTimeout = setTimeout(this.proxy('initImages'));
-				this.bitLoadedAndRendered();
+				setTimeout(() => {
+					if(this.element){
+						this.__initTimeout = setTimeout(this.proxy('initImages'));
+						this.bitLoadedAndRendered();
+					}
+				}, 1);
 			}
 		},
 		initImages : function(){
@@ -183,11 +173,11 @@ can.Component.extend({
 		// All images in bit are loaded and we can calculate it's height. We set the explicit height
 		// to make sure that that the transition animation runs.
 		doneLoading : function(){
-			if(this.element.hasClass('animate-height')){
-				this.element.height(this.element.find('.bit').height());
+			var bit = this.scope.attr('bit');
+			if(!bit.attr('@resolvedHeight')){
+				this.element.find('.bit-wrap').height(this.element.find('.bit').height());
 			}
-			this.element.removeClass('loading');
-			this.scope.attr('bit').attr('@isLoaded', true);
+			bit.attr('@isLoaded', true);
 			this.bitLoadedAndRendered();
 		},
 		// When we're done with the height transition remove the explicit height
@@ -197,7 +187,7 @@ can.Component.extend({
 			this.__removeExplicitHeightTimeout = setTimeout(function(){
 				self.scope.attr('bit').attr('@resolvedHeight', true);
 				if(self.element){
-					self.element.removeClass('animate-height').css('height', 'auto');
+					self.element.find('.bit-wrap').css('height', 'auto');
 					self.bitLoadedAndRendered();
 				}
 			}, 1);
