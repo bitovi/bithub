@@ -7,10 +7,16 @@ import $ from "jquery";
 QUnit.module('Bits Vertical Infinite Test');
 
 QUnit.test('List Partitioning', function(){
-	var list = new PartitionedColumnList();
+	var sourceList = new can.List();
+	var list = new PartitionedColumnList(sourceList);
 	var firstColumn;
-	list.resetColumnsAndAppend(3, [1,2,3,4,5,6,7,8,9]);
+
+	list.resetColumns(3);
+
+	QUnit.equal(sourceList, list.source(), 'PartitionedColumnList keeps pointer to the sourceList');
 	
+	sourceList.push(1,2,3,4,5,6,7,8,9);
+
 	QUnit.deepEqual(list.columns().attr(), [[1,4,7], [2,5,8], [3,6,9]], 'Initial partitioning');
 	
 	list.resetColumns(5);
@@ -21,7 +27,7 @@ QUnit.test('List Partitioning', function(){
 		'Changing column count'
 	);
 
-	list.append([10, 11]);
+	sourceList.push(10, 11);
 
 	QUnit.deepEqual(
 		list.columns().attr(),
@@ -37,7 +43,9 @@ QUnit.test('List Partitioning', function(){
 		"Reseting columns with the same data and column count produces same results"
 	);
 
-	list.prepend([1001, 1002, 1003]);
+
+	list.prependPaused(true);
+	sourceList.unshift(1001, 1002, 1003);
 
 	QUnit.deepEqual(
 		list.columns().attr(),
@@ -53,14 +61,16 @@ QUnit.test('List Partitioning', function(){
 		"Prepended data will be in the columns after we reset them"
 	);
 
-	list.prependImmediately([2001, 2002, 2003, 2004, 2005, 2006, 2007]);
+	list.prependPaused(false);
+	sourceList.unshift(2001, 2002, 2003, 2004, 2005, 2006, 2007);
 
 	QUnit.deepEqual(
 		list.columns().attr(),
 		[[2006, 2001, 1001, 3, 8], [2007, 2002, 1002, 4, 9], [2003, 1003, 5, 10], [2004, 1, 6, 11], [2005, 2, 7]],
 		"Prepended data is added immediately"
 	);
-
+	
+	
 	list.setLimit(17);
 
 	firstColumn = list.columns()[0];
@@ -98,25 +108,25 @@ QUnit.test('List Partitioning', function(){
 		[[2001, 2004, 2007, 1003, 3, 6, 9], [2002, 2005, 1001, 1, 4, 7, 10], [2003, 2006, 1002, 2, 5, 8, 11]],
 		"Limit can be set to infinity"
 	);
-});
 
-QUnit.test('PartitionedColumnList knows to be in sync with the source List', function(){
-	var sourceList = new can.List();
-	var partitionedList = new PartitionedColumnList(sourceList);
+	list.resetColumns(5);
 
-	partitionedList.resetColumns(3);
+	sourceList.splice(2, 0, 3000);
+	sourceList.splice(13, 0, 3001);
 
-	QUnit.equal(sourceList, partitionedList.source(), 'PartitionedColumnList keeps pointer to the sourceList');
-	
-	sourceList.push(1,2,3,4,5);
-
-	QUnit.equal(
-		partitionedList.columns().attr(),
-		[[1, 4], [2, 5], [3]]
+	QUnit.deepEqual(
+		list.columns().attr(),
+		[[2001, 2005, 1003, 4, 9],[2002, 2006, 1, 5, 10],[3000, 2007, 2, 6, 11],[2003, 1001, 3001, 7],[2004, 1002, 3, 8]],
+		"Randomly inserted data is added immediately"
 	);
-
 	
+	sourceList.splice(13, 1);
 	
-
+	QUnit.deepEqual(
+		list.columns().attr(),
+		[[2001, 2005, 1003, 4, 9],[2002, 2006, 1, 5, 10],[3000, 2007, 2, 6, 11],[2003, 1001, 7],[2004, 1002, 3, 8]],
+		"Data removed from the source list is removed from the columns"
+	);
+	
 
 });

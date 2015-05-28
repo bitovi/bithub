@@ -57,20 +57,66 @@ export var PartitionedColumnList = can.Map.extend({
 			__columns : [],
 			__currentColumn : 0,
 			__columnCount : 0,
-			__limit : Infinity
+			__limit : Infinity,
+			__prependPaused: false,
 		});
 
 		if(source){
-			source.on('change', this.proxy('replicateChangesFromSource'));
+			source.on('add', this.proxy('replicateChangesFromSource'));
+			source.on('remove', this.proxy('replicateChangesFromSource'));
 		}
 	},
-	replicateChangesFromSource : function(ev, index, what, newVal){
-		var isTail = this.__allData.length - newVal.length === parseInt(index, 10);
+	replicateChangesFromSource : function(ev, elements, index){
+		var isPrependPaused = this.attr('__prependPaused');
+		var what = ev.type;
+		var isTail;		
 
-		if(isTail){
-			this.append(newVal);
+		console.log('REPLICATE', arguments);
+
+		if(what === 'add'){
+			isTail = this.__allData.length - elements.length === index;
+			if(isTail){
+				this.append(elements);
+			} else if(!isPrependPaused){
+				if(index === 0){
+					this.prependImmediately(elements);
+				} else {
+					can.batch.start();
+					this.clearColumns();
+					this.resetCurrentColumn();
+					this.append();
+					can.batch.stop();
+				}
+			}
+		} else if(what === 'remove'){
+			this.removeItems(elements);
 		}
-
+	},
+	removeItems : function(items){
+		var columns = this.attr('__columns');
+		var index;
+		can.batch.start();
+		for(var i = 0; i < items.length; i++){
+			for(var j = 0; j < columns.length; j++){
+				index = columns[j].indexOf(items[i]);
+				if(index > -1){
+					columns[j].splice(index, 1);
+				}
+			}
+		}
+		can.batch.stop();
+	},
+	clearColumns : function(){
+		var columns = this.attr('__columns');
+		for(var i = 0; i < columns.length; i++){
+			columns[i].splice(0);
+		}
+	},
+	resetCurrentColumn : function(){
+		this.attr('__currentColumn', 0);
+	},
+	prependPaused : function(val){
+		this.attr('__prependPaused', val);
 	},
 	columns : function(){
 		return this.attr('__columns');
@@ -97,17 +143,9 @@ export var PartitionedColumnList = can.Map.extend({
 		var columns = this.columns();
 		var limit = this.attr('__limit');
 		var calculateCurrent = makeCalculateCurrent(currentColumn, columnCount);
-		var appendingData;
+		var appendingData = newData ? newData : allData;
 
 		can.batch.start();
-		
-		if(newData){
-			// First we append all data to the internal list
-			//allData.push.apply(allData, newData);
-			appendingData = newData;
-		} else {
-			appendingData = allData;
-		}
 
 		for(var i = 0; i < appendingData.length; i++){
 			if(limit === Infinity || totalCount(columns) < limit){
@@ -118,10 +156,6 @@ export var PartitionedColumnList = can.Map.extend({
 
 		this.attr('__currentColumn', currentColumn);
 		can.batch.stop();
-	},
-	prepend : function(newData){
-		var allData = this.attr('__allData');
-		allData.unshift.apply(allData, newData);
 	},
 	prependImmediately : function(newData){
 		var columnCount = this.attr('__columnCount');
@@ -136,7 +170,6 @@ export var PartitionedColumnList = can.Map.extend({
 				currentColumn = 0;
 			}
 		}
-		this.prepend(newData);
 		can.batch.stop();
 	},
 	appendCb : function(){
@@ -239,7 +272,7 @@ var PartitionedColumnListWithDeferredRendering = PartitionedColumnList.extend({
 
 export var BitsVerticalInfiniteVM = can.Map.extend({
 	init : function(){
-		this.attr('partitionedList', new PartitionedColumnListWithDeferredRendering());
+		this.attr('partitionedList', new PartitionedColumnListWithDeferredRendering(this.attr('bits')));
 	}
 });
 
@@ -250,9 +283,10 @@ can.Component.extend({
 	events : {
 		inserted : function(){
 			this.calculateColumnCount();
-			this.requestData();
 
-			this.element.on('scroll', _throttle(this.proxy('scrollHandler'), 200));
+			this.throttledScrollHandler = _throttle(this.proxy('scrollHandler'), 200);
+
+			this.element.on('scroll', this.throttledScrollHandler);
 
 		},
 		"{window} resize" : "calculateColumnCount",
@@ -267,19 +301,20 @@ can.Component.extend({
 				}
 			}, 1);
 		},
-		requestData : function(){
-			this.element.trigger('bits:loadData', [this.scope.attr('partitionedList').appendCb()]);
-		},
 		nextPage : function(){
 			var partitionedList = this.scope.attr('partitionedList');
 			
-			delete this.__minHeight;
+			if(this.__minHeight === this.__minHeightTriggeredReq){
+				return;
+			}
 
+			this.__minHeightTriggeredReq = this.__minHeight;
+			
 			if(partitionedList.hasDataAfterLimit()){
 				partitionedList.setLimit(partitionedList.limit() + PER_PAGE);
 			} else {
 				partitionedList.setLimit(Infinity);
-				this.element.trigger('bits:nextPage', [partitionedList.appendCb()]);
+				this.element.trigger('bits:nextPage');
 			}
 		},
 		scrollHandler : function(){
@@ -289,11 +324,13 @@ can.Component.extend({
 			);
 			var height =  this.element.height();
 			var partitionedList = this.scope.attr('partitionedList');
+			var onBottom = scrollHeight - scrollTop - height < 400;
+			var isLoading = this.scope.attr('isLoading');
 			
 			if(scrollTop === 0){
 				this.scope.attr('partitionedList').setLimit(PER_PAGE);
 				setTimeout(this.proxy('calculateMinHeight'), 1);
-			} else if(scrollHeight - scrollTop - height < 400 && !partitionedList.hasPending()){
+			} else if(onBottom && !partitionedList.hasPending() && !isLoading){
 				this.nextPage();
 			}
 		},
