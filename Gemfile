@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 ruby '2.1.2'
 
-gem 'rbtrace'
-
 gem 'unicorn'
 gem 'rails', '4.1.7'
 
