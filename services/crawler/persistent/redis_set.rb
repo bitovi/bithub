@@ -11,14 +11,14 @@ class RedisSet
     end
   end
 
+  def add_many(key, members)
+    @redis.sadd(key, members)
+  end
+
   def add_many(data_set)
     data_set
     .map{|e| add(e)}
     .reduce(true){|acc, e| acc && e}
-  end
-
-  def test(data_elem)
-    @redis.sismember key(data_elem), value(data_elem)
   end
 
   def members(key)
@@ -36,8 +36,4 @@ class RedisSet
   def colon_separated(path)
     path.join ':'
   end
-  
-  alias_method :seen?, :test
-  alias_method :seen, :members
 end
-
