@@ -33,6 +33,7 @@ module Events
         Time.parse(ts_str).utc
       end
       alias_method :updated_at, :origin_timestamp
+      alias_method :origin_ts, :origin_timestamp
 
       def repo_name
         url = source_data.andand[:url]
