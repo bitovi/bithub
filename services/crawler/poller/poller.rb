@@ -6,7 +6,7 @@ class Poller
   include Celluloid
   include Celluloid::Logger
 
-  HEARTBEAT_INTERVAL = 1
+  HEARTBEAT_INTERVAL = 10
 
   def initialize(owner_data, fetcher, opts={})
     @owner_data = owner_data
