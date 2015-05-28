@@ -38,6 +38,7 @@ class Listener
 
   def initialize(q_name, q_rk, handler_class)
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    @c = rf.chan
     @x = rf.x('x.web')
     @q = rf.q(q_name).bind(@x, routing_key: q_rk)
 
@@ -48,9 +49,10 @@ class Listener
   end
 
   def listen
-    @q.subscribe do |delivery_info, properties, payload|
+    @q.subscribe(ack: true, block: false) do |delivery_info, properties, payload|
       packet = JSON.parse(payload)
       @handler.handle(packet)
+      @c.acknowledge(delivery_info.delivery_tag, false)
     end
   end
 
@@ -77,7 +79,7 @@ class Listeners < Celluloid::SupervisionGroup
     as: :event_listener,
     args: ['q.web.events', 'events', EventHandler]
   )
-  
+
   supervise(
     Listener,
     as: :command_listener,
