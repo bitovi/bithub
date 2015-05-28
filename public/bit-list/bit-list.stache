@@ -1,4 +1,4 @@
-<bh-bits-vertical-infinite is-loading="{isLoading}"></bh-bits-vertical-infinite>
+<bh-bits-vertical-infinite is-loading="{isLoading}" bits="{bits}"></bh-bits-vertical-infinite>
 {{#if state.showPoweredBy}}
 	<div class="powered-by">
 		Powered by <a href="http://bithub.com" target="_blank">BitHub</a>
