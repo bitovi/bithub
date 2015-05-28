@@ -252,10 +252,10 @@ export var PartitionedColumnList = can.Map.extend({
 		return (length - firstIndex - limit > 0);
 	},
 	resetFromTopIfNeeded : function(){
+		this.attr('__limit', PER_PAGE);
 		if(this.attr('__dataAddedWhilePrependPaused')){
 			this.resetColumns();
 		}
-		this.setLimit(PER_PAGE);
 		this.prependPaused(false);
 	}
 });
@@ -280,20 +280,18 @@ var PartitionedColumnListWithDeferredRendering = PartitionedColumnList.extend({
 	},
 	renderPending : function(){
 		var items = this.__pendingItems || [];
-		var start = 0;
 		var renderFn = function(){
 			// We render items in batches of 5 so live binding setup
 			// wouldn't block the scrolling.
-			var end = start + 5;
-			if(end > items.length){
-				end = items.length;
-			}
+			var toProcess = items.splice(0, 5);
+
 			can.batch.start();
-			for(start; start < end; start++){
-				items[start].attr('@pendingRender', false);
+			for(var i = 0; i < toProcess.length; i++){
+				toProcess[i].attr('@pendingRender', false);
 			}
 			can.batch.stop();
-			if(end < items.length){
+
+			if(items.length){
 				setTimeout(renderFn, 1);
 			}
 		};
