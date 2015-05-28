@@ -4,10 +4,15 @@ require 'types/lock'
 
 class LockManager
   include Celluloid
+  include Celluloid::Logger
 
   def initialize(opts={})
     @redis = opts.fetch(:redis) { ConnectionManager.instance.redis }
     @booted = true
+
+    every(5) do
+      info "NotificationPublisher mailbox size #{Actor.current.mailbox.size}"
+    end
   end
 
   attr_accessor :interval

@@ -3,18 +3,23 @@ require 'rabbit_factory'
 
 class ErrorPublisher
   include Celluloid
+  include Celluloid::Logger
 
   def initialize
-    Celluloid.logger.info 'Initializing Error publisher'
+    info 'Initializing Error publisher'
 
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')
+
+    every(5) do
+      info "ErrorPublisher mailbox size #{Actor.current.mailbox.size}"
+    end
   end
 
   def publish(error, owner_info)
-    Celluloid.logger.info "#{owner_info.to_log_format} Publishing Error #{error.class.name}"
+    info "#{owner_info.to_log_format} Publishing Error #{error.class.name}"
     @x.publish(msg(error, owner_info).to_json, routing_key: 'errors')
   end
 

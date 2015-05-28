@@ -23,6 +23,10 @@ class Poller
     @lock_ttl = opts.fetch(:interval) { 3600 }
 
     @timer = every(HEARTBEAT_INTERVAL) { poll }
+
+    every(HEARTBEAT_INTERVAL) do
+      info "Poller #{@owner_data.to_log_format} mailbox size: #{Actor.current.mailbox.size}"
+    end
   end
 
   def fetch_and_lock
