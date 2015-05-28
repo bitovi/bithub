@@ -67,6 +67,9 @@ class EventPublisher
     decorator.decorate processed
   rescue Events::DispatchError => e
     error "#{owner_data.to_log_format} #{e}"
-    nil # if we can't dispatch, return nil so it will end up filtered out
+    nil
+  rescue KeyError => e
+    error "#{owner_data.to_log_format} #{e}"
+    nil
   end
 end
