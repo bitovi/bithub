@@ -17,8 +17,48 @@ class Dispatcher
     entity = Entities::Dispatcher.dispatch(event)
 
     ActiveRecord::Base.transaction do
-      event.build.normalize.validate.persist!
-      entity.procure.update_if_found.validate.determine.group.normalize.persist!.route
+      event_time = Benchmark.measure do
+        event.build.normalize.validate.persist!
+      end
+
+      until_validation = nil
+      until_validation_time = Benchmark.measure do
+        until_validation = entity.procure.update_if_found
+      end
+        
+      validation = nil
+      validation_time = Benchmark.measure do
+        validation = until_validation.validate
+      end
+      
+      determination = nil
+      determination_time = Benchmark.measure do
+        determination = validation.determine
+      end
+        
+      grouping = nil
+      grouping_time = Benchmark.measure do
+        grouping = determination.group
+      end
+        
+      normalization =  nil
+      normalization_time = Benchmark.measure do
+        normalization = grouping.normalize
+      end
+
+      persistance = nil
+      persistance_time = Benchmark.measure do
+        normalization.persist!.route
+      end
+
+      Celluloid.logger.info "------- #{event.feed_name} --------- #{event.type_name} -------"
+      Celluloid.logger.info "event dispatching took: #{event_time}"
+      Celluloid.logger.info "until_validation dispatching took: #{until_validation_time}"
+      Celluloid.logger.info "validation dispatching took: #{validation_time}"
+      Celluloid.logger.info "determination dispatching took: #{determination_time}"
+      Celluloid.logger.info "grouping dispatching took: #{grouping_time}"
+      Celluloid.logger.info "normalization dispatching took: #{normalization_time}"
+      Celluloid.logger.info "persistance dispatching took: #{persistance_time}"
     end
 
     [event.instance, entity.instance]

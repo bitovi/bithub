@@ -7,7 +7,11 @@ class EventHandler < Handler
 
     @listener.handle_errors do
       Apartment::Tenant.switch(bn) do
-        Dispatcher.new(logger: Celluloid.logger).dispatch(packet)
+        time = Benchmark.measure do
+          Dispatcher.new(logger: Celluloid.logger).dispatch(packet)
+        end
+
+        Celluloid.logger.info "Total dispatching time: #{time}"
       end
     end
   end
