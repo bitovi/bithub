@@ -35,6 +35,7 @@ Celluloid.logger = logger
 
 class Listener
   include Celluloid
+  include Celluloid::Logger
 
   def initialize(q_name, q_rk, handler_class)
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
@@ -45,6 +46,11 @@ class Listener
     @handler = handler_class.new(self)
 
     Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
+
+    every(5) do
+      info "Listener with #{@handler.class} mailbox size #{Actor.current.mailbox.size}"
+    end
+
     async.listen
   end
 

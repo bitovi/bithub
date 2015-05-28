@@ -15,6 +15,10 @@ class EventPublisher
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.web')
     @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
+
+    every(5) do
+      info "EventPublisher mailbox size #{Actor.current.mailbox.size}"
+    end
   end
 
   def publish(events, owner_data, opts={})

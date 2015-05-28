@@ -6,7 +6,7 @@ class NotificationPublisher
   include Celluloid::Logger
 
   def initialize
-    Celluloid.logger.info 'Initializing Notification publisher'
+    info 'Initializing Notification publisher'
 
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x_frontend = rf.x('x.liveservice', :direct)
@@ -14,6 +14,10 @@ class NotificationPublisher
 
     @x_backend = rf.x('x.web', :direct)
     @q_backend = rf.q('q.web.commands').bind(@x_backend, routing_key: 'commands')
+
+    every(5) do
+      info "NotificationPublisher mailbox size #{Actor.current.mailbox.size}"
+    end
   end
 
   def publish_to_frontend(notif)
