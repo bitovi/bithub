@@ -3,8 +3,9 @@ require_relative 'redis_set'
 class DigestSet < RedisSet
 
   def reject_old(events)
-    set_key = key(events.first)
+    return events if events.empty?
 
+    set_key = key(events.first)
     seen_digests = members(set_key)
     new_events = events.reject { |e| seen_digests.include? e[:content_digest] }
     add_batch(set_key, new_events.map {|e| e[:content_digest]}) unless new_events.empty?

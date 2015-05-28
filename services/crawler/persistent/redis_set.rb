@@ -11,10 +11,10 @@ class RedisSet
     end
   end
 
-  def add_many(key, members)
+  def add_batch(key, members)
     @redis.sadd(key, members)
   end
-
+  
   def add_many(data_set)
     data_set
     .map{|e| add(e)}
