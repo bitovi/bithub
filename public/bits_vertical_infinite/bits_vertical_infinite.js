@@ -12,7 +12,7 @@ var PER_PAGE = 50;
 
 
 var calculateColumnCount = function(el){
-	var width = el.width();
+	var width = el && el.width() || 0;
 	if(width < CARD_MIN_WIDTH) {
 		return 1;
 	}
@@ -56,6 +56,7 @@ export var PartitionedColumnList = can.Map.extend({
 			__allData : source || [],
 			__columns : [],
 			__currentColumn : 0,
+			__currentPrependColumn : 0,
 			__columnCount : 0,
 			__limit : Infinity,
 			__prependPaused: false,
@@ -69,9 +70,7 @@ export var PartitionedColumnList = can.Map.extend({
 	replicateChangesFromSource : function(ev, elements, index){
 		var isPrependPaused = this.attr('__prependPaused');
 		var what = ev.type;
-		var isTail;		
-
-		console.log('REPLICATE', arguments);
+		var isTail;
 
 		if(what === 'add'){
 			isTail = this.__allData.length - elements.length === index;
@@ -87,6 +86,8 @@ export var PartitionedColumnList = can.Map.extend({
 					this.append();
 					can.batch.stop();
 				}
+			} else if(isPrependPaused){
+				this.attr('__dataAddedWhilePrependPaused', true);
 			}
 		} else if(what === 'remove'){
 			this.removeItems(elements);
@@ -117,6 +118,12 @@ export var PartitionedColumnList = can.Map.extend({
 	},
 	prependPaused : function(val){
 		this.attr('__prependPaused', val);
+		if(!val){
+			this.attr({
+				__currentPrependColumn: 0,
+				__dataAddedWhilePrependPaused: false
+			});
+		}
 	},
 	columns : function(){
 		return this.attr('__columns');
@@ -160,22 +167,23 @@ export var PartitionedColumnList = can.Map.extend({
 	prependImmediately : function(newData){
 		var columnCount = this.attr('__columnCount');
 		var columns = this.columns();
-		var currentColumn = 0;
-
+		var currentPrependColumn = this.attr('__currentPrependColumn');
+		var calculateCurrent = makeCalculateCurrent(currentPrependColumn, columnCount);
+		var currentLimit = this.attr('__limit');
 		can.batch.start();
 		for(var i = 0; i < newData.length; i++){
-			columns[currentColumn].unshift(this.addPending(newData[i]));
-			currentColumn++;
-			if(currentColumn === columnCount){
-				currentColumn = 0;
-			}
+			columns[currentPrependColumn].unshift(this.addPending(newData[i], true));
+			currentPrependColumn = calculateCurrent();
 		}
+		this.attr('__currentPrependColumn', currentPrependColumn);
+		this.attr('__limit', currentLimit + newData.length);
 		can.batch.stop();
 	},
 	appendCb : function(){
 		return (data) => { this.append(data); };
 	},
 	resetColumns : function(newColumnCount){
+		var currentColumnCount = this.attr('__columnCount');
 		newColumnCount = newColumnCount || this.attr('__columnCount');
 		
 		can.batch.start();
@@ -183,9 +191,14 @@ export var PartitionedColumnList = can.Map.extend({
 			__currentColumn : 0,
 			__columnCount : newColumnCount
 		});
-		this.attr('__columns').replace(makeColumns(newColumnCount));
-		// We need to append current data to new columns
+		
+		if(currentColumnCount !== newColumnCount){
+			this.attr('__columns').replace(makeColumns(newColumnCount));
+		} else {
+			this.clearColumns();
+		}
 		this.append();
+		// We need to append current data to new columns
 		can.batch.stop();
 	},
 	resetColumnsAndAppend : function(newColumnCount, data){
@@ -203,7 +216,7 @@ export var PartitionedColumnList = can.Map.extend({
 		var allData = this.attr('__allData');
 		var appendUntil = limit > allData.length ? allData.length : limit;
 		var perColumnAmount, i;
-	
+		
 		can.batch.start();
 		if(appendUntil >= currentLimit){
 			for(i = currentLimit; i < appendUntil; i++){
@@ -211,7 +224,7 @@ export var PartitionedColumnList = can.Map.extend({
 				currentColumn = calculateCurrent();
 			}
 			this.attr('__currentColumn', currentColumn);
-		} else {
+		} else if(limit !== Infinity) {
 			// Mutate column lists in place so we wouldn't trigger
 			// CanJS live binding for columns. This way items that stay
 			// in page won't be removed and then inserted again.
@@ -219,6 +232,13 @@ export var PartitionedColumnList = can.Map.extend({
 			for(i = 0; i < columnCount; i++){
 				columns[i].splice(perColumnAmount[i], columns[i].length);
 			}
+			
+			currentColumn = (appendUntil % columnCount);
+			if(currentColumn === columnCount){
+				currentColumn = 0;
+			}
+
+			this.attr('__currentColumn', currentColumn);
 		}
 		this.attr('__limit', limit);
 		can.batch.stop();
@@ -230,17 +250,28 @@ export var PartitionedColumnList = can.Map.extend({
 		var limit = this.attr('__limit');
 		
 		return (length - firstIndex - limit > 0);
+	},
+	resetFromTopIfNeeded : function(){
+		if(this.attr('__dataAddedWhilePrependPaused')){
+			this.resetColumns();
+		}
+		this.setLimit(PER_PAGE);
+		this.prependPaused(false);
 	}
 });
 
-
 var PartitionedColumnListWithDeferredRendering = PartitionedColumnList.extend({
-	addPending : function(item){
+	addPending : function(item, shouldUnshift){
 		can.batch.start();
 		item.attr('@pendingRender', true);
-		
+
 		this.__pendingItems = this.__pendingItems || [];
-		this.__pendingItems.push(item);
+
+		if(shouldUnshift){
+			this.__pendingItems.unshift(item);
+		} else {
+			this.__pendingItems.push(item);
+		}
 		
 		clearTimeout(this.__renderPendingTimeout);
 		this.__renderPendingTimeout = setTimeout(this.proxy('renderPending'), 1);
@@ -283,11 +314,7 @@ can.Component.extend({
 	events : {
 		inserted : function(){
 			this.calculateColumnCount();
-
-			this.throttledScrollHandler = _throttle(this.proxy('scrollHandler'), 200);
-
-			this.element.on('scroll', this.throttledScrollHandler);
-
+			this.element.on('scroll', _throttle(this.proxy('scrollHandler'), 200));
 		},
 		"{window} resize" : "calculateColumnCount",
 		calculateColumnCount : function(){
@@ -298,6 +325,7 @@ can.Component.extend({
 				
 				if(currentColumnCount !== newColumnCount){
 					partitionedList.resetColumns(newColumnCount);
+					partitionedList.append();
 				}
 			}, 1);
 		},
@@ -319,19 +347,20 @@ can.Component.extend({
 		},
 		scrollHandler : function(){
 			var scrollTop = this.element.scrollTop();
-			var scrollHeight = (
-				this.__minHeight || this.element.prop('scrollHeight')
-			);
+			var scrollHeight = (this.__minHeight || this.element.prop('scrollHeight'));
 			var height =  this.element.height();
 			var partitionedList = this.scope.attr('partitionedList');
 			var onBottom = scrollHeight - scrollTop - height < 400;
 			var isLoading = this.scope.attr('isLoading');
 			
 			if(scrollTop === 0){
-				this.scope.attr('partitionedList').setLimit(PER_PAGE);
+				partitionedList.resetFromTopIfNeeded();
 				setTimeout(this.proxy('calculateMinHeight'), 1);
-			} else if(onBottom && !partitionedList.hasPending() && !isLoading){
-				this.nextPage();
+			} else {
+				partitionedList.prependPaused(true);
+				if(onBottom && !isLoading){
+					this.nextPage();
+				}
 			}
 		},
 		calculateMinHeight : function(){
@@ -343,6 +372,7 @@ can.Component.extend({
 			});
 
 			var minHeight = Math.min.apply(Math, heights);
+			delete this.__minHeightTriggeredReq;
 			this.__minHeight = minHeight;
 		},
 		"bit:loaded" : 'calculateMinHeight'
