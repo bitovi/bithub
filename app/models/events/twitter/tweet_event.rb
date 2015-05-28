@@ -14,6 +14,10 @@ module Events
         id_str + self.class.name
       end
 
+      def origin_ts
+        @tweet.created_at
+      end
+
       def html_url
         "https://twitter.com/#{@user.screen_name}/status/#{@tweet.id_str}"
       end

@@ -18,6 +18,10 @@ module Events
           + self.class.name
       end
 
+      def origin_ts
+        @answer.last_activity_date
+      end
+
       def wrap_response
         @answer = Wrappers::Stackexchange::Answer.new(source_data)
         @owner = Wrappers::Stackexchange::User.new(source_data[:owner])
