@@ -1,6 +1,9 @@
 require 'bunny'
 
 class RabbitFactory
+
+  attr_reader :chan
+
   def initialize(rabbit_channel)
     @chan = rabbit_channel
   end
