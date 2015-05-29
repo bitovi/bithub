@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519141558) do
+ActiveRecord::Schema.define(version: 20150529151835) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -169,6 +169,11 @@ ActiveRecord::Schema.define(version: 20150519141558) do
     t.text     "searchable_body"
     t.text     "searchable_author"
   end
+
+  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx"
+  add_index "entities", ["origin_id"], :name => "entities_origin_id_idx"
+  add_index "entities", ["props"], :name => "entities_props_idx"
+  add_index "entities", ["type_name"], :name => "entities_type_name_idx"
 
   create_table "events", force: true do |t|
     t.string   "type_name"
