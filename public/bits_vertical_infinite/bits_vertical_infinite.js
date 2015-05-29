@@ -5,6 +5,7 @@ import PartitionedColumnList from "./partitioned_column_list";
 
 import "./bits_vertical_infinite.less!";
 import "can/construct/proxy/";
+import "bit/"
 
 var CARD_MIN_WIDTH = 300;
 
