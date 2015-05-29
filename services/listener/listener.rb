@@ -55,19 +55,19 @@ class Listener
   end
 
   def listen
-    @q.subscribe(ack: true, block: false) do |delivery_info, properties, payload|
-      packet = JSON.parse(payload)
-      @handler.handle(packet)
-      @c.acknowledge(delivery_info.delivery_tag, false)
+    @q.subscribe(manual_ack: true, block: false) do |delivery_info, properties, payload|
+      packet = JSON.parse payload
+      @handler.handle packet
+      @c.acknowledge delivery_info.delivery_tag, false
     end
   end
 
   def handle_errors
     yield
   rescue => err
-    Celluloid.logger.error "Error: #{err.class}, #{err.message}"
-    Celluloid.logger.error "Backtrace: ----------"
-    Celluloid.logger.error err.backtrace.join("\n")
+    error "Error: #{err.class}, #{err.message}"
+    error "Backtrace: ----------"
+    error err.backtrace.join("\n")
   ensure
     Apartment::Tenant.switch! # either way switch back to public
   end
