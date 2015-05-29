@@ -26,7 +26,7 @@ module Entities
 
       def fake_origin_ts
         last_follow = Entity\
-          .where(feed_name: 'twitter', type_name: 'follow')\
+          .feed('twitter').type('follow')\
           .where("props -> 'target_id' = :target_id", target_id: @event.target.id.to_s)\
           .last
 
