@@ -6,7 +6,6 @@ import _map from "lodash/collections/map";
 
 import "can/construct/super/";
 import "can/construct/proxy/";
-import "bit/";
 import "bits_vertical_infinite/";
 
 
