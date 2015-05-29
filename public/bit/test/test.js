@@ -57,10 +57,10 @@ QUnit.test("Card goes through the lifecycle", 4, function(){
 		bit: Bit.model(fixtureData.data[0]),
 		state: getState(false)
 	});
-	F('bh-bit.loading').exists('Card is in the loading state');
-	F('bh-bit.animate-height').exists('Card is awaiting animation');
-	F('bh-bit.loading').missing('Card is loaded');
-	F('bh-bit.animate-height').missing('Card has resolved height');
+	F('bh-bit .loading').exists('Card is in the loading state');
+	F('bh-bit .animate-height').exists('Card is awaiting animation');
+	F('bh-bit .loading').missing('Card is loaded');
+	F('bh-bit .animate-height').missing('Card has resolved height');
 });
 
 QUnit.test("Sharing panel is expanded on click", 3, function(){

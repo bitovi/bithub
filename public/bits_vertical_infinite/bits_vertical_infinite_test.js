@@ -1,4 +1,4 @@
-import {PartitionedColumnList} from "./bits_vertical_infinite";
+import PartitionedColumnList from "./partitioned_column_list";
 
 import QUnit from "steal-qunit";
 import F from "funcunit";
@@ -71,7 +71,7 @@ QUnit.test('List Partitioning', function(){
 	);
 	
 	
-	list.setLimit(17);
+	list.setLimitAndFillColumns(17);
 
 	firstColumn = list.columns()[0];
 
@@ -91,9 +91,9 @@ QUnit.test('List Partitioning', function(){
 		"Limit is observed when resetting columns"
 	);
 	
-	QUnit.ok(list.hasDataAfterLimit(), 'List knows when there is data that is not whown');
+	QUnit.ok(list.hasDataAfterLimit(), 'List knows when there is data that is not shown');
 
-	list.setLimit(20);
+	list.setLimitAndFillColumns(20);
 
 	QUnit.deepEqual(
 		list.columns().attr(),
@@ -101,7 +101,7 @@ QUnit.test('List Partitioning', function(){
 		"Limit can be increased"
 	);
 
-	list.setLimit(Infinity);
+	list.setLimitAndFillColumns(Infinity);
 
 	QUnit.deepEqual(
 		list.columns().attr(),
@@ -127,6 +127,32 @@ QUnit.test('List Partitioning', function(){
 		[[2001, 2005, 1003, 4, 9],[2002, 2006, 1, 5, 10],[3000, 2007, 2, 6, 11],[2003, 1001, 7],[2004, 1002, 3, 8]],
 		"Data removed from the source list is removed from the columns"
 	);
-	
+});
 
+QUnit.test('Pausing prepend and restarting the content', function(){
+	var sourceList = new can.List();
+	var list = new PartitionedColumnList(sourceList);
+
+	list.prependPaused(true);
+	sourceList.unshift(1,2,3,4,5,6);
+
+	QUnit.deepEqual(list.columns().attr(), [], "No data in columns");
+
+	list.resetColumns(4);
+
+	QUnit.deepEqual(
+		list.columns().attr(),
+		[[1, 5], [2, 6], [3], [4]],
+		"Data is partitioned"
+	);
+
+	list.PER_PAGE = 2;
+
+	list.resetColumns(4, true);
+
+	QUnit.deepEqual(
+		list.columns().attr(),
+		[[1], [2], [], []],
+		"Data is partitioned and limited"
+	);
 });
