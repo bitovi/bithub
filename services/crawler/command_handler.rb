@@ -11,7 +11,7 @@ class CommandHandler
     @consumer_name = opts.fetch(:consumer_name)
     @receiver_name = opts.fetch(:receiver_name) { :main }
 
-    rf = RabbitFactory.new(@chan = ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(@chan = ConnectionManager.instance.rabbit)
     @x = rf.x('x.crawler', :direct)
     @q = rf.q("q.crawler.#{@consumer_name}.commands").bind(@x, :routing_key => 'config')
 

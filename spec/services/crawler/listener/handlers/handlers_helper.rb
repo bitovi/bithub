@@ -11,7 +11,7 @@ require 'celluloid/test'
 require 'webmock/rspec'
 require 'httparty'
 
-require 'rabbit_factory'
+require 'rabbit_helper'
 require 'events/dispatcher'
 
 require 'listener/http_server'
