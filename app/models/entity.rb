@@ -72,6 +72,13 @@ class Entity < ActiveRecord::Base
   scope :repo_name, ->(rn) { where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, ->(s) { where("props ? 'state'").where("props -> 'state' = :val", val: s) }
 
+  # Twitter
+  scope :retweeted_id, ->(rt_id) { where("props ? 'retweeted_id'").where("props -> 'retweeted_id' = :val", val: rt_id)
+  scope :target_id, ->(tgt_id) { where("props ? target_id").where("props -> 'target_id' = :val", val: tgt_id) }
+
+  # Meetup
+  scope :event_id, ->(e_id) { where("props ? 'event_id'").where("props -> 'event_id' = :val", val: e_id) }
+
   after_validation :reformat_uniqueness_validation
 
   def state
