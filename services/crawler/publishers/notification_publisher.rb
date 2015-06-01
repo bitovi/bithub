@@ -1,5 +1,5 @@
 require 'connection_manager'
-require 'rabbit_factory'
+require 'rabbit_helper'
 
 class NotificationPublisher
   include Celluloid
@@ -8,7 +8,7 @@ class NotificationPublisher
   def initialize
     info 'Initializing Notification publisher'
 
-    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
     @x_frontend = rf.x('x.liveservice', :direct)
     @q_frontend = rf.q('q.liveservice.services').bind(@x_frontend, routing_key: 'services')
 
