@@ -55,7 +55,7 @@ module Entities
         Entity
         .feed('meetup')
         .type('rsvp')
-        .where("props -> 'event_id' = '#{event_id.to_s}'")
+        .event_id(event_id.to_s)
       end
 
       def persist
