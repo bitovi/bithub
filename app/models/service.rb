@@ -12,12 +12,14 @@ class Service < ActiveRecord::Base
   has_many :entities, through: :service_entities
 
   has_many :service_errors
-
   has_many :events, dependent: :delete_all
 
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
+
+  scope :feed, ->(fn) { where(feed_name: fn) }
+  scope :type, ->(tn) { where(type_name: tn) }
 
   def brand
     embed.brand

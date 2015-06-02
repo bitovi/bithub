@@ -4,7 +4,7 @@ class RabbitHelper
 
   module Sugar
     def x(x_name, chan_is_short_lived = false)
-      if is_short_lived & block_given?
+      if chan_is_short_lived & block_given?
         ::ConnectionManager.instance.short_lived_rabbit do |chan|
           yield RabbitHelper.new(chan).x(x_name)
         end

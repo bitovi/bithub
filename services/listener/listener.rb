@@ -66,7 +66,6 @@ class Listener
     yield
   rescue => err
     error "Error: #{err.class}, #{err.message}"
-    error "Backtrace: ----------"
     error err.backtrace.join("\n")
   ensure
     Apartment::Tenant.switch! # either way switch back to public
