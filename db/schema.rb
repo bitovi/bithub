@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519141558) do
+ActiveRecord::Schema.define(version: 20150528191230) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -131,6 +131,21 @@ ActiveRecord::Schema.define(version: 20150519141558) do
     t.datetime "updated_at"
   end
 
+  create_table "embed_events", force: true do |t|
+    t.integer  "organization_id"
+    t.integer  "brand_id"
+    t.integer  "embed_id"
+    t.string   "organization_name"
+    t.string   "brand_name"
+    t.string   "embed_name"
+    t.string   "action"
+    t.string   "attr",              default: ""
+    t.string   "old_value",         default: ""
+    t.string   "new_value",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "embed_presets", force: true do |t|
     t.integer  "embed_id"
     t.string   "name"
@@ -143,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150519141558) do
     t.string  "name"
     t.integer "brand_id"
     t.boolean "approved_by_default", default: true
+    t.boolean "published",           default: false
   end
 
   add_index "embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
@@ -169,6 +185,11 @@ ActiveRecord::Schema.define(version: 20150519141558) do
     t.text     "searchable_body"
     t.text     "searchable_author"
   end
+
+  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx"
+  add_index "entities", ["origin_id"], :name => "entities_origin_id_idx"
+  add_index "entities", ["props"], :name => "entities_props_idx"
+  add_index "entities", ["type_name"], :name => "entities_type_name_idx"
 
   create_table "events", force: true do |t|
     t.string   "type_name"

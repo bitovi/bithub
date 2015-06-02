@@ -6,7 +6,7 @@ require 'apartment/elevators/generic'
 DEFAULT_BITHUB_TENANT = 'public'
 
 Apartment.configure do |config|
-  config.excluded_models = %w(InviteCode Brand BrandIdentity Account Organization AccountsOrganization AccountRole AccountsAccountRole User BrandsUser Country Subscription Payment StripeWebhooksLog Plan)
+  config.excluded_models = %w(InviteCode Brand BrandIdentity Account Organization AccountsOrganization AccountRole AccountsAccountRole User BrandsUser Country Subscription Payment StripeWebhooksLog Plan EmbedEvent)
   config.use_schemas = true
   config.use_sql = true
   config.tenant_names = -> { Brand.pluck :tenant_name }
