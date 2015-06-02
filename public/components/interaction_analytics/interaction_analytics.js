@@ -10,16 +10,16 @@ export var InteractionAnalyticsVM = can.Map.extend({
 	},
 	loadInteractionsData : function(){
 		var self = this;
-		InteractionEvent.findAll({event_type: 'share', zoom: 'rough'}).then(function(data){
+		InteractionEvent.findAll({event_type: 'share', zoom: 'rough', primary_source_id: this.attr('state.hubId')}).then(function(data){
 			self.attr('totalShareInteractions', data);
 		});
-		InteractionEvent.findAll({event_type: 'share'}).then(function(data){
+		InteractionEvent.findAll({event_type: 'share', primary_source_id: this.attr('state.hubId')}).then(function(data){
 			self.attr('perNetworkShareInteractions', data);
 		});
-		InteractionEvent.findAll({event_type: 'link'}).then(function(data){
+		InteractionEvent.findAll({event_type: 'link', primary_source_id: this.attr('state.hubId')}).then(function(data){
 			self.attr('linkInteractions', data);
 		});
-		InteractionEvent.findAll({event_type: 'scroll'}).then(function(data){
+		InteractionEvent.findAll({event_type: 'scroll', primary_source_id: this.attr('state.hubId')}).then(function(data){
 			self.attr('scrollInteractions', data);
 		});
 	}
@@ -39,6 +39,9 @@ can.Component.extend({
 				setTimeout(function(){
 					var ctx = el.getContext('2d');
 					var data = self.attr(type)[fnName]();
+					if (!data.labels.length) {
+						return;
+					}
 					new Chart(ctx).Line(data, {
 						bezierCurveTension : 0.1,
 						pointDotRadius: 2,
