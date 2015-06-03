@@ -1,6 +1,6 @@
 module Entities
   module Routable
-    include ::Traits::AmqpDeclaration
+    include ::RabbitHelper::Sugar
 
     def route
       route_embed
@@ -22,9 +22,9 @@ module Entities
     end
 
     def notify_client
-      RabbitFactory.new(ConnectionManager.instance.rabbit)\
-        .x('x.liveservice')\
-        .publish(JSON.generate(client_msg), routing_key: 'services')
+      x('x.liveservice', chan_is_short_lived = true) do |xchange|
+        xchange.publish(JSON.generate(client_msg), routing_key: 'services')
+      end
     end
 
     def client_msg

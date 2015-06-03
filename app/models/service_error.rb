@@ -1,5 +1,5 @@
 class ServiceError < ActiveRecord::Base
-  include Traits::AmqpDeclaration
+  include RabbitHelper::Sugar
 
   belongs_to :service
 
@@ -10,7 +10,9 @@ class ServiceError < ActiveRecord::Base
 
   def notify_liveservice
     Rails.logger.info "Publishing error to liveservice #{msg}"
-    x('x.liveservice').publish(msg.to_json, routing_key: :services)
+    x('x.liveservice', chan_is_short_lived = true) do |xchange|
+      xchange.publish(msg.to_json, routing_key: :services)
+    end
   end
 
   def msg

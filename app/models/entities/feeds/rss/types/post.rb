@@ -37,11 +37,14 @@ module Entities
 
       def service_config
         Brand
-          .where(name: brand_name).first
-          .services
-          .where(feed_name: feed_name, type_name: 'site').first
-          .service_config
-          .data
+          .where(name: brand_name)
+          .first
+            .services
+            .feed('rss')
+            .type('site')
+            .first
+              .service_config
+              .data
       end
 
       def meta
@@ -51,12 +54,6 @@ module Entities
       def brand_name
         meta.fetch(:brand_name)
       end
-
-      def feed_name
-        'rss'
-      end
-
     end
-
   end
 end

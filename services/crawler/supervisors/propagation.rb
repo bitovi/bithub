@@ -9,7 +9,10 @@ module Supervisors
     # matches (where target matches their name)
     def propagate_cmd(target, action)
       children.select do |c|
-        target.to_s.include?(c.name.to_s)
+        target_path = target.to_s.split(SupervisionNode::SEPARATOR)
+        current_actor_path = c.name.to_s.split(SupervisionNode::SEPARATOR)
+
+        (target_path & current_actor_path).length == current_actor_path.length
       end.each do |c|
         c.handle_cmd(target, action) if c.respond_to?(:handle_cmd, true)
       end

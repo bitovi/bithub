@@ -3,6 +3,7 @@ class InitialSetup < ActiveRecord::Migration
     unless ENV['VAGRANT'].present?
       create_extension "hstore", :version => "1.2"
       create_extension "intarray", :version => "1.0"
+      create_extension "btree_gin"
     end
 
     enable_extension "plpgsql"

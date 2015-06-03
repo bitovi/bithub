@@ -17,7 +17,7 @@ require 'celluloid/io'
 # /lib
 require 'core_ext'
 require 'core_helpers'
-require 'rabbit_factory'
+require 'rabbit_helper'
 require 'logger_factory'
 
 # /app/models

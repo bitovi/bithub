@@ -1,5 +1,5 @@
 require 'connection_manager'
-require 'rabbit_factory'
+require 'rabbit_helper'
 
 class ErrorPublisher
   include Celluloid
@@ -8,7 +8,7 @@ class ErrorPublisher
   def initialize
     info 'Initializing Error publisher'
 
-    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')

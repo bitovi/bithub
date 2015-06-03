@@ -23,5 +23,6 @@
   with_items:
     - 'hstore'
     - 'intarray'
+    - 'btree_gin'
   sudo: True
   sudo_user: postgres

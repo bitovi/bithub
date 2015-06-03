@@ -15,7 +15,7 @@ require 'config/environment'
 
 # /lib
 require 'core_ext'
-require 'rabbit_factory'
+require 'rabbit_helper'
 require 'logger_factory'
 require 'connection_manager'
 
@@ -38,7 +38,7 @@ class Listener
   include Celluloid::Logger
 
   def initialize(q_name, q_rk, handler_class)
-    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
     @c = rf.chan
     @x = rf.x('x.web')
     @q = rf.q(q_name).bind(@x, routing_key: q_rk)
@@ -66,7 +66,6 @@ class Listener
     yield
   rescue => err
     error "Error: #{err.class}, #{err.message}"
-    error "Backtrace: ----------"
     error err.backtrace.join("\n")
   ensure
     Apartment::Tenant.switch! # either way switch back to public

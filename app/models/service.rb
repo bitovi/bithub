@@ -1,5 +1,5 @@
 class Service < ActiveRecord::Base
-  include Traits::AmqpDeclaration
+  include RabbitHelper::Sugar
 
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
@@ -12,12 +12,14 @@ class Service < ActiveRecord::Base
   has_many :entities, through: :service_entities
 
   has_many :service_errors
-
   has_many :events, dependent: :delete_all
 
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
   after_destroy { notify_crawler(:stop) }
+
+  scope :feed, ->(fn) { where(feed_name: fn) }
+  scope :type, ->(tn) { where(type_name: tn) }
 
   def brand
     embed.brand
@@ -101,7 +103,9 @@ class Service < ActiveRecord::Base
     if ENV['RAILS_ENV'] != 'test' && service_config.valid?
       Rails.logger.info "Publishing a command to crawler #{msg(action)}"
       payload = JSON.generate(msg(action))
-      x('x.crawler').publish(payload, routing_key: :config)
+      x('x.crawler', chan_is_short_lived = true) do |xchange|
+        xchange.publish(payload, routing_key: :config)
+      end
     end
   end
 

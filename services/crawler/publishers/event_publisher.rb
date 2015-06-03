@@ -1,6 +1,6 @@
 require 'persistent/digest_set'
 require 'connection_manager'
-require 'rabbit_factory'
+require 'rabbit_helper'
 
 class EventPublisher
   include Celluloid
@@ -12,7 +12,7 @@ class EventPublisher
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
 
-    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.web')
     @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
 

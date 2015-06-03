@@ -1,5 +1,5 @@
 class Brand < ActiveRecord::Base
-  include Traits::AmqpDeclaration
+  include RabbitHelper::Sugar
 
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
@@ -55,7 +55,9 @@ class Brand < ActiveRecord::Base
   def notify_crawler(action)
     unless ENV['RAILS_ENV'] == 'test'
       Rails.logger.info "Publishing a command to crawler #{msg(action)}"
-      x('x.crawler').publish((msg(action).to_json), routing_key: :config)
+      x('x.crawler', chan_is_short_lived = true) do |xchange|
+        xchange.publish((msg(action).to_json), routing_key: :config)
+      end
     end
   end
 
