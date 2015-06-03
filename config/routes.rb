@@ -38,7 +38,7 @@ Bithub::Application.routes.draw do
     get '/register', to: redirect('/accounts/sign_up')
     get '/login', to: redirect('/accounts/sign_in')
     get '/logout', to: redirect('/accounts/sign_out')
-    
+
     get '/accounts/login', to: redirect('/accounts/sign_in')
     get '/accounts/logout', to: redirect('/accounts/sign_out')
     get '/accounts/register', to: redirect('/accounts/sign_up')
@@ -80,7 +80,7 @@ Bithub::Application.routes.draw do
         collection do
           get 'current', to: 'brands#show'
           put 'current', to: 'brands#update'
-          get 'current/payments', to: 'payments#index'
+          # get 'current/payments', to: 'payments#index'
           get 'current/identities/:provider', to: 'brand_identities#index'
           get 'current/identities', to: 'brand_identities#index'
           get 'current/identities/:id', to: 'brand_identities#show'
@@ -106,7 +106,7 @@ Bithub::Application.routes.draw do
       end
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
-      resources :plans, only: %i(show index)
+      # resources :plans, only: %i(show index)
       resources :interactions, only: %i(index show create)
     end
   end

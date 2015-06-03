@@ -20,18 +20,14 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
     @embed.name = generated_name if params[:name].blank?
 
-    permited = Subscriptions::PolicyChecker
-      .new(current_brand.organization.subscription)
-      .can_create_embed?(current_brand)
+    # permited = Subscriptions::PolicyChecker
+    #   .new(current_brand.organization.subscription)
+    #   .can_create_embed?(current_brand)
 
-    if permited
-      if @embed.save
-        render :show
-      else
-        render :json => msg_hash(@embed, 'create'), :status => 422
-      end
+    if @embed.save
+      render :show
     else
-      render :json => msg_hash(@embed, 'create'), :status => 406
+      render :json => msg_hash(@embed, 'create'), :status => 422
     end
   end
 
