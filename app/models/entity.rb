@@ -1,6 +1,6 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
-  include Traits::AmqpDeclaration
+  include RabbitHelper::Sugar
 
   serialize :props, IndifferentHstore
 
@@ -71,6 +71,13 @@ class Entity < ActiveRecord::Base
   scope :number, ->(n) { where("props ? 'number'").where("props -> 'number' = :val", val: n.to_s) }
   scope :repo_name, ->(rn) { where("props ? 'repo_name'").where("props -> 'repo_name' = :val", val: rn) }
   scope :with_state, ->(s) { where("props ? 'state'").where("props -> 'state' = :val", val: s) }
+
+  # Twitter
+  scope :retweeted_id, ->(rt_id) { where("props ? 'retweeted_id'").where("props -> 'retweeted_id' = :val", val: rt_id) }
+  scope :target_id, ->(tgt_id) { where("props ? target_id").where("props -> 'target_id' = :val", val: tgt_id) }
+
+  # Meetup
+  scope :event_id, ->(e_id) { where("props ? 'event_id'").where("props -> 'event_id' = :val", val: e_id) }
 
   after_validation :reformat_uniqueness_validation
 
@@ -238,13 +245,15 @@ class Entity < ActiveRecord::Base
 
     embeds.each do |embed|
       message = JSON.generate msg(embed)
-      x('x.liveservice').publish(message, routing_key: 'entities')
-      if !is_approved(embed)
-        # if the entity is not approved we don't want to send publicly
-        # the whole entity, but we need to send just enough so it can
-        # be removed from an active embed. This way live embeds (like on
-        # event media walls) can be moderated and updated
-        x('x.liveservice').publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
+      x('x.liveservice', chan_is_short_lived = true) do |xchange|
+        xchange.publish(message, routing_key: 'entities')
+        if !is_approved(embed)
+          # if the entity is not approved we don't want to send publicly
+          # the whole entity, but we need to send just enough so it can
+          # be removed from an active embed. This way live embeds (like on
+          # event media walls) can be moderated and updated
+          xchange.publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
+        end
       end
     end
   end

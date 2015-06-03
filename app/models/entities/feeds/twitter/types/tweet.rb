@@ -52,7 +52,7 @@ module Entities
         Entity
         .feed('twitter')
         .type('tweet')
-        .where("props -> 'retweeted_id' = '#{@event.id_str}'")
+        .retweeted_id(@event.id_str)
       end
     end
 
