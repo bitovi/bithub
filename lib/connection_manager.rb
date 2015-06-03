@@ -15,10 +15,12 @@ class ConnectionManager
   end
   alias_method :rabbitmq, :rabbit
 
-  def shared_rabbit
-    @rabbit_chan ||= @rabbit_conn.create_channel
+  def short_lived_rabbit
+    chan = @rabbit_conn.create_channel
+    yield chan
+    chan.close
   end
-  alias_method :shared_rabbitmq, :shared_rabbit
+  alias_method :short_lived_rabbitmq, :short_lived_rabbit
 
   def redis
     @redis_conn

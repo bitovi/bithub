@@ -26,8 +26,9 @@ module Entities
 
       def fake_origin_ts
         last_follow = Entity\
-          .where(feed_name: 'twitter', type_name: 'follow')\
-          .where("props -> 'target_id' = :target_id", target_id: @event.target.id.to_s)\
+          .feed('twitter')
+          .type('follow')
+          .target_id(@event.target.id.to_s)
           .last
 
         # First follow in first batch

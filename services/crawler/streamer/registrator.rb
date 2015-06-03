@@ -1,4 +1,4 @@
-require 'rabbit_factory'
+require 'rabbit_helper'
 
 class Registrator
   include Celluloid
@@ -6,7 +6,7 @@ class Registrator
   def initialize
     Celluloid.logger.info "Initializing Registrator"
 
-    rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x("x.crawler")
     @q = rf.q("x.crawler").bind
