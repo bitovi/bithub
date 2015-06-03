@@ -1,6 +1,8 @@
 module MonthlyBillings
   class Manager
 
+    attr_reader :price, :month
+
     def initialize(org_id, embed_events_logs, opts={})
       _year    = opts.fetch(:year) { Time.now.year }
       _month   = opts.fetch(:month) { Time.now.month }
@@ -20,7 +22,7 @@ module MonthlyBillings
 
       @mb.save!
 
-      sum_up_usage_per_days.each do |key, dates|
+      usage_per_days.each do |key, dates|
         brand_id, embed_id = key
         last_date   =  dates.map {|d| d}.last
         last_rec    = find_record(brand_id, embed_id, last_date)
@@ -33,8 +35,8 @@ module MonthlyBillings
       @mb.save!
     end
 
-    def sum_up_usage_per_days
-      @ee_logs.reduce(Hash.new(Set.new([]))) do |acc, rec|
+    def usage_per_days
+      @usage_per_days ||= @ee_logs.reduce(Hash.new(Set.new([]))) do |acc, rec|
         key = [rec.brand_id, rec.embed_id]
 
         # skip if there is next in month or use end of the month
