@@ -2,12 +2,10 @@ import can from "can/";
 import initView from "./bit-list.stache!";
 import Bit from "models/bit";
 import InteractionEvent from "models/interaction_event";
-import _map from "lodash/collections/map";
 
 import "can/construct/super/";
 import "can/construct/proxy/";
-import "bits_vertical_infinite/";
-
+import "opensourced-bithub/index";
 
 export default can.Control.extend({
 	pluginName : 'bh-bits',
