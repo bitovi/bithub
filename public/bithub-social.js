@@ -37,6 +37,9 @@ var kickstart = function(selector){
 			currentAccount: account,
 			embedType : 'admin'
 		});
+		
+
+		console.log('SUBSCRIPTION', subscription)
 
 		new PresetChangeUpdater(document.documentElement, {
 			appState : appState
