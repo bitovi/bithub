@@ -24,5 +24,8 @@ export default can.Model.extend({
 			return false;
 		}
 		return true;
+	},
+	hasCC : function(){
+		return false;
 	}
 });

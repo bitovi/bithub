@@ -355,7 +355,7 @@ hr {
 
 
 .examples-outer-wrapper {
-  margin: 50px 0;
+  margin: 50px 0 0;
   color: white;
   .container {
     -moz-border-radius: 5px;
@@ -787,4 +787,7 @@ ul.usage {
   .panel-body {
       padding: 75px 15px;
   }
+}
+#registration {
+    padding-top: 50px;
 }

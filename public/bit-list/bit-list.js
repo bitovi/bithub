@@ -6,7 +6,6 @@ import "can/construct/super/";
 import "can/construct/proxy/";
 import "opensourced-bithub/bits_vertical_infinite/";
 
-
 export default can.Control.extend({
 	pluginName : 'bh-bits',
 }, {

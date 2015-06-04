@@ -1,10 +1,22 @@
 import can from "can/";
-import moment from "moment";
+import Bit from "opensourced-bithub/models/bit";
 
 import "can/list/promise/";
 import "can/map/define/";
 
-var Bit;
+var checkIfBitIsBelowCurrentBit = function(bit, currentBit){
+	if(!currentBit){
+		return false;
+	}
+	if(currentBit.is_pinned){
+		return true;
+	}
+	return bit.thread_updated_ts < currentBit.thread_updated_ts;
+};
+
+var isFullBit = function(bit){
+	return !!bit.created_at;
+};
 
 var buffer = (function(){
 	var _buffer = [];
@@ -26,87 +38,19 @@ var buffer = (function(){
 	};
 })();
 
-var checkIfBitIsBelowCurrentBit = function(bit, currentBit){
-	if(!currentBit){
-		return false;
-	}
-	if(currentBit.is_pinned){
-		return true;
-	}
-	return bit.thread_updated_ts < currentBit.thread_updated_ts;
-};
+Bit.messageFromLiveService = function(msg){
+	var parsed = JSON.parse(msg);
+	parsed._isFromLiveService = true;
 
-var BIT_ACTIONS = ['pin', 'unpin', 'approve', 'disapprove'];
-
-var instanceMethods = {
-	formattedThreadUpdatedAt : function(){
-		return moment(this.attr('thread_updated_at')).format('LL');
-	},
-	isTumblrImage : function(){
-		return this.isPhoto() && this.isTumblr();
-	},
-	isInstagramImage : function(){
-		return this.isPhoto() && this.attr('feed_name') === 'instagram';
-	},
-	isPhoto : function(){
-		return this.attr('type_name') === 'photo';
-	},
-	isTumblr : function(){
-		return this.attr('feed_name') === 'tumblr';
-	},
-	isTwitterFollow : function(){
-		return this.attr('feed_name') === 'twitter' && this.attr('type_name') === 'follow';
-	},
-	isYoutube : function(){
-		return this.attr('feed_name') === 'youtube';
-	},
-	youtubeEmbedURL : function(){
-		return this.attr('url').replace(/watch\?v=/, 'embed/');
+	if(this.store[parsed.id]){
+		this.store[parsed.id].attr(parsed);
+	} else if(isFullBit(parsed)){
+		buffer.add(this.model(parsed));
+	}
+	if(!parsed.is_approved){
+		can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
 	}
 };
-
-var makeBitAction = function(action){
-	var templateUrl = '/api/v3/embeds/{hubId}/entities/{id}/' + action;
-	return function(hubId){
-		var url = can.sub(templateUrl, {
-			hubId : hubId,
-			id : this.attr('id')
-		});
-
-		return $.ajax(url, {
-			dataType: 'json',
-			type: 'PUT'
-		}).then(function(data){
-			Bit.model(data);
-		});
-	};
-};
-
-for(var i = 0; i < BIT_ACTIONS.length; i++){
-	instanceMethods[BIT_ACTIONS[i]] = makeBitAction(BIT_ACTIONS[i]);
-}
-
-var isFullBit = function(bit){
-	return !!bit.created_at;
-};
-
-Bit = can.Model.extend({
-	ACTIONS: BIT_ACTIONS,
-	resource : '/api/v3/embeds/{hubId}/entities',
-	messageFromLiveService : function(msg){
-		var parsed = JSON.parse(msg);
-		parsed._isFromLiveService = true;
-
-		if(this.store[parsed.id]){
-			this.store[parsed.id].attr(parsed);
-		} else if(isFullBit(parsed)){
-			buffer.add(this.model(parsed));
-		}
-		if(!parsed.is_approved){
-			can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
-		}
-	}
-}, instanceMethods);
 
 Bit.List = Bit.List.extend({
 	place : function(bit){
