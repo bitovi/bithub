@@ -3,7 +3,7 @@ require 'handlers/handler'
 class EventHandler < Handler
   def handle(packet)
     b_id, _, _= destruct(packet)
-    Celluloid.logger.info "[#{meta_to_log_format(packet)}][EVENT_LISTENER] New Event received"
+    Celluloid.logger.info "[EVENT_LISTENER][#{meta_to_log_format(packet)}] New Event received"
 
     @listener.handle_errors do
       Apartment::Tenant.switch(Brand.find(b_id).name) do

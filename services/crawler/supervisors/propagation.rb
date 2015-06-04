@@ -16,13 +16,13 @@ module Supervisors
     end
 
     def initialize_next_level_supervisor(node_info, actor_class)
-      debug "STARTING #{node_info.to_s.colorize(:red)}"
+      debug "[PROPAGATION] Starting #{node_info.to_s.colorize(:red)}"
       _childs.supervise_as(
         (actor_name = @path.next_level(node_info).actor_name),
         actor_class,
         *[@path, node_info]
       )
-      debug "STARTED #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
+      debug "[PROPAGATION] Started #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
 
       actor_name
     end
@@ -30,11 +30,11 @@ module Supervisors
     def terminate_next_level_supervisor(node_info)
       # info "Killing next level #{@path.next_level(bi).actor_name}"
 
-      debug "TERMINATING #{node_info.to_s.colorize(:red)}"
+      debug "[PROPAGATION] Terminating #{node_info.to_s.colorize(:red)}"
       if (a = Celluloid::Actor[@path.next_level(node_info).actor_name])
         a.terminate_cascading
       end
-      debug "TERMINATED #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
+      debug "[PROPAGATION] Terminated #{node_info.to_s.colorize(:red)} in #{name.to_s.colorize(:blue)} which now has #{children_names.to_s.colorize(:green)}"
 
       nil
     end

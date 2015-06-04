@@ -28,7 +28,7 @@ module Supervisors
         if (ssc = service_supervisor_class(si))
           initialize_next_level_supervisor(si, ssc)
         else
-          info "Don't know how to boot service #{si}"
+          info "[EMBED_SUPERVISOR] Don't know how to boot service #{si}"
         end
       end
     end
@@ -44,7 +44,7 @@ module Supervisors
           initialize_next_level_supervisor(target.node, ssc)
         end
       else
-        info "Don't know how to handle commands for #{target.node}"
+        info "[EMBED_SUPERVISOR] Don't know how to handle commands for #{target.node}"
       end
     end
 

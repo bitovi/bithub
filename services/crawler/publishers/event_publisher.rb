@@ -8,7 +8,7 @@ class EventPublisher
   include Celluloid::Logger
 
   def initialize(opts={})
-    info 'Initializing Entity publisher'
+    info '[EVENT_PUBLISHER] Initializing...'
 
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
@@ -16,6 +16,8 @@ class EventPublisher
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
     @x = rf.x('x.web')
     @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
+    
+    info '[EVENT_PUBLISHER] Waiting for events to publish.'
   end
 
   def publish(events, owner_data, opts={})
@@ -25,13 +27,12 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    info "[#{owner_data.to_log_format}][EVENT_PUBLISHER] Published #{new_events.size} new events out of total #{events.size}"
+    info "[EVENT_PUBLISHER][#{owner_data.to_log_format}] Published #{new_events.size} new events out of total #{events.size}"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
     end
   end
-  add_transaction_tracer :publish, :category => 'OtherTransaction/Publishers'
 
   private
 

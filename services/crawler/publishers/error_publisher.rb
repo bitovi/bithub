@@ -7,16 +7,18 @@ class ErrorPublisher
   include Celluloid::Logger
 
   def initialize
-    info 'Initializing Error publisher'
+    info '[ERROR_PUBLISHER] Initializing...'
 
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')
+    
+    info '[EVENT_PUBLISHER] Waiting for errors to publish.'
   end
 
   def publish(error, owner_data)
-    info "[#{owner_data.to_log_format}][ERROR_PUBLISHER] Publishing error #{error.class.name}"
+    info "[ERROR_PUBLISHER][#{owner_data.to_log_format}] Publishing error #{error.class.name}"
     @x.publish(msg(error, owner_data).to_json, routing_key: 'errors')
   end
 
