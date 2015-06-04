@@ -59,6 +59,25 @@ class Api::V3::EmbedsController < Api::V3::BaseController
     end
   end
 
+  def publish
+    authorize! :update, owner_embed
+
+    if Subscription.current.chargeable?
+      @embed.update_attribute :published, true
+      render :show
+    else
+      render :json => msg_hash(@embed, 'publish', 'payment_required'), :status => 402
+    end
+  end
+
+  def unpublish
+    authorize! :update, owner_embed
+
+    if @embed.update_attribute :published, false
+      render :show
+    end
+  end
+
   private
 
   def built_embed

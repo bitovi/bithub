@@ -13,6 +13,17 @@ class Subscription < ActiveRecord::Base
   #   self.update_from_subscription(subscription, event_id: event.id)
   # end
 
+  def card
+    if has_card?
+      {
+        exp_month: card_exp_month,
+        exp_year: card_exp_year,
+        type: card_type,
+        last4: card_last4
+      }
+    end
+  end
+
   def update_card(stripe_token)
     stripe_customer = Stripe::Customer.retrieve self.stripe_customer_id
     stripe_customer.card = stripe_token
@@ -27,6 +38,14 @@ class Subscription < ActiveRecord::Base
         card_last4: card.last4
       })
     end
+  end
+
+  def chargeable?
+    Rails.env.development? || !!(stripe_customer_id && has_card?)
+  end
+
+  def has_card?
+    !!(card_exp_month && card_exp_year && card_type && card_last4)
   end
 
   # def update_plan(stripe_plan_id)

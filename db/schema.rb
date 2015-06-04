@@ -16,11 +16,13 @@ ActiveRecord::Schema.define(version: 20150602135248) do
 
   create_extension "hstore", :version => "1.3"
   create_extension "intarray", :version => "1.0"
+  create_extension "btree_gin", :version => "1.0"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "intarray"
+  enable_extension "btree_gin"
 
   create_table "account_roles", force: true do |t|
     t.string   "name"
@@ -186,10 +188,13 @@ ActiveRecord::Schema.define(version: 20150602135248) do
     t.text     "searchable_author"
   end
 
-  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx"
+  add_index "entities", ["((props -> 'event_id'::text))"], :name => "entities_props_event_id_idx", :where => "(props ? 'event_id'::text)"
+  add_index "entities", ["((props -> 'repo_name'::text))"], :name => "entities_props_repo_name_idx", :where => "(props ? 'repo_name'::text)"
+  add_index "entities", ["((props -> 'retweeted_id'::text))"], :name => "entities_props_retweeted_id_idx", :where => "(props ? 'retweeted_id'::text)"
+  add_index "entities", ["((props -> 'target_id'::text))"], :name => "entities_props_target_id_idx", :where => "(props ? 'target_id'::text)"
+  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx", :using => "gin"
   add_index "entities", ["origin_id"], :name => "entities_origin_id_idx"
-  add_index "entities", ["props"], :name => "entities_props_idx"
-  add_index "entities", ["type_name"], :name => "entities_type_name_idx"
+  add_index "entities", ["type_name"], :name => "entities_type_name_idx", :using => "gin"
 
   create_table "events", force: true do |t|
     t.string   "type_name"
