@@ -35,6 +35,7 @@ Celluloid.logger = logger
 
 class Listener
   include Celluloid
+  include Celluloid::Logger
 
   def initialize(q_name, q_rk, handler_class)
     rf = RabbitFactory.new(ConnectionManager.instance.rabbit)
@@ -43,7 +44,7 @@ class Listener
 
     @handler = handler_class.new(self)
 
-    Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
+    info "[LISTENER] Connected to AMQP, queue name: #{q_name}"
     async.listen
   end
 
@@ -57,7 +58,7 @@ class Listener
   def handle_errors
     yield
   rescue => err
-    Celluloid.logger.error err
+    error "[LISTENER] #{err}"
   ensure
     Apartment::Tenant.switch! # either way switch back to public
   end

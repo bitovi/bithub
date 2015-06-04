@@ -3,7 +3,7 @@ require 'handlers/handler'
 class ErrorHandler < Handler
   def handle(packet)
     b_id, err, err_klass = destruct(packet)
-    Celluloid.logger.info "[#{meta_to_log_format(packet)}][ERROR_LISTENER] New error received: #{err_klass}"
+    Celluloid.logger.info "[ERROR_LISTENER][#{meta_to_log_format(packet)}] New error received: #{err_klass}"
 
     @listener.handle_errors do
       Apartment::Tenant.switch(Brand.find(b_id).name) do

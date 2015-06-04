@@ -3,6 +3,7 @@ require 'supervisors/node_types/node_types'
 
 class ConfigurationFetcher
   include Celluloid
+  include Celluloid::Logger
   include CoreHelpers
   
   RETRY_INTERVAL = 3
@@ -26,7 +27,7 @@ class ConfigurationFetcher
     val = fetch_and_parse
     after(0) { c.broadcast(val) }
   rescue => e
-    Celluloid.logger.error "Web unresponsive, trying again in #{RETRY_INTERVAL} seconds"
+    error "[CONFIGURATION_FETCHER] Web unresponsive, trying again in #{RETRY_INTERVAL} seconds."
     after(RETRY_INTERVAL) { fetch_until_available(c) }
   end
 

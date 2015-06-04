@@ -3,7 +3,7 @@ require 'handlers/handler'
 class CommandHandler < Handler
   def handle(packet)
     b_id, s_id = destruct(packet)
-    Celluloid.logger.info "[#{meta_to_log_format(packet)}][COMMAND_LISTENER] New command received: #{packet.fetch('payload')}"
+    Celluloid.logger.info "[COMMAND_LISTENER][#{meta_to_log_format(packet)}] New command received: #{packet.fetch('payload')}"
 
     @listener.handle_errors do
       Apartment::Tenant.switch(Brand.find(b_id).name) do

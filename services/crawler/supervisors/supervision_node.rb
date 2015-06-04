@@ -68,7 +68,19 @@ class SupervisionNode
   end
 
   def to_log_format
-    "[#{brand.name} #{embed.name} #{service.id} #{service.feed_name} #{service.type_name}]"
+    "#{brand_info.id},#{embed_info.id},#{service_info.id},#{service_info.feed_name},#{service_info.type_name}"
+  end
+
+  def to_h
+    {
+      brand_id: brand_info.id,
+      brand_name: brand_info.name,
+      embed_id: embed_info.id,
+      embed_name: embed_info.name,
+      service_id: service_info.id,
+      feed_name: service_info.feed_name,
+      type_name: service_info.type_name
+    }
   end
 
   # Shortcuts
