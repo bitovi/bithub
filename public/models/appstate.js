@@ -106,6 +106,7 @@ export default can.Map.extend({
 				var src = this.attr('iframeSrc');
 				var iframe;
 
+				console.log('NO IFRAME'); return;
 				if(src){
 					if(!CURRENT_IFRAME){
 						iframe = $('<iframe src="' + this.iframeSrc() + '"></iframe>');
