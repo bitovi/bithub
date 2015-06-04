@@ -5,6 +5,7 @@ module Fetchers
     class GetFeed < Base
 
       def fetch(opts={})
+        Celluloid.logger.info "[FETCHER] Fetching Facebook/GetFeed"
         args = {
           fields: FIELDS,
           limit: LIMIT

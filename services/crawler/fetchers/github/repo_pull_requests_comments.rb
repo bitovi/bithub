@@ -10,6 +10,8 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Github/RepoPullRequestsComments"
+
         handle_errors do
           @client.pull_requests.comments.list(user: @user, repo: @repo)
         end

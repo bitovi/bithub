@@ -7,7 +7,7 @@ class EventPublisher
   include Celluloid::Logger
 
   def initialize(opts={})
-    info 'Initializing Entity publisher'
+    info '[EVENT_PUBLISHER] Initializing...'
 
     @reject_old = opts.fetch(:reject_old) { true }
     @filter = DigestSet.new
@@ -16,9 +16,11 @@ class EventPublisher
     @x = rf.x('x.web')
     @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
 
-    every(5) do
-      info "EventPublisher mailbox size #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[EVENT_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
     end
+    
+    info '[EVENT_PUBLISHER] Waiting for events to publish.'
   end
 
   def publish(events, owner_data, opts={})
@@ -28,7 +30,7 @@ class EventPublisher
     new_events = processed events, owner_data, decorator
     new_events = reject_old new_events if @reject_old == true
 
-    info "#{owner_data.to_log_format} Published #{new_events.size} new events out of total #{events.size}"
+    info "[EVENT_PUBLISHER][#{owner_data.to_log_format}] Published #{new_events.size} new events out of fetched #{events.size}"
 
     new_events.each do |e|
       @x.publish(e.to_json, routing_key: 'events')
@@ -55,25 +57,17 @@ class EventPublisher
     dispatched = Events::Dispatcher.dispatch(event, feed)
 
     processed = {
-      meta: {
-        type_name: dispatched.type_name.snake_case,
-        brand_id: owner_data.brand.id,
-        embed_id: owner_data.embed.id,
-        service_id: owner_data.service.id,
-        brand_name: owner_data.brand.name,
-        embed_name: owner_data.embed.name,
-        feed_name: feed
-      },
+      meta: owner_data.to_h,
       content_digest: dispatched.content_digest,
       source_data: event
     }
 
     decorator.decorate processed
   rescue Events::DispatchError => e
-    error "#{owner_data.to_log_format} #{e}"
+    error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e}"
     nil
   rescue KeyError => e
-    error "#{owner_data.to_log_format} #{e}"
-    nil
+    error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e}"
+    nil # if we can't dispatch, return nil so it will end up filtered out
   end
 end

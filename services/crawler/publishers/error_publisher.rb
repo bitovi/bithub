@@ -6,40 +6,34 @@ class ErrorPublisher
   include Celluloid::Logger
 
   def initialize
-    info 'Initializing Error publisher'
+    info '[ERROR_PUBLISHER] Initializing...'
 
     rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
 
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')
 
-    every(5) do
-      info "ErrorPublisher mailbox size #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT_INTER) do
+      info "[ERROR_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
     end
+    
+    info '[ERROR_PUBLISHER] Waiting for errors to publish.'
   end
 
-  def publish(error, owner_info)
-    info "#{owner_info.to_log_format} Publishing Error #{error.class.name}"
-    @x.publish(msg(error, owner_info).to_json, routing_key: 'errors')
+  def publish(error, owner_data)
+    info "[ERROR_PUBLISHER][#{owner_data.to_log_format}] Publishing error #{error.class.name}"
+    @x.publish(msg(error, owner_data).to_json, routing_key: 'errors')
   end
 
-  def msg(error, owner_info)
+  def msg(error, owner_data)
     {
       error: {
         klass: error.class.name,
         message: error.message,
         backtrace: error.backtrace.join("\n"),
-        service_id: owner_info.service.id # TODO: remove, already contained in meta
+        service_id: owner_data.service.id # TODO: remove, already contained in meta
       },
-      meta: {
-        type_name: owner_info.service.type_name,
-        brand_id: owner_info.brand.id,
-        embed_id: owner_info.embed.id,
-        service_id: owner_info.service.id,
-        brand_name: owner_info.brand.name,
-        embed_name: owner_info.embed.name,
-        feed_name: owner_info.service.feed_name
-      }
+      meta: owner_data.to_h
     }
   end
 

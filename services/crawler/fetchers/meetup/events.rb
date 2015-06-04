@@ -11,6 +11,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Meetup/Events"
         handle_errors do
           events = @client.fetch :events, group_id: group_ids, status: "upcoming,past", fields: "event_hosts"
           @event_set.add_many(ids(events))
