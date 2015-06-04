@@ -4,8 +4,6 @@ namespace :db do
     Rake::Task["db:drop"].execute rescue nil
     Rake::Task["db:create"].execute
     Rake::Task["db:migrate"].execute
-    Rake::Task["data:import_invite_codes"].execute
     Rake::Task["redis:flushdb"].execute
-	Rake::Task["data:import_plans"].execute
   end
 end

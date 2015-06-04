@@ -1,1 +1,1 @@
-json.(embed, :id, :name, :approved_by_default)
+json.(embed, :id, :name, :approved_by_default, :published)

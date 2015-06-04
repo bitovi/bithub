@@ -16,7 +16,7 @@ Bithub::Application.routes.draw do
 
       resources :subscriptions, only: %i() do
         collection do
-          get 'edit/plan', to: 'subscriptions#edit_plan'
+          # get 'edit/plan', to: 'subscriptions#edit_plan'
           get 'edit/cc',   to: 'subscriptions#edit_cc'
           post 'update',   to: 'subscriptions#update'
         end
@@ -34,7 +34,7 @@ Bithub::Application.routes.draw do
     }
 
   as :account do
-    get '/register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
+    # get '/register/:plan', to: redirect { |path_params, req| "/accounts/sign_up?plan=#{path_params[:plan]}" }
     get '/register', to: redirect('/accounts/sign_up')
     get '/login', to: redirect('/accounts/sign_in')
     get '/logout', to: redirect('/accounts/sign_out')
@@ -53,6 +53,8 @@ Bithub::Application.routes.draw do
     namespace :v3 do
       resources :embeds, except: %i(new edit) do
         post :moderate, on: :member
+        put :publish, on: :member
+        put :unpublish, on: :member
 
         resources :entities, to: 'embed_entities', only: %i(index show destroy) do
           put :approve, on: :member
