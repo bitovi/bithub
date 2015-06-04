@@ -15,6 +15,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Tumblr/Posts"
         handle_errors do
           @result = @client.posts @hostname, limit: @limit, offset: @offset
           @result.fetch('posts')

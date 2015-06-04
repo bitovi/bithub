@@ -41,8 +41,12 @@ require 'poller/services/all'
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
 
-logger = LoggerFactory.new('crawler_poller', :environment => $env).component_logger
+logger = LoggerFactory.new('crawler_poller', :environment => $env).logger
 Celluloid.logger = logger
+
+module Intervals
+  ACTOR_MAILBOX_REPORT = 10
+end
 
 class Crawler < Celluloid::SupervisionGroup
   supervise EventPublisher,        as: :event_publisher

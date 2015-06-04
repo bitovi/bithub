@@ -11,6 +11,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/Followers"
         handle_errors do
           @client.follower_ids(@user_handle).map do |uid| 
             {

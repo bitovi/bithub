@@ -39,7 +39,8 @@ function(Model, _keys){
 		rss : convertHexToRgb('#183a37'),
 		stackexchange : convertHexToRgb('#95b26e'),
 		tumblr : convertHexToRgb('#c44900'),
-		twitter : convertHexToRgb('#432534')
+		twitter : convertHexToRgb('#432534'),
+		youtube : convertHexToRgb('#432834')
 	}
 
 

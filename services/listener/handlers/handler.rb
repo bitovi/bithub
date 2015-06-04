@@ -10,7 +10,12 @@ class Handler
 
   def meta_to_log_format(packet)
     m = packet.fetch 'meta'
-    "[#{m['brand_name']} #{m['embed_name']} #{m['service_id']} #{m['feed_name']} #{m['type_name']}]"
+    "#{m['brand_id']},#{m['embed_id']},#{m['service_id']},#{m['feed_name']},#{m['type_name']}"
+  end
+
+  def name_for_logs
+    what = self.class.name.gsub('Handler', '').upcase
+    "#{what}_HANDLER"
   end
 
 end

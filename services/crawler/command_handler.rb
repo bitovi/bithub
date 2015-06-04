@@ -28,13 +28,13 @@ class CommandHandler
   end
 
   def cancel_consumer_and_wait
-    info "CommandHandler unsubscribing, waiting for receiver '#{shard_name}'"
+    info "[COMMAND_HANDLER] Unsubscribing, waiting for receiver '#{shard_name}'"
     @consumer.cancel
     wait_for_receiver
   end
 
   def listen
-    info "CommandHandler now listening for commands"
+    info "[COMMAND_HANDLER] Listening for commands"
     @consumer = @q.subscribe do |delivery_info, properties, payload|
       msg = JSON.parse(payload).symbolize_keys
 

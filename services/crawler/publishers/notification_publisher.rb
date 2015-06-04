@@ -6,7 +6,7 @@ class NotificationPublisher
   include Celluloid::Logger
 
   def initialize
-    info 'Initializing Notification publisher'
+    info '[NOTIFICATION_PUBLISHER] Initializing...'
 
     rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
     @x_frontend = rf.x('x.liveservice', :direct)
@@ -15,19 +15,23 @@ class NotificationPublisher
     @x_backend = rf.x('x.web', :direct)
     @q_backend = rf.q('q.web.commands').bind(@x_backend, routing_key: 'commands')
 
-    every(5) do
-      info "NotificationPublisher mailbox size #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[NOTIFICATION_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
     end
+    
+    info '[NOTIFICATION_PUBLISHER] Waiting for notifications to publish.'
   end
 
-  def publish_to_frontend(notif)
-    info "Publishing COMMAND #{notif.fetch(:payload)} to frontend"
+  def publish_to_frontend(notif, owner_data)
+    notif = notif.merge({ meta: owner_data.to_h })
+    info "[NOTIFICATION_PUBLISHER][#{owner_data.to_log_format}] Publishing #{notif.fetch(:payload)} to frontend"
     @x_frontend.publish(notif.to_json, routing_key: 'services')
   end
   alias_method :publish, :publish_to_frontend
 
-  def publish_to_backend(notif)
-    info "Publishing COMMAND #{notif.fetch(:payload)} to backend"
+  def publish_to_backend(notif, owner_data)
+    notif = notif.merge({ meta: owner_data.to_h })
+    info "[NOTIFICATION_PUBLISHER][#{owner_data.to_log_format}] Publishing #{notif.fetch(:payload)} to backend"
     @x_backend.publish(notif.to_json, routing_key: 'commands')
   end
 end
