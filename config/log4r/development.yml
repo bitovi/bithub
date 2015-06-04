@@ -5,14 +5,13 @@ log4r_config:
       trace         : 'true'
       outputters    :
         - component_logfile
-        - console
 
   outputters:
     - name      : console
       type      : StdoutOutputter
       formatter :
         type    : PatternFormatter
-        date_pattern: '%Y-%m-%dT%H:%M:%S.%L%z'
+        date_pattern: '%Y-%m-%dT%H:%M:%S%z'
         pattern : '[%d][%l]: %m'
 
     - name      : component_logfile
@@ -22,5 +21,5 @@ log4r_config:
       maxsize   : 104857600
       formatter :
         type    : PatternFormatter
-        date_pattern: '%Y-%m-%dT%H:%M:%S.%L%z'
+        date_pattern: '%Y-%m-%dT%H:%M:%S%z'
         pattern : '[%d][%l]: %m'
