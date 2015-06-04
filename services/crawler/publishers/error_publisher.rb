@@ -13,7 +13,7 @@ class ErrorPublisher
     @x = rf.x('x.web', :direct)
     @q = rf.q('q.web.errors').bind(@x, routing_key: 'errors')
 
-    every(Intervals::ACTOR_MAILBOX_REPORT_INTER) do
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
       info "[ERROR_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
     end
     

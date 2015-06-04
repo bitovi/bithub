@@ -8,6 +8,9 @@ $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'lib'))
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
+# /
+require 'services/intervals'
+
 # theirs
 require 'bundler/setup'
 require 'rubygems'
@@ -43,10 +46,6 @@ require 'pry' if $env == 'development'
 
 logger = LoggerFactory.new('crawler_poller', :environment => $env).logger
 Celluloid.logger = logger
-
-module Intervals
-  ACTOR_MAILBOX_REPORT = 10
-end
 
 class Crawler < Celluloid::SupervisionGroup
   supervise EventPublisher,        as: :event_publisher

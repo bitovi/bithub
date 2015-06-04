@@ -20,6 +20,9 @@ require 'core_helpers'
 require 'rabbit_helper'
 require 'logger_factory'
 
+# /
+require 'services/intervals'
+
 # /app/models
 require 'events/dispatcher'
 
