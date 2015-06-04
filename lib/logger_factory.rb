@@ -23,6 +23,10 @@ class LoggerFactory
     Log4r::Logger['component']
   end
 
+  def loggers(component_name)
+    Log4r::Logger[component_name]
+  end
+
   private
 
   def config_path
