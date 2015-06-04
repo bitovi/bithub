@@ -40,7 +40,8 @@
 			"sifter.js" : "sifter",
 			"microplugin.js" : "microplugin",
 			"chart/chart" : "chart",
-			"randomcolor/randomcolor" : "randomcolor"
+			"randomcolor/randomcolor" : "randomcolor",
+			"opensourced-bithub/opensourced-bithub" : "opensourced-bithub"
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -52,7 +53,8 @@
 			"microplugin" : 'bower_components/microplugin/src/microplugin.js',
 			"selectize" : "bower_components/selectize/dist/js/selectize.js",
 			"chart" : "bower_components/Chart.js/Chart.js",
-			"randomcolor" : "bower_components/randomcolor/randomColor.js"
+			"randomcolor" : "bower_components/randomcolor/randomColor.js",
+			"opensourced-bithub/*" : "node_modules/opensourced-bithub/*.js"
 		},
 		meta: {
 			jquery: {
