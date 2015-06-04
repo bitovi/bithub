@@ -41,7 +41,8 @@
 			"microplugin.js" : "microplugin",
 			"chart/chart" : "chart",
 			"randomcolor/randomcolor" : "randomcolor",
-			"opensourced-bithub/opensourced-bithub" : "opensourced-bithub"
+			"opensourced-bithub/opensourced-bithub" : "opensourced-bithub",
+			"jquerypayment/jquerypayment" : "jquerypayment"
 		},
 		paths: {
 			"jquery": "bower_components/jquery/jquery.js",
@@ -54,15 +55,22 @@
 			"selectize" : "bower_components/selectize/dist/js/selectize.js",
 			"chart" : "bower_components/Chart.js/Chart.js",
 			"randomcolor" : "bower_components/randomcolor/randomColor.js",
-			"opensourced-bithub/*" : "node_modules/opensourced-bithub/*.js"
+			"opensourced-bithub/*" : "node_modules/opensourced-bithub/*.js",
+			"jquerypayment" : "bower_components/jquery.payment/lib/jquery.payment.js"
 		},
 		meta: {
 			jquery: {
 				exports: "jQuery",
 				deps: supportsUnknownElements ? undefined : ["can/lib/html5shiv.js"]
 			},
+			jquerypayment : {
+				deps : ["jquery"]
+			},
 			funcunit : {
 				exports : 'FuncUnit'
+			},
+			stripe : {
+				exports: "Stripe"
 			},
 			chart : {
 				exports: "Chart"
