@@ -4,7 +4,7 @@ import initView from "./sidebar.stache!";
 import './sidebar.less!';
 import 'components/services/';
 import 'components/moderation/';
-import 'components/integration/';
+import 'components/embed_publish/';
 import 'components/edit_hub_name/';
 import 'can/route/';
 import 'components/helpers';
