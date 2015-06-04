@@ -6,8 +6,6 @@ class Poller
   include Celluloid
   include Celluloid::Logger
 
-  HEARTBEAT_INTERVAL = 10
-
   def initialize(owner_data, fetcher, opts={})
     @owner_data = owner_data
     @fetcher = fetcher
@@ -22,10 +20,10 @@ class Poller
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
     @lock_ttl = opts.fetch(:interval) { 3600 }
 
-    @timer = every(HEARTBEAT_INTERVAL) { poll }
+    @timer = every(Intervals::POLLER_HEARTBEAT) { poll }
 
-    every(HEARTBEAT_INTERVAL) do
-      info "Poller #{@owner_data.to_log_format} mailbox size: #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[POLLER][#{@owner_data.to_log_format}] Mailbox size: #{Actor.current.mailbox.size}"
     end
   end
 

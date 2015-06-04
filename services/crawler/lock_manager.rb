@@ -10,8 +10,8 @@ class LockManager
     @redis = opts.fetch(:redis) { ConnectionManager.instance.redis }
     @booted = true
 
-    every(5) do
-      info "NotificationPublisher mailbox size #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[LOCK_MANAGER] Mailbox size #{Actor.current.mailbox.size}"
     end
   end
 
