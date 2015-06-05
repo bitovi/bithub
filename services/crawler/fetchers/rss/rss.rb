@@ -12,6 +12,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Rss/_"
         feed = Feedjira::Feed.fetch_and_parse(@url)
         raise_error(feed) if feed.is_a? Numeric
         to_hashes feed

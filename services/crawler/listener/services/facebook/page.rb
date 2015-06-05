@@ -78,19 +78,8 @@ module Supervisors::Services::Facebook
 
     # todo: unify with poller
     def notify_frontend(owner_data)
-      notif = {
-        meta: {
-          brand_name: owner_data.brand.name,
-          embed_id: owner_data.embed.id
-        },
-        payload: {
-          service: {
-            id: owner_data.service.id,
-            empty_results: true,
-          }
-        }
-      }
-      Actor[:notification_publisher].publish_to_frontend notif
+      notif = { payload: { service: { id: owner_data.service.id, empty_results: true } } }
+      Actor[:notification_publisher].publish_to_frontend(notif, owner_data)
     end
 
   end

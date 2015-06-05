@@ -4,6 +4,8 @@ module Fetchers
     class PlaylistVideos < Base
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Youtube/PlaylistVideos"
+
         playlist_id = @opts.fetch :playlist_id
 
         super do

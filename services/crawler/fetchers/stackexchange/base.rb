@@ -10,6 +10,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Stackexchange/_"
         handle_errors do
           pluck_items(HTTParty.get url, :query => tagged\
             .merge(static)

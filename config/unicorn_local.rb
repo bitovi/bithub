@@ -12,7 +12,7 @@ listen "unix:/tmp/bithub_unicorn.sock", :backlog => 64
 # PID
 pid "./tmp/pids/unicorn.pid"
 
-logger(LoggerFactory.new('unicorn', :environment => ENV['ENV']).loggers['rails'])
+logger(LoggerFactory.new('unicorn', :environment => ENV['ENV']).logger)
 
 before_fork do |server, worker|
   if defined?(ActiveRecord::Base)

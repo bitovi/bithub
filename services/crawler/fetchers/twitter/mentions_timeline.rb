@@ -11,6 +11,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/MentionsTimeline"
         handle_errors do
           @client.mentions_timeline(:count => 200)
         end

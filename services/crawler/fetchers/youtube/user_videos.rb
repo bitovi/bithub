@@ -4,6 +4,8 @@ module Fetchers
     class UserVideos < Base
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Youtube/UserVideos"
+
         super do
           @client.execute\
             api_method: youtube_api.search.list,
