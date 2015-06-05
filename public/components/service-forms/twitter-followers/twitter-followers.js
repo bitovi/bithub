@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./twitter-followers.stache!',
-'./twitter-followers.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-twitter-followers-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './twitter-followers.stache!';
+import './twitter-followers.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-twitter-followers-service',
+	template : initView
 });

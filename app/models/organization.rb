@@ -5,6 +5,8 @@ class Organization < ActiveRecord::Base
 
   has_many :brands
 
+  has_many :monthly_billings
+
   ### TODO: ENSURE UNSUBSCRIBE FROM STRIPE !!!!
   has_one  :subscription
 end

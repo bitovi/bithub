@@ -11,16 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150529151835) do
+ActiveRecord::Schema.define(version: 20150602135248) do
 
 
   create_extension "hstore", :version => "1.3"
   create_extension "intarray", :version => "1.0"
+  create_extension "btree_gin", :version => "1.0"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "intarray"
+  enable_extension "btree_gin"
 
   create_table "account_roles", force: true do |t|
     t.string   "name"
@@ -131,6 +133,21 @@ ActiveRecord::Schema.define(version: 20150529151835) do
     t.datetime "updated_at"
   end
 
+  create_table "embed_events", force: true do |t|
+    t.integer  "organization_id"
+    t.integer  "brand_id"
+    t.integer  "embed_id"
+    t.string   "organization_name"
+    t.string   "brand_name"
+    t.string   "embed_name"
+    t.string   "action"
+    t.string   "attr",              default: ""
+    t.string   "old_value",         default: ""
+    t.string   "new_value",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "embed_presets", force: true do |t|
     t.integer  "embed_id"
     t.string   "name"
@@ -143,6 +160,7 @@ ActiveRecord::Schema.define(version: 20150529151835) do
     t.string  "name"
     t.integer "brand_id"
     t.boolean "approved_by_default", default: true
+    t.boolean "published",           default: false
   end
 
   add_index "embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
@@ -170,10 +188,13 @@ ActiveRecord::Schema.define(version: 20150529151835) do
     t.text     "searchable_author"
   end
 
-  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx"
+  add_index "entities", ["((props -> 'event_id'::text))"], :name => "entities_props_event_id_idx", :where => "(props ? 'event_id'::text)"
+  add_index "entities", ["((props -> 'repo_name'::text))"], :name => "entities_props_repo_name_idx", :where => "(props ? 'repo_name'::text)"
+  add_index "entities", ["((props -> 'retweeted_id'::text))"], :name => "entities_props_retweeted_id_idx", :where => "(props ? 'retweeted_id'::text)"
+  add_index "entities", ["((props -> 'target_id'::text))"], :name => "entities_props_target_id_idx", :where => "(props ? 'target_id'::text)"
+  add_index "entities", ["feed_name"], :name => "entities_feed_name_idx", :using => "gin"
   add_index "entities", ["origin_id"], :name => "entities_origin_id_idx"
-  add_index "entities", ["props"], :name => "entities_props_idx"
-  add_index "entities", ["type_name"], :name => "entities_type_name_idx"
+  add_index "entities", ["type_name"], :name => "entities_type_name_idx", :using => "gin"
 
   create_table "events", force: true do |t|
     t.string   "type_name"
@@ -219,6 +240,33 @@ ActiveRecord::Schema.define(version: 20150529151835) do
     t.string   "code"
     t.integer  "remaining_uses"
     t.datetime "valid_until"
+  end
+
+  create_table "monthly_billing_records", force: true do |t|
+    t.integer  "monthly_billing_id"
+    t.string   "description"
+    t.integer  "amount",             default: 0
+    t.integer  "price",              default: 0
+    t.string   "currency",           default: "USD"
+    t.hstore   "props",              default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "monthly_billings", force: true do |t|
+    t.integer  "organization_id"
+    t.datetime "period_beginning"
+    t.datetime "period_end"
+    t.integer  "total"
+    t.string   "currency",           default: "USD"
+    t.text     "description"
+    t.string   "stripe_customer_id"
+    t.string   "stripe_charge_id"
+    t.string   "stripe_status"
+    t.datetime "charged_at"
+    t.hstore   "props",              default: {}
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "natlang_queries", force: true do |t|

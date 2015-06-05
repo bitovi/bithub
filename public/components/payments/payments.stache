@@ -1,18 +1,2 @@
 <h2>Payments</h2>
-<p>You are currently on the <b>{{ state.currentSubscription.plan.name }} plan</b> - {{ planPrice }} / month
-
-<hr>
-<h3>Account Actions</h3>
-<ul class="list-unstyled">
-	<li><a href="javascript://" can-click="openBillingInfo">Change Billing info</a></li>
-	<li><a href="javascript://" can-click="openAccountPlan">Change Account Plan</a></li>
-</ul>
-
-{{#if currentIframe}}
-<div class="overlay">
-    <div class="iframe-wrap">
-        <i class="fa fa-times-circle" can-click="closeIframe"></i>
-        <iframe src="{{ currentIframe}}"></iframe>
-    </div>
-</div>
-{{/if}}
+<div class="alert alert-info">Currently there are no invoices in the system.</div>

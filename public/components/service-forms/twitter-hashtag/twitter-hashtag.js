@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./twitter-hashtag.stache!',
-'./twitter-hashtag.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-twitter-hashtag-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './twitter-hashtag.stache!';
+import './twitter-hashtag.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-twitter-hashtag-service',
+	template : initView
 });
