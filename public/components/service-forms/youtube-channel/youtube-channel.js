@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./youtube-channel.stache!',
-'./youtube-channel.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-youtube-channel-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './youtube-channel.stache!';
+import './youtube-channel.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-youtube-channel-service',
+	template : initView
 });

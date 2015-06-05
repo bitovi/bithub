@@ -1,10 +1,9 @@
-steal(
-'can/component',
-'./instagram-user.stache!',
-'./instagram-user.less!',
-'selectize',
-function(Component, initView){
-  return Component.extend({
+import can from "can/";
+import initView from './instagram-user.stache!';
+import './instagram-user.less!';
+import 'selectize';
+
+can.Component.extend({
 	tag : 'bh-instagram-user-service',
 	template : initView,
 	scope : {
@@ -31,37 +30,38 @@ function(Component, initView){
 		instagramSuggest : function(){
 			var self = this;
 			return function(el){
-					$(el).selectize({
-						valueField: 'id',
-						labelField: 'username',
-						searchField: 'username',
-						create: false,
-						allowEmptyOption : true,
-						load: function(query, callback){
-							if(!query.length) return callback();
-							self.attr('isLoading', true);
-							$.ajax({
-								url: '/api/v3/services/suggestions/instagram',
-								data: {
-									username: query
-								},
-								error : function(){
-									self.attr('isLoading', false);
-									callback();
-								},
-								success : function(res){
-									self.attr('currentSuggestions').replace(res);
-									self.attr('isLoading', false);
-									callback(res);
-								}
-							});
-						},
-						onChange : function(id){
-							self.setDisplayName(id);
+				$(el).selectize({
+					valueField: 'id',
+					labelField: 'username',
+					searchField: 'username',
+					create: false,
+					allowEmptyOption : true,
+					load: function(query, callback){
+						if(!query.length){
+							return callback();
 						}
-					})
-				}
-			}
+						self.attr('isLoading', true);
+						$.ajax({
+							url: '/api/v3/services/suggestions/instagram',
+							data: {
+								username: query
+							},
+							error : function(){
+								self.attr('isLoading', false);
+								callback();
+							},
+							success : function(res){
+								self.attr('currentSuggestions').replace(res);
+								self.attr('isLoading', false);
+								callback(res);
+							}
+						});
+					},
+					onChange : function(id){
+						self.setDisplayName(id);
+					}
+				});
+			};
 		}
-	});
+	}
 });

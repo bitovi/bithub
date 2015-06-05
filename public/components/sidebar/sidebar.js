@@ -1,104 +1,46 @@
-steal(
-'can/component',
-'./sidebar.stache!',
-'models',
-'./sidebar.less!',
-'components/services',
-'components/moderation',
-'components/integration',
-'can/route',
-'components/helpers.js',
-function(Component, initView, Models){
+import can from "can/";
+import initView from "./sidebar.stache!";
 
-	var KEYMAP = {
-		13 : 'ENTER',
-		27 : 'ESC'
-	};
+import './sidebar.less!';
+import 'components/services/';
+import 'components/moderation/';
+import 'components/embed_publish/';
+import 'components/edit_hub_name/';
+import 'can/route/';
+import 'components/helpers';
 
-	return Component.extend({
-		tag : 'bh-sidebar',
-		template : initView,
-		scope : {
-			isEditing: false,
-			menuOpen : true,
-			init : function(){
-				var self = this;
-				
-				if(this.attr('state.hubId')){
-					Models.Hub.findOne({
-						id: this.attr('state.hubId')
-					}).then(function(hub){
-						self.attr('hub', hub);
-					});
-				} else {
-					throw "No Hub selected";
-				}
-			},
-			toggleHubEditing : function(ctx, el, ev){
-				var newVal = !this.attr('isEditing');
-				newVal && this.attr('hub').backup();
-				this.attr('isEditing', newVal);
-				ev.stopPropagation();
-			},
-			saveAndToggleHubEditing : function(ctx, el, ev){
-				this.commitNewHubName(el);
-				this.attr('isEditing', false);
-			},
-			preventHubEditingToggle : function(ctx, el, ev){
-				ev.stopPropagation();
-			},
-			commitNewHubName : function(el){
-				this.attr('hub').attr('name', el.val());
-				this.attr('hub').save();
-			},
-			restoreOrSave : function(ctx, el, ev){
-				var key = KEYMAP[ev.which];
-
-				if(key === 'ENTER'){
-					this.commitNewHubName(el);
-				} else if(key === 'ESC') {
-					this.attr('hub').restore();
-				}
-
-				key && this.attr('isEditing', false);
-			},
-			toggleSidebarPosition : function(ctx, el, ev){
-				this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
-			},
-			toggleSidebar : function(val){
-				this.attr('menuOpen', val);
-			}
+can.Component.extend({
+	tag : 'bh-sidebar',
+	template : initView,
+	scope : {
+		init : function(){
+			console.log(this.attr())
+},
+		menuOpen : true,
+		toggleSidebarPosition : function(ctx, el, ev){
+			this.attr('state.sidebarIsExpanded', !this.attr('state.sidebarIsExpanded'));
 		},
-		events : {
-			init : function(){
-				this.element.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('toggleMenu'));
-			},
-			toggleMenu : function(){
-				this.scope.toggleSidebar(this.scope.attr('state.sidebarIsExpanded'));
-			},
-			'{state} sidebarIsExpanded' : function(state, ev, newVal){
-				if(newVal){
-					this.scope.toggleSidebar(true)
-				}
-			},
-			'{scope} isEditing' : function(scope, ev, newVal){
-				var self = this;
-				if(newVal){
-					setTimeout(function(){
-						self.element && self.element.find('.hub-name').select().focus();
-					}, 100);
-				}
-			}
+		toggleSidebar : function(val){
+			this.attr('menuOpen', val);
+		}
+	},
+	events : {
+		init : function(){
+			this.element.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', this.proxy('toggleMenu'));
 		},
-		helpers : {
-			linkToPanel : function(panel){
-				panel = can.isFunction(panel) ? panel() : panel;
-				return can.route.url({panel: panel}, true);
-			},
-			isPanel : function(panel, opts){
-				panel = can.isFunction(panel) ? panel() : panel;
-				return panel === this.attr('state.panel') ? opts.fn(this) : opts.inverse(this);
+		toggleMenu : function(){
+			this.scope.toggleSidebar(this.scope.attr('state.sidebarIsExpanded'));
+		},
+		'{state} sidebarIsExpanded' : function(state, ev, newVal){
+			if(newVal){
+				this.scope.toggleSidebar(true);
 			}
 		}
-	});
+	},
+	helpers : {
+		linkToPanel : function(panel){
+			panel = can.isFunction(panel) ? panel() : panel;
+			return can.route.url({panel: panel}, true);
+		}
+	}
 });
