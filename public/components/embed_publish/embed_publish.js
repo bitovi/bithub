@@ -68,6 +68,7 @@ var EmbedPublishVM = can.Map.extend({
 				$.post('/admin/subscriptions/update', {stripe_token: obj.id}).then(function(){
 					self.attr('state.hub').publish().then(function(){
 						self.attr('isSaving', false);
+						self.attr('state.currentSubscription').reload();
 					});
 				});
 			});
