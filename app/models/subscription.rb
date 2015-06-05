@@ -2,8 +2,8 @@ class Subscription < ActiveRecord::Base
   include Stripe::Callbacks
 
   belongs_to :organization
-  belongs_to :plan
-  has_many :payments
+  # belongs_to :plan
+  # has_many :payments
 
   # validates :plan_id, :presence => true
 
@@ -100,8 +100,8 @@ class Subscription < ActiveRecord::Base
     subscription = customer.subscriptions.data.first
 
     self.stripe_customer_id = customer.id
-    self.stripe_subscription_id = subscription.id
-    self.stripe_subscription_status = subscription.status
+    # self.stripe_subscription_id = subscription.id
+    # self.stripe_subscription_status = subscription.status
     self.save!
   end
 

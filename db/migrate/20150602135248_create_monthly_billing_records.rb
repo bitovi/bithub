@@ -2,7 +2,7 @@ class CreateMonthlyBillingRecords < ActiveRecord::Migration
   def change
     create_table :monthly_billing_records do |t|
 
-      t.references :monthly_billings
+      t.references :monthly_billing
 
       t.string  :description
       t.integer :amount,      default: 0
