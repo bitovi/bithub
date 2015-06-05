@@ -14,6 +14,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Tumblr/Tagged"
         handle_errors do
           @result = @client.tagged @tag
         end

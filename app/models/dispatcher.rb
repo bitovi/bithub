@@ -21,9 +21,9 @@ class Dispatcher
         event.build.normalize.validate.persist!
       end
 
-      until_validation = nil
-      until_validation_time = Benchmark.measure do
-        until_validation = entity.procure.update_if_found
+      procurement = nil
+      procurement_time = Benchmark.measure do
+        procurement = entity.procure.update_if_found
       end
         
       validation = nil
@@ -51,14 +51,13 @@ class Dispatcher
         normalization.persist!.route
       end
 
-      Celluloid.logger.info "------- #{event.feed_name} --------- #{event.type_name} -------"
-      Celluloid.logger.info "event dispatching took: #{event_time}"
-      Celluloid.logger.info "until_validation dispatching took: #{until_validation_time}"
-      Celluloid.logger.info "validation dispatching took: #{validation_time}"
-      Celluloid.logger.info "determination dispatching took: #{determination_time}"
-      Celluloid.logger.info "grouping dispatching took: #{grouping_time}"
-      Celluloid.logger.info "normalization dispatching took: #{normalization_time}"
-      Celluloid.logger.info "persistance dispatching took: #{persistance_time}"
+      Celluloid.logger.info "[DISPATCHER][EVENT_DISPATCHING] for event #{event.repr_for_logs} completed in #{event_time}"
+      Celluloid.logger.info "[DISPATCHER][PROCUREMENT] for entity #{entity.repr_for_logs} completed in #{procurement_time}"
+      Celluloid.logger.info "[DISPATCHER][VALIDATION] for entity #{entity.repr_for_logs} completed in #{validation_time}"
+      Celluloid.logger.info "[DISPATCHER][DETERMINATION] for entity #{entity.repr_for_logs} completed in #{determination_time}"
+      Celluloid.logger.info "[DISPATCHER][GROUPING] for entity #{entity.repr_for_logs} completed in #{grouping_time}"
+      Celluloid.logger.info "[DISPATCHER][NORMALIZATION] for entity #{entity.repr_for_logs} completed in #{normalization_time}"
+      Celluloid.logger.info "[DISPATCHER][PERSISTANCE] for entity #{entity.repr_for_logs} completed in #{persistance_time}"
     end
 
     [event.instance, entity.instance]

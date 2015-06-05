@@ -20,6 +20,8 @@ module Handlers
       private
 
       def handle_subscription(req)
+        Celluloid.logger.info "TODO log that something happened?"
+
         params    = CGI::parse req.query_string
         challenge = params['hub.challenge'].first
         token     = params['hub.verify_token'].first

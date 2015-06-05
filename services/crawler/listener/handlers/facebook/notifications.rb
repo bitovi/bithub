@@ -22,6 +22,8 @@ module Handlers
       private
 
       def handle_postback(req)
+        Celluloid.logger.info "TODO log that something happened?"
+
         payload = JSON.parse req.body.to_s
         entries = payload.fetch('entry') { [] }
 
@@ -42,6 +44,8 @@ module Handlers
         return unless object_id
 
         if subscriptions = @proxy.registry['facebook', 'page', page_id]
+          Celluloid.logger.info "TODO log that something happened?"
+
           subscriptions.each do |owner_data|
             access_token = owner_data.service.config[:access_token]
 

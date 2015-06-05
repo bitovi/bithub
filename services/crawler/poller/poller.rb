@@ -6,8 +6,6 @@ class Poller
   include Celluloid
   include Celluloid::Logger
 
-  HEARTBEAT_INTERVAL = 10
-
   def initialize(owner_data, fetcher, opts={})
     @owner_data = owner_data
     @fetcher = fetcher
@@ -22,10 +20,10 @@ class Poller
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
     @lock_ttl = opts.fetch(:interval) { 3600 }
 
-    @timer = every(HEARTBEAT_INTERVAL) { poll }
+    @timer = every(Intervals::POLLER_HEARTBEAT) { poll }
 
-    every(HEARTBEAT_INTERVAL) do
-      info "Poller #{@owner_data.to_log_format} mailbox size: #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[POLLER][#{@owner_data.to_log_format}] Mailbox size: #{Actor.current.mailbox.size}"
     end
   end
 
@@ -52,10 +50,10 @@ class Poller
       if events.count > 0
         event_publisher.publish(events, @owner_data, decorator: @decorator)
       else
-        notification_publisher.publish_to_frontend(empty_response_notif)
+        notification_publisher.publish_to_frontend(empty_response_notif, @owner_data)
       end
-      notification_publisher.publish_to_backend(clear_service_errors_notif)
-      notification_publisher.publish_to_frontend(clear_service_errors_notif)
+      notification_publisher.publish_to_backend(clear_service_errors_notif, @owner_data)
+      notification_publisher.publish_to_frontend(clear_service_errors_notif, @owner_data)
     end
   end
 
@@ -69,10 +67,7 @@ class Poller
 
   def empty_response_notif
     {
-      meta: {
-        brand_name: @owner_data.brand.name,
-        embed_id: @owner_data.embed.id
-      },
+      meta: @owner_data.to_h,
       payload: {
         service: {
           id: @owner_data.service.id,
@@ -84,10 +79,7 @@ class Poller
 
   def clear_service_errors_notif
     {
-      meta: {
-        brand_name: @owner_data.brand.name,
-        embed_id: @owner_data.embed.id,
-      },
+      meta: @owner_data.to_h,
       payload: {
         service: {
           id: @owner_data.service.id,
