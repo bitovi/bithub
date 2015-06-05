@@ -18,10 +18,10 @@ module Entities
         bump_thread
       end
       
-      Celluloid.logger.info "finding_parents dispatching took: #{finding_parents_time}"
-      Celluloid.logger.info "finding_children dispatching took: #{finding_children_time}"
-      Celluloid.logger.info "writing_history dispatching took: #{writing_history_time}"
-      Celluloid.logger.info "bumping_thread dispatching took: #{bumping_thread_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] finding_parents completed in #{finding_parents_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] finding_children completed in #{finding_children_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] writing_history completed in #{writing_history_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] bumping_thread completed in #{bumping_thread_time}"
 
       self
     end
@@ -51,8 +51,8 @@ module Entities
         end
       end
       
-      Celluloid.logger.info "find_children_time dispatching took: #{find_children_time}"
-      Celluloid.logger.info "update_from_children_time dispatching took: #{update_from_children_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] find_children_time completed in #{find_children_time}"
+      Celluloid.logger.debug "[DISPATCHER][GROUPING] update_from_children_time completed in #{update_from_children_time}"
 
       self
     end
