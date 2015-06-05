@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./twitter-user-timeline.stache!',
-'./twitter-user-timeline.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-twitter-user-timeline-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './twitter-user-timeline.stache!';
+import './twitter-user-timeline.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-twitter-user-timeline-service',
+	template : initView
 });
