@@ -243,12 +243,12 @@ ActiveRecord::Schema.define(version: 20150602135248) do
   end
 
   create_table "monthly_billing_records", force: true do |t|
-    t.integer  "monthly_billings_id"
+    t.integer  "monthly_billing_id"
     t.string   "description"
-    t.integer  "amount",              default: 0
-    t.integer  "price",               default: 0
-    t.string   "currency",            default: "USD"
-    t.hstore   "props",               default: {}
+    t.integer  "amount",             default: 0
+    t.integer  "price",              default: 0
+    t.string   "currency",           default: "USD"
+    t.hstore   "props",              default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
