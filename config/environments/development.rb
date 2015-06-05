@@ -16,10 +16,10 @@ Bithub::Application.configure do
   config.action_controller.perform_caching = false
 
   # Logging with log4r
-  lf = LoggerFactory.new 'rails', :environment => Rails.env
-  config.active_record.logger = lf.ar_logger
   config.log_level = :debug
-  config.lograge.enabled = false
+  config.lograge.enabled = true
+  config.active_record.logger = LoggerFactory.new('active_record').logger
+  config.logger = LoggerFactory.new('rails').logger
   
   # Mandrill as default mailer
   config.action_mailer.smtp_settings = {

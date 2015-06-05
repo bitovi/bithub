@@ -20,6 +20,9 @@ require 'core_helpers'
 require 'rabbit_helper'
 require 'logger_factory'
 
+# /
+require 'services/intervals'
+
 # /app/models
 require 'events/dispatcher'
 
@@ -42,7 +45,7 @@ require 'listener/services/all'
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
 
-logger = LoggerFactory.new('crawler_listener', :environment => $env).component_logger
+logger = LoggerFactory.new('crawler_listener', :environment => $env).logger
 Celluloid.logger = logger
 
 class Listener < Celluloid::SupervisionGroup

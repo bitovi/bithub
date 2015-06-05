@@ -8,6 +8,8 @@ module Handlers
       end
 
       def handle(req)
+        Celluloid.logger.info "TODO log that something happened?"
+
         params =  CGI::parse req.query_string
         [200, params['hub.challenge'].first]
       end

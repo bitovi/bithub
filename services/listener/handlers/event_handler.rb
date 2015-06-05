@@ -2,11 +2,11 @@ require 'handlers/handler'
 
 class EventHandler < Handler
   def handle(packet)
-    bn, en, fn, tn = destruct(packet)
-    Celluloid.logger.info "#{meta_to_log_format(packet)} New Event received"
+    b_id, _, _= destruct(packet)
+    Celluloid.logger.info "[EVENT_LISTENER][#{meta_to_log_format(packet)}] New Event received"
 
     @listener.handle_errors do
-      Apartment::Tenant.switch(bn) do
+      Apartment::Tenant.switch(Brand.find(b_id).name) do
         Dispatcher.new(logger: Celluloid.logger).dispatch(packet)
       end
     end
@@ -14,6 +14,6 @@ class EventHandler < Handler
 
   def destruct(packet)
     meta = packet.fetch('meta')
-    [ meta.fetch('brand_name'), meta.fetch('embed_name'), meta.fetch('feed_name'), meta.fetch('type_name') ]
+    [ meta.fetch('brand_id'), meta.fetch('embed_id'), meta.fetch('service_id')]
   end
 end

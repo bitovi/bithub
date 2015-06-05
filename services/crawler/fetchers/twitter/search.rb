@@ -12,6 +12,7 @@ module Fetchers
       end
       
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Twitter/Search"
         handle_errors do
           @client.search(@term, :count => 100).take(100)
         end

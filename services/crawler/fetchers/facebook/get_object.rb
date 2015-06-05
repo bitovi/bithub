@@ -5,6 +5,7 @@ module Fetchers
     class GetObject < Base
 
       def fetch(opts={})
+        Celluloid.logger.info "[FETCHER] Fetching Facebook/GetObject"
         args = {
           fields: FIELDS
         }.merge opts
