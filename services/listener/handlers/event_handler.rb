@@ -7,7 +7,7 @@ class EventHandler < Handler
 
     @listener.handle_errors do
 
-      Apartment::Tenant.switch(bn) do
+      Apartment::Tenant.switch(Brand.find(b_id).name) do
         ret_val = nil
 
         dispatching_time = Benchmark.measure do
