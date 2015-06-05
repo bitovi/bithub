@@ -75,7 +75,7 @@ export default can.Map.extend({
 	},
 	getParams: function(){
 		var hubId = this.attr('hubId');
-		var params = this.attr('params').attr();
+		var params = {};
 		var tenant = this.attr('tenant');
 		var isPublic = this.isPublic();
 		var filter = this.attr('filter');
