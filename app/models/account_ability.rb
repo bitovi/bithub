@@ -25,7 +25,7 @@ class AccountAbility
       # read plans, owned subscriptions with payments
       can :read, Plan
       can :manage, Subscription, organization_id: account.organization_ids # [:read, :current]
-      can :read, Payment, subscription: {organization_id: account.organization_ids}
+      can :read, MonthlyBilling, subscription: {organization_id: account.organization_ids}
 
       can :block   , EmbedEntity
       can :approve , EmbedEntity
@@ -35,7 +35,7 @@ class AccountAbility
       # models locked inside tenants
       can :manage, Embed
       can :moderate, Embed
-      
+
       can :manage, Service
       can :suggest, Service
 
