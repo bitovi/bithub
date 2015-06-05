@@ -15,7 +15,7 @@ class EventHandler < Handler
         end
 
         Celluloid.logger.info "[#{name_for_logs}] Total dispatching time: #{dispatching_time}"
-
+        
         ret_val
       end
     end
