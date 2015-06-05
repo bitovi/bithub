@@ -5,7 +5,7 @@ import InteractionEvent from "models/interaction_event";
 
 import "can/construct/super/";
 import "can/construct/proxy/";
-import "opensourced-bithub/index";
+import "opensourced-bithub/bits_vertical_infinite/";
 
 export default can.Control.extend({
 	pluginName : 'bh-bits',
@@ -28,48 +28,8 @@ export default can.Control.extend({
 			bits: this.bits
 		}));
 
-		this.load();
-	},
-	load : function(cb){
-		var self = this;
-		this.options.isLoading(true);
 
 
-		this.__pendingReq = Bit.findAll(this.options.state.getParams()).then(function(data){
-
-			can.batch.start();
-
-			self.options.isLoading(false);
-
-			if(data.length < self.options.state.attr('params.limit')){
-				self.options.hasNextPage(false);
-			}
-
-			self.currentLimit = self.currentLimit + data.length;
-
-			delete self.__pendingReq;
-
-			self.bits.push.apply(self.bits, data);
-			self.currentOffset(self.currentOffset() + data.length);
-
-			can.batch.stop();
-		});
-	},
-	"bits:nextPage" : function(el, ev){
-		var params;
-		if(this.options.isLoading() || !this.options.hasNextPage()){
-			return;
-		}
-		params = this.options.state.attr('params');
-		params.attr('offset', this.currentOffset());
-		
-		this.load();
-	},
-	destroy : function(){
-		if(this.__pendingReq){
-			this.__pendingReq.abort();
-		}
-		return this._super.apply(this, arguments);
 	},
 	'interaction:scroll' : function(el, ev, hubId){
 		if(!this.__savedScrollInteraction){
