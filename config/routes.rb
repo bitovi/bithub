@@ -110,6 +110,7 @@ Bithub::Application.routes.draw do
       resources :tags, except: %i(new edit)
       # resources :plans, only: %i(show index)
       resources :interactions, only: %i(index show create)
+      resources :monthly_billings, only: %i(index)
     end
   end
 
