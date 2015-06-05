@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./foursquare-venue.stache!',
-'./foursquare-venue.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-foursquare-venue-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './foursquare-venue.stache!';
+import './foursquare-venue.less!';
 
-    }
-  });
+can.Component.extend({
+  tag : 'bh-foursquare-venue-service',
+  template : initView
 });

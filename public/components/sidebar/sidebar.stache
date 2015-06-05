@@ -1,6 +1,6 @@
 {{#if menuOpen}}
 
-	{{#hub}}
+	{{#state.hub}}
 		<div class="header">
 			<h1>Hub Settings</h1>
 			<a href="{{pageUrl 'hub-list'}}" class="back-to-admin">
@@ -9,45 +9,38 @@
 			</a>
 			<span class="fa fa-close close-sidebar" can-click="toggleSidebarPosition"></span>
 		</div>
-		<div class="hub-name-wrap {{#if isEditing}}hub-name-is-editting{{/if}}" can-click="toggleHubEditing">
-			<b>Hub Name</b>
-			{{#if isEditing}}
-				<input type="text" class="form-control hub-name" can-keydown="restoreOrSave" can-blur="saveAndToggleHubEditing" value="{{ name }}" can-click="preventHubEditingToggle">
-			{{else}}
-				<h2>{{ name }}</h2>
-				<i class="fa fa-pencil edit-hub-name" can-click="toggleHubEditing"></i>
-			{{/if}}
-		</div>
+		<bh-edit-hub-name hub="{state.hub}"></bh-edit-hub-name>
 		<div class="service-tabs clearfix">
-			<a href="{{linkToPanel 'services'}}" class="panel-link {{#isPanel 'services'}}active{{/isPanel}}">
+			<a href="{{linkToPanel 'services'}}" class="panel-link {{#eq state.panel 'services'}}active{{/eq}}">
 				Services
 			</a>
-			<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#isPanel 'moderation'}}active{{/isPanel}}">
+			<a href="{{linkToPanel 'moderation'}}" class="panel-link {{#eq state.panel 'moderation'}}active{{/eq}}">
 				Moderation
 			</a>
-			<a href="{{linkToPanel 'integration'}}" class="panel-link {{#isPanel 'integration'}}active{{/isPanel}}">
+			<a href="{{linkToPanel 'integration'}}" class="panel-link {{#eq state.panel 'integration'}}active{{/eq}}">
 				Integration &amp; Design
 			</a>
 		</div>
 		
-		{{#isPanel 'services'}}
+		{{#eq state.panel 'services'}}
 			<div class="panel-container">
 				<bh-services state="{state}"></bh-services>
 			</div>
-		{{/isPanel}}
+		{{/eq}}
+		
 
-		{{#isPanel 'moderation'}}
+		{{#eq state.panel 'moderation'}}
 			<div class="panel-container">
-				<bh-moderation state="{state}" hub="{hub}"></bh-moderation>
+				<bh-moderation state="{state}"></bh-moderation> 
 			</div>
-		{{/isPanel}}
+		{{/eq}}
 
 		
-		{{#isPanel 'integration'}}
+		{{#eq state.panel 'integration'}}
 			<div class="panel-container">
-				<bh-integration state="{state}" hub="{hub}"></bh-integration>
+				<bh-embed-publish state="{state}"></bh-embed-publish>
 			</div>
-		{{/isPanel}}
+		{{/eq}}
 	{{/hub}}
 {{else}}
 	<div class="menu-wrap" can-click="toggleSidebarPosition">
