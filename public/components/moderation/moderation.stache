@@ -1,5 +1,5 @@
 <h4>Do you want <b>all items approved and public</b> by default?</h4>
-<form class="form">
+<div class="form">
 	<div class="options-wrapper">
 		<div class="radio">
 			<label>
@@ -14,14 +14,14 @@
 			</label>
 		</div>
 	</div>
-  {{#unless hub.approved_by_default}}
-  {{#if approvingFilters}}
-  <bh-moderation-rules filters="{approvingFilters}" hub="{hub}" class="approving clearfix"></bh-moderation-rules>
-  {{/if}}
-  {{/unless}}
-  {{#if blockingFilters}}
-  <bh-moderation-rules filters="{blockingFilters}" hub="{hub}" class="blocking clearfix"></bh-moderation-rules>
-  {{/if}}
+	{{#unless hub.approved_by_default}}
+		{{#if approvingFilters}}
+			<bh-moderation-rules filters="{approvingFilters}" hub="{state.hub}" class="approving clearfix"></bh-moderation-rules>
+		{{/if}}
+	{{/unless}}
+	{{#if blockingFilters}}
+		<bh-moderation-rules filters="{blockingFilters}" hub="{state.hub}" class="blocking clearfix"></bh-moderation-rules>
+	{{/if}}
 	{{#isSaving}}
 		<div class="alert alert-info">
 			<i class="fa fa-spin fa-circle-o-notch"></i> Saving&hellip;
@@ -33,6 +33,6 @@
 		</div>
 	{{/hasErrors}}
 	<div class="buttons-wrapper">
-		<button class="btn btn-primary pull-right">Save moderation rules</button>
+		<button class="btn btn-primary pull-right btn-save-moderation" can-click="saveHub">Save moderation rules</button>
 	</div>
 </form>

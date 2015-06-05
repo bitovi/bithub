@@ -1,20 +1,4 @@
-<div class="column-wrapper clearfix columns-{{columnCount}}">
-    {{#each columns}}
-    <div class="column">
-        {{#each this}}
-        <bh-bit bit="{.}" state="{state}"></bh-bit>
-        {{/each}}
-    </div>
-    {{/each}}
-
-</div>
-
-{{#if isLoading}}
-	<div class="loader">
-		<i class="fa-circle-o-notch fa fa-spin"></i>
-	</div>
-{{/if}}
-
+<bh-bits-vertical-infinite params="{state.getParams}" bits="{bits}" state="{state}"></bh-bits-vertical-infinite>
 {{#if state.showPoweredBy}}
 	<div class="powered-by">
 		Powered by <a href="http://bithub.com" target="_blank">BitHub</a>

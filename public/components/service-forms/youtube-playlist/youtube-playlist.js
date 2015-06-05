@@ -1,13 +1,8 @@
-steal(
-'can/component',
-'./youtube-playlist.stache!',
-'./youtube-playlist.less!',
-function(Component, initView){
-  return Component.extend({
-    tag : 'bh-youtube-playlist-service',
-    template : initView,
-    scope : {
+import can from "can/";
+import initView from './youtube-playlist.stache!';
+import './youtube-playlist.less!';
 
-    }
-  });
+can.Component.extend({
+	tag : 'bh-youtube-playlist-service',
+	template : initView
 });

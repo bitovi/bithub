@@ -1,33 +1,31 @@
-steal(
-'models',
-'lodash/collections/reduce.js', function(Models, _reduce){
-	return function(appState){
-		Models.Service.on('saving', function(ev, service){
-			var loadingServices = appState.attr('loadingServices');
-			var index = loadingServices.indexOf(service);
+import Models from "models/";
 
-			if(index > -1){
-				loadingServices.splice(index, 1);
-			}
+export default function(appState){
+	Models.Service.on('saving', function(ev, service){
+		var loadingServices = appState.attr('loadingServices');
+		var index = loadingServices.indexOf(service);
 
-			loadingServices.unshift(service);
-		});
-
-
-		Models.Service.on('errored', function(ev, service){
-			var loadingServices = appState.attr('loadingServices');
-			var index = loadingServices.indexOf(service);
-
+		if(index > -1){
 			loadingServices.splice(index, 1);
-		});
+		}
 
-		Models.Service.on('destroyed', function(ev, service){
-			var loadingServices = appState.attr('loadingServices');
-			var index = loadingServices.indexOf(service);
+		loadingServices.unshift(service);
+	});
 
-			if(index > -1){
-				loadingServices.splice(index, 1);
-			}
-		});
-	}
-})
+
+	Models.Service.on('errored', function(ev, service){
+		var loadingServices = appState.attr('loadingServices');
+		var index = loadingServices.indexOf(service);
+
+		loadingServices.splice(index, 1);
+	});
+
+	Models.Service.on('destroyed', function(ev, service){
+		var loadingServices = appState.attr('loadingServices');
+		var index = loadingServices.indexOf(service);
+
+		if(index > -1){
+			loadingServices.splice(index, 1);
+		}
+	});
+}
