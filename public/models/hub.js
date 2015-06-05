@@ -5,7 +5,7 @@ import 'can/construct/super/';
 import 'can/map/backup/';
 import 'can/map/define/';
 
-export default can.Model.extend({
+var Bit = can.Model.extend({
 	resource : '/api/v3/embeds',
 }, {
 	define : {
@@ -25,5 +25,24 @@ export default can.Model.extend({
 			type : 'POST',
 			url : '/api/v3/embeds/' + this.attr('id') + '/moderate'
 		});
+	},
+	publish : function(){
+		return $.ajax({
+			type: 'PUT',
+			url: '/api/v3/embeds/' + this.attr('id') + '/publish'
+		}).then(function(data){
+			Bit.model(data);
+		});
+	},
+	unpublish : function(){
+		return $.ajax({
+			type: 'PUT',
+			url: '/api/v3/embeds/' + this.attr('id') + '/unpublish'
+		}).then(function(data){
+			Bit.model(data);
+		});
 	}
+
 });
+
+export default Bit;

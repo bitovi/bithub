@@ -63,13 +63,29 @@ var EmbedPublishVM = can.Map.extend({
 				cvc: cc.cvc,
 				exp_month: cc.month(),
 				exp_year: cc.year()
-			}, function(){
-				self.attr('isSaving', false);
-				console.log(arguments);
+			}, function(res, obj){
+			
+				$.post('/admin/subscriptions/update', {stripe_token: obj.id}).then(function(){
+					self.attr('state.hub').publish().then(function(){
+						self.attr('isSaving', false);
+					});
+				});
 			});
-			// create token
-			// publish
 		}
+	},
+	publishHub : function(){
+		var self = this;
+		this.attr('isSaving', true);
+		this.attr('state.hub').publish().then(function(){
+			self.attr('isSaving', false);
+		});
+	},
+	unpublishHub : function(){
+		var self = this;
+		this.attr('isSaving', true);
+		this.attr('state.hub').unpublish().then(function(){
+			self.attr('isSaving', false);
+		});
 	},
 	embedUrl(){
 		var state = this.attr('state');
