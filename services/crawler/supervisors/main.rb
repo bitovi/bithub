@@ -16,8 +16,8 @@ module Supervisors
     end
 
     def boot(whole_config)
-      info "Starting ROOT/MAIN supervisor"
-      info whole_config.to_yaml
+      info "[MAIN_SUPERVISOR] Booting..."
+      # info whole_config.to_yaml
 
       whole_config.fetch(:brands).each do |b|
         bi = NodeTypes::BrandInfo.new(b.fetch(:id), b.fetch(:name))
@@ -25,7 +25,7 @@ module Supervisors
         Actor[actor_name].boot(b)
       end
 
-      info "#{name} Confirming that boot proces is done"
+      info "[MAIN_SUPERVISOR] Booted."
       @booted = true
     end
 
@@ -49,8 +49,6 @@ module Supervisors
       else
         propagate_cmd(target, action)
       end
-      # debug "#{target.brand} is #{name}'s children? #{among_children?(target.brand)}"
-      # initialize_next_level_supervisor(target.brand, Supervisors::Brand) if !among_children?(target.brand)
     end
 
     def config_tree

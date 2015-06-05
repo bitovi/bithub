@@ -12,25 +12,19 @@ class LoggerFactory
     @env  = args[:environment] || 'development'
 
     logger_config_data = YAML.load_file config_path
+
     log_cfg = Log4r::YamlConfigurator
     log_cfg["ENV"] = @env
     log_cfg["COMPONENT_NAME"] = @name
     log_cfg.decode_yaml(logger_config_data['log4r_config'])
-
-    @loggers = Log4r::Logger
-  end
-  attr_reader :loggers
-
-  def component_logger
-    @loggers['component']
   end
 
-  def ar_logger
-    @loggers['active_record']
+  def logger
+    Log4r::Logger['component']
   end
 
-  def ac_logger
-    @loggers['action_controller']
+  def loggers(component_name)
+    Log4r::Logger[component_name]
   end
 
   private

@@ -12,6 +12,7 @@ require 'celluloid'
 
 # /
 require 'config/environment'
+require 'services/intervals'
 
 # /lib
 require 'core_ext'
@@ -30,7 +31,7 @@ require 'handlers/event_handler'
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
 
-logger = LoggerFactory.new('listener', :environment => $env).component_logger
+logger = LoggerFactory.new('listener', :environment => $env).logger
 Celluloid.logger = logger
 
 class Listener
@@ -45,10 +46,10 @@ class Listener
 
     @handler = handler_class.new(self)
 
-    Celluloid.logger.info "Listener connected to AMQP, queue name: #{q_name}"
+    info "[#{@handler.name_for_logs}] Connected to AMQP, queue name: #{q_name}"
 
-    every(5) do
-      info "Listener with #{@handler.class} mailbox size #{Actor.current.mailbox.size}"
+    every(Intervals::ACTOR_MAILBOX_REPORT) do
+      info "[#{@handler.name_for_logs}] Mailbox size #{Actor.current.mailbox.size}"
     end
 
     async.listen
@@ -65,8 +66,7 @@ class Listener
   def handle_errors
     yield
   rescue => err
-    error "Error: #{err.class}, #{err.message}"
-    error err.backtrace.join("\n")
+    error "[#{@handler.name_for_logs}] #{err}"
   ensure
     Apartment::Tenant.switch! # either way switch back to public
   end

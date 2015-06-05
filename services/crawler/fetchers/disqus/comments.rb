@@ -12,6 +12,7 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Disqus/Comments"
         handle_errors do
           resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
           pluck(resp)

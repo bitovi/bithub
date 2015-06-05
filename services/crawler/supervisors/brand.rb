@@ -33,8 +33,6 @@ module Supervisors
       else
         propagate_cmd(target, action)
       end
-      # debug "#{target.embed} is #{name}'s children? #{among_children?(target.embed)}"
-      # initialize_next_level_supervisor(target.embed, Supervisors::Embed) if !among_children?(target.embed)
     end
 
     private

@@ -105,6 +105,10 @@ module Events
         .select {|m| m.match(regexp)}
         .uniq
     end
+    
+    def repr_for_logs
+      feed_name + '/' + type_name
+    end
 
     private
     def feed_and_type_name

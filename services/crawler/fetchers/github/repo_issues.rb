@@ -10,6 +10,8 @@ module Fetchers
       end
 
       def fetch
+        Celluloid.logger.info "[FETCHER] Fetching Github/RepoIssues"
+
         handle_errors do
           @client.issues.list(user: @user, repo: @repo)
         end

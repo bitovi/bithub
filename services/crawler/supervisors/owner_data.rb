@@ -23,7 +23,19 @@ class OwnerData
     "#{@brand} / #{@embed} / #{@service}"
   end
 
+  def to_h
+    {
+      brand_id: @brand.id,
+      brand_name: @brand.name,
+      embed_id: @embed.id,
+      embed_name: @embed.name,
+      service_id: @service.id,
+      feed_name: @service.feed_name,
+      type_name: @service.type_name
+    }
+  end
+
   def to_log_format
-    "[#{@brand.name} #{@embed.name} #{@service.id} #{@service.feed_name} #{@service.type_name}]"
+    "#{@brand.id},#{@embed.id},#{@service.id},#{service.feed_name},#{@service.type_name}"
   end
 end

@@ -10,6 +10,7 @@ module Fetchers
       end
 
       def fetch(opts)
+        Celluloid.logger.info "[FETCHER] Fetching Instagram/Media"
         @result = @client.media_item @media_id
       end
 

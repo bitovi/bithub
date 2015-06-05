@@ -8,6 +8,9 @@ $:.unshift(ROOT_DIR)
 $:.unshift(File.join(ROOT_DIR, 'lib'))
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
+# /
+require 'services/intervals'
+
 # theirs
 require 'bundler/setup'
 require 'rubygems'
@@ -41,7 +44,7 @@ require 'poller/services/all'
 $env = ENV.fetch('ENV') { 'development' }
 require 'pry' if $env == 'development'
 
-logger = LoggerFactory.new('crawler_poller', :environment => $env).component_logger
+logger = LoggerFactory.new('crawler_poller', :environment => $env).logger
 Celluloid.logger = logger
 
 class Crawler < Celluloid::SupervisionGroup
