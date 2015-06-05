@@ -19,7 +19,7 @@
     "steal": "~0.10.5",
     "canjs": "~2.2.5",
     "bootstrap": "~3.3.0",
-    "lodash-amd": "~2.4.1",
+    "lodash-amd": "~3.9.3",
     "fontawesome": "~4.2.0",
     "qunit": "~1.18.0",
     "moment": "~2.9.0",

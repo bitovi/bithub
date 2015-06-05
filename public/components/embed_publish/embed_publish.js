@@ -4,7 +4,7 @@ import initView from "./embed_publish.stache!";
 
 import Preset from "models/preset";
 import $ from "jquery";
-import _some from "lodash/collections/some";
+import _some from "lodash/collection/some";
 
 import "./embed_publish.less!";
 import "components/integration/";
@@ -80,7 +80,13 @@ var EmbedPublishVM = can.Map.extend({
 		return preset.fullUrl(currentBrand.attr('tenant_name'), hub.attr('id'));
 	},
 	toggleChangeCC(){
-		this.attr('changeCC', !this.attr('changeCC'));
+		var newState = !this.attr('changeCC');
+		can.batch.start();
+		if(newState){
+			this.attr('cc', new CC());
+		}
+		this.attr('changeCC', newState);
+		can.batch.stop();
 	}
 });
 
