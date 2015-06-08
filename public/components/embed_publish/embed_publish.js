@@ -1,4 +1,5 @@
-/* globals Stripe:true*/
+/* globals Stripe:true */
+/* globals confirm:true */
 import can from "can/";
 import initView from "./embed_publish.stache!";
 
@@ -64,7 +65,7 @@ var EmbedPublishVM = can.Map.extend({
 				exp_month: cc.month(),
 				exp_year: cc.year()
 			}, function(res, obj){
-			
+				
 				$.post('/admin/subscriptions/update', {stripe_token: obj.id}).then(function(){
 					self.attr('state.hub').publish().then(function(){
 						self.attr('isSaving', false);
@@ -83,10 +84,13 @@ var EmbedPublishVM = can.Map.extend({
 	},
 	unpublishHub : function(){
 		var self = this;
-		this.attr('isSaving', true);
-		this.attr('state.hub').unpublish().then(function(){
-			self.attr('isSaving', false);
-		});
+		if(confirm("Are you sure you want to unpublish this hub?")){
+
+			this.attr('isSaving', true);
+			this.attr('state.hub').unpublish().then(function(){
+				self.attr('isSaving', false);
+			});
+		}
 	},
 	embedUrl(){
 		var state = this.attr('state');

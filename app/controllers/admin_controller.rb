@@ -12,6 +12,15 @@ class AdminController < ApplicationController
   end
 
   def embed
+    if brand = Brand.where(tenant_name: params[:tenant]).first
+      Apartment::Tenant.switch(brand.name) do
+        if embed = Embed.find_by_id(params[:hubId])
+          if embed.published
+            @embed_is_public = true
+          end
+        end
+      end
+    end
   end
 
   def choose_brand
@@ -31,7 +40,8 @@ class AdminController < ApplicationController
   private
 
     def allow_iframe
-      response.headers.except! 'X-Frame-Options'
+      response.headers.except! 'X-Frame-Options' if @embed_is_public
+      
     end
 
 end
