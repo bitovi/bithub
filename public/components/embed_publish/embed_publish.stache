@@ -1,8 +1,9 @@
 {{#if state.hub.published}}
+  <h4 class="published-hub-title"><b>This is a published and public hub</b></h4>
 	<bh-integration state="{state}"></bh-integration>
   <div class="unpublish-wrap">
-    <h4><b>This is a published and public hub</b></h4>
-    <p>When you unpublish the hub, you won't be able to embed it on your site anymore.</p>
+    <h4><b>Unpublish Hub</b></h4>
+    <p>When you unpublish the hub, the embed code will be deactivated and any embedded BitHub feeds will no longer be visible on your webpage.</p>
     <p><b>You will not be charged for unpublished hubs.</b></p>
     <button can-click="unpublishHub" class="btn btn-primary" {{#isSaving}}disabled{{/isSaving}}>
       {{#isSaving}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/isSaving}} Unpublish Hub
@@ -12,7 +13,7 @@
 {{else}}
 	<h4><b>This hub is unpublished</b></h4>
 	<p>Unpublished hub can't be embedded in the site.</p>
-	<p>This hub is publicly available at the following link: <a href="{{embedUrl}}">{{embedUrl}}</a></p>
+	<p>This hub is publicly available at the following link: <a href="{{embedUrl}}" target="_blank">{{embedUrl}}</a></p>
 	<p><b>After the hub is published you will immediately be presented with the embed code that can be placed on your site.</b></p>
 
 	<div class="alert alert-info">
@@ -61,6 +62,7 @@
 {{/if}}
 		</div>
 	</div>
+  <p><i>By clicking "Publish" you authorize us to charge your credit card on monthly basis as long as the hub is published and public.</i></p>
   <div class="button-wrap clearfix">
     {{#if showCCForm}}
       <button class="btn btn-primary" can-click="createSubscriptionAndPublishHub" {{#isSaving}}disabled{{/isSaving}}>

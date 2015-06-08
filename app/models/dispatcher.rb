@@ -21,14 +21,14 @@ class Dispatcher
         event.build.normalize.validate.persist!
       end
 
-      until_validation = nil
-      until_validation_time = Benchmark.measure do
-        until_validation = entity.procure.update_if_found
+      procurement = nil
+      procurement_time = Benchmark.measure do
+        procurement = entity.procure.update_if_found
       end
         
       validation = nil
       validation_time = Benchmark.measure do
-        validation = until_validation.validate
+        validation = procurement.validate
       end
       
       determination = nil
@@ -56,7 +56,6 @@ class Dispatcher
       @logger.info "[DISPATCHER][VALIDATION] for entity #{entity.repr_for_logs} completed in #{validation_time}"
       @logger.info "[DISPATCHER][DETERMINATION] for entity #{entity.repr_for_logs} completed in #{determination_time}"
       @logger.info "[DISPATCHER][GROUPING] for entity #{entity.repr_for_logs} completed in #{grouping_time}"
-      @logger.info "[DISPATCHER][NORMALIZATION] for entity #{entity.repr_for_logs} completed in #{normalization_time}"
       @logger.info "[DISPATCHER][PERSISTANCE] for entity #{entity.repr_for_logs} completed in #{persistance_time}"
     end
 

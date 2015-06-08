@@ -90,6 +90,10 @@ module Entities
       @event.service_id
     end
 
+    def repr_for_logs
+      feed_name + '/' + type_name
+    end
+
     def collect_methods(regexp)
       (self.private_methods + self.methods + self.class.instance_methods(false))
         .select {|m| m.match(regexp)}
