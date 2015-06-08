@@ -18,9 +18,10 @@ Bithub::Application.configure do
   # Logging with log4r
   config.log_level = :debug
   config.lograge.enabled = true
-  config.active_record.logger = LoggerFactory.new('active_record').logger
+  config.active_record.logger = LoggerFactory.new('active_record').loggers 'active_record'
+  config.action_controller.logger = LoggerFactory.new('action_controller').loggers 'action_controller'
   config.logger = LoggerFactory.new('rails').logger
-  
+
   # Mandrill as default mailer
   config.action_mailer.smtp_settings = {
     :address   => 'smtp.mandrillapp.com',
