@@ -3,18 +3,18 @@
 	<div class="options-wrapper">
 		<div class="radio">
 			<label>
-				<input type="text" type="radio" {{#if hub.approved_by_default}}checked{{/if}} value="1" can-change="toggleApprovedByDefault">
+				<input type="text" type="radio" {{#if state.hub.approved_by_default}}checked{{/if}} value="1" can-change="toggleApprovedByDefault">
 				<b>Yes</b>. Make all items approved and public by default.
 			</label>
 		</div>
 		<div class="radio">
 			<label>
-				<input type="text" type="radio" {{#unless hub.approved_by_default}}checked{{/unless}} value="0" can-change="toggleApprovedByDefault">
+				<input type="text" type="radio" {{#unless state.hub.approved_by_default}}checked{{/unless}} value="0" can-change="toggleApprovedByDefault">
 				<b>No</b>. I want all items blocked by default.
 			</label>
 		</div>
 	</div>
-	{{#unless hub.approved_by_default}}
+	{{#unless state.hub.approved_by_default}}
 		{{#if approvingFilters}}
 			<bh-moderation-rules filters="{approvingFilters}" hub="{state.hub}" class="approving clearfix"></bh-moderation-rules>
 		{{/if}}
