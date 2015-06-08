@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "opensourced-bithub": "git+ssh://git@github.com:bitovi/bithub-embed",
+    "opensourced-bithub": "git+https://github.com/bitovi/bithub-embed",
     "steal-tools": "0.10.4"
   }
 }
