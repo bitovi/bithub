@@ -33,12 +33,13 @@ RSpec.describe 'Subscriptions', type: :request do
   end
 
   describe 'GET /admin/subscriptions/edit/plan' do
-    it 'renders the edit plan page on /admin/subscriptions/edit/plan' do
-      get '/admin/subscriptions/edit/plan'
-      assert_select '#edit_plan' do
-        assert_select '#plan_id'
-      end
-    end
+    # Plans are currently disabled
+    # it 'renders the edit plan page on /admin/subscriptions/edit/plan' do
+    #   get '/admin/subscriptions/edit/plan'
+    #   assert_select '#edit_plan' do
+    #     assert_select '#plan_id'
+    #   end
+    # end
   end
 
   describe 'POST /admin/subscriptions/update' do
@@ -50,7 +51,7 @@ RSpec.describe 'Subscriptions', type: :request do
       expect(Subscription.current.card_exp_year).to eq('2018')
     end
 
-    # Having plans is currently disabled
+    # Plans are currently disabled
     # it 'updates subscription with a new plan' do
     #   post '/admin/subscriptions/update', { plan: 'a_plan' }
     #   expect(Subscription.current.plan.stripe_id).to eq('a_plan')

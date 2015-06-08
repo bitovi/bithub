@@ -7,6 +7,18 @@ log4r_config:
         - component_logfile
         - console
 
+    - name          : active_record
+      level         : DEBUG
+      trace         : 'false'
+      outputters    :
+        - active_record_logfile
+
+    - name          : action_controller
+      level         : DEBUG
+      trace         : 'false'
+      outputters    :
+        - action_controller_logfile
+
   outputters:
     - name      : console
       type      : StdoutOutputter
@@ -17,6 +29,7 @@ log4r_config:
 
     - name      : component_logfile
       type      : FileOutputter
+      dirname   : "log"
       filename  : "log/#{ENV}_#{COMPONENT_NAME}.log"
       trunc     : true
       maxsize   : 104857600
@@ -24,3 +37,25 @@ log4r_config:
         type    : PatternFormatter
         date_pattern: '%Y-%m-%dT%H:%M:%S%z'
         pattern : '[%d][%l]: %m'
+
+    - name     : active_record_logfile
+      type     : DateFileOutputter
+      dirname  : "log"
+      filename : "log/#{ENV}_active_record.log"
+      trunc    : false
+      maxsize  : 104857600
+      max_backups : 10
+      formatter:
+        type: PatternFormatter
+        pattern: '[%d][%l]: %m '
+
+    - name     : action_controller_logfile
+      type     : DateFileOutputter
+      dirname  : "log"
+      filename : "log/#{ENV}_action_controller.log"
+      trunc    : false
+      maxsize  : 104857600
+      max_backups : 10
+      formatter:
+        type: PatternFormatter
+        pattern: '[%d][%l]: %m '
