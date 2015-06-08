@@ -1,6 +1,7 @@
 require 'core_ext'
 require 'decorators/all'
 require 'types/lock'
+require 'services/intervals'
 
 class Poller
   include Celluloid

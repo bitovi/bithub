@@ -15,8 +15,10 @@ RSpec.describe 'Stripe Webhook handlers', type: :request do
     ENV['STRIPE_ENABLE'] = 'true'
     stripe_helper = StripeMock.create_test_helper
     stripe_helper.create_plan(id: 'a_plan', amount: 99999999, trial_period_days: 45)
-    post '/register/agency', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
+
+    ### Plans aren't currenly in use so we have to manually link it
+    Subscription.first.update_attribute :plan_id, Plan.first.id
   end
 
   after(:each) do

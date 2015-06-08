@@ -8,14 +8,15 @@ describe CommandHandler do
       eh = CommandHandler.new(MockListener.new)
       expect(eh.destruct({
         'meta' => {
-          'brand_name' => 'zeljko'
+          'brand_id' => 1,
+          'service_id' => 3
         },
         'payload' => {
           'service' => {
             'id' => 1
           }
         }
-      })).to eq(['zeljko', 1])
+      })).to eq([1, 3])
     end
   end
 end

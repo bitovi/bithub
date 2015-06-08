@@ -8,8 +8,10 @@ RSpec.describe 'Subscriptions', type: :request do
     ENV['STRIPE_ENABLE'] = 'true'
     @stripe_helper = StripeMock.create_test_helper
     @stripe_helper.create_plan(id: 'a_plan', amount: 1234567, trial_period_days: 45)
-    post '/register/brand', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
+
+    ### Plans aren't currenly in use so we have to manually link it
+    Subscription.first.update_attribute :plan_id, Plan.first.id
   end
 
   after(:each) do
@@ -48,9 +50,10 @@ RSpec.describe 'Subscriptions', type: :request do
       expect(Subscription.current.card_exp_year).to eq('2018')
     end
 
-    it 'updates subscription with a new plan' do
-      post '/admin/subscriptions/update', { plan: 'a_plan' }
-      expect(Subscription.current.plan.stripe_id).to eq('a_plan')
-    end
+    # Having plans is currently disabled
+    # it 'updates subscription with a new plan' do
+    #   post '/admin/subscriptions/update', { plan: 'a_plan' }
+    #   expect(Subscription.current.plan.stripe_id).to eq('a_plan')
+    # end
   end
 end

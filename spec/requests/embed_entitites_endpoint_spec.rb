@@ -5,8 +5,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
   end
 
   context 'given a certain embed id' do
@@ -81,13 +80,13 @@ RSpec.describe 'Filter endpoints', type: :request do
             embed = FactoryGirl.create(:embed, brand: Brand.current, approved_by_default: true)
             embed.make_link_to(FactoryGirl.create(:github_watch))
             embed.make_link_to(FactoryGirl.create(:github_issue))
-            
+
             get "/api/#{api_version}/embeds/#{embed.id}/entities?tenant_name=#{Brand.current.name}"
             expect(response).to be_success
             expect(json['data'].length).to eq(2)
           end
         end
-        
+
         context 'when the embed is approving and there are' do
           context 'approving filters defined' do
             it 'responds with all items that were marked as approved'

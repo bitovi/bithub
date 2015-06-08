@@ -24,8 +24,8 @@ end
 class MockNotifier
   attr_reader :qb, :qf
   def initialize; @qb = []; @qf = []; end
-  def publish_to_backend(n); @qb << n; end
-  def publish_to_frontend(n); @qf << n; end
+  def publish_to_backend(n, od); @qb << n; end
+  def publish_to_frontend(n, od); @qf << n; end
 end
 
 describe Poller do
@@ -68,7 +68,7 @@ describe Poller do
         expect(notifier.qb).to eq [poller.clear_service_errors_notif]
       end
     end
-    
+
     context 'assuming the fetch returns an empty array' do
       it 'notifies that the response is empty and publishes the command to clear service errors' do
       owner_data = OwnerData.new(1, '', 11, '', 111, '', '', {})
