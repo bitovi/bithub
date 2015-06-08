@@ -66,3 +66,8 @@ module AuthTestData
     tenant_name: 'brandnewbrand'
   }
 end
+
+def register_and_login
+  post '/accounts', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+  post '/accounts/sign_in', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+end

@@ -8,15 +8,13 @@ describe EventHandler do
       eh = EventHandler.new(MockListener.new)
       expect(eh.destruct({
         'meta' => {
-          'brand_name' => 'bicikl',
-          'embed_name' => 'kamo ide',
-          'feed_name' => 'tko zna kamo',
-          'type_name' => 'ide'
+          'brand_id' => 1,
+          'embed_id' => 2,
+          'service_id' => 3
         },
         'payload' => { }
-      })).to eq(['bicikl', 'kamo ide', 'tko zna kamo', 'ide'])
+      })).to eq([1, 2, 3])
 
     end
   end
 end
-

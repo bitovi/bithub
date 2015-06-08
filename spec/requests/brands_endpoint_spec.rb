@@ -5,8 +5,7 @@ RSpec.describe 'Brand endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
   end
 
   describe 'GET /brands/current' do

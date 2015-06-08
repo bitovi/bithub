@@ -5,8 +5,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
   end
 
   context 'given the account is logged in and the brand is determined' do
@@ -23,7 +22,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           expect(json['data'].length).to eq(2)
         end
       end
-      
+
       describe 'GET /presets/1' do
         it 'gets a specific preset' do
           embed = FactoryGirl.create(:embed, brand: Brand.current)
@@ -34,7 +33,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           expect(json.keys).to include('name', 'config')
         end
       end
-      
+
       describe 'POST /presets' do
         it 'gets all entities belonging to an embed' do
           embed = FactoryGirl.create(:embed, brand: Brand.current)
@@ -53,7 +52,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           expect(json.keys).to include('name', 'config')
         end
       end
-      
+
       describe 'PUT /presets/1' do
         it 'update a specific preset' do
           embed = FactoryGirl.create(:embed, brand: Brand.current)
@@ -67,7 +66,7 @@ RSpec.describe 'Filter endpoints', type: :request do
           expect(json['name']).to eq 'updated name'
         end
       end
-      
+
       describe 'DELETE /presets/1' do
         it 'deletes a specific preset' do
           embed = FactoryGirl.create(:embed, brand: Brand.current)

@@ -3,15 +3,15 @@ module Organizations
 
     attr_reader :account, :organization, :plan, :brand, :subscription
 
-    def initialize(account) ###, plan)
+    def initialize(account, plan=nil)
       @account = account
-      # @plan    = plan
+      @plan    = plan
     end
 
     def build
       @organization  = Organization.new name: organization_name
       @brand         = Brand.new name: brand_name, tenant_name: brand_name
-      @subscription  = Subscription.new ### plan: @plan
+      @subscription  = Subscription.new plan: @plan
 
       @account.organizations << @organization
       @organization.accounts << @account
@@ -22,7 +22,7 @@ module Organizations
 
     def save!
       @organization.save!
-      @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool ### && @plan.stripe_id
+      @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool
       self
     end
 

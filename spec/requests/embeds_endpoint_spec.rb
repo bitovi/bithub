@@ -9,8 +9,7 @@ RSpec.describe 'Embed endpoints', type: :request do
   }
 
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
   end
 
   context 'given the account is logged in and the brand is determined' do

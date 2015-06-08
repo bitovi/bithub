@@ -8,14 +8,13 @@ describe ErrorHandler do
       eh = ErrorHandler.new(MockListener.new)
       expect(eh.destruct({
         'meta' => {
-          'brand_name' => 'zeljac',
-          'embed_name' => 'u keljac'
+          'brand_id' => 1
         },
         'error' => {
           'klass' => 'SomeError',
           'message' => 'whadap'
         }
-      })).to eq(['zeljac', 'u keljac', {
+      })).to eq([1, {
           'klass' => 'SomeError',
           'message' => 'whadap'
         }, 'SomeError'])

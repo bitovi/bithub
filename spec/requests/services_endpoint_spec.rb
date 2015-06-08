@@ -13,10 +13,9 @@ RSpec.describe 'Service creation', type: :request do
       }
     }
   }
-  
+
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
     @embed = FactoryGirl.create(:embed, brand: Brand.current)
     get_via_redirect '/auth/twitter'
   end

@@ -2,16 +2,16 @@ class Subscription < ActiveRecord::Base
   include Stripe::Callbacks
 
   belongs_to :organization
-  # belongs_to :plan
-  # has_many :payments
+  belongs_to :plan
+  has_many :payments
 
   # validates :plan_id, :presence => true
 
   before_destroy :delete_stripe_customer
 
-  # after_customer_subscription_updated! do |subscription, event|
-  #   self.update_from_subscription(subscription, event_id: event.id)
-  # end
+  after_customer_subscription_updated! do |subscription, event|
+    self.update_from_subscription(subscription, event_id: event.id)
+  end
 
   def card
     if has_card?
@@ -60,28 +60,28 @@ class Subscription < ActiveRecord::Base
   #   end
   # end
 
-  # def self.update_from_subscription(subscription, opts={})
-  #   attrs = {
-  #     stripe_event_id: opts[:event_id],
-  #     stripe_subscription_status: subscription.status,
-  #   }
+  def self.update_from_subscription(subscription, opts={})
+    attrs = {
+      stripe_event_id: opts[:event_id],
+      stripe_subscription_status: subscription.status,
+    }
 
-  #   if existing = self.find_by_customer_id(subscription.customer)
-  #     unless existing.update_attributes(attrs)
-  #       Rails.logger.warn "[Stripe Webhook] Updating subscription '#{subscription.id}' failed! \n#{existing.errors.messages}"
-  #     end
-  #   else
-  #     Rails.logger.warn "[Stripe Webhook] Subscription '#{subscription.id}' not found!"
-  #   end
-  # end
+    if existing = self.find_by_customer_id(subscription.customer)
+      unless existing.update_attributes(attrs)
+        Rails.logger.warn "[Stripe Webhook] Updating subscription '#{subscription.id}' failed! \n#{existing.errors.messages}"
+      end
+    else
+      Rails.logger.warn "[Stripe Webhook] Subscription '#{subscription.id}' not found!"
+    end
+  end
 
   def self.find_by_customer_id(id)
     where(stripe_customer_id: id).order(:created_at).last
   end
 
-  # def self.available_plans
-  #   Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
-  # end
+  def self.available_plans
+    Stripe::Plans.constants.map {|p| p.to_s.downcase}.reject {|p| p == 'configuration'}
+  end
 
   def self.current
     # TODO: determine through organization

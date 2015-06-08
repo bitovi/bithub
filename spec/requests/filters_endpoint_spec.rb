@@ -5,8 +5,7 @@ RSpec.describe 'Filter endpoints', type: :request do
   let(:api_version) { 'v3' }
 
   before do
-    post '/register/startup', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-    post '/login', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+    register_and_login
     @embed = FactoryGirl.create(:embed, brand: Brand.current)
   end
 
