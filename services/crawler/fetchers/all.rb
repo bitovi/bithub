@@ -13,6 +13,7 @@ require_relative 'twitter/search'
 require_relative 'twitter/followers'
 require_relative 'twitter/mentions_timeline'
 require_relative 'twitter/user_timeline'
+require_relative 'twitter/favorites'
 
 require_relative 'facebook/get_feed'
 require_relative 'facebook/get_object'
