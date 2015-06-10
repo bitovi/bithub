@@ -7,6 +7,7 @@ require 'poller/services/twitter/user_timeline'
 require 'poller/services/twitter/followers'
 require 'poller/services/twitter/hashtag'
 require 'poller/services/twitter/term'
+require 'poller/services/twitter/favorites'
 
 require 'poller/services/tumblr/blog'
 require 'poller/services/tumblr/tag'

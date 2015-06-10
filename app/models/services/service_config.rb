@@ -53,22 +53,33 @@ end
 
 # god damned auto loading
 Services::Types::Disqus::Forum
+
 Services::Types::Facebook::Page
 Services::Types::Facebook::PublicPage
+
 Services::Types::Foursquare::Venue
+
 Services::Types::Github::Org
 Services::Types::Github::Repo
+
 Services::Types::Instagram::Tag
 Services::Types::Instagram::User
+
 Services::Types::Meetup::Group
+
 Services::Types::Rss::Site
+
 Services::Types::Stackexchange::Tags
+
 Services::Types::Tumblr::Blog
 Services::Types::Tumblr::Tag
+
 Services::Types::Twitter::Followers
 Services::Types::Twitter::Hashtag
 Services::Types::Twitter::Term
 Services::Types::Twitter::UserTimeline
+Services::Types::Twitter::Favorites
+
 Services::Types::Youtube::Channel
 Services::Types::Youtube::Playlist
 Services::Types::Youtube::User
