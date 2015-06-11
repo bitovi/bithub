@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'rails_helper'
 require 'models/embed'
 
@@ -25,6 +26,18 @@ RSpec.describe Embed, :type => :model do
         e2     = FactoryGirl.create(:github_issue, title: 'canjs is awesome')
         expect(embed.determine_state e1).to be_falsey
         expect(embed.determine_state e2).to be_truthy
+      end
+    end
+
+    context 'the embed is strict (approved_by_default is false) but the service is lax (approved_by_default is true)' do
+      it 'determines state for entities coming in' do
+        embed   = FactoryGirl.create(:embed, name: 'jebemte', approved_by_default: false)
+        service = FactoryGirl.create(:github_service, approved_by_default: true, embed: embed)
+        ev      = FactoryGirl.create(:event, service: service, embed: service.embed)
+        e1      = FactoryGirl.create(:github_issue, title: 'blocked entity')
+        e2      = FactoryGirl.create(:github_issue, title: 'approved by service entity', events: [ev])
+        expect(service.embed.determine_state e1).to be_falsey
+        expect(service.embed.determine_state e2).to be_truthy
       end
     end
   end
@@ -65,7 +78,7 @@ RSpec.describe Embed, :type => :model do
         expect(@embed.approved_entities).to match_array [@e1, @e2, @e5, @e6]
       end
     end
-      
+
     context 'given a filter that translates to a full-text search query' do
       it 'performs a full text search on all attributes by conjunctively combining multiple terms and approves all items it detects' do
         @approving = FactoryGirl.create(:filter, action: 'approve', embed: @embed)
