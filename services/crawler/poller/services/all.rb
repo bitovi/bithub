@@ -4,6 +4,7 @@ require 'poller/services/github/org'
 
 require 'poller/services/twitter/common'
 require 'poller/services/twitter/user_timeline'
+require 'poller/services/twitter/user_retweets'
 require 'poller/services/twitter/followers'
 require 'poller/services/twitter/hashtag'
 require 'poller/services/twitter/term'
