@@ -64,6 +64,7 @@ Services::Types::Github::Repo
 
 Services::Types::Instagram::Tag
 Services::Types::Instagram::User
+Services::Types::Instagram::LikedMedia
 
 Services::Types::Meetup::Group
 

@@ -18,6 +18,7 @@ require 'poller/services/youtube/playlist'
 require 'poller/services/youtube/user'
 
 require 'poller/services/facebook/public_page'
+require 'poller/services/instagram/liked_media'
 require 'poller/services/disqus_forum'
 require 'poller/services/meetup_group'
 require 'poller/services/rss_site'
