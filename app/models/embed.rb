@@ -98,11 +98,19 @@ class Embed < ActiveRecord::Base
     state_according_to_filters = filters\
       .sorted_in_application_order.select do|f|
       f.detects?(entity)
-    end.reduce(approved_by_default) do |s,f|
+    end.reduce(determine_default_approval(entity)) do |s,f|
       f.resulting_state
     end
 
     (state_according_to_filters.nil?) ? approved_by_default : state_according_to_filters
+  end
+
+  def determine_default_approval(entity)
+    if service = entity.last_modified_by.service
+      service.approved_by_default || self.approved_by_default
+    else
+      self.approved_by_default
+    end
   end
 
   private

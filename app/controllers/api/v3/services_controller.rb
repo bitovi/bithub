@@ -144,7 +144,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
   end
 
   def service_kind
-    params.require(:service).permit(:feed_name, :type_name)
+    params.require(:service).permit(:feed_name, :type_name, :approved_by_default)
   end
 
   def service_config
