@@ -106,7 +106,7 @@ class Embed < ActiveRecord::Base
   end
 
   def determine_default_approval(entity)
-    if service = entity.last_modified_by.service
+    if entity.last_modified_by && (service = entity.last_modified_by.service)
       service.approved_by_default || self.approved_by_default
     else
       self.approved_by_default
