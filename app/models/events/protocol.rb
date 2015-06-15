@@ -76,6 +76,10 @@ module Events
       @meta.fetch(:embed_name)
     end
     
+    def brand_id
+      @meta.fetch(:embed_id)
+    end
+    
     def embed_id
       @meta.fetch(:embed_id)
     end
@@ -107,7 +111,7 @@ module Events
     end
     
     def repr_for_logs
-      feed_name + '/' + type_name
+      "#{brand_id},#{embed_id},#{embed_id},#{feed_name},#{type_name}"
     end
 
     private
