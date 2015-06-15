@@ -1,5 +1,5 @@
 module Events
-  class BaseError < Exception
+  class BaseError < StandardError
     attr_accessor :context
 
     def initialize(message = nil, context = nil)
@@ -9,8 +9,6 @@ module Events
   end
 
   class BuildingError < BaseError; end
-  class MappingError < BaseError; end
-  class DispatchError < BaseError; end
-  class ValidationError < BaseError; end
+  class DeterminationError < BaseError; end
   class OrphanedEventError < BaseError; end
 end
