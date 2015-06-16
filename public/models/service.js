@@ -94,8 +94,10 @@ var TYPES = {
 	twitter : {
 		followers : 'Followers',
 		hashtag : 'Hashtag',
+		term : 'Search',
 		user_timeline : 'User Timeline',
-		term : 'Search'
+		user_retweets: 'User Retweets',
+		favorites: 'User Favorites'
 	},
 	youtube : {
 		channel : "Channel",
@@ -123,7 +125,7 @@ var NEEDS_OAUTH = {
 		types : ['repo', 'org']
 	},
 	twitter : {
-		types : ['followers', 'hashtag', 'user_timeline', 'term']
+		types : ['followers', 'hashtag', 'user_timeline', 'term', 'favorites', 'user_retweets']
 	},
 	meetup : {
 		types : ['group']
@@ -247,6 +249,11 @@ var Service = can.Model.extend({
 					return;
 				}
 				return val;
+			}
+		},
+		approved_by_default : {
+			set : function(val){
+				return !!val;
 			}
 		}
 	},

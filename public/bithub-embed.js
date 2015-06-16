@@ -4,7 +4,6 @@ import Hub from 'models/hub';
 import BitList from 'bit-list/';
 import Communicator from 'communicator/';
 import 'can/route/';
-import 'style/embed.less!';
 
 var params = can.deparam(window.location.search.substr(1));
 var isLoadedFromIframe = window.parent !== window;

@@ -27,7 +27,7 @@
 						<select can-value="type_name" class="form-control">
 							<option value="">Select Type</option>
 							{{#each typesForFeed}}
-							<option value="{{ @key }}">{{ . }}</option>
+								<option value="{{ @key }}">{{ . }}</option>
 							{{/each}}
 						</select>
 					</div>
@@ -41,11 +41,18 @@
 					<div class="alert alert-danger">Service config has some errors</div>
 				{{/if}}
 
-          {{#if feedInfo }}
-          <div class="alert alert-info">{{ feedInfo }}</div>
-          {{/if}}
+				{{#if feedInfo }}
+					<div class="alert alert-info">{{ feedInfo }}</div>
+				{{/if}}
 
+				
 				{{#renderForm}}
+          <div class="checkbox">
+					  <label>
+						  <input type="checkbox" can-value="service.approved_by_default"> Items collected from this service are approved by default
+					  </label>
+				  </div>
+
 					<div class="clearfix buttons-wrap">
 						<button class="btn btn-primary pull-right save-service">Save Service</button>
 						<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
