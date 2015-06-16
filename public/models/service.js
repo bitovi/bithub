@@ -15,6 +15,20 @@ var isConfigError = function(klass){
 	return (/configerror/).test(klass.toLowerCase());
 };
 
+var getErrorMessage = (function(){
+	var MESSAGES = {
+		autherror: "We are unable to authorize with your service credentials. Are you sure you have rights to access this content?",
+		remoteerror: "Service is currently unavailable. We will try to load data again later.",
+		unknownerror: "We are so sorry. Unknown error occured when we tried to load data from this service. We have been notified about this error, and we'll try to fix it as soon as possible.",
+		ratelimiterror: "Due to number of services authorized with the same account we are unable to load data from this service at the moment. We will try again soon."
+	};
+	return function(error){
+		var klass = error.klass;
+		return MESSAGES[klass] || error.message;
+	};
+})();
+
+
 var convertHexToRgb = function(hex){
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	var r, g, b;
@@ -39,7 +53,7 @@ var GRAPH_COLORS = {
 	stackexchange : convertHexToRgb('#95b26e'),
 	tumblr : convertHexToRgb('#c44900'),
 	twitter : convertHexToRgb('#432534'),
-youtube : convertHexToRgb('#432834')
+	youtube : convertHexToRgb('#432834')
 };
 
 
@@ -304,11 +318,7 @@ var Service = can.Model.extend({
 		return formatConfig(this.attr('config').attr());
 	},
 	formattedError : function(){
-		var klass = this.attr('error.klass');
-		if(!isConfigError(klass)){
-			return 'A problem was encountered when we tried to access the service.';
-		}
-		return this.attr('error.message');
+		return getErrorMessage(this.attr('error'));
 	},
 	formattedErrorClass : function(){
 		var klass = this.attr('error.klass');
