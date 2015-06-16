@@ -22,6 +22,8 @@ import 'components/service-forms/twitter-followers/';
 import 'components/service-forms/twitter-hashtag/';
 import 'components/service-forms/twitter-term/';
 import 'components/service-forms/twitter-user-timeline/';
+import 'components/service-forms/twitter-favorites/';
+import 'components/service-forms/twitter-user-retweets/';
 import 'components/service-forms/youtube-channel/';
 import 'components/service-forms/youtube-playlist/';
 import 'components/service-forms/youtube-user/';

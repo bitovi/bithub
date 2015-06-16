@@ -62,6 +62,14 @@
 	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
 {{/isFeedAndType}}
 
+{{#isFeedAndType 'twitter' 'user_retweets'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
+{{#isFeedAndType 'twitter' 'favorites'}}
+	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
+{{/isFeedAndType}}
+
 {{#isFeedAndType 'twitter' 'term'}}
 	<b>{{service.printFeed}} {{service.printType}} for</b> {{service.config.display_name}}
 {{/isFeedAndType}}
