@@ -30,7 +30,7 @@ module Entities
       end
 
       def caption
-        @event.source_data[:caption].andand[:text] || ''
+        @event.source_data[:caption].andand[:text] || "#{@event.user.id} posted"
       end
 
       def image_url
