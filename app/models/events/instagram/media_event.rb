@@ -1,3 +1,5 @@
+require 'events/protocol'
+
 module Events
   module Instagram
 

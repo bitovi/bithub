@@ -1,9 +1,12 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class IssueEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
+      include GithubEventAccessors
 
       def_delegators :@issue, :id, :state, :title, :body, :number, :labels
       attr_reader :issue, :repo, :actor

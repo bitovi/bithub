@@ -1,10 +1,13 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class DeleteEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
-      include Events::Github::GithubEventAccessors::Refs
+      include GithubEventAccessors
+      include GithubEventAccessors::Refs
 
       attr_reader :actor, :repo
 

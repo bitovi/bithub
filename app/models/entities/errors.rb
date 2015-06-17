@@ -1,5 +1,5 @@
 module Entities
-  class BaseError < Exception
+  class BaseError < StandardError
     attr_accessor :context
     def initialize(message = nil, context = nil)
       super(message)
@@ -7,7 +7,7 @@ module Entities
     end
   end
 
-  class DispatchError < BaseError; end
   class UpdatingError < BaseError; end
+  class DeterminationError < BaseError; end
   class NormalizationError < BaseError; end
 end
