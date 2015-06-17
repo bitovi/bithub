@@ -1,19 +1,23 @@
 require 'events/determinator'
-require 'events/protocol'
-require 'events/github/push_event'
-require 'events/github/custom_issue_event'
 
 describe Events::FeedModuleDeterminator do
 
   describe '#feed_module' do
     context 'provided a feed_name, either through a hint or in meta' do
       it 'returns a feed module' do
-        d = Events::FeedModuleDeterminator.new({
-          meta: { feed_name: 'github' },
-          source_data: { },
-        })
+        expect(
+          Events::FeedModuleDeterminator.new({
+            meta: { feed_name: 'github' },
+            source_data: { },
+          }).feed_module
+        ).to eq(Events::Github)
 
-        expect(d.feed_module).to eq(Events::Github)
+        expect(
+          Events::FeedModuleDeterminator.new({
+            meta: { feed_name: 'facebook' },
+            source_data: { },
+          }).feed_module
+        ).to eq(Events::Facebook)
       end
     end
   end
