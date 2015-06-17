@@ -1,3 +1,5 @@
+require 'events/protocol'
+
 module Events
   module Twitter
 
@@ -28,6 +30,5 @@ module Events
         self
       end
     end
-
   end
 end

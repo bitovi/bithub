@@ -1,9 +1,7 @@
 require 'entities/errors'
-require 'entities/traits/determinable'
 require 'entities/traits/groupable'
 require 'entities/traits/normalizable'
 require 'entities/traits/persistable'
-require 'entities/traits/validatable'
 require 'entities/traits/routeable'
 
 Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
@@ -11,22 +9,10 @@ Dir[File.join('app', 'models', 'wrappers', '**', '*.rb')].each do |f|
 end
 
 module Entities
-
-  module Disqus; end
-  module Github; end
-  module Twitter; end
-  module Meetup; end
-  module Stackexchange; end
-  module Facebook; end
-  module Instagram; end
-  module Tumblr; end
-  module Youtube; end
-  module Foursquare; end
-  module Rss; end
-
   class Protocol
-    include Validatable
-    include Determinable
+    extend Forwardable
+    def_delegators :@event, :brand_id, :embed_id, :service_id
+
     include Groupable
     include Normalizable
     include Persistable
@@ -78,20 +64,8 @@ module Entities
       @type_name ||= feed_and_type_name[1]
     end
 
-    def embed_name
-      @event.embed_name
-    end
-
-    def embed_id
-      @event.embed_id
-    end
-
-    def service_id
-      @event.service_id
-    end
-
     def repr_for_logs
-      feed_name + '/' + type_name
+      "#{brand_id},#{embed_id},#{embed_id},#{feed_name},#{type_name}"
     end
 
     def collect_methods(regexp)
@@ -108,15 +82,3 @@ module Entities
 
   end
 end
-
-require_relative 'feeds/disqus/disqus'
-require_relative 'feeds/github/github'
-require_relative 'feeds/twitter/twitter'
-require_relative 'feeds/meetup/meetup'
-require_relative 'feeds/stackexchange/stackexchange'
-require_relative 'feeds/facebook/facebook'
-require_relative 'feeds/rss/rss'
-require_relative 'feeds/foursquare/foursquare'
-require_relative 'feeds/instagram/instagram'
-require_relative 'feeds/tumblr/tumblr'
-require_relative 'feeds/youtube/youtube'

@@ -1,9 +1,12 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class PullRequestReviewCommentEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
+      include GithubEventAccessors
 
       def_delegators :@comment, :id, :body, :title, :references_to
       attr_reader :actor, :repo, :comment

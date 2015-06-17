@@ -1,3 +1,5 @@
+require 'lib/rabbit_helper'
+
 module Entities
   module Routable
     include ::RabbitHelper::Sugar
