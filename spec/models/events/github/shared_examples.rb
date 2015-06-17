@@ -1,4 +1,4 @@
-require 'models/events/spec_helper.rb'
+require 'spec_helper.rb'
 
 describe Events::Github do
 
