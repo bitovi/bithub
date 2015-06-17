@@ -1,9 +1,12 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class IssueCommentEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
+      include GithubEventAccessors
 
       def_delegators :@comment, :id, :body, :html_url
       def_delegators :@ipr, :number

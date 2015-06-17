@@ -1,9 +1,12 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class PullRequestEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
+      include GithubEventAccessors
 
       def_delegators :@pull_request, :id, :state, :title, :body, :number, :labels
       attr_reader :pull_request, :repo, :actor

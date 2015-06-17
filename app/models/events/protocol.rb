@@ -36,6 +36,7 @@ module Events
       @meta = opts[:meta]
       wrap_response if self.respond_to? :wrap_response
     end
+    attr_reader :source_data
 
     def build
       unless ::Service.find_by_id(service_id)
@@ -121,51 +122,3 @@ module Events
     end
   end
 end
-
-# Disqus
-require 'events/disqus/post_event'
-
-# Facebook
-require 'events/facebook/photo_event'
-require 'events/facebook/status_event'
-
-# Foursquare
-require 'events/foursquare/checkin_event'
-
-# Github
-require 'events/github/commit_comment_event'
-require 'events/github/create_event'
-require 'events/github/custom_issue_event'
-require 'events/github/delete_event'
-require 'events/github/fork_event'
-require 'events/github/github_event_accessors'
-require 'events/github/issue_comment_event'
-require 'events/github/issue_event'
-require 'events/github/pull_request_event'
-require 'events/github/pull_request_review_comment_event'
-require 'events/github/push_event'
-require 'events/github/reference'
-require 'events/github/watch_event'
-
-# Instagram
-require 'events/instagram/media_event'
-
-# Meetup
-require 'events/meetup/event_event'
-require 'events/meetup/rsvp_event'
-
-# Rss
-require 'events/rss/post_event'
-
-# Stackexchange
-require 'events/stackexchange/answer_event'
-require 'events/stackexchange/comment_event'
-require 'events/stackexchange/question_event'
-
-# Tumblr
-require 'events/tumblr/post'
-
-# Twitter
-require 'events/twitter/fake_follow_event'
-require 'events/twitter/follow_event'
-require 'events/twitter/tweet_event'
