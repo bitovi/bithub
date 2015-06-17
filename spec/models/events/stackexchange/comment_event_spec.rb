@@ -1,4 +1,4 @@
-require 'models/events/spec_helper'
+require 'spec_helper'
 
 describe Events::Stackexchange::CommentEvent do
 
