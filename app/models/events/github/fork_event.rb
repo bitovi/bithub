@@ -1,9 +1,12 @@
+require 'events/protocol'
+require_relative 'github_event_accessors'
+
 module Events
   module Github
 
     class ForkEvent < Protocol
       extend Forwardable
-      include Events::Github::GithubEventAccessors
+      include GithubEventAccessors
       
       attr_reader :actor, :repo
 

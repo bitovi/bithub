@@ -1,14 +1,6 @@
 require 'andand'
 require 'core_ext'
-require 'events/protocol'
-
-# only require if in crawler or listener, Rails auto-loads
-if $0 =~ /crawler|listener/
-  require File.join('events', 'github', 'github_event_accessors')
-  Dir[File.join('app', 'models', 'events', '**', '*.rb')].each do |f|
-    require f.gsub('app/models/', '')
-  end
-end
+require 'events/all_events'
 
 module Events
   def self.event_instance(packet)
@@ -66,6 +58,39 @@ module Events
       @data.fetch(:source_data)
     end
   end
+  
+  module Disqus
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Disqus::PostEvent }
+      end
+    end
+  end
+  
+  module Facebook
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+
+      def type_class
+        super do 
+          if Events::Facebook.constants.include? type_name
+            Events::Facebook.const_get type_name
+          end
+        end
+      end
+
+      def type_name
+        "#{source_data[:type]}_event".camel_case.to_sym
+      end
+    end
+  end
+  
+  module Foursquare
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Foursquare::CheckinEvent }
+      end
+    end
+  end
 
   module Github
     class TypeClassDeterminator < BaseTypeClassDeterminator
@@ -112,6 +137,53 @@ module Events
       # end
     end
   end
+  
+  module Instagram
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Instagram::MediaEvent }
+      end
+    end
+  end
+  
+  module Meetup
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+
+      def type_class
+        super do
+          if source_data[:rsvp_id]
+            Events::Meetup::RsvpEvent
+          elsif source_data[:event_url]
+            Events::Meetup::EventEvent
+          end
+        end
+      end
+    end
+  end
+
+  module Rss
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Rss::PostEvent }
+      end
+    end
+  end
+
+  module Stackexchange
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Stackexchange::QuestionEvent }
+      end
+    end
+  end
+
+  module Tumblr
+    class TypeClassDeterminator < BaseTypeClassDeterminator
+      def type_class
+        super { Events::Tumblr::Post }
+      end
+    end
+  end
 
   module Twitter
     class TypeClassDeterminator < BaseTypeClassDeterminator
@@ -148,86 +220,6 @@ module Events
         not(source_data[:text].nil?) && not(source_data[:user].andand[:screen_name].nil?)
       end
 
-    end
-  end
-
-  module Facebook
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-
-      def type_class
-        super do 
-          if Events::Facebook.constants.include? type_name
-            Events::Facebook.const_get type_name
-          end
-        end
-      end
-
-      def type_name
-        "#{source_data[:type]}_event".camel_case.to_sym
-      end
-    end
-  end
-  
-  module Meetup
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-
-      def type_class
-        super do
-          if source_data[:rsvp_id]
-            Events::Meetup::RsvpEvent
-          elsif source_data[:event_url]
-            Events::Meetup::EventEvent
-          end
-        end
-      end
-    end
-  end
-
-  module Stackexchange
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Stackexchange::QuestionEvent }
-      end
-    end
-  end
-
-  module Rss
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Rss::PostEvent }
-      end
-    end
-  end
-
-  module Disqus
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Disqus::PostEvent }
-      end
-    end
-  end
-
-  module Foursquare
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Foursquare::CheckinEvent }
-      end
-    end
-  end
-
-  module Instagram
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Instagram::MediaEvent }
-      end
-    end
-  end
-
-  module Tumblr
-    class TypeClassDeterminator < BaseTypeClassDeterminator
-      def type_class
-        super { Events::Tumblr::Post }
-      end
     end
   end
 
