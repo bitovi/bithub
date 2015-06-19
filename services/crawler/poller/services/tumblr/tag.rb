@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Tumblr
   class Tag < Supervisors::Service
 
@@ -7,7 +9,7 @@ module Supervisors::Services::Tumblr
         Poller, *[
           @path,
           Fetchers::Tumblr::Tagged.new(tag),
-          { interval: 600 }
+          { interval: TUMBLR_TAG }
         ])
     end
 

@@ -8,7 +8,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::RepoActivity.new(client, { user_repo: repo_name }),
-          {interval: 60}
+          { interval: GITHUB_REPO_ACTIVITY }
         ])
 
       @endpoints.supervise_as(
@@ -16,7 +16,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::RepoIssues.new(client, { user_repo: repo_name }),
-          {interval: 600}
+          { interval: GITHUB_REPO_ISSUES }
         ])
 
       @endpoints.supervise_as(
@@ -24,7 +24,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::RepoPullRequests.new(client, { user_repo: repo_name }),
-          {interval: 600}
+          { interval: GITHUB_REPO_PULL_REQUESTS }
         ])
 
 
@@ -33,7 +33,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::RepoIssuesComments.new(client, { user_repo: repo_name }),
-          {interval: 300}
+          { interval: GITHUB_REPO_ISSUE_COMMENTS }
         ])
 
 
@@ -42,7 +42,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::RepoPullRequestsComments.new(client, { user_repo: repo_name }),
-          {interval: 300}
+          { interval: GITHUB_REPO_PULL_REQUEST_COMMENTS }
         ])
     end
 

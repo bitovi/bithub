@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Stackexchange
   class Tags < Supervisors::Service
 
@@ -7,7 +9,7 @@ module Supervisors::Services::Stackexchange
         Poller, *[
           @path,
           Fetchers::Stackexchange::Questions.new(tags: tags, token: token),
-          {interval: 30}
+          { interval: STACKEXCHANGE_QUESTIONS }
         ])
 
       @endpoints.supervise_as(
@@ -15,7 +17,7 @@ module Supervisors::Services::Stackexchange
         Poller, *[
           @path,
           Fetchers::Stackexchange::Search.new(tags: tags, token: token),
-          {interval: 60}
+          { interval: STACKEXCHANGE_SEARCH }
         ])
     end
 
