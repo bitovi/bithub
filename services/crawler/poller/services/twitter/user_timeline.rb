@@ -8,7 +8,7 @@ module Supervisors::Services::Twitter
         Poller, *[
           @path,
           Fetchers::Twitter::UserTimeline.new(client, { user_handle: user_handle }),
-          {interval: 60}
+          { interval: TWITTER_USER_TIMELINE }
         ])
     end
   end

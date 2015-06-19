@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Rss
   class Site < Supervisors::Service
 
@@ -6,8 +8,10 @@ module Supervisors::Services::Rss
         @path.next_level(NodeTypes::EndpointInfo.new(url)).actor_name,
         Poller, *[
           @path,
-          Fetchers::Rss::Rss.new(url),
-          { interval: 600, decorator: Decorators::Rss.new(service_config) }
+          Fetchers::Rss::Rss.new(url), {
+            interval: Intervals::Polling::RSS_SITE,
+            decorator: Decorators::Rss.new(service_config)
+          }
         ])
     end
 

@@ -1,3 +1,4 @@
+require 'services/intervals'
 require 'github_api'
 
 module Supervisors::Services::Github

@@ -1,3 +1,4 @@
+require 'services/intervals'
 require 'rmeetup'
 require 'persistent/id_set'
 
@@ -12,6 +13,7 @@ module Supervisors::Services::Meetup
         Poller, *[
           @path,
           Fetchers::Meetup::Events.new(client, group_ids: [group_id], event_set: event_set),
+          { interval: MEETUP_GROUP }
         ])
 
       @endpoints.supervise_as(
@@ -19,6 +21,7 @@ module Supervisors::Services::Meetup
         Poller, *[
           @path,
           Fetchers::Meetup::Rsvps.new(client, event_set: event_set),
+          { interval: MEETUP_EVENT }
         ])
     end
 
