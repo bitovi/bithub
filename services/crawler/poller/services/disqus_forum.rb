@@ -1,3 +1,4 @@
+require 'services/intervals'
 require 'supervisors/service'
 
 module Supervisors::Services::Disqus
@@ -9,7 +10,7 @@ module Supervisors::Services::Disqus
         Poller, *[
           @path,
           Fetchers::Disqus::Comments.new(api_key: api_key, forum: forum_url),
-          {interval: 60}
+          { interval: DISQUS_FORUM }
         ])
     end
 

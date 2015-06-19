@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Facebook
   class PublicPage < Supervisors::Service
 
@@ -7,7 +9,7 @@ module Supervisors::Services::Facebook
         Poller, *[
           @path,
           Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }),
-          { interval: 3600 }
+          { interval: Intervals::Poller::FACEBOOK_FEED }
         ])
     end
 

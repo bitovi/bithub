@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Tumblr
   class Blog < Supervisors::Service
 
@@ -7,7 +9,7 @@ module Supervisors::Services::Tumblr
         Poller, *[
           @path,
           Fetchers::Tumblr::Posts.new(hostname),
-          { interval: 600 }
+          { interval: TUMBLR_BLOG }
         ])
     end
 

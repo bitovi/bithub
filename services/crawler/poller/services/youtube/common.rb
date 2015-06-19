@@ -1,3 +1,5 @@
+require 'services/intervals'
+
 module Supervisors::Services::Youtube
   module Common
 
