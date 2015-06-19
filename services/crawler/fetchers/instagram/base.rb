@@ -17,21 +17,35 @@ module Fetchers
         @client       = create_client
       end
 
-      def fetch(opts={})
-        opts[:count] ||= @count
+      def fetch
+        opts = { count: @count }
+        agg_results = []
 
+        # initial fetch
         handle_errors do
           @result = fetch_once opts
         end
+        agg_results += @result.to_ary
+
+        # iterate
+        while agg_results.count < @count && has_more?
+          handle_errors do
+            @result = fetch_once opts.merge({max_id: has_more?})
+          end
+          agg_results += @result.to_ary
+        end
+
+        agg_results
       end
 
-      def has_next?
+      def has_more?
         @result && @result.pagination.andand("next_max_id")
       end
 
-      def next
-        if next_max_id = has_next?
-          @result = fetch max_id: next_max_id
+      def load_more
+        if next_max_id = has_more?
+          opts = { max_id: next_max_id, count: @count }
+          @result = fetch opts
         end
       end
 
