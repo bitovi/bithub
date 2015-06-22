@@ -35,10 +35,6 @@ module Entities
         end
       end
 
-      def taggify_state
-        [ResponseMapping[@event.response]]
-      end
-
       def find_by_rsvp_id
         Entities::Meetup::Rsvp.find_by_rsvp_id(@event.rsvp_id)
       end
