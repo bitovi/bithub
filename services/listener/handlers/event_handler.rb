@@ -12,7 +12,10 @@ class EventHandler < Handler
   end
   
   def process_packet(packet)
-    event = Events.event_instance(packet)
+    event = Events.event_instance(
+      source_data = packet.fetch('source_data'),
+      meta = packet.fetch('meta')
+    )
         
     event_processing_time = Benchmark.measure do
       event.build.normalize.validate.persist!
