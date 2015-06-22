@@ -17,11 +17,6 @@ module Entities
       bumping_thread_time = Benchmark.measure do
         bump_thread
       end
-      
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] finding_parents completed in #{finding_parents_time}"
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] finding_children completed in #{finding_children_time}"
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] writing_history completed in #{writing_history_time}"
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] bumping_thread completed in #{bumping_thread_time}"
 
       self
     end
@@ -30,13 +25,13 @@ module Entities
       find_children_time = Benchmark.measure do
         if self.respond_to? :find_children
           if (c = find_children)
-            @instance.children += if c.is_a?(Array)
-                                    c
-                                  elsif c.is_a?(ActiveRecord::Relation)
-                                    c.where(true)
-                                  else
-                                    [c]
-                                  end
+            if c.is_a?(Array)
+              @instance.children += c
+            elsif c.is_a?(ActiveRecord::Relation)
+              @instance.children += c.where(true)
+            else
+              @instance.children += [c]
+            end
           end
         end
       end
@@ -51,9 +46,6 @@ module Entities
         end
       end
       
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] find_children_time completed in #{find_children_time}"
-      Celluloid.logger.debug "[DISPATCHER][GROUPING] update_from_children_time completed in #{update_from_children_time}"
-
       self
     end
 
