@@ -87,18 +87,6 @@ module Entities
         .repo_name(@event.repo.name)
         .number(number)
       end
-
-      def taggify_labels
-        if @instance.props[:label_names]
-          input = @instance.props[:label_names]
-          tags  = Tag.tagged_with('labels')
-
-          Tagger::List.new(tags).taggify(input)
-        else
-          []
-        end
-      end
-
     end
   end
 end
