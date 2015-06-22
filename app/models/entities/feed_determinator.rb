@@ -4,8 +4,7 @@ require 'entities/entities'
 module Entities
   class FeedDeterminator
     def initialize(event)
-      puts "--------> #{event.class}"
-      if !event.kind_of?(Events::Protocol) # || !event.kind_of(Event)
+      if !event.kind_of?(Events::Protocol)
         fail Entities::DeterminationError.new('Determinator requires an Event to work.')
       end
       @event = event
