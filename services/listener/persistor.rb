@@ -10,17 +10,19 @@ class Persistor
   def initialize
     @events_processed = 0
     every(Intervals::Persistor::BATCH) do
-      info "Processed #{@events_processed} in the last #{Intervals::Persistor::BATCH} seconds"
+      info "[#{name_for_logs}] Processed #{@events_processed} in the last #{Intervals::Persistor::BATCH} seconds"
       @events_processed = 0
     end
+
+    info "[#{name_for_logs}] Started, checking for work every #{Intervals::Persistor::HEARTBEAT} seconds"
     check_for_work
   end
 
   def check_for_work
     if work_to_be_done? && bulk_persist
-      after(1) { check_for_work }
+      after(Intervals::Persistor::HEARTBEAT) { check_for_work }
     else
-      after(1) { check_for_work } 
+      after(Intervals::Persistor::HEARTBEAT) { check_for_work } 
     end
   end
   
