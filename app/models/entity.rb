@@ -224,12 +224,15 @@ class Entity < ActiveRecord::Base
     Sanitize.fragment(self.body, Sanitize::Config::RESTRICTED).strip
   end
 
-  def deserialize
-    Entities::Dispatcher.dispatch(self.last_modified_by.deserialize)
-  end
-
   def wrapped
     wrapper_class.new(last_modified_by.wrapped)
+  end
+
+  def wrapper_class
+    fn = feed_name.camelize.to_sym; tn = type_name.camelize.to_sym
+    if ::Entities.constants.include?(fn) && ::Entities.const_get(fn).constants.include?(tn)
+      ::Entities.const_get(fn).const_get(tn)
+    end
   end
 
   # private
@@ -285,12 +288,5 @@ class Entity < ActiveRecord::Base
       meta: meta_msg(embed, is_approved(embed)),
       payload: payload
     }
-  end
-
-  def wrapper_class
-    fn = feed_name.camelize.to_sym; tn = type_name.camelize.to_sym
-    if ::Entities.constants.include?(fn) && ::Entities.const_get(fn).constants.include?(tn)
-      ::Entities.const_get(fn).const_get(tn)
-    end
   end
 end
