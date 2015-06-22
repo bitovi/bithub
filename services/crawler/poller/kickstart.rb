@@ -24,7 +24,7 @@ require 'rabbit_helper'
 require 'logger_factory'
 
 # /app/models
-require 'events/dispatcher'
+require 'events/events'
 
 # /CRAWLER_DIR
 require 'configuration_fetcher'

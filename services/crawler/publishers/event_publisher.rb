@@ -1,3 +1,5 @@
+require 'events/events'
+
 require 'persistent/digest_set'
 require 'connection_manager'
 require 'rabbit_helper'
@@ -54,7 +56,7 @@ class EventPublisher
     feed      = owner_data.service.feed_name
     processed = nil
 
-    dispatched = Events::Dispatcher.dispatch(event, feed)
+    dispatched = Events.event_instance(event, feed)
 
     processed = {
       meta: owner_data.to_h,
@@ -63,7 +65,7 @@ class EventPublisher
     }
 
     decorator.decorate processed
-  rescue Events::DispatchError => e
+  rescue Events::DeterminationError => e
     error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e}"
     nil
   rescue KeyError => e
