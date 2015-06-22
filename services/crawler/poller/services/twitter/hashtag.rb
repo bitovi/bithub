@@ -8,7 +8,7 @@ module Supervisors::Services::Twitter
         Poller, *[
           @path,
           Fetchers::Twitter::Search.new(client, { term: hashtag }),
-          { interval: TWITTER_HASHTAG }
+          { interval: Intervals::Services::TWITTER_HASHTAG }
         ])
     end
 

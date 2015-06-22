@@ -21,7 +21,7 @@ class Poller
     @decorator = opts.fetch(:decorator) { Decorators::Basic.new }
     @lock_ttl = opts.fetch(:interval) { 3600 }
 
-    @timer = every(Intervals::POLLER_HEARTBEAT) { poll }
+    @timer = every(Intervals::Poller::HEARTBEAT) { poll }
 
     every(Intervals::ACTOR_MAILBOX_REPORT) do
       info "[POLLER][#{@owner_data.to_log_format}] Mailbox size: #{Actor.current.mailbox.size}"

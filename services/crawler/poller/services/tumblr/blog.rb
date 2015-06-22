@@ -9,7 +9,7 @@ module Supervisors::Services::Tumblr
         Poller, *[
           @path,
           Fetchers::Tumblr::Posts.new(hostname),
-          { interval: TUMBLR_BLOG }
+          { interval: Intervals::Services::TUMBLR_BLOG }
         ])
     end
 

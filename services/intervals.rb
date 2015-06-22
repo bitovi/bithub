@@ -1,9 +1,20 @@
 module Intervals
   ACTOR_MAILBOX_REPORT = 30
-  POLLER_HEARTBEAT = 10
-  COMMAND_HANDLER_RETRY = 3
 
-  module Polling
+  module CommandHandler
+    RETRY = 3
+  end
+
+  module Poller
+    HEARTBEAT = 10
+  end
+
+  module Persistor
+    HEARTBEAT = 3
+    REPORT = 60
+  end
+
+  module Services
     FACEBOOK_FEED = 3600
 
     GITHUB_ORG_ACTIVITY = 60
