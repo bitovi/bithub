@@ -4,7 +4,7 @@ module Services
       class PublicPage
         include Virtus.model(:strict => true)
         attribute :id, String
-        attribute :url, String
+        attribute :url, String, :default => ''
         attribute :display_name, String, :default => ''
 
         def url=(url)
