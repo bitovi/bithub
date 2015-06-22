@@ -10,7 +10,7 @@ module Supervisors::Services::Disqus
         Poller, *[
           @path,
           Fetchers::Disqus::Comments.new(api_key: api_key, forum: forum_url),
-          { interval: DISQUS_FORUM }
+          { interval: Intervals::Services::DISQUS_FORUM }
         ])
     end
 

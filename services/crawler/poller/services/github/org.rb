@@ -8,7 +8,7 @@ module Supervisors::Services::Github
         Poller, *[
           @path,
           Fetchers::Github::OrgActivity.new(client, { org_name: org_name }),
-          { interval: Intervals::Poller::GITHUB_ORG_ACTIVITY }
+          { interval: Intervals::Services::GITHUB_ORG_ACTIVITY }
         ])
     end
 

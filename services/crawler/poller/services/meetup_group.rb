@@ -13,7 +13,7 @@ module Supervisors::Services::Meetup
         Poller, *[
           @path,
           Fetchers::Meetup::Events.new(client, group_ids: [group_id], event_set: event_set),
-          { interval: MEETUP_GROUP }
+          { interval: Intervals::Services::MEETUP_GROUP }
         ])
 
       @endpoints.supervise_as(
@@ -21,7 +21,7 @@ module Supervisors::Services::Meetup
         Poller, *[
           @path,
           Fetchers::Meetup::Rsvps.new(client, event_set: event_set),
-          { interval: MEETUP_EVENT }
+          { interval: Intervals::Services::MEETUP_EVENT }
         ])
     end
 

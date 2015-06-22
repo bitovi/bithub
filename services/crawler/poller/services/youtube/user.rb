@@ -10,7 +10,7 @@ module Supervisors::Services::Youtube
         Poller, *[
           @path,
           Fetchers::Youtube::UserVideos.new(client),
-          { interval: YOUTUBE_USER }
+          { interval: Intervals::Services::YOUTUBE_USER }
         ])
     end
 

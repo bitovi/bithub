@@ -9,7 +9,7 @@ module Supervisors::Services::Stackexchange
         Poller, *[
           @path,
           Fetchers::Stackexchange::Questions.new(tags: tags, token: token),
-          { interval: STACKEXCHANGE_QUESTIONS }
+          { interval: Intervals::Services::STACKEXCHANGE_QUESTIONS }
         ])
 
       @endpoints.supervise_as(
@@ -17,7 +17,7 @@ module Supervisors::Services::Stackexchange
         Poller, *[
           @path,
           Fetchers::Stackexchange::Search.new(tags: tags, token: token),
-          { interval: STACKEXCHANGE_SEARCH }
+          { interval: Intervals::Services::STACKEXCHANGE_SEARCH }
         ])
     end
 
