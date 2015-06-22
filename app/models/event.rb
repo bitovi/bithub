@@ -14,11 +14,7 @@ class Event < ActiveRecord::Base
   end
 
   def wrapped
-    wrapper_class.new(source_data, {
-      embed_id: embed.id,
-      embed_name: embed.name,
-      service_id: service.id
-    })
+    wrapper_class.new(source_data: source_data, meta: props)
   end
 
   def wrapper_class

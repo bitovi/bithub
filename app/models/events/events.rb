@@ -26,3 +26,16 @@ require 'events/tumblr/post_event'
 require 'events/twitter/fake_follow_event'
 require 'events/twitter/follow_event'
 require 'events/twitter/tweet_event'
+
+require 'events/feed_determinator'
+require 'events/type_determinator'
+
+module Events
+  def self.event_instance(packet, hint = nil)
+    event_class(packet, hint).new(packet)
+  end
+
+  def self.event_class(packet, hint = nil)
+    FeedDeterminator.new(packet, hint).feed_module::TypeDeterminator.new(packet).type_class
+  end
+end
