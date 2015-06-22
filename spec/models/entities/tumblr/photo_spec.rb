@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Entities::Tumblr::Photo do
   describe 'data' do
     it 'prepares the data for building/updating' do
-      post_event = Events::Tumblr::Post.new(
+      post_event = Events::Tumblr::PostEvent.new(
         raw_data(response_path: 'tumblr/tagged.json')['response'][1])
 
       entity_wrapper = Entities::Tumblr::Photo.new(post_event)
