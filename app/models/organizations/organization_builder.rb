@@ -1,3 +1,5 @@
+require 'core_ext'
+
 module Organizations
   class OrganizationBuilder
 
