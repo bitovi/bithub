@@ -3,7 +3,6 @@ namespace :data do
   task :import => :environment do
     puts "--- BEGIN data:import"
     Rake::Task["data:import_or_update_countries"].execute
-    Rake::Task["data:import_or_update_tags"].execute
     Rake::Task["data:import_plans"].execute
     Rake::Task["data:import_invite_codes"].execute if Rails.env.development?
     # Rake::Task["data:create_or_reset_admin_account"].execute

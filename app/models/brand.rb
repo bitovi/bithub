@@ -34,13 +34,6 @@ class Brand < ActiveRecord::Base
     Apartment::Tenant.create tenant_name
     Apartment::Tenant.switch! tenant_name
 
-    # run seed tasks
-    Bithub::Application.load_tasks
-
-    # http://stackoverflow.com/questions/577944/how-to-run-rake-tasks-from-within-rake-tasks
-    Rake::Task['data:import_or_update_tags'].reenable
-    Rake::Task['data:import_or_update_tags'].invoke
-
     Apartment::Tenant.switch!
   end
 
