@@ -19,9 +19,10 @@ module Entities
     include Routable
 
     def initialize(payload)
-      @payload = payload
-      @event = @payload
+      @event = payload
     end
+
+    def payload; @event; end
     attr_reader :event
 
     def procure
