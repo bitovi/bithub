@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.2'
+ruby '2.1.6'
 
 gem 'unicorn'
 gem 'rails', '4.1.7'
@@ -32,7 +32,6 @@ gem 'enumerize'
 gem 'sinatra'
 gem 'sidekiq', '~> 3.2'
 gem 'sidetiq'
-gem 'acts-as-taggable-on'
 gem 'ranked-model'
 gem 'jbuilder'
 
@@ -63,7 +62,6 @@ gem 'log4r', '~> 1.1'
 gem 'sass'
 gem 'bootstrap-sass', '~> 3.3.4'
 
-gem 'levenshtein-ffi', :require => 'levenshtein'
 gem 'muster', :github => 'neektza/muster'
 
 # API client libs
