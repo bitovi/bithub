@@ -24,6 +24,7 @@ require 'connection_manager'
 require 'events/events'
 
 # /LISTENER_DIR
+require 'persistor'
 require 'listener'
 require 'handlers/error_handler'
 require 'handlers/command_handler'
@@ -35,24 +36,20 @@ require 'pry' if $env == 'development'
 logger = LoggerFactory.new('listener', :environment => $env).logger
 Celluloid.logger = logger
 
-class Listeners < Celluloid::SupervisionGroup
+class WebWorkers < Celluloid::SupervisionGroup
+  supervise(Persistor, as: :entity_persistor, args: [])
+
   supervise(
-    Listener,
-    as: :error_listener,
-    args: ['q.web.errors', 'errors', ErrorHandler]
+    Listener, as: :error_listener, args: ['q.web.errors', 'errors', ErrorHandler]
   )
 
   supervise(
-    Listener,
-    as: :event_listener,
-    args: ['q.web.events', 'events', EventHandler]
+    Listener, as: :event_listener, args: ['q.web.events', 'events', EventHandler]
   )
 
   supervise(
-    Listener,
-    as: :command_listener,
-    args: ['q.web.commands', 'commands', CommandHandler]
+    Listener, as: :command_listener, args: ['q.web.commands', 'commands', CommandHandler]
   )
 end
 
-Listeners.run
+WebWorkers.run
