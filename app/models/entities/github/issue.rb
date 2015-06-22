@@ -47,7 +47,7 @@ module Entities
           most_recent_child.source_data.symbolize_keys!
 
           data = most_recent_child.last_modified_by.source_data
-          event = Events::Dispatcher.dispatch(data, 'github')
+          event = Events::Github::TypeClassDeterminator.new(data).type_class.new(data)
 
           # IssueComment, has an embedded Issue or PullRequest that have labels etc
           if event.respond_to? :ipr
