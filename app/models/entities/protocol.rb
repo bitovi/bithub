@@ -18,11 +18,9 @@ module Entities
     include Persistable
     include Routable
 
-    def initialize(payload)
-      @event = payload
+    def initialize(event)
+      @event = event
     end
-
-    def payload; @event; end
     attr_reader :event
 
     def procure
