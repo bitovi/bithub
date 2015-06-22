@@ -1,28 +1,48 @@
+require 'events/events'
 require 'handlers/handler'
 
 class EventHandler < Handler
+
   def handle(packet)
-    b_id, _, _= destruct(packet)
-    Celluloid.logger.info "[#{name_for_logs}][#{meta_to_log_format(packet)}] New Event received"
+    brand_id = packet.fetch('meta').fetch('brand_id')
 
-    @listener.handle_errors do
-
-      Apartment::Tenant.switch(Brand.find(b_id).name) do
-        ret_val = nil
-
-        dispatching_time = Benchmark.measure do
-          ret_val = Dispatcher.new(logger: Celluloid.logger).dispatch(packet)
-        end
-
-        Celluloid.logger.info "[#{name_for_logs}] Total dispatching time: #{dispatching_time}"
-        
-        ret_val
-      end
+    Apartment::Tenant.switch(Brand.find(brand_id).tenant_name) do
+      process_packet(packet)
     end
   end
+  
+  def process_packet(packet)
+    event = Events.event_instance(packet)
+        
+    event_processing_time = Benchmark.measure do
+      event.build.normalize.validate.persist!
+    end
 
-  def destruct(packet)
-    meta = packet.fetch('meta')
-    [ meta.fetch('brand_id'), meta.fetch('embed_id'), meta.fetch('service_id')]
+    Celluloid.logger.info "[#{name_for_logs}][#{event.repr_for_logs}] processed in #{event_processing_time}"
+
+    event
+
+  rescue Events::DeterminationError => err
+    Celluloid.logger.warn "[#{name_for_logs}] #{err.message} | #{err.context}"
+    nil
+
+  rescue ActiveRecord::RecordNotUnique => err
+    Celluloid.logger.warn "[#{name_for_logs}][#{event.repr_for_logs}] #{err}"
+    nil
+  
+  rescue Events::OrphanedEventError => err
+    Celluloid.logger.warn "[#{name_for_logs}][#{event.repr_for_logs}] #{err.message}"
+    nil
+  
+  rescue Events::BuildingError => err
+    Celluloid.logger.error "[#{name_for_logs}][#{event.repr_for_logs}] #{err}"
+    nil
+
+  rescue => err
+    Celluloid.logger.error "[#{name_for_logs}] #{err}"
+    nil
+
+  ensure
+    Apartment::Tenant.switch!
   end
 end
