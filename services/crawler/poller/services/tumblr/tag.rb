@@ -9,7 +9,7 @@ module Supervisors::Services::Tumblr
         Poller, *[
           @path,
           Fetchers::Tumblr::Tagged.new(tag),
-          { interval: TUMBLR_TAG }
+          { interval: Intervals::Services::TUMBLR_TAG }
         ])
     end
 

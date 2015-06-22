@@ -9,7 +9,7 @@ module Supervisors::Services::Rss
         Poller, *[
           @path,
           Fetchers::Rss::Rss.new(url), {
-            interval: Intervals::Polling::RSS_SITE,
+            interval: Intervals::Services::RSS_SITE,
             decorator: Decorators::Rss.new(service_config)
           }
         ])

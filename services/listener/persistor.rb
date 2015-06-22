@@ -5,12 +5,10 @@ class Persistor
   include Celluloid
   include Celluloid::Logger
   
-  BATCH_SIZE = 100
-
   def initialize
     @events_processed = 0
-    every(Intervals::Persistor::BATCH) do
-      info "[#{name_for_logs}] Processed #{@events_processed} in the last #{Intervals::Persistor::BATCH} seconds"
+    every(Intervals::Persistor::REPORT) do
+      info "[#{name_for_logs}] Processed #{@events_processed} in the last #{Intervals::Persistor::REPORT} seconds"
       @events_processed = 0
     end
 
@@ -27,18 +25,16 @@ class Persistor
   end
   
   def work_to_be_done?
-    res = Brand.pluck(:tenant_name).map do |tn|
-      Apartment::Tenant.switch(tn) do
-        Event.unprocessed.count
-      end
-    end
-    res.sum > 0
+    Brand.pluck(:tenant_name).map do |tn|
+      Apartment::Tenant.switch(tn) { Event.unprocessed.count }
+    end.sum > 0
   end
 
   def bulk_persist
     Brand.pluck(:tenant_name).each do |tn|
       Apartment::Tenant.switch(tn) do
-        Event.unprocessed.limit(BATCH_SIZE).find_each do |event|
+        # 100 at a time so all brands can get their share of entities in
+        Event.unprocessed.limit(100).map do |event|
           @events_processed += 1
           process_event(event)
         end

@@ -10,7 +10,7 @@ module Supervisors::Services::Youtube
         Poller, *[
           @path,
           Fetchers::Youtube::PlaylistVideos.new(client, { playlist_id: target_id }),
-          { interval: YOUTUBE_PLAYLIST }
+          { interval: Intervals::Services::YOUTUBE_PLAYLIST }
         ])
     end
 

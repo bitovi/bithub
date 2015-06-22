@@ -1,11 +1,10 @@
 require 'bunny'
 require 'connection_manager'
+require 'services/intervals'
 
 class CommandHandler
   include Celluloid
   include Celluloid::Logger
-
-  RETRY_INTERVAL = 5
 
   def initialize(opts={})
     @consumer_name = opts.fetch(:consumer_name)
@@ -23,7 +22,7 @@ class CommandHandler
       @q.purge # Main supervisor just booted, so we have a fresh state of the world.
       listen
     else
-      after(RETRY_INTERVAL) { wait_for_receiver }
+      after(Intervals::CommandHandler::RETRY) { wait_for_receiver }
     end
   end
 

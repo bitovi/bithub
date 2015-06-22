@@ -9,7 +9,7 @@ module Supervisors::Services::Facebook
         Poller, *[
           @path,
           Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }),
-          { interval: Intervals::Poller::FACEBOOK_FEED }
+          { interval: Intervals::Services::FACEBOOK_FEED }
         ])
     end
 
