@@ -12,7 +12,7 @@ class Event < ActiveRecord::Base
   scope :unprocessed, -> { where(is_processed: false) }
 
   def wrapped
-    wrapper_class.new(source_data: source_data, meta: props)
+    wrapper_class.new(source_data, meta)
   end
 
   def wrapper_class
