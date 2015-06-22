@@ -25,7 +25,7 @@ FactoryGirl.define do
     end
 
     trait :with_determined_tags do
-      tag_list ['some_feed','some_content_tag']
+      # we have no tags no more
     end
 
     trait :with_determined_author do
@@ -47,7 +47,6 @@ FactoryGirl.define do
 
       trait :event do
         type_name 'event'
-        tag_list %w(haskell)
         
         title "We're organizing a new Haskell meetup this week"
       end
@@ -58,21 +57,18 @@ FactoryGirl.define do
 
       trait :tweet do
         type_name 'tweet'
-        tag_list %w(canjs)
 
         title "A hashtag #canjs and a @canjs mention."
       end
 
       trait :retweet do
         type_name 'tweet'
-        tag_list %w(canjs)
 
         title "RT: A hashtag #canjs and a @canjs mention."
       end
 
       trait :follow do
         type_name 'tweet'
-        tag_list %w(canjs)
 
         title "followed @canjs"
       end
@@ -89,8 +85,6 @@ FactoryGirl.define do
 
       factory :github_issue do
         type_name 'issue'
-        tag_list %w(bug canjs)
-
         title "raised issue #1"
 
         trait :with_source_data do
@@ -100,7 +94,6 @@ FactoryGirl.define do
 
       factory :github_push do
         type_name 'push'
-        tag_list %w(canjs)
 
         trait :with_push_entity_source_data do
           source_data(push_entity_source_data)
@@ -109,15 +102,11 @@ FactoryGirl.define do
 
       factory :github_pull_request do
         type_name 'pull_request'
-        tag_list %w(canjs)
-
         title "requested a pull"
       end
 
       factory :github_issue_comment do
         type_name 'issue_comment'
-        tag_list %w(canjs)
-
         title "commented on issue #1"
 
         trait :with_source_data do
@@ -127,15 +116,11 @@ FactoryGirl.define do
 
       factory :github_watch do
         type_name 'watch'
-        tag_list %w(canjs)
-
         title "started watching bitovi/canjs"
       end
 
       factory :github_commit_comment do
         type_name 'commit_comment'
-        tag_list %w(canjs)
-
         title "commented on a commit 4b2342hh"
       end
     end
