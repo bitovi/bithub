@@ -3,12 +3,8 @@ class EntityDecorator < Draper::Decorator
 
   delegate_all
 
-  def tag_names
-    cached_tags
-  end
-
   def title
-    if (contains? source.cached_tags, ['tweet', 'follow'])
+    if ['tweet', 'follow'].include?(source.feed_name)
       apply_hyperlinks(source.title, source.props['entities_urls'])
     else
       source.title
@@ -16,7 +12,7 @@ class EntityDecorator < Draper::Decorator
   end
 
   def body
-    if (contains? source.cached_tags, ['github','stackexchange','bithub']) && source.body
+    if ['github','stackexchange'].include?(source.feed_name) && source.body
       markdown = Redcarpet::Markdown.new(
         Redcarpet::Render::HTML,
         :fenced_code_blocks => true,
