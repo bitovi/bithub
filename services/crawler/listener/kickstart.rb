@@ -24,7 +24,7 @@ require 'logger_factory'
 require 'services/intervals'
 
 # /app/models
-require 'events/dispatcher'
+require 'events/events'
 
 # /CRAWLER_DIR
 require 'configuration_fetcher'
