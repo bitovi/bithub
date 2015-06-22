@@ -25,14 +25,6 @@ module Entities
         Entity.feed('rss').type('post').where(url: @event.link)
       end
 
-      def taggify_by_tag_with
-        if (t = service_config['tag_with'])
-          [t.snake_case]
-        else
-          []
-        end
-      end
-
       private
 
       def service_config

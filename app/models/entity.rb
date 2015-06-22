@@ -8,8 +8,6 @@ class Entity < ActiveRecord::Base
     write_attribute :props, HashWithIndifferentAccess.new(hash)
   end
 
-  acts_as_taggable
-
   has_many :events
 
   has_many :embed_entities, dependent: :destroy
@@ -27,8 +25,7 @@ class Entity < ActiveRecord::Base
 
   validates_presence_of  :title,
     :feed_name, :type_name,
-    :origin_ts, :thread_updated_ts,
-    :tag_list
+    :origin_ts, :thread_updated_ts
 
   # Hooks
   before_save :assign_searchable_attributes
@@ -187,10 +184,6 @@ class Entity < ActiveRecord::Base
     end
   end
 
-  def cached_tags
-    cached_tag_list.split(',').map { |t| t.strip }
-  end
-
   def last_modified_by
     events.order('created_at DESC').first
   end
@@ -213,7 +206,7 @@ class Entity < ActiveRecord::Base
   end
 
   def sanitized_content
-    [sanitized_title, sanitized_body, url, feed_name, type_name, image, cached_tag_list].join(' ')
+    [sanitized_title, sanitized_body, url, feed_name, type_name, image].join(' ')
   end
 
   def sanitized_title
