@@ -28,15 +28,13 @@ module Events
     include Serializable
     include Validatable
 
-    attr_reader :instance, :source_data, :meta
-
-    def initialize(payload, opts={})
-      _raw = symbolize_keys(payload)
-      @source_data = _raw[:source_data] || _raw
-      @meta = opts[:meta]
+    def initialize(source_data, meta = {})
+      @source_data = symbolize_keys(source_data)
+      @meta = symbolize_keys(meta)
       wrap_response if self.respond_to? :wrap_response
     end
-    attr_reader :source_data
+    attr_reader :instance, :source_data, :meta
+
 
     def build
       unless ::Service.find_by_id(service_id)
