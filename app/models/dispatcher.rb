@@ -46,9 +46,14 @@ class Dispatcher
         normalization = grouping.normalize
       end
 
-      persistance = nil
+      persisted = nil
       persistance_time = Benchmark.measure do
-        normalization.persist!.route
+        persisted = normalization.persist!
+      end
+
+      routed = nil
+      routing_time = Benchmark.measure do
+        routed = persisted.route
       end
 
       @logger.info "[DISPATCHER][EVENT_DISPATCHING] for event #{event.repr_for_logs} completed in #{event_time}"
@@ -57,6 +62,7 @@ class Dispatcher
       @logger.info "[DISPATCHER][DETERMINATION] for entity #{entity.repr_for_logs} completed in #{determination_time}"
       @logger.info "[DISPATCHER][GROUPING] for entity #{entity.repr_for_logs} completed in #{grouping_time}"
       @logger.info "[DISPATCHER][PERSISTANCE] for entity #{entity.repr_for_logs} completed in #{persistance_time}"
+      @logger.info "[DISPATCHER][ROUTING] for entity #{entity.repr_for_logs} completed in #{routing_time}"
     end
 
     [event.instance, entity.instance]
