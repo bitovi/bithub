@@ -3,13 +3,16 @@ module Entities
     include ::RabbitHelper::Sugar
 
     def route
-      route_embed
-      route_service
+      routed_to_service = route_service
+      routed_to_embed = route_embed
+        
+      notify_client if routed_to_service
     end
 
     def route_embed
       if embed_id && (e = Embed.find_by_id(embed_id))
         e.make_link_to(@instance)
+        return true
       end
     end
 
@@ -17,7 +20,7 @@ module Entities
       if service_id && (s = Service.find_by_id(service_id))
         s.make_link_to(@instance)
         s.service_errors.destroy_all # if something is being saved, then service must be working
-        notify_client
+        return true
       end
     end
 
