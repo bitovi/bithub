@@ -80,6 +80,10 @@ class Embed < ActiveRecord::Base
       entity_ids = f.detected_entities('id').all.map { |e| e.id }
       entities.where(id: entity_ids).update_all(updated_at: DateTime.now) && embed_entities.where(entity_id: entity_ids).update_all(is_approved_automatically: f.resulting_state, updated_at: DateTime.now)
     end.all?
+
+    embed.services.where(:is_approved_automatically => true).each do |s|
+      EmbedEntity.joins('JOIN service_entities ON service_entities.entity_id = embed_entities.entity_id').where('service_entities.service_id = ?', s.id).update_all(:is_approved_automatically => true)
+    end
   end
 
   def valid_services
