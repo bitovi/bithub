@@ -95,6 +95,10 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 
+    scope = scope.by_service(service_id) if service_id
+
+    scope = scope.image_only if image_only?
+
     if public_visibility? || show_only_visible?
       scope = owner_embed.approved_entities(scope)
     elsif show_only_blocked?
@@ -160,6 +164,15 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
   def entity_id
     params[:entity_id] || params[:id]
+  end
+
+  def service_id
+    params[:service_id]
+  end
+
+  def image_only?
+    puts "params--------> #{params[:image_only]}"
+    params[:image_only] == 'true' || params[:image_only] == true 
   end
 
   def show_only_pinned?
