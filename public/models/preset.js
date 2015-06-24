@@ -56,6 +56,7 @@ var Preset = can.Model.extend({
 		if(!data.config.live){
 			delete data.config.live;
 		}
+
 		return {
 			preset: data
 		};

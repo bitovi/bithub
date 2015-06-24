@@ -97,6 +97,8 @@ var kickstart = function(hub){
 	appState.on('view', resetApp);
 	appState.on('order', resetApp);
 	appState.on('filter', resetApp);
+	appState.on('service_id', resetApp);
+	appState.on('image_only', resetApp);
 
 	appState.on('theme', function(ev, newTheme){
 		$('body').removeClass('dark-theme light-theme').addClass(newTheme + '-theme');

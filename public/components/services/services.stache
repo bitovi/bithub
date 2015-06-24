@@ -23,13 +23,13 @@
 	{{/ifCanAddService}}
 {{/if}}
 
-{{#if services.isPending}}
+{{#if state.services.isPending}}
 	<div class="pending-wrap">
 		<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 	</div>
 {{else}}
-	{{#if services.length}}
+	{{#if state.services.length}}
 		<h2 class="subtitle-separator">Connected services</h2>
-		<bh-services-list state="{state}" current-service="{currentService}" services="{services}"></bh-services-list>
+		<bh-services-list state="{state}" current-service="{currentService}" services="{state.services}"></bh-services-list>
 	{{/if}}
 {{/if}}
