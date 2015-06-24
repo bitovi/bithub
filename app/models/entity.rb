@@ -80,7 +80,7 @@ class Entity < ActiveRecord::Base
   scope :event_id, ->(e_id) { where("props ? 'event_id'").where("props -> 'event_id' = :val", val: e_id) }
 
   def self.image_only
-    where("image is not null or (props ? 'photos') or (props ? 'entities_media') or (props ? 'image_url')")
+    where("image is not null or (props ? 'photos') or (props ? 'entities_media' and props -> 'entities_media' <> '[]') or (props ? 'image_url')")
   end
 
   def self.by_service(service_id)
