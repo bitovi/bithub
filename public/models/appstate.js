@@ -159,16 +159,23 @@ export default can.Map.extend({
 			serialize : function(){
 				var embedType            = this.embedType();
 				var adminPreset          = this.attr('adminPreset');
+				var adminParams;
 				if(adminPreset){
 					adminPreset.attr();
 				}
 				
 
 				if(embedType === 'admin'){
-					return {
+					adminParams = {
 						order: adminPreset.attr('config.order'),
 						filter: adminPreset.attr('config.filter')
 					};
+
+					if(adminPreset.attr('config.service_id')){
+						adminParams.service_id = adminPreset.attr('config.service_id');
+					}
+
+					return adminParams;
 				}
 			}
 		},
@@ -182,6 +189,13 @@ export default can.Map.extend({
 					.then(function(hub){
 						setAttrValue(hub);
 					});
+			}
+		},
+		services : {
+			get : function() {
+				return new Models.Service.List({
+					embed_id: this.attr('hubId')
+				});
 			}
 		},
 		sidebarIsExpanded : {
