@@ -26,6 +26,11 @@
 					<input type="radio" can-value="preset.config.theme" value="dark"> Dark Theme
 				</label>
 			</div>
+      <div class="checkbox">
+        <label>
+          <input can-value="preset.config.image_only" type="checkbox" /> Show only items containing images
+        </label>
+      </div>
 			<div class="clearfix buttons-wrap">
 				<button class="btn btn-primary pull-right save-service">
 					{{#if isSaving}}
