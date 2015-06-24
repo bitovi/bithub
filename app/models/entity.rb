@@ -79,6 +79,14 @@ class Entity < ActiveRecord::Base
   # Meetup
   scope :event_id, ->(e_id) { where("props ? 'event_id'").where("props -> 'event_id' = :val", val: e_id) }
 
+  def self.image_only
+    where("image is not null or (props ? 'photos') or (props ? 'entities_media') or (props ? 'image_url')")
+  end
+
+  def self.by_service(service_id)
+    joins(:service_entities).where("service_entities.service_id" => service_id)
+  end
+
   after_validation :reformat_uniqueness_validation
 
   def state
