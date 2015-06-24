@@ -31,9 +31,6 @@ export default can.Map.extend({
 		currentBrand : {
 			serialize: false
 		},
-		params : {
-			serialize: false
-		}
 	},
 	setAttrs : function(attrs){
 		this.attr(addDefaultAttrs(attrs));
@@ -79,6 +76,10 @@ export default can.Map.extend({
 		var tenant = this.attr('tenant');
 		var isPublic = this.isPublic();
 		var filter = this.attr('filter');
+		var serviceId = this.attr('service_id');
+		var imageOnly = this.attr('image_only');
+
+		imageOnly = imageOnly === true || imageOnly === 'true';
 
 		params.view = this.getView();
 
@@ -89,8 +90,16 @@ export default can.Map.extend({
 			if(filter){
 				params.show = filter;
 			}
+			if(serviceId){
+				params.service_id = serviceId;
+			}
+		}
+	
+		if(imageOnly){
+			params.image_only = true;
 		}
 
+	
 		params.hubId = hubId;
 
 		return params;

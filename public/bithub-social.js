@@ -7,6 +7,7 @@ import bindModelEvents from './bind-model-events';
 import 'can/map/define/';
 import 'components/';
 import 'components/helpers';
+import 'components/service-config-formatter/';
 
 var kickstart = function(selector){
 	var PresetChangeUpdater = can.Control.extend({
@@ -38,8 +39,6 @@ var kickstart = function(selector){
 			embedType : 'admin'
 		});
 		
-
-		console.log('SUBSCRIPTION', subscription)
 
 		new PresetChangeUpdater(document.documentElement, {
 			appState : appState
@@ -98,6 +97,10 @@ var kickstart = function(selector){
 				props['class'] += page === currentPage ? 'btn-default' : 'btn-link';
 
 				return can.route.link(title, {page: page}, props, false);
+			},
+			serviceStringTitle : function(service){
+				service = can.isFunction(service) ? service() : service;
+				return $(can.stache('<bh-service-config-formatter service="{service}"></bh-service-config-formatter>')({service: service})).text();
 			}
 		}));
 	});
