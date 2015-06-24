@@ -96,7 +96,6 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
       .where("embed_entities.embed_id" => embed_id)
 
     scope = scope.by_service(service_id) if service_id
-
     scope = scope.image_only if image_only?
 
     if public_visibility? || show_only_visible?
@@ -171,7 +170,6 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
   end
 
   def image_only?
-    puts "params--------> #{params[:image_only]}"
     params[:image_only] == 'true' || params[:image_only] == true 
   end
 
