@@ -23,7 +23,7 @@ var getErrorMessage = (function(){
 		ratelimiterror: "Due to number of services authorized with the same account we are unable to load data from this service at the moment. We will try again soon."
 	};
 	return function(error){
-		var klass = error.klass;
+		var klass = error.klass.toLowerCase();
 		return MESSAGES[klass] || error.message;
 	};
 })();
