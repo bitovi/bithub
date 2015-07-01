@@ -25,6 +25,10 @@ require 'events/events'
 
 # /LISTENER_DIR
 require 'persistor'
+require 'dispatcher'
+
+# /LISTENER_DIR
+require 'updater'
 require 'listener'
 require 'handlers/error_handler'
 require 'handlers/command_handler'
@@ -38,18 +42,9 @@ Celluloid.logger = logger
 
 class WebWorkers < Celluloid::SupervisionGroup
   supervise(Persistor, as: :entity_persistor, args: [])
-
-  supervise(
-    Listener, as: :error_listener, args: ['q.web.errors', 'errors', ErrorHandler]
-  )
-
-  supervise(
-    Listener, as: :event_listener, args: ['q.web.events', 'events', EventHandler]
-  )
-
-  supervise(
-    Listener, as: :command_listener, args: ['q.web.commands', 'commands', CommandHandler]
-  )
+  supervise(Listener, as: :error_listener, args: ['q.web.errors', 'errors', ErrorHandler])
+  supervise(Listener, as: :event_listener, args: ['q.web.events', 'events', EventHandler])
+  supervise(Listener, as: :command_listener, args: ['q.web.commands', 'commands', CommandHandler])
 end
 
 WebWorkers.run
