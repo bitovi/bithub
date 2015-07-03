@@ -5651,6 +5651,9 @@ h1, h2, h3, h4, h5, h6 {
 .header {
   font-family: 'Raleway', sans-serif;
   padding-top: 30px; }
+  @media (max-width: 47.99em) {
+    .header {
+      padding-top: 10px; } }
   .header hr {
     margin-top: 30px; }
   .header .logo {
@@ -5662,9 +5665,17 @@ h1, h2, h3, h4, h5, h6 {
     float: right; }
     @media (max-width: 47.99em) {
       .header ul {
-        display: none; } }
+        float: none;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 30px; } }
     .header ul li {
       float: left; }
+      @media (max-width: 47.99em) {
+        .header ul li {
+          float: none;
+          display: inline-block; } }
       .header ul li .login-link {
         display: inline-block;
         padding: 10px 16px;

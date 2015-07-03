@@ -49,11 +49,15 @@ h1, h2, h3, h4, h5, h6 {
 .header {
   font-family: 'Raleway', sans-serif;
   padding-top: 30px;
+  @include mq($until: tablet){
+      padding-top: 10px;
+  }
   hr {
     margin-top: 30px;
   }
   .logo {
     height: 45px;
+   
   }
   h2 {
     font-size: 20px;
@@ -62,10 +66,18 @@ h1, h2, h3, h4, h5, h6 {
   ul {
     float: right;
     @include mq($until: tablet){
-      display: none;
+        float: none;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
     }
     li {
       float: left;
+      @include mq($until: tablet){
+          float: none;
+          display: inline-block;
+      }
       .login-link {
         display: inline-block;
         padding: 10px 16px;

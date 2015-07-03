@@ -10,7 +10,7 @@
 			<thead>
 				<tr>
 					<th class="name">Name</th>
-					<th>Connected Services</th>
+					<th class="connected-services">Connected Services</th>
 					<th class="actions"></th>
 				</tr>
 			</thead>
@@ -20,7 +20,7 @@
 						<td class="name">
 							{{ name }}
 						</td>
-						<td>
+						<td class="connected-services">
 							{{#if services.isPending}}
 								Loading...
 							{{else}}
@@ -49,8 +49,8 @@
 						<td>
 							<div class="btn-group">
 								<a href="{{pageUrl 'sidebar' panel='services' hubId=id}}" class="btn btn-xs btn-default edit-hub-btn">Edit</a>
-								<a href="{{pageUrl 'analytics' hubId=id}}" class="btn btn-xs btn-default">Analytics</a>
-								<button class="btn btn-xs btn-default" can-click="destroyHub">Delete</button>
+								<a href="{{pageUrl 'analytics' hubId=id}}" class="btn btn-xs btn-default btn-analytics-link">Analytics</a>
+								<button class="btn btn-xs btn-default btn-delete-hub" can-click="destroyHub">Delete</button>
 							</div>
 						</td>
 					</tr>
