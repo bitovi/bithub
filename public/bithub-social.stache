@@ -43,7 +43,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-2"><h1>BitHub</h1></div>
-			<div class="col-xs-10">
+			<div class="col-xs-10 bithub-main-menu">
 				<ul class="list-unstyled menu">
 					<li>{{{pageLink 'hub-list' 'Hubs'}}}</li>
 					{{#if state.isAnalyticsPageActive}}

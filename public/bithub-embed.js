@@ -42,6 +42,10 @@ var kickstart = function(hub){
 	appState.setAttrs(params);
 	appState.connectLiveService();
 
+	if(!appState.isPublic()){
+		bodyClasses.push('admin-embed');
+	}
+
 	Bit.on('lifecycle', function(ev, bit){
 		var serviceIds = bit.attr('service_ids');
 		var bits = appState.attr('bits');
