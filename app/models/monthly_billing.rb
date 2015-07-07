@@ -1,7 +1,7 @@
 class MonthlyBilling < ActiveRecord::Base
 
   belongs_to :organization
-  has_many :monthly_billing_records
+  has_many :monthly_billing_records, dependent: :destroy
 
   validates_presence_of :organization_id, :period_beginning, :period_end, :total
 
@@ -21,6 +21,8 @@ class MonthlyBilling < ActiveRecord::Base
       stripe_charge_id: charge.id,
       stripe_charge_status: charge.status,
       charged_at: Time.now.utc
+
+    self
   end
 
   def customer
