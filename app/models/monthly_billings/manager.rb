@@ -1,7 +1,7 @@
 module MonthlyBillings
   class Manager
 
-    attr_reader :price, :month
+    attr_reader :price, :month, :ee_logs
 
     def initialize(org_id, embed_events_logs, opts={})
       _year    = opts.fetch(:year) { Time.now.year }
@@ -10,10 +10,12 @@ module MonthlyBillings
       @org_id  = org_id
       @ee_logs = embed_events_logs
       @month   = Time.new _year, _month
-      @price   = opts.fetch(:price) { ENV['EMBED_PRICE_PER_DAY'] }
+      @price   = opts.fetch(:price) { ENV['EMBED_PRICE_PER_DAY'] }.to_i
     end
 
     def save_to_monthly_billings!
+      return if usage_per_days.count == 0
+
       @mb = MonthlyBilling.new\
         organization_id: @org_id,
         period_beginning: @month.beginning_of_month,
@@ -24,15 +26,15 @@ module MonthlyBillings
 
       usage_per_days.each do |key, dates|
         brand_id, embed_id = key
-        last_date   =  dates.map {|d| d}.last
-        last_rec    = find_record(brand_id, embed_id, last_date)
-        description = "Hub '#{last_rec.embed_name}' from brand '#{last_rec.brand_name}'"
+        last_rec           = find_record(brand_id, embed_id).last
+        description        = "Hub '#{last_rec.embed_name}' from brand '#{last_rec.brand_name}'"
 
         @mb.total += dates.count * @price
         @mb.monthly_billing_records << MonthlyBillingRecord.new(description: description, amount: dates.count, price: @price)
       end
 
       @mb.save!
+      @mb
     end
 
     def usage_per_days
@@ -59,11 +61,11 @@ module MonthlyBillings
       end
     end
 
-    private
-
-    def find_record(brand_id, embed_id, date)
-      @ee_logs.select {|r| r.brand_id == brand_id && r.embed_id == r.embed_id && r.date = date}.last
+    def find_record(brand_id, embed_id)
+      @ee_logs.select {|r| r.brand_id == brand_id && r.embed_id == embed_id}
     end
+
+    private
 
     def dayspan(_beginning, _end)
       (_beginning.to_date.._end.to_date).map {|d| d}
