@@ -47,21 +47,36 @@ class EmbedEvent < ActiveRecord::Base
 
     month = Time.new _year, _month
 
+    already_seen_embeds = []
+
     EmbedEvent\
       .where(organization_id: organization_id)
-      .where(created_at: month.beginning_of_month..month.end_of_month)
-      .order(created_at: :asc)
-      .map do |ee|
-        MonthlyBillings::Record.new\
+      .order(created_at: :desc)
+      .reduce([]) do |acc, ee|
+        mbr = MonthlyBillings::Record.new\
           ee.organization_id,
           ee.brand_id,
           ee.embed_id,
           ee.organization_name,
           ee.brand_name,
           ee.embed_name,
-          ee.active?,
-          ee.created_at.to_datetime
-      end
+          ee.active?
+
+        # create record if the log is within current month,
+        # in a case that there is 'activating' log in past,
+        # that doesn't reoccure in current month,
+        # add it to beginning of the month to trigger billing
+        if ee.created_at > month.beginning_of_month && ee.created_at < month.end_of_month
+          already_seen_embeds.push ee.id
+          mbr.date = ee.created_at.to_datetime
+          acc.unshift mbr
+        elsif ee.created_at < month.beginning_of_month && ee.active? && !already_seen_embeds.include?(ee.id)
+          mbr.date = month.beginning_of_month
+          acc.unshift mbr
+        end
+
+      acc
+    end
   end
 
   def active?
