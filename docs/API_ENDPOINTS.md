@@ -1,15 +1,16 @@
-Embeds
-======
+API endpoints
+=============
 
-Description
----
+Embeds
+------
+
+Path: `/api/embeds`
 
 **An embed is a 'view' of the content in the system.**
 
 These are called 'Hubs' in the client.
 
-Routes
----
+### Routes
 
 HTTP Verb   | Endpoint         | Description
 ----------- | ---------------- | ----------------------------------------
@@ -19,9 +20,7 @@ POST        | `/embeds`        | Creates a new embed.
 PUT         | `/embeds/:id`    | Removes the given entity from the list of approved entities for that embed.
 DELETE      | `/embeds/:id`    | Entirely removes the given entity from the given embed.
 
-Params
----
-
+### Params
 
 Name        | Type             | Description
 ----------- | ---------------- | ----------------------------------------
@@ -30,11 +29,11 @@ colorscheme | String           | Encoded color scheme, used for generating the e
 layout      | String           | Encoded layout, used for generating the embed code.
 
 
-Embed > Entities
-================
+Embed entities
+--------------
 
-Description
----
+Path: `/api/embeds/:embed_id/entities`
+
 **Used to expose entities linked to an embed to the client.**
 
 It's used to show various views of data in an embed. It shows
@@ -42,8 +41,7 @@ approved and waitlisted entities and allows manipulation of
 those entities (manually approving or hiding content, or entirely
 removing them).
 
-Routes
----
+### Routes
 
 HTTP Verb   | Endpoint                                    | Description
 ----------- | ------------------------------------------- | ----------------------------------------
@@ -56,11 +54,11 @@ PUT         | `/embeds/:embed_id/entities/:id/disaprove`  | Removes the given en
 DELETE      | `/embeds/:embed_id/entities/:id`            | Entirely removes the given entity from the given embed.
 
 
-Embed > Filters
-===============
+Embed filters
+-------------
 
-Description
----
+Path: `/api/embeds/:embed_id/filters`
+
 **Used to definine moderation rules for incoming data.**
 
 Only one blocking and one moderating filter can be
@@ -80,8 +78,7 @@ A few examples of queries:
 - Tagged with 'canjs'
 - Feed name is twitter
 
-Routes
----
+### Routes
 
 HTTP Verb  | Endpoint                                    | Description
 ---------- | ------------------------------------------- | ---------------------------------------
@@ -91,8 +88,7 @@ POST       | `/embeds/:embed_id/filters`                 | creates a new filter 
 PUT        | `/embeds/:embed_id/filters/:id`             | updates the existing filter for a given embed
 DELETE     | `/embeds/:embed_id/filters/:id`             | destroys a filter
 
-Params
----
+### Params
 
 Name            | Type             | Description
 -----------     | ---------------- | ----------------------------------------
@@ -122,8 +118,10 @@ Natlang queries JSON example:
 }]
 ```
 
-Embed > Services
-================
+Embed services
+--------------
+
+Path: `/api/embeds/:embed_id/services`
 
 **Used to define configuration for a given feed.**
 
@@ -136,17 +134,17 @@ along with feed specific settings. For example, repositories to follow for
 Github, Pages to follow for Facebook, user handles to follow for
 Twitter
 
-Routes:
+### Routes
 
-HTTP Verb  | Endpoint                                    | Description
----------- | ------------------------------------------- | ---------------------------------------
+HTTP Verb  | Endpoint                                     | Description
+---------- | -------------------------------------------- | ---------------------------------------
 GET        | `/embeds/:embed_id/services`                 | responds with all filters for a given embed
 GET        | `/embeds/:embed_id/services/:id`             | responds with details of the given filter
 POST       | `/embeds/:embed_id/services`                 | creates a new filter for a given embed
 PUT        | `/embeds/:embed_id/services/:id`             | updates the existing filter for a given embed
 DELETE     | `/embeds/:embed_id/services/:id`             | destroys a filter
 
-Params:
+### Params
 
 Name        | Type             | Description
 ----------- | ---------------- | ----------------------------------------
@@ -156,8 +154,9 @@ config      | Object           | Service configuration.
 
 Service variants: feeds and types
 
-Twitter
--------
+### Types of services
+
+#### Twitter
 
 User timeline:
 
@@ -191,8 +190,7 @@ Hashtag:
 ```
 
 
-Disqus
-------
+#### Disqus
 
 Forum:
 
@@ -204,8 +202,7 @@ Forum:
 }
 ```
 
-Facebook:
----
+#### Facebook:
 
 Page:
 
@@ -217,8 +214,7 @@ Page:
 }
 ```
 
-Forsquare
----
+#### Forsquare
 
 Venue:
 
@@ -230,8 +226,7 @@ Venue:
 }
 ```
 
-Meetup
----
+#### Meetup
 
 Group:
 
@@ -243,8 +238,7 @@ Group:
 }
 ```
 
-Github
----
+#### Github
 
 Repo:
 
@@ -272,8 +266,7 @@ Organization:
 }
 ```
 
-Stackexchange
----
+#### Stackexchange
 
 Tags (questions and answers):
 
@@ -285,8 +278,7 @@ Tags (questions and answers):
 }
 ```
 
-Tumblr
----
+#### Tumblr
 
 Blog:
 
@@ -308,8 +300,7 @@ Tag:
 }
 ```
 
-Instagram
----
+#### Instagram
 
 User:
 
@@ -351,8 +342,7 @@ Geography:
 }
 ```
 
-RSS
----
+#### RSS
 
 Site:
 

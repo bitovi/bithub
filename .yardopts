@@ -1,3 +1,4 @@
+- docs/PROVISIONING.md docs/API_ENDPOINTS.md docs/MODERATION.md
 --markup=markdown
 --charset utf-8
-'lib/**/*.rb' - '*.md'
+*.md
