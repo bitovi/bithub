@@ -3,6 +3,7 @@ class Service < ActiveRecord::Base
 
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
+  validate :service_state_validator
 
   belongs_to :embed
   belongs_to :brand_identity
@@ -63,6 +64,11 @@ class Service < ActiveRecord::Base
     destroy
   end
 
+  def mark_as_loaded
+    self.state = 'loaded'
+    self.save!
+  end
+
   def has_errors?
     service_errors.present?
   end
@@ -94,8 +100,14 @@ class Service < ActiveRecord::Base
   # private
 
   def service_config_validator
-    if !service_config.valid?
+    unless service_config.valid?
       errors.set(:config_attrs, service_config.error_msg)
+    end
+  end
+
+  def service_state_validator
+    unless %w(loading loaded).include?(state)
+      errors.set(:state, "can either be 'loading' or 'loaded'")
     end
   end
 
