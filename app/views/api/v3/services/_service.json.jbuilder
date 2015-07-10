@@ -1,4 +1,4 @@
-json.(service, :id, :feed_name, :type_name, :brand_identity_id, :approved_by_default)
+json.(service, :id, :feed_name, :type_name, :brand_identity_id, :approved_by_default, :state)
 
 json.entity_count service.entities.count
 json.config service.service_config.data
