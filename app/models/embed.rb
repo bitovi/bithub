@@ -116,7 +116,7 @@ class Embed < ActiveRecord::Base
 
   def moderate_entities_from_services_approved_by_default
     services.where(:approved_by_default => true).each do |s|
-      EmbedEntity.joins('JOIN service_entities ON service_entities.entity_id = embed_entities.entity_id').where('service_entities.service_id = ?', s.id).update_all(:is_approved_automatically => true)
+      EmbedEntity.joins('JOIN service_entities ON service_entities.entity_id = embed_entities.entity_id').where('service_entities.service_id = ?', s.id).update_all(:is_approved_automatically => s.approved_by_default)
     end
   end
     
