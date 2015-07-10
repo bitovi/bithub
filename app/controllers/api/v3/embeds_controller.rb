@@ -2,7 +2,6 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   include Api::EmbedScoped
 
   before_filter :authenticate_account!
-  load_and_authorize_resource
 
   def index
     authorize! :index, Embed
@@ -11,8 +10,13 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   end
 
   def show
-    authorize! :show, owner_embed
-    render :show
+    if (tn = (params[:tenant_name] || Apartment::Tenant.current))
+      tn = nil unless Apartment.tenant_names.include?(tn)
+      Apartment::Tenant.switch(tn) do
+        authorize! :show, owner_embed
+        render :show
+      end
+    end
   end
 
   def create
