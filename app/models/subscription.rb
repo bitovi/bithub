@@ -107,7 +107,7 @@ class Subscription < ActiveRecord::Base
 
   def delete_stripe_customer
     if stripe_customer_id
-      Rails.logger.info "Deleting Stripe customer for org #{organization.name} with stripe_customer_id: #{stripe_customer_id}"
+      Rails.logger.info "Deleting Stripe customer '#{stripe_customer_id}'"
 
       stripe_customer = Stripe::Customer.retrieve stripe_customer_id
       stripe_customer.delete
