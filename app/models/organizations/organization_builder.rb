@@ -14,7 +14,6 @@ module Organizations
       @subscription  = Subscription.new plan: @plan
 
       @account.organizations << @organization
-      @organization.accounts << @account
       @organization.brands   << @brand
       @organization.subscription = @subscription
       self
