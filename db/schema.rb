@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150611110720) do
+ActiveRecord::Schema.define(version: 20150710133838) do
 
 
   create_extension "hstore", :version => "1.3"
@@ -67,16 +67,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
 
   add_index "accounts_account_roles", ["account_id", "account_role_id"], :name => "index_accounts_account_roles_on_account_id_and_account_role_id"
 
-  create_table "accounts_brands", id: false, force: true do |t|
-    t.integer "brand_id",   null: false
-    t.integer "account_id", null: false
-  end
-
-  add_index "accounts_brands", ["account_id", "brand_id"], :name => "index_accounts_brands_on_account_id_and_brand_id"
-  add_index "accounts_brands", ["account_id"], :name => "index_accounts_brands_on_account_id"
-  add_index "accounts_brands", ["brand_id", "account_id"], :name => "index_accounts_brands_on_brand_id_and_account_id"
-  add_index "accounts_brands", ["brand_id"], :name => "index_accounts_brands_on_brand_id"
-
   create_table "accounts_organizations", id: false, force: true do |t|
     t.integer "account_id",      null: false
     t.integer "organization_id", null: false
@@ -91,8 +81,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.datetime "updated_at"
     t.json     "extracted_data", default: {}
   end
-
-  add_index "brand_identities", ["brand_id"], :name => "index_brand_identities_on_brand_id"
 
   create_table "brands", force: true do |t|
     t.string   "name"
@@ -113,9 +101,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.hstore  "props",       default: {}
   end
 
-  add_index "brands_users", ["brand_id"], :name => "index_brands_users_on_brand_id"
-  add_index "brands_users", ["user_id"], :name => "index_brands_users_on_user_id"
-
   create_table "countries", force: true do |t|
     t.string  "name",                     null: false
     t.string  "display_name"
@@ -132,6 +117,8 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "embed_entities", ["entity_id"], :name => "embed_entities_entity_id_idx"
 
   create_table "embed_events", force: true do |t|
     t.integer  "organization_id"
@@ -162,8 +149,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.boolean "approved_by_default", default: true
     t.boolean "published",           default: false
   end
-
-  add_index "embeds", ["brand_id"], :name => "index_embeds_on_brand_id"
 
   create_table "entities", force: true do |t|
     t.text     "title"
@@ -293,9 +278,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.datetime "updated_at"
   end
 
-  add_index "ownerships", ["entity_id"], :name => "index_ownerships_on_entity_id"
-  add_index "ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
-
   create_table "payments", force: true do |t|
     t.integer  "total"
     t.string   "currency",               limit: 3
@@ -333,6 +315,7 @@ ActiveRecord::Schema.define(version: 20150611110720) do
   end
 
   add_index "service_entities", ["entity_id", "service_id"], :name => "index_service_entities_on_entity_id_and_service_id"
+  add_index "service_entities", ["entity_id"], :name => "service_entities_entity_id_idx"
   add_index "service_entities", ["service_id"], :name => "index_service_entities_on_service_id"
 
   create_table "service_errors", force: true do |t|
@@ -354,9 +337,8 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.string   "uid"
     t.integer  "brand_identity_id"
     t.boolean  "approved_by_default"
+    t.string   "state",               default: "loading"
   end
-
-  add_index "services", ["embed_id"], :name => "index_services_on_embed_id"
 
   create_table "stripe_webhooks_log", force: true do |t|
     t.string   "event_id"
@@ -419,7 +401,6 @@ ActiveRecord::Schema.define(version: 20150611110720) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["country_id"], :name => "index_users_on_country_id"
   add_index "users", ["email"], :name => "index_users_on_email"
 
   create_view "public.entity_aggregated_tag_list", <<-SQL
@@ -431,22 +412,5 @@ ActiveRecord::Schema.define(version: 20150611110720) do
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
   SQL
-
-  add_foreign_key "accounts_brands", "public.accounts", :name => "accounts_brands_account_id_fk", :column => "account_id", :dependent => :delete, :exclude_index => true
-  add_foreign_key "accounts_brands", "public.brands", :name => "accounts_brands_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "brand_identities", "public.brands", :name => "brand_identities_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "brands_users", "public.brands", :name => "brands_users_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-  add_foreign_key "brands_users", "public.users", :name => "brands_users_user_id_fk", :column => "user_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "embeds", "public.brands", :name => "embeds_brand_id_fk", :column => "brand_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "ownerships", "public.entities", :name => "ownerships_entity_id_fk", :column => "entity_id", :dependent => :delete, :exclude_index => true
-  add_foreign_key "ownerships", "public.users", :name => "ownerships_owner_id_fk", :column => "owner_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "services", "public.embeds", :name => "services_embed_id_fk", :column => "embed_id", :dependent => :delete, :exclude_index => true
-
-  add_foreign_key "users", "public.countries", :name => "users_country_id_fk", :column => "country_id", :exclude_index => true
 
 end
