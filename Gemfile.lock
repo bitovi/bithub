@@ -23,15 +23,6 @@ GIT
       rack (~> 1.4)
 
 GIT
-  remote: git://github.com/vdragsic/apartment.git
-  revision: b55eafadc9df41f2eba68cb15098a974e1c49a93
-  branch: development
-  specs:
-    apartment (0.25.2)
-      activerecord (>= 3.1.2, < 5.0)
-      rack (>= 1.3.6)
-
-GIT
   remote: git://github.com/vdragsic/stripe-rails.git
   revision: 124b3f89dead27ebe7430bd7a48cff022c278926
   branch: daily_plan
@@ -76,6 +67,9 @@ GEM
     addressable (2.3.6)
     amq-protocol (1.9.2)
     andand (1.3.3)
+    apartment (1.0.2)
+      activerecord (>= 3.1.2, < 5.0)
+      rack (>= 1.3.6)
     arel (5.0.1.20140414130214)
     ast (2.0.0)
     astrolabe (1.3.0)
@@ -600,7 +594,7 @@ DEPENDENCIES
   activesupport-json_encoder
   acts-as-taggable-on
   andand
-  apartment!
+  apartment
   bazaar
   better_errors
   bootstrap-sass (~> 3.3.4)

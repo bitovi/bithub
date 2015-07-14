@@ -27,7 +27,7 @@ gem 'virtus'
 gem 'bazaar'
 gem "lograge"
 gem 'textacular'
-gem 'apartment', :github => 'vdragsic/apartment', :branch => 'development'
+gem 'apartment'
 gem 'enumerize'
 gem 'sinatra'
 gem 'sidekiq', '~> 3.2'
