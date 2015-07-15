@@ -30,12 +30,11 @@ RSpec.describe Embed, :type => :model do
     end
 
     context 'the embed is strict (approved_by_default is false) but the service is lax (approved_by_default is true)' do
-      it 'determines state for entities coming in' do
-        embed   = FactoryGirl.create(:embed, name: 'jebemte', approved_by_default: false)
+      it 'takes the service\'s setting over the embed\'s setting' do
+        embed   = FactoryGirl.create(:embed, name: 'foobar', approved_by_default: false)
         service = FactoryGirl.create(:github_service, approved_by_default: true, embed: embed)
-        ev      = FactoryGirl.create(:event, service: service, embed: service.embed)
         e1      = FactoryGirl.create(:github_issue, title: 'blocked entity')
-        e2      = FactoryGirl.create(:github_issue, title: 'approved by service entity', events: [ev])
+        e2      = FactoryGirl.create(:github_issue, title: 'approved by service entity', services: [service])
         expect(service.embed.determine_state e1).to be_falsey
         expect(service.embed.determine_state e2).to be_truthy
       end
