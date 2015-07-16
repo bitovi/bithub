@@ -30,9 +30,9 @@ Bithub::Application.configure do
     :user_name => ENV['MANDRILL_USERNAME'],
     :password  => ENV['MANDRILL_API_KEY'],
     :authentication => 'login',
-    :domain => 'bithub.loc'
+    :domain => 'dev.bithub.com'
   }
-  config.action_mailer.default_url_options = { host: "bithub.loc" }
+  config.action_mailer.default_url_options = { host: "dev.bithub.com" }
   config.action_mailer.raise_delivery_errors = true
 
   # Print deprecation notices to the Rails logger
