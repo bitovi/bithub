@@ -28,15 +28,18 @@ module Events
     include Serializable
     include Validatable
 
-    def initialize(source_data, meta = {})
+    def initialize(source_data, meta = {}, instance = nil)
       @source_data = symbolize_keys(source_data)
       @meta = symbolize_keys(meta)
+      @instance = instance
       wrap_response if self.respond_to? :wrap_response
     end
     attr_reader :instance, :source_data, :meta
 
 
     def build
+      return self if @instance
+
       unless ::Service.find_by_id(service_id)
         fail OrphanedEventError.new('Event to be saved under a service that has already been deleted.')
       end
@@ -52,6 +55,7 @@ module Events
         service_id: service_id,
         props: meta || {}
       })
+
       self
     end
 

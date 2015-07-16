@@ -1,3 +1,5 @@
+require 'events/type_determinator'
+
 module Events
   module Github
     class TypeDeterminator < Events::TypeDeterminator
