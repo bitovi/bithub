@@ -56,7 +56,9 @@ class EventPublisher
     feed      = owner_data.service.feed_name
     processed = nil
 
-    dispatched = Events.event_instance(event, feed)
+    dispatched = Events.event_instance({
+      source_data: event
+    }, feed)
 
     processed = {
       meta: owner_data.to_h,
