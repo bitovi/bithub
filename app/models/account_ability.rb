@@ -43,7 +43,6 @@ class AccountAbility
       can :manage, EmbedPreset
       can :manage, Entity
       can :manage, Filter
-      can :manage, Grouping
       can :manage, Histogram
       can :manage, ServiceEntity
       can :manage, User
