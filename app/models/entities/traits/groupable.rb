@@ -2,6 +2,10 @@ module Entities
   module Groupable
 
     def group
+      writing_history_time = Benchmark.measure do
+        write_history
+      end
+
       finding_parents_time = Benchmark.measure do
         join_family
       end
@@ -10,15 +14,15 @@ module Entities
         adopt
       end
 
-      writing_history_time = Benchmark.measure do
-        write_history
-      end
-
       bumping_thread_time = Benchmark.measure do
         bump_thread
       end
 
       self
+    end
+
+    def write_history
+      @instance.events << @event.instance if @event.instance
     end
 
     def adopt
@@ -41,7 +45,7 @@ module Entities
       end
 
       update_from_children_time = Benchmark.measure do
-        if not(@instance.children.blank?) && @instance.latest_child_ts && (@instance.latest_child_ts > @payload.origin_ts)
+        if !@instance.children.blank? && @instance.latest_child_ts && (@instance.latest_child_ts > @event.origin_ts)
           update_from_children if self.respond_to? :update_from_children
         end
       end
@@ -65,10 +69,6 @@ module Entities
       end
 
       self
-    end
-
-    def write_history
-      @instance.events << @event.instance if @event.instance
     end
 
     def bump_thread
