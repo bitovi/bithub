@@ -25,8 +25,8 @@ class ConfigurationFetcher
     val = fetch_and_parse
     after(0) { c.broadcast(val) }
   rescue => e
-    error "[CONFIGURATION_FETCHER] Web unresponsive, trying again in #{Intervals::COMMAND_HANDLER_RETRY} seconds."
-    after(Intervals::COMMAND_HANDLER_RETRY) { fetch_until_available(c) }
+    error "[CONFIGURATION_FETCHER] Web unresponsive, trying again in #{Intervals::CommandHandler::RETRY} seconds."
+    after(Intervals::CommandHandler::RETRY) { fetch_until_available(c) }
   end
 
   def fetch_and_parse
