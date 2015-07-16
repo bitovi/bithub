@@ -17,8 +17,8 @@ class Persistor
   end
 
   def check_for_work
-    if work_to_be_done? && bulk_persist
-      after(Intervals::Persistor::HEARTBEAT) { check_for_work }
+    if work_to_be_done?
+      bulk_persist
     else
       after(Intervals::Persistor::HEARTBEAT) { check_for_work } 
     end
@@ -33,13 +33,32 @@ class Persistor
   def bulk_persist
     Brand.pluck(:tenant_name).each do |tn|
       Apartment::Tenant.switch(tn) do
-        # 100 at a time so all brands can get their share of entities in
-        Event.unprocessed.limit(100).map do |event|
+        Event.unprocessed.map do |event|
           @events_processed += 1
           process_event(event)
         end
       end
     end
+
+  rescue Entities::DeterminationError => err
+    warn "[#{name_for_logs}] #{err.message} | #{err.context}"
+    nil
+
+  rescue ActiveRecord::RecordInvalid => err
+    error "[#{name_for_logs}] #{err.message} | #{err.record.errors.messages}"
+    nil
+
+  rescue Entities::NormalizationError => err
+    error "[#{name_for_logs}] #{err.message} | missing tags: #{err.context.join(',')}"
+    nil
+
+  rescue Entities::UpdatingError => err
+    error "[#{name_for_logs}] #{err.message} | updating: #{err.context.inspect}"
+    nil
+
+  ensure
+    Apartment::Tenant.switch!
+    after(0) { check_for_work }
   end
 
   def process_event(event)
@@ -72,26 +91,6 @@ class Persistor
     info "[#{name_for_logs}][ROUTING] for entity #{entity.repr_for_logs} completed in #{routing_time}"
 
     event.update_attribute(:is_processed, true)
-    entity
-
-  rescue Entities::DeterminationError => err
-    error "[#{name_for_logs}] #{err.message} | #{err.context}"
-    nil
-
-  rescue ActiveRecord::RecordInvalid => err
-    error "[#{name_for_logs}] #{err.message} | #{err.record.errors.messages}"
-    nil
-
-  rescue Entities::NormalizationError => err
-    error "[#{name_for_logs}] #{err.message} | missing tags: #{err.context.join(',')}"
-    nil
-
-  rescue Entities::UpdatingError => err
-    error "[#{name_for_logs}] #{err.message} | updating: #{err.context.inspect}"
-    nil
-    
-  ensure
-    Apartment::Tenant.switch!
   end
 
   def name_for_logs
