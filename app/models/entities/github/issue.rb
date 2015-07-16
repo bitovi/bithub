@@ -43,26 +43,24 @@ module Entities
       end
 
       def update_from_children
-        if (most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last)
-          most_recent_child.source_data.symbolize_keys!
+        most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
+        return if most_recent_child.nil?
 
-          data = most_recent_child.last_modified_by.source_data
-          event = Events::Github::TypeClassDeterminator.new(data).type_class.new(data)
+        event = most_recent_child.last_modified_by.wrapped
 
-          # IssueComment, has an embedded Issue or PullRequest that have labels etc
-          if event.respond_to? :ipr
-            @instance.title = event.ipr.title
-            @instance.body = event.ipr.body
-            @instance.props[:state] = event.ipr.state
-            @instance.props[:label_names] = event.ipr.labels.names_csv
+        # IssueComment, has an embedded Issue or PullRequest that have labels etc
+        if event.respond_to? :ipr
+          @instance.title = event.ipr.title
+          @instance.body = event.ipr.body
+          @instance.props[:state] = event.ipr.state
+          @instance.props[:label_names] = event.ipr.labels.names_csv
 
           # Issue, has own labels etc
-          else
-            @instance.title = event.title
-            @instance.body = event.body
-            @instance.props[:state] = event.state
-            @instance.props[:label_names] = event.labels.names_csv
-          end
+        else
+          @instance.title = event.title
+          @instance.body = event.body
+          @instance.props[:state] = event.state
+          @instance.props[:label_names] = event.labels.names_csv
         end
       end
 

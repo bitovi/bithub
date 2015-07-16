@@ -46,10 +46,7 @@ module Entities
         most_recent_child = @instance.children.sort{|x,y| x.origin_ts <=> y.origin_ts}.last
         return if most_recent_child.nil?
 
-        most_recent_child.source_data.symbolize_keys!
-
-        data = most_recent_child.last_modified_by.source_data
-        event = Events::Github::TypeClassDeterminator.new(data).type_class.new(data)
+        event = most_recent_child.last_modified_by.wrapped
 
         if event.respond_to? :ipr # IssueComment
           @instance.title = event.ipr.title
