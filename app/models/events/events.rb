@@ -32,7 +32,7 @@ require 'events/type_determinator'
 
 module Events
   def self.event_instance(packet, hint = nil)
-    event_class(packet, hint).new(packet)
+    event_class(packet, hint).new(packet[:source_data], packet[:meta])
   end
 
   def self.event_class(packet, hint = nil)
