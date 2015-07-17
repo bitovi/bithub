@@ -26,6 +26,7 @@ require 'events/tumblr/post_event'
 require 'events/twitter/fake_follow_event'
 require 'events/twitter/follow_event'
 require 'events/twitter/tweet_event'
+require 'events/youtube/video_event'
 
 require 'events/feed_determinator'
 require 'events/type_determinator'
