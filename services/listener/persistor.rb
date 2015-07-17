@@ -41,11 +41,11 @@ class Persistor
     end
 
   rescue Entities::DeterminationError => err
-    warn "[#{name_for_logs}] #{err.message} | #{err.context}"
+    # warn "[#{name_for_logs}] #{err.message} | #{err.context}"
     nil
 
   rescue ActiveRecord::RecordInvalid => err
-    error "[#{name_for_logs}] #{err.message} | #{err.record.errors.messages}"
+    error "[#{name_for_logs}] #{err}"
     nil
 
   rescue Entities::NormalizationError => err
@@ -91,6 +91,9 @@ class Persistor
     info "[#{name_for_logs}][ROUTING] for entity #{entity.repr_for_logs} completed in #{routing_time}"
 
     event.update_attribute(:is_processed, true)
+
+  ensure
+    event.update_attribute(:was_viewed, true)
   end
 
   def name_for_logs
