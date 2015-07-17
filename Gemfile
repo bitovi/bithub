@@ -32,6 +32,7 @@ gem 'enumerize'
 gem 'sinatra'
 gem 'sidekiq', '~> 3.2'
 gem 'sidetiq'
+gem 'acts-as-taggable-on'
 gem 'ranked-model'
 gem 'jbuilder'
 
