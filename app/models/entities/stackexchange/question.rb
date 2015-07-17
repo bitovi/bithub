@@ -49,8 +49,7 @@ module Entities
         @event.answers.map do |a| # Wrappers
           Events::Stackexchange::AnswerEvent.new(a.raw)
         end.map do |a_e| # Events
-          Entities::Stackexchange::Answer.new(a_e)
-          .procure.determine.group.normalize.instance
+          Entities::Stackexchange::Answer.new(a_e).procure.group.normalize.instance
         end if @event.answers
       end
 
