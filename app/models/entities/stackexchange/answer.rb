@@ -41,12 +41,7 @@ module Entities
         @event.comments.map do |c| # Wrappers
           Events::Stackexchange::CommentEvent.new(c.raw)
         end.map do |c_e| # Events
-          Entities::Stackexchange::Comment.new(c_e)
-            .procure
-            .determine
-            .group
-            .normalize
-            .instance
+          Entities::Stackexchange::Comment.new(c_e).procure.group.normalize.instance
         end if @event.comments
       end
 
