@@ -25,7 +25,6 @@ require 'events/events'
 
 # /LISTENER_DIR
 require 'persistor'
-require 'dispatcher'
 
 # /LISTENER_DIR
 require 'updater'
