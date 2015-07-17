@@ -41,7 +41,7 @@ class Persistor
     end
 
   rescue Entities::DeterminationError => err
-    # warn "[#{name_for_logs}] #{err.message} | #{err.context}"
+    warn "[#{name_for_logs}] #{err} | #{err.context}"
     nil
 
   rescue ActiveRecord::RecordInvalid => err
