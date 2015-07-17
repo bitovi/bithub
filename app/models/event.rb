@@ -9,7 +9,8 @@ class Event < ActiveRecord::Base
   validates_presence_of :content_digest, :embed_id, :service_id
   validates_uniqueness_of :content_digest, scope: [:embed_id, :service_id]
 
-  scope :unprocessed, -> { where(is_processed: false) }
+  scope :unprocessed, -> { where(was_viewed: false, is_processed: false) }
+  scope :processing_failed, lambda { where(was_viewed: true, is_processed: false) }
 
   def wrapped
     wrapper_class.new(source_data, props, self)
