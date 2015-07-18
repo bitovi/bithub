@@ -30,8 +30,8 @@ module Events
       end
 
       def wrap_response
-        @user ||= Wrappers::Foursquare::User.new source_data.fetch(:user)
-        @venue ||= Wrappers::Foursquare::Venue.new source_data.fetch(:venue)
+        @user ||= Wrappers::Foursquare::User.new(source_data.fetch(:user))
+        @venue ||= Wrappers::Foursquare::Venue.new(source_data.fetch(:venue))
         self
       end
     end
