@@ -20,9 +20,6 @@ require 'core_helpers'
 require 'rabbit_helper'
 require 'logger_factory'
 
-# /app/models
-require 'events/dispatcher'
-
 # /CRAWLER_DIR
 require 'configuration_fetcher'
 require 'command_handler'

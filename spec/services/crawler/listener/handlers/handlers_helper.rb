@@ -12,7 +12,6 @@ require 'webmock/rspec'
 require 'httparty'
 
 require 'rabbit_helper'
-require 'events/dispatcher'
 
 require 'listener/http_server'
 require 'listener/subscription_registry'
