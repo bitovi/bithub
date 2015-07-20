@@ -1,24 +1,9 @@
-require 'andand'
-require 'instagram'
-require 'listener/updater'
-require_relative 'client_builder'
+require 'listener/updaters/base_updater'
 
-class InstagramUpdater
-  def initialize(updater, cycle, tenant_name)
-    @updater = updater
-    @cycle = cycle
-    @tenant_name = tenant_name
-    @client_builder = ClientBuilder.new(tenant_name, 'instagram')
-    @client = @client_builder.build
-  end
-
-  def update
-    if new_update_due?
-      perform
-      lock
-    else
-      Celluloid.logger.info "InstagramUpdater nothing to do"
-    end
+class InstagramUpdater < BaseUpdater
+  def initialize(updater, cycle, brand)
+    @feed_name = 'instagram'; @type_name = 'media'
+    super
   end
 
   def perform
@@ -27,9 +12,9 @@ class InstagramUpdater
       popularity = m.likes[:count]
       Entity.find_by_origin_id(m.id.to_s).update_attribute(:popularity, popularity)
     end
-    Celluloid.logger.debug "INSTAGRAM : REQUESTS_LEFT : #{requests_left}"
+    Celluloid.logger.info "#{log_sig} Done with update. #{requests_left} requests left."
   rescue ::Instagram::TooManyRequests => e
-    Celluloid.logger.warn "INSTAGRAM : RATE LIMIT HIT"
+    Celluloid.logger.warn "#{log_sig} Rate limit hit"
     retry if @client_builder.has_more_creds? && (@client = @client_builder.next)
   end
   
@@ -45,27 +30,13 @@ class InstagramUpdater
   end
   
   def lookup_media(media_ids)
-    res = media_ids.map do |mid| 
+    media_ids.map do |mid| 
       begin
         @client.media_item(mid)
       rescue Instagram::BadRequest => e
         nil
       end
     end.compact
-    Celluloid.logger.debug "Fetched '#{res.count}' media" if res 
-    res
-  end
-  
-  def lock_name
-    "lock:popularity_updater:#{@cycle}:#{@tenant_name}:instagram:media"
-  end
-  
-  def lock
-    redis.setex(lock_name, @updater.cycle_to_lock_duration(@cycle), "LOCKED")
-  end
-
-  def new_update_due?
-    redis.get(lock_name).nil?
   end
   
   def requests_left
@@ -75,11 +46,12 @@ class InstagramUpdater
   def rate_limits
     @client.utils_raw_response
   rescue Error::TooManyRequests => e
-    Celluloid.logger.info "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    Celluloid.logger.error "#{log_sig} Rate limit hit while trying to determine rate limits!"
   end
   
-  def redis
-    @updater.redis
+  private
+  def log_sig
+    "[UPDATER][INSTAGRAM]"
   end
 end
 
