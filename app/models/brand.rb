@@ -3,8 +3,6 @@ class Brand < ActiveRecord::Base
 
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
-  scope :identity_from, -> (feed_name) { where(feed_name: feed_name) }
-
   has_many :embeds, dependent: :destroy
   has_many :services, through: :embeds
 
@@ -28,6 +26,14 @@ class Brand < ActiveRecord::Base
 
   def self.current
     where(tenant_name: Apartment::Tenant.current).first
+  end
+
+  def has_connected_brand_idents?(provider_name)
+    identities_from(provider_name).count > 0
+  end
+  
+  def identities_from(provider_name)
+    identities.where(provider: provider_name)
   end
 
   def create_tenant
