@@ -11,22 +11,21 @@ class Updater
   def initialize(app_scope = {})
     @redis = ConnectionManager.instance.redis
     every(HEARTBEAT) { update_popularity }
-    Celluloid.logger.info "Updater running..."
+    Celluloid.logger.info "[UPDATER] Running..."
   end
   attr_reader :redis
 
   def update_popularity
     CYCLES.each do |c|
-      Brand.pluck(:tenant_name).each do |tn|
-        Apartment::Tenant.switch(tn) do 
-          Celluloid.logger.info "Updating entities for tenant #{tn}"
-          TwitterUpdater.new(self, c, tn).update
-          InstagramUpdater.new(self, c, tn).update
+      Brand.find_each do |b|
+        Apartment::Tenant.switch(b.tenant_name) do 
+          TwitterUpdater.new(self, c, b).update if b.has_connected_brand_idents?('twitter')
+          InstagramUpdater.new(self, c, b).update if b.has_connected_brand_idents?('instagram')
         end
       end
     end
   end
-  
+
   def cycle_to_lock_duration(cycle)
     if cycle == :day
       30*60
