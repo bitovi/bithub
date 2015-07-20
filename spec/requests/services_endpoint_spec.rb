@@ -92,7 +92,7 @@ RSpec.describe 'Service creation', type: :request do
       context 'given well defined service data' do
         it 'updates an existing service' do
 
-          @service = FactoryGirl.create(:rss_service, embed: @embed)
+          @service = FactoryGirl.create(:facebook_service, embed: @embed)
           put "/api/#{api_version}/services/#{@service.id}", {
             service: {
               feed_name: 'twitter',
