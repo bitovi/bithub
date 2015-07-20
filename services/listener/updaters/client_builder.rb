@@ -2,8 +2,8 @@ require 'twitter'
 require 'instagram'
 
 class ClientBuilder
-  def initialize(tenant_name, feed_name)
-    @tenant_name = tenant_name
+  def initialize(brand, feed_name)
+    @brand = brand
     @feed_name = feed_name
     @current_cred_idx = 0
   end
@@ -34,10 +34,7 @@ class ClientBuilder
   end
 
   def creds
-    @creds ||= BrandIdentity.joins(:brand)
-      .where(provider: @feed_name)
-      .where('brands.tenant_name = ?', @tenant_name)
-      .map { |bi| bi.facade.credentials }
+    @creds ||= @brand.identities_from(@feed_name).map { |bi| bi.facade.credentials }
   end
 
   def next
