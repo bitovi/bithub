@@ -21,7 +21,7 @@ module Events
       end
 
       def origin_ts
-        @answer.last_activity_date
+        @answer.creation_date
       end
 
       def wrap_response
