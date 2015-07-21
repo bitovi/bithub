@@ -333,6 +333,9 @@ var Service = can.Model.extend({
 	},
 	clearErrors : function(){
 		this.removeAttr('error');
+	},
+	isLoading : function(){
+		return this.attr('state') === 'loading';
 	}
 });
 
