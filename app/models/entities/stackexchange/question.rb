@@ -57,8 +57,7 @@ module Entities
         @event.comments.map do |c| # Wrappers
           Events::Stackexchange::CommentEvent.new(c.raw)
         end.map do |c_e| # Events
-          Entities::Stackexchange::Comment.new(c_e)
-          .procure.determine.group.normalize.instance
+          Entities::Stackexchange::Comment.new(c_e).procure.group.normalize.instance
         end if @event.comments
       end
 
@@ -66,8 +65,7 @@ module Entities
         @event.answers.map do |a| # Wrappers
           Events::Stackexchange::AnswerEvent.new(a.raw)
         end.map do |a_e| # Events
-          Entities::Stackexchange::Answer.new(a_e)
-          .procure.update.determine.group.normalize.persist
+          Entities::Stackexchange::Answer.new(a_e).procure.update.group.normalize.persist
         end if @event.answers
       end
 
