@@ -33,7 +33,7 @@ class Persistor
   def bulk_persist
     Brand.pluck(:tenant_name).each do |tn|
       Apartment::Tenant.switch(tn) do
-        Event.unprocessed.map do |event|
+        Event.unprocessed.order("created_at DESC").limit(50).find_each do |event|
           @events_processed += 1
           process_event(event)
         end
