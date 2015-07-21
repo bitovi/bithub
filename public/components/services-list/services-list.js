@@ -50,8 +50,8 @@ can.Component.extend({
 			var currentlyLoading = this.attr('state.loadingServices');
 
 			service = can.isFunction(service) ? service() : service;
-
-			if(currentlyLoading.indexOf(service) !== -1 && !service.attr('error') && !service.attr('noResults')){
+			
+			if(service.isLoading() || (currentlyLoading.indexOf(service) !== -1 && !service.attr('error') && !service.attr('noResults'))){
 				return opts.fn();
 			}
 		},
