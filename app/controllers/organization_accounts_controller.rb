@@ -4,7 +4,7 @@ class OrganizationAccountsController < ApplicationController
   layout 'backend_admin'
 
   def index
-    # authorize!(:manage, Organization)
+    authorize!(:manage, Organization)
     @members = current_organization.account_organizations.where.not(invitation_accepted_at: nil).map(&:account)
     render :index
   end
