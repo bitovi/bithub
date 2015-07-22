@@ -13,6 +13,8 @@ class TwitterUpdater < BaseUpdater
       Entity.find_by_origin_id(t.id.to_s).update_attribute(:popularity, popularity)
     end
     Celluloid.logger.info "#{log_sig} Done with update. #{requests_left} requests left."
+  rescue ::Twitter::Error::Unauthorized => e
+    Celluloid.logger.warn "#{log_sig} e"
   rescue ::Twitter::Error::TooManyRequests => e
     Celluloid.logger.warn "#{log_sig} Rate limit hit"
     retry if @client_builder.has_more_creds? && (@client = @client_builder.next)
@@ -34,7 +36,7 @@ class TwitterUpdater < BaseUpdater
   end
   
   def requests_left
-    rate_limits[:remaining]
+    rate_limits[:remaining] || "error"
   end
 
   def rate_limits
@@ -46,6 +48,10 @@ class TwitterUpdater < BaseUpdater
     resp
   rescue ::Twitter::Error::TooManyRequests => e
     Celluloid.logger.error "#{log_sig} Rate limit hit while trying to determine rate limits!"
+    {}
+  rescue ::Twitter::Error::Unauthorized => e
+    Celluloid.logger.warn "#{log_sig} e"
+    {}
   end
 
   private
