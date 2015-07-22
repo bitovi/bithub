@@ -65,32 +65,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
 
   def tree
     raise CanCan::AccessDenied unless params['secret'] == ENV['CRAWLER_SECRET_KEY']
-
-    big_hash = Hash[
-      :brands, Brand.active.all.map do |b|
-        Apartment::Tenant.switch b.name do
-          Hash[
-            :id, b.id,
-            :name, b.name,
-            :embeds, b.embeds.map do |e|
-              Hash[
-                :id, e.id,
-                :name, e.name,
-                :services, e.services.map do |s|
-                  Hash[
-                    :id, s.id,
-                    :feed_name, s.feed_name,
-                    :type_name, s.type_name,
-                    :config, s.config_with_credentials
-                  ]
-                end
-              ]
-            end
-          ]
-        end
-      end
-    ]
-
     render :json => big_hash.to_json
   end
 
@@ -111,6 +85,34 @@ class Api::V3::ServicesController < Api::V3::BaseController
     else
       render json: msg_hash(@bi, 'suggestions'), status => 406
     end
+  end
+
+  def big_hash
+    Hash[
+      :brands, Brand.active.all.map do |b|
+        Apartment::Tenant.switch b.name do
+          Hash[
+            :id, b.id,
+            :name, b.name,
+            :embeds, b.embeds.map do |e|
+              Hash[
+                :id, e.id,
+                :name, e.name,
+                :services, e.valid_services.map do |s|
+                  Hash[
+                    :id, s.id,
+                    :feed_name, s.feed_name,
+                    :type_name, s.type_name,
+                    :config, s.config_with_credentials
+                  ]
+                  end
+                end
+              ]
+            end
+          ]
+        end
+      end
+    ]
   end
 
   private
