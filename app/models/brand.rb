@@ -14,6 +14,8 @@ class Brand < ActiveRecord::Base
     with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
+  scope :active, lambda { where(is_active: true) }
+
   after_create  :create_tenant
   after_destroy :destroy_tenant
 
