@@ -14,13 +14,22 @@ class Brand < ActiveRecord::Base
     with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
-  scope :active, lambda { where(is_active: true) }
-
   after_create  :create_tenant
   after_destroy :destroy_tenant
 
   after_create  { notify_crawler(:start) }
   after_destroy { notify_crawler(:stop) }
+
+  # Fetch Brands that have at least one Embed and a Service connected
+  def self.active
+    non_empty_brand_ids = pluck(:tenant_name).map do |tenant_name|
+      Apartment::Tenant.switch(tenant_name) do
+        Service.joins(:embed).select("services.*, embeds.brand_id").uniq.pluck(:brand_id)
+      end
+    end.flatten.uniq
+    
+    where(:id => non_empty_brand_ids)
+  end
 
   def self.switch!(name = nil)
     Apartment::Tenant.switch! name
