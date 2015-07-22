@@ -1,9 +1,13 @@
 class AddActivityIndicatorToBrand < ActiveRecord::Migration
   def up
-    add_column :brands, :is_active, :boolean, default: true
+    if Apartment::Tenant.current == 'public'
+      add_column :brands, :is_active, :boolean, default: true
+    end
   end
 
   def down
-    remove_column :brands, :is_active
+    if Apartment::Tenant.current == 'public'
+      remove_column :brands, :is_active
+    end
   end
 end
