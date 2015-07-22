@@ -1,4 +1,4 @@
-namespace :reports do
+namespace :report do
   desc "Creates a report with account stats"
   task :account_stats => :environment do
 
