@@ -67,7 +67,7 @@ class Api::V3::ServicesController < Api::V3::BaseController
     raise CanCan::AccessDenied unless params['secret'] == ENV['CRAWLER_SECRET_KEY']
 
     big_hash = Hash[
-      :brands, Brand.all.map do |b|
+      :brands, Brand.active.all.map do |b|
         Apartment::Tenant.switch b.name do
           Hash[
             :id, b.id,
