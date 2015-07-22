@@ -23,7 +23,6 @@ module Organizations
       )
 
       @subscription = @organization.build_subscription(plan: @plan)
-      
 
       self
     end
@@ -31,7 +30,7 @@ module Organizations
     def save!
       @organization.save!
 
-      @account.add_role(:admin, @organization)
+      @account.add_role(:organization_admin, @organization)
       @account.save!
 
       @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool && @plan.stripe_id
