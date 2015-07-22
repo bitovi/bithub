@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
 
-  # rescue_from ActionController::RoutingError, with: :render_404
-  # rescue_from ActionView::MissingTemplate, with: :render_404
-  # rescue_from CanCan::AccessDenied, with: :render_401
+  rescue_from ActionController::RoutingError, with: :render_404
+  rescue_from ActionView::MissingTemplate, with: :render_404
+  rescue_from CanCan::AccessDenied, with: :render_401
 
   def current_ability
     if account_signed_in?
