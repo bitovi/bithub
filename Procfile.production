@@ -1,6 +1,6 @@
 web: bundle exec unicorn_rails -c ./config/unicorn.rb
-listener: bundle exec ruby ./services/listener/listener.rb
-crawler_poller: NEW_RELIC_APP_NAME="Bithub-Crawler/Poller" bundle exec ruby ./services/crawler/poller/kickstart.rb
-crawler_listener: NEW_RELIC_APP_NAME="Bithub-Crawler/Listener" bundle exec ruby ./services/crawler/listener/kickstart.rb
-liveservice: NEW_RELIC_APP_NAME="Bithub-LiveService" nodejs ./services/liveservice/server.js
+listener: bundle exec ruby ./services/listener/kickstart.rb
+crawler_poller: bundle exec ruby ./services/crawler/poller/kickstart.rb
+crawler_listener: bundle exec ruby ./services/crawler/listener/kickstart.rb
+liveservice: nodejs ./services/liveservice/server.js
 worker: bundle exec sidekiq
