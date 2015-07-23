@@ -105,7 +105,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
                     :type_name, s.type_name,
                     :config, s.config_with_credentials
                   ]
-                  end
                 end
               ]
             end
