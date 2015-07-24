@@ -1,0 +1,28 @@
+
+<h2 class="static-page-heading">Accounts in your organization</h2>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+
+
+		<table class="table">
+			<thead>
+				
+				<tr>
+					<th>Name</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @members.each do |m| %>
+				<tr>
+					<td><%= m.name %></td>
+					<td><%= m.email %></td>
+				</tr>
+				<% end %>
+				
+			</tbody>
+		</table>
+		Total accounts: <b><%= @members.count %>
+	</div>
+</div>

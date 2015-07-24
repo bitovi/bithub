@@ -1,13 +1,17 @@
 class Api::V3::BrandsController < Api::V3::BaseController
   before_filter :authenticate_account!
 
+  before_action :set_current_brand, only: %i(show update)
+  before_action :set_brand, only: %i(destroy)
+  before_action :build_brand, only: %i(create)
+
   def show
-    authorize! :show, current_brand
+    authorize! :show, @brand
     render :show
   end
 
   def create
-    authorize! :create, built_brand
+    authorize! :create, @brand
 
     if @brand.save
       render :show
@@ -17,9 +21,9 @@ class Api::V3::BrandsController < Api::V3::BaseController
   end
 
   def update
-    authorize! :update, current_brand
+    authorize! :update, @brand
 
-    if @brand.update_attributes brand_params
+    if @brand.update_attributes(brand_params)
       render :show
     else
       render json: msg_hash(@brand, 'update'), status: 422
@@ -27,7 +31,7 @@ class Api::V3::BrandsController < Api::V3::BaseController
   end
 
   def destroy
-    authorize! :destroy, a_brand
+    authorize! :destroy, @brand
     
     if @brand.destroy
       render :json => msg_hash(@brand, 'destroy', 'success'), :status => 204
@@ -38,11 +42,15 @@ class Api::V3::BrandsController < Api::V3::BaseController
 
   private
 
-  def a_brand
+  def set_current_brand
+    @brand = current_brand
+  end
+
+  def set_brand
     @brand = Brand.find(params[:id])
   end
   
-  def built_brand
+  def build_brand
     @brand = Brand.new(brand_params)
   end
 
