@@ -2,22 +2,34 @@ class AccountAbility
   include CanCan::Ability
 
   def initialize(account)
-    if (account.has_role? :admin) || (ENV['RAILS_ENV'] == 'test')
+    if (account.has_role? :bithub_admin) || (ENV['RAILS_ENV'] == 'test')
       can :manage, :all
     else
-      # manage it's own account
+
+      # Admin of an organization
+      if (account.has_role? :organization_admin)
+        can :manage, Organization, id: account.organization_ids
+      end
+
+      # Admin of a brand within an organization
+      if (account.roles_name & %w(brand_admin organization_admin)).length > 0
+        can :manage, Brand, organization_id: account.organization_ids
+      end
+
+      # can manage its own account
       can :manage, Account, id: account.id
 
-      # update and leave organization
-      can [:read, :update], Organization, id: account.organization_ids
-      can :destroy, AccountsOrganization, account_id: account.id
+      # can read its organization information
+      can [:create, :read], Organization, id: account.organization_ids
 
-      # create new a brand or read/update/delete owned brands
-      can :create, Brand, organization_id: account.organization_ids
-      can [:read, :update, :destroy], Brand, organization_id: account.organization_ids
+      # can read and destroy it's own organization membership
+      can [:create, :read, :destroy], AccountOrganization, account_id: account.id
+
+      # can create/read/update/delete a brand
+      can [:create, :read], Brand, organization_id: account.organization_ids
 
       # read/destroy owned brand identities
-      can [:read, :destroy], BrandIdentity, brand_id: account.brand_ids
+      can [:create, :read], BrandIdentity, brand_id: account.brand_ids
 
       # countries list
       can :read, Country
@@ -25,7 +37,7 @@ class AccountAbility
       # read plans, owned subscriptions with payments
       can :read, Plan
       can :manage, Subscription, organization_id: account.organization_ids # [:read, :current]
-      can :read, MonthlyBilling, subscription: {organization_id: account.organization_ids}
+      can :read, Payment, subscription: {organization_id: account.organization_ids}
 
       can :block   , EmbedEntity
       can :approve , EmbedEntity
@@ -43,6 +55,7 @@ class AccountAbility
       can :manage, EmbedPreset
       can :manage, Entity
       can :manage, Filter
+      can :manage, Grouping
       can :manage, Histogram
       can :manage, ServiceEntity
       can :manage, User

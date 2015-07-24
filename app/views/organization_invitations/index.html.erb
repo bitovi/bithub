@@ -1,0 +1,13 @@
+<ul>
+	<% if @invitations && @invitations.length > 0 %>
+		<% @invitations.each do |i| %>
+			<li>
+			Invited to: <%= i.organization.name %><br/>
+			Invited at: <%= i.invitation_created_at %><br/>
+			<%= button_to "Accept", organization_invitation_path(i.id), method: 'put' %>
+			</li>
+		<% end %>
+	<% else %>
+		No invitations
+	<% end %>
+</ul>

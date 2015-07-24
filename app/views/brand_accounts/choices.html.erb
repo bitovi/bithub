@@ -3,8 +3,8 @@
 	Choose brand
   </div>
   <div class="panel-body">
-	<% @brands.each do |brand| %>
-	<p><%= link_to brand.name, choose_brand_admin_index_path(tenant_name: brand.tenant_name) %></p>
+	<% @brands.each do |b| %>
+		<p><%= button_to b.name, choose_brand_path(brand_id: b.id) %></p>
 	<% end %>
   </div>
 </div>
