@@ -2,11 +2,11 @@ class Listener
   include Celluloid
   include Celluloid::Logger
 
-  def initialize(q_name, q_rk, handler_class)
+  def initialize(q_name, q_routing_key, handler_class)
     rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
     @c = rf.chan
     @x = rf.x('x.web')
-    @q = rf.q(q_name).bind(@x, routing_key: q_rk)
+    @q = rf.q(q_name).bind(@x, routing_key: q_routing_key)
 
     @handler = handler_class.new(self)
 
@@ -18,6 +18,7 @@ class Listener
 
     async.listen
   end
+  attr_reader :x, :q
 
   def listen
     @q.subscribe(manual_ack: true, block: false) do |delivery_info, properties, payload|
