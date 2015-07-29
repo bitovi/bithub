@@ -2,12 +2,22 @@ require 'events/events'
 require 'handlers/handler'
 
 class EventHandler < Handler
+  def initialize(listener)
+    super
+    @x = @listener.x
+  end
 
   def handle(packet)
     brand_id = packet.fetch('meta').fetch('brand_id')
+    tenant_name = Brand.find(brand_id).tenant_name
 
-    Apartment::Tenant.switch(Brand.find(brand_id).tenant_name) do
-      process_packet(packet)
+    Apartment::Tenant.switch(tenant_name) do
+      if (event = process_packet(packet))
+        @x.publish(JSON.generate({
+          tenant_name: tenant_name,
+          event_id: event.instance.id
+        }), routing_key: 'entities')
+      end
     end
   end
   
@@ -22,7 +32,6 @@ class EventHandler < Handler
     end
 
     Celluloid.logger.info "[#{name_for_logs}][#{event.repr_for_logs}] processed in #{event_processing_time}"
-
     event
 
   rescue Events::DeterminationError => err
