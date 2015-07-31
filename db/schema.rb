@@ -11,19 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150716220245) do
+ActiveRecord::Schema.define(version: 20150731170111) do
 
-  create_schema "lush_sunset_8115"
 
   create_extension "hstore", :version => "1.2"
-  create_extension "intarray", :version => "1.0"
   create_extension "btree_gin", :version => "1.0"
+  create_extension "intarray", :version => "1.0"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
-  enable_extension "intarray"
   enable_extension "btree_gin"
+  enable_extension "intarray"
+
+  create_table "account_organizations", force: true do |t|
+    t.integer  "account_id",             null: false
+    t.integer  "organization_id",        null: false
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_accepted_at"
+    t.integer  "invited_by_account_id"
+  end
+
+  add_index "account_organizations", ["account_id", "organization_id"], :name => "no_double_links", :unique => true
 
   create_table "account_roles", force: true do |t|
     t.string   "name"
@@ -42,7 +51,7 @@ ActiveRecord::Schema.define(version: 20150716220245) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "encrypted_password",     default: ""
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -56,9 +65,20 @@ ActiveRecord::Schema.define(version: 20150716220245) do
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
     t.integer  "invite_code_id"
+    t.string   "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer  "invitation_limit"
+    t.integer  "invitations_count",      default: 0
+    t.integer  "invited_by_id"
+    t.string   "invited_by_type"
   end
 
   add_index "accounts", ["email"], :name => "index_accounts_on_email", :unique => true
+  add_index "accounts", ["invitation_token"], :name => "index_accounts_on_invitation_token", :unique => true
+  add_index "accounts", ["invitations_count"], :name => "index_accounts_on_invitations_count"
+  add_index "accounts", ["invited_by_id"], :name => "index_accounts_on_invited_by_id"
   add_index "accounts", ["reset_password_token"], :name => "index_accounts_on_reset_password_token", :unique => true
 
   create_table "accounts_account_roles", id: false, force: true do |t|
@@ -67,11 +87,6 @@ ActiveRecord::Schema.define(version: 20150716220245) do
   end
 
   add_index "accounts_account_roles", ["account_id", "account_role_id"], :name => "index_accounts_account_roles_on_account_id_and_account_role_id"
-
-  create_table "accounts_organizations", force: true do |t|
-    t.integer "account_id",      null: false
-    t.integer "organization_id", null: false
-  end
 
   create_table "brand_identities", force: true do |t|
     t.string   "provider"
@@ -90,6 +105,7 @@ ActiveRecord::Schema.define(version: 20150716220245) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "organization_id"
+    t.boolean  "is_active",       default: true
   end
 
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
@@ -231,154 +247,6 @@ ActiveRecord::Schema.define(version: 20150716220245) do
     t.integer  "remaining_uses"
     t.datetime "valid_until"
   end
-
-  create_table "lush_sunset_8115.embed_entities", force: true do |t|
-    t.integer  "embed_id"
-    t.integer  "entity_id"
-    t.boolean  "is_approved_manually"
-    t.boolean  "is_pinned",                 default: false, null: false
-    t.boolean  "is_approved_automatically"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "lush_sunset_8115.embed_entities", ["entity_id"], :name => "embed_entities_entity_id_idx"
-
-  create_table "lush_sunset_8115.embed_presets", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.embeds", force: true do |t|
-    t.string  "name"
-    t.integer "brand_id"
-    t.boolean "approved_by_default", default: true
-    t.boolean "published",           default: false
-  end
-
-# Could not dump table "lush_sunset_8115.entities" because of following NoMethodError
-#   undefined method `[]' for nil:NilClass
-
-  create_table "lush_sunset_8115.events", force: true do |t|
-    t.string   "type_name"
-    t.string   "feed_name"
-    t.string   "content_digest"
-    t.hstore   "props",          default: {}
-    t.json     "source_data"
-    t.integer  "entity_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "embed_id"
-    t.integer  "service_id"
-    t.boolean  "is_processed",   default: false
-    t.boolean  "was_viewed",     default: false
-  end
-
-  add_index "lush_sunset_8115.events", ["content_digest"], :name => "index_events_on_content_digest"
-
-  create_table "lush_sunset_8115.filters", force: true do |t|
-    t.integer "embed_id"
-    t.string  "action",   null: false
-  end
-
-  create_table "lush_sunset_8115.histogram", id: false, force: true do |t|
-    t.string   "source_type"
-    t.integer  "source_id"
-    t.integer  "volume"
-    t.integer  "delta"
-    t.datetime "measured_at"
-  end
-
-  add_index "lush_sunset_8115.histogram", ["source_type", "source_id", "measured_at"], :name => "histogram_unique_source_measured_at", :unique => true
-
-  create_table "lush_sunset_8115.interactions", id: false, force: true do |t|
-    t.string   "event_type"
-    t.string   "event_subtype"
-    t.integer  "primary_source_id"
-    t.string   "primary_source_type"
-    t.integer  "secondary_source_id"
-    t.string   "secondary_source_type"
-    t.datetime "created_at"
-  end
-
-  create_table "lush_sunset_8115.natlang_queries", force: true do |t|
-    t.string  "attr_name"
-    t.string  "op"
-    t.string  "val"
-    t.boolean "is_negated", default: false
-    t.integer "filter_id"
-  end
-
-  create_table "lush_sunset_8115.ownerships", force: true do |t|
-    t.integer  "owner_id"
-    t.integer  "entity_id"
-    t.integer  "value"
-    t.string   "ownership_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.schema_migrations", id: false, force: true do |t|
-    t.string "version", null: false
-  end
-
-  add_index "lush_sunset_8115.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
-
-  create_table "lush_sunset_8115.service_entities", force: true do |t|
-    t.integer "service_id"
-    t.integer "entity_id"
-  end
-
-  add_index "lush_sunset_8115.service_entities", ["entity_id", "service_id"], :name => "index_service_entities_on_entity_id_and_service_id"
-  add_index "lush_sunset_8115.service_entities", ["entity_id"], :name => "service_entities_entity_id_idx"
-  add_index "lush_sunset_8115.service_entities", ["service_id"], :name => "index_service_entities_on_service_id"
-
-  create_table "lush_sunset_8115.service_errors", force: true do |t|
-    t.string   "klass"
-    t.string   "message"
-    t.text     "backtrace"
-    t.integer  "service_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.services", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "uid"
-    t.integer  "brand_identity_id"
-    t.boolean  "approved_by_default"
-    t.string   "state",               default: "loading"
-  end
-
-  create_table "lush_sunset_8115.taggings", force: true do |t|
-    t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context",       limit: 128
-    t.datetime "created_at"
-  end
-
-  add_index "lush_sunset_8115.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
-
-  create_table "lush_sunset_8115.tags", force: true do |t|
-    t.string  "name",                        null: false
-    t.string  "display_name"
-    t.string  "aliases",        default: [],              array: true
-    t.hstore  "props",          default: {}
-    t.integer "taggings_count", default: 0
-  end
-
-  add_index "lush_sunset_8115.tags", ["name"], :name => "index_tags_on_name", :unique => true
 
   create_table "monthly_billing_records", force: true do |t|
     t.integer  "monthly_billing_id"
@@ -555,169 +423,12 @@ ActiveRecord::Schema.define(version: 20150716220245) do
 
   add_index "users", ["email"], :name => "index_users_on_email"
 
-  create_table "lush_sunset_8115.embed_entities", force: true do |t|
-    t.integer  "embed_id"
-    t.integer  "entity_id"
-    t.boolean  "is_approved_manually"
-    t.boolean  "is_pinned",                 default: false, null: false
-    t.boolean  "is_approved_automatically"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "lush_sunset_8115.embed_entities", ["entity_id"], :name => "embed_entities_entity_id_idx"
-
-  create_table "lush_sunset_8115.embed_presets", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.embeds", force: true do |t|
-    t.string  "name"
-    t.integer "brand_id"
-    t.boolean "approved_by_default", default: true
-    t.boolean "published",           default: false
-  end
-
-# Could not dump table "lush_sunset_8115.entities" because of following NoMethodError
-#   undefined method `[]' for nil:NilClass
-
-  create_table "lush_sunset_8115.events", force: true do |t|
-    t.string   "type_name"
-    t.string   "feed_name"
-    t.string   "content_digest"
-    t.hstore   "props",          default: {}
-    t.json     "source_data"
-    t.integer  "entity_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "embed_id"
-    t.integer  "service_id"
-    t.boolean  "is_processed",   default: false
-    t.boolean  "was_viewed",     default: false
-  end
-
-  add_index "lush_sunset_8115.events", ["content_digest"], :name => "index_events_on_content_digest"
-
-  create_table "lush_sunset_8115.filters", force: true do |t|
-    t.integer "embed_id"
-    t.string  "action",   null: false
-  end
-
-  create_table "lush_sunset_8115.histogram", id: false, force: true do |t|
-    t.string   "source_type"
-    t.integer  "source_id"
-    t.integer  "volume"
-    t.integer  "delta"
-    t.datetime "measured_at"
-  end
-
-  add_index "lush_sunset_8115.histogram", ["source_type", "source_id", "measured_at"], :name => "histogram_unique_source_measured_at", :unique => true
-
-  create_table "lush_sunset_8115.interactions", id: false, force: true do |t|
-    t.string   "event_type"
-    t.string   "event_subtype"
-    t.integer  "primary_source_id"
-    t.string   "primary_source_type"
-    t.integer  "secondary_source_id"
-    t.string   "secondary_source_type"
-    t.datetime "created_at"
-  end
-
-  create_table "lush_sunset_8115.natlang_queries", force: true do |t|
-    t.string  "attr_name"
-    t.string  "op"
-    t.string  "val"
-    t.boolean "is_negated", default: false
-    t.integer "filter_id"
-  end
-
-  create_table "lush_sunset_8115.ownerships", force: true do |t|
-    t.integer  "owner_id"
-    t.integer  "entity_id"
-    t.integer  "value"
-    t.string   "ownership_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.schema_migrations", id: false, force: true do |t|
-    t.string "version", null: false
-  end
-
-  add_index "lush_sunset_8115.schema_migrations", ["version"], :name => "unique_schema_migrations", :unique => true
-
-  create_table "lush_sunset_8115.service_entities", force: true do |t|
-    t.integer "service_id"
-    t.integer "entity_id"
-  end
-
-  add_index "lush_sunset_8115.service_entities", ["entity_id", "service_id"], :name => "index_service_entities_on_entity_id_and_service_id"
-  add_index "lush_sunset_8115.service_entities", ["entity_id"], :name => "service_entities_entity_id_idx"
-  add_index "lush_sunset_8115.service_entities", ["service_id"], :name => "index_service_entities_on_service_id"
-
-  create_table "lush_sunset_8115.service_errors", force: true do |t|
-    t.string   "klass"
-    t.string   "message"
-    t.text     "backtrace"
-    t.integer  "service_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "lush_sunset_8115.services", force: true do |t|
-    t.integer  "embed_id"
-    t.string   "feed_name"
-    t.string   "type_name"
-    t.json     "config"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "uid"
-    t.integer  "brand_identity_id"
-    t.boolean  "approved_by_default"
-    t.string   "state",               default: "loading"
-  end
-
-  create_table "lush_sunset_8115.taggings", force: true do |t|
-    t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context",       limit: 128
-    t.datetime "created_at"
-  end
-
-  add_index "lush_sunset_8115.taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
-
-  create_table "lush_sunset_8115.tags", force: true do |t|
-    t.string  "name",                        null: false
-    t.string  "display_name"
-    t.string  "aliases",        default: [],              array: true
-    t.hstore  "props",          default: {}
-    t.integer "taggings_count", default: 0
-  end
-
-  add_index "lush_sunset_8115.tags", ["name"], :name => "index_tags_on_name", :unique => true
-
   create_view "public.entity_aggregated_tag_list", <<-SQL
      SELECT e.id AS entity_id,
     string_agg((t.name)::text, ','::text) AS tag_list
    FROM entities e,
     tags t,
     taggings e_t
-  WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
-  GROUP BY e.id;
-  SQL
-  create_view "lush_sunset_8115.entity_aggregated_tag_list", <<-SQL
-     SELECT e.id AS entity_id,
-    string_agg((t.name)::text, ','::text) AS tag_list
-   FROM lush_sunset_8115.entities e,
-    lush_sunset_8115.tags t,
-    lush_sunset_8115.taggings e_t
   WHERE ((e.id = e_t.taggable_id) AND (e_t.tag_id = t.id))
   GROUP BY e.id;
   SQL

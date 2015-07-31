@@ -1,9 +1,13 @@
 class Api::V3::AccountsController < Api::V3::BaseController
-  before_filter :authenticate_account!
+  before_action :set_account, only: %i(current)
 
   def current
-    authorize!(:read, @account = current_account)
+    authorize!(:read, @account)
     render :show
   end
 
+  private
+  def set_account
+    @account = current_account
+  end
 end

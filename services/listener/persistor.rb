@@ -5,47 +5,67 @@ class Persistor
   include Celluloid
   include Celluloid::Logger
   
-  def initialize
-    @events_processed = 0
-    every(Intervals::Persistor::REPORT) do
-      info "[#{name_for_logs}] Processed #{@events_processed} in the last #{Intervals::Persistor::REPORT} seconds"
-      @events_processed = 0
-    end
+  def initialize(q_name, q_routing_key)
+    rf = RabbitHelper.new(ConnectionManager.instance.rabbit)
+    @c = rf.chan
+    @x = rf.x('x.web')
+    @q = rf.q(q_name).bind(@x, routing_key: q_routing_key)
 
     info "[#{name_for_logs}] Started, checking for work every #{Intervals::Persistor::HEARTBEAT} seconds"
-    check_for_work
+    subscribe
   end
 
-  def check_for_work
-    if work_to_be_done?
-      bulk_persist
-    else
-      after(Intervals::Persistor::HEARTBEAT) { check_for_work } 
+  def subscribe
+    @q.subscribe(block: false) do |delivery_info, properties, payload|
+      packet = JSON.parse(payload, symbolize_names: true)
+      tenant_name = packet.fetch(:tenant_name)
+
+      if event_id = packet[:event_id]
+        process_one(tenant_name, event_id)
+      else
+        process_many(tenant_name)
+      end
     end
   end
-  
-  def work_to_be_done?
-    Brand.pluck(:tenant_name).map do |tn|
-      Apartment::Tenant.switch(tn) { Event.unprocessed.count }
-    end.sum > 0
-  end
 
-  def bulk_persist
-    Brand.pluck(:tenant_name).each do |tn|
-      Apartment::Tenant.switch(tn) do
-        Event.unprocessed.map do |event|
-          @events_processed += 1
-          process_event(event)
+  def process_one(tenant_name, event_id)
+    handle_errors do
+      Apartment::Tenant.switch(tenant_name) do
+        event = Event.find(event_id)
+        if event.is_processed
+          warn "[#{name_for_logs}] Event already processed"
+        else
+          run_pipeline_with_benchmarks(event)
         end
       end
     end
+  end
 
-  rescue Entities::DeterminationError => err
-    warn "[#{name_for_logs}] #{err} | #{err.context}"
+  # Not used currently, but may be used in the future
+  # when there is a lot of backpressure on the entities queue
+  def process_many(tenant_name)
+    handle_errors do
+      Apartment::Tenant.switch(tenant_name) do
+        Event.unprocessed.order("created_at DESC").limit(500).find_each do |event|
+          run_pipeline_with_benchmarks(event)
+        end
+      end
+    end
+  end
+
+  def handle_errors
+    yield
+
+  rescue ActiveRecord::RecordNotFound => e
+    error "[#{name_for_logs}] #{err}"
     nil
 
   rescue ActiveRecord::RecordInvalid => err
     error "[#{name_for_logs}] #{err}"
+    nil
+
+  rescue Entities::DeterminationError => err
+    warn "[#{name_for_logs}] #{err} | #{err.context}"
     nil
 
   rescue Entities::NormalizationError => err
@@ -58,10 +78,9 @@ class Persistor
 
   ensure
     Apartment::Tenant.switch!
-    after(0) { check_for_work }
   end
 
-  def process_event(event)
+  def run_pipeline_with_benchmarks(event)
     entity = Entities.entity_instance(event.wrapped)
 
     procurement = nil
@@ -91,7 +110,7 @@ class Persistor
     info "[#{name_for_logs}][ROUTING] for entity #{entity.repr_for_logs} completed in #{routing_time}"
 
     event.update_attribute(:is_processed, true)
-
+    entity
   ensure
     event.update_attribute(:was_viewed, true)
   end

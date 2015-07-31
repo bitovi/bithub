@@ -40,8 +40,8 @@ logger = LoggerFactory.new('listener', :environment => $env).logger
 Celluloid.logger = logger
 
 class WebWorkers < Celluloid::SupervisionGroup
-  supervise(Persistor, as: :entity_persistor, args: [])
   supervise(Updater, as: :entity_updater, args: [])
+  supervise(Persistor, as: :entity_persistor, args: ['q.web.entities', 'entities'])
   supervise(Listener, as: :error_listener, args: ['q.web.errors', 'errors', ErrorHandler])
   supervise(Listener, as: :event_listener, args: ['q.web.events', 'events', EventHandler])
   supervise(Listener, as: :command_listener, args: ['q.web.commands', 'commands', CommandHandler])
