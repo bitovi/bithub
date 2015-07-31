@@ -29,6 +29,7 @@
 					<select can-value="state.preset.config.order" class="form-control input-sm">
 						<option value="created_at:desc">Ordered by crawling time</option>
 						<option value="preview">Ordered like in the public embed</option>
+            <option value="popularity:desc">Order most popular items first</option>
 					</select>
 				</div>
 			{{/if}}
