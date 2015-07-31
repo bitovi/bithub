@@ -12,3 +12,4 @@ json.service_ids entity.services.map {|s| s.id}
 
 json.is_approved entity.is_approved
 json.is_pinned entity.is_pinned
+json.popularity entity.popularity
