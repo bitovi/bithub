@@ -12,15 +12,17 @@ var InteractionEvent = can.Model.extend({
 	create : 'POST /api/v3/interactions',
 	findAll : 'GET /api/v3/interactions',
 	
-	createScrollInteraction : function(hubId){
+	createScrollInteraction : function(tenant_name, hubId){
 		return this.create(wrapCreate({
+			tenant_name: tenant_name,
 			primary_source_id: hubId,
 			primary_source_type: 'Embed',
 			event_type: 'scroll'
 		}));
 	},
-	createLinkClickedInteraction : function(hubId, entityId){
+	createLinkClickedInteraction : function(tenant_name, hubId, entityId){
 		return this.create(wrapCreate({
+			tenant_name: tenant_name,
 			primary_source_id: hubId,
 			primary_source_type: 'Embed',
 			secondary_source_id: entityId,
@@ -28,8 +30,9 @@ var InteractionEvent = can.Model.extend({
 			event_type: 'link'
 		}));
 	},
-	createEntitySharedInteraction : function(hubId, entityId, target){
+	createEntitySharedInteraction : function(tenant_name, hubId, entityId, target){
 		return this.create(wrapCreate({
+			tenant_name: tenant_name,
 			primary_source_id: hubId,
 			primary_source_type: 'Embed',
 			secondary_source_id: entityId,

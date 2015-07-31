@@ -32,18 +32,18 @@ export default can.Control.extend({
 	},
 	'interaction:scroll' : function(el, ev, hubId){
 		if(!this.__savedScrollInteraction){
-			InteractionEvent.createScrollInteraction(hubId);
+			InteractionEvent.createScrollInteraction(this.options.state.attr('tenant'), hubId);
 			this.__savedScrollInteraction = true;
 		}
 	},
 	'interaction:link' : function(el, ev, hubId, entityId){
 		if(!this.options.state.isAdmin()){
-			InteractionEvent.createLinkClickedInteraction(hubId, entityId);
+			InteractionEvent.createLinkClickedInteraction(this.options.state.attr('tenant'), hubId, entityId);
 		}
 	},
 	'interaction:share' : function(el, ev, hubId, entityId, target){
 		if(!this.options.state.isAdmin()){
-			InteractionEvent.createEntitySharedInteraction(hubId, entityId, target);
+			InteractionEvent.createEntitySharedInteraction(this.options.state.attr('tenant'), hubId, entityId, target);
 		}
 	}
 });
