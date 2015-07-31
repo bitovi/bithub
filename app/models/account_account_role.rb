@@ -1,3 +1,3 @@
-class AccountsAccountRole < ActiveRecord::Base
+class AccountAccountRole < ActiveRecord::Base
   self.table_name = :accounts_account_roles
 end

@@ -1,0 +1,19 @@
+<table>
+
+	<tr>
+		<td>Expires: </td>
+		<td><%= @subscription.card_exp_year%> / <%=@subscription.card_exp_month %></td>
+	</tr>
+	<tr>
+		<td>Types: </td>
+		<td><%= @subscription.card_type %></td>
+	</tr>
+	<tr>
+		<td>Last 4 digits:</td>
+		<td><%= @subscription.card_last4 %></td>
+	</tr>
+</table>
+
+<%# json.plan do %>
+	<%#   json.partial! 'api/v3/plans/plan', plan: sub.plan %>
+	<%# end %>
