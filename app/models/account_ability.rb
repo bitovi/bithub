@@ -7,14 +7,10 @@ class AccountAbility
     else
 
       # Admin of an organization
-      if (account.has_role? :organization_admin)
-        can :manage, Organization, id: account.organization_ids
-      end
+      can :manage, Organization, id: account.organization_ids
 
       # Admin of a brand within an organization
-      if (account.roles_name & %w(brand_admin organization_admin)).length > 0
-        can :manage, Brand, organization_id: account.organization_ids
-      end
+      can :manage, Brand, organization_id: account.organization_ids
 
       # can manage its own account
       can :manage, Account, id: account.id
@@ -55,7 +51,6 @@ class AccountAbility
       can :manage, EmbedPreset
       can :manage, Entity
       can :manage, Filter
-      can :manage, Grouping
       can :manage, Histogram
       can :manage, ServiceEntity
       can :manage, User
