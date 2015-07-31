@@ -1,9 +1,13 @@
 class AddPrimaryKeyToAccountOrganizations < ActiveRecord::Migration
   def up
-    add_column :accounts_organizations, :id, :primary_key
+    if Apartment::Tenant.current == 'public' && !column_exists?(:accounts_organizations, :id)
+      add_column :accounts_organizations, :id, :primary_key
+    end
   end
 
   def down
-    remove_column :accounts_organizations, :id
+    if Apartment::Tenant.current == 'public' && column_exists?(:accounts_organizations, :id)
+      remove_column :accounts_organizations, :id
+    end
   end
 end
