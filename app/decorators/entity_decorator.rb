@@ -4,7 +4,7 @@ class EntityDecorator < Draper::Decorator
   delegate_all
 
   def title
-    if ['tweet', 'follow'].include?(source.feed_name)
+    if ['tweet', 'follow'].include?(source.type_name)
       apply_hyperlinks(source.title, source.props['entities_urls'])
     else
       source.title

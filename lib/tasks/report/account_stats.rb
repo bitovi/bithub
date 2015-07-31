@@ -1,10 +1,13 @@
-namespace :reports do
+namespace :report do
   desc "Creates a report with account stats"
   task :account_stats => :environment do
 
-    results = Brand.pluck(:tenant_name).map do |tn|
+    tenant_names = Brand.pluck(:tenant_name)
+
+    results = tenant_names.map do |tn|
       sql_command = <<-SQL
-        select email,
+        select accounts.id,
+          email,
           case when confirmed_at is null then 'no' else 'yes' end as is_confirmed,
           last_sign_in_at,
           count(distinct(embeds.id)) as embeds_count,
@@ -19,13 +22,14 @@ namespace :reports do
         group by email, confirmed_at, last_sign_in_at;
       SQL
 
-      [sql_command, ActiveRecord::Base.connection.execute(sql_command).values]
-    end
+      ActiveRecord::Base.connection.execute(sql_command).values
+    end.reject {|v| v == []}
+
 
     CSV.open("/tmp/account_stats.csv", "wb", {:col_sep => ";"}) do |csv|
-      csv << ['Email', 'Email confirmed?', 'Last login at', 'Number of embeds', 'Number of services']
+      csv << ['ID', 'Email', 'Email confirmed?', 'Last login at', 'Number of embeds', 'Number of services']
       results.each do |values|
-        csv << values[1][0]
+        csv << values[0]
       end
     end
 

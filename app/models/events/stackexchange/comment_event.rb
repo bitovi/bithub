@@ -14,6 +14,10 @@ module Events
       def digest_seed
         @comment.comment_id.to_s + creation_date.to_s + self.class.name
       end
+      
+      def origin_ts
+        @answer.creation_date
+      end
 
       def wrap_response
         @comment = Wrappers::Stackexchange::Comment.new(source_data)

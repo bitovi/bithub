@@ -18,6 +18,10 @@ module Events
           self.class.name
       end
 
+      def origin_ts
+        @question.creation_date
+      end
+
       def wrap_response
         @question = Wrappers::Stackexchange::Question.new(source_data)
         @answers = source_data[:answers].andand.map{|a| Wrappers::Stackexchange::Answer.new(a)}
