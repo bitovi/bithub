@@ -31,30 +31,29 @@ class Service < ActiveRecord::Base
     embed_id = embed.id
 
     query = <<-SQL
+      delete from embed_entities using service_entities
+      where embed_entities.entity_id = service_entities.entity_id
+      and embed_id = #{embed_id}
+      and service_id = #{service_id};
+      -- ^ delete connections between entities belonging to the service
+      -- we're currently deleting and the embed that service belongs to
 
-    -- delete connections between entities belonging to the service
-    -- we're currently deleting and the embed that service belongs to
-    -----------------------------------------------------------------
-    delete from embed_entities using service_entities
-    where embed_entities.entity_id = service_entities.entity_id
-    and embed_id = #{embed_id}
-    and service_id = #{service_id};
+      delete from service_entities
+      where service_id = #{service_id};
+      -- ^ delete connections between entities
+      -- and the service we're deleting
 
-    -- delete connections between entities and the service we're deleting
-    ---------------------------------------------------------------------
-    delete from service_entities
-    where service_id = #{service_id};
+      delete from entities
+      where id not in (
+        select distinct(entity_id)
+        from service_entities
+      );
+      -- ^ delete entities that have
+      -- no connections to a service
 
-    -- delete entities that have no connections to a service
-    --------------------------------------------------------
-    delete from entities
-    where id not in (select distinct(entity_id) from service_entities);
-
-    -- delete events that belong to this service
-    --------------------------------------------
-    delete from events
-    where service_id = #{service_id};
-
+      delete from events
+      where service_id = #{service_id};
+      -- ^ delete events that belong to this service
     SQL
 
     ActiveRecord::Base.transaction do

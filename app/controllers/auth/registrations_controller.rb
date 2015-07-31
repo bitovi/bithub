@@ -1,56 +1,43 @@
 class Auth::RegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
-  # def new
-  #   @plan = find_plan
-  #   super
-  # end
-
   def create
-    # @plan = find_plan
     ActiveRecord::Base.transaction do
       super do |account|
-        org_builder = Organizations::OrganizationBuilder.new account #, @plan
+        org_builder = Organizations::OrganizationBuilder.new account
 
         begin
-          org_builder.build.save!
+          ActiveRecord::Base.transaction do
+            org_builder.build.save!
+          end
         rescue ActiveRecord::RecordInvalid => e
-          # catch exception on account validation
+          # swallow exception on account validation
           # errors will be displayed on register form
         end
 
         Workers::DripSubscriber.perform_async account.email
 
         # TODO: handle multiple brands on organization
-        session['organization_name'] = org_builder.organization.name
+        session['organization_id'] = org_builder.organization.id
         session['tenant_name'] = org_builder.brand.tenant_name
       end
     end
   end
-
+  
   protected
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:sign_up).push(:name)
+    devise_parameter_sanitizer.for(:account_update).push(:name)
+    devise_parameter_sanitizer.for(:invite).push(:name)
+    devise_parameter_sanitizer.for(:accept_invitation).push(:name)
   end
 
   def after_sign_up_path_for(resource)
-    admin_index_path
+    admin_path
   end
 
   def after_inactive_sign_up_path_for(resource)
-    admin_index_path
+    admin_path
   end
-
-  # def find_plan
-  #   if plan_name
-  #     Plan.find_by_stripe_id(plan_name)
-  #   else
-  #     Plan.find_by_stripe_id('startup')
-  #   end
-  # end
-
-  # def plan_name
-  #   params[:plan]
-  # end
 end

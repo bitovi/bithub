@@ -7,7 +7,7 @@ class Api::V3::SubscriptionsController < Api::V3::BaseController
   end
 
   def current
-    @subscription = Subscription.current
+    @subscription = current_organization.subscription
     render :show
   end
 
