@@ -8,13 +8,12 @@ describe Organizations::OrganizationBuilder do
         account = FactoryGirl.create(:account)
         plan = FactoryGirl.create(:plan)
 
-        org_builder = Organizations::OrganizationBuilder.new(account, plan)
-        org_builder.build
+        org_builder = Organizations::OrganizationBuilder.new(account)
+        org_builder.build.save!
 
         expect(org_builder.organization.accounts).to include(account)
         expect(org_builder.account.organizations).to include(org_builder.organization)
         expect(org_builder.brand).to be_truthy
-        expect(org_builder.subscription.plan).to eq plan
         expect{org_builder.save!}.not_to raise_error
       end
     end
