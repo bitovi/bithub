@@ -37,6 +37,7 @@ gem 'ranked-model'
 gem 'jbuilder'
 
 gem 'devise', '~> 3.2'
+gem 'devise_invitable', '~> 1.3.4'
 gem 'rolify', '~> 3.2'
 
 gem 'omniauth', '~> 1.2'
@@ -116,7 +117,6 @@ group :development do
   gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
-  gem 'rubocop'
 end
 
 group :test do

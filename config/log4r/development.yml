@@ -11,51 +11,26 @@ log4r_config:
       level         : DEBUG
       trace         : 'false'
       outputters    :
-        - active_record_logfile
+        - component_logfile
 
     - name          : action_controller
       level         : DEBUG
       trace         : 'false'
       outputters    :
-        - action_controller_logfile
+        - component_logfile
 
   outputters:
     - name      : console
       type      : StdoutOutputter
       formatter :
-        type    : PatternFormatter
-        date_pattern: '%Y-%m-%dT%H:%M:%S%z'
-        pattern : '[%d][%l]: %m'
+        type: PatternFormatter
+        pattern: '[%l]: %m '
 
-    - name      : component_logfile
-      type      : FileOutputter
-      dirname   : "log"
-      filename  : "log/#{ENV}_#{COMPONENT_NAME}.log"
-      trunc     : true
-      maxsize   : 104857600
-      formatter :
-        type    : PatternFormatter
-        date_pattern: '%Y-%m-%dT%H:%M:%S%z'
-        pattern : '[%d][%l]: %m'
-
-    - name     : active_record_logfile
-      type     : DateFileOutputter
-      dirname  : "log"
-      filename : "log/#{ENV}_active_record.log"
-      trunc    : false
+    - name     : component_logfile
+      type     : FileOutputter
+      filename : "log/#{ENV}_#{COMPONENT_NAME}.log"
+      trunc    : true
       maxsize  : 104857600
-      max_backups : 10
       formatter:
         type: PatternFormatter
-        pattern: '[%d][%l]: %m '
-
-    - name     : action_controller_logfile
-      type     : DateFileOutputter
-      dirname  : "log"
-      filename : "log/#{ENV}_action_controller.log"
-      trunc    : false
-      maxsize  : 104857600
-      max_backups : 10
-      formatter:
-        type: PatternFormatter
-        pattern: '[%d][%l]: %m '
+        pattern: '[#{ENV}][[%d][%l]: %m '

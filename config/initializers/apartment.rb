@@ -6,7 +6,7 @@ require 'apartment/elevators/generic'
 DEFAULT_BITHUB_TENANT = 'public'
 
 Apartment.configure do |config|
-  config.excluded_models = %w(InviteCode Brand BrandIdentity Account Organization AccountsOrganization AccountRole AccountsAccountRole User BrandsUser Country Subscription Payment StripeWebhooksLog Plan EmbedEvent MonthlyBilling MonthlyBillingRecord)
+  config.excluded_models = %w(InviteCode Brand BrandIdentity Account Organization AccountOrganization AccountRole AccountAccountRole User BrandsUser Country Subscription Payment StripeWebhooksLog Plan EmbedEvent MonthlyBilling MonthlyBillingRecord)
   config.use_schemas = true
   config.use_sql = true
   config.tenant_names = -> { Brand.pluck :tenant_name }
@@ -16,6 +16,5 @@ end
 
 Rails.application.config.middleware.use 'Apartment::Elevators::Generic', lambda { |request|
   tenant_name = request.session['tenant_name']
-
   Apartment.tenant_names.include?(tenant_name) ? tenant_name : DEFAULT_BITHUB_TENANT
 }

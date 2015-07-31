@@ -11,21 +11,33 @@ module Organizations
     end
 
     def build
-      @organization  = Organization.new name: organization_name
-      @brand         = Brand.new name: brand_name, tenant_name: brand_name
-      @subscription  = Subscription.new plan: @plan
+      @organization = Organization.new name: organization_name
 
-      @account.organizations << @organization
-      @organization.brands   << @brand
-      @organization.subscription = @subscription
+      @organization_account = @organization.account_organizations.build(
+        account: @account,
+        invitation_created_at: DateTime.now,
+        invitation_accepted_at: DateTime.now
+      )
+
+      @brand = @organization.brands.build(
+        name: brand_name,
+        tenant_name: brand_name
+      )
+
+      @subscription = @organization.build_subscription(plan: @plan)
+
       self
     end
 
     def save!
       @organization.save!
+
       @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool
       delete_excluded_tables_from_tenant brand_name
 
+      @account.add_role(:organization_admin, @organization)
+      @account.save!
+      
       self
     end
 
