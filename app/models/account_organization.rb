@@ -1,6 +1,4 @@
 class AccountOrganization < ActiveRecord::Base
-  self.table_name = :accounts_organizations
-
   belongs_to :account
   belongs_to :organization
   
