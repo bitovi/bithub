@@ -11,9 +11,17 @@ class ApplicationController < ActionController::Base
       @current_ability ||= AnonAbility.new
     end
   end
+  
+  def current_brand
+    Brand.find_by_tenant_name(session['tenant_name'])
+  end
+  
+  def current_organization
+    Organization.find(session['organization_id'])
+  end
 
   def render_404
-    render "frontend/404", status: 404, layout: false
+    render "static_pages/404", status: 404, layout: false
   end
 
   def render_401
