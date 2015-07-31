@@ -16,7 +16,11 @@ class Auth::InvitationsController < Devise::InvitationsController
     devise_parameter_sanitizer.for(:accept_invitation).push(:name)
   end
 
+  def after_accept_path_for(account)
+    choices_organization_path
+  end
+
   def current_organization
-    Organization.find_by_name(session.fetch('organization_name'))
+    Organization.find(session['organization_id'])
   end
 end
