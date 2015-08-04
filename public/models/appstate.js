@@ -16,7 +16,8 @@ var PAGE_TITLES = {
 	'moderation' : 'Moderation',
 	'analytics' : 'Analytics',
 	'payments' : 'Payments',
-	'organization-settings' : 'Organization Accounts'
+	'organization-settings' : 'Organization Accounts',
+	'user-settings' : 'User Settings'
 };
 
 var getPageTitle = function(val, appState){
