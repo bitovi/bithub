@@ -30,12 +30,13 @@ var kickstart = function(selector){
 		}
 	});
 
-	$.when(Models.Brand.findOne({}), Models.Subscription.findOne({}), Models.Account.current()).done(function(brand, subscription, account){
+	$.when(Models.Brand.findOne({}), Models.Subscription.findOne({}), Models.Account.current(), Models.Organization.current()).done(function(brand, subscription, account, organization){
 
 		var appState = new AppState({
 			currentBrand: brand,
 			currentSubscription: subscription,
 			currentAccount: account,
+			currentOrganization: organization,
 			embedType : 'admin'
 		});
 		
@@ -73,7 +74,14 @@ var kickstart = function(selector){
 
 
 		$(selector).html(initView({
-			state: appState
+			state: appState,
+			switchOrganization : function(organization){
+				Models.Organization.choose(organization.id).then(function(){
+					window.location.reload();
+				}, function(){
+					alert('There was a problem with the organization switching');
+				});
+			}
 		}, {
 			renderIframe : function(iframe, opts){
 				iframe = can.isFunction(iframe) ? iframe() : iframe;

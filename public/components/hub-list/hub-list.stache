@@ -1,4 +1,4 @@
-<h2>Your Hubs</h2>
+<bh-edit-hub-name hub="{state.currentOrganization}"></bh-edit-hub-name>
 {{#if hubs.isPending}}
 	<div class="alert alert-info">Loading...</div>
 {{else}}

@@ -50,8 +50,28 @@
 					{{#if state.isAnalyticsPageActive}}
 						<li><a href="{{pageUrl 'analytics' hubId=state.hubId}}" class="btn btn-default">Analytics</a></li>
 					{{/if}}
+          
+         
 					<li>{{{pageLink 'payments' 'Payments'}}}</li>
-					<li><a href="/logout" class="btn btn-link">Logout ({{state.currentAccount.name}} - {{ state.currentAccount.email}})</a></li>
+
+           <li class="switch-organizations-link">
+            <a href="javascript://" class="btn">Switch organization</a>
+            <ul class="list-unstyled">
+              {{#each state.currentAccount.organizations}}
+                <li>
+                  <a href="javascript://" can-click="switchOrganization" class="btn">{{name}}</a>
+                </li>
+              {{/each}}
+            </ul>
+          </li>
+          <li>{{{ pageLink 'organization-settings' 'Organization Settings' }}}</li>
+					<li class="user-account-link">
+            <a href="javascript://" class="btn">{{state.currentAccount.name}} - {{ state.currentAccount.email}}</a>
+            <ul class="list-unstyled">
+              <li>{{{ pageLink 'user-settings' 'Account Settings' }}}</li>
+              <li><a href="/logout" class="btn btn-link">Logout</a></li>
+            </ul>
+          </li>
 				</ul>
 			</div>
 		</div>
