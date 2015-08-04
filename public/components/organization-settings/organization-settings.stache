@@ -1,0 +1,55 @@
+<h2><b>{{state.currentOrganization.name}}</b> Accounts</h2>
+<hr>
+<h3>Users</h3>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th class="actions" style="display: none"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each state.currentOrganization.accounts}}
+      <tr>
+        <td>{{email}}</td>
+        <td style="display: none">
+          {{^eq id state.currentAccount.id}}
+            <button class="btn btn-xs btn-primary">Revoke Access</button>
+          {{/eq}}
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<hr>
+{{#if state.currentOrganization.invitations.length}}
+<h3>Invitations</h3>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each state.currentOrganization.invitations}}
+      <tr>
+        <td>{{email}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<hr>
+{{/if}}
+
+<h3>Invite User</h3>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="input-group">
+      <input type="text" placeholder="User's Email" class="form-control" can-change="setInviteUserEmail" can-blur="setInviteUserEmail" can-keydown="setInviteUserEmail">
+      <div class="input-group-btn">
+        <button class="btn btn-default" {{#unless isInviteUserEmailValid}}disabled{{/unless}} can-click="inviteUser">Invite User</button>
+      </div>
+    </div>
+  </div>
+</div>
+

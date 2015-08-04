@@ -3,6 +3,6 @@ class Api::V3::Current::AccountsController < Api::V3::Current::AbstractControlle
   
   private
   def resource_params
-    params.require(:account).permit(:name)
+    params.require(:account).permit(:name, :password, :password_confirmation)
   end
 end

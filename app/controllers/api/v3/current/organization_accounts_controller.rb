@@ -16,11 +16,11 @@ class Api::V3::Current::OrganizationAccountsController < Api::V3::BaseController
   def create
     @target_account = Account.find_by_email(params[:account][:email])
 
-    if !@target_account
+    if @target_account.blank?
       render json: { msg: 'Invitation creating failed. Non-existent user.' }, status: 404
     else
       @organization_invitation = AccountOrganization.new({
-        account: target_account,
+        account: @target_account,
         organization: current_organization,
         invited_by_account_id: current_account.id,
         invitation_created_at: DateTime.now
@@ -29,10 +29,9 @@ class Api::V3::Current::OrganizationAccountsController < Api::V3::BaseController
       if @organization_invitation.save
         Workers::DripSubscriber.perform_async @target_account.email
 
-        @organization_accounts = current_organization.account_organizations.all
-        render :index
+        render :show
       else
-        render json: { msg: 'Invitation creating failed.' }, status: 500
+        render json: { msg: 'Invitation creation failed.' }, status: 406
       end
     end
   end

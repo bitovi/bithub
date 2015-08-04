@@ -3,6 +3,7 @@ class Api::V3::Current::OrganizationsController < Api::V3::Current::AbstractCont
 
   def choose
     if @organization = current_account.organizations.find_by_id(organization_id)
+      AccountOrganization.where(account: current_account, organization: @organization).first.confirm!
       session['organization_id'] = @organization.id
       session['tenant_name']     = @organization.brands.first.tenant_name
       render :show
