@@ -86,6 +86,7 @@ Bithub::Application.routes.draw do
         end
 
         resource :organization do
+          put 'choose', on: :collection
           resources :accounts, to: 'organization_accounts'
           resources :invitations, to: 'organization_accounts', status: 'pending'
         end
