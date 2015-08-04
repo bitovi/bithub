@@ -4,7 +4,7 @@ class Interaction < ActiveRecord::Base
   belongs_to :primary_source, polymorphic: true
   belongs_to :secondary_source, polymorphic: true
 
-  validates_presence_of :primary_source, :event_type
+  validates_presence_of :primary_source_id, :primary_source_type, :event_type
   
   self.primary_key = :created_at
 
