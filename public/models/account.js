@@ -2,6 +2,7 @@ import can from "can/";
 import Organization from "./organization";
 
 import "can/map/define/";
+import "can/construct/super/";
 
 export default can.Model.extend({
 	findOne : '/api/v3/current/account',
@@ -11,8 +12,13 @@ export default can.Model.extend({
 	}
 }, {
 	define : {
+
 		organizations : {
 			Type : Organization.List
 		}
+	},
+	serialize: function() {
+		var data = this._super();
+		return { account: data };
 	}
 });

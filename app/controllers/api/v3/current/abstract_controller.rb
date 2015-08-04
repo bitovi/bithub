@@ -17,14 +17,20 @@ class Api::V3::Current::AbstractController < Api::V3::BaseController
   def update
     authorize! :update, @resource
 
-    @resource.update_attributes(resource_params)
-    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
+    if @resource.update_attributes(resource_params)
+      render json: @resource, status: :ok
+    else
+      render json: { errors: @resource.errors }, status: :not_acceptable
+    end
   end
   
   def destroy
     authorize! :destroy, @resource
-    @resource.destroy
-    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
+    if @resource.destroy
+      render json: @resource, status: :ok
+    else
+      render json: { errors: @resource.errors }, status: :not_acceptable
+    end
   end
 
   private
