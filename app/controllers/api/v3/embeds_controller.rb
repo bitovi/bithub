@@ -5,7 +5,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
 
   def index
     authorize! :index, Embed
-    @embeds = Embed.all
+    @embeds = Embed.order("created_at DESC").all
     render :index
   end
 
@@ -23,10 +23,6 @@ class Api::V3::EmbedsController < Api::V3::BaseController
     authorize! :create, built_embed
 
     @embed.name = generated_name if params[:name].blank?
-
-    # permited = Subscriptions::PolicyChecker
-    #   .new(current_brand.organization.subscription)
-    #   .can_create_embed?(current_brand)
 
     if @embed.save
       render :show
