@@ -2,12 +2,19 @@ class Auth::InvitationsController < Devise::InvitationsController
   before_filter :authenticate_account!
 
   def create
-    super do |account|
-      account.account_organizations.create(
-        organization: current_organization,
-        invitation_created_at: DateTime.now,
-        invitation_accepted_at: DateTime.now
-      )
+    self.resource = invite_resource
+    resource_invited = resource.errors.empty?
+
+    resource.account_organizations.create(
+      organization: current_organization,
+      invitation_created_at: DateTime.now,
+      invitation_accepted_at: nil
+    )
+
+    if resource_invited
+      render json: resource
+    else
+      render json: { msg: 'Invitation failed' }, status: 400
     end
   end
 
