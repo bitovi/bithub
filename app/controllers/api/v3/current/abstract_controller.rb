@@ -17,39 +17,20 @@ class Api::V3::Current::AbstractController < Api::V3::BaseController
   def update
     authorize! :update, @resource
 
-    if @resource.update_attributes(resource_params)
-      render :show
-    else
-      render json: msg_hash(@resource, "Failed to update #{str_klass}."), status: 422
-    end
+    @resource.update_attributes(resource_params)
+    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
   end
   
   def destroy
     authorize! :destroy, @resource
-
-    if @resource.destroy
-      render json: 'ok'
-    end
+    @resource.destroy
+    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
   end
 
   private
 
   def chain_start
     self.class.represented_resource
-  end
-
-  def show
-    render json: chain_start.find(params[:id])
-  end
-
-  def update
-    @resource.save
-    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
-  end
-
-  def destroy
-    @resource.destroy
-    render json: @resource, status: (@resource.valid? ? :ok : :not_acceptable )
   end
 
   def set_current_resource
