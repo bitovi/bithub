@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   has_many :organizations, through: :account_organizations
   has_many :account_organizations, dependent: :destroy
 
+
   def brand_ids
     organizations.map do |o|
       o.brand_ids

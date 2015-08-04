@@ -19,6 +19,11 @@ export default can.Model.extend({
 	},
 	serialize: function() {
 		var data = this._super();
+		
+		if(data.password && !data.password_confirmation){
+			data.password_confirmation = "";
+		}
+
 		return { account: data };
 	}
 });
