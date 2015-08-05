@@ -53,7 +53,7 @@
           
          
 					<li>{{{pageLink 'payments' 'Payments'}}}</li>
-
+          {{#if state.currentAccount.hasMultipleOrganizations}}
            <li class="switch-organizations-link">
             <a href="javascript://" class="btn">Switch organization</a>
             <ul class="list-unstyled">
@@ -64,6 +64,7 @@
               {{/each}}
             </ul>
           </li>
+          {{/if}}
           <li>{{{ pageLink 'organization-settings' 'Organization Settings' }}}</li>
 					<li class="user-account-link">
             <a href="javascript://" class="btn">{{state.currentAccount.name}} - {{ state.currentAccount.email}}</a>

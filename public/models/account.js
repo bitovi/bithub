@@ -17,8 +17,16 @@ export default can.Model.extend({
 			Type : Organization.List
 		}
 	},
+	hasMultipleOrganizations : function(){
+		var organizations = this.attr('organizations');
+		return organizations && organizations.attr('length') > 1;
+	},
 	serialize: function() {
 		var data = this._super();
+
+		if(data.current_password && !data.password){
+			data.password = "";
+		}
 		
 		if(data.password && !data.password_confirmation){
 			data.password_confirmation = "";
