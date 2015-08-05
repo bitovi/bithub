@@ -1,12 +1,11 @@
 class Api::V3::Current::AccountsController < Api::V3::Current::AbstractController
   represents_resource Account
 
-
   def update
     @account = current_account
     authorize! :update, @account
 
-    if params[:account].grep(/password/).count > 0
+    if params[:account].keys.grep(/password/).count > 0
       if @account.update_with_password(resource_params)
         sign_in(@account, :bypass => true)
         render json: @account, status: :ok
