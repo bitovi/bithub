@@ -1,0 +1,64 @@
+<h2><b>{{state.currentAccount.email}}</b> Settings</h2>
+<hr>
+{{#state.currentAccount}}
+{{#if notice}}
+  <div class="alert alert-info">{{notice}}</div>
+{{/if}}
+<form can-submit="updateAccount">
+  <div class="form-group">
+    <label>Name</label>
+    <input can-value="name" class="form-control">
+    {{#if errors.name}}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+          {{#each errors.name}}
+            <li>{{.}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  </div>
+  <div class="form-group">
+    <label>Current password</label>
+    <input can-value="current_password" type="password" class="form-control">
+    {{#if errors.current_password}}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+          {{#each errors.current_password}}
+            <li>{{.}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input can-value="password" type="password" class="form-control">
+    {{#if errors.password}}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+          {{#each errors.password}}
+            <li>{{.}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  </div>
+  <div class="form-group">
+    <label>Password Confirmation</label>
+    <input can-value="password_confirmation" type="password" class="form-control">
+    {{#if errors.password_confirmation}}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+          {{#each errors.password_confirmation}}
+            <li>{{.}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  </div>
+  <div>
+    <button class="btn btn-primary">Save Changes</button>
+  </div>
+</form>
+{{/state.currentAccount}}

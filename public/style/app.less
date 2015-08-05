@@ -153,3 +153,36 @@
       }
   }
 }
+.switch-organizations-link, .user-account-link {
+    ul {
+        position: absolute;
+        border: 1px solid #ccc;
+        background: white;
+        display: none;
+        border-radius: 3px;
+        margin-top: -1px;
+        z-index: 10001;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        min-width: 149px;
+        li {
+            float: none;
+            a {
+                display: block;
+                text-align: left;
+            }
+        }
+    }
+    &:hover {
+        > a {
+            position: relative;
+            background: #ccc;
+            border-bottom: none;
+            z-index: 10000;
+            color: black;
+        }
+        ul {
+            display: block;
+        }
+    }
+}

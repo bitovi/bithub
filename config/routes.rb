@@ -5,23 +5,6 @@ Bithub::Application.routes.draw do
   get '/admin', to: 'kickstart#admin'
   get '/embed', to: 'kickstart#embed'
 
-  resources :accounts, only: %i(index)
-
-  resource :organization, only: %i(edit update), to: 'organization' do
-    root to: 'organization#current'
-
-    resources :accounts, only: %i(index destroy), to: 'organization_accounts'
-    resources :invitations, only: %i(index new create update destroy), to: 'organization_invitations'
-
-    get 'choices', to: 'organization_accounts#choices'
-    post 'choose', to: 'organization_accounts#choose'
-  end
-
-  resource :brand, only: %i(show edit update) do
-    get 'choices', to: 'brand_accounts#choices'
-    post 'choose', to: 'brand_accounts#choose'
-  end
-
   resources :subscriptions, only: %i(show) do
     collection do
       get 'current', to: 'subscriptions#current'
@@ -88,8 +71,6 @@ Bithub::Application.routes.draw do
 
       resources :brands,  except: %i(new edit) do
         collection do
-          get 'current', to: 'brands#show'
-          put 'current', to: 'brands#update'
           get 'current/payments', to: 'payments#index'
           get 'current/identities/:provider', to: 'brand_identities#index'
           get 'current/identities', to: 'brand_identities#index'
@@ -98,11 +79,25 @@ Bithub::Application.routes.draw do
         end
       end
 
-      resources :accounts, only: %i() do
-        collection do
-          get 'current', to: 'accounts#current'
+      namespace :current do
+        resource :account do
+          resources :organizations, to: 'account_organizations'
+          resources :invitations, to: 'account_organizations'
+        end
+
+        resource :organization do
+          put 'choose', on: :collection
+          resources :accounts, to: 'organization_accounts'
+          resources :invitations, to: 'organization_accounts', status: 'pending'
+        end
+      
+        resource :brand do
+          resources :identities, to: 'brand_identities'
         end
       end
+
+      
+      get :embeds_by_organization, to: 'account_organizations_embeds#index'
 
       get 'analytics', to: 'analytics#show'
       get 'interactions', to: 'interactions#index'
