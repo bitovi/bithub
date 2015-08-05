@@ -19,6 +19,19 @@
     {{/if}}
   </div>
   <div class="form-group">
+    <label>Current password</label>
+    <input can-value="current_password" type="password" class="form-control">
+    {{#if errors.current_password}}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+          {{#each errors.current_password}}
+            <li>{{.}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+  </div>
+  <div class="form-group">
     <label>Password</label>
     <input can-value="password" type="password" class="form-control">
     {{#if errors.password}}
