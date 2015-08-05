@@ -8,7 +8,7 @@ class Auth::InvitationsController < Devise::InvitationsController
     resource.account_organizations.create(
       organization: current_organization,
       invitation_created_at: DateTime.now,
-      invitation_accepted_at: nil
+      invitation_accepted_at: DateTime.now
     )
 
     if resource_invited
@@ -18,13 +18,20 @@ class Auth::InvitationsController < Devise::InvitationsController
     end
   end
 
+  def update
+    super do |account|
+      session['organization_id'] = account.organizations.first.id
+      session['tenant_name'] = account.organizations.first.brands.first.tenant_name
+    end
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:invite).push(:name)
     devise_parameter_sanitizer.for(:accept_invitation).push(:name)
   end
 
   def after_accept_path_for(account)
-    choices_organization_path
+    admin_path
   end
 
   def current_organization
