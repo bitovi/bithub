@@ -17,7 +17,12 @@ export default can.Component.extend({
 			this.removeAttr('errors');
 
 			account.save(function(){
+				can.batch.start();
 				self.attr('notice', 'Your credentials were saved');
+				account.removeAttr('current_password');
+				account.removeAttr('password');
+				account.removeAttr('password_confirmation');
+				can.batch.stop();
 			}, function(res){
 				self.attr('errors', res.responseJSON.errors);
 			});
