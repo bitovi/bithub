@@ -15,7 +15,9 @@ var PAGE_TITLES = {
 	'integration' : 'Integration',
 	'moderation' : 'Moderation',
 	'analytics' : 'Analytics',
-	'payments' : 'Payments'
+	'payments' : 'Payments',
+	'organization-settings' : 'Organization Accounts',
+	'user-settings' : 'User Settings'
 };
 
 var getPageTitle = function(val, appState){
@@ -50,6 +52,9 @@ export default can.Map.extend({
 			serialize: false
 		},
 		currentAccount: {
+			serialize: false
+		},
+		currentOrganization : {
 			serialize: false
 		},
 		hubId : {

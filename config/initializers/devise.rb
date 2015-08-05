@@ -68,6 +68,11 @@ Devise.setup do |config|
   config.mailer_sender = '"BitHub" <no-reply@bithub.com>'
   Devise::Mailer.layout 'mailer'
 
+
+  config.http_authenticatable_on_xhr = false
+  config.navigational_formats = ["*/*", :html, :json]
+
+
   # config.case_insensitive_keys = [ :email ]
   # config.strip_whitespace_keys = [ :email ]
 
@@ -75,6 +80,7 @@ Devise.setup do |config|
 
   # config.http_authenticatable = false
   # config.http_authenticatable_on_xhr = true
+  
   # config.http_authentication_realm = 'Application'
   # config.paranoid = true
 
