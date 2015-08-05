@@ -4,12 +4,13 @@ class Auth::RegistrationsController < Devise::RegistrationsController
   def create
     ActiveRecord::Base.transaction do
       super do |account|
-        org_builder = Organizations::OrganizationBuilder.new account
+        org_builder = Organizations::OrganizationBuilder.new account, params
 
         begin
           ActiveRecord::Base.transaction do
             org_builder.build.save!
           end
+
         rescue ActiveRecord::RecordInvalid => e
           # swallow exception on account validation
           # errors will be displayed on register form
@@ -22,6 +23,9 @@ class Auth::RegistrationsController < Devise::RegistrationsController
         session['tenant_name'] = org_builder.brand.tenant_name
       end
     end
+
+  rescue Organizations::OrganizationBuilder::BuildingError => e
+    render :new
   end
   
   protected

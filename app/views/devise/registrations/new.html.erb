@@ -1,10 +1,8 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-	<h2 class="static-page-heading registration-heading">Sign up for the <b><%= @plan.name.capitalize %></b> plan.</h2>
-
 	<div class="plan-and-form-wrap clearfix">
 		<div class="pricing-registration-page">
-			<%= render :partial => 'pricing/' + @plan.name.underscore, :locals => {context: 'registration'} %>
+				<%= render :partial => 'pricing/per_hub', :locals => {context: 'frontpage'} %>
 		</div>
 
 		<div class="panel panel-default registration-panel">
@@ -37,7 +35,9 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10 col-md-offset-1">
+	<div>
 		<%= render "devise/shared/links" %>
 	</div>
 </div>
+
+<% end %>
