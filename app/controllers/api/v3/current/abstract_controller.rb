@@ -11,11 +11,11 @@ class Api::V3::Current::AbstractController < Api::V3::BaseController
   end
 
   def show
-    authorize! :show, @resource
+    # authorize! :show, @resource
   end
 
   def update
-    authorize! :update, @resource
+    # authorize! :update, @resource
 
     if @resource.update_attributes(resource_params)
       render json: @resource, status: :ok
