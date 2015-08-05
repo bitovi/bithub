@@ -1,6 +1,4 @@
 class Api::V3::Current::AccountOrganizationsController < Api::V3::BaseController
-  represented_resource Account
-
   def index
     if !status
       @account_organizations = current_account.account_organizations.all
