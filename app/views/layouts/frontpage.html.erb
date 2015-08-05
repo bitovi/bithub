@@ -271,7 +271,7 @@
 							<div class="form-group"><%= f.label :email %>
 								<%= f.email_field :email, class: 'form-control' %></div>
 
-							<div class="form-group"><%= f.label :password %> <% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %>
+							<div class="form-group"><%= f.label :password %> <% if @validatable %><i> (<%= @minimum_password_length %> characters minimum)</i><% end %>
 								<%= f.password_field :password, autocomplete: "off", class: 'form-control' %></div>
 
 							<div class="form-group"><%= f.label :password_confirmation %>

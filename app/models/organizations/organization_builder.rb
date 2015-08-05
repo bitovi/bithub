@@ -2,15 +2,17 @@ require 'core_ext'
 
 module Organizations
   class OrganizationBuilder
+    class BuildingError < StandardError; end;
 
     attr_reader :account, :organization, :plan, :brand, :subscription
 
-    def initialize(account, plan=nil)
+    def initialize(account, params)
       @account = account
-      @plan    = plan
+      @params = params
     end
 
     def build
+      fail BuildingError.new if !@account.valid?
       @organization = Organization.new name: organization_name
 
       @organization_account = @organization.account_organizations.build(
@@ -24,7 +26,7 @@ module Organizations
         tenant_name: brand_name
       )
 
-      @subscription = @organization.build_subscription(plan: @plan)
+      @subscription = @organization.build_subscription(plan: nil)
 
       self
     end
