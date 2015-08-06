@@ -51,7 +51,7 @@ class Api::V3::InteractionsController < Api::V3::BaseController
 
   def tenant_name
     tenant_name = session[:tenant_name] || params[:interaction][:tenant_name]
-    params[:interaction].delete(:tenant_name)
+    params[:interaction].delete(:tenant_name) if params[:interaction]
     tenant_name
   end
   
