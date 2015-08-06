@@ -247,7 +247,7 @@ class Entity < ActiveRecord::Base
   def notify_liveservice
     return if (is_pending? || is_child?)
 
-    embeds.each do |embed|
+    embeds.reload.each do |embed|
       message = JSON.generate msg(embed)
       x('x.liveservice', chan_is_short_lived = true) do |xchange|
         xchange.publish(message, routing_key: 'entities')

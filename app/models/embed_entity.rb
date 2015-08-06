@@ -1,6 +1,8 @@
 class EmbedEntity < ActiveRecord::Base
   belongs_to :embed
   belongs_to :entity
+  
+  after_commit :notify_liveservice, on: :create
 
   validates_uniqueness_of :embed_id, scope: [:entity_id]
 
@@ -31,6 +33,10 @@ class EmbedEntity < ActiveRecord::Base
     returning(update_attribute(:is_pinned, false)) do
       entity.touch
     end
+  end
+
+  def notify_liveservice
+    entity.notify_liveservice
   end
 
   private
