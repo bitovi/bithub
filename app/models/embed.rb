@@ -24,24 +24,20 @@ class Embed < ActiveRecord::Base
     embed_id = id
 
     query = <<-SQL
+      delete from service_entities using embed_entities
+      where service_entities.entity_id = embed_entities.entity_id
+      and service_id in (select id from services where embed_id = #{embed_id});
+      -- ^ delete service_entities that are no longer
+      -- valid as (because the services are going to be deleted)
 
-    -- delete service_entities that are no longer
-    -- valid as (because the services are going to be deleted)
-    ------------------------------------------------------------------------------
-    delete from service_entities using embed_entities
-    where service_entities.entity_id = embed_entities.entity_id
-    and service_id in (select id from services where embed_id = #{embed_id});
+      delete from embed_entities
+      where embed_id = #{embed_id};
+      -- ^ delete connections between entities
+      -- and the embed we're deleting
 
-    -- delete connections between entities and the embed we're deleting
-    -------------------------------------------------------------------
-    delete from embed_entities
-    where embed_id = #{embed_id};
-
-    -- delete events that belong to this embed
-    ------------------------------------------
-    delete from events
-    where embed_id = #{embed_id};
-
+      delete from events
+      where embed_id = #{embed_id};
+      -- ^ delete events that belong to this embed
     SQL
 
     ActiveRecord::Base.transaction do
