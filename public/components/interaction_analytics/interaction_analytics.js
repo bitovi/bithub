@@ -22,6 +22,30 @@ export var InteractionAnalyticsVM = can.Map.extend({
 		InteractionEvent.findAll({event_type: 'scroll', primary_source_id: this.attr('state.hubId')}).then(function(data){
 			self.attr('scrollInteractions', data);
 		});
+	},
+	hasAnyInteractionAnalytics : function(){
+		var totalShareInteractions = this.attr('totalShareInteractions');
+		var perNetworkShareInteractions = this.attr('perNetworkShareInteractions');
+		var linkInteractions = this.attr('linkInteractions');
+		var scrollInteractions = this.attr('scrollInteractions');
+
+		if(totalShareInteractions && totalShareInteractions.length){
+			return true;
+		}
+
+		if(perNetworkShareInteractions && perNetworkShareInteractions.length){
+			return true;
+		}
+
+		if(linkInteractions && linkInteractions.length){
+			return true;
+		}
+
+		if(scrollInteractions && scrollInteractions.length){
+			return true;
+		}
+
+		return false;
 	}
 });
 

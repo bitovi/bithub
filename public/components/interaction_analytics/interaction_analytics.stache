@@ -1,16 +1,23 @@
-{{#if totalShareInteractions}}
-<h3>Total amount of shares</h3>
-<canvas  width="1140" height="400" {{renderGraph 'totalShareInteractions'}}></canvas>
+{{#if totalShareInteractions.length}}
+  <h3>Total amount of shares</h3>
+  <canvas  width="1140" height="400" {{renderGraph 'totalShareInteractions'}}></canvas>
 {{/if}}
-{{#if perNetworkShareInteractions}}
-<h3>Share amount per network</h3>
-<canvas width="1140" height="400" {{renderGraph 'perNetworkShareInteractions'}}></canvas>
+
+{{#if perNetworkShareInteractions.length}}
+  <h3>Share amount per network</h3>
+  <canvas width="1140" height="400" {{renderGraph 'perNetworkShareInteractions'}}></canvas>
 {{/if}}
-{{#if linkInteractions}}
-<h3>Link clicks</h3>
-<canvas width="1140" height="400" {{renderGraph 'linkInteractions'}}></canvas>
+
+{{#if linkInteractions.length}}
+  <h3>Link clicks</h3>
+  <canvas width="1140" height="400" {{renderGraph 'linkInteractions'}}></canvas>
 {{/if}}
-{{#if scrollInteractions}}
-<h3>Scrolls</h3>
-<canvas width="1140" height="400" {{renderGraph 'scrollInteractions'}}></canvas>
+
+{{#if scrollInteractions.length}}
+  <h3>Scrolls</h3>
+  <canvas width="1140" height="400" {{renderGraph 'scrollInteractions'}}></canvas>
 {{/if}}
+
+{{#unless hasAnyInteractionAnalytics}}
+  <div class="alert alert-info">We don't have enough data to plot the interactions graph.</div>
+{{/unless}}
