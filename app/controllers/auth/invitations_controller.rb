@@ -20,6 +20,7 @@ class Auth::InvitationsController < Devise::InvitationsController
 
   def update
     super do |account|
+      account.name = params[:account][:name] if params[:account][:name]
       session['organization_id'] = account.organizations.first.id
       session['tenant_name'] = account.organizations.first.brands.first.tenant_name
     end
