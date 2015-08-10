@@ -1,0 +1,70 @@
+### Create system user
+
+- name: Create bithub system group
+  group: name=bithub state=present
+
+- name: Create bithub system user
+  user: name=bithub password={{ user_pw }} shell=/bin/bash group=bithub append=yes
+
+- name: "Copying yours id_rsa.pub to bithub's authorized_keys"
+  authorized_key: user=bithub key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  ignore_errors: True
+
+- name: Setup ENV vars
+  lineinfile:
+    dest: /home/bithub/.bashrc
+    line: "{{ item }}"
+  with_items:
+    - '\n'
+    - '# Added by Ansible'
+    - 'export RAILS_ENV={{ env }}'
+    - 'export ENV={{ env }}'
+
+- name: Configure sudo for bithub account
+  template: src=bithub_sudoers dest=/etc/sudoers.d/bithub
+
+### Configure nginx vhost
+
+- name: Copy bithub vhost
+  template: src=bithub_vhost dest=/etc/nginx/sites-available/bithub
+  notify:
+    - restart nginx
+
+- name: Enable bithub vhost
+  file: src=/etc/nginx/sites-available/bithub dest=/etc/nginx/sites-enabled/bithub state=link
+  notify:
+    - restart nginx
+
+
+### Configure RabbitMQ
+
+- name: Create RabbitMQ vhost
+  rabbitmq_vhost: name='/bithub' state=present
+
+- name: Create RabbitMQ user
+  rabbitmq_user: user=bithub
+                 password={{ rabbitmq_pw }}
+                 force=yes
+                 vhost='/bithub'
+                 tags=administrator
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
+
+
+### Configure Postgresql
+
+- name: Create Postgresql user
+  postgresql_user: name=bithub
+                   password={{ postgres_pw }}
+                   role_attr_flags=CREATEDB,NOSUPERUSER
+  sudo: yes
+  sudo_user: 'postgres'
+
+- name: Create Postgresql database
+  postgresql_db: name=bithub
+                 owner=bithub
+                 encoding='UTF-8'
+  sudo: yes
+  sudo_user: 'postgres'

@@ -1,0 +1,4 @@
+### Create system user
+
+- name: Load common bash aliases for sane server navigation
+  template: src=bash_aliases dest=/etc/bash_completion.d/aliases
