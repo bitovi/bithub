@@ -1,6 +1,0 @@
-web: bundle exec unicorn_rails -c ./config/unicorn.rb
-listener: bundle exec ruby ./services/listener/kickstart.rb
-crawler_poller: bundle exec ruby ./services/crawler/poller/kickstart.rb
-crawler_listener: bundle exec ruby ./services/crawler/listener/kickstart.rb
-liveservice: nodejs ./services/liveservice/server.js
-worker: bundle exec sidekiq
