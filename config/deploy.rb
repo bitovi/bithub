@@ -4,9 +4,6 @@
 set :application, 'bithub'
 set :user, 'bithub'
 
-role :db, "master"
-role :db, "slave"
-
 set :scm, :git
 set :repo_url, 'git@github.com:bitovi/bithub.git'
 ask :branch, 'master'

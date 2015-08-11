@@ -14,7 +14,7 @@ test:
   username: bithub
   socket: /var/run/postgresql/.s.PGSQL.5432
 
-testing:
+staging:
   adapter: postgresql
   encoding: utf8
   database: bithub
