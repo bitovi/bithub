@@ -18,7 +18,7 @@ namespace :deploy do
       options << "--log #{fetch(:log_path)}"
       options << "--user #{fetch(:user)}"
       options << "--env #{fetch(:current_path)}/.env_#{fetch(:stage)}"
-      options << "--template #{fetch(:current_path)}/lib/capistrano/tasks/templates"
+      options << "--template #{fetch(:current_path)}/config/capistrano/tasks/templates"
       options << "--procfile #{fetch(:current_path)}/Procfile.#{fetch(:stage)}"
 
       dst = "/lib/systemd/system/"
@@ -36,7 +36,7 @@ namespace :deploy do
     task :npm_install do
       on roles(:all) do |host|
         within release_path.join('services/liveservice') do
-          execute :npm, 'install', '--production', '--silent', '--no-spin'
+          execute :npm, 'install', '--production', '--no-spin'
         end
       end
     end
@@ -47,7 +47,7 @@ namespace :deploy do
     task :npm_install do
       on roles(:all) do |host|
         within release_path.join('public') do
-          execute :npm, 'install', '--production', '--silent', '--no-spin'
+          execute :npm, 'install', '--production', '--no-spin'
         end
       end
     end
