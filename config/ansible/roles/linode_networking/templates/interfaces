@@ -1,0 +1,16 @@
+# Added by Ansible provisioning
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+allow-hotplug eth0
+
+iface eth0 inet static
+	address {{ public_ip }}
+	netmask {{ public_netmask }}
+    gateway {{ default_gateway }}
+
+iface eth0 inet static
+	address {{ private_ip }}
+	netmask {{ private_netmask }}

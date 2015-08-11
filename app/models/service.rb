@@ -44,9 +44,9 @@ class Service < ActiveRecord::Base
       -- and the service we're deleting
 
       delete from entities
-      where id not in (
-        select distinct(entity_id)
-        from service_entities
+      where not exists (
+        select 1 from service_entities se
+        where se.entity_id = entities.id
       );
       -- ^ delete entities that have
       -- no connections to a service
