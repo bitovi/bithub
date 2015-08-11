@@ -191,12 +191,10 @@ test:
   <<: *default_settings
   monitor_mode: false
 
-
-# Testing environment, which is really a staging environment
-testing:
+staging:
   <<: *default_settings
   monitor_mode: true
-  app_name: Bithub-Web (Testing)
+  app_name: Bithub-Web (Staging)
 
 production:
   <<: *default_settings
