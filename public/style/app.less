@@ -134,25 +134,7 @@
 		line-height: 20px;
 	}
 }
-@media (max-width: 600px) {
-  .sidebar-wrap, .admin-embed-filter, .bithub-main-menu, .btn-add-hub {
-      display: none;
-  }
-  #content, #content.sidebar-is-expanded {
-      left: 0;
-  }
-  bh-hub-list {
-      .connected-services {
-          display: none;
-      }
-      .name {
-          width: 70%;
-      }
-      .btn-analytics-link, .btn-delete-hub {
-          display: none;
-      }
-  }
-}
+
 .switch-organizations-link, .user-account-link {
     ul {
         position: absolute;
@@ -184,5 +166,38 @@
         ul {
             display: block;
         }
+    }
+}
+@media (max-width: 600px) {
+  .sidebar-wrap, .admin-embed-filter, .bithub-main-menu, .btn-add-hub {
+      display: none;
+  }
+  #content, #content.sidebar-is-expanded {
+      left: 0;
+  }
+  bh-hub-list {
+      .connected-services {
+          display: none;
+      }
+      .name {
+          width: 70%;
+      }
+      .btn-analytics-link, .btn-delete-hub {
+          display: none;
+      }
+  }
+  .full-width-embed-title {
+      display: none;
+  }
+  .narrow-width-embed-title {
+      display: block;
+  }
+}
+@media (min-width: 601px){
+    .narrow-width-embed-title {
+        display: none;
+    }
+    .full-width-embed-title {
+        display: block;
     }
 }
