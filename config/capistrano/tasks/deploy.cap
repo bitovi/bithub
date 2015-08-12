@@ -1,14 +1,5 @@
 namespace :deploy do
 
-  desc "Preparation tasks"
-  task :prepare do
-    on roles(:all) do |host|
-      within fetch(:shared_path) do
-        execute :mkdir, '-p', 'pids', 'sockets', 'log'
-      end
-    end
-  end
-
   desc "Export upstart scripts"
   task :export do
     on roles(:all) do |host|
@@ -80,7 +71,6 @@ namespace :deploy do
     end
   end
 
-  after :finishing, 'deploy:prepare'
   after :finishing, 'deploy:export'
   after :finishing, 'deploy:liveservice:npm_install'
   after :finishing, 'deploy:client:npm_install'
