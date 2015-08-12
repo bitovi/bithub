@@ -1,21 +1,24 @@
 class Api::V3::EmbedsController < Api::V3::BaseController
   include Api::EmbedScoped
 
-  before_filter :authenticate_account!
+  before_filter :authenticate_account!, except: %i(show)
 
   def index
     authorize! :index, Embed
     @embeds = Embed.order("created_at DESC").all
-    render :index
   end
 
   def show
-    if (tn = (params[:tenant_name] || Apartment::Tenant.current))
-      tn = nil unless Apartment.tenant_names.include?(tn)
-      Apartment::Tenant.switch(tn) do
-        authorize! :show, owner_embed
-        render :show
+    if current_account
+      if (tn = (params[:tenant_name] || Apartment::Tenant.current))
+        tn = nil unless Apartment.tenant_names.include?(tn)
+        Apartment::Tenant.switch(tn) do
+          authorize! :show, owner_embed
+          render :show
+        end
       end
+    else
+      render nothing: true, status: 401
     end
   end
 
