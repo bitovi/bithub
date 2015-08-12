@@ -38,8 +38,9 @@ set :current_path, File.join([fetch(:deploy_to), 'current'])
 set :shared_path, File.join([fetch(:deploy_to), 'shared'])
 set :log_path, File.join([fetch(:shared_path), 'log'])
 
-# 'foreman' command should be prefixed with 'rbenv exec' and 'bundle exec'
-set :rbenv_map_bins, fetch(:rbenv_map_bins, []).push('foreman')
+# 'foreman' command should be prefixed with 'bundle exec'
 set :bundle_bins, fetch(:bundle_bins, []).push('foreman')
+set :bundle_binstubs, -> { shared_path.join('bin') }            # default: nil
+
 
 after 'deploy:updated', 'newrelic:notice_deployment'
