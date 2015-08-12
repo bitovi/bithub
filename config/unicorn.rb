@@ -6,10 +6,10 @@ timeout 30
 preload_app true
 
 # Unix socket
-listen "/home/bithub/bithub/shared/sockets/unicorn.sock", :backlog => 64
+listen "/home/bithub/bithub/shared/tmp/sockets/unicorn.sock", :backlog => 64
 
 # PID
-pid "/home/bithub/bithub/shared/pids/unicorn.pid"
+pid "/home/bithub/bithub/shared/tmp/pids/unicorn.pid"
 
 logger(LoggerFactory.new('unicorn', :environment => ENV['ENV']).logger)
 
