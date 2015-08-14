@@ -30,6 +30,7 @@ namespace :db do
   desc "Pull DB from current stage"
   task :pull do
     on roles(:db) do |host|
+      puts "kita od billa -----------"
       backup_filename = gen_backup_version + fetch(:backup_ext)
       local_backup_dest = File.join('.', 'tmp', backup_filename)
       remote_backup_dest = File.join('/', 'tmp', backup_filename)
@@ -43,7 +44,7 @@ namespace :db do
       download! remote_backup_dest, local_backup_dest
       execute :rm, remote_backup_dest
 
-      # load the database with: pg_restore --dbname bithub_development {local_backup_dest}
+      # load the database with: pg_restore --dbname --clean --if-exists bithub_development {local_backup_dest}
     end
   end
 
