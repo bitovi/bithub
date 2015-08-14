@@ -28,13 +28,12 @@ Dotenv.load
 ENV['INSIDE_TEST'] = 'true'
 
 RSpec.configure do |config|
-
   config.before(:suite) do
     $rabbit_channel = ConnectionManager.instance.rabbit
   end
 
   config.after(:suite) do
-    $rabbit_channel.close
+    $rabbit_channel.close if $rabbit_channel
   end
 end
 
