@@ -3,6 +3,7 @@ require 'github_api'
 require 'koala'
 require 'instagram'
 require 'google/api_client'
+require 'fetchers/youtube/errors'
 
 module Fetchers
 
