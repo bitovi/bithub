@@ -12,6 +12,7 @@ module Supervisors::Services::Instagram
         register_to_handler
       rescue ::Instagram::Error => e
         info "Instagram subscription failed with #{e.message}"
+        error e
       end
 
       preload
@@ -76,12 +77,17 @@ module Supervisors::Services::Instagram
     end
 
     def callback_url(opts={})
-      domain = opts[:domain] || ENV['CRAWLER_HTTP_DOMAIN']
-      port   = opts[:port]   || ENV['CRAWLER_HTTP_PORT']
+      # Tunnel is used only in development (b/c Instagram can't connect to your local dev machine directly)
+      domain =  ENV['TUNNEL_CRAWLER_HOST'] || opts[:domain] || ENV['LOCAL_CRAWLER_HOST']
+      port   =  ENV['TUNNEL_CRAWLER_PORT'] || opts[:port]   || ENV['LOCAL_CRAWLER_PORT'] 
+
       path   = File.join ENV['CRAWLER_HTTP_PREFIX'], 'instagram', 'media'
 
-      "http://#{domain}:#{port}#{path}"
+      if port == '80'
+        "http://#{domain}#{path}"
+      else
+        "http://#{domain}:#{port}#{path}"
+      end
     end
-
   end
 end
