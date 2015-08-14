@@ -1,9 +1,7 @@
+require_relative 'errors'
+
 module Fetchers
   module Youtube
-
-    class BadRequestError < StandardError; end
-    class ForbiddenError < StandardError; end
-    class QuotaExceeded < StandardError; end
 
     class Base
       include Protocol
