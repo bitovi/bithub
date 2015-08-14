@@ -13,7 +13,7 @@ class InstagramUpdater < BaseUpdater
       Entity.find_by_origin_id(m.id.to_s).update_attribute(:popularity, popularity)
     end
     Celluloid.logger.info "#{log_sig} Done with update. #{requests_left} requests left."
-  rescue ::Instagram::TooManyRequests => e
+  rescue Instagram::TooManyRequests => e
     Celluloid.logger.warn "#{log_sig} Rate limit hit"
     retry if @client_builder.has_more_creds? && (@client = @client_builder.next)
   end
@@ -40,13 +40,21 @@ class InstagramUpdater < BaseUpdater
   end
   
   def requests_left
-    rate_limits[:x_ratelimit_limit].to_i
+    if rate_limits
+      rate_limits[:x_ratelimit_limit].to_i
+    else
+      -1
+    end
   end
 
   def rate_limits
     @client.utils_raw_response
-  rescue Error::TooManyRequests => e
-    Celluloid.logger.error "#{log_sig} Rate limit hit while trying to determine rate limits!"
+  rescue Instagram::TooManyRequests => e
+    Celluloid.logger.error "#{log_sig} Rate limit hit #{e}"
+    nil
+  rescue Instagram::BadRequest => e
+    Celluloid.logger.error "#{log_sig} Bad request #{e}"
+    nil
   end
   
   private

@@ -11,8 +11,8 @@ class HttpServer < Reel::Server::HTTP
   attr_reader :routes
 
   def initialize(args={})
-    host        = args[:host]        || ENV['CRAWLER_HTTP_HOST']   || '127.0.0.1'
-    port        = args[:port]        || ENV['CRAWLER_HTTP_PORT']   || '3001'
+    host        = args[:host]        || ENV['LOCAL_CRAWLER_HOST']   || '127.0.0.1'
+    port        = args[:port]        || ENV['LOCAL_CRAWLER_PORT']   || '3001'
     path_prefix = args[:path_prefix] || ENV['CRAWLER_HTTP_PREFIX'] || '/'
 
     @publisher_name    = args[:event_publisher_name]       || :event_publisher
