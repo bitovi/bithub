@@ -8,7 +8,7 @@ describe Organizations::OrganizationBuilder do
         account = FactoryGirl.create(:account)
         plan = FactoryGirl.create(:plan)
 
-        org_builder = Organizations::OrganizationBuilder.new(account)
+        org_builder = Organizations::OrganizationBuilder.new(account, {})
         org_builder.build.save!
 
         expect(org_builder.organization.accounts).to include(account)
