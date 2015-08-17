@@ -9,6 +9,7 @@ class Brand < ActiveRecord::Base
   has_and_belongs_to_many :users
 
   belongs_to :organization
+  has_one :subscription, through: :organization
 
   validates :tenant_name, format: {
     with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
@@ -21,14 +22,24 @@ class Brand < ActiveRecord::Base
   after_destroy { notify_crawler(:stop) }
 
   # Fetch Brands that have at least one Embed and a Service connected
+  
+  def self.with_card
+    joins(:subscription).where("subscriptions.card_last4 IS NOT NULL")
+  end
+
+  def self.without_card
+    joins(:subscription).where("subscriptions.card_last4 IS NULL")
+  end
+
   def self.active
-    non_empty_brand_ids = pluck(:tenant_name).map do |tenant_name|
-      Apartment::Tenant.switch(tenant_name) do
-        Service.joins(:embed).select("services.*, embeds.brand_id").uniq.pluck(:brand_id)
-      end
-    end.flatten.uniq
+    where(:is_active => true)
+    # non_empty_brand_ids = pluck(:tenant_name).map do |tenant_name|
+    #   Apartment::Tenant.switch(tenant_name) do
+    #     Service.joins(:embed).select("services.*, embeds.brand_id").uniq.pluck(:brand_id)
+    #   end
+    # end.flatten.uniq
     
-    where(:id => non_empty_brand_ids)
+    # where(:id => non_empty_brand_ids)
   end
 
   def self.switch!(name = nil)
