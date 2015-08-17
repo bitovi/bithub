@@ -73,5 +73,8 @@ class EventPublisher
   rescue KeyError => e
     error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e}"
     nil # if we can't dispatch, return nil so it will end up filtered out
+  rescue TypeError => e
+    error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e} | #{event.inspect}"
+    raise e
   end
 end
