@@ -6,6 +6,6 @@ every '10,20,30,40,50 * * * *' do
   rake 'recurring:fill_fake_follows'
 end
 
-every :dat, at: '06:15am' do
-  command "/usr/bin/psql -c 'VACUUM FULL ANALYZE;'"
+every :day, at: '06:15am' do
+  command '/usr/bin/psql -c \'VACUUM FULL ANALYZE;\''
 end
