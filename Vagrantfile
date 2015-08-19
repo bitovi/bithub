@@ -21,7 +21,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/vagrant.yml"
+    ansible.playbook = "config/ansible/vagrant.yml"
     ansible.sudo = true
     ansible.host_key_checking = false
     # ansible.verbose = "vvvv"
