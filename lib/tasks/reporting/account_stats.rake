@@ -1,4 +1,4 @@
-namespace :report do
+namespace :reporting do
   desc "Creates a report with account stats"
   task :account_stats => :environment do
 
@@ -7,19 +7,19 @@ namespace :report do
     results = tenant_names.map do |tn|
       sql_command = <<-SQL
         select accounts.id,
-          email,
-          case when confirmed_at is null then 'no' else 'yes' end as is_confirmed,
-          last_sign_in_at,
+          accounts.email,
+          case when accounts.confirmed_at is null then 'no' else 'yes' end as is_confirmed,
+          accounts.last_sign_in_at,
           count(distinct(embeds.id)) as embeds_count,
           count(distinct(services.id)) as services_count
         from accounts
-        join accounts_organizations on accounts.id = accounts_organizations.account_id
-        join organizations on organizations.id = accounts_organizations.organization_id
+        join account_organizations on accounts.id = account_organizations.account_id
+        join organizations on organizations.id = account_organizations.organization_id
         join brands on brands.organization_id = organizations.id
         left join #{tn}.embeds on #{tn}.embeds.brand_id = brands.id
         left join #{tn}.services on #{tn}.services.embed_id = embeds.id
         where tenant_name = '#{tn}'
-        group by email, confirmed_at, last_sign_in_at;
+        group by accounts.id, accounts.email, accounts.confirmed_at, accounts.last_sign_in_at;
       SQL
 
       ActiveRecord::Base.connection.execute(sql_command).values
