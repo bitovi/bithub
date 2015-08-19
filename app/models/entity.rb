@@ -1,6 +1,7 @@
 class Entity < ActiveRecord::Base
   extend Solipsism
   include RabbitHelper::Sugar
+  include Convenience::Twitter
 
   serialize :props, IndifferentHstore
 
@@ -223,6 +224,10 @@ class Entity < ActiveRecord::Base
 
   def sanitized_body
     Sanitize.fragment(self.body, Sanitize::Config::RESTRICTED).strip
+  end
+
+  def rebuild_from_source
+    wrapped.procure.rebuild.persist
   end
 
   def wrapped
