@@ -1,6 +1,4 @@
-require 'pp'
 class EntityDecorator < Draper::Decorator
-
   delegate_all
 
   def title
