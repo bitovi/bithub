@@ -50,7 +50,7 @@ class TwitterUpdater < BaseUpdater
     Celluloid.logger.error "#{log_sig} Rate limit hit while trying to determine rate limits!"
     {}
   rescue ::Twitter::Error::Unauthorized => e
-    Celluloid.logger.warn "#{log_sig} e"
+    Celluloid.logger.warn "#{log_sig} #{e}"
     {}
   end
 
