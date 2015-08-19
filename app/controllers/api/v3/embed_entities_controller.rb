@@ -92,6 +92,8 @@ class Api::V3::EmbedEntitiesController < Api::V3::BaseController
 
     scope = Entity\
       .select(select_sql_statement)
+      .includes(:events)\
+      .includes(:services)\
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
 

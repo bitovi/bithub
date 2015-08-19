@@ -7,8 +7,10 @@ module Events
       extend Forwardable
 
       def_delegators :@tweet, :id, :id_str,
-        :text, :retweet, :retweeted_status,
-        :entities, :retweet?, :created_at
+        :text, :entities, :created_at,
+        :retweet, :retweeted_status, :retweet?,
+        :quote, :quoted_status, :quote?
+
 
       attr_accessor :tweet, :user
 

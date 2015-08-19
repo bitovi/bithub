@@ -24,7 +24,8 @@ module Entities
           }
         }
 
-        prepared[:props][:retweeted_id] = @event.retweet.id if @event.retweet?
+        prepared[:props][:retweeted_id] = @event.retweeted_status.id if @event.retweet?
+        prepared[:props][:quoted_id] = @event.quoted_status.id if @event.quote?
         with_commons(prepared)
       end
 
