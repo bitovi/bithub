@@ -5,6 +5,7 @@ import InteractionEvent from "models/interaction_event";
 import "can/construct/super/";
 import "can/construct/proxy/";
 import "opensourced-bithub/bits_vertical_infinite/";
+import "opensourced-bithub/bits_vertical_infinite_grouped/";
 
 export default can.Control.extend({
 	pluginName : 'bh-bits',
