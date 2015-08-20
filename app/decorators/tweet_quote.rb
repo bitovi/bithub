@@ -8,6 +8,7 @@ class TweetQuote
       {
         title: Twitter::Autolink.auto_link(@quoted_status["text"]),
         url: "https://twitter.com/#{@quoted_status["user"]["screen_name"]}/status/#{@quoted_status["id_str"]}",
+        created_at: @quoted_status["created_at"],
         author: {
           id: @quoted_status["user"]["name"],
           avatar_url: @quoted_status["user"]["profile_image_url"]
