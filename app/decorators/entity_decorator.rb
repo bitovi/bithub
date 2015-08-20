@@ -55,6 +55,11 @@ class EntityDecorator < Draper::Decorator
 
     Twitter::Autolink.auto_link(text)
   end
+  
+  def quoted_status
+    TweetQuote.new(source).build
+  end
+
 
   # NOTE: this is a quick fix, would be better to add newlines only when they're missing
   def add_newline_before_fenced_code_block(text)

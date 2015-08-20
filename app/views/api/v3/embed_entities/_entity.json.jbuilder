@@ -15,7 +15,7 @@ json.is_pinned entity.is_pinned
 json.popularity entity.popularity
 
 if entity.feed_name == 'twitter' && entity.type_name == 'tweet' && entity.has_quote?
-  json.quoted_status entity.events.last.source_data['quoted_status']
+  json.quoted_status entity.quoted_status
 end
   
 if entity.feed_name == 'twitter' && entity.type_name == 'tweet' && entity.has_retweet?
