@@ -64,8 +64,7 @@ class Service < ActiveRecord::Base
   end
 
   def mark_as_loaded
-    self.state = 'loaded'
-    self.save!
+    self.update_column(:state, 'loaded') #update_column skips callbacks, and it should be that way!
   end
 
   def has_errors?
