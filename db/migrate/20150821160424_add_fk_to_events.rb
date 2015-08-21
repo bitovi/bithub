@@ -1,4 +1,4 @@
-class AddFksToEventsTable < ActiveRecord::Migration
+class AddFkToEvents < ActiveRecord::Migration
   def up
     ActiveRecord::Base.connection.execute <<-SQL
       DELETE FROM events WHERE NOT EXISTS (SELECT 1 FROM entities WHERE entities.id = events.entity_id);
