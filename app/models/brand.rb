@@ -15,6 +15,12 @@ class Brand < ActiveRecord::Base
     with: /\A[_0-9a-zA-Z]+\z/, message: 'invalid characters'
   }
 
+  scope :active, -> { where(is_active: true) }
+  scope :with_card, -> { joins(:subscription).where("subscriptions.card_last4 IS NOT NULL") }
+
+  scope :inactive, -> { where(is_active: false) }
+  scope :without_card, -> { joins(:subscription).where("subscriptions.card_last4 IS NULL") }
+
   after_create  :create_tenant
   after_destroy :destroy_tenant
 
@@ -23,25 +29,6 @@ class Brand < ActiveRecord::Base
 
   # Fetch Brands that have at least one Embed and a Service connected
   
-  def self.with_card
-    joins(:subscription).where("subscriptions.card_last4 IS NOT NULL")
-  end
-
-  def self.without_card
-    joins(:subscription).where("subscriptions.card_last4 IS NULL")
-  end
-
-  def self.active
-    where(:is_active => true)
-    # non_empty_brand_ids = pluck(:tenant_name).map do |tenant_name|
-    #   Apartment::Tenant.switch(tenant_name) do
-    #     Service.joins(:embed).select("services.*, embeds.brand_id").uniq.pluck(:brand_id)
-    #   end
-    # end.flatten.uniq
-    
-    # where(:id => non_empty_brand_ids)
-  end
-
   def self.switch!(name = nil)
     Apartment::Tenant.switch! name
   end
