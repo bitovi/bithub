@@ -1,12 +1,11 @@
 namespace :recurring do
 
-  desc "Calculate analytics every tenant"
-  task :mark_inactive => :environment do
+  desc 'Flags brands that haven\'t confirmed their accounts and haven\'t logged in a week as inactive'
+  task :flag_inactive => :environment do
     Rails.logger.info "[WHENEVER] Flagging inactive accounts"
 
     ActiveRecord::Base.connection.execute <<-SQL
       BEGIN;
-
       UPDATE brands SET is_active = 't';
 
       UPDATE brands SET is_active = 'f'
