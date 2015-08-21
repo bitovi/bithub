@@ -45,7 +45,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def destroy
     authorize! :destroy, owner_embed
 
-    if @embed.clear_relations_and_destroy
+    if @embed.destroy
       render :json => msg_hash(@embed, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@embed, 'destroy'), :status => 406
