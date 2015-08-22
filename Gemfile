@@ -1,12 +1,11 @@
 source 'https://rubygems.org'
 ruby '2.1.2'
 
-gem 'unicorn'
-gem 'rails', '4.1.7'
+gem 'rails', '~> 4.2'
 
 gem 'rake'
-gem 'rspec', '~> 3.1'
-gem 'rspec-rails', '~> 3.1'
+gem 'rspec', '~> 3.2'
+gem 'rspec-rails', '~> 3.2'
 gem 'pry'
 gem 'pry-rails'
 gem 'rb-readline'
@@ -30,6 +29,7 @@ gem 'textacular'
 gem 'apartment'
 gem 'enumerize'
 gem 'sinatra'
+gem 'unicorn'
 gem 'sidekiq', '~> 3.2'
 gem 'whenever', :require => false
 gem 'acts-as-taggable-on'

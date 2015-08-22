@@ -53,6 +53,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
     authorize! :destroy, a_service
 
     if @service.clear_relations_and_destroy
+      CleanOrphanedEntitiesJob.perform_later
+
       render :json => msg_hash(@service, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406

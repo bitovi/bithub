@@ -46,6 +46,8 @@ class Api::V3::EmbedsController < Api::V3::BaseController
     authorize! :destroy, owner_embed
 
     if @embed.destroy
+      CleanOrphanedEntitiesJob.perform_later
+
       render :json => msg_hash(@embed, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@embed, 'destroy'), :status => 406

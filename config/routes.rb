@@ -47,7 +47,7 @@ Bithub::Application.routes.draw do
         put :publish, on: :member
         put :unpublish, on: :member
 
-        resources :entities, to: 'embed_entities', only: %i(index show destroy) do
+        resources :entities, controller: 'embed_entities', only: %i(index show destroy) do
           put :approve, on: :member
           put :disapprove, on: :member
           put :block, on: :member
@@ -61,7 +61,7 @@ Bithub::Application.routes.draw do
         resources :services, except: %i(new edit update)
       end
 
-      resources :presets, to: 'embed_presets', except: %i(new edit)
+      resources :presets, controller: 'embed_presets', except: %i(new edit)
 
       resources :services, except: %i(new edit) do
         get 'tree', on: :collection
@@ -81,18 +81,18 @@ Bithub::Application.routes.draw do
 
       namespace :current do
         resource :account do
-          resources :organizations, to: 'account_organizations'
-          resources :invitations, to: 'account_organizations'
+          resources :organizations, controller: 'account_organizations'
+          resources :invitations, controller: 'account_organizations'
         end
 
         resource :organization do
           put 'choose', on: :collection
-          resources :accounts, to: 'organization_accounts'
-          resources :invitations, to: 'organization_accounts', status: 'pending'
+          resources :accounts, controller: 'organization_accounts'
+          resources :invitations, controller: 'organization_accounts', status: 'pending'
         end
       
         resource :brand do
-          resources :identities, to: 'brand_identities'
+          resources :identities, controller: 'brand_identities'
         end
       end
 
