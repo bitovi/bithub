@@ -4,8 +4,8 @@ namespace :recurring do
   task :fill_fake_follows => :environment do
     Rails.logger.info "[WHENEVER] Running recurring:fill_fake_follows at #{Time.now}"
 
-    Brand.pluck(:name).each do |name|
-      Apartment::Tenant.switch name do
+    Brand.pluck(:tenant_name).each do |tenant_name|
+      Apartment::Tenant.switch(tenant_name) do
         Sidekiq.redis do |conn|
           fff = Support::FakeFollowFiller.new(conn)
           fff.fill_missing
