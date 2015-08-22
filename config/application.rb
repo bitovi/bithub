@@ -34,5 +34,9 @@ module Bithub
     config.stripe.auto_mount = false
 
     config.middleware.use Sass::Plugin::Rack
+
+    # Rails 4.1 --> 4.2 upgrade
+    config.active_job.queue_adapter = :sidekiq
+    config.active_record.raise_in_transactional_callbacks = true
   end
 end

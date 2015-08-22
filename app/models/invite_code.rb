@@ -1,5 +1,5 @@
 class InviteCode < ActiveRecord::Base
-  has_many :invited_accounts, class: 'Account', foreign_key: :invite_code_id
+  has_many :invited_accounts, class_name: 'Account', foreign_key: :invite_code_id
 
   validates_presence_of :code
   validates_uniqueness_of :code

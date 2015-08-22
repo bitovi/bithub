@@ -12,10 +12,8 @@ class Api::V3::BaseController < ActionController::Base
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_403
 
-  respond_to :json
-
   def home
-    render :text => "Bithub API v3", content_type: "text/plain"
+    render plain: "Bithub API v3"
   end
 
   # CanCan override:

@@ -27,8 +27,7 @@ class Api::V3::Current::OrganizationAccountsController < Api::V3::BaseController
       })
 
       if @organization_invitation.save
-        Workers::DripSubscriber.perform_async @target_account.email
-
+        CreateDripSubscriberJob.perform_later @target_account.email
         render :show
       else
         render json: { msg: 'Invitation creation failed.' }, status: 406
