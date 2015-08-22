@@ -1,1 +1,0 @@
-require 'literate_ruby'
