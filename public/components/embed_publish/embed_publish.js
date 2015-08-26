@@ -66,7 +66,7 @@ var EmbedPublishVM = can.Map.extend({
 				exp_year: cc.year()
 			}, function(res, obj){
 				
-				$.post('/admin/subscriptions/update', {stripe_token: obj.id}).then(function(){
+				$.post('/subscriptions/update', {stripe_token: obj.id}).then(function(){
 					self.attr('state.hub').publish().then(function(){
 						self.attr('isSaving', false);
 						self.attr('state.currentSubscription').reload();
