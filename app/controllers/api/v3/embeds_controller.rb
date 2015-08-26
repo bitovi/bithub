@@ -67,7 +67,7 @@ class Api::V3::EmbedsController < Api::V3::BaseController
   def publish
     authorize! :update, owner_embed
 
-    if Subscription.current.chargeable?
+    if current_organization.subscription.chargeable?
       @embed.update_attribute :published, true
       render :show
     else
