@@ -1,13 +1,15 @@
 class InitialSetup < ActiveRecord::Migration
   def change
-    unless ENV['VAGRANT'].present?
-      create_extension "hstore", :version => "1.2"
-      create_extension "intarray", :version => "1.0"
-      create_extension "btree_gin"
+    if ENV['VAGRANT'].nil?
+      ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS hstore WITH VERSION '1.2';"
+      ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS intarray WITH VERSION '1.0'"
+      ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS btree_gin"
+      ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS plpgsql;"
     end
 
-    enable_extension "plpgsql"
-    enable_extension "hstore"
-    enable_extension "intarray"
+    ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS hstore;"
+    ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS intarray;"
+    ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS btree_gin"
+    ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS plpgsql;"
   end
 end
