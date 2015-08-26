@@ -1,7 +1,7 @@
 class DropTagsAndTaggings < ActiveRecord::Migration
   def change
     ActiveRecord::Base.connection.execute 'DROP VIEW IF EXISTS entity_aggregated_tag_list;'
-    drop_table :taggings
-    drop_table :tags
+    ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS taggings;'
+    ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS tags;'
   end
 end
