@@ -25,7 +25,7 @@ namespace :recurring do
             organizations.id
         ) AS org_data
       WHERE
-        org_data. ID = brands.organization_id
+        org_data.id = brands.organization_id
       AND org_data.last_sign_in_at < now() :: TIMESTAMP - '1 week' :: INTERVAL
       AND org_data.confirmed_accounts = 0;
 
