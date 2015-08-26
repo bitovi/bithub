@@ -2,7 +2,6 @@ FactoryGirl.define do
 
   factory :props, class:Hash do
     feed "some_feed"
-    tags ['some_feed','some_content_tag']
     origin_author_id "1"
     origin_author_username "some_user"
 
@@ -24,21 +23,16 @@ FactoryGirl.define do
       type_name 'some_type'
     end
 
-    trait :with_determined_tags do
-      # we have no tags no more
-    end
-
     trait :with_determined_author do
       after :create do |e|
         e.owners {[FactoryGirl.create(:user)]}
       end
     end
 
-    factory :entity_wo_type, traits: [:with_determined_tags, :with_determined_feed, :with_determined_author]
-    factory :entity_wo_feed, traits: [:with_determined_type, :with_determined_tags, :with_determined_author]
-    factory :entity_wo_tags, traits: [:with_determined_type, :with_determined_feed, :with_determined_author]
-    factory :entity_wo_author, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed]
-    factory :determined_entity, traits: [:with_determined_type, :with_determined_tags, :with_determined_feed, :with_determined_author]
+    factory :entity_wo_type, traits: [:with_determined_feed, :with_determined_author]
+    factory :entity_wo_feed, traits: [:with_determined_type, :with_determined_author]
+    factory :entity_wo_author, traits: [:with_determined_type, :with_determined_feed]
+    factory :determined_entity, traits: [:with_determined_type, :with_determined_feed, :with_determined_author]
 
     # Twitter entity
     
