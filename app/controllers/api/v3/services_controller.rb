@@ -28,10 +28,6 @@ class Api::V3::ServicesController < Api::V3::BaseController
     feed_name = service_kind[:feed_name]
     type_name = service_kind[:type_name]
 
-    # permited = Subscriptions::PolicyChecker
-    #   .new(current_brand.organization.subscription)
-    #   .can_create_service?(owner_embed, feed_name, type_name)
-
     if @service.save
       render 'api/v3/services/show'
     else
@@ -57,6 +53,8 @@ class Api::V3::ServicesController < Api::V3::BaseController
     authorize! :destroy, a_service
 
     if @service.clear_relations_and_destroy
+      CleanOrphanedEntitiesJob.perform_later(Apartment::Tenant.current)
+
       render :json => msg_hash(@service, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406

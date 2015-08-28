@@ -20,33 +20,6 @@ class Embed < ActiveRecord::Base
   before_save :log_update_to_embed_events, if: :published_changed?
   before_destroy :log_destroy_to_embed_events
 
-  def clear_relations_and_destroy
-    embed_id = id
-
-    query = <<-SQL
-      delete from service_entities using embed_entities
-      where service_entities.entity_id = embed_entities.entity_id
-      and service_id in (select id from services where embed_id = #{embed_id});
-      -- ^ delete service_entities that are no longer
-      -- valid as (because the services are going to be deleted)
-
-      delete from embed_entities
-      where embed_id = #{embed_id};
-      -- ^ delete connections between entities
-      -- and the embed we're deleting
-
-      delete from events
-      where embed_id = #{embed_id};
-      -- ^ delete events that belong to this embed
-    SQL
-
-    ActiveRecord::Base.transaction do
-      ActiveRecord::Base.connection.execute(query)
-    end
-
-    destroy
-  end
-
   def blocking_filters; filters.where(action: 'block').all; end
   def approving_filters; filters.where(action: 'approve').all; end
   def permissive?; approved_by_default; end

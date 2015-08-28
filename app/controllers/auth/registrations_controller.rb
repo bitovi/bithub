@@ -16,7 +16,7 @@ class Auth::RegistrationsController < Devise::RegistrationsController
           # errors will be displayed on register form
         end
 
-        Workers::DripSubscriber.perform_async account.email
+        CreateDripSubscriberJob.perform_later account.email
 
         # TODO: handle multiple brands on organization
         session['organization_id'] = org_builder.organization.id

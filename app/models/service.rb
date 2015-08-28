@@ -13,7 +13,7 @@ class Service < ActiveRecord::Base
   has_many :entities, through: :service_entities
 
   has_many :service_errors
-  has_many :events, dependent: :delete_all
+  has_many :events
 
   after_create  { notify_crawler(:start) }
   after_update  { notify_crawler(:restart) }
@@ -33,39 +33,16 @@ class Service < ActiveRecord::Base
     query = <<-SQL
       delete from embed_entities using service_entities
       where embed_entities.entity_id = service_entities.entity_id
-      and embed_id = #{embed_id}
-      and service_id = #{service_id};
-      -- ^ delete connections between entities belonging to the service
-      -- we're currently deleting and the embed that service belongs to
-
-      delete from service_entities
-      where service_id = #{service_id};
-      -- ^ delete connections between entities
-      -- and the service we're deleting
-
-      delete from entities
-      where not exists (
-        select 1 from service_entities se
-        where se.entity_id = entities.id
-      );
-      -- ^ delete entities that have
-      -- no connections to a service
-
-      delete from events
-      where service_id = #{service_id};
-      -- ^ delete events that belong to this service
+      and service_entities.service_id = #{service_id};
     SQL
 
-    ActiveRecord::Base.transaction do
-      ActiveRecord::Base.connection.execute(query)
-    end
+    ActiveRecord::Base.connection.execute(query)
 
     destroy
   end
 
   def mark_as_loaded
-    self.state = 'loaded'
-    self.save!
+    self.update_column(:state, 'loaded') #update_column skips callbacks, and it should be that way!
   end
 
   def has_errors?
