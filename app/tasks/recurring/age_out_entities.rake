@@ -4,7 +4,7 @@ namespace :recurring do
   task :age_out_entities => :environment do
     Rails.logger.info '[WHENEVER] Deleting old-ass entities'
 
-    Brand.without_card.inactive.pluck(:name).each do |name|
+    Brand.without_card.inactive.pluck(:tenant_name).each do |tenant_name|
       Apartment::Tenant.switch(tenant_name) do
         ActiveRecord::Base.connection.execute <<-SQL
           DELETE FROM entities USING service_entities
