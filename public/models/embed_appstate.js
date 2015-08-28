@@ -44,6 +44,9 @@ export default can.Map.extend({
 	isPublic : function(){
 		return !this.isAdmin();
 	},
+	isGroupedByDate : function(){
+		return this.attr('order') === 'grouped-by-date';
+	},
 	showPoweredBy : function(){
 		return this.isPublic();
 	},
@@ -87,6 +90,9 @@ export default can.Map.extend({
 			params.tenant_name = tenant;
 		} else {
 			params.order = this.attr('order') || "created_at:desc";
+			if(params.order === 'grouped-by-date'){
+				params.order = 'preview';
+			}
 			if(filter){
 				params.show = filter;
 			}
