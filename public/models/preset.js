@@ -67,7 +67,7 @@ Preset.ADMIN = new Preset({
 	config: {
 		live: true,
 		view: 'admin',
-		order: 'created_at:desc',
+		order: 'grouped-by-date',
 		filter: 'all'
 	}
 });

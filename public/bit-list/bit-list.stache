@@ -1,5 +1,10 @@
 {{#if state.isAdmin}}
-  <bh-bits-vertical-infinite-grouped params="{state.getParams}" bits="{bits}" state="{state}"></bh-bits-vertical-infinite-grouped>
+  {{#if state.isGroupedByDate}}
+    <bh-bits-vertical-infinite-grouped params="{state.getParams}" bits="{bits}" state="{state}"></bh-bits-vertical-infinite-grouped>
+  {{else}}
+    <bh-bits-vertical-infinite params="{state.getParams}" bits="{bits}" state="{state}"></bh-bits-vertical-infinite>
+    
+  {{/if}}
 
 {{else}}
   <bh-bits-vertical-infinite params="{state.getParams}" bits="{bits}" state="{state}"></bh-bits-vertical-infinite>
