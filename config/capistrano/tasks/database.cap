@@ -22,7 +22,8 @@ namespace :db do
           "--clean",
           "--if-exists",
           "--format=custom",
-          "bithub > /pg_dumps/sync.dump"
+          "--dbname=bithub",
+          "/pg_dumps/sync.dump"
       end
     end
   end
@@ -30,7 +31,6 @@ namespace :db do
   desc "Pull DB from current stage"
   task :pull do
     on roles(:db) do |host|
-      puts "kita od billa -----------"
       backup_filename = gen_backup_version + fetch(:backup_ext)
       local_backup_dest = File.join('.', 'tmp', backup_filename)
       remote_backup_dest = File.join('/', 'tmp', backup_filename)
