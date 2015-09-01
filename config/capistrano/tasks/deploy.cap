@@ -34,6 +34,14 @@ namespace :deploy do
   end
 
   namespace :client do
+    desc 'Run all subtasks for client'
+    task :build => [
+      'deploy:client:npm_install',
+      'deploy:client:bower_install',
+      'deploy:client:steal_build',
+      'deploy:client:embed_build'
+    ]
+
     desc "NPM install"
     task :npm_install do
       on roles(:all) do |host|
@@ -71,10 +79,9 @@ namespace :deploy do
     end
   end
 
+  task :client => ['deploy:client:build']
+
   after :finishing, 'deploy:export'
   after :finishing, 'deploy:liveservice:npm_install'
-  after :finishing, 'deploy:client:npm_install'
-  after :finishing, 'deploy:client:bower_install'
-  after :finishing, 'deploy:client:steal_build'
-  after :finishing, 'deploy:client:embed_build'
+  after :finishing, 'deploy:client'
 end
