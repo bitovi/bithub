@@ -28,6 +28,7 @@ log4r_config:
 
     - name     : component_logfile
       type     : FileOutputter
+      dirname  : ENV['LOG_DIR']
       filename : "log/#{ENV}_#{COMPONENT_NAME}.log"
       trunc    : true
       maxsize  : 104857600
