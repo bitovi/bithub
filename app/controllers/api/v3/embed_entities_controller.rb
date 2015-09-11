@@ -9,14 +9,20 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
   helper_method :list_cache_key
 
   def index
-    unless (tn = params[:tenant_name]) && Apartment.tenant_names.include?(tn)
+    if account_signed_in? 
+      @tenant_name = Apartment::Tenant.current
+      @visibility = params[:view] || 'public'
+    else
+      @tenant_name = params[:tenant_name]
+      @visibility = 'public'
+    end
+
+    if @tenant_name.blank? || !Apartment.tenant_names.include?(@tenant_name)
       show_406('Valid tenant name must be provided')
       return 
     end
 
-    @visibility = current_account ? (params[:view] || 'public') : 'public'
-
-    Apartment::Tenant.switch(tn) do
+    Apartment::Tenant.switch(@tenant_name) do
       scope = build_scope
       @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
       render :index
