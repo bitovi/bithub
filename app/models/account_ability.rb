@@ -2,7 +2,7 @@ class AccountAbility
   include CanCan::Ability
 
   def initialize(account)
-    if (account.has_role? :bithub_admin) || (ENV['RAILS_ENV'] == 'test')
+    if (account.has_role? :admin) || (ENV['RAILS_ENV'] == 'test')
       can :manage, :all
     else
 
@@ -33,7 +33,7 @@ class AccountAbility
       # read plans, owned subscriptions with payments
       can :read, Plan
       can :manage, Subscription, organization_id: account.organization_ids # [:read, :current]
-      can :read, Payment, subscription: {organization_id: account.organization_ids}
+      can :read, Payment, subscription: { organization_id: account.organization_ids }
 
       can :block   , EmbedEntity
       can :approve , EmbedEntity

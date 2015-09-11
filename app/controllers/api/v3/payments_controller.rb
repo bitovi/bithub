@@ -1,6 +1,4 @@
-class Api::V3::PaymentsController < Api::V3::BaseController
-  before_filter :authenticate_account!
-
+class Api::V3::PaymentsController < Api::V3::ApiController
   def index
     authorize! :index, Payment
     @payments = my_payments.order(created_at: :desc)

@@ -1,4 +1,4 @@
-class Api::V3::Current::AccountOrganizationsController < Api::V3::BaseController
+class Api::V3::Current::AccountOrganizationsController < Api::V3::ApiController
   def index
     if !status
       @account_organizations = current_account.account_organizations.all

@@ -1,6 +1,4 @@
-class Api::V3::Current::BrandIdentitiesController < Api::V3::BaseController
-  before_filter :authenticate_account!
-
+class Api::V3::Current::BrandIdentitiesController < Api::V3::ApiController
   before_action :set_identity, only: %i(show destroy)
 
   def index

@@ -1,4 +1,4 @@
-class Api::V3::InteractionsController < Api::V3::BaseController
+class Api::V3::InteractionsController < Api::V3::ApiController
   respond_to :html
   before_action :switch_tenant
 

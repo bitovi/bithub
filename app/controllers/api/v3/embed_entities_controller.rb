@@ -1,24 +1,25 @@
 require 'digest/md5'
 
-class Api::V3::EmbedEntitiesController < Api::V3::BaseController
+class Api::V3::EmbedEntitiesController < Api::V3::ApiController
   include Api::EmbedScoped
 
-  before_filter :authenticate_account!, except: [:index]
+  skip_filter :require_account!, only: [:index]
 
   helper_method :custom_cache_key
   helper_method :list_cache_key
 
   def index
+    unless (tn = params[:tenant_name]) && Apartment.tenant_names.include?(tn)
+      show_406('Valid tenant name must be provided')
+      return 
+    end
+
     @visibility = current_account ? (params[:view] || 'public') : 'public'
 
-    if (tn = (params[:tenant_name] || Apartment::Tenant.current))
-      tn = nil unless Apartment.tenant_names.include?(tn)
-      Apartment::Tenant.switch(tn) do
-        scope = build_scope
-        @entities = EntityDecorator.decorate_collection(
-          scope.all, context: { embed: owner_embed })
-        render :index
-      end
+    Apartment::Tenant.switch(tn) do
+      scope = build_scope
+      @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
+      render :index
     end
   end
 

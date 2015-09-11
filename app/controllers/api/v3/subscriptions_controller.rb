@@ -1,5 +1,4 @@
-class Api::V3::SubscriptionsController < Api::V3::BaseController
-  before_filter :authenticate_account!
+class Api::V3::SubscriptionsController < Api::V3::ApiController
 
   def show
     authorize! :show, a_subscription
