@@ -1,6 +1,4 @@
-class Api::V3::BrandsController < Api::V3::BaseController
-  before_filter :authenticate_account!
-
+class Api::V3::BrandsController < Api::V3::ApiController
   before_action :set_current_brand, only: %i(show update)
   before_action :set_brand, only: %i(destroy)
   before_action :build_brand, only: %i(create)

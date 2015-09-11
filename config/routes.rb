@@ -40,8 +40,11 @@ Bithub::Application.routes.draw do
 
   # SERVICE API Routes
   namespace :api, defaults: { format: 'json' } do
+    root :to => 'api#api_id'
 
     namespace :v3 do
+      root :to => 'v3#api_id'
+
       resources :embeds, except: %i(new edit) do
         post :moderate, on: :member
         put :publish, on: :member
@@ -96,12 +99,6 @@ Bithub::Application.routes.draw do
         end
       end
 
-      
-      get :embeds_by_organization, to: 'account_organizations_embeds#index'
-
-      get 'analytics', to: 'analytics#show'
-      get 'interactions', to: 'interactions#index'
-
       resources :brand_identities, path: 'identities', only: %i(index show destroy)
       resources :services, except: %i(new edit update)
       resources :subscriptions, only: %i(show) do
@@ -109,11 +106,15 @@ Bithub::Application.routes.draw do
           get 'current', to: 'subscriptions#current'
         end
       end
+
       resources :filters, except: %i(new edit)
       resources :tags, except: %i(new edit)
-      resources :plans, only: %i(show index)
       resources :interactions, only: %i(index show create)
       resources :monthly_billings, only: %i(index)
+      
+      get 'embeds_by_organization', to: 'account_organizations_embeds#index'
+      get 'analytics', to: 'analytics#show'
+      get 'interactions', to: 'interactions#index'
     end
   end
 
