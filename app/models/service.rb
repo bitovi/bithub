@@ -15,9 +15,9 @@ class Service < ActiveRecord::Base
   has_many :service_errors
   has_many :events
 
-  after_create  { notify_crawler(:start) }
-  after_update  { notify_crawler(:restart) }
-  after_destroy { notify_crawler(:stop) }
+  after_create  { Guzzler::Client.schedule(decorated_for_crawler) }
+  after_update  { Guzzler::Client.schedule(decorated_for_crawler) }
+  after_destroy { Guzzler::Client.unschedule(decorated_for_crawler) }
 
   scope :feed, ->(fn) { where(feed_name: fn) }
   scope :type, ->(tn) { where(type_name: tn) }
@@ -65,12 +65,20 @@ class Service < ActiveRecord::Base
     self.entities << entity
   end
 
+  def decorated_for_crawler
+    CrawlerServiceDecorator.new(self)
+  end
+
   def config_with_credentials
     if brand_identity
       service_config.data.merge(brand_identity.credentials(property_id))
     else
       service_config.data
     end
+  end
+
+  def interval
+    60
   end
 
   # private
@@ -85,37 +93,6 @@ class Service < ActiveRecord::Base
     unless %w(loading loaded).include?(state)
       errors.set(:state, "can either be 'loading' or 'loaded'")
     end
-  end
-
-  def notify_crawler(action)
-    if ENV['RAILS_ENV'] != 'test' && service_config.valid?
-      Rails.logger.info "Publishing a command to crawler #{msg(action)}"
-      payload = JSON.generate(msg(action))
-      x('x.crawler', chan_is_short_lived = true) do |xchange|
-        xchange.publish(payload, routing_key: :config)
-      end
-    end
-  end
-
-  def msg(action)
-    {
-      brand: {
-        id: embed.brand.id,
-        name: embed.brand.name
-      },
-      embed: {
-        id: embed.id,
-        name: embed.name
-      },
-      service: {
-        id: id,
-        feed_name: feed_name,
-        type_name: type_name,
-        config: config_with_credentials
-      },
-      signature: "service_#{action}",
-      action: action
-    }
   end
 
   ['disqus', 'facebook', 'foursquare', 'github', 'instagram', 'meetup', 'rss', 'stackexchange', 'tumblr', 'twitter', 'youtube'].each do |fn|
