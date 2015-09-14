@@ -1,5 +1,4 @@
-class Api::V3::Current::OrganizationAccountsController < Api::V3::BaseController
-  before_filter :authenticate_account!
+class Api::V3::Current::OrganizationAccountsController < Api::V3::ApiController
 
   def index
     if !status

@@ -1,7 +1,5 @@
-class Api::V3::FiltersController < Api::V3::BaseController
+class Api::V3::FiltersController < Api::V3::ApiController
   include Api::EmbedScoped
-
-  before_filter :authenticate_account!
 
   def index
     authorize! :index, Filter
