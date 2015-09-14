@@ -10,5 +10,3 @@ import "components/moderation-rules/moderation-rules-test";
 import "components/services/services_test";
 import "components/services-list/services-list-test";
 import "components/integration/integration_test";
-import "bits_vertical_infinite/bits_vertical_infinite_test";
-import "bit/test/test";

@@ -26,6 +26,7 @@ window.EMBED_ENDPOINT = 'http://bithub.loc';
 QUnit.module("Integration test",{
 	beforeEach : function(){
 		fixture.on = true;
+		fixture.delay = 1000;
 		fixture("GET /api/v3/presets", function(){
 			return [presetData];
 		});
@@ -53,6 +54,7 @@ QUnit.module("Integration test",{
 	},
 	afterEach : function(){
 		fixture.on = false;
+		fixture.delay = 100;
 		fixture("GET /api/v3/presets", null);
 		fixture("DELETE /api/v3/presets/{id}", null);
 	}
