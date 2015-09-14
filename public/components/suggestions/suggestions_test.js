@@ -31,11 +31,12 @@ QUnit.module('Suggestions Tests', {
 				}
 			];
 		});
-
+		fixture.delay = 100;
 		fixture.on = true;
 	},
 	afterEach : function(){
 		fixture.on = false;
+		fixture.delay = 0;
 		fixture(fixtureUrl, null);
 	}
 });
@@ -71,7 +72,7 @@ QUnit.test("Allow extra", function(){
 	});
 	
 	F('bh-suggestions [can-value=val]').exists('Input field for extra is shown');
-	F('bh-suggestions [can-value=val]').type('foo/bar\t');
+	F('bh-suggestions [can-value=val]').type('foo/bar[\t]');
 	F.wait(1, function(){
 		QUnit.equal(F('bh-suggestions').scope().attr('val'), 'foo/bar', 'Val is set to extra value');
 	});
