@@ -1,20 +1,32 @@
-module Api::V3::Helpers
+module Api::Helpers
   module Common
 
-    def show_401(exception)
-      render json: { message: exception.message }, status: 401
+    def show_401(reason = nil)
+      message = reason.respond_to?(:message) ? reason.message : reason
+      render_by_format(message, :unauthorized)
     end
     
-    def show_403(exception)
-      render json: { message: exception.message }, status: 403
+    def show_403(reason)
+      message = reason.respond_to?(:message) ? reason.message : reason
+      render_by_format(message, :forbidden)
     end
 
-    def show_404(exception)
-      render json: { message: exception.message }, status: 404
+    def show_404(reason)
+      message = reason.respond_to?(:message) ? reason.message : reason
+      render_by_format(message, :not_found)
     end
     
-    def show_406(exception)
-      render json: { message: exception.message }, status: 406
+    def show_406(reason)
+      message = reason.respond_to?(:message) ? reason.message : reason
+      render_by_format(message, :not_acceptable)
+    end
+
+    def render_by_format(message, status_sym)
+      respond_to do |format|
+        format.json { render json: { message: message }, status: status_sym }
+        format.html { render html: message.html_safe, status: status_sym }
+        format.text { render plain: message, status: status_sym }
+      end
     end
 
     def muster_query

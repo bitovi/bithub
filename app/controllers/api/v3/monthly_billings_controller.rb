@@ -1,6 +1,4 @@
-class Api::V3::MonthlyBillingsController < Api::V3::BaseController
-  before_filter :authenticate_account!
-
+class Api::V3::MonthlyBillingsController < Api::V3::ApiController
   def index
     authorize! :index, MonthlyBilling
 

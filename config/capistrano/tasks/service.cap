@@ -48,6 +48,16 @@ namespace :start do
       capture("sudo systemctl start bithub-crawler_listener-1.service")
     end
   end
+
+  task :all => [
+    'start:web',
+    'start:worker',
+    'start:listener',
+    'start:liveservice',
+    'start:crawler_poller',
+    # 'start:crawler_listener'
+  ]
+
 end
 
 namespace :stop do
@@ -100,6 +110,15 @@ namespace :stop do
       capture("sudo systemctl stop bithub-crawler_streamer-1.service")
     end
   end
+  
+  task :all => [
+    'stop:web',
+    'stop:worker',
+    'stop:listener',
+    'stop:liveservice',
+    'stop:crawler_poller',
+    # 'stop:crawler_listener'
+  ]
 end
 
 namespace :restart do
@@ -152,4 +171,14 @@ namespace :restart do
       capture("sudo systemctl restart bithub-crawler_listener-1.service")
     end
   end
+
+  task :all => [
+    'restart:web',
+    'restart:worker',
+    'restart:listener',
+    'restart:liveservice',
+    'restart:crawler_poller',
+    # 'restart:crawler_listener'
+  ]
+
 end

@@ -1,7 +1,7 @@
-class Api::V3::ServicesController < Api::V3::BaseController
+class Api::V3::ServicesController < Api::V3::ApiController
   include Api::EmbedScoped
 
-  before_filter :authenticate_account!, :except => [:tree]
+  skip_filter :require_account!, :only => [:tree]
 
   def index
     authorize! :index, Service
