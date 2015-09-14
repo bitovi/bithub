@@ -3,6 +3,9 @@ import QUnit from "steal-qunit";
 import F from "funcunit";
 import $ from "jquery";
 import fixture from "can/util/fixture/";
+import Models from  "models/";
+
+import "can/map/define/";
 
 var template = can.stache("<bh-services state='{state}'></bh-services>");
 
@@ -16,6 +19,20 @@ can.stache.registerHelper(
 		return opts.fn();
 	}
 );
+
+var StateMap = can.Map.extend({
+	define : {
+		services : {
+			get : function() {
+				var res = new Models.Service.List({
+					embed_id: this.attr('hubId')
+				});
+				console.log(res);
+				return res;
+			}
+		}
+	}
+});
 
 QUnit.module('Services Test', {
 	beforeEach : function(){
@@ -36,17 +53,19 @@ QUnit.module('Services Test', {
 		fixture('GET /api/v3/services', function(){
 			return fixtureData;
 		});
+		fixture.delay = 1000;
 		fixture.on = true;
 	},
 	afterEach : function(){
 		fixture('GET /api/v3/services', null);
 		fixture.on = false;
+		fixture.delay = 100;
 	}
 });
 
 QUnit.test('Services are correctly rendered', function(){
 	renderTemplate({
-		state : new can.Map({
+		state : new StateMap({
 			hubId: 1,
 			loadingServices: []
 		})

@@ -9,6 +9,7 @@ export var SuggestionsVM = can.Map.extend({
 	isLoading : true,
 	init : function(){
 		var self = this;
+		this.attr('isLoading', true);
 		Models.Suggestion.findAll({
 			service: this.attr('service'),
 			brandIdentityId: this.attr('brandIdentityId')

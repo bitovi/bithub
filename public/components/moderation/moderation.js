@@ -24,7 +24,6 @@ var ModerationVM = can.Map.extend({
 			var approving = filters.approving();
 			var approveSomeAutomatically = approving.attr('length') > 0;
 			var blockSomeAutomatically = blocking.attr('length') > 0;
-			
 			self.attr({
 				blockingFilters: blocking,
 				approvingFilters: approving,

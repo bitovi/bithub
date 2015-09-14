@@ -15,11 +15,11 @@
 		</div>
 	</div>
 	{{#unless state.hub.approved_by_default}}
-		{{#if approvingFilters}}
+		{{#if approvingFilters.length}}
 			<bh-moderation-rules filters="{approvingFilters}" hub="{state.hub}" class="approving clearfix"></bh-moderation-rules>
 		{{/if}}
 	{{/unless}}
-	{{#if blockingFilters}}
+	{{#if blockingFilters.length}}
 		<bh-moderation-rules filters="{blockingFilters}" hub="{state.hub}" class="blocking clearfix"></bh-moderation-rules>
 	{{/if}}
 	{{#isSaving}}
