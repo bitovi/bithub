@@ -18,6 +18,7 @@ var State = can.Map.extend({
 QUnit.module('Sidebar tests', {
 	beforeEach : function(){
 		fixture.on = true;
+		fixture.delay = 100;
 		fixture('/api/v3/filters', function(){
 			return [];
 		});

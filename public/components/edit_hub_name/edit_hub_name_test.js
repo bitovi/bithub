@@ -54,7 +54,9 @@ QUnit.test("Pressing enter inside the input field will save changes and exit the
 
 QUnit.test('Bluring the input field will save changes and exit the editing state', 4, function(){
 	renderTemplateAndEnterEditingState();
-	F('bh-edit-hub-name input').click().type('[\b][\b]foo[\t][\t]');
+	F('bh-edit-hub-name input').click().type('[\b][\b]foo');
+	F('bh-edit-hub-name input').type('[\t][\t]');
+	F('body').click();
 	F('bh-edit-hub-name input').missing('Exited edit state');
 	F('bh-edit-hub-name h2').text('foo', 'Hub name is updated');
 });
