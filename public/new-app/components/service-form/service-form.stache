@@ -1,0 +1,66 @@
+{{#unless isHidden}}
+	<div class="form-wrapper">
+		<h3>
+			{{#if service.isNew}}Add{{else}}Edit{{/if}} {{currentServiceFeedName}}
+			<i class="fa fa-close" can-click="clearService"></i>
+		</h3>
+		{{#service}}
+
+			{{#if error}}
+				<div class="alert alert-danger">
+					<b>{{ formattedErrorClass }}</b>
+					{{ formattedError }}
+				</div>
+			{{/if}}
+
+			{{#if typeErrors.length}}
+				<div class="alert alert-danger">
+					You have {{ typeErrors.0 }}
+				</div>
+			{{/if}}
+
+			<form can-submit="saveService">
+				
+				{{#if hasMultipleTypes}}
+					<label>Type</label>
+					<div class="form-group">
+						<select can-value="type_name" class="form-control">
+							<option value="">Select Type</option>
+							{{#each typesForFeed}}
+								<option value="{{ @key }}">{{ . }}</option>
+							{{/each}}
+						</select>
+					</div>
+				{{/if}}
+
+				{{#if missingConfig}}
+					<div class="alert alert-danger">Config can't be empty</div>
+				{{/if}}
+
+				{{#if errors}}
+					<div class="alert alert-danger">Service config has some errors</div>
+				{{/if}}
+
+				{{#if feedInfo }}
+					<div class="alert alert-info">{{ feedInfo }}</div>
+				{{/if}}
+
+				
+				{{#renderForm}}
+          <div class="checkbox">
+					  <label>
+						  <input type="checkbox" can-value="service.approved_by_default"> Items collected from this service are approved by default
+					  </label>
+				  </div>
+
+					<div class="clearfix buttons-wrap">
+						<button class="btn btn-primary pull-right save-service">Save Service</button>
+						<a href="javascript://" class="btn btn-link pull-right" can-click="clearService">Cancel</a>
+					</div>
+				{{/renderForm}}
+				
+			</form>
+
+		{{/service}}
+	</div>
+{{/unless}}
