@@ -1,0 +1,60 @@
+{{#if isPending}}
+	<div class="loader oauthorizer-loader">
+		<i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+	</div>
+{{else}}
+
+	{{#if identitiesForCurrentService.length}}
+		{{#if service.isNew}}
+
+			<ul class="nav nav-tabs account-tabs">
+				<li {{#if useExistingAccount}}class="active"{{/if}}>
+					<a href="javascript://" data-account-type="existing" can-click="toggleAccountType">Use Existing Account</a>
+				</li>
+				<li {{#if addNewAccount}}class="active"{{/if}}>
+					<a href="javascript://" data-account-type="new" can-click="toggleAccountType">Add New Account</a>
+				</li>
+			</ul>
+
+			{{#if useExistingAccount}}
+				<div class="select-wrap form-group">
+					<label>{{ serviceLabel }} Account</label>
+					<select class="form-control service-brand" can-value="service.brand_identity_id">
+						{{#each identitiesForCurrentService}}
+							<option value="{{ id }}">{{ name }}</option>
+						{{/each}}
+					</select>
+				</div>
+			{{/if}}
+
+			{{#if addNewAccount}}
+				<button class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizingOrHasIdentity}}disabled{{/isAuthorizingOrHasIdentity}}>
+					{{#isAuthorizing}}
+						<i class="fa fa-spin fa-circle-o-notch"></i>
+					{{/isAuthorizing}}
+					{{{buttonLabel}}
+				</button>
+			{{/if}}
+
+		{{/if}}
+		{{#withSelectedService}}
+			<content></content>
+		{{/withSelectedService}}
+	{{else}}
+		<button class="btn btn-primary oauthorize" can-click="oauthorize" {{#isAuthorizing}}disabled{{/isAuthorizing}}>
+			{{#isAuthorizing}}
+				<i class="fa fa-spin fa-circle-o-notch"></i>
+			{{/isAuthorizing}}
+			{{{buttonLabel}}}
+		</button>
+		{{#ifServiceIs 'facebook'}}
+			<div class="oauthorize-help">
+				<h4><i class="fa fa-question-circle"></i> Why do I need to log in?</h4>
+				<p>
+					We need your login info to be able to allow you to collect data from the Facebook pages you administer.
+				</p>
+			</div>
+		{{/ifServiceIs}}
+	{{/if}}
+
+{{/if}}

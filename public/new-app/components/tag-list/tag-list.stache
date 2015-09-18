@@ -1,0 +1,9 @@
+<div class="form-control tag-list-wrap clearfix">
+	{{#each tags}}
+		<span class="label label-primary">
+			{{ . }}
+			<i class="fa fa-close remove-tag" can-click="removeTag"></i>
+		</span>
+	{{/each}}
+	<input type="text" placeholder="Add Tag...">
+</div>
