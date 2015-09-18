@@ -1,6 +1,6 @@
 class KickstartController < ApplicationController
 
-  layout false, only: [:admin, :embed]
+  layout false, only: [:admin, :embed, :new_admin]
   after_action :allow_iframe, only: :embed
 
   # Kickstarts the js code that displays the admin app
@@ -13,6 +13,15 @@ class KickstartController < ApplicationController
     end
   end
 
+  def new_admin
+    unless current_account
+      redirect_to :new_account_session
+    else
+      flash[:error] = flash[:errors] = flash[:notice] = nil
+      render 'new_admin'
+    end
+  end
+  
   # Kickstarts the js code that publicly displays the embed
   def embed
     render 'embed'
