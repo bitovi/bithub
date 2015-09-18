@@ -1,0 +1,5 @@
+<div class="form-group">
+	<label>Tags</label>
+	<bh-tag-list tags="{map.config.tags}"></bh-tags-list>
+	{{{configErrors errors 'tags'}}}
+</div>

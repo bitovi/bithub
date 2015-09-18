@@ -1,0 +1,42 @@
+bh-services {
+	display: block;
+	.service-slider-outer-wrap {
+		position: relative;
+		margin-bottom: 20px;
+	}
+	.service-slider-wrap {
+		padding: 25px 0;
+		.new-service-picker {
+			margin-bottom: 0;
+			li {
+				float: left;
+				width: 14.285%;
+				height: 77px;
+				border: 1px solid #dad9d9;
+				text-align: center;
+				font-size: 9px;
+				margin-right: -1px;
+				margin-top: -1px;
+				cursor: pointer;
+				img {
+					width: 48px;
+					height: 48px;
+					display: block;
+					margin: 5px auto;
+				}
+				&.active {
+					background: white;
+					color: #249cb8;
+				}
+			}
+		}
+	}
+	.alert-error-list {
+		padding: 5px;
+		margin-top: 5px;
+		font-size: 85%;
+	}
+	bh-service-form {
+		margin-bottom: 25px;
+	}
+}
