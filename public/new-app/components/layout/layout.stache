@@ -1,0 +1,49 @@
+<div class="top-bar">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+          <a href="#" class="logo">Bit<b>Hub</b></a>
+          <div class="select-wrap">
+            <select class="form-control input-sm"></select>
+          </div>
+          <div class="select-wrap">
+            <select class="form-control input-sm"></select>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <bh-edit-hub-name hub="{hub}"></bh-edit-hub-name>
+        <a href="javascript://" class="add-edit-service-link" can-click="toggleServicesPanel">Add / Edit Service</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<bit-tabs>
+  <bit-panel title="Moderation">
+    <div class="container"><bh-empty-slate></bh-empty-slate></div>
+  </bit-panel>
+  <bit-panel title="Publish">
+    <div class="container"><bh-empty-slate></bh-empty-slate></div>
+  </bit-panel>
+  <bit-panel title="Analytics">
+    <div class="container"><bh-empty-slate></bh-empty-slate></div>
+  </bit-panel>
+</bit-tabs>
+
+{{#if showServicesPanel}}
+  <div class="overlay">
+    <div class="services-panel-wrap">
+      <a href="javascript://" can-click="toggleServicesPanel">Close</a>
+      <bh-services></bh-services>
+    </div>
+  </div>
+
+{{/if}}
