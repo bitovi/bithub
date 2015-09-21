@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './github-repo.stache!';
 import './github-repo.less!';
 

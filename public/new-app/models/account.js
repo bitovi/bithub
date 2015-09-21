@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import Organization from "./organization";
 
 import "can/map/define/";
