@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import Service from "./service";
 import moment from "moment";
 

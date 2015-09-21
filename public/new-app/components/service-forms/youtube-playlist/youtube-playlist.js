@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './youtube-playlist.stache!';
 import './youtube-playlist.less!';
 

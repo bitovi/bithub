@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './facebook-public-page.stache!';
 import './facebook-public-page.less!';
 import 'components/suggestions/';
