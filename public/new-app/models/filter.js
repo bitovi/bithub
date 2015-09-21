@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import NatlangQuery from "./natlang-query";
 import "can/map/define/";
 import "can/construct/super/";

@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import Bit from "opensourced-bithub/models/bit";
 
 import "can/list/promise/";

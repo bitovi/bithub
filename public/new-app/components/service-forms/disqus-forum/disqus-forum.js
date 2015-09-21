@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from "./disqus-forum.stache!";
 
 import "./disqus-forum.less!";

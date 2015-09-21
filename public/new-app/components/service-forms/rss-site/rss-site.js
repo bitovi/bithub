@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './rss-site.stache!';
 import './rss-site.less!';
 

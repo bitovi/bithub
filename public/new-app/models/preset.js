@@ -1,6 +1,6 @@
 /* globals EMBED_ENDPOINT:true */
 
-import can from "can/";
+import can from "can";
 
 import 'can/construct/super/';
 import 'can/map/define/';

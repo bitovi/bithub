@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './instagram-user.stache!';
 import './instagram-user.less!';
 import 'selectize';

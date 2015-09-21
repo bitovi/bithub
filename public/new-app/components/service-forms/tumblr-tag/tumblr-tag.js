@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './tumblr-tag.stache!';
 import './tumblr-tag.less!';
 
