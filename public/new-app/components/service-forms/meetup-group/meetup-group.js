@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './meetup-group.stache!';
 import './meetup-group.less!';
 import "components/suggestions/";

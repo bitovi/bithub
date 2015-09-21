@@ -16,6 +16,7 @@ function(stache, _reduce){
 		return can.route.url(hash, false);
 	});
 
+
 	stache.registerHelper('configErrors', function(errors, key, opts){
 		var res;
 		

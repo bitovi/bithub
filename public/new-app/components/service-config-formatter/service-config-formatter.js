@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from "./service-config-formatter.stache!";
 import "./service-config-formatter.less!";
 

@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import moment from "moment";
 import "can/construct/super/";
 

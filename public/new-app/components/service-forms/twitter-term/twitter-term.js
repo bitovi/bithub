@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './twitter-term.stache!';
 import './twitter-term.less!';
 

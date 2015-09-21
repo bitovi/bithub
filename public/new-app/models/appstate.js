@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import Models from 'models/';
 import _reduce from 'lodash/collection/reduce';
 import connectLiveService from 'connect-liveservice';

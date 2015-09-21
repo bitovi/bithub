@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './twitter-favorites.stache!';
 import './twitter-favorites.less!';
 

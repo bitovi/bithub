@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from "./delete_service_dialog.stache!";
 import "./delete_service_dialog.less!";
 import "can/construct/proxy/";
