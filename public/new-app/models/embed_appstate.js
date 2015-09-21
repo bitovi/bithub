@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import Bit from "models/bit";
 import connectLiveService from "connect-liveservice";
 import "can/map/define/";

@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './instagram-tag.stache!';
 import './instagram-tag.less!';
 

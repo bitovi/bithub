@@ -9,7 +9,6 @@
 				{{else}}
 					<img src="/images/social-grey/{{@key}}.png" alt="">
 				{{/currentServiceIsNewAndHasFeedName}}
-				{{ . }}
 			</li>
 		{{/each}}
 	</ul>
