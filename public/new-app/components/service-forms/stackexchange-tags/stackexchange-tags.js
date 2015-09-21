@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import initView from './stackexchange-tags.stache!';
 import './stackexchange-tags.less!';
 import'components/tag-list/';

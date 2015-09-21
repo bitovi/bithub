@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import "can/list/promise/";
 
 var identities;

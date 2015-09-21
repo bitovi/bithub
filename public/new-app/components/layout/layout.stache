@@ -20,23 +20,25 @@
       <div class="col-xs-12">
         <bh-edit-hub-name hub="{hub}"></bh-edit-hub-name>
         <a href="javascript://" class="add-edit-service-link" can-click="toggleServicesPanel">Add / Edit Service</a>
+        <div class="main-navigation">
+          <ul class="list-unstyled">
+            <li {{#eq state.page "moderation"}}class="active"{{/eq}}>
+              <a href='{{pageUrl "moderation"}}'>Moderation</a>
+            </li>
+            <li {{#eq state.page "publish"}}class="active"{{/eq}}>
+              <a href='{{pageUrl "publish"}}'>Publish</a>
+            </li>
+            <li {{#eq state.page "analytics"}}class="active"{{/eq}}>
+              <a href='{{pageUrl "analytics"}}'>Analytics</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
-<bit-tabs>
-  <bit-panel title="Moderation">
-    <div class="container"><bh-empty-slate></bh-empty-slate></div>
-  </bit-panel>
-  <bit-panel title="Publish">
-    <div class="container"><bh-empty-slate></bh-empty-slate></div>
-  </bit-panel>
-  <bit-panel title="Analytics">
-    <div class="container"><bh-empty-slate></bh-empty-slate></div>
-  </bit-panel>
-</bit-tabs>
+<bh-empty-slate></bh-empty-slate>
 
 {{#if showServicesPanel}}
   <div class="overlay">

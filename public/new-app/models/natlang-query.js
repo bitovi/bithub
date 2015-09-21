@@ -1,4 +1,4 @@
-import can from "can/";
+import can from "can";
 import "can/map/define/";
 
 export default can.Model.extend({}, {
