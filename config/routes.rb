@@ -4,6 +4,7 @@ Bithub::Application.routes.draw do
 
   get '/admin', to: 'kickstart#admin'
   get '/embed', to: 'kickstart#embed'
+  get '/new_admin', to: 'kickstart#new_admin'
 
   resources :subscriptions, only: %i(show) do
     collection do
