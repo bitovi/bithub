@@ -1,0 +1,13 @@
+require_relative 'base'
+
+module Guzzler::Fetchers
+
+  module Stackexchange
+    class Search < Base
+
+      def url
+        "https://api.stackexchange.com/2.2/search"
+      end
+    end
+  end
+end
