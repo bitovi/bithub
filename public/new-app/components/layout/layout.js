@@ -7,7 +7,7 @@ import "./layout.less!";
 import "components/edit_hub_name/";
 import "components/empty-slate/";
 import "bit-tabs/";
-import "components/services/";
+import "components/helpers";
 
 export default can.Component.extend({
 	tag : 'bh-layout',
