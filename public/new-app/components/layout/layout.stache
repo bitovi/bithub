@@ -43,8 +43,12 @@
 {{#if showServicesPanel}}
   <div class="overlay">
     <div class="services-panel-wrap">
-      <a href="javascript://" can-click="toggleServicesPanel">Close</a>
-      <bh-services></bh-services>
+      <can-import from="components/services/">
+        {{#eq state "resolved"}}
+          <a href="javascript://" can-click="toggleServicesPanel">Close</a>
+          <bh-services></bh-services>
+        {{/eq}}
+      </can-import>
     </div>
   </div>
 
