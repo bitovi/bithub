@@ -13,6 +13,7 @@ function(stache, _reduce){
 	stache.registerHelper('pageUrl', function(page, opts){
 		var hash = getHash(opts.hash);
 		hash.page = can.isFunction(page) ? page() : page;
+		console.log('PAGE URL', hash)
 		return can.route.url(hash, false);
 	});
 
