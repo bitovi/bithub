@@ -19,6 +19,25 @@ export default can.Component.extend({
 		},
 		toggleServicesPanel(){
 			this.attr('showServicesPanel', !this.attr('showServicesPanel'));
-		}
+		},
+		selectOrganization(ctx, el, ev){
+			var val = el.val();
+			if(val){
+				this.attr('appState').attr('currentOrganization', ctx);
+			}
+		},
+		selectHub(ctx, el, ev){
+			var val = el.val();
+			var newHub;
+			if(val){
+				newHub = this.attr('appState.hubs').filter(function(hub){
+					return hub.attr('id') ===  parseInt(val, 10);
+				})[0];
+
+
+
+				this.attr('appState').attr('currentHub', newHub);
+			}
+		},
 	}
 });
