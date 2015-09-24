@@ -16,19 +16,19 @@
 
 {{#if currentService.isNew}}
 	{{#ifCanAddService services currentService.feed_name currentService.type_name}}
-		<bh-service-form service="{currentService}" state="{state}" services="{state.services}" class="bithub-form"></bh-service-form>
+		<bh-service-form service="{currentService}" state="{appState}" services="{appState.services}" class="bithub-form"></bh-service-form>
   {{else}}
     <div class="alert alert-info">You must upgrade your plan to add this service.</div>
 	{{/ifCanAddService}}
 {{/if}}
 
-{{#if state.services.isPending}}
+{{#if services.isPending}}
 	<div class="pending-wrap">
 		<i class="fa fa-spin fa-circle-o-notch"></i> Loading ...
 	</div>
 {{else}}
-	{{#if state.services.length}}
+	{{#if services.length}}
 		<h2 class="subtitle-separator">Connected services</h2>
-		<bh-services-list state="{state}" current-service="{currentService}" services="{state.services}"></bh-services-list>
+		<bh-services-list state="{state}" current-service="{currentService}" services="{appState.services}"></bh-services-list>
 	{{/if}}
 {{/if}}
