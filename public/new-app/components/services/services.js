@@ -14,8 +14,9 @@ can.Component.extend({
 		define : {
 			services : {
 				get : function() {
+					console.log('GET LIST OF SERVICES', this.attr('appState'))
 					return new Models.Service.List({
-						embed_id: this.attr('state.hubId')
+						embed_id: this.attr('appState.currentHub.id')
 					});
 				}
 			}
