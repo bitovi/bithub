@@ -8,7 +8,7 @@ module Wrappers
       include CoreHelpers
 
       attr_reader :retweeted_status, :quoted_status, :entities
-      has :id, :id_str, :text
+      has :id, :id_str, :text, :retweet_count, :favorite_count
 
       def initialize(tweet)
         @data = symbolize_keys(tweet)

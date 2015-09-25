@@ -6,7 +6,7 @@ module Events
     class MediaEvent < Protocol
       extend Forwardable
 
-      def_delegators :@media, :id, :type, :link, :created_time
+      def_delegators :@media, :id, :type, :link, :created_time, :likes
       attr_reader :user
 
 
