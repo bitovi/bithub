@@ -11,6 +11,16 @@ import "components/layout/";
 
 var AppState = can.Map.extend({
 	define : {
+		page : {
+			set : function(val){
+				return val;
+			}
+		},
+		tab : {
+			get : function(lastSetVal){
+				return lastSetVal || "inbox";
+			}
+		},
 		currentBrand : {
 			serialize: false
 		},
