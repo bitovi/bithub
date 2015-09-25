@@ -14,6 +14,7 @@ module Entities
           origin_ts: @event.created_at,
           origin_id: @event.id,
           searchable_author: (@event.user.username + ' ' + @event.user.full_name).strip,
+          popularity: @event.likes[:count],
           props: {
             origin_author_id: @event.user.id,
             origin_author_name: @event.user.username,
