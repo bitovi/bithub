@@ -7,7 +7,7 @@ module Handlers
 
       AVAILABLE_ITEMS = %w(status link checkin photo video)
 
-      def initialize(proxy)
+      def initialize(proxy, opts = {})
         @proxy = proxy
       end
 
@@ -22,8 +22,6 @@ module Handlers
       private
 
       def handle_postback(req)
-        Celluloid.logger.info "TODO log that something happened?"
-
         payload = JSON.parse req.body.to_s
         entries = payload.fetch('entry') { [] }
 
@@ -31,7 +29,7 @@ module Handlers
           page_id = entry['id']
           changes = entry.fetch('changes') { [] }
 
-          Celluloid.logger.info "Facbook postback notification for page #{page_id}"
+          Celluloid.logger.info "Facebook postback notification for page #{page_id}"
           changes.each {|c| process_change page_id, c}
         end
 
@@ -44,8 +42,6 @@ module Handlers
         return unless object_id
 
         if subscriptions = @proxy.registry['facebook', 'page', page_id]
-          Celluloid.logger.info "TODO log that something happened?"
-
           subscriptions.each do |owner_data|
             access_token = owner_data.service.config[:access_token]
 

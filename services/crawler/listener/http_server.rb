@@ -35,9 +35,12 @@ class HttpServer < Reel::Server::HTTP
   private
 
   def boot
+    fb_subscription_listener_condvar = Celluloid::Condition.new
+    FacebookAppSubscriber.new(fb_subscription_listener_condvar).async.subscribe unless ENV['INSIDE_TEST']
+
     @handlers.supervise_as :instagram_subscriptions_handler, HandlerProxy, *[::Handlers::Instagram::Subscriptions]
     @handlers.supervise_as :instagram_notifications_handler, HandlerProxy, *[::Handlers::Instagram::Notifications]
-    @handlers.supervise_as :facebook_subscriptions_handler, HandlerProxy, *[::Handlers::Facebook::Subscriptions]
+    @handlers.supervise_as :facebook_subscriptions_handler, HandlerProxy, *[::Handlers::Facebook::Subscriptions, { :condvar => fb_subscription_listener_condvar }]
     @handlers.supervise_as :facebook_notifications_handler, HandlerProxy, *[::Handlers::Facebook::Notifications]
     @handlers.supervise_as :foursquare_handler, HandlerProxy, *[::Handlers::Foursquare]
 
@@ -46,10 +49,6 @@ class HttpServer < Reel::Server::HTTP
     register_route :facebook_subscriptions_handler,  ::Handlers::Facebook::Subscriptions.route
     register_route :facebook_notifications_handler,  ::Handlers::Facebook::Notifications.route
     register_route :foursquare_handler,              ::Handlers::Foursquare.route
-
-    after(5) do
-      FacebookAppSubscriber.new.subscribe unless ENV['INSIDE_TEST']
-    end
   end
 
   def on_connection(connection)
