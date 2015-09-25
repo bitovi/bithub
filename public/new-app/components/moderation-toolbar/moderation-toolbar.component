@@ -1,0 +1,14 @@
+<can-component tag="bh-moderation-toolbar">
+  <can-import from="components/moderation-toolbar/moderation-toolbar.less!"/>
+  <template>
+    <can-import from="components/helpers">
+
+    <ul class="nav nav-tabs">
+      <li {{#eq appState.tab "inbox"}}class="active"{{/eq}}><a href="{{tabUrl 'inbox'}}">Inbox</a></li>
+      <li {{#eq appState.tab "approved"}}class="active"{{/eq}}><a href="{{tabUrl 'approved'}}">Approved</a></li>
+      <li {{#eq appState.tab "starred"}}class="active"{{/eq}}><a href="{{tabUrl 'starred'}}">Starred</a></li>
+      <li {{#eq appState.tab "deleted"}}class="active"{{/eq}}><a href="{{tabUrl 'deleted'}}">Deleted</a></li>
+    </ul>
+    </can-import>
+  </template>
+</can-component>
