@@ -1,6 +1,7 @@
 class Api::V3::InteractionsController < Api::V3::ApiController
   respond_to :html
-  before_action :switch_tenant
+
+  skip_before_action :require_account!, only: %w(create)
 
   def index
     @zoom = zoom
@@ -11,9 +12,12 @@ class Api::V3::InteractionsController < Api::V3::ApiController
   end
 
   def create
-    @interaction = Interaction.new(interaction_params)
-    @interaction.save!
+    Apartment::Tenant.switch(tenant_name) do
+      @interaction = Interaction.create(interaction_params)
+    end
     render json: @interaction
+  rescue ArgumentError => e
+    show_406(e.message)
   ensure
     Apartment::Tenant.switch!
   end
@@ -45,14 +49,13 @@ class Api::V3::InteractionsController < Api::V3::ApiController
   private
 
   def switch_tenant
-    fail 'Tenant must be provided in the session or as param' if !tenant_name
-    Apartment::Tenant.switch!(tenant_name)
   end
 
   def tenant_name
-    tenant_name = session[:tenant_name] || params[:interaction][:tenant_name]
+    @tenant_name = session[:tenant_name] || params[:interaction][:tenant_name]
+    fail ArgumentError.new('Tenant must be known.') unless @tenant_name
     params[:interaction].delete(:tenant_name) if params[:interaction]
-    tenant_name
+    @tenant_name
   end
   
   def resolution
