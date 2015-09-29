@@ -1,0 +1,4 @@
+EMBED CODE
+<div class="cc-wrap">
+  <bh-embed-publish app-state="{appState}"></bh-embed-publish>
+</div>

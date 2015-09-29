@@ -29,6 +29,6 @@
 {{else}}
 	{{#if services.length}}
 		<h2 class="subtitle-separator">Connected services</h2>
-		<bh-services-list state="{state}" current-service="{currentService}" services="{appState.services}"></bh-services-list>
+		<bh-services-list state="{appState}" current-service="{currentService}" services="{appState.services}"></bh-services-list>
 	{{/if}}
 {{/if}}
