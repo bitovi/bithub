@@ -30,7 +30,7 @@ class MonthlyBilling < ActiveRecord::Base
   end
 
   def update_description
-    self.description = "Billing for period #{period_beginning.strftime('%B %d, %Y')} - #{period_end.strftime('%B %d, %Y')}, TOTAL: #{total/100} #{currency}"
+    self.description = "Billing for period #{period_beginning.strftime('%B %d, %Y')} - #{period_end.strftime('%B %d, %Y')}, TOTAL: #{total/100.0} #{currency}"
   end
 
 end
