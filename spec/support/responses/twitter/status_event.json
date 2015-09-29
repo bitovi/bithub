@@ -7,6 +7,9 @@
 	"source": "<a href=\"http://tapbots.com/tweetbot\" rel=\"nofollow\">Tweetbot for iOS</a>",
 	"in_reply_to_user_id": null,
 	"contributors": null,
+	"is_quote_status":false,
+	"retweet_count":0,
+	"favorite_count":0,
 	"retweeted_status": {
 		"truncated": false,
 		"retweeted": true,
