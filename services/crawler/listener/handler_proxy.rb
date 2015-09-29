@@ -1,4 +1,3 @@
-
 class HandlerProxy
   include Celluloid
 
@@ -9,7 +8,7 @@ class HandlerProxy
     @error_publisher_name = opts.fetch(:error_publisher_name) { :error_publisher }
     @configurator_name    = opts.fetch(:configurator_name) { :configurator }
     @registry_name        = opts.fetch(:subscription_registry_name) { :subscription_registry }
-    @handler              = handler_class.new self
+    @handler              = handler_class.new self, opts
 
     Celluloid.logger.info "Started HTTP handler for #{handler_class} on url #{handler_class.route}"
   end

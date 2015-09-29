@@ -1,13 +1,11 @@
 module Handlers
   class Foursquare
 
-    def initialize(proxy)
+    def initialize(proxy, opts = {})
       @proxy = proxy
     end
 
     def handle(req)
-      Celluloid.logger.info "TODO log that something happened?"
-
       # data is in URL encoded form :/
       payload = CGI.parse req.body.to_s
 

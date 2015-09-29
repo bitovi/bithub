@@ -10,7 +10,7 @@ module MonthlyBillings
       @org_id  = org_id
       @ee_logs = embed_events_logs
       @month   = Time.new _year, _month
-      @price   = opts.fetch(:price) { ENV['EMBED_PRICE_PER_DAY'] }.to_i
+      @price   = (opts.fetch(:price) { ENV['EMBED_PRICE_PER_MONTH'] }).to_i / Time.days_in_month(@month.month)
     end
 
     def save_to_monthly_billings!

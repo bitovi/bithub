@@ -32,7 +32,7 @@ module Entities
             if c.is_a?(Array)
               @instance.children += c
             elsif c.is_a?(ActiveRecord::Relation)
-              @instance.children += c.where(true)
+              @instance.children += c.to_a
             else
               @instance.children += [c]
             end

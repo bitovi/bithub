@@ -9,8 +9,7 @@ module Wrappers
 
       has :id, :type, :link, :created_time, :filter, :tags, \
           :location, :comments, :likes, :images, :users_in_photo, \
-          :caption, \
-          :user
+          :caption, :user
 
       def initialize(media)
         @data = symbolize_keys(media)
