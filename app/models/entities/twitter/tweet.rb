@@ -17,6 +17,7 @@ module Entities
           url: @event.html_url,
           origin_ts: @event.created_at,
           origin_id: @event.id_str,
+          popularity: @event.retweet_count + @event.favorite_count,
           props: {
             origin_author_avatar_url: @event.user.profile_image_url,
             entities_urls: JSON.generate(@event.entities.urls),

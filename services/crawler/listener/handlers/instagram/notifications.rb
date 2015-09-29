@@ -3,7 +3,7 @@ module Handlers
 
     class Notifications
 
-      def initialize(proxy)
+      def initialize(proxy, opts = {})
         @proxy = proxy
       end
 
@@ -18,8 +18,6 @@ module Handlers
       private
 
       def handle_postback(req)
-        Celluloid.logger.info "TODO log that something happened?"
-
         payload = JSON.parse req.body.to_s
 
         payload.each do |notif|
