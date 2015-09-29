@@ -7,7 +7,7 @@
             <select class="form-control input-sm" can-change="selectOrganization">
               <option value="">Select Organization</option>
               {{#each appState.currentAccount.organizations}}
-                <option value="{{id}}" {{#eq this appState.currentOrganization}}selected{{/eq}}>{{name}}</option>
+                <option value="{{id}}" {{#eq id appState.currentOrganization.id}}selected{{/eq}}>{{name}}</option>
               {{/each}}
             </select>
           </div>
@@ -15,7 +15,7 @@
             <select class="form-control input-sm" can-change="selectHub">
               <option value="">Select Hub</option>
               {{#each appState.hubs}}
-                <option value="{{id}}" {{#eq this appState.currentHub}}selected{{/eq}}>{{name}}</option>
+                <option value="{{id}}" {{#eq id appState.currentHub.id}}selected{{/eq}}>{{name}}</option>
               {{/each}}
             </select>
           </div>

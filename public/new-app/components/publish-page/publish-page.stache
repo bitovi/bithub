@@ -1,2 +1,17 @@
-<h1>PUBLISH</h1>
-<bh-empty-slate></bh-empty-slate>
+{{#if presets.length}}
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6">
+        <select can-change="selectPresetOrAddNew">
+          {{#each presets}}
+            <option value="{{id}}" {{#eq id currentPreset.id}}selected{{/eq}}>{{name}}</option>
+          {{/each}}
+          <option value="addNewPreset">+ Add New Preset</option>
+        </select>
+      </div>
+      <div class="col-xs-6">
+        <bh-embed-code app-state="{appState}"></bh-embed-code>
+      </div>
+    </div>
+  </div>
+{{/if}}
