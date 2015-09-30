@@ -27,9 +27,10 @@ module MonthlyBillings
       usage_per_days.each do |key, dates|
         brand_id, embed_id = key
         last_rec           = find_record(brand_id, embed_id).last
-        description        = "Hub '#{last_rec.embed_name}' from brand '#{last_rec.brand_name}'"
+        description        = "Hub '#{last_rec.embed_name}' from organization '#{last_rec.organization_name}'"
 
         @mb.total += dates.count * @price
+        @mb.total = (@mb.total >= 50) ? @mb.total : 50
         @mb.monthly_billing_records << MonthlyBillingRecord.new(description: description, amount: dates.count, price: @price)
       end
 
