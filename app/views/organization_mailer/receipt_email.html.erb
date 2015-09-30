@@ -1,0 +1,20 @@
+<h2>Thank you for your BitHub payment!</h2>
+
+<p>Charged amount: $<%= @billing.total / 100.0 %></p>
+<p>Charged at: <%= @billing.charged_at %></p>
+<p>Transaction number: <%= @billing.stripe_charge_id %></p>
+<p>Number of published hubs: <%= @billing.monthly_billing_records.count %></p>
+
+<hr/>
+
+<h2>Published hubs:</h2>
+
+<% @billing.monthly_billing_records.each do |record| %>
+	<h3><%= record.description %></h3>
+	<p>Hub was active for <%= record.amount %> days</p>
+	<p>Total cost of hub for this month: $<%= (record.price * record.amount) / 100.0 %></p>
+<% end %>
+
+<hr/>
+
+<p>Your card will be charged next on 1st of next month.</p>

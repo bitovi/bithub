@@ -22,6 +22,8 @@ class MonthlyBilling < ActiveRecord::Base
       stripe_charge_status: charge.status,
       charged_at: Time.now.utc
 
+    OrganizationMailer.receipt_email(self).deliver_later
+
     self
   end
 
