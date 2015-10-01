@@ -44,6 +44,15 @@ namespace :billing do
             puts "\t #{embed_id} / #{record.embed_name}: #{dates.count} days * #{price} USD = #{dates.count * price}"
           end
 
+          mbm.usage_per_days.each do |key, dates|
+            brand_id, embed_id = key
+            record             = mbm.find_record(brand_id, embed_id).last
+            price              = (mbm.price / 100.0).round(2).to_f
+            total              = (dates.count * mbm.price).round(2).to_i
+
+            puts "\t #{embed_id} / #{record.embed_name}: #{dates.count} days * #{price} = #{total} cents"
+          end
+
           if _save && (mb = mbm.save_to_monthly_billings!)
             puts "\t ----> MonthlyBilling '#{mb.description}' created!"
           else
