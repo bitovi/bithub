@@ -28,7 +28,7 @@ log4r_config:
 
     - name     : component_logfile
       type     : DateFileOutputter
-      dirname  : ENV['LOG_DIR']
+      dirname  : '/home/bithub/bithub/shared/log'
       filename : "#{COMPONENT_NAME}.log"
       trunc    : false
       maxsize  : 104857600
@@ -39,7 +39,7 @@ log4r_config:
 
     - name     : active_record_logfile
       type     : DateFileOutputter
-      dirname  : ENV['LOG_DIR']
+      dirname  : '/home/bithub/bithub/shared/log'
       filename : "active_record.log"
       trunc    : false
       maxsize  : 104857600
@@ -50,7 +50,7 @@ log4r_config:
 
     - name     : action_controller_logfile
       type     : DateFileOutputter
-      dirname  : ENV['LOG_DIR']
+      dirname  : '/home/bithub/bithub/shared/log'
       filename : "action_controller.log"
       trunc    : false
       maxsize  : 104857600
