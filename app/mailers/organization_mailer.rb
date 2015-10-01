@@ -1,4 +1,5 @@
 class OrganizationMailer < ApplicationMailer
+  default from: '"BitHub" <no-reply@bithub.com>'
 
   def receipt_email(billing)
     @billing = billing
