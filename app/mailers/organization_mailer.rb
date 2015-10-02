@@ -3,6 +3,6 @@ class OrganizationMailer < ApplicationMailer
 
   def receipt_email(billing)
     @billing = billing
-    mail(to: @billing.organization.accounts.pluck(:email), subject: @billing.description)
+    mail(to: @billing.organization.accounts.pluck(:email), subject: "Your BitHub receipt")
   end
 end
