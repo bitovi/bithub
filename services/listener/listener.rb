@@ -12,10 +12,6 @@ class Listener
 
     info "[#{@handler.name_for_logs}] Connected to AMQP, queue name: #{q_name}"
 
-    every(Intervals::ACTOR_MAILBOX_REPORT) do
-      info "[#{@handler.name_for_logs}] Mailbox size #{Actor.current.mailbox.size}"
-    end
-
     async.listen
   end
   attr_reader :x, :q
