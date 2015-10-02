@@ -30,6 +30,7 @@ gem 'enumerize'
 gem 'sinatra'
 gem 'unicorn'
 gem 'sidekiq', '~> 3.2'
+gem 'sidekiq-failures'
 gem 'whenever', :require => false
 gem 'acts-as-taggable-on'
 gem 'ranked-model'
