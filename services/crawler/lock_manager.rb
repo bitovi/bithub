@@ -9,10 +9,6 @@ class LockManager
   def initialize(opts={})
     @redis = opts.fetch(:redis) { ConnectionManager.instance.redis }
     @booted = true
-
-    every(Intervals::ACTOR_MAILBOX_REPORT) do
-      info "[LOCK_MANAGER] Mailbox size #{Actor.current.mailbox.size}"
-    end
   end
 
   attr_accessor :interval

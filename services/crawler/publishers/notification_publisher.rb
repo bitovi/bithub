@@ -15,10 +15,6 @@ class NotificationPublisher
     @x_backend = rf.x('x.web', :direct)
     @q_backend = rf.q('q.web.commands').bind(@x_backend, routing_key: 'commands')
 
-    every(Intervals::ACTOR_MAILBOX_REPORT) do
-      info "[NOTIFICATION_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
-    end
-    
     info '[NOTIFICATION_PUBLISHER] Waiting for notifications to publish.'
   end
 

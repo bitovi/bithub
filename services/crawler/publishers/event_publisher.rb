@@ -18,10 +18,6 @@ class EventPublisher
     @x = rf.x('x.web')
     @q = rf.q('q.web.events').bind(@x, routing_key: 'events')
 
-    every(Intervals::ACTOR_MAILBOX_REPORT) do
-      info "[EVENT_PUBLISHER] Mailbox size #{Actor.current.mailbox.size}"
-    end
-    
     info '[EVENT_PUBLISHER] Waiting for events to publish.'
   end
 
