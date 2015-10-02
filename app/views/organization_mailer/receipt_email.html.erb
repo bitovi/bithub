@@ -1,7 +1,8 @@
 <h2>Thank you for your payment!</h2>
 
-<p>Charged amount: $<%= @billing.total / 100.0 %></p>
-<p>Charged at: <%= @billing.charged_at.strftime("%B %d, %Y") %></p>
+<p>Date: <%= @billing.charged_at.strftime("%B %d, %Y") %></p>
+<p><%= @billing.description.gsub(/,\ TOTAL.*/, '') %></p>
+<p>Total: $<%= sprintf("%.2f", @billing.total / 100.0) %></p>
 <p>Transaction number: <%= @billing.stripe_charge_id %></p>
 <p>Number of published hubs: <%= @billing.monthly_billing_records.count %></p>
 
@@ -13,11 +14,9 @@
 <% end %>
 </ul>
 
-<hr/>
+<p>If you have any questions please contact us at: <a href="mailto:support@bithub.com">support@bithub.com</a>.</p>
 
-<p>If you have any questions or concerns, please contact: <a href="mailto:support@bithub.com">support@bithub.com</a>.</p>
-
-<p>Thank you,<br/>
+<p>Thank you,<br/><br/>
 The BitHub Team<br/>
 <a href="http://bithub.com/">bithub.com</a></br>
 </p>
