@@ -75,6 +75,32 @@ var EmbedPublishVM = can.Map.extend({
 			});
 		}
 	},
+	removeCCUpdatedNotice : function(){
+		this.attr('showCCUpdatedNotice', false);
+	},
+	updateCC : function(){
+		var self = this;
+		var cc;
+		if(this.validate()){
+			this.attr('isUpdatingCC', true);
+			cc = this.attr('cc');
+			Stripe.card.createToken({
+				number: cc.numberNumberWithoutSpaces(),
+				cvc: cc.cvc,
+				exp_month: cc.month(),
+				exp_year: cc.year()
+			}, function(res, obj){
+				$.post('/subscriptions/update', {stripe_token: obj.id}).then(function(){
+					self.attr({
+						isUpdatingCC: false,
+						changeCC: false,
+						showCCUpdatedNotice: true
+					});
+					self.attr('state.currentSubscription').reload();
+				});
+			});
+		}
+	},
 	publishHub : function(){
 		var self = this;
 		this.attr('isSaving', true);
