@@ -1,4 +1,7 @@
-EMBED CODE
-<div class="cc-wrap">
-  <bh-embed-publish app-state="{appState}"></bh-embed-publish>
-</div>
+<input class="form-control" can-click="openCC" value="{{presetEmbedCode}}">
+{{#if isCCOpen}}
+  <div class="cc-wrap" can-click="closeCC">
+    <bh-embed-publish app-state="{appState}"></bh-embed-publish>
+  </div>
+{{/if}}
+
