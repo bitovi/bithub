@@ -49,6 +49,15 @@ export default can.Component.extend({
 				})[0];
 				this.attr('currentPreset', currentPreset);
 			}
-		}
+		},
+		presetIframe : function(){
+			var currentPreset = this.attr('currentPreset');
+			if(currentPreset){
+				var tenantName = this.attr('appState.currentBrand.tenant_name');
+				var hub = this.attr('appState.currentHub');
+				var hubId = hub.attr('id');
+				return this.attr('currentPreset').url(tenantName, hubId);
+			}
+		}	
 	}
 });
