@@ -9,12 +9,16 @@
  
 </head>
 <body>
+   <script type="text/stache" can-autorender id="main">
+     <bh-layout app-state="{viewModel}"></bh-layout>
+  </script>
+
+
+
 <script>
 	window.EMBED_ENDPOINT = '<%= ENV["EMBED_ENDPOINT"] %>';
 </script>
 <script src='/new-app/node_modules/steal/steal.js' data-main='index' data-env="<%= Rails.env == 'development' ? 'development' : 'production' %>"></script>
-
-<div id="app"></div>
-
+ 
 </body>
 </html>
