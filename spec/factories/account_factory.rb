@@ -5,4 +5,3 @@ FactoryGirl.define do
     password_confirmation "coobar123"
   end
 end
-
