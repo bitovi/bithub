@@ -37,6 +37,36 @@ class Brand < ActiveRecord::Base
     where(tenant_name: Apartment::Tenant.current).first
   end
 
+  def self.flag_inactive
+    ActiveRecord::Base.connection.execute <<-SQL
+      BEGIN;
+      UPDATE brands SET is_active = 't';
+
+      UPDATE brands SET is_active = 'f'
+      FROM (
+          SELECT
+            organizations. ID,
+            COUNT (confirmed_at) AS confirmed_accounts,
+            MAX (accounts.last_sign_in_at) AS last_sign_in_at
+          FROM
+            accounts,
+            account_organizations,
+            organizations
+          WHERE
+            accounts.id = account_organizations.account_id
+          AND organizations.id = account_organizations.organization_id
+          GROUP BY
+            organizations.id
+        ) AS org_data
+      WHERE
+        org_data.id = brands.organization_id
+      AND org_data.last_sign_in_at < now() :: TIMESTAMP - '1 week' :: INTERVAL
+      AND org_data.confirmed_accounts = 0;
+
+      COMMIT;
+    SQL
+  end
+
   def has_connected_brand_idents?(provider_name)
     identities_from(provider_name).count > 0
   end
