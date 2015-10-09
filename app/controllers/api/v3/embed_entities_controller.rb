@@ -9,7 +9,7 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
   helper_method :list_cache_key
 
   def index
-    if account_signed_in? 
+    if account_signed_in? && !params[:tenant_name]
       @tenant_name = Apartment::Tenant.current
       @visibility = params[:view] || 'public'
     else
