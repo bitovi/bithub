@@ -112,7 +112,7 @@
 {{/if}}
 		</div>
 	</div>
-	<p><i>By clicking "Publish" you authorize us to charge your credit card on monthly basis as long as the hub is published and public.</i></p>
+	<p><i>By clicking "Publish" you authorize us to automatically charge your credit card at the end of each month.  You will be charged $7.00 per month for each published feed.  If you publish the feed for less than a month, you will only be charged for the time the feed is published. For additional information, please visit Billing located under Support.</i></p>
 	<div class="button-wrap clearfix">
 		{{#if showCCForm}}
 			<button class="btn btn-primary" can-click="createSubscriptionAndPublishHub" {{#isSaving}}disabled{{/isSaving}}>
