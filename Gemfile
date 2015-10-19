@@ -63,6 +63,7 @@ gem 'log4r', '~> 1.1'
 
 gem 'sass'
 gem 'bootstrap-sass', '~> 3.3.4'
+gem 'compass-rails'
 
 gem 'muster', :github => 'neektza/muster'
 

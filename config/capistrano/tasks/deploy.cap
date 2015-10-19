@@ -39,7 +39,9 @@ namespace :deploy do
       'deploy:client:npm_install',
       'deploy:client:bower_install',
       'deploy:client:steal_build',
-      'deploy:client:embed_build'
+      'deploy:client:embed_build',
+      'deploy:client:frontpage_hub_npm_install',
+      'deploy:client:frontpage_hub_build'
     ]
 
     desc "NPM install"
@@ -74,6 +76,24 @@ namespace :deploy do
       on roles(:all) do |host|
         within release_path.join('public') do
           execute './node_modules/steal-tools/bin/steal', 'build', '--config=stealconfig.js', '--main=bithub-embed'
+        end
+      end
+    end
+
+    desc "Frontpage Hub NPM install"
+    task :frontpage_hub_npm_install do
+      on roles(:all) do |host|
+        within release_path.join('public', 'homepage_embed') do
+          execute :npm, 'install', '--production', '--no-spin'
+        end
+      end
+    end
+
+    desc "Frontpage Hub build"
+    task :frontpage_hub_build do
+      on roles(:all) do |host|
+        within release_path.join('public', 'homepage_embed') do
+          execute './node_modules/steal-tools/bin/steal', 'build', '--main=index'
         end
       end
     end
