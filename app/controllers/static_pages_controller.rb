@@ -22,8 +22,7 @@ class StaticPagesController < ApplicationController
 
   def determine_layout
     return "frontpage" if action_name == "index"
-    return "pricing" if params[:page] === "pricing"
-    return "application" if static_pages.keys.include?(params[:page].to_sym)
+    return "application"
   end
 
   def static_page_titles

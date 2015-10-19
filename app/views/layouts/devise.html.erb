@@ -1,11 +1,7 @@
-<%= render partial: "layouts/head", :locals => {:narrow => false}  %>
-
-<div class="container page-content">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2 clearfix">
-			<%= yield %>
-		</div>
-	</div>
+<%= render partial: "layouts/head" %>
+<div class="static-container">
+  <div class="inner-static-container">
+    <%= yield %>
+  </div>
 </div>
-
-<%= render partial: "layouts/footer", :locals => {:narrow => false} %>
+<%= render partial: "layouts/footer" %>
