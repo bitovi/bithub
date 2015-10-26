@@ -3,9 +3,9 @@ bh-bits-carousel {
     display: block;
     position: relative;
     .outer-carousel-wrap {
-        margin: 10px 25px -10px;
+        margin: 0px 25px -20px;
         overflow: hidden;
-
+        padding: 10px 0;
     }
     .inner-carousel-wrap {
         transition: margin-left 0.5s ease-in-out;
@@ -17,7 +17,10 @@ bh-bits-carousel {
             margin-top: 0;
             margin-left: 0;
             height: 100% !important;
-            border: none;
+            border: 2px solid white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+            margin-right: 15px;
             &.loading {
                 background-image: url(../images/card-loader-blue.gif);
             }
@@ -36,8 +39,8 @@ bh-bits-carousel {
         border-radius: 100%;
         background: #4a7c8d;
         color: white;
-        width: 50px;
-        height: 50px;
+        width: 34px;
+        height: 34px;
         position: absolute;
         font-size: 25px;
         line-height: 50px;
@@ -46,20 +49,21 @@ bh-bits-carousel {
         cursor: pointer;
         background-repeat: no-repeat;
         top: 50%;
-        margin-top: -25px;
+        margin-top: -17px;
+        background-size: 30px;
         
     }
 
     .carousel-prev {
         left: 0;
-        margin-left: -25px;
+        margin-left: -17px;
         background-image: url(../images/bithub-site_test-hub-arrow-left.svg);
         background-position: 50% 50%;
     }
 
     .carousel-next {
         right: 0;
-        margin-right: -25px;
+        margin-right: -17px;
         background-image: url(../images/bithub-site_test-hub-arrow-right.svg);
         background-position: 50% 50%;
     }

@@ -25,7 +25,7 @@ var State = can.Map.extend({
 	isAdmin(){
 		return false;
 	},
-	assetRoot: "http://localhost:8888/bithub-homepage-carousel/",
+	assetRoot: "/homepage_embed/",
 	hubId: 1
 });
 
