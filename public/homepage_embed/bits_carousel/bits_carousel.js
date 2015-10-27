@@ -6,7 +6,7 @@ import "./bits_carousel.less!";
 import "can/map/define/";
 
 
-var MIN_CARD_WIDTH = 200;
+var MIN_CARD_WIDTH = 250;
 
 export default can.Component.extend({
 	tag: 'bh-bits-carousel',

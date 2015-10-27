@@ -12,7 +12,7 @@ import "style/embed.less!";
 var RealBit = Bit.extend({
 	findAll: function(params){
 		return $.ajax({
-			url: 'http://bithub.com/api/v3/embeds/1/entities?view=public&tenant_name=radioactive_fern_9050&image_only=true&' + $.param(params)
+			url: 'http://bithub.com/api/v3/embeds/143/entities?view=public&tenant_name=calm_dove_6826&image_only=true&' + $.param(params)
 		});
 	},
 }, {});
