@@ -229,9 +229,9 @@ header.site-header {
     border: 1px solid $browser-border;
     border-radius: 6px;
     margin: 25px auto;
-    max-width: 760px;
+    max-width: 820px;
     position: relative;
-    padding-bottom: 25px;
+    padding-bottom: 45px;
     a.powered-by {
         background: $browser-border;
         color: white;
@@ -274,7 +274,7 @@ header.site-header {
     .bithub-embed {
         font-size: 12px;
         color: $dark-gray;
-        margin: 0 50px 10px;
+        margin: 25px 50px 10px;
         .carousel-prev {
             margin-left: -67px;
         }
