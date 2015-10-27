@@ -518,9 +518,9 @@ header.site-header {
   border: 1px solid #71b5c5;
   border-radius: 6px;
   margin: 25px auto;
-  max-width: 760px;
+  max-width: 820px;
   position: relative;
-  padding-bottom: 25px; }
+  padding-bottom: 45px; }
   .browser-border a.powered-by {
     background: #71b5c5;
     color: white;
@@ -557,7 +557,7 @@ header.site-header {
   .browser-border .bithub-embed {
     font-size: 12px;
     color: #0a0a0d;
-    margin: 0 50px 10px; }
+    margin: 25px 50px 10px; }
     .browser-border .bithub-embed .carousel-prev {
       margin-left: -67px; }
     .browser-border .bithub-embed .carousel-next {
