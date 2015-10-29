@@ -19,6 +19,7 @@
       <div class="register-account-wrap">
         <button class="close-registration-overlay"><img src="/images/site/bithub-site_close-icon.svg"></button>
         <div class="get-started-title">Get Started with Bit<b>Hub</b></div>
+        <%#
         <p>Sign Up With Social:</p>
         <div class="social-icons">
           <img alt="" src="/images/site/bithub-site_social-facebook.svg">
@@ -26,10 +27,14 @@
           <img alt="" src="/images/site/bithub-site_social-twitter.svg">
         </div>
         <hr>
-        <p>Or Sign up With Email:</p>
-        <form action="">
-          <input type="text" placeholder="Your Email">
-          <input type="password" placeholder="Choose a password">
+        %>
+        <p>Sign up With Email:</p>
+        <form action="/accounts" method="post">
+          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+          <input name="utf8" type="hidden" value="✓">
+          <input type="email" placeholder="Your Email" name="account[email]">
+          <input type="password" placeholder="Choose a password" name="account[password]">
+          <input type="password" placeholder="Confirm your password" name="account[password_confirmation]">
           <button>Create Free Account</button>
         </form>
       </div>
@@ -37,9 +42,8 @@
     <div class="sidebar-menu sm">
       <nav>
         <ul>
-          <li><a href="#">How it Works</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Pricing</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/pricing">Pricing</a></li>
         </ul>
       </nav>
     </div>
@@ -52,15 +56,14 @@
             <div class="main-menu lg">
               <nav>
                 <ul>
-                  <li><a href="#">How it Works</a></li>
-                  <li><a href="#">FAQ</a></li>
-                  <li><a href="#">Pricing</a></li>
+                  <li><a href="/faq">FAQ</a></li>
+                  <li><a href="/pricing">Pricing</a></li>
                 </ul>
               </nav>
             </div>
             <div class="header-menu">
               <span class="lg">Starting at <b>$7 per month!</b></span>
-              <a href="#" class="sign-in">Sign in</a>
+              <a href="/login" class="sign-in">Log in</a>
               <a href="#" class="try-it-now">Try It Now!</a>
             </div>
           </div> 

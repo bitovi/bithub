@@ -793,7 +793,7 @@ body.registration-open .register-account-overlay {
   margin: 0 auto;
   padding: 25px;
   font-size: 16px; }
-  .static-container .inner-static-container :first-child {
+  .static-container .inner-static-container > :first-child {
     margin-top: 0; }
 .static-container img {
   max-width: 100%;
@@ -818,6 +818,52 @@ body.registration-open .register-account-overlay {
 
 .lg {
   display: none !important; }
+
+.plans .plan {
+  padding: 25px 25px 90px;
+  position: relative;
+  margin: 25px 0; }
+  .plans .plan h2 {
+    font-size: 36px;
+    margin: 0; }
+    .plans .plan h2 small {
+      display: block;
+      font-size: 12px;
+      font-weight: normal; }
+  .plans .plan .btn-get-started {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+    height: 40px;
+    background: #617880;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 40px;
+    text-decoration: none; }
+  .plans .plan hr {
+    border: none;
+    border-top: 1px solid #c5c7c6; }
+  .plans .plan ul {
+    padding-left: 20px;
+    margin: 0; }
+.plans .plan-free {
+  border: 2px solid #859a9d; }
+.plans .plan-paid {
+  background: #375263;
+  border: 2px solid #375263;
+  color: white; }
+  .plans .plan-paid hr {
+    border-color: #417a8d; }
+  .plans .plan-paid h2 small {
+    color: white;
+    padding-bottom: 5px; }
+  .plans .plan-paid h2, .plans .plan-paid .important {
+    color: #91c0d4; }
+  .plans .plan-paid .btn-get-started {
+    background: #f24439; }
 
 @media (min-width: 760px) {
   .browser-border .bithub-embed {
@@ -968,13 +1014,23 @@ body.registration-open .register-account-overlay {
       margin: 0;
       width: auto;
       font-size: 20px; }
+      footer.site-footer h4 a {
+        color: white;
+        text-decoration: none; }
     footer.site-footer ul {
       display: inline-block;
       margin: 0;
       margin-left: 15px; }
       footer.site-footer ul li {
         display: inline-block;
-        margin-left: 30px; } }
+        margin-left: 30px; }
+
+  .plans {
+    display: flex;
+    flex-wrap: no-wrap;
+    justify-content: space-between; }
+    .plans .plan {
+      width: 48%; } }
 .panel {
   background: white;
   padding: 25px; }
