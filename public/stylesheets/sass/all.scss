@@ -13,6 +13,7 @@ $dark-gray: #0a0a0d;
 $turquoise: #295364;
 $dark-turquoise: #2b4c58;
 $grey: #4b5053;
+$light-turquioise: #859a9d;
 
 /**
  * For modern browsers
@@ -563,7 +564,7 @@ body {
         margin: 0 auto;
         padding: 25px;
         font-size: 16px;
-        :first-child {
+        >:first-child {
             margin-top: 0;
         }
     }
@@ -599,6 +600,67 @@ body {
 }
 .lg {
     display: none !important;
+}
+
+.plans {
+    .plan {
+        padding: 25px 25px 90px;
+        position: relative;
+        margin: 25px 0;
+        h2 {
+            font-size: 36px;
+            margin: 0;
+            small {
+                display: block;
+                font-size: 12px;
+                font-weight: normal;
+            }
+        }
+        .btn-get-started {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            height: 40px;
+            background: #617880;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 40px;
+            text-decoration: none;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #c5c7c6;
+        }
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+    }
+    .plan-free {
+        border: 2px solid $light-turquioise;
+    }
+    .plan-paid {
+        background: #375263;
+        border: 2px solid #375263;
+        color: white;
+        hr {
+            border-color: #417a8d;
+        }
+        h2 small {
+            color: white;
+            padding-bottom: 5px;
+        }
+        
+        h2, .important {
+            color: #91c0d4;
+        }
+        .btn-get-started {
+            background: $light-red;
+        }
+    }
 }
 
 @media (min-width: 760px) {
@@ -805,6 +867,10 @@ body {
             margin: 0;
             width: auto;
             font-size: 20px;
+             a {
+                 color: white;
+                 text-decoration: none;
+             }
         }
         ul {
             display: inline-block;
@@ -814,6 +880,14 @@ body {
                 display: inline-block;
                 margin-left: 30px;
             }
+        }
+    }
+    .plans {
+        display: flex;
+        flex-wrap: no-wrap;
+        justify-content: space-between;
+        .plan {
+            width: 48%;
         }
     }
 }
