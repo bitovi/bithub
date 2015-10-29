@@ -17,7 +17,7 @@ export default can.Component.extend({
 		isLoading: false,
 		fromLeft: 0,
 		carouselWidth: 0,
-		cardWidth: 250,
+		cardWidth: 220,
 		define : {
 			params : {
 				value : function(){
