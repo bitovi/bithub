@@ -1,0 +1,1 @@
+Bithub::Application.config.secret_key_base = 'cd8944883fa3dbb7921be8767d43219cd656e59f0fe74de5171255c091829d0cebdbb1be301b2fe2ac640b55b41c15bf387bb5657462e24d58c395e0947cb425'

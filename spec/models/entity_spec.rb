@@ -7,7 +7,7 @@ RSpec.describe Entity, :type => :model do
     describe "#save" do
       it "raises an error on save! b/c there is no feed / tags / rules applied" do
         generic_entity = FactoryGirl.build(:entity)
-        expect{generic_entity.save!}.to raise_error
+        expect{generic_entity.save!}.to raise_error(StandardError)
       end
     end
 
