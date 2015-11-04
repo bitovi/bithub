@@ -32,7 +32,6 @@ FactoryGirl.define do
     factory :entity_wo_type, traits: [:with_determined_feed, :with_determined_author]
     factory :entity_wo_feed, traits: [:with_determined_type, :with_determined_author]
     factory :entity_wo_author, traits: [:with_determined_type, :with_determined_feed]
-    factory :determined_entity, traits: [:with_determined_type, :with_determined_feed, :with_determined_author]
 
     # Twitter entity
     
