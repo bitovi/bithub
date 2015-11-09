@@ -46,7 +46,12 @@
     "donejs": "^0.5.2",
     "generator-donejs": "^0.3.4",
     "jquery": "^2.1.4",
-    "steal": "^0.12.3"
+    "steal": "^0.12.3",
+    "lodash-amd": "^3.10.1",
+    "moment": "^2.10.6",
+    "selectize": "^0.12.1",
+    "bootstrap": "^3.3.5",
+    "slideout": "^0.1.10"
   },
   "devDependencies": {
     "steal-qunit": "^0.1.1",
