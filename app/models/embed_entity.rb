@@ -35,6 +35,12 @@ class EmbedEntity < ActiveRecord::Base
     end
   end
 
+  def decide(decision)
+    returning(update_attribute(:decision, decision)) do
+      entity.touch
+    end
+  end
+
   def notify_liveservice
     entity.notify_liveservice
   end

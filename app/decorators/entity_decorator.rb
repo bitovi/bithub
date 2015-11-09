@@ -35,6 +35,11 @@ class EntityDecorator < Draper::Decorator
     current_embed = context.fetch(:embed)
     source.is_pinned(current_embed)
   end
+  
+  def decision
+    current_embed = context.fetch(:embed)
+    source.decision(current_embed)
+  end
 
   def images
     EntityImagesMapper.new(source).build
