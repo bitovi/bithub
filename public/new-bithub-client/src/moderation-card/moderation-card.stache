@@ -1,0 +1,11 @@
+<div class="content-wrap">
+  {{{ title }}}
+  {{{ body }}}
+</div>
+<div class="moderation-bar">
+  <ul class="list-unstyled">
+    <li><a href="javascript://"><img src="{{joinBase iconUrl('approve')}}"></a></li>
+    <li><a href="javascript://"><img src="{{joinBase iconUrl('star')}}"></a></li>
+    <li><a href="javascript://"><img src="{{joinBase iconUrl('destroy')}}"></a></li>
+  </ul>
+</div>

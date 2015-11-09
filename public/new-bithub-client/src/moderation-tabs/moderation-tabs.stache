@@ -1,0 +1,14 @@
+<ul class="list-unstyled">
+  <li><a href="{{moderationUrl 'inbox'}}" {{#eq activeTab 'inbox'}}class="active"{{/eq}}>
+    <img src="{{joinBase icon("inbox")}}">
+  </a></li>
+  <li><a href="{{moderationUrl 'approved'}}" {{#eq activeTab 'approved'}} class="active"{{/eq}}>
+    <img src="{{joinBase icon("approved")}}">
+  </a></li>
+  <li><a href="{{moderationUrl 'starred'}}" {{#eq activeTab 'starred'}}class="active"{{/eq}}>
+    <img src="{{joinBase icon("starred")}}">
+  </a></li>
+  <li><a href="{{moderationUrl 'deleted'}}" {{#eq activeTab 'deleted'}}class="active"{{/eq}}>
+    <img src="{{joinBase icon("deleted")}}">
+  </a></li>
+</ul>

@@ -1,15 +1,40 @@
 <html>
   <head>
     <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {{asset "css"}}
     {{asset "html5shiv"}}
   </head>
   <body>
+    <can-import from="bootstrap/dist/css/bootstrap.css!" />
     <can-import from="bithub-client/styles.less!" />
     <can-import from="bithub-client/app" export-as="viewModel" />
+    <can-import from="src/edit_hub_name/" />
+    <can-import from="src/slideout" />
+    <can-import from="src/mobile-menu/" />
+    <can-import from="src/moderation-tabs/" />
+    <can-import from="src/moderation-panel/" />
+    {{#if isLoaded}}
+      <bh-slideout>
+        <nav id="menu">
+          <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+          <a class="btn-switch-org" href="#">Switch Organization</a>
+          <a class="btn-logout" href="#">Logout</a>
+        </nav>
+        
+        <main id="panel">
+          <header>
+            <button class="toggle-button">☰</button>
+            <h1>{{currentHub.name}}</h1>
+          </header>
+          <bh-moderation-panel bits="{bits}"></bh-moderation-panel>
+          <bh-moderation-tabs active-tab="{moderationTab}"></bh-moderation-tabs>
+        </main>
 
-    <h1>{{message}}</h1>
-
+      </bh-slideout>
+    {{else}}
+      loading
+    {{/if}}
     {{asset "inline-cache"}}
 
     {{#switch env.NODE_ENV}}
