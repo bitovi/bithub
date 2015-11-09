@@ -29,7 +29,7 @@
     "system-json": "https://github.com/stealjs/system-json.git",
     "steal-qunit": "~0.0.4",
     "jquery.payment": "~1.2.3",
-    "funcunit": "~3.0.0"
+    "funcunit": "~2.0.0"
   },
   "resolutions": {
     "steal": "~0.10.5",
