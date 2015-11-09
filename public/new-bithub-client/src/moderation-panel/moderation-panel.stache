@@ -1,0 +1,4 @@
+<can-import from="src/moderation-card/">
+{{#each bits}}
+  <bh-moderation-card bit="{this}"></bh-moderation-card>
+{{/each}}

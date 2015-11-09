@@ -1,0 +1,35 @@
+bh-moderation-card {
+    display: block;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    border: 2px solid white;
+    overflow: hidden;
+    .content-wrap {
+        padding: 15px;
+    }
+    .moderation-bar {
+        background: #d2d7da;
+        height: 40px;
+        ul {
+            text-align: center;
+            li {
+                display: inline-block;
+                height: 30px;
+                margin: 5px 0;
+                border-left: 1px solid #dce2e2;
+                &:last-child {
+                    border-right: 1px solid #dce2e2;
+                }
+                a {
+                    display: block;
+                    padding: 0 20px;
+                }
+                img {
+                    height: 20px;
+                    margin: 5px;
+                }
+            }
+        }
+    }
+}
