@@ -34,6 +34,22 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
     end
   end
 
+  def stats
+    render :json => [{ 
+      id: 'approved',
+      count: owner_embed.embed_entities.where(:decision => 'approved').count
+    }, {
+      id: 'pending',
+      count: owner_embed.embed_entities.where(:decision => 'pending').count
+    }, {
+      id: 'deleted',
+      count: owner_embed.embed_entities.where(:decision => 'deleted').count
+    }, {
+      id: 'starred',
+      count: owner_embed.embed_entities.where(:decision => 'starred').count
+    }]
+  end
+
   private
 
   def build_scope
