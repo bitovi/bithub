@@ -60,9 +60,16 @@ class Embed < ActiveRecord::Base
 
   def make_link_to(entity)
     if (ee = embed_entities.where(:entity_id => entity.id).first)
-      ee.update_attribute(:is_approved_automatically, determine_state(entity))
+      ee.update_attributes({
+        :is_approved_automatically => determine_state(entity),
+        :decision => 'pending'
+      })
     else
-      embed_entities.create(entity: entity, is_approved_automatically: determine_state(entity))
+      embed_entities.create({
+        :is_approved_automatically => determine_state(entity),
+        :decision => 'pending',
+        :entity => entity,
+      })
     end
   end
 
