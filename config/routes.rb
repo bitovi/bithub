@@ -43,6 +43,16 @@ Bithub::Application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
     root :to => 'api#api_id'
 
+    namespace :v4 do
+      root :to => 'v4#api_id'
+
+      resources :embeds, except: %i(new edit) do
+        resources :entities, controller: 'embed_entities', only: %i(index show) do
+          put :decide, on: :member
+        end
+      end
+    end
+
     namespace :v3 do
       root :to => 'v3#api_id'
 
