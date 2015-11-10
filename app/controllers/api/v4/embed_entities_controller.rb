@@ -9,6 +9,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
     super do
       Apartment::Tenant.switch(@tenant_name) do
         scope = build_scope
+        @count =  build_count_scope.count
         @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
         render 'api/v4/embed_entities/index'
       end
@@ -45,30 +46,21 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
       .select(select_sql_statement)
       .includes(:events)\
       .includes(:services)\
+      .includes(:parent)\
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
-
-
+      .no_children
+    
     scope = scope.by_service(service_id) if service_id
     scope = scope.image_only if image_only?
     scope = scope.where('embed_entities.decision' => decision) if decision
 
-    if public_visibility? || show_only_visible?
-      scope = owner_embed.approved_entities(scope)
-    elsif show_only_blocked?
-      scope = owner_embed.blocked_entities(scope)
-    elsif show_only_pinned?
-      scope = owner_embed.pinned_entitites(scope)
-    end
-
     if public_visibility?
-      scope = scope.order('embed_entities.is_pinned DESC, entities.thread_updated_ts DESC')
+      scope = scope.order('entities.thread_updated_ts DESC')
       params.delete(:order)
     elsif params[:order] == 'preview'
       params[:order] = ['thread_updated_ts:desc']
     end
-
-    scope = scope.includes(:parent).no_children
 
     scope = scope_applier(scope)
       .apply_negated_attrs_to_scope
@@ -80,7 +72,28 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
 
     scope
   end
-  
+
+  def build_count_scope
+    count_scope = Entity\
+      .joins(:embed_entities)\
+      .includes(:parent)\
+      .where("embed_entities.embed_id" => embed_id)
+      .no_children
+
+    count_scope = count_scope.by_service(service_id) if service_id
+    count_scope = count_scope.image_only if image_only?
+    count_scope = count_scope.where('embed_entities.decision' => decision) if decision
+    
+    count_scope = scope_applier(count_scope)
+      .apply_negated_attrs_to_scope
+      .apply_muster_query_to_scope(muster_query)
+      .apply_regular_params_to_scope
+      .apply_tag_based_params_to_scope
+      .apply_order_to_scope
+      .result
+
+    count_scope
+  end
 
   def decision
     if params[:decision] && DECISIONS.include?(params[:decision])

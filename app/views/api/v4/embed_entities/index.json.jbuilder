@@ -1,3 +1,5 @@
+json.count @count
+
 json.set! :data do
   json.array! @entities do |e|
     json.cache! ['v4', e] do
