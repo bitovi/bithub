@@ -22,10 +22,14 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
       return 
     end
 
-    Apartment::Tenant.switch(@tenant_name) do
-      scope = build_scope
-      @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
-      render :index
+    if block_given?
+      yield
+    else
+      Apartment::Tenant.switch(@tenant_name) do
+        scope = build_scope
+        @entities = EntityDecorator.decorate_collection(scope.all, context: { embed: owner_embed })
+        render :index
+      end
     end
   end
 
@@ -78,6 +82,16 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
     end
   end
 
+  def decide
+    if @relation = embed_entity_relation!
+      authorize! :decide, @relation
+      if @relation.decide(decision)
+        decorate_entity
+        render :show
+      end
+    end
+  end
+
   def destroy
     if @relation = embed_entity_relation!
       authorize! :destroy, @relation
@@ -94,7 +108,8 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
       entities.*,
       embed_entities.is_approved_automatically AS is_approved_automatically,
       embed_entities.is_approved_manually AS is_approved_manually,
-      embed_entities.is_pinned AS is_pinned
+      embed_entities.is_pinned AS is_pinned,
+      embed_entities.decision AS decision
     SQL
 
     scope = Entity\
@@ -204,5 +219,9 @@ class Api::V3::EmbedEntitiesController < Api::V3::ApiController
 
   def public_visibility?
     @visibility == 'public'
+  end
+
+  def decision
+    params[:decision] || 'pending'
   end
 end
