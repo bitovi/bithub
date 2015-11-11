@@ -49,6 +49,7 @@ Bithub::Application.routes.draw do
       resources :embeds, except: %i(new edit) do
         resources :entities, controller: 'embed_entities', only: %i(index show) do
           put :decide, on: :member
+          get :stats, on: :collection
         end
       end
     end
