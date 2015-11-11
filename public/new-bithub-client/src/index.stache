@@ -27,8 +27,8 @@
             <button class="toggle-button">☰</button>
             <h1>{{currentHub.name}}</h1>
           </header>
-          <bh-moderation-panel bits="{bits}"></bh-moderation-panel>
-          <bh-moderation-tabs active-tab="{moderationTab}"></bh-moderation-tabs>
+          <bh-moderation-panel bits="{bits}" {hub-id}="currentHub.id" active-decision="{moderationTab}"></bh-moderation-panel>
+          <bh-moderation-tabs active-tab="{moderationTab}" entity-decisions="{entityDecisions}"></bh-moderation-tabs>
         </main>
 
       </bh-slideout>
