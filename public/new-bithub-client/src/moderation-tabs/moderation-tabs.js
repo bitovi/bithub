@@ -5,6 +5,7 @@ import "./moderation-tabs.less!";
 import "can/route/";
 
 const ICON_MAPPINGS = {
+	pending: 'inbox',
 	approved: 'thumbs-up',
 	starred: 'star',
 	deleted: 'trash'
@@ -17,7 +18,13 @@ export default can.Component.extend({
 	scope : {
 		icon : function(icon){
 			var color = this.attr('activeTab') === icon ? "white" : "grey";
-			return "images/app-resources-icons-" + (ICON_MAPPINGS[icon] || icon) + "-" + color + ".svg"	
+			return "images/app-resources-icons-" + (ICON_MAPPINGS[icon] || icon) + "-" + color + ".svg";
+		},
+		countFor : function(decision){
+			var entityDecisions = this.attr('entityDecisions');
+			if(entityDecisions.isResolved()){
+				return "(" + entityDecisions.getById(decision).attr('count') + ")";
+			}
 		}
 	},
 	helpers : {

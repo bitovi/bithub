@@ -5,9 +5,16 @@ import Account from 'src/models/account';
 import Hub from 'src/models/hub';
 import Organization from 'src/models/organization';
 import Bit from 'src/models/bit';
+import EntityDecision from 'src/models/entity-decision';
 
 can.route.bindings.pushstate.root = "/new-bithub/";
 
+const TAB_TO_FILTER = {
+	pending: 'pending',
+	approved: 'approved',
+	starred: 'starred',
+	deleted: 'deleted'
+};
 
 const AppViewModel = AppMap.extend({
 	define : {
@@ -18,7 +25,7 @@ const AppViewModel = AppMap.extend({
 		},
 		tab : {
 			get : function(lastSetVal){
-				return lastSetVal || "inbox";
+				return lastSetVal || "pending";
 			}
 		},
 		currentBrand : {
@@ -115,13 +122,34 @@ const AppViewModel = AppMap.extend({
 			serialize : false,
 			value : 'BitHub'
 		},
+		entityDecisions : {
+			get : function(){
+				var currentHub = this.attr('currentHub');
+				if(currentHub){
+					return new EntityDecision.List({hubId: currentHub.id});
+				}
+			}
+		},
 		bits : {
 			get : function(){
 				var tab = this.attr('moderationTab');
-				if(tab){
-					return new Bit.List({hubId: this.attr('currentHubId')});
+				var currentHub = this.attr('currentHubId');
+				if(tab && currentHub){
+					return new Bit.List({hubId: currentHub, decision: TAB_TO_FILTER[tab]});
 				}
 			}
+		}
+	},
+	init : function(){
+		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
+	},
+	handleDecision: function(ev, oldDecision, newDecision){
+		var entityDecisions = this.attr('entityDecisions');
+		if(entityDecisions.isResolved()){
+			can.batch.start();
+			entityDecisions.getById(oldDecision).dec();
+			entityDecisions.getById(newDecision).inc();
+			can.batch.stop();
 		}
 	},
 	isAdmin : function(){
@@ -133,8 +161,10 @@ const AppViewModel = AppMap.extend({
 	}
 });
 
-can.route("/:currentHubId", {page: 'moderation', moderationTab: 'inbox'});
-can.route('/:currentHubId/:page', {moderationTab: 'inbox'});
+
+
+can.route("/:currentHubId", {page: 'moderation', moderationTab: 'pending'});
+can.route('/:currentHubId/:page', {moderationTab: 'pending'});
 can.route('/:currentHubId/:page/:moderationTab');
 
 export default AppViewModel;
