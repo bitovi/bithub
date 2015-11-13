@@ -5,8 +5,11 @@ import BitModel from "models/bit";
 import "./bits_carousel.less!";
 import "can/map/define/";
 
-
 var MIN_CARD_WIDTH = 250;
+
+var getNextClickTS = function(factor){
+	return (new Date()).getTime() + (factor || 5000);
+};
 
 export default can.Component.extend({
 	tag: 'bh-bits-carousel',
@@ -18,6 +21,7 @@ export default can.Component.extend({
 		fromLeft: 0,
 		carouselWidth: 0,
 		cardWidth: 220,
+		nextClickTimeout : null,
 		define : {
 			params : {
 				value : function(){
@@ -41,7 +45,10 @@ export default can.Component.extend({
 		},
 		loadNextPage : function(){
 			var self = this;
+			var bits = self.attr('bits');
+			var hasContents = !!bits.length;
 			var params;
+
 
 			if(this.attr('hasNextPage')){
 				this.attr('isLoading', true);
@@ -50,22 +57,35 @@ export default can.Component.extend({
 				//return;
 				this.getBitModel().findAll(params).then(function(data){
 					can.batch.start();
-					
-					if(data.length < self.attr('params.limit')){
-						self.attr('hasNextPage', false);
-					}
 
-					self.attr('params.offset', self.attr('params.offset') + data.length);
-					self.attr('isLoading', false);
-					self.attr('bits').push.apply(self.attr('bits'), data);
-					
+					if(data.length){
+						if(data.length < self.attr('params.limit')){
+							self.attr('hasNextPage', false);
+						}
+						
+						self.attr('params.offset', self.attr('params.offset') + data.length);
+						self.attr('isLoading', false);
+						bits.push.apply(bits, data);
+					} else {
+						self.attr({
+							isLoading: false,
+							hasNextPage: false
+						});
+						bits.push.apply(bits, bits);
+					}
 					can.batch.stop();
+					if(hasContents){
+						self.carouselNext();
+					}
 				}, function(){
 					self.attr({
 						isLoading: false,
 						hasNextPage: false
 					});
 				});
+			} else {
+				bits.push.apply(bits, bits.attr());
+				this.carouselNext();
 			}
 		},
 		loadingCardWidth : function(){
@@ -81,7 +101,12 @@ export default can.Component.extend({
 		},
 		carouselNext : function(ctx, el){
 			var cardWidth = this.attr('cardWidth');
-			el.trigger('interaction:carousel-scroll', [this.attr('state.hubId')]);
+			var factor;
+			if(el){
+				el.trigger('interaction:carousel-scroll', [this.attr('state.hubId')]);
+				factor = 10000;
+			}
+			this.nextClickTimeout = getNextClickTS(factor);
 			if(this.attr('isLoading')){
 				return;
 			}
@@ -89,15 +114,19 @@ export default can.Component.extend({
 			var next = this.attr('fromLeft') + cardWidth;
 			if(next > this.maxFromLeft()){
 				this.loadNextPage();
-				next = next + cardWidth;
 			}
 			this.attr('fromLeft', Math.min(next, this.maxFromLeft()));
 		},
 		maxFromLeft : function(){
 			return this.carouselContentWidth() - this.attr('carouselWidth') - 10;
 		},
-		carouselPrev : function(){
+		carouselPrev : function(ctx, el){
 			var cardWidth = this.attr('cardWidth');
+			var factor;
+			if(el){
+				factor = 10000;
+			}
+			this.nextClickTimeout = getNextClickTS(factor);
 			this.attr('fromLeft', Math.max(0, this.attr('fromLeft') - cardWidth));
 		}
 	},
@@ -111,6 +140,22 @@ export default can.Component.extend({
 	events : {
 		init: function(){
 			this.measureWidth();
+			this.scope.nextClickTimeout = getNextClickTS();
+		},
+		autoClick : function(){
+			var currentTS = (new Date()).getTime();
+			var diff = Math.abs(currentTS - this.scope.nextClickTimeout);
+			if(diff < 100){
+				this.element.find('[can-click="carouselNext"]').click();
+				this.scope.nextClickTimeout = getNextClickTS();
+			}
+			setTimeout(this.autoClick.bind(this), 100);
+		},
+		"{scope.bits} length" : function(){
+			if(!this.__autoClickInited){
+				this.autoClick();
+				this.__autoClickInited = true;
+			}
 		},
 		'{window} resize': 'measureWidth',
 		measureWidth: function(){
