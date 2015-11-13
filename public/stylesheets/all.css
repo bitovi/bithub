@@ -660,6 +660,11 @@ header.site-header {
   .features-wrap .feature-moderate h2 img {
     width: 80px;
     margin-bottom: 10px; }
+  .features-wrap .supported-services {
+    color: #4b5053;
+    text-align: left;
+    list-style-position: inside;
+    padding: 0; }
 
 footer.site-footer {
   background: #0a0a0d;
@@ -947,9 +952,15 @@ body.registration-open .register-account-overlay {
     width: 250px;
     margin: 0 auto;
     height: 190px;
-    cursor: pointer; }
+    cursor: pointer;
+    opacity: 0.7; }
+    .features-wrap .intro-wrap:hover {
+      opacity: 1; }
     .features-wrap .intro-wrap .intro {
       max-width: 150px; }
+  .features-wrap .supported-services li {
+    float: left;
+    width: 33.3%; }
   .features-wrap h3 {
     font-size: 36px; }
   .features-wrap .feature-details-wrap:before {
@@ -993,12 +1004,18 @@ body.registration-open .register-account-overlay {
     .features-wrap .feature-description .red-button {
       margin-left: 0; }
 
+  .active-feature-connect .feature-connect .intro-wrap {
+    opacity: 1; }
   .active-feature-connect .feature-connect .outer-feature-details-wrap {
     display: block; }
 
+  .active-feature-moderate .feature-moderate .intro-wrap {
+    opacity: 1; }
   .active-feature-moderate .feature-moderate .outer-feature-details-wrap {
     display: block; }
 
+  .active-feature-publish .feature-publish .intro-wrap {
+    opacity: 1; }
   .active-feature-publish .feature-publish .outer-feature-details-wrap {
     display: block; }
 
