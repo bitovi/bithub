@@ -45,7 +45,7 @@
 			"jquerypayment/jquerypayment" : "jquerypayment"
 		},
 		paths: {
-			"jquery": "bower_components/jquery/dist/jquery.js",
+			"jquery": "bower_components/jquery/jquery.js",
 			"can/*": "bower_components/canjs/steal/can/*.js",
 			"lodash/*": "bower_components/lodash-amd/modern/*.js",
 			'funcunit' : 'bower_components/funcunit/dist/funcunit.js',
