@@ -40,7 +40,6 @@ class Brand < ActiveRecord::Base
   def self.flag_inactive
     ActiveRecord::Base.connection.execute <<-SQL
       BEGIN;
-      UPDATE brands SET is_active = 't';
 
       UPDATE brands SET is_active = 'f'
       FROM (
