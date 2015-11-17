@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150821192603) do
+ActiveRecord::Schema.define(version: 20151117170033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,10 +124,11 @@ ActiveRecord::Schema.define(version: 20150821192603) do
     t.integer  "embed_id"
     t.integer  "entity_id"
     t.boolean  "is_approved_manually"
-    t.boolean  "is_pinned",                 default: false, null: false
+    t.boolean  "is_pinned",                 default: false,     null: false
     t.boolean  "is_approved_automatically"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "decision",                  default: "pending"
   end
 
   add_index "embed_entities", ["entity_id"], name: "embed_entities_entity_id_idx", using: :btree
@@ -209,6 +210,7 @@ ActiveRecord::Schema.define(version: 20150821192603) do
   end
 
   add_index "events", ["content_digest"], name: "index_events_on_content_digest", using: :btree
+  add_index "events", ["entity_id"], name: "events_entity_id_idx", using: :btree
 
   create_table "filters", force: :cascade do |t|
     t.integer "embed_id"
@@ -257,13 +259,13 @@ ActiveRecord::Schema.define(version: 20150821192603) do
     t.datetime "period_beginning"
     t.datetime "period_end"
     t.integer  "total"
-    t.string   "currency",           default: "USD"
+    t.string   "currency",             default: "USD"
     t.text     "description"
     t.string   "stripe_customer_id"
     t.string   "stripe_charge_id"
-    t.string   "stripe_status"
+    t.string   "stripe_charge_status"
     t.datetime "charged_at"
-    t.hstore   "props",              default: {}
+    t.hstore   "props",                default: {}
     t.datetime "created_at"
     t.datetime "updated_at"
   end
