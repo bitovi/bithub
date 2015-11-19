@@ -14,6 +14,21 @@ export default can.Component.extend({
 		init : function(){
 			this.__timeouts = {};
 		},
+		scroll : function(){
+			var self = this;
+			clearTimeout(this.__scrollTimeout);
+			if(this.scope.bits.length){
+				this.__scrollTimeout = setTimeout(function(){
+					var scrollTop = self.element.scrollTop();
+					var scrollHeight = self.element[0].scrollHeight;
+					var height = self.element.outerHeight();
+					if(scrollHeight - height - scrollTop < 200){
+						self.scope.bits.loadNextPage();
+					}
+				}, 200);
+			}
+			
+		},
 		"{scope.Bit} updated" : function(Bit, ev, bit){
 			var bitDecision = bit.attr('decision');
 			var activeDecision = this.scope.attr('activeDecision');

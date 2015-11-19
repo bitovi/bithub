@@ -7,6 +7,7 @@
   </head>
   <body>
     <can-import from="bootstrap/dist/css/bootstrap.css!" />
+    <can-import from="font-awesome/css/font-awesome.css!" />
     <can-import from="bithub-client/styles.less!" />
     <can-import from="bithub-client/app" export-as="viewModel" />
     <can-import from="src/edit_hub_name/" />
