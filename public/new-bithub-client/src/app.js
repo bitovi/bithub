@@ -134,8 +134,18 @@ const AppViewModel = AppMap.extend({
 			get : function(){
 				var tab = this.attr('moderationTab');
 				var currentHub = this.attr('currentHubId');
+				var list = new Bit.List();
 				if(tab && currentHub){
-					return new Bit.List({hubId: currentHub, decision: TAB_TO_FILTER[tab]});
+					list.__loadingParams = {
+						hubId: currentHub,
+						decision: TAB_TO_FILTER[tab],
+						limit: 50,
+						offset: 0
+					};
+					setTimeout(function(){
+						list.loadNextPage();
+					});
+					return list;
 				}
 			}
 		}

@@ -6,7 +6,31 @@ bh-moderation-card {
     border: 2px solid white;
     overflow: hidden;
     .content-wrap {
+    }
+    .columns-2 {
+        .content-column {
+            float: left;
+            width: 50%;
+        }
+        bh-card-image-gallery .current-image-wrap img {
+            width: 100%;
+            max-height: none;
+        }
+    }
+    .content-column--title-body {
         padding: 15px;
+        .content-image-wrap {
+            margin: 0 -15px;
+        }
+        img {
+            width: 100%;
+        }
+        :last-child {
+            margin-bottom: 0;
+        }
+        bh-card-body-wrap, bh-card-body-wrap:last-child {
+            margin: -15px;
+        }
     }
     .moderation-bar {
         background: #d2d7da;
@@ -31,5 +55,66 @@ bh-moderation-card {
                 }
             }
         }
+    }
+    bh-card-image-gallery {
+        max-width: 100%;
+    }
+    .author-date-wrap {
+        border-top: 2px solid #f3f3f3;
+        padding: 5px 15px;
+        position: relative;
+        z-index: 1000;
+    }
+    .bit-author-name {
+        font-weight: bold;
+        font-size: 110%;
+        margin-bottom: -5px;
+        margin-top: 2px;
+    }
+    .social-icon {
+        width: 16px;
+        height: 16px;
+        float: left;
+        img {
+            width: 16px;
+            height: 16px;
+            display: block;
+            position: relative;
+            top: 2px;
+        }
+    }
+    .bit-created-at {
+        color: #7b7f80;
+    }
+    .bit-avatar {
+        float: left;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-right: 10px;
+        a {
+            display: block;
+            width: 40px;
+            height: 40px;
+            img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    }
+    .youtube-embed-container {
+        margin: -15px -15px 15px;
+        position: relative;
+				padding-bottom: 56.25%;
+				height: 0;
+				overflow: hidden;
+				iframe, object, embed {
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+				}
     }
 }

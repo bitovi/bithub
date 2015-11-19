@@ -157,6 +157,30 @@ Bit.List = Bit.List.extend({
 		if(index > -1){
 			this.splice(index, 1);
 		}
+	},
+	loadNextPage: function(){
+		var length = this.attr('length');
+		var count = this.__totalCount;
+		var self = this;
+
+		console.log('LOAD NEXT PAGE')
+
+		if(typeof count !== 'undefined' || length < this.__totalCount){
+			this.__loadingParams.offset = length;
+		}
+		if(!this.attr('isCurrentlyLoading') && (!this.__totalCount || length < this.__totalCount)){
+			this.attr('isCurrentlyLoading', true);
+			Bit.findAll(this.__loadingParams).then(function(data){
+				self.__totalCount = data.count;
+				self.push.apply(self, data);
+				setTimeout(function(){
+					self.attr('isCurrentlyLoading', false);
+				});
+			});
+		}
+	},
+	isLoading : function(){
+		return this.attr('length') === 0 && this.attr('isCurrentlyLoading');
 	}
 });
 

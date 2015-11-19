@@ -28,6 +28,18 @@
     "configDependencies": [
       "live-reload"
     ],
+		"envs": {
+      "server-development": {
+        "map": {
+          "slideout/dist/slideout": "@empty"
+        }
+      },
+      "server-production": {
+        "map": {
+          "slideout/dist/slideout": "@empty"
+        }
+      }
+    },
     "npmIgnore": [
       "documentjs",
       "testee",
@@ -51,7 +63,8 @@
     "moment": "^2.10.6",
     "selectize": "^0.12.1",
     "bootstrap": "^3.3.5",
-    "slideout": "^0.1.10"
+    "slideout": "^0.1.10",
+    "font-awesome": "^4.4.0"
   },
   "devDependencies": {
     "steal-qunit": "^0.1.1",
