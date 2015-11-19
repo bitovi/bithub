@@ -17,13 +17,13 @@
     <can-import from="src/moderation-panel/" />
     {{#if isLoaded}}
       <bh-slideout>
-        <nav id="menu">
+        <nav id="menu" class="slideout-menu">
           <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
           <a class="btn-switch-org" href="#">Switch Organization</a>
           <a class="btn-logout" href="#">Logout</a>
         </nav>
         
-        <main id="panel">
+        <main id="panel" class="slideout-panel">
           <header>
             <button class="toggle-button">☰</button>
             <h1>{{currentHub.name}}</h1>

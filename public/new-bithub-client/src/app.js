@@ -1,3 +1,7 @@
+/* globals process */
+/* globals global */
+/* globals setTimeout */
+
 import AppMap from "can-ssr/app-map";
 import 'can/map/define/';
 import 'can/route/pushstate/';
@@ -6,8 +10,39 @@ import Hub from 'src/models/hub';
 import Organization from 'src/models/organization';
 import Bit from 'src/models/bit';
 import EntityDecision from 'src/models/entity-decision';
+import $ from "jquery";
 
 can.route.bindings.pushstate.root = "/new-bithub/";
+can.baseURL = '/new-bithub/';
+
+var NODE_ENV = "";
+
+if(process){
+	NODE_ENV = (process.env && process.env.NODE_ENV) || "";
+}
+
+if(NODE_ENV.substr(0, 6) !== 'window'){
+	$.ajaxSettings.xhr = function(){
+		try {
+			var req = new global.XMLHttpRequest();
+			var oldOpen = req.open;
+			req.open = function(){
+				if((arguments[1] || "").substr(0, 5) === '/api/'){
+					arguments[1] = "http://dev.bithub.com" + arguments[1];
+				}
+				var res = oldOpen.apply(this, arguments);
+				if(this.setDisableHeaderCheck && global && global.__railsSessionId){
+					this.setDisableHeaderCheck(true);
+					this.setRequestHeader('Cookie', '_session_id=' + global.__railsSessionId);
+				}
+				
+				return res;
+			};
+			return req;
+		} catch( e ) {}
+	};
+}
+
 
 const TAB_TO_FILTER = {
 	pending: 'pending',
@@ -38,12 +73,11 @@ const AppViewModel = AppMap.extend({
 			serialize: false,
 			get : function(lastValue, setter){
 				if(!lastValue){
-					Account.current().then(function(account){
+					return this.waitFor(Account.current()).then(function(account){
 						setter(account);
 					});
-				} else {
-					return lastValue;
 				}
+				return lastValue;
 			}
 		},
 		currentOrganizationId : {
@@ -54,7 +88,7 @@ const AppViewModel = AppMap.extend({
 			},
 			get : function(lastValue, setter){
 				if(!lastValue){
-					Organization.current().then(function(organization){
+					this.waitFor(Organization.current()).then(function(organization){
 						setter(organization.id);
 					});
 				}
@@ -104,11 +138,18 @@ const AppViewModel = AppMap.extend({
 			get : function(){
 				var self = this;
 				var hubList = new Hub.List({});
+				var deferred = can.Deferred();
 				hubList.then(function(hubs){
 					if(!self.attr('currentHubId') && hubs.length){
 						self.attr('currentHubId', hubs[0].id);
 					}
+					setTimeout(function(){	
+						deferred.resolve();
+					}, 1);
+				}, function(e){
+					deferred.reject();
 				});
+				this.waitFor(deferred);
 				return hubList;
 			}
 		},
@@ -135,6 +176,7 @@ const AppViewModel = AppMap.extend({
 				var tab = this.attr('moderationTab');
 				var currentHub = this.attr('currentHubId');
 				var list = new Bit.List();
+				var deferred = can.Deferred();
 				if(tab && currentHub){
 					list.__loadingParams = {
 						hubId: currentHub,
@@ -143,8 +185,16 @@ const AppViewModel = AppMap.extend({
 						offset: 0
 					};
 					setTimeout(function(){
-						list.loadNextPage();
+						var req = list.loadNextPage();
+						if(req){
+							req.then(function(){
+								deferred.resolve();
+							});
+						} else {
+							deferred.resolve();
+						}
 					});
+					//this.waitFor(deferred);
 					return list;
 				}
 			}
@@ -170,8 +220,6 @@ const AppViewModel = AppMap.extend({
 		return this.attr('hubs').isResolved() && this.attr('currentHub');
 	}
 });
-
-
 
 can.route("/:currentHubId", {page: 'moderation', moderationTab: 'pending'});
 can.route('/:currentHubId/:page', {moderationTab: 'pending'});

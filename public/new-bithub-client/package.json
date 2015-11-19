@@ -28,7 +28,7 @@
     "configDependencies": [
       "live-reload"
     ],
-		"envs": {
+    "envs": {
       "server-development": {
         "map": {
           "slideout/dist/slideout": "@empty"
@@ -64,7 +64,8 @@
     "selectize": "^0.12.1",
     "bootstrap": "^3.3.5",
     "slideout": "^0.1.10",
-    "font-awesome": "^4.4.0"
+    "font-awesome": "^4.4.0",
+    "cookies": "^0.5.1"
   },
   "devDependencies": {
     "steal-qunit": "^0.1.1",
