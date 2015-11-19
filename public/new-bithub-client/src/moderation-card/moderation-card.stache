@@ -12,7 +12,7 @@
     <div class="content-column content-column--title-body">
       {{#if isYoutube}}
         <div class="youtube-embed-container">
-					<iframe src="{{ youtubeEmbedURL }}" frameborder="0" allowfullscreen>
+					<iframe src="{{ youtubeEmbedURL }}" frameborder="0" allowfullscreen></iframe>
 				</div>
         <p>{{{formattedTitle title }}}</p>
       {{else}}
@@ -21,7 +21,7 @@
           {{{ body }}}
         {{else}}
           <bh-card-body-wrap>
-          {{{formattedTitle title }}}
+            {{{formattedTitle title }}}
             {{{ body }}}
           </bh-card-body-wrap>
         {{/if}}

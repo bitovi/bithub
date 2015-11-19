@@ -1,4 +1,4 @@
-<can-import from="src/moderation-card/">
+<can-import from="src/moderation-card/" />
 {{#if bits.isLoading}}
   <div class="loading-wrap">
     <img src="{{joinBase "images/spinner.gif"}}">

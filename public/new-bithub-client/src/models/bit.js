@@ -163,14 +163,12 @@ Bit.List = Bit.List.extend({
 		var count = this.__totalCount;
 		var self = this;
 
-		console.log('LOAD NEXT PAGE')
-
 		if(typeof count !== 'undefined' || length < this.__totalCount){
 			this.__loadingParams.offset = length;
 		}
 		if(!this.attr('isCurrentlyLoading') && (!this.__totalCount || length < this.__totalCount)){
 			this.attr('isCurrentlyLoading', true);
-			Bit.findAll(this.__loadingParams).then(function(data){
+			return Bit.findAll(this.__loadingParams).then(function(data){
 				self.__totalCount = data.count;
 				self.push.apply(self, data);
 				setTimeout(function(){
