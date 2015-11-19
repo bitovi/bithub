@@ -102,7 +102,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
     
     count_scope = scope_applier(count_scope)
       .apply_negated_attrs_to_scope
-      .apply_muster_query_to_scope(muster_query)
+      .apply_muster_query_to_scope(muster_query, skip_limits: true)
       .apply_regular_params_to_scope
       .apply_tag_based_params_to_scope
       .apply_order_to_scope
