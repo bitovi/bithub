@@ -97,6 +97,17 @@ namespace :deploy do
         end
       end
     end
+
+    desc "SSR build"
+    task :ssr_build do
+      on roles(:all) do |host|
+        within release_path.join('public', 'new-bithub-client') do
+          execute :npm, 'install', '--production', '--no-spin'
+          execute :nodejs, 'build.js'
+        end
+      end
+    end
+    
   end
 
   task :client => ['deploy:client:build']
