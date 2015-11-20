@@ -1,6 +1,6 @@
-rails: bundle exec unicorn_rails -c ./config/unicorn_local.rb
+rails: bundle exec unicorn_rails -c ./config/unicorn.rb
 sidekiq: bundle exec sidekiq
-ssr: cd ./public/new-bithub-client && ./node_modules/can-ssr/bin/can-serve --port 3030
+ssr: cd /home/bithub/bithub/current/public/new-bithub-client && nodejs server --port 3030
 
 liveservice: nodejs ./services/liveservice/server.js
 listener: bundle exec ruby ./services/listener/kickstart.rb
