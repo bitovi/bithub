@@ -60,7 +60,7 @@ can.Component.extend({
 			var scrollHeight = wrap[0].scrollHeight;
 			var height = wrap.height();
 
-			this.scope.attr('isTooTall', height < scrollHeight);
+			this.scope.attr('isTooTall', scrollHeight > 150 && height < scrollHeight);
 		}
 	}
 });
