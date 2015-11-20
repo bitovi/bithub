@@ -2,7 +2,16 @@
   <head>
     <title>{{title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{asset "css"}}
+      {{#switch env.NODE_ENV}}
+        {{#case "production"}}
+          <link rel="stylesheet" href="/new-bithub/dist/bundles/bithub-client/index.css">
+        {{/case}}
+
+        {{#default}}
+          {{asset "css"}}
+        {{/default}}
+    {{/switch}}
+
     {{asset "html5shiv"}}
   </head>
   <body>
