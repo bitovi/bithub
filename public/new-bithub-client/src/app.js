@@ -16,9 +16,11 @@ can.route.bindings.pushstate.root = "/new-bithub/";
 can.baseURL = '/new-bithub/';
 
 var NODE_ENV = "";
+var BITHUB_HOST = "http://dev.bithub.com";
 
 if(process){
 	NODE_ENV = (process.env && process.env.NODE_ENV) || "";
+	BITHUB_HOST = (process.env && process.env.BITHUB_HOST) || BITHUB_HOST;
 }
 
 if(NODE_ENV.substr(0, 6) !== 'window'){
@@ -28,7 +30,7 @@ if(NODE_ENV.substr(0, 6) !== 'window'){
 			var oldOpen = req.open;
 			req.open = function(){
 				if((arguments[1] || "").substr(0, 5) === '/api/'){
-					arguments[1] = "http://dev.bithub.com" + arguments[1];
+					arguments[1] = BITHUB_HOST + arguments[1];
 				}
 				var res = oldOpen.apply(this, arguments);
 				if(this.setDisableHeaderCheck && global && global.__railsSessionId){
@@ -72,9 +74,12 @@ const AppViewModel = AppMap.extend({
 		currentAccount : {
 			serialize: false,
 			get : function(lastValue, setter){
+				var self = this;
 				if(!lastValue){
 					return this.waitFor(Account.current()).then(function(account){
 						setter(account);
+					}, function(){
+						console.log('NO CURRENT ACCOUNT');
 					});
 				}
 				return lastValue;
@@ -166,8 +171,16 @@ const AppViewModel = AppMap.extend({
 		entityDecisions : {
 			get : function(){
 				var currentHub = this.attr('currentHub');
+				var deferred;
+				var list;
 				if(currentHub){
-					return new EntityDecision.List({hubId: currentHub.id});
+					deferred = can.Deferred();
+					list = new EntityDecision.List({hubId: currentHub.id});
+					this.waitFor(deferred);
+					list.then(function(){
+						deferred.resolve();
+					});
+					return list;
 				}
 			}
 		},

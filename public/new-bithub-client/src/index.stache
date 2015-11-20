@@ -15,6 +15,7 @@
     <can-import from="src/mobile-menu/" />
     <can-import from="src/moderation-tabs/" />
     <can-import from="src/moderation-panel/" />
+
     {{#if isLoaded}}
       <bh-slideout>
         <nav id="menu" class="slideout-menu">
