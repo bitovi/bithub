@@ -7,7 +7,7 @@ var pkg = require('can-ssr/package.json');
 var server = require('can-ssr/lib/server');
 var exec = require('child_process').exec;
 var Cookies = require('cookies');
-
+var http = require('http');
 
 program.version(pkg.version)
   .usage('[options]')
@@ -69,6 +69,11 @@ if(program.develop) {
 var app = server(options);
 var port = program.port || process.env.PORT || 3030;
 var server = app.listen(port);
+
+// We should never hit this if the user is logged in
+app.use(function(req, res, next){
+	res.redirect(process.env.BITHUB_HOST + '/accounts/sign_in');
+});
 
 server.on('error', function(e) {
 	if(e.code === 'EADDRINUSE') {
