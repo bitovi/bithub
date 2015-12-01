@@ -78,7 +78,7 @@ export default can.Map.extend({
 		var params = {};
 		var tenant = this.attr('tenant');
 		var isPublic = this.isPublic();
-		var filter = this.attr('filter');
+		var decision = this.attr('decision');
 		var serviceId = this.attr('service_id');
 		var imageOnly = this.attr('image_only');
 
@@ -93,8 +93,8 @@ export default can.Map.extend({
 			if(params.order === 'grouped-by-date'){
 				params.order = 'preview';
 			}
-			if(filter){
-				params.show = filter;
+			if(decision){
+				params.decision = decision;
 			}
 			if(serviceId){
 				params.service_id = serviceId;
@@ -107,6 +107,8 @@ export default can.Map.extend({
 
 	
 		params.hubId = hubId;
+
+		console.log(params)
 
 		return params;
 	},

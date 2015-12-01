@@ -9,6 +9,7 @@ import 'components/';
 import 'components/helpers';
 import 'components/service-config-formatter/';
 
+
 var kickstart = function(selector){
 	var PresetChangeUpdater = can.Control.extend({
 		'{appState} preset' : 'updateIframeAttrs',
@@ -23,6 +24,7 @@ var kickstart = function(selector){
 		}
 	});
 
+	
 	$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 		if(options.type.toLowerCase() !== 'get'){
 			options.data = JSON.stringify(originalOptions.data);
@@ -111,6 +113,8 @@ var kickstart = function(selector){
 				return $(can.stache('<bh-service-config-formatter service="{service}"></bh-service-config-formatter>')({service: service})).text();
 			}
 		}));
+	}).fail(function(){
+		console.log('FAIL', arguments)
 	});
 };
 

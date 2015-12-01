@@ -68,14 +68,15 @@ Preset.ADMIN = new Preset({
 		live: true,
 		view: 'admin',
 		order: 'grouped-by-date',
-		filter: 'all'
+		decision: 'pending'
 	}
 });
 
 Preset.PREVIEW = new Preset({
 	name : 'Default Preset',
 	config: {
-		live: false
+		live: false,
+		decision: 'approved'
 	}
 });
 

@@ -37,7 +37,6 @@ var kickstart = function(hub){
 	//can.route.ready();
 
 
-
 	appState.attr('hub', hub);
 	appState.setAttrs(params);
 	appState.connectLiveService();
@@ -81,7 +80,7 @@ var kickstart = function(hub){
 		var div = $('<div id="app" />');
 
 		$('#app-wrapper').html(div);
-
+		console.log('INIT APP')
 		new BitList(div, {
 			state : appState
 		});
@@ -100,7 +99,7 @@ var kickstart = function(hub){
 
 	appState.on('view', resetApp);
 	appState.on('order', resetApp);
-	appState.on('filter', resetApp);
+	appState.on('decision', resetApp);
 	appState.on('service_id', resetApp);
 	appState.on('image_only', resetApp);
 
