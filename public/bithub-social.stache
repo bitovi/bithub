@@ -21,12 +21,6 @@
 							  {{/each}}
 						  </select>
 					  {{/if}}
-					  <select can-value="state.preset.config.filter" class="form-control input-sm">
-						  <option value="all">Show all items</option>
-						  <option value="visible">Show only public items</option>
-						  <option value="pinned">Show only pinned items</option>
-						  <option value="blocked">Show only blocked items</option>
-					  </select>
 					  <select can-value="state.preset.config.order" class="form-control input-sm">
               <option value="grouped-by-date">Grouped By Date</option>
 						  <option value="created_at:desc">Ordered by crawling time</option>
@@ -40,6 +34,14 @@
           <a href="{{pageUrl 'hub-list'}}">Back to Admin</a> | <b>{{state.hub.name}}</b>
         </div>
 		</div>
+    <div class="folders-wrapper">
+      <ul>
+        <li><a href="javascript://" {{#eq state.preset.config.decision "pending"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="pending">Inbox</a></li>
+        <li><a href="javascript://" {{#eq state.preset.config.decision "approved"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="approved">Approved</a></li>
+        <li><a href="javascript://" {{#eq state.preset.config.decision "starred"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="starred">Starred</a></li>
+        <li><a href="javascript://" {{#eq state.preset.config.decision "deleted"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="deleted">Deleted</a></li>
+      </ul>
+    </div>
 		<div class="iframe-wrapper">
 			{{renderIframe state.iframe}}
 		</div>
