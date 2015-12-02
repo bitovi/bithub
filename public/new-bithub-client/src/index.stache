@@ -7,7 +7,6 @@
   </head>
   <body>
     <can-import from="bootstrap/dist/css/bootstrap.css!" />
-    <can-import from="font-awesome/css/font-awesome.css!" />
     <can-import from="bithub-client/styles.less!" />
     <can-import from="bithub-client/app" export-as="viewModel" />
     <can-import from="src/edit_hub_name/" />
@@ -20,8 +19,11 @@
       <bh-slideout>
         <nav id="menu" class="slideout-menu">
           <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
-          <a class="btn-switch-org" href="#">Switch Organization</a>
-          <a class="btn-logout" href="#">Logout</a>
+          <a class="btn-switch-org" href="javascript://" ($click)="toggleOrganizations()">
+            <i class="fa fa-exchange"></i>
+            Switch Organization
+          </a>
+          <a class="btn-logout" href="/logout">Logout</a>
         </nav>
         
         <main id="panel" class="slideout-panel">
@@ -29,13 +31,31 @@
             <button class="toggle-button">☰</button>
             <h1>{{currentHub.name}}</h1>
           </header>
-          <bh-moderation-panel bits="{bits}" {hub-id}="currentHub.id" active-decision="{moderationTab}"></bh-moderation-panel>
-          <bh-moderation-tabs active-tab="{moderationTab}" entity-decisions="{entityDecisions}"></bh-moderation-tabs>
+          {{#if services.length}}
+            <bh-moderation-panel bits="{bits}" {hub-id}="currentHub.id" active-decision="{moderationTab}"></bh-moderation-panel>
+            <bh-moderation-tabs active-tab="{moderationTab}" entity-decisions="{entityDecisions}"></bh-moderation-tabs>
+          {{else}}
+            <div class="content-padding">
+              <div class="alert alert-info">Currently you don't have any services set up. Please use the <a href="/admin">desktop interface</a> to set them up.</div>
+            </div>
+          {{/if}}
         </main>
 
       </bh-slideout>
+      <div class="organizations-wrap {{#if organizationsOpen}}organizations-wrap--open{{/if}}">
+        <header ($click)="toggleOrganizations()" class="text-center">
+          <i class="fa fa-chevron-left"></i>Organizations
+        </header>
+        <ul class="list-unstyled list-organizations">
+          {{#each currentAccount.organizations}}
+            <li ($click)="changeCurrentOrganizationId(id)">{{name}} {{#eq id currentOrganizationId}}<i class="fa fa-check pull-right"></i>{{/eq}}</li>
+          {{/each}}
+        </ul>
+      </div>
     {{else}}
-      loading
+      <div class="content-padding text-center">
+        <img src="{{joinBase "images/spinner.gif"}}">
+      </div>
     {{/if}}
     {{asset "inline-cache"}}
 
