@@ -1,6 +1,6 @@
 <ul class="list-unstyled">
   {{#each hubs}}
-    <li><a href="">{{name}} {{#eq id currentHub.id}}&#x2714;{{/eq}}</a></li>
+    <li><a href="{{joinBase id}}">{{name}} {{#eq id currentHub.id}}&#x2714;{{/eq}}</a></li>
   {{/each}}
-  <li><a href="javascript://"><b>+</b> Add another hub</a></li>
+  <!--<li><a href="javascript://"><b>+</b> Add another hub</a></li>-->
 </ul>

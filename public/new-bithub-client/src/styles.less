@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic');
+@import "../node_modules/font-awesome/less/font-awesome.less";
+
+@fa-font-path:        "/new-bithub-client/node_modules/font-awesome/fonts";
+
 
 html {
     height: 100%;
@@ -10,6 +14,7 @@ body {
     width: 100%;
     height: 100%;
     font-size: 14px;
+    background: #f2f3f5;
 }
 
 .slideout-menu {
@@ -96,4 +101,54 @@ body {
 
 .slideout-open .slideout-menu {
     display: block;
+}
+.content-padding {
+    padding: 10px;
+}
+.organizations-wrap {
+    background: #f2f3f4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: all 0.3s;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    header {
+        background: white;
+        height: 50px;
+        line-height: 50px;
+        position: relative;
+        color: #827f82;
+        font-size: 16px;
+        .fa-chevron-left {
+            position: absolute;
+            color: #4493a5;
+            top: 17px;
+            left: 15px;
+            
+        }
+    }
+    .list-organizations {
+        margin-top: 15px;
+        li {
+            line-height: 50px;
+            padding: 0 40px;
+            border-bottom: 1px solid white;
+            color: #827f82;
+            font-size: 16px;
+            position: relative;
+            .fa-check {
+                position: absolute;
+                right: 30px;
+                top: 17px;
+            }
+        }
+    }
+}
+.organizations-wrap--open {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
 }

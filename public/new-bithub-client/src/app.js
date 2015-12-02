@@ -10,6 +10,7 @@ import Hub from 'src/models/hub';
 import Organization from 'src/models/organization';
 import Bit from 'src/models/bit';
 import EntityDecision from 'src/models/entity-decision';
+import Service from 'src/models/service';
 import $ from "jquery";
 
 can.route.bindings.pushstate.root = "/new-bithub/";
@@ -74,7 +75,6 @@ const AppViewModel = AppMap.extend({
 		currentAccount : {
 			serialize: false,
 			get : function(lastValue, setter){
-				var self = this;
 				if(!lastValue){
 					return this.waitFor(Account.current()).then(function(account){
 						setter(account);
@@ -85,10 +85,18 @@ const AppViewModel = AppMap.extend({
 				return lastValue;
 			}
 		},
+		isChangingOrganization : {
+			value: false,
+			serialize: false
+		},
 		currentOrganizationId : {
 			set : function(newVal, setVal){
+				var self = this;
 				if(newVal){
-					setVal(newVal);
+					Organization.choose(newVal).then(function(){
+						self.attr('organizationsOpen', false);
+						window.location.reload();
+					});
 				}
 			},
 			get : function(lastValue, setter){
@@ -119,7 +127,7 @@ const AppViewModel = AppMap.extend({
 		currentHubId : {
 			set : function(newVal, setVal){
 				if(newVal){
-					setVal(newVal);
+					return newVal;
 				}
 			}
 		},
@@ -148,7 +156,7 @@ const AppViewModel = AppMap.extend({
 					if(!self.attr('currentHubId') && hubs.length){
 						self.attr('currentHubId', hubs[0].id);
 					}
-					setTimeout(function(){	
+					setTimeout(function(){
 						deferred.resolve();
 					}, 1);
 				}, function(e){
@@ -171,11 +179,25 @@ const AppViewModel = AppMap.extend({
 		entityDecisions : {
 			get : function(){
 				var currentHub = this.attr('currentHub');
-				var deferred;
-				var list;
+				var deferred, list;
 				if(currentHub){
 					deferred = can.Deferred();
 					list = new EntityDecision.List({hubId: currentHub.id});
+					this.waitFor(deferred);
+					list.then(function(){
+						deferred.resolve();
+					});
+					return list;
+				}
+			}
+		},
+		services : {
+			get : function(){
+				var currentHub = this.attr('currentHub');
+				var deferred, list;
+				if(currentHub){
+					deferred = can.Deferred();
+					list = new Service.List({embed_id: currentHub.id});
 					this.waitFor(deferred);
 					list.then(function(){
 						deferred.resolve();
@@ -211,10 +233,17 @@ const AppViewModel = AppMap.extend({
 					return list;
 				}
 			}
+		},
+		organizationsOpen : {
+			serialize: false,
+			value: false
 		}
 	},
 	init : function(){
 		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
+	},
+	toggleOrganizations: function(){
+		this.attr('organizationsOpen', !this.attr('organizationsOpen'));
 	},
 	handleDecision: function(ev, oldDecision, newDecision){
 		var entityDecisions = this.attr('entityDecisions');
@@ -229,8 +258,22 @@ const AppViewModel = AppMap.extend({
 		return true;
 	},
 	resetEmbed : function(){},
+	changeCurrentOrganizationId : function(id){
+		this.attr('currentOrganizationId', id);
+	},
 	isLoaded : function(){
-		return this.attr('hubs').isResolved() && this.attr('currentHub');
+		if(this.attr('isChangingOrganization')){
+			return false;
+		}
+		if(this.attr('hubs').isResolved()){
+			if(this.attr('hubs.length') === 0){
+				return true;
+			}
+			if(this.attr('services') && this.attr('services').isResolved() && this.attr('currentHub')){
+				return true;
+			}
+		}
+		return false;
 	}
 });
 
