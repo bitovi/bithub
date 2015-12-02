@@ -2,6 +2,7 @@ class Entity < ActiveRecord::Base
   extend Solipsism
   include RabbitHelper::Sugar
   include Convenience::Twitter
+  include Convenience::Meetup
 
   serialize :props, IndifferentHstore
 

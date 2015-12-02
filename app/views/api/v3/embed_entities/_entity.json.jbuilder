@@ -21,3 +21,7 @@ end
 if entity.feed_name == 'twitter' && entity.type_name == 'tweet' && entity.has_retweet?
   json.retweeted_status entity.events.last.source_data['retweeted_status']
 end
+
+if entity.feed_name == 'meetup' && entity.type_name == 'event'
+  json.location entity.venue
+end
