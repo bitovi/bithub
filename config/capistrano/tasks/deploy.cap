@@ -41,7 +41,8 @@ namespace :deploy do
       'deploy:client:steal_build',
       'deploy:client:embed_build',
       'deploy:client:frontpage_hub_npm_install',
-      'deploy:client:frontpage_hub_build'
+      'deploy:client:frontpage_hub_build',
+      'deploy:client:ssr_build'
     ]
 
     desc "NPM install"
@@ -107,7 +108,6 @@ namespace :deploy do
         end
       end
     end
-    
   end
 
   task :client => ['deploy:client:build']
