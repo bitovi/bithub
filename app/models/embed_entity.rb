@@ -1,4 +1,6 @@
 class EmbedEntity < ActiveRecord::Base
+  DECISIONS = ['approved', 'deleted', 'pending', 'starred'] 
+  
   belongs_to :embed
   belongs_to :entity
   
