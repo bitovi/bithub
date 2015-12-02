@@ -14,7 +14,7 @@ can.Component.extend({
 		},
 		initSlideout : function(){
 			var self = this;
-			if(Slideout){
+			if(Slideout && self.element){
 				self.slideout = new Slideout({
 					'panel': self.element.find('#panel')[0],
 					'menu': self.element.find('#menu')[0],
