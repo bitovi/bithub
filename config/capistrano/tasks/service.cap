@@ -1,23 +1,27 @@
 namespace :start do
-  
-  desc "Start rails"
-  task :rails do
-    on roles(:all) do |host|
-      capture("sudo systemctl start bithub-rails-1.service")
+
+  namespace :web do
+    desc "Start rails"
+    task :rails do
+      on roles(:all) do |host|
+        capture("sudo systemctl start bithub-rails-1.service")
+      end
+    end
+
+    desc "Start ssr"
+    task :ssr do
+      on roles(:all) do |host|
+        capture("sudo systemctl start bithub-ssr-1.service")
+      end
     end
   end
-  
+
+  task :web => ['start:web:rails', 'start:web:ssr']
+
   desc "Start sidekiq"
   task :sidekiq do
     on roles(:all) do |host|
       capture("sudo systemctl start bithub-sidekiq-1.service")
-    end
-  end
-
-  desc "Start ssr"
-  task :ssr do
-    on roles(:all) do |host|
-      capture("sudo systemctl start bithub-ssr-1.service")
     end
   end
 
@@ -57,9 +61,8 @@ namespace :start do
   end
 
   task :all => [
-    'start:rails',
+    'start:web',
     'start:sidekiq',
-    'start:ssr',
     'start:listener',
     'start:liveservice',
     'start:crawler_poller',
@@ -70,24 +73,28 @@ end
 
 namespace :stop do
 
-  desc "Stop rails"
-  task :rails do
-    on roles(:all) do |host|
-      capture("sudo systemctl stop bithub-rails-1.service")
+  namespace :web do
+    desc "Stop rails"
+    task :rails do
+      on roles(:all) do |host|
+        capture("sudo systemctl stop bithub-rails-1.service")
+      end
+    end
+
+    desc "Stop ssr"
+    task :ssr do
+      on roles(:all) do |host|
+        capture("sudo systemctl stop bithub-ssr-1.service")
+      end
     end
   end
+
+  task :web => ['stop:web:rails', 'stop:web:ssr']
   
   desc "Stop sidekiq"
   task :sidekiq do
     on roles(:all) do |host|
       capture("sudo systemctl stop bithub-sidekiq-1.service")
-    end
-  end
-  
-  desc "Stop ssr"
-  task :ssr do
-    on roles(:all) do |host|
-      capture("sudo systemctl stop bithub-ssr-1.service")
     end
   end
   
@@ -127,9 +134,8 @@ namespace :stop do
   end
   
   task :all => [
-    'stop:rails',
+    'stop:web',
     'stop:sidekiq',
-    'stop:ssr',
     'stop:listener',
     'stop:liveservice',
     'stop:crawler_poller',
@@ -139,13 +145,25 @@ end
 
 namespace :restart do
 
-  desc "Restart rails"
-  task :rails do
-    on roles(:all) do |host|
-      capture("sudo systemctl restart bithub-rails-1.service")
+  namespace :web do
+    desc "Restart rails"
+    task :rails do
+      on roles(:all) do |host|
+        capture("sudo systemctl restart bithub-rails-1.service")
+      end
+    end
+
+    desc "Restart ssr"
+    task :ssr do
+      on roles(:all) do |host|
+        capture("sudo systemctl restart bithub-ssr-1.service")
+      end
     end
   end
-  
+
+  desc 'Restart everyting needed for web'
+  task :web => ['restart:web:rails', 'restart:web:ssr']
+
   desc "Restart sidekiq"
   task :sidekiq do
     on roles(:all) do |host|
@@ -153,13 +171,6 @@ namespace :restart do
     end
   end
 
-  desc "Restart ssr"
-  task :ssr do
-    on roles(:all) do |host|
-      capture("sudo systemctl restart bithub-ssr-1.service")
-    end
-  end
-  
   desc "Restart listener"
   task :listener do
     on roles(:all) do |host|
@@ -196,9 +207,8 @@ namespace :restart do
   end
 
   task :all => [
-    'restart:rails',
+    'restart:web',
     'restart:sidekiq',
-    'restart:ssr',
     'restart:listener',
     'restart:liveservice',
     'restart:crawler_poller',
