@@ -3,8 +3,6 @@ require 'digest/md5'
 class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
   include Api::EmbedScoped
 
-  DECISIONS = ['approved', 'deleted', 'pending', 'starred']
-  
   def index
     super do
       Apartment::Tenant.switch(@tenant_name) do
@@ -112,7 +110,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
   end
 
   def decision
-    if params[:decision] && DECISIONS.include?(params[:decision])
+    if params[:decision] && EmbedEntity::DECISIONS.include?(params[:decision])
       params[:decision]
     end
   end
