@@ -9,39 +9,37 @@ module Entities
       end
 
       def data
-        {
+        tmp = {
           title: @event.name,
           body: @event.description,
           url: @event.url,
           origin_id: @event.url,
           origin_ts: @event.created_at,
+          thread_updated_ts: Time.parse(@event.scheduled_at),
           props: {
             status: @event.status,
-            venue: @event.venue,
             scheduled_at: @event.scheduled_at,
-            event_hosts: JSON.generate(@event.hosts),
-            event_host_ids: @event.host_ids_csv,
-            location: "", #@event.venue.composite_location,
-            latitude: "", #@event.venue.lat,
-            longitude: "", #@event.venue.lon,
+            event_host_ids: @event.host_ids_csv
           }
         }
+
+        tmp[:props][:location] = @event.venue.composite_location if @event.venue
+        tmp[:props][:group_name] = @event.group.name if @event.group
+
+        tmp
       end
 
       def update
         @instance.title = @event.name
         @instance.body = @event.description
-        @instance.props[:status] = @event.status
-        @instance.props[:location] = "" #@event.composite_location
-        @instance.props[:scheduled_at] = @event.scheduled_at
-        @instance.props[:latitude] = "" #@event.lat
-        @instance.props[:longitude] = "" #@event.lon
-        @instance.props[:event_host_ids] = @event.host_ids_csv
-        @instance.props[:event_hosts] = JSON.generate(@event.hosts)
-      end
+        @instance.thread_updated_ts = Time.parse(@event.scheduled_at)
 
-      def set_thread_ts
-        @instance.thread_updated_ts = Time.parse(@instance.props[:scheduled_at])
+        @instance.props = {}
+        @instance.props[:status] = @event.status
+        @instance.props[:scheduled_at] = @event.scheduled_at
+        @instance.props[:event_host_ids] = @event.host_ids_csv
+        @instance.props[:location] = @event.venue.composite_location if @event.venue
+        @instance.props[:group_name] = @event.group.name if @event.group
       end
 
       def find_children

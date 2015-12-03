@@ -8,7 +8,7 @@ module Wrappers
       include CoreHelpers
 
       has :id, :event_url, :name, :status
-      attr_reader :hosts, :venue
+      attr_reader :hosts
 
       def initialize(event)
         _event = symbolize_keys(event)
