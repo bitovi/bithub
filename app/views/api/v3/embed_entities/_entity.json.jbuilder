@@ -23,6 +23,6 @@ if entity.feed_name == 'twitter' && entity.type_name == 'tweet' && entity.has_re
 end
 
 if entity.feed_name == 'meetup' && entity.type_name == 'event'
-  json.location entity.venue
+  json.location entity.location
   json.group_name entity.group_name
 end

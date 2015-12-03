@@ -34,7 +34,7 @@ module Entities
     end
 
     def rebuild
-      @instance.assign_attributes(data)
+      update
       self
     end
 

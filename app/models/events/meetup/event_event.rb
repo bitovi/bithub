@@ -11,7 +11,7 @@ module Events
         :host_ids, :host_ids_csv,
         :host_names, :host_names_csv
 
-      attr_reader :venue
+      attr_reader :venue, :group
 
       def digest_seed
         id\
@@ -29,7 +29,8 @@ module Events
 
       def wrap_response
         @event = Wrappers::Meetup::Event.new(source_data)
-        @venue = Wrappers::Meetup::Venue.new(source_data[:venue])
+        @venue = Wrappers::Meetup::Venue.new(source_data[:venue]) if source_data[:venue]
+        @group = Wrappers::Meetup::Group.new(source_data[:group]) if source_data[:group]
         self
       end
     end
