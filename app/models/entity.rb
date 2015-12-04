@@ -153,7 +153,7 @@ class Entity < ActiveRecord::Base
     parent.children
   end
 
-  # FIXME, should be delegated to a proper type from Entities
+  # FIXME dirty hack, should be delegated to a type in Entities::{FEED}::{TYPE}
   def bump_thread
     if feed_name == 'meetup' && type_name == 'event'
       latest_origin_ts = thread.pluck(:props)
