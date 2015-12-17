@@ -34,15 +34,17 @@
           <a href="{{pageUrl 'hub-list'}}">Back to Admin</a> | <b>{{state.hub.name}}</b>
         </div>
 		</div>
-    <div class="folders-wrapper">
-      <ul>
-        <li><a href="javascript://" {{#eq state.preset.config.decision "pending"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="pending">Inbox</a></li>
-        <li><a href="javascript://" {{#eq state.preset.config.decision "approved"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="approved">Approved</a></li>
-        <li><a href="javascript://" {{#eq state.preset.config.decision "starred"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="starred">Starred</a></li>
-        <li><a href="javascript://" {{#eq state.preset.config.decision "deleted"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="deleted">Deleted</a></li>
-      </ul>
-    </div>
-		<div class="iframe-wrapper">
+    {{#if state.isAdminEmbed}}
+      <div class="folders-wrapper">
+        <ul>
+          <li><a href="javascript://" {{#eq state.preset.config.decision "pending"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="pending">Inbox</a></li>
+          <li><a href="javascript://" {{#eq state.preset.config.decision "approved"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="approved">Approved</a></li>
+          <li><a href="javascript://" {{#eq state.preset.config.decision "starred"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="starred">Starred</a></li>
+          <li><a href="javascript://" {{#eq state.preset.config.decision "deleted"}}class="active"{{/eq}} can-click="state.setDecision" data-decision="deleted">Deleted</a></li>
+        </ul>
+      </div>
+    {{/if}}
+		<div class="iframe-wrapper {{#if state.isAdminEmbed}}iframe-wrapper-admin-embed{{/if}}">
 			{{renderIframe state.iframe}}
 		</div>
 	</main>
