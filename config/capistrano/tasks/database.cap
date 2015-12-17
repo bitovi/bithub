@@ -8,9 +8,9 @@ namespace :db do
           "--verbose",
           "--no-password",
           "--format=custom",
-          "bithub > /pg_dumps/sync.dump"
+          "bithub > /tmp/sync.dump"
 
-        execute :scp, "/pg_dumps/sync.dump", "192.168.143.36:/pg_dumps/sync.dump"
+        execute :scp, "/tmp/sync.dump", "192.168.140.40:/tmp/sync.dump"
       end
     end
 
@@ -23,7 +23,7 @@ namespace :db do
           "--if-exists",
           "--format=custom",
           "--dbname=bithub",
-          "/pg_dumps/sync.dump"
+          "/tmp/sync.dump"
       end
     end
   end
