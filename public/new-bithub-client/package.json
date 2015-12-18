@@ -68,7 +68,7 @@
     "cookies": "^0.5.1",
     "commander": "^2.9.0",
     "infanticide": "^1.0.1",
-    "js-cookie": "^2.0.4"
+    "js-cookie": "^2.0.4",
 
     "steal-qunit": "^0.1.1",
     "can-fixture": "0.0.1",
@@ -77,6 +77,6 @@
     "donejs-deploy": "^0.3.1",
     "donejs-cli": "^0.5.4",
     "steal-tools": "^0.12.1",
-    "documentjs": "^0.3.3",
+    "documentjs": "^0.3.3"
   }
 }
