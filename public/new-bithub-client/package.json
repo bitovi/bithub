@@ -68,7 +68,7 @@
     "cookies": "^0.5.1",
     "commander": "^2.9.0",
     "infanticide": "^1.0.1",
-  // }, "devDependencies": { // figure out why build.js is failing and why it needs dev deps?
+
     "steal-qunit": "^0.1.1",
     "can-fixture": "0.0.1",
     "funcunit": "^3.0.0",
