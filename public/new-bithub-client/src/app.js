@@ -12,6 +12,7 @@ import Bit from 'src/models/bit';
 import EntityDecision from 'src/models/entity-decision';
 import Service from 'src/models/service';
 import $ from "jquery";
+import Cookie from "js-cookie";
 
 can.route.bindings.pushstate.root = "/new-bithub/";
 can.baseURL = '/new-bithub/';
@@ -80,6 +81,7 @@ const AppViewModel = AppMap.extend({
 						setter(account);
 					}, function(){
 						console.log('NO CURRENT ACCOUNT');
+						window.location.href = "/";
 					});
 				}
 				return lastValue;
@@ -274,6 +276,11 @@ const AppViewModel = AppMap.extend({
 			}
 		}
 		return false;
+	},
+	redirectToDesktop : function(ctx, el, ev){
+		ev.preventDefault();
+		Cookie.set('redirected-from-new-ui', 1);
+		window.location.href = el.attr('href');
 	}
 });
 

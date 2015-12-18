@@ -45,7 +45,7 @@
             <bh-moderation-tabs active-tab="{moderationTab}" entity-decisions="{entityDecisions}"></bh-moderation-tabs>
           {{else}}
             <div class="content-padding">
-              <div class="alert alert-info">Currently you don't have any services set up. Please use the <a href="/admin">desktop interface</a> to set them up.</div>
+              <div class="alert alert-info">Currently you don't have any services set up. Please use the <a href="/admin" can-click="redirectToDesktop">desktop interface</a> to set them up.</div>
             </div>
           {{/if}}
         </main>

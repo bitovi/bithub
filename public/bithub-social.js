@@ -8,7 +8,7 @@ import 'can/map/define/';
 import 'components/';
 import 'components/helpers';
 import 'components/service-config-formatter/';
-
+import Cookie from 'js-cookie';
 
 var kickstart = function(selector){
 	var PresetChangeUpdater = can.Control.extend({
@@ -24,6 +24,14 @@ var kickstart = function(selector){
 		}
 	});
 
+	if(/Mobi/.test(navigator.userAgent)){
+		if(Cookie.get('redirected-from-new-ui')){
+			Cookie.remove('redirected-from-new-ui');
+		} else {
+			window.location = '/new-bithub/';
+			return;
+		}
+	}
 	
 	$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 		if(options.type.toLowerCase() !== 'get'){
