@@ -11,11 +11,8 @@ namespace :data do
         EmbedEntity.where('is_pinned = TRUE').update_all(:decision => 'starred')
       end
     end
+
+    puts "--- END run_moderation_on_all_embeds"
   end
 
-  puts "--- END run_moderation_on_all_embeds"
 end
-
-
-Brand.pluck(:tenant_name).map { |tn| Apartment::Tenant.switch(tn) { ServiceError.count }}
-
