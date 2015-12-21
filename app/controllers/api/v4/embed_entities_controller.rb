@@ -70,7 +70,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
     scope = scope.where('embed_entities.decision' => decision) if decision
 
     if public_visibility?
-      scope = scope.order('entities.thread_updated_ts DESC')
+      scope = scope.order("(case when decision = 'starred' then 1 when decision = 'approved' then 2 end), entities.thread_updated_ts DESC")
       params.delete(:order)
     elsif params[:order] == 'preview'
       params[:order] = ['thread_updated_ts:desc']
