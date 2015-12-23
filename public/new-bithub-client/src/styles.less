@@ -25,10 +25,20 @@ body {
     right: 0;
     z-index: 0;
     width: 256px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
     display: none;
     background: #354c58;
+    bh-mobile-menu {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 90px;
+        display: block;
+        position: absolute;
+        z-index: 10000;
+    }
     .btn-switch-org, .btn-logout {
         height: 45px;
         color: white;
@@ -36,10 +46,11 @@ body {
         line-height: 45px;
         text-align: center;
         position: absolute;
-        width: 100%;
+        width: 256px;
     }
     .btn-switch-org {
         bottom: 45px;
+        background: #354c58;
     }
     .btn-logout {
         font-weight: 700;
