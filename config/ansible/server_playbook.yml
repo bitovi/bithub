@@ -15,13 +15,13 @@
     # - { role: jessie            , tags: ['jessie'] }
     # - { role: common            , tags: ['common'] }
     # # - { role: ssh             , tags: ['ssh'] }
-    # - { role: nodejs            , tags: ['nodejs'] }
+    - { role: nodejs            , tags: ['nodejs'] }
     # - { role: nginx             , tags: ['nginx'] }
     # - { role: postgresql        , tags: ['postgresql'] }
     # - { role: rabbitmq          , tags: ['rabbitmq'] }
     # - { role: redis             , tags: ['redis'] }
     # - { role: hostname          , tags: ['hostname'] }
     # - { role: ruby              , tags: ['ruby'] }
-    - { role: bithub_prod       , tags: ['bithub'] }
+    # - { role: bithub_prod       , tags: ['bithub'] }
     # - { role: linode_networking , tags: ['linode_networking'] }
-    - { role: pg_dump           , tags: ['pg_dump'] }
+    # - { role: pg_dump           , tags: ['pg_dump'] }

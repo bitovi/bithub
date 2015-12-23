@@ -78,6 +78,7 @@ class Entity < ActiveRecord::Base
   # Meetup
   scope :event_id, ->(e_id) { where("props ? 'event_id'").where("props -> 'event_id' = :val", val: e_id) }
 
+
   def self.image_only
     where("image is not null or (props ? 'photos') or (props ? 'entities_media' and props -> 'entities_media' <> '[]') or (props ? 'image_url')")
   end
@@ -125,6 +126,18 @@ class Entity < ActiveRecord::Base
       return nil if embed.nil?
       memoize('is_pinned', embed.id) do
         embed_entities.where(:embed_id => embed.id).first.is_pinned?
+      end
+    end
+  end
+  
+  # See first 5 lines of EmbedEntitiesController#build_scope method
+  def decision(embed = nil)
+    if has_attribute?(:decision)
+      read_attribute(:decision)
+    else
+      return nil if embed.nil?
+      memoize('decision', embed.id) do
+        embed_entities.where(:embed_id => embed.id).first.decision
       end
     end
   end

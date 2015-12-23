@@ -41,7 +41,8 @@ namespace :deploy do
       'deploy:client:steal_build',
       'deploy:client:embed_build',
       'deploy:client:frontpage_hub_npm_install',
-      'deploy:client:frontpage_hub_build'
+      'deploy:client:frontpage_hub_build',
+      'deploy:client:ssr_build'
     ]
 
     desc "NPM install"
@@ -94,6 +95,16 @@ namespace :deploy do
       on roles(:all) do |host|
         within release_path.join('public', 'homepage_embed') do
           execute './node_modules/steal-tools/bin/steal', 'build', '--main=index'
+        end
+      end
+    end
+
+    desc "SSR build"
+    task :ssr_build do
+      on roles(:all) do |host|
+        within release_path.join('public', 'new-bithub-client') do
+          execute :npm, 'install', '--production', '--no-spin'
+          execute :nodejs, 'build.js'
         end
       end
     end

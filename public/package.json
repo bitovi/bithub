@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "opensourced-bithub": "git+https://github.com/bitovi/bithub-embed",
-    "steal-tools": "0.10.4"
+    "opensourced-bithub": "git+https://github.com/bitovi/bithub-embed#new-bithub",
+    "steal-tools": "0.10.4",
+    "moment": "^2.10.6"
   }
 }

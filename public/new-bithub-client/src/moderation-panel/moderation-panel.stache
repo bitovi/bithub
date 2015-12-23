@@ -1,0 +1,14 @@
+<can-import from="src/moderation-card/" />
+{{#if bits.isLoading}}
+  <div class="loading-wrap">
+    <img src="{{joinBase "images/spinner.gif"}}">
+  </div>
+{{else}}
+  {{#if bits.length}}
+    {{#each bits}}
+      <bh-moderation-card bit="{this}" {hub-id}="hubId" data-bit-id="{{id}}"></bh-moderation-card>
+    {{/each}}
+  {{else}}
+    <div class="alert-no-bits">There are no bits in this group.</div>
+  {{/if}}
+{{/if}}

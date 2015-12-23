@@ -173,7 +173,7 @@ export default can.Map.extend({
 				if(embedType === 'admin'){
 					adminParams = {
 						order: adminPreset.attr('config.order'),
-						filter: adminPreset.attr('config.filter')
+						decision: adminPreset.attr('config.decision')
 					};
 
 					if(adminPreset.attr('config.service_id')){
@@ -288,4 +288,8 @@ export default can.Map.extend({
 	isAnalyticsPageActive : function(){
 		return this.attr('page') === 'analytics';
 	},
+	setDecision : function(ctx, el, ev){
+		var decision = el.data('decision');
+		this.attr('preset.config.decision', decision);
+	}
 });
