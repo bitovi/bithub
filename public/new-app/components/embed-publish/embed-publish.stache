@@ -1,0 +1,79 @@
+{{#if state.hub.published}}
+  <h4 class="published-hub-title"><b>This is a published and public hub</b></h4>
+  <div class="unpublish-wrap">
+    <h4><b>Unpublish Hub</b></h4>
+    <p>When you unpublish the hub, the embed code will be deactivated and any embedded BitHub feeds will no longer be visible on your webpage.</p>
+    <p><b>You will not be charged for unpublished hubs.</b></p>
+    <button can-click="unpublishHub" class="btn btn-primary" {{#isSaving}}disabled{{/isSaving}}>
+      {{#isSaving}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/isSaving}} Unpublish Hub
+    </button>
+  </div>
+
+{{else}}
+	<h4><b>This hub is unpublished</b></h4>
+	<p>Unpublished hub can't be embedded in the site.</p>
+	<p>This hub is publicly available at the following link: <a href="{{embedUrl}}" target="_blank">{{embedUrl}}</a></p>
+	<p><b>After the hub is published you will immediately be presented with the embed code that can be placed on your site.</b></p>
+
+	<div class="alert alert-info">
+		Public hubs are charged <b>$7 per month</b>. <a href="#">Read more about our pricing here &raquo;</a>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">Credit Card Info</h4>
+		</div>
+		<div class="panel-body cc-body">
+			{{#unless showCCForm}}
+				<p>The following credit card will be charged:</p>
+        <div class="cc-info">
+          {{state.currentSubscription.card.type}} **** **** **** {{state.currentSubscription.card.last4}}, Expiration {{state.currentSubscription.card.exp_month}}/{{state.currentSubscription.card.exp_year}}
+        </div>
+        <a href="javascript://" can-click="toggleChangeCC" class="change-cc-info">Change Credit Card info</a>
+{{else}}
+				<p>Please enter your credit card info to publish this hub.</p>
+				<div class="form-group {{#if errors.number}}has-error{{/if}}">
+					<label>Credit Card Number</label>
+					<input {{formatCC 'CardNumber'}} class="form-control input-lg cc-input" placeholder="•••• •••• •••• ••••" can-value="cc.number">
+					{{#if errors.number}}
+						<strong class="text-danger">Wrong Credit Card number</strong>
+					{{/if}}
+				</div>
+				<div class="expiration-cvc-wrap clearfix">
+					<div class="form-group {{#if errors.expiration}}has-error{{/if}}">
+						<label>Expiration (MM/YYYY)</label>
+						<input {{formatCC 'CardExpiry'}} class="form-control" placeholder="•• / ••" can-value="cc.expiration">
+						{{#if errors.expiration}}
+							<strong class="text-danger">Wrong expiration date</strong>
+						{{/if}}
+					</div>
+					<div class="form-group {{#if errors.cvc}}has-error{{/if}}">
+						<label>CVC</label>
+						<input {{formatCC 'CardCVC'}} class="form-control" placeholder="•••" can-value="cc.cvc">
+						{{#if errors.cvc}}
+							<strong class="text-danger">Wrong CVC number</strong>
+						{{/if}}
+					</div>
+				</div>
+				{{#if changeCC}}
+          <a href="javascript://" can-click="toggleChangeCC">Cancel</a>
+        {{/if}}
+{{/if}}
+		</div>
+	</div>
+  <p><i>By clicking "Publish" you authorize us to charge your credit card on monthly basis as long as the hub is published and public.</i></p>
+  <div class="button-wrap clearfix">
+    {{#if showCCForm}}
+      <button class="btn btn-primary" can-click="createSubscriptionAndPublishHub" {{#isSaving}}disabled{{/isSaving}}>
+        {{#isSaving}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/isSaving}} Publish Hub
+      </button>
+    {{else}}
+      <button class="btn btn-primary" can-click="publishHub" {{#isSaving}}disabled{{/isSaving}}>
+        {{#isSaving}}<i class="fa fa-spin fa-circle-o-notch"></i>{{/isSaving}} Publish Hub
+      </button>
+    {{/if}}
+  </div>
+	
+	
+{{/if}}
+

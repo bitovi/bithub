@@ -1,4 +1,6 @@
 class EmbedEntity < ActiveRecord::Base
+  DECISIONS = ['approved', 'deleted', 'pending', 'starred'] 
+  
   belongs_to :embed
   belongs_to :entity
   
@@ -31,6 +33,12 @@ class EmbedEntity < ActiveRecord::Base
 
   def unpin
     returning(update_attribute(:is_pinned, false)) do
+      entity.touch
+    end
+  end
+
+  def decide(decision)
+    returning(update_attribute(:decision, decision)) do
       entity.touch
     end
   end

@@ -4,6 +4,7 @@ Bithub::Application.routes.draw do
 
   get '/admin', to: 'kickstart#admin'
   get '/embed', to: 'kickstart#embed'
+  get '/new_admin', to: 'kickstart#new_admin'
 
   resources :subscriptions, only: %i(show) do
     collection do
@@ -41,6 +42,17 @@ Bithub::Application.routes.draw do
   # SERVICE API Routes
   namespace :api, defaults: { format: 'json' } do
     root :to => 'api#api_id'
+
+    namespace :v4 do
+      root :to => 'v4#api_id'
+
+      resources :embeds, except: %i(new edit) do
+        resources :entities, controller: 'embed_entities', only: %i(index show) do
+          put :decide, on: :member
+          get :stats, on: :collection
+        end
+      end
+    end
 
     namespace :v3 do
       root :to => 'v3#api_id'

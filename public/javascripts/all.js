@@ -11,11 +11,12 @@ $(function(){
 		$('.register-account-overlay').removeClass('register-account-overlay--shown');
 	});
 
-	$(' .try-it-now').click(function(){
+	$('.try-it-now,.open-registration-overlay').click(function(){
 		$('.register-account-overlay').addClass('register-account-overlay--shown');
 		setTimeout(function(){
 			$('body').addClass('registration-open');
 		});
+		return false;
 	});
 	$('.intro-wrap').click(function(){
 		var width = $(window).width();

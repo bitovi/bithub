@@ -18,6 +18,11 @@ server {
          proxy_set_header Connection "Upgrade";
     }
 
+    location /new-bithub/ {
+         rewrite ^/new-bithub/(.*) /$1 break;
+         proxy_pass http://127.0.0.1:3030;
+    }
+
     location / {
          try_files $uri @api;
     }
