@@ -63,7 +63,7 @@
     "moment": "^2.10.6",
     "selectize": "^0.12.1",
     "bootstrap": "^3.3.5",
-    "slideout": "^0.1.10",
+    "slideout": "0.1.11",
     "font-awesome": "^4.4.0",
     "cookies": "^0.5.1",
     "commander": "^2.9.0",

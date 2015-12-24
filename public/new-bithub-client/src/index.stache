@@ -27,12 +27,13 @@
     {{#if isLoaded}}
       <bh-slideout>
         <nav id="menu" class="slideout-menu">
-          <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+          
           <a class="btn-switch-org" href="javascript://" ($click)="toggleOrganizations()">
             <i class="fa fa-exchange"></i>
             Switch Organization
           </a>
-          <a class="btn-logout" href="/logout">Logout</a>
+          <a class="btn-logout" href="/logout">Logout</a> 
+          <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
         </nav>
         
         <main id="panel" class="slideout-panel">
