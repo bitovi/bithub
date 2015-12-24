@@ -18,26 +18,31 @@ body {
 }
 
 .slideout-menu {
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     right: 0;
     z-index: 0;
     width: 256px;
-    overflow: hidden;
     display: none;
     background: #354c58;
     bh-mobile-menu {
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-        top: 0;
+        display: block;
+        position: absolute;
         left: 0;
         right: 0;
         bottom: 90px;
-        display: block;
-        position: absolute;
-        z-index: 10000;
+        top: 0;
+        overflow: hidden;
+        .list-wrap {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        ul {
+        }
     }
     .btn-switch-org, .btn-logout {
         height: 45px;

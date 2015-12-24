@@ -97,7 +97,7 @@ const AppViewModel = AppMap.extend({
 				if(newVal){
 					Organization.choose(newVal).then(function(){
 						self.attr('organizationsOpen', false);
-						window.location.reload();
+						window.location.href = "/new-bithub/";
 					});
 				}
 			},
