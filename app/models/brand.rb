@@ -24,11 +24,6 @@ class Brand < ActiveRecord::Base
   after_create  :create_tenant
   after_destroy :destroy_tenant
 
-  after_create  { notify_crawler(:start) }
-  after_destroy { notify_crawler(:stop) }
-
-  # Fetch Brands that have at least one Embed and a Service connected
-  
   def self.switch!(name = nil)
     Apartment::Tenant.switch! name
   end
@@ -48,7 +43,6 @@ class Brand < ActiveRecord::Base
   def create_tenant
     Apartment::Tenant.create tenant_name
     Apartment::Tenant.switch! tenant_name
-
     Apartment::Tenant.switch!
   end
 
@@ -58,25 +52,5 @@ class Brand < ActiveRecord::Base
 
   def self.find_by_tenant_name(tenant)
     where(tenant_name: tenant).first
-  end
-
-  def notify_crawler(action)
-    unless ENV['RAILS_ENV'] == 'test'
-      Rails.logger.info "Publishing a command to crawler #{msg(action)}"
-      x('x.crawler', chan_is_short_lived = true) do |xchange|
-        xchange.publish((msg(action).to_json), routing_key: :config)
-      end
-    end
-  end
-
-  def msg(action)
-    {
-      brand: {
-        id: id,
-        name: name
-      },
-      signature: "brand_#{action}",
-      action: action
-    }
   end
 end

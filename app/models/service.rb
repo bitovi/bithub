@@ -15,10 +15,6 @@ class Service < ActiveRecord::Base
   has_many :service_errors
   has_many :events
 
-  after_create  { Guzzler::Client.schedule(decorated_for_crawler) }
-  after_update  { Guzzler::Client.schedule(decorated_for_crawler) }
-  after_destroy { Guzzler::Client.unschedule(decorated_for_crawler) }
-
   scope :feed, ->(fn) { where(feed_name: fn) }
   scope :type, ->(tn) { where(type_name: tn) }
 
@@ -62,11 +58,7 @@ class Service < ActiveRecord::Base
   end
 
   def make_link_to(entity)
-    self.entities << entity
-  end
-
-  def decorated_for_crawler
-    CrawlerServiceDecorator.new(self)
+    service_entities.create(entity: entity)
   end
 
   def config_with_credentials

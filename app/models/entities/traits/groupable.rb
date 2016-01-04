@@ -2,22 +2,10 @@ module Entities
   module Groupable
 
     def group
-      writing_history_time = Benchmark.measure do
-        write_history
-      end
-
-      finding_parents_time = Benchmark.measure do
-        join_family
-      end
-
-      finding_children_time = Benchmark.measure do
-        adopt
-      end
-
-      bumping_thread_time = Benchmark.measure do
-        bump_thread
-      end
-
+      write_history
+      join_family
+      adopt
+      bump_thread
       self
     end
 
@@ -26,16 +14,14 @@ module Entities
     end
 
     def adopt
-      find_children_time = Benchmark.measure do
-        if self.respond_to? :find_children
-          if (c = find_children)
-            if c.is_a?(Array)
-              @instance.children += c
-            elsif c.is_a?(ActiveRecord::Relation)
-              @instance.children += c.where(true)
-            else
-              @instance.children += [c]
-            end
+      if self.respond_to? :find_children
+        if (c = find_children)
+          if c.is_a?(Array)
+            @instance.children += c
+          elsif c.is_a?(ActiveRecord::Relation)
+            @instance.children += c.to_a
+          else
+            @instance.children += [c]
           end
         end
       end

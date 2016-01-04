@@ -2,8 +2,6 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :embed
   belongs_to :entity
   
-  after_commit :notify_liveservice, on: :create
-
   validates_uniqueness_of :embed_id, scope: [:entity_id]
 
   def is_approved
@@ -13,31 +11,32 @@ class EmbedEntity < ActiveRecord::Base
   def approve
     returning(update_attribute(:is_approved_manually, true)) do
       entity.touch
+      Notifier.notify_client(:entity_moderated, { entity: entity, action: 'approved' })
     end
   end
 
   def block
     returning(update_attributes({is_approved_manually: false, is_pinned: false})) do
       entity.touch
+      Notifier.notify_client(:entity_moderated, { entity: entity, action: 'blocked' })
     end
   end
-  alias_method :disapprove, :block
 
   def pin
     returning(update_attributes({is_pinned: true, is_approved_manually: true})) do
       entity.touch
+      Notifier.notify_client(:entity_moderated, { entity: entity, action: 'approved' })
     end
   end
 
   def unpin
     returning(update_attribute(:is_pinned, false)) do
       entity.touch
+      Notifier.notify_client(:entity_moderated, { entity: entity })
     end
   end
-
-  def notify_liveservice
-    entity.notify_liveservice
-  end
+  
+  alias_method :disapprove, :block
 
   private
   def returning(exp)

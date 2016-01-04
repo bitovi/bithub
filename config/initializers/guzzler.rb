@@ -1,1 +1,1 @@
-require 'guzzler/client'
+require 'guzzler/jobs/client'
