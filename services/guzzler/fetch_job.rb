@@ -13,6 +13,8 @@ module Guzzler
 
       @feed_name = data.fetch('feed_name')
       @type_name = data.fetch('type_name')
+      @embed_id = data.fetch('embed_id')
+      @brand_id = data.fetch('brand_id')
       @interval = data.fetch('interval')  { 60 }
 
       @config = data.fetch('config')
@@ -20,7 +22,7 @@ module Guzzler
 
     attr_accessor :data
 
-    attr_reader :tenant_name, :service_id,
+    attr_reader :tenant_name, :service_id, :embed_id, :brand_id,
       :interval, :feed_name, :type_name, :config
     
     def key
