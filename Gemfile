@@ -18,6 +18,7 @@ gem 'redis-rails'
 gem 'redis-session-store'
 gem 'redis-namespace'
 gem 'cancancan'
+gem 'roar-rails'
 gem 'rmagick', :require => false
 gem 'draper'
 gem 'carrierwave'
@@ -127,8 +128,9 @@ end
 # services
 # --------
 
-gem 'celluloid', '0.15.2'
+gem 'celluloid', '~> 0.17'
 gem 'celluloid-io'
+gem 'connection_pool'
 
 gem 'nokogiri', '~> 1.6'
 gem 'nori', '~> 2.3'

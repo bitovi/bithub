@@ -2,8 +2,7 @@ var amqp = require('amqp');
 var Q     = require('q');
 
 var Client = function( url, opts ) {
-	opts = opts || {};
-
+	var opts = opts || {};
 	var self = this;
 
 	this.conn     = amqp.createConnection({url: url});
@@ -18,7 +17,7 @@ var Client = function( url, opts ) {
 
 
 	this.conn.on('ready', function() {
-		self.quite || console.info("Connected to " + self.conn.serverProperties.product);
+		self.quite || console.info("Connected to", self.conn.serverProperties.product);
 		self.exchange = self.conn.exchange( exchangeName, { type: exchangeType, autoDelete: exchangeAD}, function( ex ) {
 			self.ready.resolve('OK');
 		});

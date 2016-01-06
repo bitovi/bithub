@@ -25,13 +25,13 @@ class Entity < ActiveRecord::Base
   belongs_to :parent, :class_name => "Entity"
   has_many :children, :foreign_key => "parent_id", :class_name => "Entity"
 
-  validates_presence_of  :title,
+  validates_presence_of :title,
     :feed_name, :type_name,
     :origin_ts, :thread_updated_ts
 
   # Hooks
   before_save :assign_searchable_attributes
-  after_commit :notify_liveservice
+  after_validation :reformat_uniqueness_validation
 
   # Basic
   scope :feed, ->(f) { where(feed_name: f) }
@@ -87,7 +87,6 @@ class Entity < ActiveRecord::Base
     joins(:service_entities).where("service_entities.service_id" => service_id)
   end
 
-  after_validation :reformat_uniqueness_validation
 
   def state
     props.andand['state']
@@ -261,52 +260,5 @@ class Entity < ActiveRecord::Base
     if errors[:hash_key]
       errors[:base].concat(errors.delete(:hash_key))
     end
-  end
-
-  def notify_liveservice
-    return if (is_pending? || is_child?)
-
-    embeds.reload.each do |embed|
-      message = JSON.generate msg(embed)
-      x('x.liveservice', chan_is_short_lived = true) do |xchange|
-        xchange.publish(message, routing_key: 'entities')
-        if !is_approved(embed)
-          # if the entity is not approved we don't want to send publicly
-          # the whole entity, but we need to send just enough so it can
-          # be removed from an active embed. This way live embeds (like on
-          # event media walls) can be moderated and updated
-          xchange.publish(JSON.generate(not_approved_msg(embed)), routing_key: 'entities')
-        end
-      end
-    end
-  end
-
-  def meta_msg(embed, is_public)
-    {
-      brand_name: Apartment::Tenant.current,
-      embed_id: embed.id,
-      is_public: is_public
-    }
-  end
-
-  def not_approved_msg(embed)
-    {
-      meta: meta_msg(embed, true),
-      payload: JSON.generate({
-        id: self.id,
-        is_approved: false
-      })
-    }
-  end
-
-  def msg(embed)
-    view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
-    entity = EntityDecorator.decorate(self, context: {embed: embed})
-    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
-
-    {
-      meta: meta_msg(embed, is_approved(embed)),
-      payload: payload
-    }
   end
 end

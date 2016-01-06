@@ -2,12 +2,13 @@ ENV['ENV'] = 'test'
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-$LOAD_PATH.unshift PROJECT_ROOT
-$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'models')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app', 'domain')
-$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'crawler')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'app')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'guzzler')
 $LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services', 'listener')
+$LOAD_PATH.unshift File.join(PROJECT_ROOT, 'services')
+$LOAD_PATH.unshift PROJECT_ROOT
 
 require 'rspec'
 require 'rspec/mocks'
@@ -17,7 +18,6 @@ require 'celluloid/test'
 require 'lib/core_helpers'
 require 'spec/test_helper_methods'
 
-require 'sequel'
 require 'database_cleaner'
 
 require 'codeclimate-test-reporter'

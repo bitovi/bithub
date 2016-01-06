@@ -6,7 +6,7 @@ var http = require('http'),
 	_    = require('lodash');
 
 var sessionStore  = require('./session_store.js'),
-	amqpListener  = require('./amqp_listener.js'),
+	redisListener = require('./redis_listener.js'),
 	messageRouter = require('./message_router.js');
 
 var ENDPOINTS = ['entities', 'services', 'moderation'];
@@ -39,9 +39,9 @@ var _parseCookies = function( cookie ) {
 	}, {} );
 };
 
-var _logNewMessage = function( endpoint, message ) {
+var _logNewMessage = function( queueName, message ) {
 	var meta = message.meta;
-	var output = [endpoint, meta.brand_name, meta.embed_id, meta.is_public].join(' ');
+	var output = [queueName, meta.brand_name, meta.embed_id, meta.is_public].join(' ');
 
 	console.log( 'New message from MQ (endpoint, brand, embed, public?): [' + output + ']' );
 };
@@ -62,7 +62,6 @@ var LiveService = function( opts ) {
 
 	this.host        = opts.host        || process.env.LIVESERVICE_HOST || '127.0.0.1';
 	this.port        = opts.port        || process.env.LIVESERVICE_PORT || 3002;
-	this.rabbitmqUri = opts.rabbitmqUri || process.env.RABBITMQ_URI;
 	this.redisUrl    = opts.redisUrl    || process.env.REDIS_URL;
 	this.endpoints   = opts.endpoints   || ENDPOINTS;
 	this.quite       = opts.quite       || false;
@@ -71,7 +70,7 @@ var LiveService = function( opts ) {
 	this.io  = IO( this.app );
 
 	this.sessions = sessionStore.createClient( this.redisUrl, {quite: this.quite} ),
-	this.listener = amqpListener.createClient( this.rabbitmqUri, {quite: this.quite} ),
+	this.listener = redisListener.createClient( this.redisUrl, {quite: this.quite} ),
 	this.router   = new messageRouter();
 };
 
@@ -89,14 +88,17 @@ LiveService.prototype.listen = function() {
 
 LiveService.prototype.registerEndpoints = function() {
 	var self = this;
+	var queues = ['guzzler:liveservice:entities', 'guzzler:liveservice:services'];
 
-	_.each( self.endpoints, function( endpoint ) {
-		self.listener.bindConsumer(endpoint, function( data ) {
-			self.quite || _logNewMessage( endpoint, data );
+	self.listener.listen(queues, function( resp ) {
+		var queueName = resp['queueName'],
+			keyPrefix = queueName.substr(queueName.lastIndexOf(':')+1),
+			data = resp['data'];
 
-			var key = [endpoint, data.meta.brand_name, data.meta.embed_id].join('.');
-			self.router.publish( key, data );
-		});
+		self.quite || _logNewMessage( keyPrefix, data );
+
+		var key = [keyPrefix, data.meta.brand_name, data.meta.embed_id].join('.');
+		self.router.publish( key, data );
 	});
 };
 

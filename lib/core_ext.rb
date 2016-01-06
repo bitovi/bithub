@@ -46,12 +46,23 @@ class String
     gsub(/\s/, '_').
     gsub(/__+/, '_').
     downcase
-  end
+  end if !"".respond_to?(:snake_case)
+
+  def constantize
+    names = self.split('::')
+    names.shift if names.empty? || names.first.empty?
+
+    constant = Object
+    names.each do |name|
+      constant = constant.const_defined?(name) ? constant.const_get(name) : constant.const_missing(name)
+    end
+    constant
+  end if !"".respond_to?(:constantize)
 
   def camel_case
     return self if self !~ /_/ && self =~ /[A-Z]+.*/
     split('_').map{|e| e.capitalize}.join
-  end
+  end if !"".respond_to?(:camel_case)
 
   def to_proc
     Proc.new do |*args|
