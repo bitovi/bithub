@@ -7,22 +7,23 @@ module Guzzler
   class RedisConnection
     class << self
 
-      def create
-        size = Guzzler.options[:concurrency] + 2
+      def create(options = {})
+        options[:url] ||= redis_url
 
-        ConnectionPool.new(:timeout => 1, :size => size) do
-          client
+        ConnectionPool.new(:timeout => 1, :size => 5) do
+          create_client(options)
         end
       end
 
       private
 
-      def client
-        Redis::Namespace.new('guzzler', :redis => Redis.new(url: 'redis://127.0.0.1:6379/15'))
+      def create_client(options = {})
+        namespace = options[:namespace] || 'guzzler'
+        Redis::Namespace.new(namespace, :redis => Redis.new(:url => options.fetch(:url)))
       end
 
       def redis_url
-        ENV.fetch('REDIS_URL')
+        ENV['REDIS_URL'] || 'redis://127.0.0.1:6379/15'
       end
     end
   end

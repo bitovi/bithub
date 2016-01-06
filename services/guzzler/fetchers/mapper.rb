@@ -16,19 +16,16 @@ module Guzzler
         fetcher_thing = if native_fetcher_exists?(camelized_feed.to_sym, camelized_type.to_sym)
           "Guzzler::Fetchers::#{camelized_feed}::#{camelized_type}".constantize
         else
-          mappings.fetch(camelized_feed.to_sym).fetch(camelized_type.to_sym)
+          mappings[camelized_feed.to_sym][camelized_type.to_sym]
         end
 
-        if fetcher_thing.respond_to?(:fetch)
+        if fetcher_thing && fetcher_thing.respond_to?(:fetch)
           fetcher_thing
-        else
+        elsif fetcher_thing
           fetcher_thing.new(@job)
+        else
+          nil
         end
-
-      rescue KeyError => e
-        Guzzler.logger.error "Don't know how to process job #{camelized_feed}/#{camelized_type}"
-        Guzzler.logger.error @job.inspect
-        nil
       end
 
       def native_fetcher_exists?(feed_name, type_name)

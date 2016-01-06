@@ -29,12 +29,12 @@ require_relative 'stackexchange/search'
 
 require_relative 'disqus/comments'
 
-require_relative 'instagram/media'
-require_relative 'instagram/user_recent_media'
-require_relative 'instagram/user_liked_media'
-require_relative 'instagram/tag_recent_media'
-require_relative 'instagram/location_recent_media'
-require_relative 'instagram/geography_recent_media'
+# require_relative 'instagram/media'
+# require_relative 'instagram/user_recent_media'
+# require_relative 'instagram/user_liked_media'
+# require_relative 'instagram/tag_recent_media'
+# require_relative 'instagram/location_recent_media'
+# require_relative 'instagram/geography_recent_media'
 
 require_relative 'tumblr/posts'
 require_relative 'tumblr/tagged'
