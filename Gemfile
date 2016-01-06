@@ -100,26 +100,15 @@ group :development, :test do
   gem 'travis', require: false
   gem 'git'
   gem 'yard'
-  gem 'thin' # used by stripe-ruby-mock
   gem 'stripe-ruby-mock', '~> 2.0'
-end
-
-group :test do
-  gem 'codeclimate-test-reporter', require: nil
-end
-
-group :development do
   gem 'spring-commands-rspec'
   gem 'better_errors'
-  gem 'capistrano', '~> 3.1'
-  gem 'capistrano-rails', '~> 1.1'
-  gem 'capistrano-rbenv', '~> 2.0'
-  gem 'capistrano-bundler', '~> 1.1'
   gem 'bullet'
   gem 'rb-fsevent', '~> 0.9'
 end
 
 group :test do
+  gem 'codeclimate-test-reporter', require: nil
   gem 'webmock'
   gem 'vcr'
 end
