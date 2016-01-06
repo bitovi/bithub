@@ -1,3 +1,5 @@
+#!/usr/bin/env puma
+
 require 'puma'
 
 workers Integer(ENV['WEB_CONCURRENCY'] || 2)
