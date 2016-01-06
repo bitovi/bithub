@@ -28,6 +28,7 @@ Bithub::Application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
+  config.logger = Logger.new(STDOUT)
   config.log_level = :info
 
   # Mandrill as default mailer
