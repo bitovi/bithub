@@ -5,7 +5,6 @@ class EmbedEntity < ActiveRecord::Base
   belongs_to :entity
   
   validates_uniqueness_of :embed_id, scope: [:entity_id]
-  alias_method :disapprove, :block
 
   def is_approved
     (read_attribute(:is_approved_manually) != nil) ? is_approved_manually? : is_approved_automatically?
@@ -24,6 +23,7 @@ class EmbedEntity < ActiveRecord::Base
       Notifier.notify_client(:entity_moderated, { entity: entity, action: 'blocked' })
     end
   end
+  alias_method :disapprove, :block
 
   def pin
     returning(update_attributes({is_pinned: true, is_approved_manually: true})) do
