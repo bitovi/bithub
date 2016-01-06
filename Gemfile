@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.2'
+ruby '2.2.2'
 
 gem 'rails', '~> 4.2'
 
@@ -28,8 +28,8 @@ gem 'textacular'
 gem 'apartment'
 gem 'enumerize'
 gem 'sinatra'
-gem 'unicorn'
-gem 'sidekiq', '~> 3.2'
+gem 'puma'
+gem 'sidekiq'
 gem 'sidekiq-failures'
 gem 'whenever', :require => false
 gem 'acts-as-taggable-on'
