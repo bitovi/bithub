@@ -1,12 +1,12 @@
 import can from "can";
 import $ from "jquery";
 
-import Bit from "models/bit";
+import Bit from "homepage_embed/models/bit";
 
-import "bits_carousel/";
-import "bit_carousel/";
+import "homepage_embed/bits_carousel/";
+import "homepage_embed/bit_carousel/";
 
-import "style/embed.less!";
+import "homepage_embed/style/embed.less!";
 //var bitData = new Bit.List(fixtures.data.slice(0, 10));
 
 var RealBit = Bit.extend({
