@@ -17,8 +17,8 @@ $:.unshift(File.join(ROOT_DIR, 'config'))
 $TESTING = false
 $CELLULOID_DEBUG = false
 
-require 'bundler/setup'
 require 'rubygems'
+require 'bundler/setup'
 require 'config/environment'
 require 'cli'
 

@@ -1,30 +1,28 @@
-#!/usr/bin/env puma
+if defined?(Puma)
+  workers Integer(ENV['WEB_CONCURRENCY'] || 2)
+  threads_count = Integer(ENV['MAX_THREADS'] || 5)
+  threads threads_count, threads_count
 
-require 'puma'
+  preload_app!
 
-workers Integer(ENV['WEB_CONCURRENCY'] || 2)
-threads_count = Integer(ENV['MAX_THREADS'] || 5)
-threads threads_count, threads_count
+  rackup      DefaultRackup
+  port        ENV['PORT']     || 3000
+  environment ENV['RACK_ENV'] || 'development'
 
-# preload_app!
+  on_worker_boot do
+    if defined?(ActiveRecord::Base)
+      ActiveRecord::Base.establish_connection
+      Rails.logger.info('Connected to Postgres (ActiveRecord)')
+    end
 
-rackup      DefaultRackup
-port        ENV['PORT']     || 3000
-environment ENV['RACK_ENV'] || 'development'
+    if defined?(Bunny)
+      ConnectionManager.instance
+      Rails.logger.info('Connected to RabbitMQ')
+    end
 
-on_worker_boot do
-  if defined?(ActiveRecord::Base)
-    ActiveRecord::Base.establish_connection
-    Rails.logger.info('Connected to Postgres (ActiveRecord)')
-  end
-
-  if defined?(Bunny)
-    ConnectionManager.instance
-    Rails.logger.info('Connected to RabbitMQ')
-  end
-
-  if defined?(Redis)
-    ConnectionManager.instance
-    Rails.logger.info('Connected to Redis')
+    if defined?(Redis)
+      ConnectionManager.instance
+      Rails.logger.info('Connected to Redis')
+    end
   end
 end
