@@ -1,6 +1,4 @@
 class Embed < ActiveRecord::Base
-  include RabbitHelper::Sugar
-
   belongs_to :brand
   validates_uniqueness_of :name, :scope => [:brand_id]
 

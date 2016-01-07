@@ -1,2 +1,0 @@
-- name: Enable private IP and setup static IPs
-  template: src=interfaces dest=/etc/network/interfaces force=yes backup=yes

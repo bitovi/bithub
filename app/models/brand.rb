@@ -1,6 +1,4 @@
 class Brand < ActiveRecord::Base
-  include RabbitHelper::Sugar
-
   has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
 
   has_many :embeds, dependent: :destroy

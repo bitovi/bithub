@@ -1,7 +1,0 @@
-- name: Enable GatewayPorts in SSH daemon
-  lineinfile: dest=/etc/ssh/sshd_config line={{ item }}
-  with_items:
-    - "AllowTcpForwarding yes"
-    - "GatewayPorts yes"
-  notify:
-    - restart ssh

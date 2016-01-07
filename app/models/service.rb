@@ -1,6 +1,4 @@
 class Service < ActiveRecord::Base
-  include RabbitHelper::Sugar
-
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
   validate :service_state_validator
