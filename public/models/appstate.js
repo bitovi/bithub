@@ -1,6 +1,6 @@
 import can from "can/";
 import Models from 'models/';
-import _reduce from 'lodash/collection/reduce';
+import _reduce from 'lodash-amd/modern/collection/reduce';
 import connectLiveService from 'connect-liveservice';
 import Communicator from 'communicator/';
 import 'can/map/define/';
@@ -113,7 +113,7 @@ export default can.Map.extend({
 
 				if(src){
 					if(!CURRENT_IFRAME){
-						iframe = $('<iframe src="' + this.iframeSrc() + '"></iframe>');
+						iframe = $('<iframe src="' + src + '"></iframe>');
 						CURRENT_IFRAME = iframe[0];
 					}
 

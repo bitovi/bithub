@@ -5,11 +5,11 @@ import initView from "./embed_publish.stache!";
 
 import Preset from "models/preset";
 import $ from "jquery";
-import _some from "lodash/collection/some";
+import _some from "lodash-amd/modern/collection/some";
 
 import "./embed_publish.less!";
 import "components/integration/";
-import "jquerypayment";
+import "jquery.payment/lib/jquery.payment";
 import "can/map/define/";
 
 var CC = can.Map.extend({

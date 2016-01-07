@@ -1,5 +1,5 @@
 import can from "can/";
-import _keys from "lodash/object/keys";
+import _keys from "lodash-amd/modern/object/keys";
 
 import 'can/list/promise/';
 import 'can/map/define/';
