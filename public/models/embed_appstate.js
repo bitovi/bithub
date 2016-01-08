@@ -88,6 +88,9 @@ export default can.Map.extend({
 
 		if(isPublic){
 			params.tenant_name = tenant;
+			if(decision === 'approved' || decision === 'starred'){
+				params.decision = decision;
+			}
 		} else {
 			params.order = this.attr('order') || "created_at:desc";
 			if(params.order === 'grouped-by-date'){
