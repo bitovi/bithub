@@ -1,6 +1,6 @@
 steal(
 'can/view/stache',
-'lodash/collection/reduce.js',
+'lodash-amd/modern/collection/reduce.js',
 function(stache, _reduce){
 
 	var getHash = function(optsHash){

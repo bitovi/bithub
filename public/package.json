@@ -9,8 +9,32 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "opensourced-bithub": "git+https://github.com/bitovi/bithub-embed#new-bithub",
-    "steal-tools": "0.10.4",
-    "moment": "^2.10.6"
+		"jquery": "2.1.4",
+    "opensourced-bithub": "git+https://github.com/bitovi/bithub-embed#2-3-working",
+    "steal-tools": "0.13.2",
+    "moment": "2.10.3",
+    "selectize": "0.12.0",
+    "steal": "0.13.0",
+    "can": "2.3.8",
+    "bootstrap": "3.3.0",
+    "lodash-amd": "3.10.1",
+    "font-awesome": "4.2.0",
+    "chart.js": "1.0.2",
+    "randomcolor": "0.4.3",
+    "system-json": "0.0.3",
+    "jquery.payment": "1.2.3",
+    "js-cookie": "^2.1.0"
+  },
+  "system": {
+    "configDependencies": [
+      "live-reload"
+    ],
+    "npmIgnore": [
+      "documentjs",
+      "testee",
+      "donejs-deploy",
+      "generator-donejs",
+      "donejs-cli"
+    ]
   }
 }

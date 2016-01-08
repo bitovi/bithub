@@ -1,7 +1,7 @@
 import can from "can/";
 import initView from "./interaction_analytics.stache!";
 import InteractionEvent from "models/interaction_event";
-import Chart from "chart";
+import Chart from "chart.js/Chart";
 import "./interaction_analytics.less!";
 
 export var InteractionAnalyticsVM = can.Map.extend({

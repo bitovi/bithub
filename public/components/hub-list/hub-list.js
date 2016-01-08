@@ -3,8 +3,8 @@
 import can from "can/";
 import initView from "./hub-list.stache!";
 import Models from "models/";
-import _map from "lodash/collection/map";
-import _reduce from "lodash/collection/reduce";
+import _map from "lodash-amd/modern/collection/map";
+import _reduce from "lodash-amd/modern/collection/reduce";
 
 import "style/";
 import "./hub-list.less!";

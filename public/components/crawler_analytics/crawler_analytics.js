@@ -1,6 +1,6 @@
 import can from "can/";
 import initView from "./crawler_analytics.stache!";
-import Chart from "chart";
+import Chart from "chart.js/Chart";
 import Models from "models/";
 
 import "./crawler_analytics.less!";

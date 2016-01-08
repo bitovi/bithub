@@ -49,7 +49,7 @@
     ]
   },
   "dependencies": {
-    "can": "^2.3.1",
+    "can": "2.3.8",
     "can-connect": "^0.3.1",
     "can-ssr": "^0.10.1",
     "done-autorender": "^0.4.3",
@@ -58,7 +58,6 @@
     "donejs": "^0.5.2",
     "generator-donejs": "^0.3.4",
     "jquery": "^2.1.4",
-    "steal": "^0.12.3",
     "lodash-amd": "^3.10.1",
     "moment": "^2.10.6",
     "selectize": "^0.12.1",
@@ -69,14 +68,14 @@
     "commander": "^2.9.0",
     "infanticide": "^1.0.1",
     "js-cookie": "^2.0.4",
-
     "steal-qunit": "^0.1.1",
     "can-fixture": "0.0.1",
     "funcunit": "^3.0.0",
     "testee": "^0.2.2",
     "donejs-deploy": "^0.3.1",
     "donejs-cli": "^0.5.4",
-    "steal-tools": "^0.12.1",
-    "documentjs": "^0.3.3"
+    "steal-tools": "0.13.2",
+    "steal": "0.13.0",
+    "documentjs": "0.3.3"
   }
 }
