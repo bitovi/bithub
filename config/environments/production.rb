@@ -1,5 +1,3 @@
-require './lib/logger_factory'
-
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -30,17 +28,8 @@ Bithub::Application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-<<<<<<< HEAD
-  config.logger = Logger.new(STDOUT)
-=======
-  # Logging with log4r
-  lf = LoggerFactory.new 'rails', :environment => Rails.env
-  config.logger = lf.logger
-  config.action_controller.logger = lf.loggers('action_controller')
-  config.active_record.logger = lf.loggers('active_record')
-  config.lograge.enabled = true
->>>>>>> 2-3
   config.log_level = :info
+  config.logger = Logger.new(STDOUT)
 
   # Mandrill as default mailer
   config.action_mailer.smtp_settings = {

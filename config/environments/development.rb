@@ -1,5 +1,3 @@
-require './lib/logger_factory'
-
 Bithub::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -17,14 +15,7 @@ Bithub::Application.configure do
 
   # Logging with log4r
   config.log_level = :debug
-<<<<<<< HEAD
   config.logger = Logger.new(STDOUT)
-=======
-  config.lograge.enabled = false
-  config.active_record.logger = LoggerFactory.new('active_record').loggers 'active_record'
-  config.action_controller.logger = LoggerFactory.new('action_controller').loggers 'action_controller'
-  config.logger = LoggerFactory.new('rails').logger
->>>>>>> 2-3
 
   # Mandrill as default mailer
   config.action_mailer.smtp_settings = {
