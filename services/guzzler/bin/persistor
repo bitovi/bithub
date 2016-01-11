@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+GUZZLER_DIR  = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+SERVICES_DIR = File.expand_path(File.join(GUZZLER_DIR,  '..'))
+ROOT_DIR     = File.expand_path(File.join(GUZZLER_DIR,  '..', '..'))
+
+$:.unshift(File.expand_path(GUZZLER_DIR))
+$:.unshift(SERVICES_DIR)
+$:.unshift(ROOT_DIR)
+$:.unshift(File.join(ROOT_DIR, 'lib'))
+$:.unshift(File.join(ROOT_DIR, 'app', 'models'))
+$:.unshift(File.join(ROOT_DIR, 'config'))
+
+# Quiet some warnings we see when running in warning mode:
+# RUBYOPT=-w bundle exec sidekiq
+$TESTING = false
+$CELLULOID_DEBUG = false
+
+require 'rubygems'
+require 'bundler/setup'
+require 'config/environment'
+require 'cli'
+
+require 'dotenv'
+Dotenv.load
+
+begin
+  Guzzler::CLI.instance.run('Guzzler::Persistor::Runner', 'persistor/runner')
+rescue => e
+  raise e if $DEBUG
+  STDERR.puts e.message
+  STDERR.puts e.backtrace.join("\n")
+  exit 1
+end
+
