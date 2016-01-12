@@ -1,9 +1,8 @@
 require 'celluloid/current'
 require 'celluloid/autostart'
 
-require 'jobs/manager'
-require 'jobs/fetcher'
-require 'jobs/manager'
+require 'manager'
+require 'fetcher'
 
 module Guzzler
   class Poller

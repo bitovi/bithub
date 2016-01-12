@@ -1,5 +1,5 @@
 require 'util'
-require 'jobs/processor'
+require 'processor'
 
 module Guzzler
   module Jobs

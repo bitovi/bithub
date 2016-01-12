@@ -1,11 +1,12 @@
 require 'celluloid/current'
 require 'celluloid/autostart'
 
-require 'popper'
 
-require 'handlers/event_handler'
-require 'handlers/entity_handler'
-require 'handlers/error_handler'
+require 'guzzler/service'
+require 'guzzler/popper'
+require 'guzzler/persistor/handlers/event_handler'
+require 'guzzler/persistor/handlers/entity_handler'
+require 'guzzler/persistor/handlers/error_handler'
 
 module Guzzler
   class Persistor

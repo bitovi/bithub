@@ -1,43 +1,45 @@
 require 'httparty'
 
-module Guzzler::Fetchers
-  module Disqus
-    class Comments
-      include Protocol
+module Guzzler
+  module Fetchers
+    module Disqus
+      class Comments
+        include Protocol
 
-      def initialize(job)
-        @job = job
-      end
-
-      def fetch
-        log_fetch
-
-        handle_errors do
-          resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
-          pluck(resp)
+        def initialize(job)
+          @job = job
         end
-      end
 
-      private
+        def fetch
+          log_fetch
 
-      def pluck(response)
-        response['response'] || []
-      end
+          handle_errors do
+            resp = HTTParty.get url, :query => related.merge(forum).merge(auth)
+            pluck(resp)
+          end
+        end
 
-      def forum
-        { :forum => @job.config.fetch('url') }
-      end
+        private
 
-      def related
-        { :related => %w(thread forum) }
-      end
+        def pluck(response)
+          response['response'] || []
+        end
 
-      def url
-        'http://disqus.com/api/3.0/posts/list.json'
-      end
+        def forum
+          { :forum => @job.config.fetch('url') }
+        end
 
-      def auth
-        { :api_key => Guzzler.static_config.fetch(:disqus).fetch(:api_key) }
+        def related
+          { :related => %w(thread forum) }
+        end
+
+        def url
+          'http://disqus.com/api/3.0/posts/list.json'
+        end
+
+        def auth
+          { :api_key => Guzzler.static_config.fetch(:disqus).fetch(:api_key) }
+        end
       end
     end
   end

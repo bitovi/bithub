@@ -1,15 +1,16 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-GUZZLER_DIR  = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-SERVICES_DIR = File.expand_path(File.join(GUZZLER_DIR,  '..'))
-ROOT_DIR     = File.expand_path(File.join(GUZZLER_DIR,  '..', '..'))
-
-$:.unshift(File.expand_path(GUZZLER_DIR))
+COMPONENT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', 'listener'))
+GUZZLER_DIR   = File.expand_path(File.join(COMPONENT_DIR , '..'))
+SERVICES_DIR  = File.expand_path(File.join(GUZZLER_DIR   , '..'))
+ROOT_DIR      = File.expand_path(File.join(SERVICES_DIR  , '..'))
+$:.unshift(COMPONENT_DIR)
+$:.unshift(GUZZLER_DIR)
 $:.unshift(SERVICES_DIR)
 $:.unshift(ROOT_DIR)
+
 $:.unshift(File.join(ROOT_DIR, 'lib'))
-$:.unshift(File.join(ROOT_DIR, 'config'))
 $:.unshift(File.join(ROOT_DIR, 'app', 'models'))
 
 # Quiet some warnings we see when running in warning mode:

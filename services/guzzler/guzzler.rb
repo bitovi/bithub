@@ -1,11 +1,16 @@
 require 'uri'
 require 'guzzler/redis_connection'
+require 'guzzler/commands'
+
+require 'guzzler/service'
+require 'guzzler/service_error'
 
 require 'guzzler/transformers/event_digester'
 require 'guzzler/transformers/event_rejector'
 require 'guzzler/transformers/event_decorator'
 
 module Guzzler
+
   def self.logger
     Celluloid.logger
   end
@@ -25,32 +30,6 @@ module Guzzler
 
   def self.redis_pool
     @redis ||= Guzzler::RedisConnection.create
-  end
-    
-  def self.lpush(q_name, item)
-    redis do |conn|
-      conn.lpush(q_name, item.to_json)
-    end
-  end
-
-  def self.publish(chan_name, notif)
-    redis do |conn|
-      conn.publish(chan_name, notif)
-    end
-  end
-
-  def self.subscribe(chan)
-    redis do |conn|
-      conn.subscribe(chan) do |on|
-        yield on
-      end
-    end
-  end
-  
-  def self.unsubscribe(chan)
-    redis do |conn|
-      conn.unsubscribe(chan)
-    end
   end
 
   def self.processing_chain

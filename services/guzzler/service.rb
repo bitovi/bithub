@@ -1,6 +1,11 @@
-module Guzzler
+require 'core_ext'
 
-  class FetchJob
+module Guzzler
+  class Service
+
+    def self.from_service_record(service)
+      # new()...
+    end
     
     # "guzzler:services:gauntless_forrest_3523:17/repo_issues"
     def initialize(service_key, service_data)
@@ -17,7 +22,7 @@ module Guzzler
       @brand_id = data.fetch('brand_id')
       @interval = data.fetch('interval')  { 60 }
 
-      @config = data.fetch('config')
+      @config = data.fetch('config').symbolize_keys
     end
 
     attr_accessor :data

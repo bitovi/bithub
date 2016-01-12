@@ -1,5 +1,4 @@
 require 'util'
-require 'guzzler/fetch_job'
 
 module Guzzler
   module Jobs
@@ -35,7 +34,7 @@ module Guzzler
             service_key, score = conn.zrangebyscore(schedule_key, '-inf', now, { :limit => [0, 1], :with_scores => true }).first
             if service_key && score
               if service_data = conn.redis.get(service_key)
-                job = Guzzler::FetchJob.new(service_key, service_data)
+                job = Guzzler::Service.new(service_key, service_data)
                 conn.zincrby(schedule_key, (now - score + job.interval), service_key)
               end
             end

@@ -1,13 +1,15 @@
 require_relative 'common'
 
-module Guzzler::Fetchers
-  module Github
-    module Common
+module Guzzler
+  module Fetchers
+    module Github
+      module Common
 
-      def client
-        @client ||= ::Github.new(oauth_token: @job.token)
+        def client
+          @client ||= ::Github.new(oauth_token: @job.token)
+        end
+
       end
-
     end
   end
 end

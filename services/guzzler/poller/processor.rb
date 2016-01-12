@@ -1,5 +1,5 @@
 require 'util'
-require 'guzzler/fetchers/mapper'
+require 'fetchers/mapper'
 
 module Guzzler
   module Jobs
@@ -14,10 +14,10 @@ module Guzzler
         @manager = boss
       end
 
-      def process(fetch_job)
-        if fetcher = Guzzler::Fetchers::Mapper.new(fetch_job).fetcher
+      def process(service)
+        if fetcher = Guzzler::Fetchers::Mapper.new(service).fetcher
           events = fetcher.fetch
-          Guzzler.processing_chain.invoke(events, fetch_job).each do |event|
+          Guzzler.processing_chain.invoke(events, service).each do |event|
             Guzzler.lpush('event_q', event)
           end
         else
@@ -26,7 +26,7 @@ module Guzzler
         @manager.async.processor_done(current_actor)
 
       rescue Fetchers::FetchError => e
-        Guzzler.lpush('error_q', [job_error(fetch_job)])
+        Guzzler.lpush('error_q', [ ServiceError.new(e, service).to_h ])
         @manager.async.processor_done(current_actor)
       end
 
@@ -36,21 +36,6 @@ module Guzzler
 
       private
       
-      def job_error(error, fetch_job)
-        {
-          data: {
-            klass: error.class.name,
-            message: error.message,
-            backtrace: error.backtrace.join("\n")
-            # happened_at: Time.now.to_f
-          },
-          meta: {
-            tenant_name: fetch_job.tenant_name,
-            service_id: fetch_job.service_id
-          }
-        }
-      end
-
       def thread_identity
         @str ||= Thread.current.object_id.to_s(36)
       end
