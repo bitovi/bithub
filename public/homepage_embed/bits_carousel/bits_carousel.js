@@ -153,6 +153,7 @@ export default can.Component.extend({
 		},
 		"{scope.bits} length" : function(){
 			if(!this.__autoClickInited){
+				this.measureWidth();
 				this.autoClick();
 				this.__autoClickInited = true;
 			}
@@ -170,7 +171,7 @@ export default can.Component.extend({
 					cardWidth: cardWidth,
 					fromLeft: 0
 				});
-			});
+			}, 100);
 		}
 	}
 
