@@ -60,8 +60,6 @@ can.Component.extend({
 			var scrollHeight = wrap[0].scrollHeight;
 			var height = wrap.height();
 
-			console.log('HEIGHT / SCROLL HEIGHT', height, scrollHeight)
-
 			this.scope.attr('isTooTall', height < scrollHeight);
 		},
 		'{scope} isExpanded' : function(){
