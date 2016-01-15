@@ -115,8 +115,8 @@ update embed_entities ee
       ModerationState.new(f.resulting_state, f.resulting_decision)
     end
 
-    (result.decision == 'pending' && result.state) ? result.decision = 'approved' # Switch to approved if either service or hub are approved by default
-    state_according_to_filters
+    resulting_state.decision = 'approved' if (resulting_state.decision == 'pending' && resulting_state.state) # Switch to approved if either service or hub are approved by default
+    resulting_state
   end
 
   def determine_default_approval(entity)
@@ -140,7 +140,7 @@ update embed_entities ee
     embed_entities.update_all(
       is_approved_automatically: approved_by_default,
       updated_at: DateTime.now,
-      decision: 'pending')
+      decision: 'pending'
     )
   end
 
