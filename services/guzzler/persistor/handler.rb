@@ -42,6 +42,10 @@ module Guzzler::Persistor
       Guzzler.logger.warn "[#{name_for_logs}] #{e.class.name} | #{e}"
       raise Guzzler::HandlingError.new(e)
 
+    rescue RunTimerror => e
+      Guzzler.logger.error e
+      raise e
+
     rescue => e
       Guzzler.logger.error "[#{name_for_logs}] #{e.class.name} | #{e}"
     ensure
