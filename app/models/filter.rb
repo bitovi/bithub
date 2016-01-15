@@ -24,7 +24,17 @@ class Filter < ActiveRecord::Base
   def approves?
     action == 'approve'
   end
-  alias_method :resulting_state, :'approves?'
+
+  # "true" represents filter pass
+  # "false represents filter reject
+  def resulting_state
+    approves?
+  end
+
+  # used for inbox-style moderation
+  def resulting_decision
+    (approves?) ? 'approved' : 'deleted'
+  end
 
   def detected(select_values = nil)
     NatlangQueries::Applier.new(self, Entity).scope(select_values).all
