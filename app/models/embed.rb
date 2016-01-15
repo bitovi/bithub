@@ -68,7 +68,7 @@ class Embed < ActiveRecord::Base
     ActiveRecord::Base.connection.execute(
       <<-SQL
 update embed_entities ee
-  set ee.decision = 'approved'
+  set decision = 'approved'
   from embeds e 
   where ee.entity_id = e.id
   and ee.decision = 'pending'
@@ -79,9 +79,9 @@ update embed_entities ee
     ActiveRecord::Base.connection.execute(
       <<-SQL
 update embed_entities ee
-  set ee.decision = 'approved'
+  set decision = 'approved'
   from services s
-  where ee.embed_id = s.embed_id,
+  where ee.embed_id = s.embed_id
   and ee.decision = 'pending'
   and s.approved_by_default = TRUE;
       SQL
