@@ -49,15 +49,15 @@
     ]
   },
   "dependencies": {
-    "can": "2.3.8",
+    "can": "2.3.9",
     "can-connect": "^0.3.1",
     "can-ssr": "^0.10.1",
     "done-autorender": "^0.4.3",
     "done-component": "^0.3.0",
     "done-css": "^1.1.15",
-    "donejs": "^0.5.2",
+    "donejs": "0.6.0",
     "generator-donejs": "^0.3.4",
-    "jquery": "^2.1.4",
+    "jquery": "2.1.4",
     "lodash-amd": "^3.10.1",
     "moment": "^2.10.6",
     "selectize": "^0.12.1",
@@ -75,7 +75,6 @@
     "donejs-deploy": "^0.3.1",
     "donejs-cli": "^0.5.4",
     "steal-tools": "0.13.2",
-    "steal": "0.13.0",
-    "documentjs": "0.3.3"
+    "steal": "0.13.0"
   }
 }
