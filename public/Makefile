@@ -1,8 +1,8 @@
-all: cleandesktop installdesktop builddesktop buildhomepageembed cleanmobile installmobile buildmobile
+all: gitco cleandesktop installdesktop builddesktop buildhomepageembed cleanmobile installmobile buildmobile gitadd gitci
 
-desktop: cleandesktop installdesktop builddesktop buildhomepageembed
+desktop: gitco cleandesktop installdesktop builddesktop buildhomepageembed gitadd gitci
 
-mobile: cleanmobile installmobile buildmobile
+mobile: gitco cleanmobile installmobile buildmobile addtogit gitadd gitci
 
 cleandesktop:
 	@echo "********************************************************************************"
@@ -46,3 +46,22 @@ buildmobile:
 	@echo "* Building mobile app                                                          *"
 	@echo "********************************************************************************"
 	cd new-bithub-client; donejs build
+
+gitco:
+	@echo "********************************************************************************"
+	@echo "* Switching to release branch"
+	@echo "********************************************************************************"
+	git checkout -b release
+
+gitadd:
+	@echo "********************************************************************************"
+	@echo "* Forcefully adding to git"
+	@echo "********************************************************************************"
+	git add --force node_modules dist new-bithub-client/node_modules new-bithub-client/dist
+
+gitadd:
+	@echo "********************************************************************************"
+	@echo "* Forcefully adding to git"
+	@echo "********************************************************************************"
+	git ci -m 'Release is out yall!'
+
