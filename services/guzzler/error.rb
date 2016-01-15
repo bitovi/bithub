@@ -10,6 +10,11 @@ module Guzzler
   class UnknownError < FetchError; end
   class RateLimitError < FetchError; end
 
+  # Persistor errors
+  class HandlingError < GuzzlerError; end
+  class EventHandlingError < HandlingError; end
+  class EntityHandlingError < HandlingError; end
+
   # Subscription errors
   class SubscriptionError < GuzzlerError; end
 

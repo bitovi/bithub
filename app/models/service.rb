@@ -71,6 +71,14 @@ class Service < ActiveRecord::Base
     60
   end
 
+  def listens?
+    feed_name == 'instagram' || feed_name == 'foursquare' || (feed_name == 'facebook' && type_name == 'page')
+  end
+
+  def polls?
+    !listens?
+  end
+
   # private
 
   def service_config_validator

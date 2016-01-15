@@ -22,7 +22,7 @@ module Guzzler::Fetchers
       end
 
       def tag
-        @job.config.fetch('tag')
+        @job.config.fetch(:tag)
       end
     end
   end

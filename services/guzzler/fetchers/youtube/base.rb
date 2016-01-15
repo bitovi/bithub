@@ -61,15 +61,15 @@ module Guzzler::Fetchers
        
 
       def target_id
-        @job.config.fetch 'id'
+        @job.config.fetch :id
       end
 
       def access_token
-        @job.config.fetch 'access_token'
+        @job.config.fetch :access_token
       end
 
       def refresh_token
-        @job.config.fetch 'refresh_token'
+        @job.config.fetch :refresh_token
       end
     end
   end

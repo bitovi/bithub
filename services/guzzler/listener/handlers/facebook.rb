@@ -6,14 +6,16 @@ module Guzzler
 
       class FacebookSubscriptions < Handler
         def handle(req)
-          params    = CGI::parse req.query_string
-          challenge = params['hub.challenge'].first
-          token     = params['hub.verify_token'].first
+          handle_errors do
+            params    = CGI::parse req.query_string
+            challenge = params['hub.challenge'].first
+            token     = params['hub.verify_token'].first
 
-          if token == ENV['FACEBOOK_SUBSCRIPTIONS_VERIFY_TOKEN']
-            [200, challenge]
-          else
-            [403, ':p']
+            if token == ENV['FACEBOOK_SUBSCRIPTIONS_VERIFY_TOKEN']
+              [200, challenge]
+            else
+              [403, ':p']
+            end
           end
         end
       end
@@ -22,7 +24,7 @@ module Guzzler
         AVAILABLE_ITEMS = %w(status link checkin photo video)
 
         def handle(req)
-          super do
+          handle_errors do
             payload = JSON.parse req.body.to_s
             entries = payload.fetch('entry') { [] }
 

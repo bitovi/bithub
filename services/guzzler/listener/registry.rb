@@ -34,6 +34,6 @@ module Guzzler::Listener
       key = SubscriptionKey.new feed, type, id
       @subscriptions[key]
     end
-    alias_method :[], :fetch
+
   end
 end

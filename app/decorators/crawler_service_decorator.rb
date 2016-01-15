@@ -1,5 +1,5 @@
 class CrawlerServiceDecorator < Draper::Decorator
-  delegate :id, :brand, :type_name, :feed_name
+  delegate :id, :brand, :type_name, :feed_name, :listens?, :polls?
 
   def key
     "services:#{source.brand.tenant_name}:#{source.id}"

@@ -1,45 +1,38 @@
-require 'util'
+require 'worker'
 require 'fetchers/mapper'
+require 'messages'
 
-module Guzzler
-  module Jobs
+module Guzzler::Poller
 
-    class Processor
-      include Util
-      include Celluloid
+  class Processor < Guzzler::Worker
 
-      attr_accessor :proxy_id
-
-      def initialize(boss)
-        @manager = boss
-      end
-
-      def process(service)
-        if fetcher = Guzzler::Fetchers::Mapper.new(service).fetcher
-          events = fetcher.fetch
+    def process(service)
+      if fetcher = Guzzler::Fetchers::Mapper.new(service).fetcher
+        if events = fetcher.fetch
           Guzzler.processing_chain.invoke(events, service).each do |event|
             Guzzler.lpush('event_q', event)
           end
         else
-          Guzzler.logger.warn "Don't know how to process job #{job.feed}/#{job.type}"
+
+          Guzzler.logger.debug "_____________________________"
+
+          Guzzler.lpush('liveservice:services', { 
+            meta: { tenant_name: service.tenant_name, embed_id: service.embed_id },
+            payload: { 
+              service: { id: service.id, empty_results: true }
+            }
+          })
+          
         end
-        @manager.async.processor_done(current_actor)
-
-      rescue Fetchers::FetchError => e
-        Guzzler.lpush('error_q', [ ServiceError.new(e, service).to_h ])
-        @manager.async.processor_done(current_actor)
+      else
+        Guzzler.logger.warn "Don't know how to process job #{job.feed}/#{job.type}"
       end
 
-      def inspect
-        "<Processor##{object_id.to_s(16)}>"
-      end
-
-      private
-      
-      def thread_identity
-        @str ||= Thread.current.object_id.to_s(36)
-      end
-
+      @manager.async.worker_done(current_actor)
+    rescue Guzzler::FetchError => e
+      Guzzler.lpush('error_q', [ ServiceError.new(e, service).to_h ])
+      @manager.async.worker_done(current_actor)
     end
+
   end
 end

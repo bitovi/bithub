@@ -11,7 +11,7 @@ end
 module Entities
   class Protocol
     extend Forwardable
-    def_delegators :@event, :brand_id, :embed_id, :service_id
+    def_delegators :@event, :tenant_name, :brand_id, :embed_id, :service_id
 
     include Groupable
     include Normalizable
@@ -64,7 +64,7 @@ module Entities
     end
 
     def repr_for_logs
-      "#{brand_id},#{embed_id},#{embed_id},#{feed_name},#{type_name}"
+      "#{tenant_name},#{embed_id},#{service_id},#{feed_name},#{type_name}"
     end
 
     def collect_methods(regexp)

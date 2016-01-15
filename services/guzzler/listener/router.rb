@@ -7,7 +7,6 @@ module Guzzler::Listener
 
     def initialize(opts={})
       @routes = {}
-      @prefix = opts[:prefix] || ''
     end
     attr_reader :routes
     
@@ -16,15 +15,21 @@ module Guzzler::Listener
       @routes[[method,path]] || @routes[[DEFAULT_METHOD, path]]
     end
 
-    def register_handler(path, handler, method=DEFAULT_METHOD)
-      path   = build_path path
+    def register_handler(route, handler)
+      method, path = *route
+
       method = build_method method
+      path   = build_path path
 
       if @routes[[method,path]]
         fail Guzzler::HandlerAlreadyRegisteredError, "Handler #{handler} already registered for #{method} #{path}."
       else
         @routes[[method,path]] = handler
       end
+    end
+
+    def routes
+      @routes
     end
 
     def unregister_handler(path, method=DEFAULT_METHOD)
@@ -37,12 +42,15 @@ module Guzzler::Listener
     private
 
     def build_path(path)
-      File.join '/', @prefix, path
+      File.join '/', path_prefix, path
     end
 
     def build_method(method)
       method.to_s.upcase
     end
 
+    def path_prefix
+      ENV['GUZZLER_POSTBACK_ENDPOINT_PREFIX'] || '/'
+    end
   end
 end

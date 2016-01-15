@@ -22,7 +22,7 @@ module Guzzler::Fetchers
 
       def query
         { 
-          :tagged => @job.config.fetch('tags').join(';'),
+          :tagged => @job.config.fetch(:tags).join(';'),
           :site => 'stackoverflow',
           :filter => Guzzler.static_config.fetch(:stackexchange).fetch(:filter),
           :key => Guzzler.static_config.fetch(:stackexchange).fetch(:api_key),

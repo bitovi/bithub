@@ -11,7 +11,7 @@ module Guzzler
     def initialize(service_key, service_data)
       @_service_key = service_key
 
-      @tenant_name, service_id_string = service_key.gsub('guzzler:services:', '').split(':')
+      @tenant_name, service_id_string = service_key.gsub('guzzler:', '').gsub('services:', '').split(':')
       @service_id = service_id_string.to_i
       
       data = JSON.parse(service_data)
@@ -34,6 +34,10 @@ module Guzzler
       "services:#{@tenant_name}:#{@service_id}"
     end
 
+    def member
+      "guzzler:" + key
+    end
+
     def token
       @config['access_token'] || @config['token']
     end
@@ -48,6 +52,10 @@ module Guzzler
 
     def multi_component_job?
       @_service_key.include?('/')
+    end
+
+    def to_s
+      "#{@tenant_name},#{@embed_id},#{@service_id},#{@feed_name},#{@type_name}"
     end
 
     def to_h

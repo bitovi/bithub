@@ -30,7 +30,7 @@ module Guzzler::Fetchers
       private
 
       def group_id
-        @job.config.fetch('id')
+        @job.config.fetch(:id)
       end
 
       def group_ids

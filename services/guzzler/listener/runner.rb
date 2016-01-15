@@ -16,7 +16,7 @@ module Guzzler
         @condvar = Celluloid::Condition.new
 
         @registry = Guzzler::Listener::Registry.new_link
-        @http_server = Guzzler::Listener::HttpServer.new_link({ host: '0.0.0.0' })
+        @http_server = Guzzler::Listener::HttpServer.new_link(@registry)
         @subscriber = Guzzler::Listener::Subscriber.new_link(@registry, @condvar)
         @done = false
       end
@@ -24,8 +24,7 @@ module Guzzler
       def run
         watchdog('Listener#run') do
           @http_server.start
-          @subscriber.subscribe
-          @subscriber.preload_items
+          @subscriber.start
         end
       end
 

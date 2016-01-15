@@ -1,41 +1,46 @@
 require 'celluloid/current'
-require 'celluloid/autostart'
 
 require 'manager'
-require 'fetcher'
+require 'retriever'
+
+require 'processor'
+require 'rangey_ren'
 
 module Guzzler
-  class Poller
-    include Celluloid
-    include Util
+  module Poller
 
-    def initialize
-      @condvar = Celluloid::Condition.new
-      
-      @manager = Jobs::Manager.new_link(@condvar)
-      @fetcher = Jobs::Fetcher.new_link
+    class Runner
+      include Celluloid
+      include Util
 
-      @fetcher.manager = @manager
-      @manager.fetcher = @fetcher
+      def initialize
+        @condvar = Celluloid::Condition.new
 
-      @done = false
-    end
+        @manager = Manager.new_link(Processor, @condvar)
+        @retriever = Retriever.new_link(RangeyRen.new('services:polling'), { interval: 5 })
 
-    def run
-      watchdog('Poller#run') do
-        @manager.async.start
+        @retriever.manager = @manager
+        @manager.retriever = @retriever
+
+        @done = false
       end
-    end
 
-    def stop
-      watchdog('Poller#stop') do
-        @done = true
+      def run
+        watchdog('Poller#run') do
+          @manager.async.start
+        end
+      end
 
-        @manager.async.stop
-        @condvar.wait
-        @manager.terminate
-        
-        @fetcher.terminate if @fetcher.alive?
+      def stop
+        watchdog('Poller#stop') do
+          @done = true
+
+          @manager.async.stop
+          @condvar.wait
+          @manager.terminate
+
+          @fetcher.terminate if @fetcher.alive?
+        end
       end
     end
   end

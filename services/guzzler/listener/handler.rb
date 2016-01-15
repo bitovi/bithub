@@ -7,8 +7,13 @@ module Guzzler
           @registry = registry
         end
 
+        def publish(events, service)
+          Guzzler.processing_chain.invoke(events, service).each do |event|
+            Guzzler.lpush('event_q', event)
+          end
+        end
 
-        def handle(req)
+        def handle_errors
           yield
 
         rescue Guzzler::SubscriptionError => e

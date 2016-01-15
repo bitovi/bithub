@@ -4,8 +4,11 @@ module Guzzler
 
       class InstagramSubscriptions < Handler
         def handle(req)
-          params = CGI::parse req.query_string
-          [200, params['hub.challenge'].first]
+          Guzzler.logger.debug "Confirming Instagram subscription"
+          handle_errors do
+            params = CGI::parse req.query_string
+            [200, params['hub.challenge'].first]
+          end
         end
       end
 
@@ -13,7 +16,7 @@ module Guzzler
       class InstagramNotifications < Handler
 
         def handle(req)
-          super do
+          handle_errors do
             payload = JSON.parse req.body.to_s
 
             payload.each do |notif|
@@ -25,8 +28,8 @@ module Guzzler
                 subscriptions = @registry.fetch('instagram', 'media', object_id)
 
                 if subscriptions.empty?
-                  Celluloid.logger.info "Unsubscribing from Instagram service for #{object} #{object_id}"
-                  unsubscribe notif['subscription_id']
+                  # Guzzler.logger.info "Unsubscribing from Instagram service for #{object} #{object_id}"
+                  # unsubscribe notif['subscription_id']
                 else
                   subscriptions.each do |service|
                     results = send method_name.to_sym, object_id, service.config[:access_token]

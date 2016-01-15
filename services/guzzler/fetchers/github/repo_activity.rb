@@ -32,11 +32,11 @@ module Guzzler
         private
 
         def user_name
-          @user_name ||= @job.config.fetch('name').split('/').first
+          @user_name ||= @job.config.fetch(:name).split('/').first
         end
 
         def repo_name
-          @repo_name ||= @job.config.fetch('name').split('/').last
+          @repo_name ||= @job.config.fetch(:name).split('/').last
         end
       end
     end

@@ -12,49 +12,62 @@ module Guzzler
 
       def initialize(registry, condvar)
         @registry = registry
-        @unsubscribed = condvar
+        every(60) { refresh }
+      end
 
-        @subscriptions = []
-
-        Guzzler.logger.info "Fetching listening services"
-        Guzzler.services(:listening).each do |sk|
+      def start
+        Guzzler.logger.info "Subscribing all services."
+        Guzzler.smembers('services:listening').each do |sk|
           service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
-          @subscriptions << subscriber_class(service).new(@registry, service)
+          manage_subscription(service, :subscribe)
         end
       end
 
-      def subscribe
-        @subscriptions.each { |s| handle_subscription_errors(s, :subscribe) }
-      end
-
-      def unsubscribe
-        @subscriptions.each { |s| handle_subscription_errors(s, :unsubscribe) }
-        Guzzler.logger.info "Unsubscribed all services"
+      def stop
+        Guzzler.logger.info "Unsubscribing all services"
+        Guzzler.smembers('services:listening:subscribed').each do |sk|
+          service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
+          manage_subscription(service, :unsubscribe)
+        end
         @unsubscribed.signal
       end
-
-      def preload_items
-        @subscriptions.each { |s| handle_preloading_results_and_errors(s) }
+      
+      def refresh
+        Guzzler.sdiff('services:listening', 'services:listening:subscribed').each do |sk|
+          service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
+          Guzzler.logger.info "New service: #{service}. Subscribing ..."
+          manage_subscription(service, :subscribe)
+        end
       end
 
-      def handle_preloading_results_and_errors(s)
-        return unless s.respond_to? :preload_items
+      def manage_subscription(service, method)
+        subscriber = subscriber_class(service).new(@registry, service)
 
-        if (events = s.preload_items).empty?
-          Guzzler.notifier.empty_response_fetched(s.service)
+        if method == :subscribe
+          subscriber.subscribe
+          preload_items(subscriber) if subscriber.respond_to? :preload_items
+          Guzzler.sadd('services:listening:subscribed', service.member)
+        elsif method == :unsubscribe
+          subscriber.unsubscribe
+          Guzzler.srem('services:listening:subscribed', service.member)
+        end
+
+      rescue Guzzler::SubscriptionError => e
+        Guzzler.lpush('error_q', [ Guzzler::ServiceError.new(e, service).to_h ])
+        Guzzler.logger.error e.message
+      end
+      
+      def preload_items(subscriber)
+        if (events = subscriber.preload_items).empty?
+          Guzzler.notifier.empty_response_fetched(subscriber.service)
         else
-          Guzzler.processing_chain.invoke(events, s.service).each do |event|
-            Guzzler.enq('event_q', event)
+          Guzzler.processing_chain.invoke(events, subscriber.service).each do |event|
+            Guzzler.lpush('event_q', event)
           end
         end
       rescue Guzzler::FetchError => e
-        Guzzler.enq('error_q', [ Guzzler::ServiceError.new(e, s.service).to_h ])
-      end
-
-      def handle_subscription_errors(s, method)
-        s.send(method)
-      rescue Guzzler::SubscriptionError => e
-        Guzzler.enq('error_q', [ Guzzler::ServiceError.new(e, s.service).to_h ])
+        Guzzler.lpush('error_q', [ Guzzler::ServiceError.new(e, subscriber.service).to_h ])
+        Guzzler.logger.error e.message
       end
 
       def subscriber_class(service)

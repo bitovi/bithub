@@ -21,8 +21,8 @@ module Guzzler::Fetchers
         end
       end
 
-      def log_fetch
-        Guzzler.logger.info "[FETCHER] Fetching Twitter/#{@job.type_name.camel_case}"
+      def name_for_logs
+        'Twitter/Hashtag'
       end
     end
   end

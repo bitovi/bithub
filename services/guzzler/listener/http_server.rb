@@ -14,7 +14,7 @@ module Guzzler
       def initialize(registry, opts = {})
         @opts = opts
         @registry = registry
-        @router = Router.new prefix: path_prefix
+        @router = Router.new
 
         super(host, port, &method(:on_connection))
 
@@ -43,7 +43,7 @@ module Guzzler
         
         @router.register_handler(
           ['POST', '/foursquare/venues'],
-          Handlers::FacebookNotifications.new(@registry))
+          Handlers::FoursquareData.new(@registry))
 
         Guzzler.logger.info "Handlers registered"
       end
@@ -58,11 +58,6 @@ module Guzzler
         end
       end
 
-      def register_route(handler, route)
-        method, path = *route
-        @router.register handler, path, method
-      end
-
       def route(req)
         if handler = @router.route(req.path, req.method)
           handler.handle req
@@ -72,15 +67,11 @@ module Guzzler
       end
 
       def host
-        @opts[:host] || ENV['LOCAL_CRAWLER_HOST'] || '127.0.0.1'
+        ENV['LOCAL_CRAWLER_HOST'] || '127.0.0.1'
       end
 
       def port
-        @opts[:port] || ENV['LOCAL_CRAWLER_PORT'] || '3001'
-      end
-
-      def path_prefix
-        @opts[:path_prefix] || ENV['CRAWLER_HTTP_PREFIX'] || '/'
+        ENV['LOCAL_CRAWLER_PORT'] || '3001'
       end
     end
   end

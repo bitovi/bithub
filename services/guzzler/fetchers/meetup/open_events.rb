@@ -21,7 +21,7 @@ module Guzzler::Fetchers
       end
 
       def search_params
-        @job.config.fetch('terms').join ', '
+        @job.config.fetch(:terms).join ', '
       end
       
     end

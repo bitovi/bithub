@@ -1,6 +1,6 @@
 require 'uri'
-require 'guzzler/redis_connection'
-require 'guzzler/commands'
+
+require 'guzzler/redis_api'
 
 require 'guzzler/service'
 require 'guzzler/service_error'
@@ -13,23 +13,6 @@ module Guzzler
 
   def self.logger
     Celluloid.logger
-  end
-
-  def self.redis(&block)
-    raise ArgumentError, "requires a block" unless block
-    redis_pool.with(&block)
-  end
-
-  def self.redis=(arg)
-    @redis = if arg.is_a?(ConnectionPool)
-      arg
-    else
-      Guzzler::RedisConnection.create(arg)
-    end
-  end
-
-  def self.redis_pool
-    @redis ||= Guzzler::RedisConnection.create
   end
 
   def self.processing_chain

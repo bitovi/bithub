@@ -1,38 +1,60 @@
 require 'celluloid/current'
-require 'celluloid/autostart'
 
+require 'service'
+require 'manager'
+require 'retriever'
 
-require 'guzzler/service'
-require 'guzzler/popper'
-require 'guzzler/persistor/handlers/event_handler'
-require 'guzzler/persistor/handlers/entity_handler'
-require 'guzzler/persistor/handlers/error_handler'
+require 'event_handler'
+require 'error_handler'
+require 'entity_handler'
+require 'poppity_pop'
 
 module Guzzler
-  class Persistor
-    include Celluloid
-    include Util
+  module Persistor
 
-    def initialize
-      @condvar = Celluloid::Condition.new
+    class Runner
+      include Celluloid
+      include Util
 
-      @poppers = []
-      @poppers << Popper.new_link('event_q', Handlers::EventHandler)
-      @poppers << Popper.new_link('error_q', Handlers::ErrorHandler)
-      @poppers << Popper.new_link('entity_q', Handlers::EntityHandler)
-      @done = false
-    end
+      def initialize
+        @cvs = []; @mgs = []; @rtrs = []
 
-    def run
-      watchdog('Persistor#run') do
-        @poppers.each { |p| p.start }
+        @cvs << (@cv1 = Celluloid::Condition.new)
+        @cvs << (@cv2 = Celluloid::Condition.new)
+        @cvs << (@cv3 = Celluloid::Condition.new)
+
+        @mgs << (@event_manager = Manager.new_link(EventHandler, @cv1, { concurrency: 5 }))
+        @rtrs << (@event_retriever = Retriever.new_link(PoppityPop.new('event_q')))
+        @event_retriever.manager = @event_manager
+        @event_manager.retriever = @event_retriever
+
+        @mgs << (@entity_manager = Manager.new_link(EntityHandler, @cv2, { concurrency: 10 }))
+        @rtrs << (@entity_retriever = Retriever.new_link(PoppityPop.new('entity_q')))
+        @entity_retriever.manager = @entity_manager
+        @entity_manager.retriever = @entity_retriever
+
+        @mgs << (@error_manager = Manager.new_link(ErrorHandler, @cv3, { concurrency: 1 }))
+        @rtrs << (@error_retriever = Retriever.new_link(PoppityPop.new('error_q')))
+        @error_retriever.manager = @error_manager
+        @error_manager.retriever = @error_retriever
+
+        @done = false
       end
-    end
 
-    def stop
-      watchdog('Persistor#run') do
-        @done = true
-        @poppers.each { |p| p.stop }
+      def run
+        watchdog('Persistor#run') do
+          @mgs.each { |m| m.start }
+        end
+      end
+
+      def stop
+        watchdog('Persistor#run') do
+          @done = true
+
+          @mgs.each { |m| m.async.stop }
+          @cvs.each { |cv| cv.wait }
+          @rtrs.each { |r| r.terminate if r.alive? }
+        end
       end
     end
   end

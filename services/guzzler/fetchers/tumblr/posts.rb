@@ -25,7 +25,7 @@ module Guzzler::Fetchers
       end
 
       def hostname
-        @job.config.fetch('hostname')
+        @job.config.fetch(:hostname)
       end
 
       def next

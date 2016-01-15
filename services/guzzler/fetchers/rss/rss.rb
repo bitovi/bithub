@@ -13,7 +13,7 @@ module Guzzler::Fetchers
       def fetch
         log_fetch
 
-        feed = Feedjira::Feed.fetch_and_parse(@job.config.fetch('url'))
+        feed = Feedjira::Feed.fetch_and_parse(@job.config.fetch(:url))
         raise_error(feed) if feed.is_a? Numeric
         to_hashes feed
       end

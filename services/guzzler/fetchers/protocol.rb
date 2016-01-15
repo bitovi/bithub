@@ -9,11 +9,20 @@ module Guzzler
 
   module Fetchers
     module Protocol
-      def handle_errors(job = nil)
+      
+      def log_fetch
+        if @job
+          Guzzler.logger.info "[Fetcher] Fetching [#{name_for_logs}][#{@job}]"
+        else
+          Guzzler.logger.info "[Fetcher] Fetching [#{name_for_logs}]"
+        end
+      end
+
+      def handle_errors(service = nil)
         yield
 
       rescue KeyError => e
-        if job && job.feed_name == 'tumblr'
+        if service && service.feed_name == 'tumblr'
           raise Guzzler::ConfigError.new("Blog doesn't exist.")
         end
 
@@ -82,8 +91,8 @@ module Guzzler
         []
       end
 
-      def log_fetch
-        Guzzler.logger.info "[FETCHER] Fetching #{self.class.name.gsub('Guzzler::Fetchers::','').gsub('::', '/')}"
+      def name_for_logs
+        self.class.name.gsub('Guzzler::Fetchers::','').gsub('::', '/')
       end
 
       def fetch; end

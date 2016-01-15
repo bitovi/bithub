@@ -1,17 +1,13 @@
 require_relative 'base'
 
-module Guzzler
-  module Fetchers
+module Guzzler::Fetchers
 
-    module Instagram
-
-      class UserRecentMedia < Base
-        def fetch_once(opts={})
-          Celluloid.logger.info "[FETCHER] Fetching Instagram/UserRecentMedia"
-          @client.user_recent_media @object_id, opts
-        end
+  module Instagram
+    class UserRecentMedia < Base
+      def fetch_once(opts={})
+        log_fetch
+        @client.user_recent_media @object_id, opts
       end
-
     end
   end
 end

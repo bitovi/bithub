@@ -12,16 +12,14 @@ module Guzzler
           create_subscription
           @registry.subscribe 'instagram', 'media', instagram_object_id, @service
         rescue ::Instagram::Error => e
-          Guzzler.logger.error(msg = "Instagram sub failed with #{e.message}")
-          raise Guzzler::SubscriptionError.new(msg)
+          raise Guzzler::SubscriptionError.new(e)
         end
 
         def unsubscribe
           delete_subscription
           @registry.unsubscribe 'instagram', 'media', instagram_object_id, @service
         rescue ::Instagram::Error => e
-          Guzzler.logger.error(msg = "Instagram unsub failed with #{e.message}")
-          raise Guzzler::SubscriptionError.new(msg)
+          raise Guzzler::SubscriptionError.new(e)
         end
 
         private
@@ -33,18 +31,14 @@ module Guzzler
           @client ||= ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
         end
 
-        def callback_url(opts={})
+        def callback_url
           # Tunnel is used only in development (b/c Instagram can't connect to your local dev machine directly)
-          domain =  ENV['TUNNEL_CRAWLER_HOST'] || opts[:domain] || ENV['LOCAL_CRAWLER_HOST']
-          port   =  ENV['TUNNEL_CRAWLER_PORT'] || opts[:port]   || ENV['LOCAL_CRAWLER_PORT'] 
+          domain =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_HOST'] : ENV['GUZZLER_HOST']
+          port   =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_PORT'] : ENV['GUZZLER_PORT'] 
 
-          path   = File.join ENV['CRAWLER_HTTP_PREFIX'], 'instagram', 'media'
+          path   = File.join ENV['GUZZLER_POSTBACK_ENDPOINT_PREFIX'], 'instagram', 'media'
 
-          if port == '80'
-            "http://#{domain}#{path}"
-          else
-            "http://#{domain}:#{port}#{path}"
-          end
+          (port == '80') ? "http://#{domain}#{path}" : "http://#{domain}:#{port}#{path}"
         end
       end
 

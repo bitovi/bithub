@@ -1,8 +1,6 @@
 class Api::V3::ServicesController < Api::V3::ApiController
   include Api::EmbedScoped
 
-  skip_filter :require_account!, :only => [:tree]
-
   def index
     authorize! :index, Service
     all_services
@@ -29,7 +27,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
     type_name = service_kind[:type_name]
 
     if @service.save
-      Guzzler::Jobs::Client.schedule(CrawlerServiceDecorator.new(@service))
+      Guzzler::Client.guzzle(CrawlerServiceDecorator.new(@service))
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
@@ -44,7 +42,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
     @service.humanized_config
 
     if @service.save
-      Guzzler::Jobs::Client.schedule(CrawlerServiceDecorator.new(@service))
+      Guzzler::Client.guzzle(CrawlerServiceDecorator.new(@service))
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
@@ -55,18 +53,13 @@ class Api::V3::ServicesController < Api::V3::ApiController
     authorize! :destroy, a_service
 
     if @service.clear_relations_and_destroy
-      Guzzler::Jobs::Client.unschedule(CrawlerServiceDecorator.new(@service)) 
+      Guzzler::Client.unguzzle(CrawlerServiceDecorator.new(@service)) 
       CleanOrphanedEntitiesJob.perform_later(Apartment::Tenant.current)
 
       render :json => msg_hash(@service, 'destroy', 'success'), :status => 204
     else
       render :json => msg_hash(@service, 'destroy'), :status => 406
     end
-  end
-
-  def tree
-    raise CanCan::AccessDenied unless params['secret'] == ENV['CRAWLER_SECRET_KEY']
-    render :json => big_hash.to_json
   end
 
   def suggestions
@@ -86,33 +79,6 @@ class Api::V3::ServicesController < Api::V3::ApiController
     else
       render json: msg_hash(@bi, 'suggestions'), status => 406
     end
-  end
-
-  def big_hash
-    Hash[
-      :brands, Brand.active.all.map do |b|
-        Apartment::Tenant.switch b.name do
-          Hash[
-            :id, b.id,
-            :name, b.name,
-            :embeds, b.embeds.map do |e|
-              Hash[
-                :id, e.id,
-                :name, e.name,
-                :services, e.valid_services.map do |s|
-                  Hash[
-                    :id, s.id,
-                    :feed_name, s.feed_name,
-                    :type_name, s.type_name,
-                    :config, s.config_with_credentials
-                  ]
-                end
-              ]
-            end
-          ]
-        end
-      end
-    ]
   end
 
   private

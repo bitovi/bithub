@@ -32,7 +32,7 @@ module Guzzler
         private
 
         def org_name
-          @job.config.fetch('name')
+          @job.config.fetch(:name)
         end
       end
     end

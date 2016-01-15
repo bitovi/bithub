@@ -26,16 +26,14 @@ module Guzzler::Listener::Subscribers
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'post'
       @registry.subscribe 'facebook', 'page', page_id, @service
     rescue ::Koala::KoalaError => e
-      Guzzler.logger.info(msg = "Facebook sub failed with #{e.message}")
-      raise Guzzler::SubscriptionError.new(msg)
+      raise Guzzler::SubscriptionError.new(e)
     end
 
     def unsubscribe
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'delete'
       @registry.unsubscribe 'facebook', 'page', page_id, @service
     rescue ::Koala::KoalaError => e
-      Guzzler.logger.info(msg = "Facebook unsub failed with #{e.message}")
-      raise Guzzler::SubscriptionError.new(msg)
+      raise Guzzler::SubscriptionError.new(e)
     end
     
     def preload_items

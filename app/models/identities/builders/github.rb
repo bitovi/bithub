@@ -12,13 +12,13 @@ module Identities
 
       def repos
         if rs = repos_over_http
-          @storage[:repos] = rs.map(&:to_h)
+          @storage[:repos] = rs.map(&:to_hash)
         end
       end
 
       def orgs
         if os = orgs_over_http
-          @storage[:orgs] = os.map(&:to_h)
+          @storage[:orgs] = os.map(&:to_hash)
         end
       end
 

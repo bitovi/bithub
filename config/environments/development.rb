@@ -15,7 +15,7 @@ Bithub::Application.configure do
 
   # Logging with log4r
   config.log_level = :debug
-  config.logger = Logger.new(STDOUT)
+  config.logger = Logger.new(nil)
 
   # Mandrill as default mailer
   config.action_mailer.smtp_settings = {

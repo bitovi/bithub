@@ -1,6 +1,7 @@
 require 'rmeetup'
 
 module Guzzler::Fetchers
+
   module Meetup
     module Common
 
