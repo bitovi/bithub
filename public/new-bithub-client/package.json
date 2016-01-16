@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "testee src/test.html --browsers firefox --reporter Spec",
-    "start": "BITHUB_HOST=http://dev.bithub.com can-serve --port 3030",
+    "start": "http://dev.bithub.com can-serve --port 3030",
     "develop": "BITHUB_HOST=http://dev.bithub.com node server --develop --port 3030",
     "document": "documentjs",
     "build": "node build"
@@ -57,7 +57,7 @@
     "done-css": "^1.1.15",
     "donejs": "^0.5.2",
     "generator-donejs": "^0.3.4",
-    "jquery": "^2.1.4",
+    "jquery": "2.1.4",
     "steal": "^0.12.3",
     "lodash-amd": "^3.10.1",
     "moment": "^2.10.6",
@@ -76,7 +76,6 @@
     "testee": "^0.2.2",
     "donejs-deploy": "^0.3.1",
     "donejs-cli": "^0.5.4",
-    "steal-tools": "^0.12.1",
-    "documentjs": "^0.3.3"
+    "steal-tools": "^0.12.1"
   }
 }
