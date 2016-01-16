@@ -83,18 +83,7 @@ const AppViewModel = AppMap.extend({
 			serialize: false
 		},
 		currentAccount : {
-			serialize: false,
-			get : function(lastValue, setter){
-				if(!lastValue){
-					return this.waitFor(Account.current()).then(function(account){
-						setter(account);
-					}, function(){
-						console.log('NO CURRENT ACCOUNT');
-						window.location.href = "/";
-					});
-				}
-				return lastValue;
-			}
+			serialize: false
 		},
 		isChangingOrganization : {
 			value: false,
@@ -260,7 +249,15 @@ const AppViewModel = AppMap.extend({
 		}
 	},
 	init : function(){
+		var self = this;
 		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
+		Account.current().then(function(acc){
+			console.log('ACCOUNT', acc);
+			self.attr('currentAccount', acc);
+		}, function(){
+			console.log('ACCOUNT REQ', arguments);
+			window.location.href = "/";
+		});
 	},
 	refreshBits : function(){
 		var self = this;
@@ -292,25 +289,26 @@ const AppViewModel = AppMap.extend({
 		this.attr('currentOrganizationId', id);
 	},
 	isLoaded : function(){
-		var currentAccount = this.attr('currentAccount');
-		if(!currentAccount){
-			return false;
-		}
-		if(currentAccount.state && currentAccount.state() === 'pending'){
+		var services = this.attr('services');
+		console.log('--------------------------------------');
+		console.log('CURRENT ACCOUNT', this.attr('currentAccount'));
+		console.log('IS CHANGING ORG', this.attr('isChangingOrganization'));
+		console.log('HUBS RESOLVED', this.attr('hubs').isResolved());
+		console.log('SERVICES', this.attr('services') && this.attr('services').isResolved());
+		console.log('--------------------------------------');
+		if(!this.attr('currentAccount')){
 			return false;
 		}
 		if(this.attr('isChangingOrganization')){
 			return false;
 		}
-		if(this.attr('hubs').isResolved()){
-			if(this.attr('hubs.length') === 0){
-				return true;
-			}
-			if(this.attr('services') && this.attr('services').isResolved() && this.attr('currentHub')){
-				return true;
-			}
+		if(this.attr('hubs').isPending()){
+			return false;
 		}
-		return false;
+		if(!services || (services && services.isPending())){
+				return false;
+		}
+		return true;
 	},
 	redirectToDesktop : function(ctx, el, ev){
 		ev.preventDefault();
