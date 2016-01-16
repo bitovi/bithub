@@ -149,8 +149,6 @@ const AppViewModel = AppMap.extend({
 				var length = hubs.attr('length');
 				var currentHubId = parseInt(this.attr('currentHubId'), 10);
 				if(hubs.isResolved()){
-					this.__liveservice = connectLiveService(currentHubId);
-					this.__liveservice && this.__liveservice.on('entities', can.proxy(this.newEntity, this));
 					for(var i = 0; i < length; i++){
 						if(hubs[i].id === currentHubId){
 							return hubs[i];
@@ -175,7 +173,7 @@ const AppViewModel = AppMap.extend({
 				}, function(e){
 					deferred.reject();
 				});
-				//this.waitFor(deferred);
+				this.waitFor(deferred);
 				return hubList;
 			}
 		},
@@ -199,6 +197,8 @@ const AppViewModel = AppMap.extend({
 					this.waitFor(deferred);
 					list.then(function(){
 						deferred.resolve();
+					}, function(){
+						deferred.reject();
 					});
 					return list;
 				}
@@ -214,6 +214,8 @@ const AppViewModel = AppMap.extend({
 					this.waitFor(deferred);
 					list.then(function(){
 						deferred.resolve();
+					}, function(){
+						deferred.reject();
 					});
 					return list;
 				}
@@ -290,6 +292,13 @@ const AppViewModel = AppMap.extend({
 		this.attr('currentOrganizationId', id);
 	},
 	isLoaded : function(){
+		var currentAccount = this.attr('currentAccount');
+		if(!currentAccount){
+			return false;
+		}
+		if(currentAccount.state && currentAccount.state() === 'pending'){
+			return false;
+		}
 		if(this.attr('isChangingOrganization')){
 			return false;
 		}
