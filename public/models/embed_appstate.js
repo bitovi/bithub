@@ -66,6 +66,7 @@ export default can.Map.extend({
 
 		var hubId = this.attr('hubId');
 		liveService = connectLiveService(hubId, this.attr('tenant'));
+		console.log('HUB ID', hubId, liveService, this.attr('tenant'))
 
 		if(liveService){
 			console.log('LIVESERVICE ENTITIES', liveService);

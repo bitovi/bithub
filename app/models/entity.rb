@@ -104,30 +104,12 @@ class Entity < ActiveRecord::Base
   end
 
   def is_approved(embed = nil)
-    # Used when entities are decorated with attributes from embed_entities,
-    # ie. is_approved_manually and is_approved_automatically
-    if has_attribute?(:is_approved_manually) && has_attribute?(:is_approved_automatically)
-      (read_attribute(:is_approved_manually) != nil) ? is_approved_manually? : is_approved_automatically?
-    # If entity doesn't have these attributes (is_approved_*), then given an embed,
-    # find the appropriate embed_entities record and read that info from it
-    else
-      return nil if embed.nil?
-      memoize('is_approved', embed.id) do
-        embed_entities.find_by_embed_id(embed.id).is_approved
-      end
-    end
+    return self.decision(embed) == 'approved' || self.decision(embed) == 'starred'
   end
 
   # See first 5 lines of EmbedEntitiesController#build_scope method
   def is_pinned(embed = nil)
-    if has_attribute?(:is_pinned)
-      read_attribute(:is_pinned)
-    else
-      return nil if embed.nil?
-      memoize('is_pinned', embed.id) do
-        embed_entities.where(:embed_id => embed.id).first.is_pinned?
-      end
-    end
+    return self.decision(embed) == 'starred'
   end
   
   # See first 5 lines of EmbedEntitiesController#build_scope method
@@ -302,7 +284,7 @@ class Entity < ActiveRecord::Base
   def msg(embed)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
     entity = EntityDecorator.decorate(self, context: {embed: embed})
-    payload = view.render('api/v3/embed_entities/entity', {entity: entity})
+    payload = view.render('api/v4/embed_entities/entity', {entity: entity})
 
     {
       meta: meta_msg(embed, is_approved(embed)),

@@ -177,6 +177,23 @@ Bit.List = Bit.List.extend({
 			});
 		}
 	},
+	refresh : function(cb){
+		var params = this.__loadingParams;
+		var self = this;
+		Bit.findAll(params).then(function(data){
+			var current;
+			var counter = 0;
+			for(var i = 0; i < data.length; i++){
+				current = data[i];
+				if(self.indexOf(current) === -1){
+					self.unshift(current);
+					counter++;
+				}
+			}
+			cb(counter);
+		});
+		
+	},
 	isLoading : function(){
 		return this.attr('length') === 0 && this.attr('isCurrentlyLoading');
 	}

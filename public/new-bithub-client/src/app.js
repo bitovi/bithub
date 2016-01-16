@@ -13,6 +13,7 @@ import EntityDecision from 'src/models/entity-decision';
 import Service from 'src/models/service';
 import $ from "jquery";
 import Cookie from "js-cookie";
+import connectLiveService from "./connect-liveservice";
 
 can.route.bindings.pushstate.root = "/new-bithub/";
 can.baseURL = '/new-bithub/';
@@ -53,6 +54,14 @@ const TAB_TO_FILTER = {
 	approved: 'approved',
 	starred: 'starred',
 	deleted: 'deleted'
+};
+
+var getCurrentDecision = function(decisions, current){
+	for(var i = 0; i < decisions.length; i++){
+		if(decisions[i].id === current){
+			return decisions[i];
+		}
+	}
 };
 
 const AppViewModel = AppMap.extend({
@@ -140,13 +149,15 @@ const AppViewModel = AppMap.extend({
 				var length = hubs.attr('length');
 				var currentHubId = parseInt(this.attr('currentHubId'), 10);
 				if(hubs.isResolved()){
+					this.__liveservice = connectLiveService(currentHubId);
+					this.__liveservice && this.__liveservice.on('entities', can.proxy(this.newEntity, this));
 					for(var i = 0; i < length; i++){
 						if(hubs[i].id === currentHubId){
 							return hubs[i];
 						}
 					}
 				}
-			}
+			},
 		},
 		hubs : {
 			serialize: false,
@@ -214,6 +225,10 @@ const AppViewModel = AppMap.extend({
 				var currentHub = this.attr('currentHubId');
 				var list = new Bit.List();
 				var deferred = can.Deferred();
+				var self = this;
+				
+				clearTimeout(this.__listRefreshTimeout);
+
 				if(tab && currentHub){
 					list.__loadingParams = {
 						hubId: currentHub,
@@ -225,6 +240,7 @@ const AppViewModel = AppMap.extend({
 						var req = list.loadNextPage();
 						if(req){
 							req.then(function(){
+								self.refreshBits();
 								deferred.resolve();
 							});
 						} else {
@@ -243,6 +259,16 @@ const AppViewModel = AppMap.extend({
 	},
 	init : function(){
 		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
+	},
+	refreshBits : function(){
+		var self = this;
+		this.__listRefreshTimeout = setTimeout(function(){
+			self.attr('bits').refresh(function(newCount){
+				var currentDecision = getCurrentDecision(self.attr('entityDecisions'), self.attr('moderationTab'));
+				currentDecision.attr('count', currentDecision.attr('count') + newCount);
+			});
+			self.refreshBits();
+		}, 30000);
 	},
 	toggleOrganizations: function(){
 		this.attr('organizationsOpen', !this.attr('organizationsOpen'));
