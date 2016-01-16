@@ -293,15 +293,14 @@ const AppViewModel = AppMap.extend({
 		if(this.attr('isChangingOrganization')){
 			return false;
 		}
-		/*if(this.attr('hubs').isResolved()){
+		if(this.attr('hubs').isResolved()){
 			if(this.attr('hubs.length') === 0){
 				return true;
 			}
 			if(this.attr('services') && this.attr('services').isResolved() && this.attr('currentHub')){
 				return true;
 			}
-		}*/
-		return true;
+		}
 		return false;
 	},
 	redirectToDesktop : function(ctx, el, ev){
