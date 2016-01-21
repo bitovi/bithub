@@ -1,6 +1,6 @@
 rails: ./bin/unicorn_rails -c ./config/unicorn_local.rb
 sidekiq: ./bin/sidekiq
-ssr: cd ./public/new-bithub-client && ./node_modules/can-ssr/bin/can-serve --port 3030
+ssr: cd ./public/new-bithub-client && node server.js --port 3030
 
 liveservice: node ./services/liveservice/server.js
 listener: bundle exec ruby ./services/listener/kickstart.rb
