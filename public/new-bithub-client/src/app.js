@@ -24,6 +24,9 @@ var BITHUB_HOST = "http://dev.bithub.com";
 if(process){
 	NODE_ENV = (process.env && process.env.NODE_ENV) || "";
 	BITHUB_HOST = (process.env && process.env.BITHUB_HOST) || BITHUB_HOST;
+	
+	console.log('BITHUB_HOST', BITHUB_HOST)
+
 }
 
 if(NODE_ENV.substr(0, 6) !== 'window'){
@@ -36,6 +39,9 @@ if(NODE_ENV.substr(0, 6) !== 'window'){
 					arguments[1] = BITHUB_HOST + arguments[1];
 				}
 				var res = oldOpen.apply(this, arguments);
+
+				console.log('AJAX CALL', global.__railsSessionId)
+
 				if(this.setDisableHeaderCheck && global && global.__railsSessionId){
 					this.setDisableHeaderCheck(true);
 					this.setRequestHeader('Cookie', '_session_id=' + global.__railsSessionId);
@@ -57,6 +63,7 @@ const TAB_TO_FILTER = {
 };
 
 var getCurrentDecision = function(decisions, current){
+	decisions = decisions || [];
 	for(var i = 0; i < decisions.length; i++){
 		if(decisions[i].id === current){
 			return decisions[i];
@@ -264,7 +271,9 @@ const AppViewModel = AppMap.extend({
 		this.__listRefreshTimeout = setTimeout(function(){
 			self.attr('bits').refresh(function(newCount){
 				var currentDecision = getCurrentDecision(self.attr('entityDecisions'), self.attr('moderationTab'));
-				currentDecision.attr('count', currentDecision.attr('count') + newCount);
+				if(currentDecision){
+					currentDecision.attr('count', currentDecision.attr('count') + newCount);
+				}
 			});
 			self.refreshBits();
 		}, 30000);
@@ -293,8 +302,8 @@ const AppViewModel = AppMap.extend({
 		console.log('--------------------------------------');
 		console.log('CURRENT ACCOUNT', this.attr('currentAccount'));
 		console.log('IS CHANGING ORG', this.attr('isChangingOrganization'));
-		console.log('HUBS RESOLVED', this.attr('hubs').isResolved());
-		console.log('SERVICES', this.attr('services') && this.attr('services').isResolved());
+		console.log('HUBS IS PENDING', this.attr('hubs').isPending());
+		console.log('SERVICES IS PENDING', !services || (services && services.isPending()));
 		console.log('--------------------------------------');
 		if(!this.attr('currentAccount')){
 			return false;
