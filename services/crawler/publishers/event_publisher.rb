@@ -71,6 +71,6 @@ class EventPublisher
     nil # if we can't dispatch, return nil so it will end up filtered out
   rescue TypeError => e
     error "[EVENT_PUBLISHER][#{owner_data.to_log_format}] #{e} | #{event.inspect}"
-    raise e
+    nil # we don't ever want to corrupt the state of the poller because of an unknown reponse
   end
 end
