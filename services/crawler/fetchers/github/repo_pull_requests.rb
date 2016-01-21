@@ -1,8 +1,11 @@
+require_relative 'common'
+
 module Fetchers
   module Github
 
     class RepoPullRequests
       include Protocol
+      include Github::UnknownGithubErrorHandler
 
       def initialize(client, opts)
         @client = client
@@ -13,8 +16,18 @@ module Fetchers
         Celluloid.logger.info "[FETCHER] Fetching Github/RepoPullRequests"
 
         handle_errors do
-          @client.pull_requests.list(user: @user, repo: @repo)
+          resp = @client.pull_requests.list(user: @user, repo: @repo)
+          handle_unknown_response(resp) do
+            @client.pull_requests.list(user: @user, repo: @repo)
+          end
         end
+      end
+      
+      def reset_settings_from_redirect(resp)
+        @user, @repo = HTTParty.get(resp['url'])[0]['url'].match(/repos\/(.*)\/pulls/)[1].split('/')
+      rescue => e
+        Celluloid.logger.error "[FETCHER] Error in Github/RepoIssues while trying to reset @user and @repo"
+        [ ]
       end
     end
   end
