@@ -17,9 +17,8 @@ class FacebookAppSubscriber
   private
 
   def callback_url
-    url = 'http://'
+    url = 'https://'
     url += domain
-    url += ':' + port if port
     url += path
     url
   end
@@ -36,13 +35,9 @@ class FacebookAppSubscriber
     ENV.fetch('CRAWLER_HTTP_PREFIX') + '/facebook/page/feed'
   end
 
-  def port
-    ENV['CRAWLER_HTTP_PORT']
-  end
-
   def realtime_client
     return @realtime_client if @realtime_client
-    @realtime_client = Koala::Facebook::RealtimeUpdates.new(client_opts)
+    @realtime_client = Koala::Facebook::RealtimeUpdates.new(client_opts.merge({:use_ssl => true}))
   end
 
   def client_opts
