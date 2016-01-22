@@ -21,6 +21,9 @@ module Handlers
       private
 
       def handle_subscription(req)
+        err_resp = [403, ':p']
+        return err_resp unless req.query_string
+
         params    = CGI::parse req.query_string
         challenge = params['hub.challenge'].first
         token     = params['hub.verify_token'].first
@@ -28,7 +31,7 @@ module Handlers
         if token == ENV['FACEBOOK_SUBSCRIPTIONS_VERIFY_TOKEN']
           [200, challenge]
         else
-          [403, ':p']
+          err_resp
         end
       end
 
