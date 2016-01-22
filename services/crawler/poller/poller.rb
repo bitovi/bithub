@@ -37,8 +37,11 @@ class Poller
     else
       fail 'LockManager unavailable'
     end
-  rescue => e
+  rescue Fetchers::ServiceError => e
     error_publisher.publish(e, @owner_data)
+    nil
+  rescue => e
+    Celluloid.logger.error e
     nil
   end
 
