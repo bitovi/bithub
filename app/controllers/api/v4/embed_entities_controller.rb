@@ -112,6 +112,8 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
   def decision
     if params[:decision] && EmbedEntity::DECISIONS.include?(params[:decision])
       params[:decision]
+    else
+      'approved'
     end
   end
 end
