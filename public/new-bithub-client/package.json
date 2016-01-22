@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "testee src/test.html --browsers firefox --reporter Spec",
-    "start": "http://dev.bithub.com can-serve --port 3030",
+    "start": "BITHUB_HOST=http://dev.bithub.com can-serve --port 3030",
     "develop": "BITHUB_HOST=http://dev.bithub.com node server --develop --port 3030",
     "document": "documentjs",
     "build": "node build"
