@@ -6,6 +6,9 @@ module Guzzler
 
       class FacebookSubscriptions < Handler
         def handle(req)
+          err_resp = [403, ':p']
+          return err_resp unless req.query_string
+
           handle_errors do
             params    = CGI::parse req.query_string
             challenge = params['hub.challenge'].first
@@ -14,7 +17,7 @@ module Guzzler
             if token == ENV['FACEBOOK_SUBSCRIPTIONS_VERIFY_TOKEN']
               [200, challenge]
             else
-              [403, ':p']
+              err_resp
             end
           end
         end

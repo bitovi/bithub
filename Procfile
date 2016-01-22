@@ -7,5 +7,3 @@ poller: ./services/guzzler/bin/poller
 listener: ./services/guzzler/bin/listener
 
 #ssr: cd ./public/new-bithub-client && ./node_modules/can-ssr/bin/can-serve --port 3030
-#crawler_listener: bundle exec ruby ./services/crawler/listener/kickstart.rb
-#crawler_streamer: bundle exec ruby ./services/crawler/streamer/kickstart.rb

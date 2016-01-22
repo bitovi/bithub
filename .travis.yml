@@ -5,13 +5,8 @@ env:
 script:
   - "bundle exec rake spec:models && bundle exec rake spec:services && bundle exec rake spec:requests"
 notifications:
-  slack: floatingpoint:IO5HYcnmWaVzxxgrWQUIgQK4
-  webhooks:
-    - https://floatingpoint.slack.com/services/hooks/travis?token=U0vBLGleeqmcaHVW4NO8IOLD
   recipients:
-    - veljko@bitovi.com
-    - nikica@bitovi.com
-    - mihael@bitovi.com
+    - mark@bitovi.com
 services:
   - redis-server
   - rabbitmq

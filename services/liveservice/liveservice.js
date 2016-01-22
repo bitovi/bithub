@@ -144,6 +144,7 @@ LiveService.prototype.onIoConnection = function() {
 				_.each( self.endpoints, function( endpoint ) {
 					var routingKey = [endpoint, params.tenant_name, params.embed_id].join('.');
 					var emitter  = function( data ) {
+						console.log('NEW DATA', data)
 						socket.emit( endpoint, data.payload );
 					};
 

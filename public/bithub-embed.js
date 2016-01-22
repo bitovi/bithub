@@ -50,10 +50,10 @@ var kickstart = function(hub){
 		var bits = appState.attr('bits');
 		var isLive = appState.isLive();
 
-		if(appState.isPublic() && isLive && bit.attr('is_approved')){
+		if(appState.isPublic() && isLive && bit.isPublic()){
 			bits.place(bit);
 		} else {
-			if(isLive && bits.indexOf(bit) === -1){
+			if(isLive && bits.indexOf(bit) === -1 && bit.attr('decision') === appState.attr('decision')){
 				bits.unshift(bit);
 			}
 		}

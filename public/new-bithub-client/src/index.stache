@@ -32,8 +32,10 @@
             <i class="fa fa-exchange"></i>
             Switch Organization
           </a>
-          <a class="btn-logout" href="/logout">Logout</a> 
-          <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+          <a class="btn-logout" href="/logout">Logout</a>
+          {{#if hubs.length}}
+            <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+          {{/if}}
         </nav>
         
         <main id="panel" class="slideout-panel">

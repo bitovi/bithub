@@ -13,6 +13,7 @@ import EntityDecision from 'src/models/entity-decision';
 import Service from 'src/models/service';
 import $ from "jquery";
 import Cookie from "js-cookie";
+import connectLiveService from "./connect-liveservice";
 
 can.route.bindings.pushstate.root = "/new-bithub/";
 can.baseURL = '/new-bithub/';
@@ -23,6 +24,9 @@ var BITHUB_HOST = "http://dev.bithub.com";
 if(process){
 	NODE_ENV = (process.env && process.env.NODE_ENV) || "";
 	BITHUB_HOST = (process.env && process.env.BITHUB_HOST) || BITHUB_HOST;
+	
+	console.log('BITHUB_HOST', BITHUB_HOST)
+
 }
 
 if(NODE_ENV.substr(0, 6) !== 'window'){
@@ -35,6 +39,9 @@ if(NODE_ENV.substr(0, 6) !== 'window'){
 					arguments[1] = BITHUB_HOST + arguments[1];
 				}
 				var res = oldOpen.apply(this, arguments);
+
+				console.log('AJAX CALL', global.__railsSessionId)
+
 				if(this.setDisableHeaderCheck && global && global.__railsSessionId){
 					this.setDisableHeaderCheck(true);
 					this.setRequestHeader('Cookie', '_session_id=' + global.__railsSessionId);
@@ -53,6 +60,15 @@ const TAB_TO_FILTER = {
 	approved: 'approved',
 	starred: 'starred',
 	deleted: 'deleted'
+};
+
+var getCurrentDecision = function(decisions, current){
+	decisions = decisions || [];
+	for(var i = 0; i < decisions.length; i++){
+		if(decisions[i].id === current){
+			return decisions[i];
+		}
+	}
 };
 
 const AppViewModel = AppMap.extend({
@@ -74,18 +90,7 @@ const AppViewModel = AppMap.extend({
 			serialize: false
 		},
 		currentAccount : {
-			serialize: false,
-			get : function(lastValue, setter){
-				if(!lastValue){
-					return this.waitFor(Account.current()).then(function(account){
-						setter(account);
-					}, function(){
-						console.log('NO CURRENT ACCOUNT');
-						window.location.href = "/";
-					});
-				}
-				return lastValue;
-			}
+			serialize: false
 		},
 		isChangingOrganization : {
 			value: false,
@@ -146,7 +151,7 @@ const AppViewModel = AppMap.extend({
 						}
 					}
 				}
-			}
+			},
 		},
 		hubs : {
 			serialize: false,
@@ -188,6 +193,8 @@ const AppViewModel = AppMap.extend({
 					this.waitFor(deferred);
 					list.then(function(){
 						deferred.resolve();
+					}, function(){
+						deferred.reject();
 					});
 					return list;
 				}
@@ -203,6 +210,8 @@ const AppViewModel = AppMap.extend({
 					this.waitFor(deferred);
 					list.then(function(){
 						deferred.resolve();
+					}, function(){
+						deferred.reject();
 					});
 					return list;
 				}
@@ -214,6 +223,10 @@ const AppViewModel = AppMap.extend({
 				var currentHub = this.attr('currentHubId');
 				var list = new Bit.List();
 				var deferred = can.Deferred();
+				var self = this;
+				
+				clearTimeout(this.__listRefreshTimeout);
+
 				if(tab && currentHub){
 					list.__loadingParams = {
 						hubId: currentHub,
@@ -225,6 +238,7 @@ const AppViewModel = AppMap.extend({
 						var req = list.loadNextPage();
 						if(req){
 							req.then(function(){
+								self.refreshBits();
 								deferred.resolve();
 							});
 						} else {
@@ -242,7 +256,27 @@ const AppViewModel = AppMap.extend({
 		}
 	},
 	init : function(){
+		var self = this;
 		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
+		Account.current().then(function(acc){
+			console.log('ACCOUNT', acc);
+			self.attr('currentAccount', acc);
+		}, function(){
+			console.log('ACCOUNT REQ', arguments);
+			window.location.href = "/";
+		});
+	},
+	refreshBits : function(){
+		var self = this;
+		this.__listRefreshTimeout = setTimeout(function(){
+			self.attr('bits').refresh(function(newCount){
+				var currentDecision = getCurrentDecision(self.attr('entityDecisions'), self.attr('moderationTab'));
+				if(currentDecision){
+					currentDecision.attr('count', currentDecision.attr('count') + newCount);
+				}
+			});
+			self.refreshBits();
+		}, 30000);
 	},
 	toggleOrganizations: function(){
 		this.attr('organizationsOpen', !this.attr('organizationsOpen'));
@@ -264,18 +298,26 @@ const AppViewModel = AppMap.extend({
 		this.attr('currentOrganizationId', id);
 	},
 	isLoaded : function(){
+		var services = this.attr('services');
+		console.log('--------------------------------------');
+		console.log('CURRENT ACCOUNT', this.attr('currentAccount'));
+		console.log('IS CHANGING ORG', this.attr('isChangingOrganization'));
+		console.log('HUBS IS PENDING', this.attr('hubs').isPending());
+		console.log('SERVICES IS PENDING', !services || (services && services.isPending()));
+		console.log('--------------------------------------');
+		if(!this.attr('currentAccount')){
+			return false;
+		}
 		if(this.attr('isChangingOrganization')){
 			return false;
 		}
-		if(this.attr('hubs').isResolved()){
-			if(this.attr('hubs.length') === 0){
-				return true;
-			}
-			if(this.attr('services') && this.attr('services').isResolved() && this.attr('currentHub')){
-				return true;
-			}
+		if(this.attr('hubs').isPending()){
+			return false;
 		}
-		return false;
+		if(!services || (services && services.isPending())){
+				return false;
+		}
+		return true;
 	},
 	redirectToDesktop : function(ctx, el, ev){
 		ev.preventDefault();

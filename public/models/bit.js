@@ -39,6 +39,7 @@ var buffer = (function(){
 })();
 
 Bit.messageFromLiveService = function(msg){
+	//console.log('MSG FROM LIVE SERVICE', msg);
 	var parsed = JSON.parse(msg);
 	parsed._isFromLiveService = true;
 
@@ -47,7 +48,7 @@ Bit.messageFromLiveService = function(msg){
 	} else if(isFullBit(parsed)){
 		buffer.add(this.model(parsed));
 	}
-	if(!parsed.is_approved){
+	if(!parsed.decision === 'deleted'){
 		can.trigger(Bit, 'disapproved', [this.store[parsed.id]]);
 	}
 };
@@ -81,5 +82,10 @@ Bit.List = Bit.List.extend({
 		this.splice(index, 0, bit);
 	}
 });
+
+Bit.prototype.isPublic = function(){
+	var d = this.attr('decision')
+	return d === 'approved' || d === 'starred';
+}
 
 export default Bit;

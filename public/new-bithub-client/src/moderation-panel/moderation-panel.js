@@ -1,7 +1,6 @@
 import can from "can";
 import template from "./moderation-panel.stache!";
 import Bit from "src/models/bit";
-
 import "./moderation-panel.less!";
 
 export default can.Component.extend({

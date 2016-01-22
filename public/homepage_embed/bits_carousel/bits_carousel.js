@@ -30,7 +30,7 @@ export default can.Component.extend({
 				get : function(lastSetValue){
 					lastSetValue = lastSetValue || new can.Map();
 					lastSetValue.attr('offset', lastSetValue.offset || this.attr('bits').length || 0);
-					lastSetValue.attr('limit', 5);
+					lastSetValue.attr('limit', 10);
 					return lastSetValue;
 				}
 			},

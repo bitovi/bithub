@@ -31,7 +31,7 @@ can.Component.extend({
 				opts = arguments[1];
 			}
 
-			str = can.isFunction(str) ? str() : str;
+			str = (can.isFunction(str) ? str() : str) || "";
 
 			if(str.length > 50){
 				str = str.substr(0, 50) + '&hellip;';

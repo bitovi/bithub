@@ -17,6 +17,9 @@ module Guzzler
 
       def start
         Guzzler.logger.info "Subscribing all services."
+
+        # TODO start FacebookAppSubscriber FIRST !!!
+
         Guzzler.smembers('services:listening').each do |sk|
           service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
           manage_subscription(service, :subscribe)

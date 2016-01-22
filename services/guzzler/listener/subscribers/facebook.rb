@@ -16,6 +16,7 @@ require 'guzzler/error'
 # https://developers.facebook.com/docs/facebook-login/access-tokens
 
 module Guzzler::Listener::Subscribers
+
   class FacebookPage < BaseSubscriber
 
     ### Current hack

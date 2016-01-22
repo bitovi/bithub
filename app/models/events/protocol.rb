@@ -84,7 +84,7 @@ module Events
     end
     
     def brand_id
-      @meta.fetch(:embed_id)
+      @meta.fetch(:brand_id)
     end
     
     def embed_id
