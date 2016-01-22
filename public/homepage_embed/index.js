@@ -12,7 +12,7 @@ import "style/embed.less!";
 var RealBit = Bit.extend({
 	findAll: function(params){
 		return $.ajax({
-			url: 'https://bithub.com/api/v4/embeds/143/entities?view=public&decision=approved&tenant_name=calm_dove_6826&image_only=true&' + $.param(params)
+			url: window.location.protocol + '//bithub.com/api/v4/embeds/143/entities?view=public&decision=approved&tenant_name=calm_dove_6826&image_only=true&' + $.param(params)
 		});
 	},
 }, {});
