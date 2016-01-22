@@ -64,7 +64,7 @@ module Entities
     end
 
     def repr_for_logs
-      "#{brand_id},#{embed_id},#{embed_id},#{feed_name},#{type_name}"
+      "#{brand_id},#{embed_id},#{service_id},#{feed_name},#{type_name}"
     end
 
     def collect_methods(regexp)
