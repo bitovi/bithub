@@ -12,7 +12,7 @@ module Guzzler
     end
 
     def self.unguzzle(service)
-      if true
+      if service.listens?
         stop_listening(service)
       else
         stop_polling(service)

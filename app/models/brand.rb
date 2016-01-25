@@ -26,6 +26,14 @@ class Brand < ActiveRecord::Base
     Apartment::Tenant.switch! name
   end
 
+  def self.map_tenants_to(&blk)
+    pluck(:tenant_name).map do |tn|
+      Apartment::Tenant.switch(tn) do
+        blk.call
+      end
+    end
+  end
+
   def self.current
     where(tenant_name: Apartment::Tenant.current).first
   end

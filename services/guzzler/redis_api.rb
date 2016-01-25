@@ -29,6 +29,24 @@ module Guzzler
       str
     end
   end
+  
+  def self.scard(k)
+    redis do |conn|
+      conn.scard(k)
+    end
+  end
+
+  def self.zcard(k)
+    redis do |conn|
+      conn.zcard(k)
+    end
+  end
+
+  def self.zrange(k, l = 0, r = -1)
+    redis do |conn|
+      conn.zrange(k, l, r)
+    end
+  end
 
   def self.smembers(k)
     redis do |conn|
@@ -48,9 +66,15 @@ module Guzzler
     end
   end
   
-  def self.srem(k)
+  def self.zrem(zset, k)
     redis do |conn|
-      conn.srem(k)
+      conn.zrem(zset, k)
+    end
+  end
+  
+  def self.srem(set, k)
+    redis do |conn|
+      conn.srem(set, k)
     end
   end
 

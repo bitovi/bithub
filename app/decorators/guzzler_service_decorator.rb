@@ -1,4 +1,4 @@
-class CrawlerServiceDecorator < Draper::Decorator
+class GuzzlerServiceDecorator < Draper::Decorator
   delegate :id, :brand, :type_name, :feed_name, :listens?, :polls?
 
   def key

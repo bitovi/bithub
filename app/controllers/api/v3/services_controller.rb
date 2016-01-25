@@ -27,7 +27,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
     type_name = service_kind[:type_name]
 
     if @service.save
-      Guzzler::Client.guzzle(CrawlerServiceDecorator.new(@service))
+      Guzzler::Client.guzzle(GuzzlerServiceDecorator.new(@service))
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
@@ -42,7 +42,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
     @service.humanized_config
 
     if @service.save
-      Guzzler::Client.guzzle(CrawlerServiceDecorator.new(@service))
+      Guzzler::Client.guzzle(GuzzlerServiceDecorator.new(@service))
       render 'api/v3/services/show'
     else
       render :json => msg_hash(@service, 'create'), :status => 406
@@ -53,7 +53,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
     authorize! :destroy, a_service
 
     if @service.clear_relations_and_destroy
-      Guzzler::Client.unguzzle(CrawlerServiceDecorator.new(@service)) 
+      Guzzler::Client.unguzzle(GuzzlerServiceDecorator.new(@service)) 
       CleanOrphanedEntitiesJob.perform_later(Apartment::Tenant.current)
 
       render :json => msg_hash(@service, 'destroy', 'success'), :status => 204

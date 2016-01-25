@@ -16,6 +16,32 @@ class Service < ActiveRecord::Base
   scope :feed, ->(fn) { where(feed_name: fn) }
   scope :type, ->(tn) { where(type_name: tn) }
 
+  QUERIES_FOR_LISTENING_SERVICES = [
+    Service.joins(:embed => :brand).where(feed_name: %w(instagram foursquare)),
+    Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'page')
+  ]
+
+  QUERIES_FOR_POLLING_SERVICES = [
+    Service.joins(:embed => :brand).where(feed_name: %w(github meetup twitter rss disqus stackexchange tumblr youtube)),
+    Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'public_page')
+  ]
+
+  def self.all_services(type)
+    Brand.map_tenants_to do
+      "Service::QUERIES_FOR_#{type.to_s.upcase}_SERVICES".constantize.map do |q|
+        q.select('services.*, brands.tenant_name as tenant_name').to_a
+      end.flatten
+    end.flatten
+  end
+
+  def self.num_of_services(type)
+    Brand.map_tenants_to do
+      "Service::QUERIES_FOR_#{type.to_s.upcase}_SERVICES".constantize.map do |q|
+        q.count
+      end.sum
+    end.sum
+  end
+
   def brand
     embed.brand
   end
