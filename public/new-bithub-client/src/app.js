@@ -78,6 +78,20 @@ const AppViewModel = AppMap.extend({
 				return val;
 			}
 		},
+		isSlideoutOpen : {
+			serialize: false,
+			value: false,
+			set : function(val){
+				if(val){
+					this.attr('wasSlideoutOpen', true);
+				}
+				return val;
+			}
+		},
+		wasSlideoutOpen : {
+			value: false,
+			serialize: false
+		},
 		tab : {
 			get : function(lastSetVal){
 				return lastSetVal || "pending";
@@ -140,37 +154,23 @@ const AppViewModel = AppMap.extend({
 		},
 		currentHub: {
 			serialize: false,
-			get : function(){
-				var hubs = this.attr('hubs');
-				var length = hubs.attr('length');
-				var currentHubId = parseInt(this.attr('currentHubId'), 10);
-				if(hubs.isResolved()){
-					for(var i = 0; i < length; i++){
-						if(hubs[i].id === currentHubId){
-							return hubs[i];
-						}
-					}
+			get : function(lastSetVal, setter){
+				var currentHubId = this.attr('currentHubId');
+				if(currentHubId){
+					Hub.findOne({id: currentHubId}).then(function(hub){
+						setter(hub);
+					});
+				} else {
+					Hub.findAll({limit: 1}).then(function(hubs){
+						setter(hubs[0]);
+					});
 				}
 			},
 		},
 		hubs : {
 			serialize: false,
 			get : function(){
-				var self = this;
-				var hubList = new Hub.List({});
-				var deferred = can.Deferred();
-				hubList.then(function(hubs){
-					if(!self.attr('currentHubId') && hubs.length){
-						self.attr('currentHubId', hubs[0].id);
-					}
-					setTimeout(function(){
-						deferred.resolve();
-					}, 1);
-				}, function(e){
-					deferred.reject();
-				});
-				this.waitFor(deferred);
-				return hubList;
+				return new Hub.List({});
 			}
 		},
 		loadingServices : {
@@ -302,16 +302,12 @@ const AppViewModel = AppMap.extend({
 		console.log('--------------------------------------');
 		console.log('CURRENT ACCOUNT', this.attr('currentAccount'));
 		console.log('IS CHANGING ORG', this.attr('isChangingOrganization'));
-		console.log('HUBS IS PENDING', this.attr('hubs').isPending());
 		console.log('SERVICES IS PENDING', !services || (services && services.isPending()));
 		console.log('--------------------------------------');
 		if(!this.attr('currentAccount')){
 			return false;
 		}
 		if(this.attr('isChangingOrganization')){
-			return false;
-		}
-		if(this.attr('hubs').isPending()){
 			return false;
 		}
 		if(!services || (services && services.isPending())){

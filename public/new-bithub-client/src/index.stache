@@ -25,7 +25,7 @@
     <can-import from="src/moderation-panel/" />
 
     {{#if isLoaded}}
-      <bh-slideout>
+      <bh-slideout {(is-open)}="isSlideoutOpen">
         <nav id="menu" class="slideout-menu">
           
           <a class="btn-switch-org" href="javascript://" ($click)="toggleOrganizations()">
@@ -33,8 +33,10 @@
             Switch Organization
           </a>
           <a class="btn-logout" href="/logout">Logout</a>
-          {{#if hubs.length}}
-            <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+          {{#if wasSlideoutOpen}}
+            {{#if hubs.length}}
+              <bh-mobile-menu hubs="{hubs}" current-hub="{currentHub}"></bh-mobile-menu>
+            {{/if}}
           {{/if}}
         </nav>
         
@@ -71,7 +73,6 @@
     {{/if}}
     {{asset "inline-cache"}}
 
-    <script src="/socket.io/socket.io.js"></script>
     {{#switch env.NODE_ENV}}
       {{#case "production"}}
         <script src="{{joinBase 'node_modules/steal/steal.production.js'}}"  main="bithub-client/index.stache!done-autorender"></script>

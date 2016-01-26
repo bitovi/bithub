@@ -9,6 +9,7 @@ can.Component.extend({
 		},
 		'.toggle-button click' : function(){
 			if(this.slideout){
+				this.scope.attr('isOpen', !this.scope.attr('isOpen'));
 				this.slideout.toggle();
 			}
 		},
