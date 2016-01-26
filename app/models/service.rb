@@ -13,6 +13,10 @@ class Service < ActiveRecord::Base
   has_many :service_errors
   has_many :events
 
+  after_create :guzzle_service
+  after_update :guzzle_service
+  after_destroy :unguzzle_service
+
   scope :feed, ->(fn) { where(feed_name: fn) }
   scope :type, ->(tn) { where(type_name: tn) }
 
@@ -40,6 +44,14 @@ class Service < ActiveRecord::Base
         q.count
       end.sum
     end.sum
+  end
+
+  def guzzle_service
+    Guzzler::Client.guzzle(GuzzlerServiceDecorator.new(self))
+  end
+
+  def unguzzle_service
+    Guzzler::Client.unguzzle(GuzzlerServiceDecorator.new(self)) 
   end
 
   def brand

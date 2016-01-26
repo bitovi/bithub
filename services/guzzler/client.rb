@@ -5,21 +5,21 @@ module Guzzler
 
     def self.guzzle(service)
       if service.listens?
-        start_listening(service)
+        cache_listening(service)
       else
-        start_polling(service)
+        cache_polling(service)
       end
     end
 
     def self.unguzzle(service)
       if service.listens?
-        stop_listening(service)
+        clear_listening_cache(service)
       else
-        stop_polling(service)
+        clear_polling_cache(service)
       end
     end
 
-    def self.start_listening(service)
+    def self.cache_listening(service)
       Guzzler.redis do |conn|
         conn.multi do
           conn.set(service.key, service.data.to_json)
@@ -28,16 +28,7 @@ module Guzzler
       end
     end
 
-    def self.stop_listening(service)
-      Guzzler.redis do |conn|
-        conn.multi do
-          conn.del(service.key, service.data.to_json)
-          conn.srem('services:listening', service.member)
-        end
-      end
-    end
-
-    def self.start_polling(service)
+    def self.cache_polling(service)
       Guzzler.redis do |conn|
         conn.multi do
           conn.set(service.key, service.data.to_json)
@@ -45,15 +36,31 @@ module Guzzler
         end
       end
     end
-
-    def self.stop_polling(service)
+    
+    def self.clear_listening_cache(service)
       Guzzler.redis do |conn|
         conn.multi do
-          conn.del(service.key, service.data)
-          conn.zrem('services:polling', service.member)
+          conn.del(service.key, service.data.to_json)
+          conn.srem('services:listening', service.member)
+          conn.srem('services:listening:subscribed', service.member)
+          delete_digests(conn, service)
         end
       end
     end
 
+    def self.clear_polling_cache(service)
+      Guzzler.redis do |conn|
+        conn.multi do
+          conn.del(service.key, service.data)
+          conn.zrem('services:polling', service.member)
+          delete_digests(conn, service)
+        end
+      end
+    end
+
+    def delete_digests(conn, service)
+      conn.del("digests:batch:#{service.tenant_name}:#{service.id}")
+      conn.del("digests:total:#{service.tenant_name}:#{service.id}")
+    end
   end
 end
