@@ -19,4 +19,5 @@ end
 
 require 'subscribers/instagram'
 require 'subscribers/facebook'
+require 'subscribers/facebook_app_subscriber'
 require 'subscribers/foursquare'

@@ -10,15 +10,22 @@ module Guzzler
       include Util
       include Celluloid
 
-      def initialize(registry, condvar)
+      def initialize(registry, http_server)
         @registry = registry
+        @http_server = http_server
         every(60) { refresh }
       end
 
       def start
+        if @http_server.started?
+          Listener::Subscribers::FacebookAppSubscriber.subscribe
+        else
+          Guzzler.logger.info "Waiting on HttpServer to bind."
+          after(1) { start }
+          return
+        end
+        
         Guzzler.logger.info "Subscribing all services."
-
-        # TODO start FacebookAppSubscriber FIRST !!!
 
         Guzzler.smembers('services:listening').each do |sk|
           service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
@@ -68,9 +75,8 @@ module Guzzler
             Guzzler.lpush('event_q', event)
           end
         end
-      rescue Guzzler::FetchError => e
-        Guzzler.lpush('error_q', [ Guzzler::ServiceError.new(e, subscriber.service).to_h ])
-        Guzzler.logger.error e.message
+      rescue => e
+        Guzzler.lpush('error_q', [ ServiceError.new(e, subscriber.service).to_h ])
       end
 
       def subscriber_class(service)

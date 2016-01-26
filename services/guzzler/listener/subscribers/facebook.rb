@@ -38,7 +38,7 @@ module Guzzler::Listener::Subscribers
     end
     
     def preload_items
-      Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }).fetch
+      Guzzler::Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }).fetch
     end
 
     private

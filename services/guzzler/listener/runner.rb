@@ -17,14 +17,14 @@ module Guzzler
 
         @registry = Guzzler::Listener::Registry.new_link
         @http_server = Guzzler::Listener::HttpServer.new_link(@registry)
-        @subscriber = Guzzler::Listener::Subscriber.new_link(@registry, @condvar)
+        @subscriber = Guzzler::Listener::Subscriber.new_link(@registry, @http_server)
         @done = false
       end
 
       def run
         watchdog('Listener#run') do
-          @http_server.start
-          @subscriber.start
+          @http_server.async.start
+          @subscriber.async.start
         end
       end
 
@@ -35,6 +35,7 @@ module Guzzler
           @condvar.wait
           @subscriber.terminate
           @http_server.terminate
+          @registry.terminate
         end
       end
     end

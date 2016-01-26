@@ -11,9 +11,10 @@ module Guzzler
 
     class HttpServer < Reel::Server::HTTP
 
-      def initialize(registry, opts = {})
-        @opts = opts
+      def initialize(registry)
         @registry = registry
+        @started = false
+      
         @router = Router.new
 
         super(host, port, &method(:on_connection))
@@ -23,6 +24,8 @@ module Guzzler
         # use Facebook v2.2 API
         Koala.config.api_version = 'v2.2'
       end
+      attr_reader :started
+      alias_method :started?, :started
 
       def start
         @router.register_handler(
@@ -44,6 +47,8 @@ module Guzzler
         @router.register_handler(
           ['POST', '/foursquare/venues'],
           Handlers::FoursquareData.new(@registry))
+
+        @started = true
 
         Guzzler.logger.info "Handlers registered"
       end
@@ -67,11 +72,11 @@ module Guzzler
       end
 
       def host
-        ENV['LOCAL_CRAWLER_HOST'] || '127.0.0.1'
+        ENV['LOCAL_LISTENER_HOST'] || '127.0.0.1'
       end
 
       def port
-        ENV['LOCAL_CRAWLER_PORT'] || '3001'
+        ENV['LOCAL_LISTENER_PORT'] || '3001'
       end
     end
   end

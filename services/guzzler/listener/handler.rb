@@ -3,7 +3,7 @@ module Guzzler
     module Handlers
 
       class Handler
-        def initialize(registry, opts = {})
+        def initialize(registry)
           @registry = registry
         end
 

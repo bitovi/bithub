@@ -36,7 +36,7 @@ module Guzzler
           domain =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_HOST'] : ENV['GUZZLER_HOST']
           port   =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_PORT'] : ENV['GUZZLER_PORT'] 
 
-          path   = File.join ENV['GUZZLER_POSTBACK_ENDPOINT_PREFIX'], 'instagram', 'media'
+          path   = File.join(ENV['GUZZLER_POSTBACK_ENDPOINT_PREFIX'] || '/', 'instagram', 'media')
 
           (port == '80') ? "http://#{domain}#{path}" : "http://#{domain}:#{port}#{path}"
         end

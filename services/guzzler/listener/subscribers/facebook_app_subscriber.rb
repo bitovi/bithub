@@ -1,12 +1,14 @@
 module Guzzler::Listener::Subscribers
 
   class FacebookAppSubscriber
-    def initialize(condvar)
-      @condvar = condvar
+    include Celluloid
+
+    def self.subscribe
+      new.async.subscribe
     end
 
     def subscribe
-      @condvar.wait
+      Guzzler.logger.info "Subscribing Guzzler as Facebook App"
       realtime_client.subscribe 'page', 'feed', callback_url, verify_token
     end
 
@@ -25,14 +27,14 @@ module Guzzler::Listener::Subscribers
 
     def domain
       if ENV['ENV'] == 'development'
-        ENV.fetch('TUNNEL_CRAWLER_HTTP_DOMAIN')
+        ENV.fetch('TUNNEL_GUZZLER_HOST')
       else
-        ENV.fetch('CRAWLER_HTTP_DOMAIN')
+        ENV.fetch('GUZZLER_HTTP_DOMAIN')
       end
     end
 
     def path
-      ENV.fetch('CRAWLER_HTTP_PREFIX') + '/facebook/page/feed'
+      ENV.fetch('GUZZLER_POSTBACK_ENDPOINT_PREFIX') + '/facebook/page/feed'
     end
 
     def realtime_client
