@@ -3,7 +3,13 @@ class Api::V3::EmbedsController < Api::V3::ApiController
 
   def index
     authorize! :index, Embed
-    @embeds = Embed.order("created_at DESC").all
+
+    scope = scope_applier\
+      .apply_muster_query_to_scope(muster_query)\
+      .apply_order_to_scope
+      .result
+
+    @embeds = scope.all
   end
 
   def show
@@ -85,6 +91,10 @@ class Api::V3::EmbedsController < Api::V3::ApiController
 
   def embed_params
     params.require(:embed).permit(:name, :colorscheme, :layout, :approved_by_default)
+  end
+  
+  def scope_applier(current_scope = nil)
+    ScopeApplier.new((current_scope || Embed), QueryLogic::Query.new(Embed, params))
   end
 
   def generated_name
