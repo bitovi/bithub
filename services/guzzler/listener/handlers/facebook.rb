@@ -30,15 +30,15 @@ module Guzzler
           handle_errors do
             payload = JSON.parse req.body.to_s
             entries = payload.fetch('entry') { [] }
-
+                
             entries.each do |entry|
               page_id = entry['id']
-              updates = entry.fetch('updates') { [] }
-
+              changes = entry.fetch('changes') { [] }
+            
               Guzzler.logger.info "Facebook postback notification for page #{page_id}"
 
-              updates.each do |u|
-                object_id = update['value'].andand['post_id']
+              changes.each do |c|
+                object_id = c['value'].andand['post_id']
                 next unless object_id
 
                 if subscriptions = @registry.fetch('facebook', 'page', page_id)
@@ -53,7 +53,6 @@ module Guzzler
           end
 
           Guzzler.logger.debug "Responding to Facebook"
-          # TODO: yield this immediately ?
           [200, 'OK']
         end
 
