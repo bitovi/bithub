@@ -40,7 +40,10 @@ module Guzzler::Fetchers
         },
 
         :Facebook => {
-          :PublicPage => Guzzler::Fetchers::Facebook::GetFeed
+          :PublicPage => Guzzler::Fetchers::Facebook::GetFeed.new(
+            ::Koala::Facebook::API.new("#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"),
+            { object_id: @job.config.fetch(:id) }
+          )
         },
 
         :Meetup => {

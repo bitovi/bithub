@@ -3,7 +3,7 @@ module Guzzler
   class Worker
     include Util
     include Celluloid
-    
+
     def initialize(boss)
       @manager = boss
     end

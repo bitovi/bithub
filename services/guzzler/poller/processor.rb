@@ -14,8 +14,6 @@ module Guzzler::Poller
           end
         else
 
-          Guzzler.logger.debug "_____________________________"
-
           Guzzler.lpush('liveservice:services', { 
             meta: { tenant_name: service.tenant_name, embed_id: service.embed_id },
             payload: { 
@@ -25,12 +23,13 @@ module Guzzler::Poller
           
         end
       else
-        Guzzler.logger.warn "Don't know how to process job #{job.feed}/#{job.type}"
+        Guzzler.logger.warn "Don't know how to process job #{service.feed}/#{service.type}"
       end
 
       @manager.async.worker_done(current_actor)
-    rescue Guzzler::FetchError => e
-      Guzzler.lpush('error_q', [ ServiceError.new(e, service).to_h ])
+    rescue => e
+      Guzzler.logger.error e
+      Guzzler.lpush('error_q', [ Guzzler::ServiceError.new(e, service).to_h ])
       @manager.async.worker_done(current_actor)
     end
 

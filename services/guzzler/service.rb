@@ -3,10 +3,6 @@ require 'core_ext'
 module Guzzler
   class Service
 
-    def self.from_service_record(service)
-      # new()...
-    end
-    
     # "guzzler:services:gauntless_forrest_3523:17/repo_issues"
     def initialize(service_key, service_data)
       @_service_key = service_key
