@@ -58,7 +58,7 @@ module Guzzler
       end
     end
 
-    def delete_digests(conn, service)
+    def self.delete_digests(conn, service)
       conn.del("digests:batch:#{service.tenant_name}:#{service.id}")
       conn.del("digests:total:#{service.tenant_name}:#{service.id}")
     end

@@ -17,6 +17,10 @@ class GuzzlerServiceDecorator < Draper::Decorator
     source.embed.brand.id
   end
 
+  def tenant_name
+    source.embed.brand.tenant_name
+  end
+
   def member
     'guzzler:' + key
   end
