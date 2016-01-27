@@ -30,6 +30,7 @@ if(process){
 }
 
 if(NODE_ENV.substr(0, 6) !== 'window'){
+	// Hacking in session stuff (should be gone in next version)
 	$.ajaxSettings.xhr = function(){
 		try {
 			var req = new global.XMLHttpRequest();
@@ -145,10 +146,29 @@ const AppViewModel = AppMap.extend({
 				}
 			}
 		},
-		currentHubId : {
-			set : function(newVal, setVal){
+		currentHubIdAsString: {
+			get: function(){
+				return this.attr("currentHubId") ? ""+this.attr("currentHubId") : undefined;
+			},
+			set: function(newVal){
+				this.attr("currentHubId", parseInt(newVal,10));
+			},
+			serialize: true,
+		},
+		currentHubId: {
+			set: function(newVal, resolve){
 				if(newVal){
 					return newVal;
+				}
+			},
+			get: function(lastSet, resolve){
+				if(!lastSet && resolve) {
+					Hub.findAll({limit: 1}).then((hubs) => {
+						this.attr("currentHub",hubs[0] );
+						resolve(hubs[0].attr("id"));
+					});
+				} else {
+					return lastSet;
 				}
 			}
 		},
@@ -156,16 +176,18 @@ const AppViewModel = AppMap.extend({
 			serialize: false,
 			get : function(lastSetVal, setter){
 				var currentHubId = this.attr('currentHubId');
-				if(currentHubId){
-					Hub.findOne({id: currentHubId}).then(function(hub){
-						setter(hub);
-					});
+				if(currentHubId) {
+					if(lastSetVal && lastSetVal.attr("id") === currentHubId ) {
+						return lastSetVal;
+					} else {
+						
+						Hub.findOne({id: currentHubId}).then(setter);
+						return null;
+					}
 				} else {
-					Hub.findAll({limit: 1}).then(function(hubs){
-						setter(hubs[0]);
-					});
+					return null;
 				}
-			},
+			}
 		},
 		hubs : {
 			serialize: false,
@@ -217,6 +239,8 @@ const AppViewModel = AppMap.extend({
 				}
 			}
 		},
+		// Creates an empty list, returns it, but in next turn, 
+		// calls `loadNextPage` to populate list.
 		bits : {
 			get : function(){
 				var tab = this.attr('moderationTab');
@@ -235,6 +259,7 @@ const AppViewModel = AppMap.extend({
 						offset: 0
 					};
 					setTimeout(function(){
+						
 						var req = list.loadNextPage();
 						if(req){
 							req.then(function(){
@@ -256,13 +281,14 @@ const AppViewModel = AppMap.extend({
 		}
 	},
 	init : function(){
+		$("html").data("viewModel",this);
 		var self = this;
 		can.on.call(Bit, 'decision', this.handleDecision.bind(this));
 		Account.current().then(function(acc){
-			console.log('ACCOUNT', acc);
+			//console.log('ACCOUNT', acc);
 			self.attr('currentAccount', acc);
 		}, function(){
-			console.log('ACCOUNT REQ', arguments);
+			//console.log('ACCOUNT REQ', arguments);
 			window.location.href = "/";
 		});
 	},
@@ -299,11 +325,7 @@ const AppViewModel = AppMap.extend({
 	},
 	isLoaded : function(){
 		var services = this.attr('services');
-		console.log('--------------------------------------');
-		console.log('CURRENT ACCOUNT', this.attr('currentAccount'));
-		console.log('IS CHANGING ORG', this.attr('isChangingOrganization'));
-		console.log('SERVICES IS PENDING', !services || (services && services.isPending()));
-		console.log('--------------------------------------');
+
 		if(!this.attr('currentAccount')){
 			return false;
 		}
@@ -322,8 +344,8 @@ const AppViewModel = AppMap.extend({
 	}
 });
 
-can.route("/:currentHubId", {page: 'moderation', moderationTab: 'pending'});
-can.route('/:currentHubId/:page', {moderationTab: 'pending'});
-can.route('/:currentHubId/:page/:moderationTab');
+can.route("/:currentHubIdAsString", {page: 'moderation', moderationTab: 'pending'});
+can.route('/:currentHubIdAsString/:page', {moderationTab: 'pending'});
+can.route('/:currentHubIdAsString/:page/:moderationTab');
 
 export default AppViewModel;
