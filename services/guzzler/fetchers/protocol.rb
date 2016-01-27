@@ -11,11 +11,7 @@ module Guzzler
     module Protocol
       
       def log_fetch
-        if @job
-          Guzzler.logger.info "[Fetcher] Fetching [#{name_for_logs}][#{@job}]"
-        else
-          Guzzler.logger.info "[Fetcher] Fetching [#{name_for_logs}]"
-        end
+        Guzzler.logger.info "[Fetcher] Fetching [#{name_for_logs}][#{@service}]"
       end
 
       def handle_errors(service = nil)

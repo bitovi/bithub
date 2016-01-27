@@ -19,10 +19,6 @@ module Guzzler::Listener::Subscribers
 
   class FacebookPage < BaseSubscriber
 
-    ### Current hack
-    # if there is no (page) access token in service use app token,
-    # skip RT subscription and only preload data from the page
-
     def subscribe
       client.graph_call "v2.2/#{page_id}/subscribed_apps", {access_token: page_token}, 'post'
       @registry.subscribe 'facebook', 'page', page_id, @service
@@ -38,10 +34,12 @@ module Guzzler::Listener::Subscribers
     end
     
     def preload_items
-      Guzzler::Fetchers::Facebook::GetFeed.new(client, { object_id: page_id }).fetch
+      Guzzler::Fetchers::Facebook::GetFeed.new(@service).fetch
     end
 
-    private
+    def client
+      Koala::Facebook::API.new(@service.config.fetch(:access_token))
+    end
 
     def page_id
       @service.config.fetch(:id)
@@ -49,10 +47,6 @@ module Guzzler::Listener::Subscribers
 
     def page_token
       @service.config.fetch(:access_token)
-    end
-
-    def client
-      @client ||= Koala::Facebook::API.new page_token #, app_secret
     end
   end
 end

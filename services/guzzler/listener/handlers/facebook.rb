@@ -44,7 +44,7 @@ module Guzzler
                 if subscriptions = @registry.fetch('facebook', 'page', page_id)
                   subscriptions.each do |service|
                     Guzzler.logger.debug "Fetching ..."
-                    events = fetch_object client(service.config[:access_token]), object_id
+                    events = Fetchers::Facebook::GetObject.new(service).fetch(object_id)
                     publish events, service
                   end
                 end
@@ -55,17 +55,7 @@ module Guzzler
           Guzzler.logger.debug "Responding to Facebook"
           [200, 'OK']
         end
-
-        def client(access_token)
-          Koala::Facebook::API.new access_token
-        end
-
-        def fetch_object(client, object_id)
-          Fetchers::Facebook::GetObject.new(client, {object_id: object_id}).fetch
-        end
-
       end
-
     end
   end
 end

@@ -1,9 +1,9 @@
-require_relative 'base'
+require_relative 'base_fetcher'
 
 module Guzzler::Fetchers
 
   module Facebook
-    class Search < Base
+    class Search < BaseFetcher
 
       def fetch(term, opts={})
         log_fetch

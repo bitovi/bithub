@@ -39,7 +39,7 @@ module Guzzler
           @condvar.wait
           @manager.terminate
 
-          @fetcher.terminate if @fetcher.alive?
+          @retriever.terminate if @retriever.alive?
         end
       end
     end
