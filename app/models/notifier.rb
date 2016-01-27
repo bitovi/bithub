@@ -10,7 +10,7 @@ class Notifier
     if about == :entity_persisted || about == :entity_moderated
       entity_touched(args.fetch(:entity))
     elsif about == :entity_routed_to_service
-      entity_routed_to_service(args.fetch(:entity), args.fetch(:service))
+      entity_routed_to_service(args.fetch(:service))
     elsif about == :service_error_raised
       service_error_raised(args.fetch(:service_error))
     end
@@ -32,7 +32,7 @@ class Notifier
   end
 
   # Notify client that an event was routed to a service so that it can mark it as a loaded service and/or clear the error marker.
-  def entity_routed_to_service(entity, service)
+  def entity_routed_to_service(service)
     Guzzler.lpush('liveservice:services', Messages.clear_service_errors(service))
   end
 

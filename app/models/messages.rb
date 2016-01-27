@@ -6,7 +6,7 @@ module Messages
 
     {
       meta: meta_msg(embed).merge({ is_public: entity.is_approved(embed) }),
-      payload: view.render('api/v3/embed_entities/entity', { entity: decorated_entity })
+      payload: view.render('api/v4/embed_entities/entity', { entity: decorated_entity })
     }
   end
 
