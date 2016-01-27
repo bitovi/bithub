@@ -7,8 +7,8 @@ module Guzzler::Fetchers
       include Protocol
       include Meetup::Common
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
@@ -30,7 +30,7 @@ module Guzzler::Fetchers
       private
 
       def group_id
-        @job.config.fetch(:id)
+        @service.config.fetch(:id)
       end
 
       def group_ids

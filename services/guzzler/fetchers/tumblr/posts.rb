@@ -10,8 +10,8 @@ module Guzzler::Fetchers
       # http://www.tumblr.com/docs/en/api/v2#posts
       LIMIT = 20
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
         @offset = 0
       end
 
@@ -25,7 +25,7 @@ module Guzzler::Fetchers
       end
 
       def hostname
-        @job.config.fetch(:hostname)
+        @service.config.fetch(:hostname)
       end
 
       def next

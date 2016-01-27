@@ -8,8 +8,8 @@ module Guzzler::Fetchers
     class Base
       include Protocol
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch(&block)
@@ -61,15 +61,15 @@ module Guzzler::Fetchers
        
 
       def target_id
-        @job.config.fetch :id
+        @service.config.fetch :id
       end
 
       def access_token
-        @job.config.fetch :access_token
+        @service.config.fetch :access_token
       end
 
       def refresh_token
-        @job.config.fetch :refresh_token
+        @service.config.fetch :refresh_token
       end
     end
   end

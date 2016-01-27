@@ -7,8 +7,8 @@ module Guzzler::Fetchers
       include Protocol
       include Twitter::Common
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch

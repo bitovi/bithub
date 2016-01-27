@@ -6,7 +6,7 @@ module Guzzler
       module Common
 
         def client
-          @client ||= ::Github.new(oauth_token: @job.token)
+          @client ||= ::Github.new(oauth_token: @service.token)
         end
 
       end

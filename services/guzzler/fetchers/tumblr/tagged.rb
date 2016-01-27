@@ -9,8 +9,8 @@ module Guzzler::Fetchers
 
       # http://www.tumblr.com/docs/en/api/v2#tagged-method
       
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
@@ -22,7 +22,7 @@ module Guzzler::Fetchers
       end
 
       def tag
-        @job.config.fetch(:tag)
+        @service.config.fetch(:tag)
       end
     end
   end

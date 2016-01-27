@@ -9,21 +9,21 @@ module Guzzler
         include Protocol
         include Github::Common
 
-        def initialize(job)
-          @job = job
+        def initialize(service)
+          @service = service
         end
 
         def fetch
           log_fetch
 
-          handle_errors(@job) do
+          handle_errors(@service) do
             client.activity.events.auto_pagination = false
             client.activity.events.repos(user: user_name, repo: repo_name)
           end
         end
 
         def initial_fetch
-          handle_errors(@job) do
+          handle_errors(@service) do
             client.activity.events.auto_pagination = true
             client.activity.events.repos(user: user_name, repo: repo_name)
           end
@@ -32,11 +32,11 @@ module Guzzler
         private
 
         def user_name
-          @user_name ||= @job.config.fetch(:name).split('/').first
+          @user_name ||= @service.config.fetch(:name).split('/').first
         end
 
         def repo_name
-          @repo_name ||= @job.config.fetch(:name).split('/').last
+          @repo_name ||= @service.config.fetch(:name).split('/').last
         end
       end
     end

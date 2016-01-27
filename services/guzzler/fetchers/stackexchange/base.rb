@@ -4,8 +4,8 @@ module Guzzler::Fetchers
     class Base
       include Protocol
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
@@ -22,11 +22,11 @@ module Guzzler::Fetchers
 
       def query
         { 
-          :tagged => @job.config.fetch(:tags).join(';'),
+          :tagged => @service.config.fetch(:tags).join(';'),
           :site => 'stackoverflow',
           :filter => Guzzler.static_config.fetch(:stackexchange).fetch(:filter),
           :key => Guzzler.static_config.fetch(:stackexchange).fetch(:api_key),
-          :access_token => @job.token
+          :access_token => @service.token
         }
       end
 

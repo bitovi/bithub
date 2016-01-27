@@ -11,11 +11,11 @@ module Guzzler::Fetchers
       private
 
       def key
-        @job.config['consumer_key'] || Guzzler.static_config.fetch(:tumblr).fetch(:api_key)
+        @service.config['consumer_key'] || Guzzler.static_config.fetch(:tumblr).fetch(:api_key)
       end
 
       def secret
-        @job.config['consumer_secret'] || Guzzler.static_config.fetch(:tumblr).fetch(:api_secret)
+        @service.config['consumer_secret'] || Guzzler.static_config.fetch(:tumblr).fetch(:api_secret)
       end
     end
   end

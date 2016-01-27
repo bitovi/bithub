@@ -6,14 +6,14 @@ module Guzzler::Fetchers
     class Site
       include Protocol
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
         log_fetch
 
-        feed = Feedjira::Feed.fetch_and_parse(@job.config.fetch(:url))
+        feed = Feedjira::Feed.fetch_and_parse(@service.config.fetch(:url))
         raise_error(feed) if feed.is_a? Numeric
         to_hashes feed
       end

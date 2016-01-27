@@ -6,8 +6,8 @@ module Guzzler::Fetchers
     class Comments
       include Protocol
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
@@ -26,7 +26,7 @@ module Guzzler::Fetchers
       end
 
       def forum
-        { :forum => @job.config.fetch(:url) }
+        { :forum => @service.config.fetch(:url) }
       end
 
       def related

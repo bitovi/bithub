@@ -7,8 +7,8 @@ module Guzzler::Fetchers
       include Protocol
       include Twitter::Common
 
-      def initialize(job, &blk)
-        @job = job
+      def initialize(service, &blk)
+        @service = service
         @blk = blk
       end
       
@@ -17,7 +17,7 @@ module Guzzler::Fetchers
 
         log_fetch
         handle_errors do
-          client.search(@blk.call(@job.config), :count => 100).take(100)
+          client.search(@blk.call(@service.config), :count => 100).take(100)
         end
       end
 

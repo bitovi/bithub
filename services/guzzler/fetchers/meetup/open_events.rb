@@ -7,8 +7,8 @@ module Guzzler::Fetchers
       include Protocol
       include Meetup::Common
 
-      def initialize(job)
-        @job = job
+      def initialize(service)
+        @service = service
       end
 
       def fetch
@@ -21,7 +21,7 @@ module Guzzler::Fetchers
       end
 
       def search_params
-        @job.config.fetch(:terms).join ', '
+        @service.config.fetch(:terms).join ', '
       end
       
     end

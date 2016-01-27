@@ -9,8 +9,8 @@ module Guzzler
         include Protocol
         include Github::Common
 
-        def initialize(job)
-          @job = job
+        def initialize(service)
+          @service = service
         end
 
         def fetch
@@ -32,7 +32,7 @@ module Guzzler
         private
 
         def org_name
-          @job.config.fetch(:name)
+          @service.config.fetch(:name)
         end
       end
     end
