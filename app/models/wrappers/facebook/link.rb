@@ -4,20 +4,16 @@ require 'wrappers/facebook/attachment_processing'
 module Wrappers
   module Facebook
 
-    class Photo
+    class Link
       include DataAccessible
       include CoreHelpers
       include AttachmentProcessing
 
-      has :id, :type, :picture
-      maybe_has :message, :link, :source, :width, :height
+      has :id, :type, :picture, :link
+      maybe_has :message, :description
 
       def initialize(status)
         @data = symbolize_keys(status)
-      end
-
-      def photo_id
-        @data.fetch(:object_id)
       end
 
       def created_time

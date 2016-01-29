@@ -1,4 +1,5 @@
 require 'entities/disqus/post'
+require 'entities/facebook/link'
 require 'entities/facebook/photo'
 require 'entities/facebook/status'
 require 'entities/foursquare/checkin'

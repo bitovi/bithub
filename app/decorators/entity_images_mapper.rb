@@ -45,6 +45,7 @@ class EntityImagesMapper
       }
     end
   end
+  alias_method :facebook_link, :facebook_photo
 
   def youtube_video
     { caption: 'Thumbnail', url: @source.image }
