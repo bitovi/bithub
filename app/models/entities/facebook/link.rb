@@ -4,27 +4,30 @@ require_relative 'shared'
 module Entities
   module Facebook
 
-    class Photo < Protocol
+    class Link < Protocol
       include Facebook::Shared
 
       def find
-        @event.photo.id && find_by_photo_id.first
+        @event.link_obj.id && find_by_link_id.first
       end
 
-      def find_by_photo_id
+      def find_by_link_id
         Entity
         .feed('facebook')
-        .type('photo')
-        .where(origin_id: @event.photo.id.to_s)
+        .type('link')
+        .where(origin_id: @event.link_obj.id.to_s)
       end
 
       def data
-        with_commons({
+        tmp = with_commons({
           props: {
-            origin_object_id: @event.photo_id,
-            photos: JSON.generate(@event.photo.images)
+            photos: JSON.generate(@event.link_obj.images)
           }
         })
+
+        tmp[:title] = @event.message
+        tmp[:body] = @event.description
+        tmp
       end
 
       def update

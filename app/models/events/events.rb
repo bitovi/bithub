@@ -1,4 +1,5 @@
 require 'events/disqus/post_event'
+require 'events/facebook/link_event'
 require 'events/facebook/photo_event'
 require 'events/facebook/status_event'
 require 'events/foursquare/checkin_event'
