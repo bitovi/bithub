@@ -111,9 +111,17 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
 
   def decision
     if params[:decision] && EmbedEntity::DECISIONS.include?(params[:decision])
-      params[:decision]
+      translate_decision(params[:decision])
     else
-      'approved'
+      translate_decision('approved')
+    end
+  end
+
+  def translate_decision(decision)
+    if public_visibility? 
+      (decision == 'approved') ? %w(approved starred) : decision
+    else
+      decision
     end
   end
 end
