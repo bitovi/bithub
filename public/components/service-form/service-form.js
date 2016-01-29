@@ -131,8 +131,8 @@ can.Component.extend({
 		clearService : function(){
 			can.batch.start();
 			this.attr({
-				saveDisabled: false,
-				service: null
+				service: null,
+				saveDisabled: false
 			});
 			this.clearErrors();
 			can.batch.stop();

@@ -16,11 +16,7 @@
 </div>
 
 {{#if currentService.isNew}}
-	{{#ifCanAddService services currentService.feed_name currentService.type_name}}
-		<bh-service-form service="{currentService}" state="{state}" services="{state.services}" class="bithub-form"></bh-service-form>
-  {{else}}
-    <div class="alert alert-info">You must upgrade your plan to add this service.</div>
-	{{/ifCanAddService}}
+	<bh-service-form service="{currentService}" state="{state}" services="{state.services}" class="bithub-form"></bh-service-form>
 {{/if}}
 
 {{#if state.services.isPending}}
