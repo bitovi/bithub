@@ -2,6 +2,7 @@ db/*.sqlite3
 log/*.log
 tmp/
 bin/
+db/structure.sql
 .bundle/
 .DS_Store
 public/uploads
