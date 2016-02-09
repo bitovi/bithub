@@ -15,8 +15,6 @@ WebMock.allow_net_connect!
 
 RSpec.configure do |config|
   config.before(:suite) do
-    ConnectionManager.instance
-
     Celluloid.boot
     DatabaseCleaner.clean_with :truncation
   end
