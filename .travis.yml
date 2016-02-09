@@ -1,7 +1,7 @@
 language: ruby
 cache: bundler
 env:
-  - RABBITMQ_URI=amqp://guest:guest@localhost/%2F REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
+  - REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
 script:
   - "bundle exec rake spec:models && bundle exec rake spec:services && bundle exec rake spec:requests"
 notifications:
@@ -9,13 +9,12 @@ notifications:
     - mark@bitovi.com
 services:
   - redis-server
-  - rabbitmq
 addons:
   postgresql: 9.3
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
 rvm:
-  - 2.1.2
+  - 2.2.2
 before_script:
   - "cp ./.travis_database.yml ./config/database.yml"
   - "bundle exec rake db:create"
