@@ -1,4 +1,6 @@
 class Service < ActiveRecord::Base
+  attr_accessor :skip_callbacks_during_testing
+
   validates_presence_of :embed_id, :feed_name, :type_name
   validate :service_config_validator
   validate :service_state_validator
@@ -13,9 +15,9 @@ class Service < ActiveRecord::Base
   has_many :service_errors
   has_many :events
 
-  after_create :guzzle_service
-  after_update :guzzle_service
-  after_destroy :unguzzle_service
+  after_create :guzzle_service, :unless => :skip_callbacks_during_testing
+  after_update :guzzle_service, :unless => :skip_callbacks_during_testing
+  after_destroy :unguzzle_service, :unless => :skip_callbacks_during_testing
 
   scope :feed, ->(fn) { where(feed_name: fn) }
   scope :type, ->(tn) { where(type_name: tn) }
@@ -51,7 +53,7 @@ class Service < ActiveRecord::Base
   end
 
   def unguzzle_service
-    Guzzler::Client.unguzzle(GuzzlerServiceDecorator.new(self)) 
+    Guzzler::Client.unguzzle(GuzzlerServiceDecorator.new(self))
   end
 
   def brand

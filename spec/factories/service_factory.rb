@@ -2,7 +2,9 @@ FactoryGirl.define do
 
   factory :service do
     embed
-    association :brand_identity 
+    skip_callbacks_during_testing true
+
+    association :brand_identity
 
     factory :rss_service do
       feed_name 'rss'
@@ -71,9 +73,7 @@ FactoryGirl.define do
     end
 
     after(:create) do |service|
-      service.class.skip_callback(:create, :after, :notify_service_start)
-      service.class.skip_callback(:update, :after, :notify_service_restart)
-      service.class.skip_callback(:destroy, :after, :notify_service_stop)
+      service.class.skip_callback(:create, :after, :guzzle_service)
     end
   end
 end

@@ -12,8 +12,9 @@ RSpec.describe Embed, :type => :model do
         nlq    = FactoryGirl.create(:natlang_query, :is_from_twitter, filter: filter)
         e1     = FactoryGirl.create(:twitter_entity, :tweet)
         e2     = FactoryGirl.create(:meetup_entity, :event)
-        expect(embed.determine_state e1).to be_truthy
-        expect(embed.determine_state e2).to be_falsey
+
+        expect((embed.determine_state e1).decision).to eq("approved")
+        expect((embed.determine_state e2).decision).to eq("pending")
       end
     end
 
@@ -24,8 +25,9 @@ RSpec.describe Embed, :type => :model do
         nql    = FactoryGirl.create(:natlang_query, :contains_haskell, filter: filter)
         e1     = FactoryGirl.create(:github_issue, title: 'haskell is awesome')
         e2     = FactoryGirl.create(:github_issue, title: 'canjs is awesome')
-        expect(embed.determine_state e1).to be_falsey
-        expect(embed.determine_state e2).to be_truthy
+
+        expect((embed.determine_state e1).decision).to eq("deleted")
+        expect((embed.determine_state e2).decision).to eq("approved")
       end
     end
 
@@ -35,8 +37,9 @@ RSpec.describe Embed, :type => :model do
         service = FactoryGirl.create(:github_service, approved_by_default: true, embed: embed)
         e1      = FactoryGirl.create(:github_issue, title: 'blocked entity')
         e2      = FactoryGirl.create(:github_issue, title: 'approved by service entity', services: [service])
-        expect(service.embed.determine_state e1).to be_falsey
-        expect(service.embed.determine_state e2).to be_truthy
+        
+        expect((service.embed.determine_state e1).decision).to eq("pending")
+        expect((service.embed.determine_state e2).decision).to eq("approved")
       end
     end
   end
