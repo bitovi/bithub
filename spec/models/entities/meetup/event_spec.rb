@@ -8,9 +8,9 @@ describe Entities::Meetup::Event do
 
       entity_wrapper = Entities::Meetup::Event.new(event_event)
       instance = entity_wrapper.procure.instance
-
+      puts instance.props.keys.inspect
       expect(instance.attributes.keys).to include( 'title', 'body', 'url', 'origin_id', 'origin_ts')
-      expect(instance.props.keys).to include( 'location', 'status', 'venue', 'scheduled_at', 'latitude', 'longitude', 'event_hosts', 'event_host_ids')
+      expect(instance.props.keys).to include( 'location', 'status', 'scheduled_at', 'event_host_ids', 'group_name')
     end
   end
 end
