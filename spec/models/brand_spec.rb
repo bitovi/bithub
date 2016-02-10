@@ -12,10 +12,11 @@ describe Brand do
       self.use_transactional_fixtures = true
     end
 
-    it 'marks all Brands as active if by default' do
+    it 'marks all Brands as active by default' do
       clean_slate
 
-      brand = FactoryGirl.create(:brand, name: 'bitovi', tenant_name: 'bitovi', is_active: false)
+      organization = FactoryGirl.create(:organization)
+      brand = FactoryGirl.create(:brand, organization: organization)
 
       Brand.flag_inactive
       expect(brand.reload.is_active).to be_truthy
@@ -26,7 +27,9 @@ describe Brand do
 
       organization = FactoryGirl.create(:organization)
       brand = FactoryGirl.create(:brand, organization: organization)
-      organization.accounts << (account = FactoryGirl.create(:account, last_sign_in_at: 3.weeks.ago, confirmed_at: nil))
+
+      account = FactoryGirl.create(:account, last_sign_in_at: 3.weeks.ago, confirmed_at: nil)
+      organization.accounts << account
       organization.save!
 
       Brand.flag_inactive
