@@ -10,7 +10,7 @@ notifications:
 services:
   - redis-server
 addons:
-  postgresql: 9.3
+  postgresql: "9.4"
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
 rvm:
