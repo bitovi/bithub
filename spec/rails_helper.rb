@@ -13,6 +13,10 @@ CodeClimate::TestReporter.start
 # otherwise all net connects will fail
 WebMock.allow_net_connect!
 
+# Creation, updating, destruction of services should not intereact with the
+# guzzler during testing
+Service.skip_guzzler_callbacks_during_testing = true
+
 RSpec.configure do |config|
   config.before(:suite) do
     Celluloid.boot

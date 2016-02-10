@@ -2,8 +2,6 @@ FactoryGirl.define do
 
   factory :service do
     embed
-    skip_callbacks_during_testing true
-
     association :brand_identity
 
     factory :rss_service do
