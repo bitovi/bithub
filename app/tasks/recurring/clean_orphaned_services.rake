@@ -4,10 +4,8 @@ namespace :recurring do
   task :clean_orphaned_services => :environment do
     Rails.logger.info "[WHENEVER] Running recurring:clean_orphaned_services at #{Time.now}"
 
-    if true # Service.num_of_services('polling') < Guzzler.zcard('services:polling')
-
+    if Service.num_of_services('polling') < Guzzler.zcard('services:polling')
       services_in_redis = Guzzler.zrange('services:polling')
-
       services_in_postgres = Service.all_services('polling').map do |s|
         Apartment::Tenant.switch(s.tenant_name) do
           GuzzlerServiceDecorator.new(s).member
@@ -20,9 +18,7 @@ namespace :recurring do
     end
 
     if Service.num_of_services('listening') < Guzzler.scard('services:listening')
-
       services_in_redis = Guzzler.smembers('services:listening')
-
       services_in_postgres = Service.all_services('listening').map do |s|
         Apartment::Tenant.switch(s.tenant_name) do
           GuzzlerServiceDecorator.new(s).member
