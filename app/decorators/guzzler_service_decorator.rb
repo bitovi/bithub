@@ -2,7 +2,7 @@ class GuzzlerServiceDecorator < Draper::Decorator
   delegate :id, :brand, :type_name, :feed_name, :listens?, :polls?
 
   def key
-    "services:#{source.brand.tenant_name}:#{source.id}"
+    "services:#{tenant_name}:#{service_id}"
   end
 
   def service_id
@@ -10,15 +10,15 @@ class GuzzlerServiceDecorator < Draper::Decorator
   end
 
   def embed_id
-    source.embed.id
+    source.embed_id
   end
 
   def brand_id
-    source.embed.brand.id
+    source.andand.embed.andand.brand.andand.id || source.brand_id
   end
 
   def tenant_name
-    source.embed.brand.tenant_name
+    source.andand.embed.andand.brand.andand.tenant_name || source.tenant_name
   end
 
   def member

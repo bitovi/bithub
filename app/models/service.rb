@@ -35,7 +35,7 @@ class Service < ActiveRecord::Base
   def self.all_services(type)
     Brand.map_tenants_to do
       "Service::QUERIES_FOR_#{type.to_s.upcase}_SERVICES".constantize.map do |q|
-        q.select('services.*, brands.tenant_name as tenant_name').to_a
+        q.select('services.*, brands.id as brand_id, brands.tenant_name as tenant_name').to_a
       end.flatten
     end.flatten
   end
