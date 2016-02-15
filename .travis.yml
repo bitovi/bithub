@@ -5,17 +5,23 @@ env:
 script:
   - "bundle exec rake spec:models && bundle exec rake spec:services && bundle exec rake spec:requests"
 notifications:
-  recipients:
-    - mark@bitovi.com
+  slack: bitovi:a6EZ5xpLzrpMgCYyvKwfkmN5
 services:
   - redis-server
 addons:
   postgresql: "9.4"
   code_climate:
     repo_token: 2142151d5ad5912f06df9c908ae9676d885650166ba091ac999ab82d7c87747f
+  ssh_known_hosts: 45.79.201.206
 rvm:
   - 2.2.2
 before_script:
   - "cp ./.travis_database.yml ./config/database.yml"
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
+deploy:
+  provider: script
+  script: ./.travis/deploy.sh
+  skip_cleanup: true
+  on:
+    branch: develop
