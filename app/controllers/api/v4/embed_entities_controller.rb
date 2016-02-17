@@ -33,7 +33,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
   end
 
   def stats
-    render :json => [{ 
+    render :json => [{
       id: 'approved',
       count: owner_embed.embed_entities.where(:decision => 'approved').count
     }, {
@@ -64,16 +64,24 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
       .joins(:embed_entities)\
       .where("embed_entities.embed_id" => embed_id)
       .no_children
-    
+
     scope = scope.by_service(service_id) if service_id
     scope = scope.image_only if image_only?
     scope = scope.where('embed_entities.decision' => decision) if decision
 
     if public_visibility?
-      scope = scope.order('entities.thread_updated_ts DESC')
+      order_stmts = 'embed_entities.decision DESC, thread_updated_ts DESC'
+      if params[:order] == 'timeline'
+        order_stmts = 'thread_updated_ts DESC'
+      end
+      scope = scope.order(order_stmts)
       params.delete(:order)
-    elsif params[:order] == 'preview'
-      params[:order] = ['thread_updated_ts:desc']
+    else
+      order_by = ['embed_entities:desc', 'thread_updated_ts:desc']
+      if params[:order] == 'timeline'
+        order_by = ['thread_updated_ts:desc']
+      end
+      params[:order] = order_by
     end
 
     scope = scope_applier(scope)
@@ -97,7 +105,7 @@ class Api::V4::EmbedEntitiesController < Api::V3::EmbedEntitiesController
     count_scope = count_scope.by_service(service_id) if service_id
     count_scope = count_scope.image_only if image_only?
     count_scope = count_scope.where('embed_entities.decision' => decision) if decision
-    
+
     count_scope = scope_applier(count_scope)
       .apply_negated_attrs_to_scope
       .apply_muster_query_to_scope(muster_query, skip_limits: true)
