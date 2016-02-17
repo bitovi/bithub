@@ -11,4 +11,4 @@ git fetch origin "+refs/heads/*:refs/remotes/origin/*"
 git remote add deploy ssh://bithub@45.79.201.206/home/bithub/bithub.git
 # Do not change this line. Travis has the ability push back to the repository
 # https://docs.travis-ci.com/user/github-oauth-scopes/
-git push -f deploy develop:master
+git push -f deploy develop:develop
