@@ -41,7 +41,7 @@ Bithub::Application.configure do
     :authentication => 'login',
     :domain => 'bithub.com'
   }
-  config.action_mailer.default_url_options = { host: "bithub.com" }
+  config.action_mailer.default_url_options = { host: ENV["EMBED_ENDPOINT"] }
   config.action_mailer.raise_delivery_errors = false
 
   # Enable threaded mode
