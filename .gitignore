@@ -22,3 +22,4 @@ newrelic_agent.log
 .idea
 .envrc
 public/new-bithub-client/dist
+vendor/bundle

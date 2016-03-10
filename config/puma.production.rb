@@ -4,16 +4,17 @@ if defined?(Puma)
   threads 1, threads_count
 
   app_dir = File.expand_path("../../..", File.dirname(__FILE__))
+  shared_dir = "#{app_dir}/shared"
 
-  rails_env = ENV["RACK_ENV"] || "development"
+  rails_env = ENV["RACK_ENV"] || "production"
   environment rails_env
 
-  bind "unix://tmp/puma.sock"
+  bind "unix://#{shared_dir}/sockets/puma.sock"
 
-  stdout_redirect "/tmp/puma.stdout.log", "tmp/puma.stderr.log", true
+  stdout_redirect "#{shared_dir}/logs/puma.stdout.log", "#{shared_dir}/logs/puma.stderr.log", true
 
-  pidfile "/tmp/puma.pid"
-  state_path "/tmp/puma.state"
+  pidfile "#{shared_dir}/pids/puma.pid"
+  state_path "#{shared_dir}/pids/puma.state"
 
   preload_app!
   rackup DefaultRackup
