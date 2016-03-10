@@ -3,14 +3,12 @@ if defined?(Puma)
   threads_count = Integer(ENV["MAX_THREADS"] || 5)
   threads 1, threads_count
 
-  app_dir = File.expand_path("../../..", File.dirname(__FILE__))
-
   rails_env = ENV["RACK_ENV"] || "development"
   environment rails_env
 
-  bind "unix://tmp/puma.sock"
+  bind "unix:///tmp/bithub.sock"
 
-  stdout_redirect "/tmp/puma.stdout.log", "tmp/puma.stderr.log", true
+  stdout_redirect "/tmp/puma.stdout.log", "/tmp/puma.stderr.log", true
 
   pidfile "/tmp/puma.pid"
   state_path "/tmp/puma.state"
