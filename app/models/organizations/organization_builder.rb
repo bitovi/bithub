@@ -8,7 +8,7 @@ module Organizations
 
     def initialize(account, params)
       @account = account
-      @params = params
+	  @params = params
     end
 
     def build
