@@ -20,9 +20,6 @@ require 'spec/test_helper_methods'
 
 require 'database_cleaner'
 
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
-
 require 'dotenv'
 Dotenv.load
 
@@ -46,5 +43,17 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.syntax = :expect
     mocks.verify_partial_doubles = true
+  end
+  
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+  end
+  
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:suite) do
+    DatabaseCleaner.clean
   end
 end
