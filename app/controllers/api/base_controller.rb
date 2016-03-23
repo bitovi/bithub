@@ -8,7 +8,7 @@ class Api::BaseController < ActionController::Base
 	end
 	
 	def ensure_current_account
-		return if account_signed_in?
+		return if current_account
 		render json: {
 			message: "You must authenticate prior to requesting this resource"
 		}, status: :unauthorized

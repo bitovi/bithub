@@ -50,4 +50,19 @@ RSpec.describe Api::UsersController, type: :controller do
 			account.confirmed_at.should_not be_nil
 		end
 	end
+	
+	describe "GET /users" do
+		it "should require authentication to request users" do
+			get :show
+			response.should have_http_status 401
+		end
+		
+		it "should return a user object when authenticated" do
+			account = FactoryGirl.create(:account)
+			sign_in :account, account
+			get :show
+			response.should have_http_status 200
+			assigns[:current_account].should eq(account)
+		end
+	end
 end
