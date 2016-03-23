@@ -44,14 +44,6 @@ RSpec.configure do |config|
     mocks.syntax = :expect
     mocks.verify_partial_doubles = true
   end
-  
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-  end
-  
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
 
   config.after(:suite) do
     DatabaseCleaner.clean
