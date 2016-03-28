@@ -1,4 +1,6 @@
-class Api::UsersController < Api::BaseController	
+class Api::UsersController < Api::BaseController
+	include Api::Helpers::Filter
+	
 	before_action :ensure_current_account, only: [ :show ]
 	
 	def create
@@ -27,10 +29,14 @@ class Api::UsersController < Api::BaseController
     end
 		
 	def show
-		render json: current_account, status: :ok
+		return render json: filter(Account, sanitize_params), status: :ok
 	end
 	
 	private
+	
+	def sanitize_params
+		params.permit!
+	end
 	
 	def params_to_account_arguments params
 		{ 

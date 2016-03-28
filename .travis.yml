@@ -3,7 +3,7 @@ cache: bundler
 env:
   - REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
 script:
-    - "bundle exec rake spec"
+    - "bundle exec rake spec:models && bundle exec rake spec:controllers && bundle exec rake spec:requests"
 notifications:
   slack: bitovi:a6EZ5xpLzrpMgCYyvKwfkmN5
 services:
