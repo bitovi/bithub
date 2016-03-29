@@ -20,7 +20,7 @@ class Api::BaseController < ActionController::Base
 	def must_be_authenticated
 		render json: {
 			message: "You must authenticate prior to requesting this resource"
-		}, status: :forbidden
+		}, status: :unauthorized
 	end
 	
 	def invalid_login_attempt
