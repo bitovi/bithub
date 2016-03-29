@@ -34,10 +34,6 @@ class Api::UsersController < Api::BaseController
 	
 	private
 	
-	def sanitize_params
-		params.permit!
-	end
-	
 	def params_to_account_arguments params
 		{ 
 			email: params.fetch(:email), 
