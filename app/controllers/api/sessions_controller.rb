@@ -10,7 +10,7 @@ class Api::SessionsController < Api::BaseController
 		
 		if resource.valid_password? params[:password]
 			sign_in :account, resource
-			return render json: { user: current_account }, status: :created
+			return user_session :created
 		end
 		invalid_login_attempt
 	end
@@ -26,18 +26,9 @@ class Api::SessionsController < Api::BaseController
 
     protected
 	
-	def user_session
-		render json: { user: current_account }, status: :ok
-	end
-	
-	def ensure_auth_params_exists
-		return unless params[:email].blank? || params[:password].blank?
-		return invalid_login_attempt
-	end
-	
-	def invalid_login_attempt
-		render json: { 
-			message: "We were unable to log you in. Please double-check your email and password."
-		}, status: :bad_request
+	def user_session(status = :ok)
+		user = {}.merge(current_account.as_json)
+		user[:tenant_name] = current_account.organizations.first.brands.first.tenant_name
+		render json: user, status: status
 	end
 end
