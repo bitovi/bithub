@@ -1,6 +1,6 @@
 class Api::SessionsController < Api::BaseController
-    before_action :ensure_auth_params_exists, only: [ :create ]
-	before_action :ensure_current_account, only: [ :show, :destroy ]
+    before_action :ensure_auth_params_exists,   only: [ :create ]
+	before_action :ensure_current_account,      only: [ :show, :destroy ]
 
     def create
 		return user_session if current_account
