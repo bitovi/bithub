@@ -29,7 +29,7 @@ class Api::UsersController < Api::BaseController
     end
 		
 	def show
-		return render json: filter(Account, params), status: :ok
+		return render json: filter(Account, sanitize(params)), status: :ok
 	end
 	
 	private

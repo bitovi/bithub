@@ -28,4 +28,8 @@ class Api::BaseController < ActionController::Base
 			message: "We were unable to log you in. Please double-check your email and password."
 		}, status: :bad_request
 	end
+    
+    def sanitize params
+        params.permit!
+    end
 end
