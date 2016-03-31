@@ -1,6 +1,6 @@
 class Api::SessionsController < Api::BaseController
     before_action :ensure_auth_params_exists,   only: [ :create ]
-	before_action :ensure_current_account,      only: [ :show, :destroy ]
+	before_action :ensure_current_account,      only: [ :index, :destroy ]
 
     def create
 		return render json: user_session if current_account
@@ -15,7 +15,7 @@ class Api::SessionsController < Api::BaseController
 		invalid_login_attempt
 	end
 	
-	def show
+	def index
 		return render json: user_session, status: :ok
 	end
 

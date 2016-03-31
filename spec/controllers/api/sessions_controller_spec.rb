@@ -35,7 +35,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 		describe "GET /session" do
 			it "should return a session when requested by an authenticated user" do
 				post :create, well_formed
-				get :show
+				get :index
 				response.should have_http_status 200
 				assigns[:current_account].email.should eq(well_formed[:email])
 			end

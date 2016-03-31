@@ -8,10 +8,10 @@ Bithub::Application.routes.draw do
 			get		"/accounts"			=> "accounts#index"
 		    
 			post	"/session"			=> "sessions#create"
-		    get		"/session"			=> "sessions#show"
+		    get		"/session"			=> "sessions#index"
 		    delete	"/session"			=> "sessions#destroy"
 			
-			get		"/organizations" 	=> "organizations#show"
+			get		"/organizations" 	=> "organizations#index"
 		end
 	end
 
