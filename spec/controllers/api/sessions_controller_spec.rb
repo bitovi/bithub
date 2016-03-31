@@ -15,7 +15,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 		end
 	end
 	
-	context "the user exists in the system" do
+	context "the Account exists in the system" do
 		before(:example) do
 			account = Account.new(well_formed)
 			account.save!
@@ -25,7 +25,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 		end
 		
 		describe "POST /session" do
-			it "should log a user in given an email and password" do
+			it "should log an Account in given an email and password" do
 				post :create, well_formed
 				response.should have_http_status 201
 				assigns[:current_account][:email].should eq("hello@example.com")
@@ -33,7 +33,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 		end
 		
 		describe "GET /session" do
-			it "should return a session when requested by an authenticated user" do
+			it "should return a session when requested by an authenticated Account" do
 				post :create, well_formed
 				get :index
 				response.should have_http_status 200
@@ -42,7 +42,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 		end
 	
 		describe "DELETE /session" do
-			it "should log the user out when requested by an authenticated user" do
+			it "should log the user out when requested by an authenticated Account" do
 				sign_in :account, FactoryGirl.create(:account)
 				
 				delete :destroy

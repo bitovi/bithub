@@ -57,12 +57,24 @@ RSpec.describe Api::AccountsController, type: :controller do
 			response.should have_http_status 401
 		end
 		
-		it "should return a account object when authenticated" do
-			account = FactoryGirl.create(:account)
-			sign_in :account, account
-			get :index
-			response.should have_http_status 200
-			assigns[:current_account].should eq(account)
+		well_formed = { "email": "hello@example.com", "password": "UDontKnowJack" }
+		
+		context "Account is signed in" do
+			before(:example) do
+				@account = Account.new(well_formed)
+				@account.save!
+			
+				organization = Organizations::OrganizationBuilder.new @account, {}
+				organization.build.save!
+				
+				sign_in :account, @account
+			end
+			
+			it "should return a account object when authenticated" do
+				get :index
+				response.should have_http_status 200
+				assigns(:current_account).should eq(@account)
+			end
 		end
 	end
 end

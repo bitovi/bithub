@@ -34,6 +34,10 @@ class Api::AccountsController < Api::BaseController
 	
 	private
 	
+	def render_error_message e, m, status
+		return render json: { message: m, errors: e }, status: status
+	end
+	
 	def params_to_account_arguments params
 		{ 
 			email: params.fetch(:email), 

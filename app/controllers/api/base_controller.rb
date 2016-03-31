@@ -3,8 +3,8 @@ class Api::BaseController < ActionController::Base
 	
 	respond_to :json
 	
-	def render_error_message e, m, status
-		return render json: { message: m, errors: e }, status: status
+	rescue_from ActiveRecord::AssociationNotFoundError do |exception|
+		render json: exception, status: :bad_request
 	end
 	
 	def ensure_current_account
