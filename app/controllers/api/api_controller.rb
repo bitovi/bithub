@@ -1,5 +1,5 @@
 class Api::ApiController < ActionController::Base
-  include Helpers::Common
+  include Api::Helpers::Common
 
   before_filter :require_account!, except: %w(api_id)
 
