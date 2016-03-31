@@ -23,6 +23,6 @@ class Account < ActiveRecord::Base
 	end
 	
 	def as_json options = {}
-		super options.merge only: [ :id, :created_at, :updated_at, :email ]
+		super options.merge only: [ :id, :name, :created_at, :updated_at, :email ]
 	end
 end
