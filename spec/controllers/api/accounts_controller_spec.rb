@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe Api::UsersController, type: :controller do
-	describe "POST /users" do
-		it "should return 400 when no user property is present" do
+RSpec.describe Api::AccountsController, type: :controller do
+	describe "POST /accounts" do
+		it "should return 400 when no account property is present" do
 			post :create, { }
 			response.should have_http_status 400
 		end
@@ -51,16 +51,16 @@ RSpec.describe Api::UsersController, type: :controller do
 		end
 	end
 	
-	describe "GET /users" do
-		it "should require authentication to request users" do
-			get :show
+	describe "GET /accounts" do
+		it "should require authentication to request accounts" do
+			get :index
 			response.should have_http_status 401
 		end
 		
-		it "should return a user object when authenticated" do
+		it "should return a account object when authenticated" do
 			account = FactoryGirl.create(:account)
 			sign_in :account, account
-			get :show
+			get :index
 			response.should have_http_status 200
 			assigns[:current_account].should eq(account)
 		end
