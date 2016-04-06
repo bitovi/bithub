@@ -4,8 +4,8 @@ Bithub::Application.routes.draw do
 	namespace :api do
 		devise_for :accounts, controller: { sessions: "api/sessions" }
 		as :account do
-		    post	"/accounts"			=> "accounts#create"
-			get		"/accounts"			=> "accounts#index"
+		    post	"/users"			=> "users#create"
+			get		"/users"			=> "users#index"
 		    
 			post	"/session"			=> "sessions#create"
 		    get		"/session"			=> "sessions#index"

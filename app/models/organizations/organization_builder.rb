@@ -44,11 +44,14 @@ module Organizations
     end
 
     def organization_name
+	  if @params.include? :organization
+	  	@organization_name = @params[:organization][:name]
+	  end
       @organization_name ||= pretty_name
     end
 
     def brand_name
-      @brand_name ||= pretty_name
+	  @brand_name ||= pretty_name
     end
 
     private
@@ -63,6 +66,5 @@ module Organizations
     def pretty_name
       Bazaar.heroku.gsub('-','_')
     end
-
   end
 end

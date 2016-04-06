@@ -1,9 +1,9 @@
-class Api::AccountsController < Api::BaseController
+class Api::UsersController < Api::BaseController
 	include Api::Helpers::Filter
 	
-	before_action :ensure_current_account, only: [ :index ]
+	before_action :ensure_current_account, only: [:index]
 	
-	def create
+	def create	
 		account = Account.new params_to_account_arguments params
 		ActiveRecord::Base.transaction do
 	        unless account.save
@@ -42,8 +42,9 @@ class Api::AccountsController < Api::BaseController
 		{ 
 			email: params.fetch(:email), 
 			password: params.fetch(:password),
+			name: params.fetch(:name),
 			confirmed_at: DateTime.now,
-			confirmation_sent_at: DateTime.now
+			confirmation_sent_at: DateTime.now,
 		}
 	end
 end
