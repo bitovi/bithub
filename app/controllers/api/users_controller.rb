@@ -30,6 +30,8 @@ class Api::UsersController < Api::BaseController
 		
 	def index
 		return render json: filter(Account, sanitize(params)), status: :ok
+	rescue => from
+		return render_error_message from, from.message, :bad_request
 	end
 	
 	private

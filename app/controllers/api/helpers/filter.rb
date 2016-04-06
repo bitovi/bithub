@@ -2,17 +2,16 @@ module Api::Helpers
 	module Filter
 		def filter model, params
 			return model.all unless includes_query params
-			
-			where = where(model, params)
-			includes = includes(where, params)
-			ordered = order(includes, params)
+			includes = includes(model, params)
+			where = where(includes, params)
+			ordered = order(where, params)
 			offset = offset(ordered, params)
 			limited = limit(offset, params)
 			as_json(limited, params)
 		end
 		
 		def includes_query params
-			%w[where includes order offset limit includes].any? {|param|
+			%w[where order offset limit includes].any? {|param|
 				params.include? param
 			}
 		end
@@ -23,8 +22,7 @@ module Api::Helpers
 		end
 
 		def includes model, params
-			return model.includes(params[:includes]) if params[:includes]
-			model
+			return model.joins(params[:includes].map {|str| str.to_sym})
 		end
 
 		def order model, params
