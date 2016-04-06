@@ -42,7 +42,7 @@ class Api::UsersController < Api::BaseController
 		{ 
 			email: params.fetch(:email), 
 			password: params.fetch(:password),
-			name: params.fetch(:name),
+			name: params.fetch(:name, nil),
 			confirmed_at: DateTime.now,
 			confirmation_sent_at: DateTime.now,
 		}
