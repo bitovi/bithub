@@ -28,7 +28,6 @@ class Api::SessionsController < Api::BaseController
 		organization = current_account.organizations.first
 		session["organization_id"] = organization.id
 		session["tenant_name"] = organization.brands.first.tenant_name
-		session["account"] = current_account
 		return session
 	end
 end
