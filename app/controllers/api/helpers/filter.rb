@@ -22,7 +22,8 @@ module Api::Helpers
 		end
 
 		def includes model, params
-			return model.joins(params[:includes].map {|str| str.to_sym})
+			return model.joins(params[:includes].map {|str| str.to_sym}) if params[:includes]
+			model
 		end
 
 		def order model, params
