@@ -16,6 +16,7 @@ Bithub::Application.routes.draw do
 			post	"/hubs"				=>	"hubs#create"
 			get		"/hubs"				=>	"hubs#index"
 			get		"/hubs/:id"			=>	"hubs#show"
+			put		"/hubs/:id"			=>	"hubs#update"
 			delete	"/hubs/:id"			=>	"hubs#destroy"
 		end
 	end
