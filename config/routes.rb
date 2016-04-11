@@ -4,20 +4,22 @@ Bithub::Application.routes.draw do
 	namespace :api do
 		devise_for :accounts, controller: { sessions: "api/sessions" }
 		as :account do
-		    post	"/users"			=>	"users#create"
-			get		"/users"			=>	"users#index"
+		    post	"/users"				=>	"users#create"
+			get		"/users"				=>	"users#index"
 		    
-			post	"/session"			=>	"sessions#create"
-		    get		"/session"			=>	"sessions#index"
-		    delete	"/session"			=>	"sessions#destroy"
+			post	"/session"				=>	"sessions#create"
+		    get		"/session"				=>	"sessions#index"
+		    delete	"/session"				=>	"sessions#destroy"
 			
-			get		"/organizations" 	=>	"organizations#index"
+			get		"/organizations" 		=>	"organizations#index"
+			get		"/organizations/:id"	=>	"organizations#show"
+			put		"/organizations/:id"	=>	"organizations#update"
 			
-			post	"/hubs"				=>	"hubs#create"
-			get		"/hubs"				=>	"hubs#index"
-			get		"/hubs/:id"			=>	"hubs#show"
-			put		"/hubs/:id"			=>	"hubs#update"
-			delete	"/hubs/:id"			=>	"hubs#destroy"
+			post	"/hubs"					=>	"hubs#create"
+			get		"/hubs"					=>	"hubs#index"
+			get		"/hubs/:id"				=>	"hubs#show"
+			put		"/hubs/:id"				=>	"hubs#update"
+			delete	"/hubs/:id"				=>	"hubs#destroy"
 		end
 	end
 
