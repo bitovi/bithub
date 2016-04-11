@@ -50,6 +50,10 @@ class Api::HubsController < Api::BaseController
 		return render json: {
 			message: "Embed, with id: '#{params[:id]}' was not found"
 		}, status: :not_found
+	rescue ActiveRecord::UnknownAttributeError => e
+		return render json: {
+			message: e.message
+		}, status: :bad_request
 	ensure
 		Apartment::Tenant.switch!
 	end

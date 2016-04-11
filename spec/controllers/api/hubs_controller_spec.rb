@@ -78,7 +78,7 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 		
 		describe "GET /hubs/:id" do
-			it "returns NotFound if the Embed requested is not found" do
+			it "returns Not Found if the Embed requested is not found" do
 				get :show, { id: 999 }
 				response.should have_http_status :not_found
 			end
@@ -94,7 +94,27 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 		
 		describe "PUT /hub/:id" do
+			it "returns Not Found if Embed requested is not found" do
+				put :update, { id: 999 }, @session
+				response.should have_http_status :not_found
+			end
 			
+			it "returns Bad Request if the body contains an unknown attribute" do
+				post :create, { organization_id: @organization.id }, @session
+				id = JSON.parse(response.body)["id"]
+				
+				put :update, { id: id, hub: { bad_attr: "OH NO!" }}, @session
+				response.should have_http_status :bad_request
+			end
+			
+			it "should update the attributes" do
+				post :create, { organization_id: @organization.id }, @session
+				id = JSON.parse(response.body)["id"]
+				
+				put :update, { id: id, hub: { name: "HelloWorld" }}, @session
+				response.should have_http_status :ok
+				JSON.parse(response.body)["name"].should eq("HelloWorld")
+			end
 		end
 		
 		describe "DELETE /hub/:id" do
