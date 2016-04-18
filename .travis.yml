@@ -18,8 +18,13 @@ before_script:
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
 deploy:
-  provider: script
-  script: ./.travis/deploy.sh
-  skip_cleanup: true
-  on:
-    branch: develop
+  - provider: script
+    script: ./.travis/deploy-develop.sh
+    skip_cleanup: true
+    on:
+      branch: develop
+  - provider: script
+    script: ./.travis/deploy-staging.sh
+    skip_cleanup: true
+    on:
+      branch: staging
