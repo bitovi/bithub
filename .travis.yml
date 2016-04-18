@@ -11,6 +11,7 @@ services:
 addons:
   postgresql: "9.4"
   ssh_known_hosts: 45.79.201.206
+  ssh_known_hosts: 45.79.143.148
 rvm:
   - 2.2.2
 before_script:
