@@ -11,8 +11,8 @@ services:
 addons:
   postgresql: "9.4"
   ssh_known_hosts: 
-    - 45.79.201.206
-    - 45.79.143.148
+    - staging.bithub.com
+    - develop.bithub.com
 rvm:
   - 2.2.2
 before_script:
