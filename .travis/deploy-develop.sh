@@ -8,7 +8,7 @@ ssh-add ./.travis/deploy-key.pem
 git fetch --unshallow || true
 git fetch origin "+refs/heads/*:refs/remotes/origin/*"
 
-git remote add deploy ssh://bithub@45.79.201.206/home/bithub/server.git
+git remote add deploy ssh://bithub@develop.bithub.com/home/bithub/server.git
 # Do not change this line. Travis has the ability push back to the repository
 # https://docs.travis-ci.com/user/github-oauth-scopes/
 git push -f deploy develop:develop
