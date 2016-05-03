@@ -17,17 +17,17 @@ Bithub::Application.configure do
   config.log_level = :debug
   config.logger = Logger.new(nil)
 
-  # Mandrill as default mailer
+  # Mailgun as default mailer
   config.action_mailer.smtp_settings = {
-    :address   => 'smtp.mandrillapp.com',
+    :address   => 'smtp.mailgun.org',
     :port      => 587,
     :enable_starttls_auto => true,
-    :user_name => ENV['MANDRILL_USERNAME'],
-    :password  => ENV['MANDRILL_API_KEY'],
+    :user_name => ENV['MAILGUN_USERNAME'],
+    :password  => ENV['MAILGUN_API_KEY'],
     :authentication => 'login',
-    :domain => 'dev.bithub.com'
+    :domain => 'out.bithub.com'
   }
-  config.action_mailer.default_url_options = { host: "dev.bithub.com" }
+  config.action_mailer.default_url_options = { host: "develop.bithub.com" }
   config.action_mailer.raise_delivery_errors = true
 
   # Print deprecation notices to the Rails logger
