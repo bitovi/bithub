@@ -30,6 +30,12 @@ module Guzzler
     end
   end
   
+  def self.flushdb
+    redis do |conn|
+      conn.flush()
+    end
+  end
+  
   def self.scard(k)
     redis do |conn|
       conn.scard(k)
