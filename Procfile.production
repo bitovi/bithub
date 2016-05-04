@@ -1,9 +1,9 @@
-rails: bundle exec puma -C ./config/puma.production.rb
+rails: bundle exec puma -C ./config/puma.production.rb >> /home/bithub/server/logs/upstart-puma.log 2>&1
 sidekiq: bundle exec sidekiq
 
-liveservice: node ./services/liveservice/server.js
-persistor: ./services/guzzler/bin/persistor
-poller: ./services/guzzler/bin/poller
-listener: ./services/guzzler/bin/listener
+liveservice: node ./services/liveservice/server.js >> /home/bithub/server/logs/upstart-liveservice.log 2>&1
+persistor: ./services/guzzler/bin/persistor >> /home/bithub/server/logs/upstart-persistor.log 2>&1
+poller: ./services/guzzler/bin/poller >> /home/bithub/server/logs/upstart-poller.log 2>&1
+listener: ./services/guzzler/bin/listener >> /home/bithub/server/logs/upstart-listener.log 2>&1
 
 #ssr: cd ./public/new-bithub-client && ./node_modules/can-ssr/bin/can-serve --port 3030
