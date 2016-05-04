@@ -2,7 +2,6 @@ var http = require('http'),
 	IO   = require('socket.io'),
 	fs   = require('fs'),
 	Q    = require('q'),
-	pm   = require('newrelic'),
 	_    = require('lodash');
 
 var sessionStore  = require('./session_store.js'),

@@ -1,4 +1,4 @@
-rails: bundle exec puma -C ./config/puma.production.rb >> /home/bithub/server/logs/upstart-puma.log 2>&1
+rails: bundle exec puma -C ./config/puma.production.rb >> /home/bithub/server/logs/upstart-rails.log 2>&1
 sidekiq: bundle exec sidekiq
 
 liveservice: node ./services/liveservice/server.js >> /home/bithub/server/logs/upstart-liveservice.log 2>&1

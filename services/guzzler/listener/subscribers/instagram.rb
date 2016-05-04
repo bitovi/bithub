@@ -33,12 +33,12 @@ module Guzzler
 
         def callback_url
           # Tunnel is used only in development (b/c Instagram can't connect to your local dev machine directly)
-          domain =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_HOST'] : ENV['GUZZLER_HOST']
+          domain =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_HOST'] : ENV['GUZZLER_HTTP_DOMAIN']
           port   =  (ENV['ENV'] == 'development') ? ENV['TUNNEL_GUZZLER_PORT'] : ENV['GUZZLER_PORT'] 
 
           path   = File.join(ENV['GUZZLER_POSTBACK_ENDPOINT_PREFIX'] || '/', 'instagram', 'media')
 
-          (port == '80') ? "http://#{domain}#{path}" : "http://#{domain}:#{port}#{path}"
+          (port == 80) ? "http://#{domain}#{path}" : "http://#{domain}:#{port}#{path}"
         end
       end
 
