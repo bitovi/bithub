@@ -4,8 +4,6 @@ env:
   - REDIS_URL=redis://127.0.0.1:6379/15 RAILS_ENV=test
 script:
     - "bundle exec rake spec:models && bundle exec rake spec:controllers && bundle exec rake spec:requests"
-notifications:
-  slack: bitovi:a6EZ5xpLzrpMgCYyvKwfkmN5
 services:
   - redis-server
 addons:
@@ -13,6 +11,7 @@ addons:
   ssh_known_hosts: 
     - staging.bithub.com
     - develop.bithub.com
+    - production.bithub.com
 rvm:
   - 2.2.2
 before_script:
@@ -30,3 +29,10 @@ deploy:
     skip_cleanup: true
     on:
       branch: staging
+  - provider: script
+    script: ./.travis/deploy-production.sh
+    skip_cleanup: true
+    on:
+      branch: production
+notifications:
+  slack: bitovi:a6EZ5xpLzrpMgCYyvKwfkmN5
