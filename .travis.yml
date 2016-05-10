@@ -13,6 +13,7 @@ addons:
   ssh_known_hosts: 
     - staging.bithub.com
     - develop.bithub.com
+    - production.bithub.com
 rvm:
   - 2.2.2
 before_script:
@@ -30,3 +31,8 @@ deploy:
     skip_cleanup: true
     on:
       branch: staging
+  - provider: script
+    script: ./.travis/deploy-production.sh
+    skip_cleanup: true
+    on:
+      branch: production
