@@ -100,10 +100,11 @@ class Service < ActiveRecord::Base
   end
 
   def config_with_credentials
-    if brand_identity
-      service_config.data.merge(brand_identity.credentials(property_id))
+    config = service_config
+    if brand_identity && config.data
+      config.data.merge(brand_identity.credentials(property_id))
     else
-      service_config.data
+      config.data
     end
   end
 
