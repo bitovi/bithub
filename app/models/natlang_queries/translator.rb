@@ -7,7 +7,7 @@ module NatlangQueries
   OPS_TRANSLATED_TO_FULL_TEXT_SEARCH = %w(contains contains_all contains_any)
 
   class Translator
-    def initialize(query, klass = Entity)
+    def initialize(query, klass = Bit)
       @q = query
       @klass = klass
     end

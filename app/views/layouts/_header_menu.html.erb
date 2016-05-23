@@ -6,7 +6,7 @@
 				<ul class="list-unstyled">
 					<li><a href="/#features">Features</a></li>
 					<li><a href="/pricing">Pricing</a></li>
-					<% if current_account.nil? %>
+					<% if current_user.nil? %>
 						<li><a href="/register">Sign Up</a></li>
 						<li><a href="/login">Login</a></li>
 					<% else %>
@@ -18,7 +18,7 @@
 						<li>
 							<a href="/logout">
 								Logout 
-								<span class="email"><%= current_account.email %></span>
+								<span class="email"><%= current_user.email %></span>
 							</a>
 						</li>
 					<% end %>

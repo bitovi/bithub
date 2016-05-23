@@ -14,7 +14,7 @@ module Guzzler
         item[:meta][:feed_name] = service.feed_name
         item[:meta][:type_name] = service.type_name
         item[:meta][:service_id] = service.service_id
-        item[:meta][:embed_id] = service.embed_id
+        item[:meta][:hub_id] = service.hub_id
         item[:meta][:brand_id] = service.brand_id
         item[:meta][:tenant_name] = service.tenant_name
       end

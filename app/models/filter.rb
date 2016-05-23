@@ -1,6 +1,6 @@
 class Filter < ActiveRecord::Base
 
-  belongs_to :embed
+  belongs_to :hub
   has_many :natlang_queries, :dependent => :destroy
 
   VALID_ACTIONS = %w(approve block)
@@ -37,12 +37,12 @@ class Filter < ActiveRecord::Base
   end
 
   def detected(select_values = nil)
-    NatlangQueries::Applier.new(self, Entity).scope(select_values).all
+    NatlangQueries::Applier.new(self, Bit).scope(select_values).all
   end
-  alias_method :detected_entities, :detected
+  alias_method :detected_bits, :detected
 
-  def detects?(entity)
-    NatlangQueries::Applier.new(self, Entity).scope.where(id: entity.id).first
+  def detects?(bit)
+    NatlangQueries::Applier.new(self, Bit).scope.where(id: bit.id).first
   end
 
   private

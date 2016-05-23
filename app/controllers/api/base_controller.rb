@@ -7,8 +7,8 @@ class Api::BaseController < ActionController::Base
 		render json: exception, status: :bad_request
 	end
 	
-	def ensure_current_account
-		return if current_account
+	def ensure_current_user
+		return if current_user
 		return render json: {
 			message: "You must authenticate prior to requesting this resource"
 		}, status: :unauthorized

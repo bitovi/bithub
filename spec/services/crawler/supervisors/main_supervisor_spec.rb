@@ -8,7 +8,7 @@ describe Supervisors::Main do
   after { Celluloid.shutdown }
 
   let(:config) do
-    JSON.parse(File.read('spec/support/responses/configurator/test_account_config.json'), symbolize_names: true)
+    JSON.parse(File.read('spec/support/responses/configurator/test_user_config.json'), symbolize_names: true)
   end
 
   let(:target) do

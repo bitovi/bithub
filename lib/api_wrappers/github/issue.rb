@@ -1,7 +1,7 @@
 require 'github/entity'
 
 module Github
-  class Issue < Entity
+  class Issue < Bit
     FIELDS = [:title, :body, :number, :assignee, :state, :milestone, :labels]
     
     attr_accessor *FIELDS

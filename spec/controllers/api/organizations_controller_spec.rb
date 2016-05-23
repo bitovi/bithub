@@ -28,16 +28,16 @@ RSpec.describe Api::OrganizationsController, type: :controller do
 	
 	context "User is authenticated" do
 		before(:example) do
-			@account = Account.new(well_formed)
-			@account.save!
+			@user = User.new(well_formed)
+			@user.save!
 		
-			organization = Organizations::OrganizationBuilder.new @account, {}
+			organization = Organizations::OrganizationBuilder.new @user, {}
 			organization = organization.build.save!
 			@organization = organization.organization
 			@tenant = organization.brand.tenant_name
 			@session = { organization_id: @organization_id, tenant_name: @tenant }
 			
-			sign_in :account, @account
+			sign_in :user, @user
 		end
 		
 		describe "GET /organizations/:id" do

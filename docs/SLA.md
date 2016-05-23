@@ -1,6 +1,6 @@
 # User/Organization activity status
 
-If nobody from an organization confirmed their account and nobody from an organization logged in in a week we mark that organization as inactive. This effectively stops crawling for new data for that organization.
+If nobody from an organization confirmed their user and nobody from an organization logged in in a week we mark that organization as inactive. This effectively stops crawling for new data for that organization.
 
 # Item retention
 

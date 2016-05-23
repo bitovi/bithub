@@ -4,19 +4,19 @@ module Organizations
   class OrganizationBuilder
     class BuildingError < StandardError; end;
 
-    attr_reader :account, :organization, :plan, :brand, :subscription
+    attr_reader :user, :organization, :plan, :brand, :subscription
 
-    def initialize(account, params)
-      @account = account
+    def initialize(user, params)
+      @user = user
 	  @params = params
     end
 
     def build
-      fail BuildingError.new if !@account.valid?
+      fail BuildingError.new if !@user.valid?
       @organization = Organization.new name: organization_name
 
-      @organization_account = @organization.account_organizations.build(
-        account: @account,
+      @organization_user = @organization.user_organizations.build(
+        user: @user,
         invitation_created_at: DateTime.now,
         invitation_accepted_at: DateTime.now
       )
@@ -37,8 +37,8 @@ module Organizations
       @subscription.create_stripe_customer! if ENV['STRIPE_ENABLE'].to_bool
       delete_excluded_tables_from_tenant brand_name
 
-      @account.add_role(:organization_admin, @organization)
-      @account.save!
+      @user.add_role(:organization_admin, @organization)
+      @user.save!
       
       self
     end

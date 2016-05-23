@@ -1,3 +1,3 @@
-json.array! @embeds do |e|
-  json.partial! 'api/v3/embeds/embed', embed: e
+json.array! @hubs do |e|
+  json.partial! 'api/v3/hubs/hub', hub: e
 end

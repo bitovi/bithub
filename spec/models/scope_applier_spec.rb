@@ -6,7 +6,7 @@ RSpec.describe ScopeApplier, :type => :domain do
 
   describe '.apply_muster_query_to_scope' do
     it 'should apply muster params to the scope' do
-      scope = Entity.all; params = { includes: 'activities', joins: 'rules' }
+      scope = Bit.all; params = { includes: 'activities', joins: 'rules' }
 
       @query_logic = QueryLogic::Query.new scope, params
       scope = ScopeApplier
@@ -26,7 +26,7 @@ RSpec.describe ScopeApplier, :type => :domain do
 
   describe ".apply_negated_attrs_to_scope" do
     it "should apply negated attrs to the scope" do
-      scope = Entity.all; params = { title: 'Some title', url: '!http://some.link.com'}
+      scope = Bit.all; params = { title: 'Some title', url: '!http://some.link.com'}
       @query_logic = QueryLogic::Query.new scope, params
       scope = ScopeApplier
         .new(scope, @query_logic)
@@ -34,13 +34,13 @@ RSpec.describe ScopeApplier, :type => :domain do
         .result
 
 
-      expect(scope.where_values).to eq(["entities.url <> 'http://some.link.com'"])
+      expect(scope.where_values).to eq(["bits.url <> 'http://some.link.com'"])
     end
   end
 
   describe '.apply_regular_params_to_scope' do
     it 'should apply regular filtering params to the scope' do
-      scope = Entity.all; params = { id: '1', title: 'Whats up?'}
+      scope = Bit.all; params = { id: '1', title: 'Whats up?'}
 
       @query_logic = QueryLogic::Query.new scope, params
       scope = ScopeApplier
@@ -55,7 +55,7 @@ RSpec.describe ScopeApplier, :type => :domain do
   describe '.apply_order_to_scope' do
     context 'when handling virtual attrs' do
       it 'should replace virtual attrs with calculated ones and apply a modified statement to the scope' do
-        scope = Entity.all; params = {order: ['score asc', 'upvotes desc']}
+        scope = Bit.all; params = {order: ['score asc', 'upvotes desc']}
 
         @query_logic = QueryLogic::Query.new scope, params
         scope = ScopeApplier
@@ -69,7 +69,7 @@ RSpec.describe ScopeApplier, :type => :domain do
 
     context 'when handling proper attrs' do
       it 'should apply unmodified order statement to the scope' do
-        scope = Entity.all; params = {order: ['id asc']}
+        scope = Bit.all; params = {order: ['id asc']}
 
         @query_logic = QueryLogic::Query.new scope, params
         scope = ScopeApplier

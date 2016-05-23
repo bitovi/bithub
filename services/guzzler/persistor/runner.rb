@@ -6,7 +6,7 @@ require 'retriever'
 
 require 'event_handler'
 require 'error_handler'
-require 'entity_handler'
+require 'bit_handler'
 require 'poppity_pop'
 
 module Guzzler
@@ -28,10 +28,10 @@ module Guzzler
         @event_retriever.manager = @event_manager
         @event_manager.retriever = @event_retriever
 
-        @mgs << (@entity_manager = Manager.new_link(EntityHandler, @cv2, { concurrency: 10 }))
-        @rtrs << (@entity_retriever = Retriever.new_link(PoppityPop.new('entity_q')))
-        @entity_retriever.manager = @entity_manager
-        @entity_manager.retriever = @entity_retriever
+        @mgs << (@bit_manager = Manager.new_link(BitHandler, @cv2, { concurrency: 10 }))
+        @rtrs << (@bit_retriever = Retriever.new_link(PoppityPop.new('bit_q')))
+        @bit_retriever.manager = @bit_manager
+        @bit_manager.retriever = @bit_retriever
 
         @mgs << (@error_manager = Manager.new_link(ErrorHandler, @cv3, { concurrency: 1 }))
         @rtrs << (@error_retriever = Retriever.new_link(PoppityPop.new('error_q')))

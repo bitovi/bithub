@@ -23,7 +23,7 @@ module Support
     end
 
     def update_follows(data)
-      if (es = Entity.where(feed_name: 'twitter', type_name: 'follow').where("props -> 'origin_author_name' = '' OR props -> 'target_name' = ''").all) 
+      if (es = Bit.where(feed_name: 'twitter', type_name: 'follow').where("props -> 'origin_author_name' = '' OR props -> 'target_name' = ''").all) 
 
         es.each do |e|
           if (x_name = data[x_id = e.props['origin_author_id'].to_i])
@@ -77,7 +77,7 @@ module Support
     end
 
     def follows
-      Entity.where(:feed_name => 'twitter', :type_name => 'follow')
+      Bit.where(:feed_name => 'twitter', :type_name => 'follow')
     end
 
     def name_from_cache(user_id)

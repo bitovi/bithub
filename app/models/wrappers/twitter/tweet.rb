@@ -7,12 +7,12 @@ module Wrappers
       include DataAccessible
       include CoreHelpers
 
-      attr_reader :retweeted_status, :quoted_status, :entities
+      attr_reader :retweeted_status, :quoted_status, :bits
       has :id, :id_str, :text, :retweet_count, :favorite_count
 
       def initialize(tweet)
         @data = symbolize_keys(tweet)
-        @entities = Wrappers::Twitter::Entities.new(tweet.andand[:entities])
+        @bits = Wrappers::Twitter::Bits.new(tweet.andand[:bits])
         if @data[:retweeted_status]
           @retweeted_status = Wrappers::Twitter::Tweet.new(@data[:retweeted_status])
         elsif @data[:quoted_status]

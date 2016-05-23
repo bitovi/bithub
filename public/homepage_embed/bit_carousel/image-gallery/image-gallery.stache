@@ -1,6 +1,0 @@
-<div class="current-image" style="background-image: url({{currentImage.url}})">
-  {{#if hasGallery}}
-    <span class="prev-link" can-click="prevImage">Prev</span>
-    <span class="next-link" can-click="nextImage">Next</span>
-  {{/if}}
-</div>

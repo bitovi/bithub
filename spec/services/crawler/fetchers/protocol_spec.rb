@@ -15,7 +15,7 @@ describe Fetchers::Protocol do
   # Github::Error::NotAcceptable
   # Github::Error::ServiceUnavailable
   # Github::Error::Unauthorized
-  # Github::Error::UnprocessableEntity
+  # Github::Error::UnprocessableBit
   #
   # TODO Instagram
   # Instagram::Error::BadRequest
@@ -35,7 +35,7 @@ describe Fetchers::Protocol do
   # Twitter::Error::NotAcceptable
   # Twitter::Error::RequestTimeout
   # Twitter::Error::EnhanceYourCalm
-  # Twitter::Error::UnprocessableEntity
+  # Twitter::Error::UnprocessableBit
   # Twitter::Error::InternalServerError
   # Twitter::Error::BadGateway
   # Twitter::Error::ServiceUnavailable

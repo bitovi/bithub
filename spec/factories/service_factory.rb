@@ -1,8 +1,8 @@
 FactoryGirl.define do
 
   factory :service do
-    embed
-    association :brand_identity
+    hub
+    association :credential
 
     factory :rss_service do
       feed_name 'rss'

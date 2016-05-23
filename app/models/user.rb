@@ -1,36 +1,28 @@
 class User < ActiveRecord::Base
-  extend Solipsism
+	devise :invitable, :database_authenticatable, :registerable,
+	     :recoverable, :rememberable, :trackable, :validatable,
+	     :omniauthable, :confirmable, :invitable
 
-  store_accessor :props
+	rolify :role_cname => 'UserRole'
 
-  has_many :ownerships, foreign_key: 'owner_id', :dependent => :destroy
-  has_many :entities, through: :ownerships, source: 'entity'
+	has_many :organizations, through: :user_organizations
+	has_many :user_organizations, dependent: :destroy
 
-  has_and_belongs_to_many :brands
+	attr_accessor :current_password
 
-  scope :only_not_null_names, -> { where("name <> '' and name IS NOT NULL") }
-  scope :from_tenant, ->(brand_name) { joins(:brands).where("brands.tenant_name = ?", brand_name) }
+	def brand_ids
+		organizations.map do |o|
+		  o.brand_ids
+		end.uniq.flatten
+	end
 
-  def join_brand(brand_name)
-    return unless (b = match_brand brand_name)
-    brands << b unless brands.include? b
-  end
-
-  def remove_brand(brand_name)
-    return unless (b = match_brand brand_name)
-    brands.delete b
-  end
-
-  private
-
-  def match_brand(brand)
-    if brand.is_a? Integer
-      Brand.find_by_id(brand)
-    elsif brand.is_a?(String) || brand.is_a?(Symbol)
-      Brand.where(:name => brand.to_s).first
-    elsif brand.is_a? Brand
-      brand
-    end
-  end
-
+	def brands
+		organizations.map do |o|
+		  o.brands
+		end.uniq.flatten
+	end
+	
+	def as_json options = {}
+		super options.merge only: [ :id, :name, :created_at, :updated_at, :email ]
+	end
 end

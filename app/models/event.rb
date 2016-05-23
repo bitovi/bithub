@@ -1,13 +1,13 @@
 class Event < ActiveRecord::Base
-  belongs_to :entity
-  belongs_to :embed
+  belongs_to :bit
+  belongs_to :hub
   belongs_to :service
 
   store_accessor :props
   store_accessor :source_data
 
-  validates_presence_of :content_digest, :embed_id, :service_id
-  validates_uniqueness_of :content_digest, scope: [:embed_id, :service_id]
+  validates_presence_of :content_digest, :hub_id, :service_id
+  validates_uniqueness_of :content_digest, scope: [:hub_id, :service_id]
 
   scope :unprocessed, -> { where(was_viewed: false, is_processed: false) }
   scope :processing_failed, lambda { where(was_viewed: true, is_processed: false) }

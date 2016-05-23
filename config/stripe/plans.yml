@@ -44,8 +44,8 @@
   features: {}
   limits:
     brands: 1
-    embeds_per_brand: 1
-    services_per_embed: 7
+    hubs_per_brand: 1
+    services_per_hub: 7
     disqus_forum: 1
     facebook_page: 1
     foursquare_venue: 1
@@ -78,8 +78,8 @@
     whitelabel: true
   limits:
     brands: 1
-    embeds_per_brand: 3
-    services_per_embed: 10
+    hubs_per_brand: 3
+    services_per_hub: 10
 
 -
   stripe_id: 'agency'
@@ -96,5 +96,5 @@
     whitelabel: true
   limits:
     brands: 4
-    embeds_per_brand: 3
-    services_per_embed: 12
+    hubs_per_brand: 3
+    services_per_hub: 12

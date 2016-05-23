@@ -1,17 +1,17 @@
 class Api::UsersController < Api::BaseController
 	include Api::Helpers::Filter
 	
-	before_action :ensure_current_account, only: [:index]
+	before_action :ensure_current_user, only: [:index]
 	
 	def create	
-		account = Account.new params_to_account_arguments params
+		user = User.new params_to_user_arguments params
 		ActiveRecord::Base.transaction do
-	        unless account.save
-		        return render_error_message account.errors, account.errors, :unprocessable_entity
+	        unless user.save
+		        return render_error_message user.errors, user.errors, :unprocessable_entity
 	        end
 		end
 		
-		org_builder = Organizations::OrganizationBuilder.new account, params
+		org_builder = Organizations::OrganizationBuilder.new user, params
 		begin
 			ActiveRecord::Base.transaction do
 				org_builder.build.save!
@@ -22,14 +22,16 @@ class Api::UsersController < Api::BaseController
 			return render_error_message e, e, :unprocessable_entity
 		end
 
-		sign_in :account, account
-		return render json: account, status: :created
+		sign_in :user, user
+		return render json: user, status: :created
 	rescue KeyError => e
+		render_error_message e, e, :bad_request
+	rescue => e
 		render_error_message e, e, :bad_request
     end
 		
 	def index
-		return render json: filter(Account, sanitize(params)), status: :ok
+		return render json: filter(User, sanitize(params)), status: :ok
 	rescue => from
 		return render_error_message from, from.message, :bad_request
 	end
@@ -40,7 +42,7 @@ class Api::UsersController < Api::BaseController
 		return render json: { message: m, errors: e }, status: status
 	end
 	
-	def params_to_account_arguments params
+	def params_to_user_arguments params
 		{ 
 			email: params.fetch(:email), 
 			password: params.fetch(:password),

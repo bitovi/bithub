@@ -29,7 +29,7 @@ module Identities
 
       private
       def pages_over_http
-        facebook_api_client.get_connections('me','accounts')
+        facebook_api_client.get_connections('me','users')
       end
 
       def long_lived_access_token_over_http

@@ -8,7 +8,7 @@
 	<h1>WsServer test</h1>
 
 	<script>
-	  var socket = io('/?embed_name=foobar');
+	  var socket = io('/?hub_name=foobar');
 	  socket.on('connect', function() {
 	    console.log('CONNECTED!');
 	  });
@@ -16,8 +16,8 @@
 	    console.log('CONNECTION ERROR!');
 	  });
 
-	  socket.on('entities', function( msg ) {
-        console.log( 'New message from entities', msg );
+	  socket.on('bits', function( msg ) {
+        console.log( 'New message from bits', msg );
 	  });
 
 	  socket.on('services', function( msg ) {

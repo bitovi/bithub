@@ -18,7 +18,7 @@ class Histogram < ActiveRecord::Base
 
   def self.fill_stats(recurrence = 'minute')
     fill_service_stats(recurrence)
-    fill_embed_stats(recurrence)
+    fill_hub_stats(recurrence)
   end
   
   def self.fill_service_stats(recurrence = 'minute')
@@ -26,11 +26,11 @@ class Histogram < ActiveRecord::Base
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
         select services.id as source_id
-               , sum(case when entities.id is not null then 1 else 0 end) as volume
+               , sum(case when bits.id is not null then 1 else 0 end) as volume
                , date_trunc('#{recurrence}', now()) as measured_at
         from services
-        left join service_entities on services.id = service_entities.service_id
-        left join entities on service_entities.entity_id = entities.id
+        left join service_bits on services.id = service_bits.service_id
+        left join bits on service_bits.bit_id = bits.id
         group by services.id
         union (
           select source_id, volume, measured_at
@@ -59,23 +59,23 @@ class Histogram < ActiveRecord::Base
     nil
   end
 
-  def self.fill_embed_stats(recurrence = 'minute')
+  def self.fill_hub_stats(recurrence = 'minute')
     ActiveRecord::Base.connection.execute <<-SQL
       insert into histogram (source_type, source_id, volume, delta, measured_at)
       with whole as (
-        select embeds.id as source_id
-               , sum(case when entities.id is not null then 1 else 0 end) as volume
+        select hubs.id as source_id
+               , sum(case when bits.id is not null then 1 else 0 end) as volume
                , date_trunc('#{recurrence}', now()) as measured_at
-        from embeds
-        left join embed_entities on embeds.id = embed_entities.embed_id
-        left join entities on embed_entities.entity_id = entities.id
-        group by embeds.id
+        from hubs
+        left join moderations on hubs.id = moderations.hub_id
+        left join bits on moderations.bit_id = bits.id
+        group by hubs.id
         union (
           select source_id, volume, measured_at
           from histogram
-          where source_type = 'Embed'
+          where source_type = 'Hub'
           order by measured_at desc
-          limit (select count (distinct (embeds.id)) from embeds))
+          limit (select count (distinct (hubs.id)) from hubs))
         order by source_id, measured_at asc
       ), whole_diffed as (
         select source_id
@@ -84,7 +84,7 @@ class Histogram < ActiveRecord::Base
              , measured_at
         from whole
         window w as (partition by source_id order by measured_at asc)
-      ) select 'Embed' source_type
+      ) select 'Hub' source_type
            , source_id
            , volume
            , delta
@@ -93,7 +93,7 @@ class Histogram < ActiveRecord::Base
       where (now() - measured_at) < '1 #{recurrence}'::interval;
     SQL
   rescue ActiveRecord::RecordNotUnique => e
-    Rails.logger.error "Histogram embed data should be filled only once each #{recurrence}"
+    Rails.logger.error "Histogram hub data should be filled only once each #{recurrence}"
     nil
   end
 end

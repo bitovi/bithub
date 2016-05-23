@@ -8,7 +8,7 @@ var sessionStore  = require('./session_store.js'),
 	redisListener = require('./redis_listener.js'),
 	messageRouter = require('./message_router.js');
 
-var ENDPOINTS = ['entities', 'services', 'moderation'];
+var ENDPOINTS = ['bits', 'services', 'moderation'];
 
 var indexHandler = function( req, res ) {
 	fs.readFile(
@@ -40,9 +40,9 @@ var _parseCookies = function( cookie ) {
 
 var _logNewMessage = function( queueName, message ) {
 	var meta = message.meta;
-	var output = [queueName, meta.brand_name, meta.embed_id, meta.is_public].join(' ');
+	var output = [queueName, meta.brand_name, meta.hub_id, meta.is_public].join(' ');
 
-	console.log( 'New message from MQ (endpoint, brand, embed, public?): [' + output + ']' );
+	console.log( 'New message from MQ (endpoint, brand, hub, public?): [' + output + ']' );
 };
 
 var _logNewSubscription = function( routingKey, session ) {
@@ -87,7 +87,7 @@ LiveService.prototype.listen = function() {
 
 LiveService.prototype.registerEndpoints = function() {
 	var self = this;
-	var queues = ['guzzler:liveservice:entities', 'guzzler:liveservice:services'];
+	var queues = ['guzzler:liveservice:bits', 'guzzler:liveservice:services'];
 
 	self.listener.listen(queues, function( resp ) {
 		var queueName = resp['queueName'],
@@ -96,7 +96,7 @@ LiveService.prototype.registerEndpoints = function() {
 
 		self.quite || _logNewMessage( keyPrefix, data );
 
-		var key = [keyPrefix, data.meta.brand_name, data.meta.embed_id].join('.');
+		var key = [keyPrefix, data.meta.brand_name, data.meta.hub_id].join('.');
 		self.router.publish( key, data );
 	});
 };
@@ -112,7 +112,7 @@ LiveService.prototype.onIoConnection = function() {
 		var session_id = params.session_id || (cookie && _parseCookies( cookie )._session_id);
 		var subscriptions = [];
 
-		if( params.embed_id && params.tenant_name) {
+		if( params.hub_id && params.tenant_name) {
 			self.quite || console.log( 'CONNECTED, SID: ', socket.id );
 		} else {
 			self.quite || console.log( 'FORCE DISCONNECT, malformed request from', remoteIp );
@@ -141,7 +141,7 @@ LiveService.prototype.onIoConnection = function() {
 				// AUTHORIZED USER
 
 				_.each( self.endpoints, function( endpoint ) {
-					var routingKey = [endpoint, params.tenant_name, params.embed_id].join('.');
+					var routingKey = [endpoint, params.tenant_name, params.hub_id].join('.');
 					var emitter  = function( data ) {
 						console.log('NEW DATA', data)
 						socket.emit( endpoint, data.payload );
@@ -154,10 +154,10 @@ LiveService.prototype.onIoConnection = function() {
 			} else {
 				// PUBLIC CONNECTION
 
-				var routingKey = ['entities', params.tenant_name, params.embed_id].join('.');
+				var routingKey = ['bits', params.tenant_name, params.hub_id].join('.');
 				var emitter  = function(data){
 					if(data.meta.is_public){
-						socket.emit('entities', data.payload);
+						socket.emit('bits', data.payload);
 					}
 				};
 

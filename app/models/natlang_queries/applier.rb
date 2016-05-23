@@ -19,7 +19,7 @@ module NatlangQueries
       skope
     end
 
-    def method_scope(q, skope = Entity)
+    def method_scope(q, skope = Bit)
       skope.send(q[:method], q[:arg])
     end
   end

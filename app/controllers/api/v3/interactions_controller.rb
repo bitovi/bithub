@@ -1,7 +1,7 @@
 class Api::V3::InteractionsController < Api::V3::ApiController
   respond_to :html
 
-  skip_before_action :require_account!, only: %w(create)
+  skip_before_action :require_user!, only: %w(create)
 
   def index
     @zoom = zoom

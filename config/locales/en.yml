@@ -54,24 +54,24 @@ en:
         success: "Reward deleted."
         error: "Error during reward deletion."
     
-    embeds:
+    hubs:
       show:
-        error: "Embed not found."
+        error: "Hub not found."
       create:
-        success: "Embed created."
-        error: "Error during embed creation."
+        success: "Hub created."
+        error: "Error during hub creation."
       update:
-        success: "Embed created."
-        error: "Error during embed creation"
+        success: "Hub created."
+        error: "Error during hub creation"
       update:
-        success: "Embed updated."
-        error: "Error during embed update"
+        success: "Hub updated."
+        error: "Error during hub update"
       destroy:
-        success: "Embed deleted."
-        error: "Error during embed deletion."
+        success: "Hub deleted."
+        error: "Error during hub deletion."
       moderate:
-        success: "Embed moderated."
-        error: "Error during embed moderatinon."
+        success: "Hub moderated."
+        error: "Error during hub moderatinon."
 
     services:
       create:

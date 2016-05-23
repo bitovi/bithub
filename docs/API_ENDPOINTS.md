@@ -1,12 +1,12 @@
 API endpoints
 =============
 
-Embeds
+Hubs
 ------
 
-Path: `/api/embeds`
+Path: `/api/hubs`
 
-**An embed is a 'view' of the content in the system.**
+**An hub is a 'view' of the content in the system.**
 
 These are called 'Hubs' in the client.
 
@@ -14,58 +14,58 @@ These are called 'Hubs' in the client.
 
 HTTP Verb   | Endpoint         | Description
 ----------- | ---------------- | ----------------------------------------
-GET         | `/embeds`        | Responds with all entities from an embed.
-GET         | `/embeds/:id`    | Responds with all entities from an embed that are waiting for manual approval.
-POST        | `/embeds`        | Creates a new embed.
-PUT         | `/embeds/:id`    | Removes the given entity from the list of approved entities for that embed.
-DELETE      | `/embeds/:id`    | Entirely removes the given entity from the given embed.
+GET         | `/hubs`        | Responds with all bits from an hub.
+GET         | `/hubs/:id`    | Responds with all bits from an hub that are waiting for manual approval.
+POST        | `/hubs`        | Creates a new hub.
+PUT         | `/hubs/:id`    | Removes the given bit from the list of approved bits for that hub.
+DELETE      | `/hubs/:id`    | Entirely removes the given bit from the given hub.
 
 ### Params
 
 Name        | Type             | Description
 ----------- | ---------------- | ----------------------------------------
 name        | String           | -
-colorscheme | String           | Encoded color scheme, used for generating the embed code.
-layout      | String           | Encoded layout, used for generating the embed code.
+colorscheme | String           | Encoded color scheme, used for generating the hub code.
+layout      | String           | Encoded layout, used for generating the hub code.
 
 
-Embed entities
+Hub bits
 --------------
 
-Path: `/api/embeds/:embed_id/entities`
+Path: `/api/hubs/:hub_id/bits`
 
-**Used to expose entities linked to an embed to the client.**
+**Used to expose bits linked to an hub to the client.**
 
-It's used to show various views of data in an embed. It shows
-approved and waitlisted entities and allows manipulation of
-those entities (manually approving or hiding content, or entirely
+It's used to show various views of data in an hub. It shows
+approved and waitlisted bits and allows manipulation of
+those bits (manually approving or hiding content, or entirely
 removing them).
 
 ### Routes
 
 HTTP Verb   | Endpoint                                    | Description
 ----------- | ------------------------------------------- | ----------------------------------------
-GET         | `/embeds/:embed_id/entities`                | Responds with all entities from an embed
-GET         | `/embeds/:embed_id/entities/approved`       | Responds with all approved entities from an embed
-GET         | `/embeds/:embed_id/entities/waitlisted`     | Responds with all entities from an embed that are waiting for manual approval
-GET         | `/embeds/:embed_id/entities/:id`            | Responds with details of the given entity.
-PUT         | `/embeds/:embed_id/entities/:id/aprove`     | Adds the given entity to the list of approved entities for that embed.
-PUT         | `/embeds/:embed_id/entities/:id/disaprove`  | Removes the given entity from the list of approved entities for that embed.
-DELETE      | `/embeds/:embed_id/entities/:id`            | Entirely removes the given entity from the given embed.
+GET         | `/hubs/:hub_id/bits`                | Responds with all bits from an hub
+GET         | `/hubs/:hub_id/bits/approved`       | Responds with all approved bits from an hub
+GET         | `/hubs/:hub_id/bits/waitlisted`     | Responds with all bits from an hub that are waiting for manual approval
+GET         | `/hubs/:hub_id/bits/:id`            | Responds with details of the given bit.
+PUT         | `/hubs/:hub_id/bits/:id/aprove`     | Adds the given bit to the list of approved bits for that hub.
+PUT         | `/hubs/:hub_id/bits/:id/disaprove`  | Removes the given bit from the list of approved bits for that hub.
+DELETE      | `/hubs/:hub_id/bits/:id`            | Entirely removes the given bit from the given hub.
 
 
-Embed filters
+Hub filters
 -------------
 
-Path: `/api/embeds/:embed_id/filters`
+Path: `/api/hubs/:hub_id/filters`
 
 **Used to definine moderation rules for incoming data.**
 
 Only one blocking and one moderating filter can be
-defined for each embed.
+defined for each hub.
 
 The blocking filter prevents saving the incoming data,
-and the moderating filter automatically approves an entity
+and the moderating filter automatically approves an bit
 if it satisfies the appropriate conditions.
 
 Filters consist of queries which can be combined. A filter
@@ -82,11 +82,11 @@ A few examples of queries:
 
 HTTP Verb  | Endpoint                                    | Description
 ---------- | ------------------------------------------- | ---------------------------------------
-GET        | `/embeds/:embed_id/filters`                 | responds with all filters for a given embed
-GET        | `/embeds/:embed_id/filters/:id`             | responds with details of the given filter
-POST       | `/embeds/:embed_id/filters`                 | creates a new filter for a given embed
-PUT        | `/embeds/:embed_id/filters/:id`             | updates the existing filter for a given embed
-DELETE     | `/embeds/:embed_id/filters/:id`             | destroys a filter
+GET        | `/hubs/:hub_id/filters`                 | responds with all filters for a given hub
+GET        | `/hubs/:hub_id/filters/:id`             | responds with details of the given filter
+POST       | `/hubs/:hub_id/filters`                 | creates a new filter for a given hub
+PUT        | `/hubs/:hub_id/filters/:id`             | updates the existing filter for a given hub
+DELETE     | `/hubs/:hub_id/filters/:id`             | destroys a filter
 
 ### Params
 
@@ -118,10 +118,10 @@ Natlang queries JSON example:
 }]
 ```
 
-Embed services
+Hub services
 --------------
 
-Path: `/api/embeds/:embed_id/services`
+Path: `/api/hubs/:hub_id/services`
 
 **Used to define configuration for a given feed.**
 
@@ -138,11 +138,11 @@ Twitter
 
 HTTP Verb  | Endpoint                                     | Description
 ---------- | -------------------------------------------- | ---------------------------------------
-GET        | `/embeds/:embed_id/services`                 | responds with all filters for a given embed
-GET        | `/embeds/:embed_id/services/:id`             | responds with details of the given filter
-POST       | `/embeds/:embed_id/services`                 | creates a new filter for a given embed
-PUT        | `/embeds/:embed_id/services/:id`             | updates the existing filter for a given embed
-DELETE     | `/embeds/:embed_id/services/:id`             | destroys a filter
+GET        | `/hubs/:hub_id/services`                 | responds with all filters for a given hub
+GET        | `/hubs/:hub_id/services/:id`             | responds with details of the given filter
+POST       | `/hubs/:hub_id/services`                 | creates a new filter for a given hub
+PUT        | `/hubs/:hub_id/services/:id`             | updates the existing filter for a given hub
+DELETE     | `/hubs/:hub_id/services/:id`             | destroys a filter
 
 ### Params
 

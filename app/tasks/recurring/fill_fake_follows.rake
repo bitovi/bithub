@@ -1,6 +1,6 @@
 namespace :recurring do
 
-  desc "Fill pending columns for FakeFollow entities"
+  desc "Fill pending columns for FakeFollow bits"
   task :fill_fake_follows => :environment do
     Rails.logger.info "[WHENEVER] Running recurring:fill_fake_follows at #{Time.now}"
 
