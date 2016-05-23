@@ -13,7 +13,7 @@ module Guzzler
   # Persistor errors
   class HandlingError < GuzzlerError; end
   class EventHandlingError < HandlingError; end
-  class EntityHandlingError < HandlingError; end
+  class BitHandlingError < HandlingError; end
 
   # Subscription errors
   class SubscriptionError < GuzzlerError; end

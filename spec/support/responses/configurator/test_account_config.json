@@ -3,7 +3,7 @@
 		{
         "id":42,
 		"name":"bitovi",
-		"embeds":[
+		"hubs":[
 		{
 			"id":17,
 			"name":"code",

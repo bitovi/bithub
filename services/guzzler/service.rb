@@ -14,7 +14,7 @@ module Guzzler
 
       @feed_name = data.fetch('feed_name')
       @type_name = data.fetch('type_name')
-      @embed_id = data.fetch('embed_id')
+      @hub_id = data.fetch('hub_id')
       @brand_id = data.fetch('brand_id')
       @interval = data.fetch('interval')  { 60 }
 
@@ -23,7 +23,7 @@ module Guzzler
 
     attr_accessor :data
 
-    attr_reader :tenant_name, :service_id, :embed_id, :brand_id,
+    attr_reader :tenant_name, :service_id, :hub_id, :brand_id,
       :interval, :feed_name, :type_name, :config
     
     def key
@@ -51,7 +51,7 @@ module Guzzler
     end
 
     def to_s
-      "#{@tenant_name},#{@embed_id},#{@service_id},#{@feed_name},#{@type_name}"
+      "#{@tenant_name},#{@hub_id},#{@service_id},#{@feed_name},#{@type_name}"
     end
 
     def to_h

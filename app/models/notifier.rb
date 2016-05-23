@@ -7,10 +7,10 @@ class Notifier
   end
 
   def notify_client(about, args)
-    if about == :entity_persisted || about == :entity_moderated
-      entity_touched(args.fetch(:entity))
-    elsif about == :entity_routed_to_service
-      entity_routed_to_service(args.fetch(:service))
+    if about == :bit_persisted || about == :bit_moderated
+      bit_touched(args.fetch(:bit))
+    elsif about == :bit_routed_to_service
+      bit_routed_to_service(args.fetch(:service))
     elsif about == :service_error_raised
       service_error_raised(args.fetch(:service_error))
     end
@@ -18,21 +18,21 @@ class Notifier
 
   private
 
-  # Notify client that an entity was updated in some way.
-  def entity_touched(entity)
-    return if (entity.is_pending? || entity.is_child?)
+  # Notify client that an bit was updated in some way.
+  def bit_touched(bit)
+    return if (bit.is_pending? || bit.is_child?)
 
-    entity.embeds.reload.each do |embed|
-      Guzzler.lpush('liveservice:entities', Messages.push_entity_to_embed(entity, embed))
-      if !entity.is_approved(embed)
-        # We don't want to send the whole entity publicly when it is blocked but we need to send just enough so it can be removed from an active embed. This way live embeds (like on event media walls) can be moderated and updated in real-time.
-        Guzzler.lpush('liveservice:entities', Messages.pop_entity_from_embed(entity, embed))
+    bit.hubs.reload.each do |hub|
+      Guzzler.lpush('liveservice:bits', Messages.push_bit_to_hub(bit, hub))
+      if !bit.is_approved(hub)
+        # We don't want to send the whole bit publicly when it is blocked but we need to send just enough so it can be removed from an active hub. This way live hubs (like on event media walls) can be moderated and updated in real-time.
+        Guzzler.lpush('liveservice:bits', Messages.pop_bit_from_hub(bit, hub))
       end
     end
   end
 
   # Notify client that an event was routed to a service so that it can mark it as a loaded service and/or clear the error marker.
-  def entity_routed_to_service(service)
+  def bit_routed_to_service(service)
     Guzzler.lpush('liveservice:services', Messages.clear_service_errors(service))
   end
 

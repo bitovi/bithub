@@ -1,6 +1,7 @@
 require 'octokit'
 
 module Github
+  # Maybe this should be Bit, but we don't know if Github has a concept of "Bit"
   class Entity
     attr_accessor :last_response
     

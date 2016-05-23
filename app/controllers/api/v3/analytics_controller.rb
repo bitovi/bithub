@@ -40,11 +40,11 @@ class Api::V3::AnalyticsController < Api::V3::ApiController
 
   def source
     if source_type == Service && owner_id
-      @sources = Embed.find(owner_id).services
+      @sources = Hub.find(owner_id).services
     elsif source_type == Service && source_id
       @source = Service.find(source_id)
-    elsif source_type == Embed && source_id
-      @source = Embed.find(source_id)
+    elsif source_type == Hub && source_id
+      @source = Hub.find(source_id)
     else
       fail ArgumentError.new("Missing params.")
     end
@@ -57,8 +57,8 @@ class Api::V3::AnalyticsController < Api::V3::ApiController
   end
 
   def source_type
-    if params[:source_type] == 'embeds'
-      Embed
+    if params[:source_type] == 'hubs'
+      Hub
     elsif params[:source_type] == 'services'
       Service
     end

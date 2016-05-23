@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
 
-  before_filter :authenticate_account!
+  before_filter :authenticate_user!
   after_action :allow_iframe, only: [:edit_cc, :edit_plan]
   layout :backend_admin
 

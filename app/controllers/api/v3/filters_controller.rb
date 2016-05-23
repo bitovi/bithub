@@ -1,9 +1,9 @@
 class Api::V3::FiltersController < Api::V3::ApiController
-  include Api::EmbedScoped
+  include Api::HubScoped
 
   def index
     authorize! :index, Filter
-    @filters = owner_embed.filters
+    @filters = owner_hub.filters
     render 'api/v3/filters/index'
   end
 
@@ -17,7 +17,7 @@ class Api::V3::FiltersController < Api::V3::ApiController
   end
 
   def create
-    @filter = owner_embed.filters.build(filter_params)
+    @filter = owner_hub.filters.build(filter_params)
     @filter.natlang_queries.build(normalized_queries)
     @filter.natlang_queries.map(&:clean)
 
@@ -29,7 +29,7 @@ class Api::V3::FiltersController < Api::V3::ApiController
   end
 
   def update
-    @filter = owner_embed.filters.find(filter_id)
+    @filter = owner_hub.filters.find(filter_id)
     queries_params.each do |q|
       if (nlq = @filter.natlang_queries.find(q[:id]))
         nlq.assign_attributes(q)
@@ -48,8 +48,8 @@ class Api::V3::FiltersController < Api::V3::ApiController
   end
 
   def destroy
-    embed = current_brand.embeds.find(embed_id)
-    @filter = embed.filters.find(filter_id)
+    hub = current_brand.hubs.find(hub_id)
+    @filter = hub.filters.find(filter_id)
 
     if @filter.destroy
       render :json => msg_hash(@filter, 'destroy', 'success'), :status => 204
@@ -64,8 +64,8 @@ class Api::V3::FiltersController < Api::V3::ApiController
     @filter = Filter.find(filter_id)
   end
 
-  def embed_id
-    params[:embed_id] || params[:filter].andand[:embed_id]
+  def hub_id
+    params[:hub_id] || params[:filter].andand[:hub_id]
   end
 
   def filter_id
@@ -74,7 +74,7 @@ class Api::V3::FiltersController < Api::V3::ApiController
 
   def filter_params
     @json ||= ActionController::Parameters.new(JSON.parse_nil(request.body.read))
-    @json.require(:filter).permit(:id, :action, :embed_id)
+    @json.require(:filter).permit(:id, :action, :hub_id)
   end
 
   def normalized_queries

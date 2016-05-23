@@ -2,7 +2,7 @@
 	"brands":[
 		{
 		"name":"bitovi",
-		"embeds":[
+		"hubs":[
 		{
 			"name":"code",
 			"services":[

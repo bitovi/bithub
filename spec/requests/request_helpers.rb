@@ -68,6 +68,6 @@ module AuthTestData
 end
 
 def register_and_login
-  post '/accounts', { account: AuthTestData::ACCOUNT_REGISTRATION_DATA }
-  post '/accounts/sign_in', { account: AuthTestData::ACCOUNT_LOGIN_DATA }
+  post '/users', { user: AuthTestData::ACCOUNT_REGISTRATION_DATA }
+  post '/users/sign_in', { user: AuthTestData::ACCOUNT_LOGIN_DATA }
 end

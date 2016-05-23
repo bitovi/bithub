@@ -1,4 +1,0 @@
-<div class="form-group form-group-without-margin suggestions-wrapper">
-	<bh-suggestions service="meetup" brand-identity-id="{map.brand_identity_id}" val="{map.config.id}" pick-suggestion-label="Select Meetup Group"></bh-suggestions>
-	{{{configErrors errors 'id'}}}
-</div>

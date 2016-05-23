@@ -1,9 +1,0 @@
-<div class="form-group">
-	<label>User Handle</label>
-	<div class="input-group">
-		<span class="input-group-addon">@</span>
-		<input type="text" can-value="map.config.handle" class="form-control">
-		{{{configErrors errors 'handle'}}}
-	</div>
-	<p class="form-instructions">Enter any Twitter user handle</p>
-</div>

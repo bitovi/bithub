@@ -1,5 +1,5 @@
 class Api::V3::ServicesController < Api::V3::ApiController
-  include Api::EmbedScoped
+  include Api::HubScoped
 
   def index
     authorize! :index, Service
@@ -20,7 +20,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
   def create
     authorize! :create, built_service
 
-    @service.brand_identity = BrandIdentity.find_by_id(brand_identity_id)
+    @service.credential = Credential.find_by_id(brand_idbit_id)
     @service.humanized_config
 
     feed_name = service_kind[:feed_name]
@@ -68,7 +68,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
         suggestions += api_adapter.user_from_instagram(params[:username])
 
       # VISE IDENTITETA
-      elsif bi = current_brand.identities.where(id: brand_identity_id, provider: feed_name).first
+      elsif bi = current_brand.identities.where(id: brand_idbit_id, provider: feed_name).first
         suggestions += bi.property_id_name_pairs(params[:feed_type])
       end
 
@@ -81,7 +81,7 @@ class Api::V3::ServicesController < Api::V3::ApiController
   private
 
   def all_services
-    @services = embed_id ? owner_embed.services : Service.all
+    @services = hub_id ? owner_hub.services : Service.all
   end
 
   def a_service
@@ -89,15 +89,15 @@ class Api::V3::ServicesController < Api::V3::ApiController
   end
 
   def built_service
-    @service = owner_embed.services.build(service_definition)
+    @service = owner_hub.services.build(service_definition)
   end
 
-  def embed_id
-    params[:embed_id] || params[:service].andand[:embed_id]
+  def hub_id
+    params[:hub_id] || params[:service].andand[:hub_id]
   end
 
-  def brand_identity_id
-    params[:brand_identity_id] || params[:service].andand[:brand_identity_id]
+  def brand_idbit_id
+    params[:brand_idbit_id] || params[:service].andand[:brand_idbit_id]
   end
 
   def service_id

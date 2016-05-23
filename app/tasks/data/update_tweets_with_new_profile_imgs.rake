@@ -1,15 +1,15 @@
 def new_profile_imgs
-  twitter_api = Accounts::ThirdPartyUserInformer.new.twitter
+  twitter_api = Users::ThirdPartyUserInformer.new.twitter
 
-  ids = Entity.where(:feed_name => 'twitter').where(:type_name => 'tweet').map{|t| t.props["origin_author_id"]}.uniq.map{|id| id.to_i}
+  ids = Bit.where(:feed_name => 'twitter').where(:type_name => 'tweet').map{|t| t.props["origin_author_id"]}.uniq.map{|id| id.to_i}
   Hash[twitter_api.users(ids).map {|u| [u.id, u.profile_image_url]}]
 end
 
 def refresh_tweet_origin_avatar_urls(resp_hash)
   resp_hash.each do |id, img_url|
-    Entity.origin_author(id).all.each do |entity|
-      entity.props['origin_author_avatar_url'] = img_url.to_s
-      entity.save
+    Bit.origin_author(id).all.each do |bit|
+      bit.props['origin_author_avatar_url'] = img_url.to_s
+      bit.save
     end
   end
 end

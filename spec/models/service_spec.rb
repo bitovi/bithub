@@ -12,8 +12,8 @@ RSpec.describe Service, :type => :model do
         config: {
           fruit: %w(apple and banana)
         },
-        embed: Embed.new({
-          name: 'test-embed',
+        hub: Hub.new({
+          name: 'test-hub',
           brand: Brand.current
         })
       })
@@ -23,7 +23,7 @@ RSpec.describe Service, :type => :model do
   end
 
   describe '#config_with_credentials' do
-    it 'knows how to merge the config with the credentials from the associated brand_identity'
+    it 'knows how to merge the config with the credentials from the associated credential'
   end
 
 end

@@ -20,6 +20,7 @@ Bithub::Application.configure do
 
   # Logging with log4r
   config.log_level = :debug
+  config.logger = Logger.new(nil)
 
   # Don't sent out actual 3rd party OAuth requests
   OmniAuth.config.test_mode = true

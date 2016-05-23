@@ -13,7 +13,7 @@ common: &default_settings
   # ============================== LICENSE KEY ===============================
 
   # You must specify the license key associated with your New Relic
-  # account.  This key binds your Agent's data to your account in the
+  # user.  This key binds your Agent's data to your user in the
   # New Relic service.
   license_key: 'fceb2642ac34bfe1de22a2a43bb9502a0ac48d8a'
 

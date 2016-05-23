@@ -31,26 +31,26 @@ namespace :billing do
         end
 
         Apartment::Tenant.switch(brand.tenant_name) do
-          # collect embed publish/unpublish/destroy logs
-          logs_export = EmbedEvent.export_for_monthly_billing_by_org_id org.id, year: _year, month: _month
+          # collect hub publish/unpublish/destroy logs
+          logs_export = HubEvent.export_for_monthly_billing_by_org_id org.id, year: _year, month: _month
 
           mbm = MonthlyBillings::Manager.new org.id, logs_export, year: _year, month: _month
 
           mbm.usage_per_days.each do |key, dates|
-            brand_id, embed_id = key
-            record             = mbm.find_record(brand_id, embed_id).last
+            brand_id, hub_id = key
+            record             = mbm.find_record(brand_id, hub_id).last
             price              = mbm.price.to_i / 100.00
 
-            puts "\t #{embed_id} / #{record.embed_name}: #{dates.count} days * #{price} USD = #{dates.count * price}"
+            puts "\t #{hub_id} / #{record.hub_name}: #{dates.count} days * #{price} USD = #{dates.count * price}"
           end
 
           mbm.usage_per_days.each do |key, dates|
-            brand_id, embed_id = key
-            record             = mbm.find_record(brand_id, embed_id).last
+            brand_id, hub_id = key
+            record             = mbm.find_record(brand_id, hub_id).last
             price              = (mbm.price / 100.0).round(2).to_f
             total              = (dates.count * mbm.price).round(2).to_i
 
-            puts "\t #{embed_id} / #{record.embed_name}: #{dates.count} days * #{price} = #{total} cents"
+            puts "\t #{hub_id} / #{record.hub_name}: #{dates.count} days * #{price} = #{total} cents"
           end
 
           if _save && (mb = mbm.save_to_monthly_billings!)

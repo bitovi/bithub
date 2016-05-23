@@ -1,4 +1,0 @@
-<div class="form-group">
-	<bh-suggestions service="github/org" brand-identity-id="{map.brand_identity_id}" val="{map.config.name}" allow-extra="true" pick-suggestion-label="Select an organization you belong to" enter-your-own-label="Or enter any public organization"></bh-suggestions>
-	{{{configErrors errors 'name'}}}
-</div>

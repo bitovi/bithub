@@ -4,8 +4,8 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied, with: :render_401
 
   def current_ability
-    if account_signed_in?
-      @current_ability ||= AccountAbility.new current_account
+    if user_signed_in?
+      @current_ability ||= UserAbility.new current_user
     else
       @current_ability ||= AnonAbility.new
     end

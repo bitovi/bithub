@@ -11,11 +11,11 @@ every :day, at: '05:30am' do
 end
 
 every :day, at: '06:30am' do
-  rake 'recurring:age_out_entities'
+  rake 'recurring:age_out_bits'
 end
 
 every :day, at: '07:30am' do
-  rake 'recurring:clean_orphaned_entities'
+  rake 'recurring:clean_orphaned_bits'
 end
 
 every :day, at: '8:30am' do

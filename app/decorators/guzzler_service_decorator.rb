@@ -9,16 +9,16 @@ class GuzzlerServiceDecorator < Draper::Decorator
     id
   end
 
-  def embed_id
-    source.embed_id
+  def hub_id
+    source.hub_id
   end
 
   def brand_id
-    source.andand.embed.andand.brand.andand.id || source.brand_id
+    source.andand.hub.andand.brand.andand.id || source.brand_id
   end
 
   def tenant_name
-    source.andand.embed.andand.brand.andand.tenant_name || source.tenant_name
+    source.andand.hub.andand.brand.andand.tenant_name || source.tenant_name
   end
 
   def member
@@ -32,7 +32,7 @@ class GuzzlerServiceDecorator < Draper::Decorator
       'feed_name' => source.feed_name,
       'type_name' => source.type_name,
       'brand_id' => brand_id,
-      'embed_id' => embed_id,
+      'hub_id' => hub_id,
       'service_id' => service_id
 
     }

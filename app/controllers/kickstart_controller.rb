@@ -1,12 +1,12 @@
 class KickstartController < ApplicationController
 
-  layout false, only: [:admin, :embed, :new_admin]
-  after_action :allow_iframe, only: :embed
+  layout false, only: [:admin, :hub, :new_admin]
+  after_action :allow_iframe, only: :hub
 
   # Kickstarts the js code that displays the admin app
   def admin
-    unless current_account
-      redirect_to :new_account_session
+    unless current_user
+      redirect_to :new_user_session
     else
       flash[:error] = flash[:errors] = flash[:notice] = nil
       render 'admin'
@@ -14,17 +14,17 @@ class KickstartController < ApplicationController
   end
 
   def new_admin
-    unless current_account
-      redirect_to :new_account_session
+    unless current_user
+      redirect_to :new_user_session
     else
       flash[:error] = flash[:errors] = flash[:notice] = nil
       render 'new_admin'
     end
   end
   
-  # Kickstarts the js code that publicly displays the embed
-  def embed
-    render 'embed'
+  # Kickstarts the js code that publicly displays the hub
+  def hub
+    render 'hub'
   end
 
   private

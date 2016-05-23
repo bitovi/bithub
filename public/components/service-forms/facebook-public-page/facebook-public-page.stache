@@ -1,7 +1,0 @@
-<div class="form-group">
-    <label>Facebook Page URL</label>
-    <div class="input-group">
-        <input can-value="map.config.url" can-enter="loadPage" class="form-control">
-    </div>
-	{{{configErrors errors 'id'}}}
-</div>

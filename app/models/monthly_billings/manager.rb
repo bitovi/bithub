@@ -3,12 +3,12 @@ module MonthlyBillings
 
     attr_reader :price, :month, :ee_logs
 
-    def initialize(org_id, embed_events_logs, opts={})
+    def initialize(org_id, hub_events_logs, opts={})
       _year    = opts.fetch(:year) { Time.now.year }
       _month   = opts.fetch(:month) { Time.now.month }
 
       @org_id  = org_id
-      @ee_logs = embed_events_logs
+      @ee_logs = hub_events_logs
       @month   = Time.new _year, _month
       @price   = BigDecimal.new((opts.fetch(:price) { ENV['EMBED_PRICE_PER_MONTH'] }).to_i) / Time.days_in_month(@month.month)
     end
@@ -27,9 +27,9 @@ module MonthlyBillings
       total = BigDecimal.new(0)
 
       usage_per_days.each do |key, dates|
-        brand_id, embed_id = key
-        last_rec           = find_record(brand_id, embed_id).last
-        description        = "Hub '#{last_rec.embed_name}' from organization '#{last_rec.organization_name}'"
+        brand_id, hub_id = key
+        last_rec           = find_record(brand_id, hub_id).last
+        description        = "Hub '#{last_rec.hub_name}' from organization '#{last_rec.organization_name}'"
 
         total += dates.count * @price
         total = (total >= 50) ? total : BigDecimal.new(50)
@@ -43,7 +43,7 @@ module MonthlyBillings
 
     def usage_per_days
       @usage_per_days ||= @ee_logs.reduce(Hash.new(Set.new([]))) do |acc, rec|
-        key = [rec.brand_id, rec.embed_id]
+        key = [rec.brand_id, rec.hub_id]
 
         # skip if there is next in month or use end of the month
         if rec.active == true
@@ -65,8 +65,8 @@ module MonthlyBillings
       end
     end
 
-    def find_record(brand_id, embed_id)
-      @ee_logs.select {|r| r.brand_id == brand_id && r.embed_id == embed_id}
+    def find_record(brand_id, hub_id)
+      @ee_logs.select {|r| r.brand_id == brand_id && r.hub_id == hub_id}
     end
 
     private
@@ -77,13 +77,13 @@ module MonthlyBillings
 
     def previous_in_month(rec)
       @ee_logs\
-        .select {|r| r.brand_id == rec.brand_id && r.embed_id == rec.embed_id && r.date < rec.date}
+        .select {|r| r.brand_id == rec.brand_id && r.hub_id == rec.hub_id && r.date < rec.date}
         .last
     end
 
     def next_in_month(rec)
       @ee_logs\
-        .select {|r| r.brand_id == rec.brand_id && r.embed_id == rec.embed_id && r.date > rec.date}
+        .select {|r| r.brand_id == rec.brand_id && r.hub_id == rec.hub_id && r.date > rec.date}
         .first
     end
 
