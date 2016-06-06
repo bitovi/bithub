@@ -6,8 +6,8 @@ Guzzler.redis do |conn|
 	conn.flushdb
 end
 
-# We don't want to try and start the services when we are migrating
-if ActiveRecord::Base.connection.table_exists? "services"
+# We don't want to try and start the services when we are running rake tasks
+unless File.basename($0) == "rake"	
 	# Since we are starting from a clear slate, we need to ensure 
 	# that our polling and listening services are started.
 	Service.all_services("polling").map do |service|
