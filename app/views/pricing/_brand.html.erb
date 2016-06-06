@@ -5,7 +5,7 @@
 		<h4>$249.00/month</h4>
 		<% if context == 'frontpage' %>
 			<div class="call-to-action">
-				<a href="<%= current_account ? "/admin" : "/register/brand" %>" class="btn btn-info btn-block btn-lg">Start your 15 - day trial</a>
+				<a href="<%= current_user ? "/admin" : "/register/brand" %>" class="btn btn-info btn-block btn-lg">Start your 15 - day trial</a>
 				<%# <a href="#" class="btn btn-info btn-block btn-lg">Coming Soon</a> %>
 			</div>
 		<% end %>
@@ -14,8 +14,8 @@
 			<li>10 Services per Hub</li>
 			<li>Analytics</li>
 			<li>Moderation</li>
-			<li>Embed</li>
-			<li>Whitelabel Embed</li>
+			<li>Hub</li>
+			<li>Whitelabel Hub</li>
 			<li><b>Live stream</b></li>
 			<% if context == 'registration' %>
 				<li><hr></li>

@@ -7,7 +7,7 @@ describe SupervisionNode do
       brand: { id: 1501, name: 'bitovi' },
       main: { watever: 'main' },
       service: { id: 3396, feed_name: 'github', type_name: 'repo', config: {}},
-      embed: { id: 2452, name: 'code' }
+      hub: { id: 2452, name: 'code' }
     }
   end
 
@@ -18,7 +18,7 @@ describe SupervisionNode do
           @m_node = SupervisionNode.new(
             nil, @root = NodeTypes::MainInfo.new
           ), @bi = NodeTypes::BrandInfo.new(1501, 'bitovi')
-        ), @ei = NodeTypes::EmbedInfo.new(2452, 'code')
+        ), @ei = NodeTypes::HubInfo.new(2452, 'code')
       ), @si = NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
     )
   end
@@ -30,7 +30,7 @@ describe SupervisionNode do
     expect(nodes).to eq([
       NodeTypes::MainInfo.from_message(msg[:main])\
       , NodeTypes::BrandInfo.from_message(msg[:brand])\
-      , NodeTypes::EmbedInfo.from_message(msg[:embed])\
+      , NodeTypes::HubInfo.from_message(msg[:hub])\
       , NodeTypes::ServiceInfo.from_message(msg[:service])
     ])
     end
@@ -44,7 +44,7 @@ describe SupervisionNode do
       expect(leaf.node).to eq NodeTypes::ServiceInfo.new(3396, 'github', 'repo', {})
       expect(leaf.string_path).to eq %w(main b/1501 e/2452 s/3396)
       expect(leaf.brand.to_s).to eq 'b/1501'
-      expect(leaf.embed.to_s).to eq 'e/2452'
+      expect(leaf.hub.to_s).to eq 'e/2452'
       expect(leaf.service.to_s).to eq 's/3396'
       expect(leaf.actor_name).to eq 'main->b/1501->e/2452->s/3396'.to_sym
     end
@@ -92,9 +92,9 @@ describe SupervisionNode do
     end
   end
 
-  describe '#embed_info' do
-    it 'finds the embed information in the tree' do
-      expect(@s_node.embed_info).to eq NodeTypes::EmbedInfo.new(2452, 'code')
+  describe '#hub_info' do
+    it 'finds the hub information in the tree' do
+      expect(@s_node.hub_info).to eq NodeTypes::HubInfo.new(2452, 'code')
     end
   end
 

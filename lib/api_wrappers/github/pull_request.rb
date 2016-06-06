@@ -1,7 +1,7 @@
 require 'github/entity'
 
 module Github
-  class PullRequest < Entity
+  class PullRequest < Bit
 
     def initialize(*args)
       data = super

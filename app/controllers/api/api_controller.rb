@@ -1,14 +1,14 @@
 class Api::ApiController < ActionController::Base
   include Api::Helpers::Common
 
-  before_filter :require_account!, except: %w(api_id)
+  before_filter :require_user!, except: %w(api_id)
 
   rescue_from ActiveRecord::RecordNotFound, with: :show_404
   rescue_from ActiveRecord::RecordInvalid, with: :show_406
   rescue_from CanCan::AccessDenied, with: :show_403
   
-  def require_account!
-    show_401("You're not authorized to access this resource.") unless account_signed_in?
+  def require_user!
+    show_401("You're not authorized to access this resource.") unless user_signed_in?
   end
 
   def api_id
@@ -28,8 +28,8 @@ class Api::ApiController < ActionController::Base
   # CanCan override:
   # https://github.com/ryanb/cancan/wiki/changing-defaults
   def current_ability
-    if account_signed_in?
-      @current_ability ||= AccountAbility.new current_account
+    if user_signed_in?
+      @current_ability ||= UserAbility.new current_user
     else
       @current_ability ||= AnonAbility.new
     end

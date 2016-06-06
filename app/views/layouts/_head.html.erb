@@ -15,8 +15,8 @@
   </head>
 
   <body class="<%= local_assigns.fetch :body_classes, "" %>">
-    <div class="register-account-overlay">
-      <div class="register-account-wrap">
+    <div class="register-user-overlay">
+      <div class="register-user-wrap">
         <button class="close-registration-overlay"><img src="/images/site/bithub-site_close-icon.svg"></button>
         <div class="get-started-title">Get Started with Bit<b>Hub</b></div>
         <%#
@@ -29,13 +29,13 @@
         <hr>
         %>
         <p>Sign up With Email:</p>
-        <form action="/accounts" method="post">
+        <form action="/users" method="post">
           <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
           <input name="utf8" type="hidden" value="✓">
-          <input type="email" placeholder="Your Email" name="account[email]">
-          <input type="password" placeholder="Choose a password" name="account[password]">
-          <input type="password" placeholder="Confirm your password" name="account[password_confirmation]">
-          <button>Create Free Account</button>
+          <input type="email" placeholder="Your Email" name="user[email]">
+          <input type="password" placeholder="Choose a password" name="user[password]">
+          <input type="password" placeholder="Confirm your password" name="user[password_confirmation]">
+          <button>Create Free User</button>
         </form>
       </div>
     </div>

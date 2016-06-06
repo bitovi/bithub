@@ -1,5 +1,0 @@
-<div class="form-group">
-	<label>Term</label>
-	<input type="text" can-value="map.config.term" class="form-control">
-	{{{configErrors errors 'term'}}}
-</div>

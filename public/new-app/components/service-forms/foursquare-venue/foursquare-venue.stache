@@ -1,5 +1,0 @@
-<div class="alert alert-info">To add a Forsquare Venue you must be the manager.</div>
-<div class="form-group form-group-without-margin suggestions-wrapper">
-	<bh-suggestions service="foursquare" brand-identity-id="{map.brand_identity_id}" val="{map.config.id}" pick-suggestion-label="Select a venue"></bh-suggestions>
-	{{{configErrors errors 'id'}}}
-</div>

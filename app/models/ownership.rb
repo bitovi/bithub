@@ -3,13 +3,13 @@ class Ownership < ActiveRecord::Base
 
   belongs_to :owner, class_name: "User"
   belongs_to :host, lambda { where(ownership_type: 'host') }, class_name: "User"
-  belongs_to :entity
+  belongs_to :bit
 
   enumerize :ownership_type, in: [:author, :host, :organizer]
 
   validates_presence_of :ownership_type
-  validates_uniqueness_of :owner_id, scope: [:entity_id, :ownership_type]
-  # validates_uniqueness_of :entity_id, scope: [:ownership_type]
+  validates_uniqueness_of :owner_id, scope: [:bit_id, :ownership_type]
+  # validates_uniqueness_of :bit_id, scope: [:ownership_type]
 
   def is_authorship?
     self.ownership_type.to_sym == :author

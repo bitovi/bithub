@@ -49,7 +49,7 @@ http_interactions:
   recorded_at: Tue, 24 Mar 2015 22:51:50 GMT
 - request:
     method: get
-    uri: https://graph.facebook.com/v2.2/me/accounts?access_token=CAAKROn3HV5UBAMV92p4WY4VHk9PhNXaTtyLtvfxN6DdObrPZCAkhm71JZAilOVqBlYze8YuFapNoWXrsBlsGb2rKnXp88WEX6H713FrTlikq7wGwOSxsebq6RtD58MiyRRAjCUZA3EdhzXaJZBwbXd36GxP0uWw0oWYFddnak0sO6qy2TQs7WtyQbK0u7FjEfunomdw89QKq34CZCnHDW
+    uri: https://graph.facebook.com/v2.2/me/users?access_token=CAAKROn3HV5UBAMV92p4WY4VHk9PhNXaTtyLtvfxN6DdObrPZCAkhm71JZAilOVqBlYze8YuFapNoWXrsBlsGb2rKnXp88WEX6H713FrTlikq7wGwOSxsebq6RtD58MiyRRAjCUZA3EdhzXaJZBwbXd36GxP0uWw0oWYFddnak0sO6qy2TQs7WtyQbK0u7FjEfunomdw89QKq34CZCnHDW
     body:
       encoding: US-ASCII
       string: ''

@@ -15,39 +15,39 @@ RSpec.describe Api::SessionsController, type: :controller do
 		end
 	end
 	
-	context "the Account exists in the system" do
+	context "the User exists in the system" do
 		before(:example) do
-			account = Account.new(well_formed)
-			account.save!
+			user = User.new(well_formed)
+			user.save!
 			
-			organization = Organizations::OrganizationBuilder.new account, {}
+			organization = Organizations::OrganizationBuilder.new user, {}
 			organization.build.save!
 		end
 		
 		describe "POST /session" do
-			it "should log an Account in given an email and password" do
+			it "should log an User in given an email and password" do
 				post :create, well_formed
 				response.should have_http_status 201
-				assigns[:current_account][:email].should eq("hello@example.com")
+				assigns[:current_user][:email].should eq("hello@example.com")
 			end
 		end
 		
 		describe "GET /session" do
-			it "should return a session when requested by an authenticated Account" do
+			it "should return a session when requested by an authenticated User" do
 				post :create, well_formed
 				get :index
 				response.should have_http_status 200
-				assigns[:current_account].email.should eq(well_formed[:email])
+				assigns[:current_user].email.should eq(well_formed[:email])
 			end
 		end
 	
 		describe "DELETE /session" do
-			it "should log the user out when requested by an authenticated Account" do
-				sign_in :account, FactoryGirl.create(:account)
+			it "should log the user out when requested by an authenticated User" do
+				sign_in :user, FactoryGirl.create(:user)
 				
 				delete :destroy
 				response.should have_http_status 200
-				assigns[:current_account].should be_nil
+				assigns[:current_user].should be_nil
 			end
 		end
 	end

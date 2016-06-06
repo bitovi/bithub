@@ -54,10 +54,10 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     raise 'Unknown tenant' unless current_brand
     uid = oauth_data[:uid].to_s
 
-    if identity_exists?(provider, uid)
+    if idbit_exists?(provider, uid)
       @identity.source_data = oauth_data
     else
-      @identity = BrandIdentity.new({
+      @identity = Credential.new({
         brand: current_brand,
         provider: provider,
         uid: oauth_data[:uid],
@@ -77,7 +77,7 @@ class Auth::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     env["omniauth.auth"]
   end
 
-  def identity_exists?(provider, uid)
+  def idbit_exists?(provider, uid)
     @identity = current_brand.identities.where(provider: provider, uid: uid).first
   end
 

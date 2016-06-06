@@ -57,7 +57,7 @@ Devise.setup do |config|
   config.omniauth :google_oauth2,
     ENV.fetch('GOOGLE_CLIENT_ID'),
     ENV.fetch('GOOGLE_CLIENT_SECRET'),
-    prompt: 'select_account consent',
+    prompt: 'select_user consent',
     scope: 'email, profile, https://www.googleapis.com/auth/youtube.readonly',
     access_type: 'offline'
 

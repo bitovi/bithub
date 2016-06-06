@@ -1,16 +1,16 @@
 class Service < ActiveRecord::Base
   cattr_accessor :skip_guzzler_callbacks_during_testing
 
-  validates_presence_of :embed_id, :feed_name, :type_name
+  validates_presence_of :hub_id, :feed_name, :type_name
   validate :service_config_validator
   validate :service_state_validator
 
-  belongs_to :embed
-  belongs_to :brand_identity
-  alias_method :bi, :brand_identity
+  belongs_to :hub
+  belongs_to :credential
+  alias_method :bi, :credential
 
-  has_many :service_entities
-  has_many :entities, through: :service_entities
+  has_many :service_bits
+  has_many :bits, through: :service_bits
 
   has_many :service_errors
   has_many :events
@@ -23,13 +23,13 @@ class Service < ActiveRecord::Base
   scope :type, ->(tn) { where(type_name: tn) }
 
   QUERIES_FOR_LISTENING_SERVICES = [
-    Service.joins(:embed => :brand).where(feed_name: %w(instagram foursquare)),
-    Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'page')
+    Service.joins(:hub => :brand).where(feed_name: %w(instagram foursquare)),
+    Service.joins(:hub => :brand).where(feed_name: 'facebook', type_name: 'page')
   ]
 
   QUERIES_FOR_POLLING_SERVICES = [
-    Service.joins(:embed => :brand).where(feed_name: %w(github meetup twitter rss disqus stackexchange tumblr youtube)),
-    Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'public_page')
+    Service.joins(:hub => :brand).where(feed_name: %w(github meetup twitter rss disqus stackexchange tumblr youtube)),
+    Service.joins(:hub => :brand).where(feed_name: 'facebook', type_name: 'public_page')
   ]
 
   def self.all_services(type)
@@ -57,17 +57,17 @@ class Service < ActiveRecord::Base
   end
 
   def brand
-    embed.brand
+    hub.brand
   end
 
   def clear_relations_and_destroy
     service_id = id
-    embed_id = embed.id
+    hub_id = hub.id
 
     query = <<-SQL
-      delete from embed_entities using service_entities
-      where embed_entities.entity_id = service_entities.entity_id
-      and service_entities.service_id = #{service_id};
+      delete from moderations using service_bits
+      where moderations.bit_id = service_bits.bit_id
+      and service_bits.service_id = #{service_id};
     SQL
 
     ActiveRecord::Base.connection.execute(query)
@@ -95,14 +95,14 @@ class Service < ActiveRecord::Base
     self.config = service_config.humanized_config
   end
 
-  def make_link_to(entity)
-    service_entities.create(entity: entity)
+  def make_link_to(bit)
+    service_bits.create(bit: bit)
   end
 
   def config_with_credentials
     config = service_config
-    if brand_identity && config.data
-      config.data.merge(brand_identity.credentials(property_id))
+    if credential && config.data
+      config.data.merge(credential.credentials(property_id))
     else
       config.data
     end

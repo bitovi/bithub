@@ -44,14 +44,14 @@ module Events
         fail OrphanedEventError.new('Event to be saved under a service that has already been deleted.')
       end
 
-      unless ::Embed.find_by_id(embed_id)
-        fail OrphanedEventError.new('Event to be saved under an embed that has already been deleted.')
+      unless ::Hub.find_by_id(hub_id)
+        fail OrphanedEventError.new('Event to be saved under an hub that has already been deleted.')
       end
 
       @instance = ::Event.new({
         content_digest: content_digest,
         source_data: source_data,
-        embed_id: embed_id,
+        hub_id: hub_id,
         service_id: service_id,
         props: meta || {}
       })
@@ -75,8 +75,8 @@ module Events
       @type_name ||= feed_and_type_name[1]
     end
 
-    def embed_name
-      @meta.fetch(:embed_name)
+    def hub_name
+      @meta.fetch(:hub_name)
     end
 
     def tenant_name
@@ -87,8 +87,8 @@ module Events
       @meta.fetch(:brand_id)
     end
     
-    def embed_id
-      @meta.fetch(:embed_id)
+    def hub_id
+      @meta.fetch(:hub_id)
     end
     
     def service_id
@@ -118,7 +118,7 @@ module Events
     end
     
     def repr_for_logs
-      "#{tenant_name},#{embed_id},#{service_id},#{feed_name},#{type_name}"
+      "#{tenant_name},#{hub_id},#{service_id},#{feed_name},#{type_name}"
     end
 
     private

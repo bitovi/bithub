@@ -22,14 +22,14 @@ describe Brand do
       expect(brand.reload.is_active).to be_truthy
     end
 
-    it 'marks Brands with unconfirmed accounts under them (that also haven\'t logged in for a week) as inactive' do
+    it 'marks Brands with unconfirmed users under them (that also haven\'t logged in for a week) as inactive' do
       clean_slate
 
       organization = FactoryGirl.create(:organization)
       brand = FactoryGirl.create(:brand, organization: organization)
 
-      account = FactoryGirl.create(:account, last_sign_in_at: 3.weeks.ago, confirmed_at: nil)
-      organization.accounts << account
+      user = FactoryGirl.create(:user, last_sign_in_at: 3.weeks.ago, confirmed_at: nil)
+      organization.users << user
       organization.save!
 
       Brand.flag_inactive
@@ -38,7 +38,7 @@ describe Brand do
   end
 
   def clean_slate
-    ActiveRecord::Base.connection.execute('DELETE FROM brands; DELETE FROM accounts;')
+    ActiveRecord::Base.connection.execute('DELETE FROM brands; DELETE FROM users;')
     Apartment::Tenant.drop('bitovi') if Apartment.connection.schema_exists? 'bitovi'
   end
 

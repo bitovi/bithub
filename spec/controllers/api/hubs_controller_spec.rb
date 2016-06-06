@@ -33,7 +33,7 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 	
 		describe "DELETE /hubs/:id" do
-			it "should require an authorized user to delete an embed" do
+			it "should require an authorized user to delete an hub" do
 				delete :destroy, { id: 1 }
 				response.should have_http_status :unauthorized
 			end
@@ -42,16 +42,16 @@ RSpec.describe Api::HubsController, type: :controller do
 	
 	context "User is authenticated" do
 		before(:example) do
-			@account = Account.new(well_formed)
-			@account.save!
+			@user = User.new(well_formed)
+			@user.save!
 		
-			organization = Organizations::OrganizationBuilder.new @account, {}
+			organization = Organizations::OrganizationBuilder.new @user, {}
 			organization = organization.build.save!
 			@organization = organization.organization
 			@tenant = organization.brand.tenant_name
 			@session = { organization_id: @organization_id, tenant_name: @tenant }
 			
-			sign_in :account, @account
+			sign_in :user, @user
 		end
 		
 		describe "POST /hubs" do
@@ -68,7 +68,7 @@ RSpec.describe Api::HubsController, type: :controller do
 				body["name"].should_not be_nil
 			end
 			
-			it "should assign the provided name to the embed" do
+			it "should assign the provided name to the hub" do
 				post :create, { organization_id: @organization.id, name: "HelloWorld" }, @session
 				response.should have_http_status :created
 				body = JSON.parse(response.body)
@@ -78,12 +78,12 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 		
 		describe "GET /hubs/:id" do
-			it "returns Not Found if the Embed requested is not found" do
+			it "returns Not Found if the Hub requested is not found" do
 				get :show, { id: 999 }
 				response.should have_http_status :not_found
 			end
 			
-			it "should return an Embed if the id provided is valid" do
+			it "should return an Hub if the id provided is valid" do
 				post :create, { organization_id: @organization.id, name: "HelloWorld" }, @session
 				id = JSON.parse(response.body)["id"]
 				
@@ -94,7 +94,7 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 		
 		describe "PUT /hub/:id" do
-			it "returns Not Found if Embed requested is not found" do
+			it "returns Not Found if Hub requested is not found" do
 				put :update, { id: 999 }, @session
 				response.should have_http_status :not_found
 			end
@@ -118,12 +118,12 @@ RSpec.describe Api::HubsController, type: :controller do
 		end
 		
 		describe "DELETE /hub/:id" do
-			it "returns NotFound if the Embed request is not found" do
+			it "returns NotFound if the Hub request is not found" do
 				get :show, { id: 999 }, @session
 				response.should have_http_status :not_found
 			end
 			
-			it "should remove embed when found" do
+			it "should remove hub when found" do
 				post :create, { organization_id: @organization.id }, @session
 				id = JSON.parse(response.body)["id"]
 				

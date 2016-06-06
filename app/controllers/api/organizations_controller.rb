@@ -1,7 +1,7 @@
 class Api::OrganizationsController < Api::BaseController
 	include Api::Helpers::Filter
 	
-	before_action :ensure_current_account
+	before_action :ensure_current_user
 	before_action :sanitize_params
 	
 	def index

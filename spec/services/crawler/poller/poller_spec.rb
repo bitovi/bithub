@@ -92,8 +92,8 @@ describe Poller do
       it 'produces a lock name' do
         owner_data = OwnerData.new(1, '', 11, '', 111, '', '', {})
         poller = Poller.new(owner_data, fetcher, locker: locker)
-        expect(poller.lock_name).to eq "lock:polling:brand/1:embed/11:service/111"
-        expect(poller.lock_name(:initial)).to eq "lock:polling:initial_fetch:brand/1:embed/11:service/111"
+        expect(poller.lock_name).to eq "lock:polling:brand/1:hub/11:service/111"
+        expect(poller.lock_name(:initial)).to eq "lock:polling:initial_fetch:brand/1:hub/11:service/111"
       end
     end
   end

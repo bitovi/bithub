@@ -25,9 +25,9 @@ describe('The Universe', function() {
 		duo: { session_id: 'test_session_duo', tenant_name: 'test_tenant_duo'}
 	};
 
-	var websocketUrl = function( embed_id, session_id )  {
+	var websocketUrl = function( hub_id, session_id )  {
 		return 'http://127.0.0.1:' + process.env.LIVESERVICE_HTTP_PORT +
-			'/?embed_id=' + embed_id +
+			'/?hub_id=' + hub_id +
 			'&session_id=' + session_id;
 	};
 
@@ -46,11 +46,11 @@ describe('The Universe', function() {
 		var wsUnoFooReady = Q.defer(), wsUnoBarReady = Q.defer(), wsDuoFooReady = Q.defer();
 		var wsUnoFooCount = 0, wsUnoBarCount = 0, wsDuoFooCount = 0;
 
-		var wsUnoFoo = io( websocketUrl( 'embed_uno_foo', clients.uno.session_id), { multiplex: false } ),
-			wsUnoBar = io( websocketUrl( 'embed_uno_bar', clients.uno.session_id), { multiplex: false } ),
-			wsDuoFoo = io( websocketUrl( 'embed_duo_foo', clients.duo.session_id), { multiplex: false } );
+		var wsUnoFoo = io( websocketUrl( 'hub_uno_foo', clients.uno.session_id), { multiplex: false } ),
+			wsUnoBar = io( websocketUrl( 'hub_uno_bar', clients.uno.session_id), { multiplex: false } ),
+			wsDuoFoo = io( websocketUrl( 'hub_duo_foo', clients.duo.session_id), { multiplex: false } );
 
-		wsUnoFoo.on('entities', function( msg ) {
+		wsUnoFoo.on('bits', function( msg ) {
 			if( msg.id == 'msg_4_uno_foo' ) {
 				wsUnoFooCount++;
 			} else {
@@ -58,7 +58,7 @@ describe('The Universe', function() {
 			}
 		});
 
-		wsUnoBar.on('entities', function( msg ) {
+		wsUnoBar.on('bits', function( msg ) {
 			if( msg.id == 'msg_4_uno_bar' ) {
 				wsUnoBarCount++;
 			} else {
@@ -66,7 +66,7 @@ describe('The Universe', function() {
 			}
 		});
 
-		wsDuoFoo.on('entities', function( msg ) {
+		wsDuoFoo.on('bits', function( msg ) {
 			if( msg.id == 'msg_4_duo_foo' ) {
 				wsDuoFooCount++;
 			} else {
@@ -83,25 +83,25 @@ describe('The Universe', function() {
 		Q.all([ wsUnoFooReady.promise, wsUnoBarReady.promise, wsDuoFooReady.promise ]).then( function() {
 
 			// 1x uno foo
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_foo' },
+			mq.publish('bits',{ meta: { brand_name: clients.uno.tenant_name, hub_id: 'hub_uno_foo' },
 									payload: { id: 'msg_4_uno_foo'} });
 
 			// 2x uno bar
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_bar' },
+			mq.publish('bits',{ meta: { brand_name: clients.uno.tenant_name, hub_id: 'hub_uno_bar' },
 									payload: { id: 'msg_4_uno_bar'} });
-			mq.publish('entities',{ meta: { brand_name: clients.uno.tenant_name, embed_id: 'embed_uno_bar' },
+			mq.publish('bits',{ meta: { brand_name: clients.uno.tenant_name, hub_id: 'hub_uno_bar' },
 									payload: { id: 'msg_4_uno_bar'} });
 
 			// 1x duo foo
-			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_id: 'embed_duo_foo' },
+			mq.publish('bits',{ meta: { brand_name: clients.duo.tenant_name, hub_id: 'hub_duo_foo' },
 									payload: { id: 'msg_4_duo_foo'} });
 
-			// 1x duo bar (non existing embed)
-			mq.publish('entities',{ meta: { brand_name: clients.duo.tenant_name, embed_id: 'embed_duo_bar' },
+			// 1x duo bar (non existing hub)
+			mq.publish('bits',{ meta: { brand_name: clients.duo.tenant_name, hub_id: 'hub_duo_bar' },
 									payload: { id: 'msg_4_duo_bar'} });
 
 			// 1x tre baz (non existing tenant)
-			mq.publish('entities',{ meta: { brand_name: 'test_tenant_tre', embed_id: 'embed_tree_baz' },
+			mq.publish('bits',{ meta: { brand_name: 'test_tenant_tre', hub_id: 'hub_tree_baz' },
 									payload: { id: 'msg_4_tre_baz'} });
 
 			// give it some time before checking results

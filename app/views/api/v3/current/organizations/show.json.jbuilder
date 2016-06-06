@@ -1,13 +1,13 @@
 json.partial! 'api/v3/current/organizations/organization', organization: @organization
 
-json.set! :accounts do
-  json.array! @organization.account_organizations.accepted.map(&:account) do |acc|
-    json.partial! "api/v3/current/accounts/account", account: acc
+json.set! :users do
+  json.array! @organization.user_organizations.accepted.map(&:user) do |acc|
+    json.partial! "api/v3/current/users/user", user: acc
   end
 end
 
 json.set! :invitations do
-  json.array! @organization.account_organizations.pending.map(&:account) do |acc|
-    json.partial! "api/v3/current/accounts/account", account: acc
+  json.array! @organization.user_organizations.pending.map(&:user) do |acc|
+    json.partial! "api/v3/current/users/user", user: acc
   end
 end

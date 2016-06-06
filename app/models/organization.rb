@@ -1,7 +1,7 @@
 class Organization < ActiveRecord::Base
 
-  has_many :account_organizations, dependent: :destroy
-  has_many :accounts, through: :account_organizations
+  has_many :user_organizations, dependent: :destroy
+  has_many :users, through: :user_organizations
 
   has_many :brands, dependent: :destroy
 

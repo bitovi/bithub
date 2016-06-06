@@ -1,4 +1,0 @@
-<div class="form-group">
-	<bh-suggestions service="youtube/playlist" brand-identity-id="{map.brand_identity_id}" val="{map.config.target}" allow-extra="true" pick-suggestion-label="Pick a playlist" enter-your-own-label="Or enter any public playlist"></bh-suggestions>
-	{{{configErrors errors 'name'}}}
-</div>

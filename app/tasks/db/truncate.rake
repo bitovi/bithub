@@ -1,7 +1,7 @@
 namespace :db do
   desc "Truncate all existing data"
   task :truncate => "db:load_config" do
-    views = %w(entity_aggregated_tag_list entity_total_upvotes user_total_score)
+    views = %w(bit_aggregated_tag_list bit_total_upvotes user_total_score)
     critical_tables = %w(tags scoring_rules category_determination_rules)
     begin
       config = ActiveRecord::Base.configurations[::Rails.env]

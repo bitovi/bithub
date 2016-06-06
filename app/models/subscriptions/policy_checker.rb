@@ -9,18 +9,18 @@ module Subscriptions
       check 'brands', organization.brands.count
     end
 
-    def can_create_embed?(brand)
-      check 'embeds_per_brand', brand.embeds.count
+    def can_create_hub?(brand)
+      check 'hubs_per_brand', brand.hubs.count
     end
 
-    def can_create_service?(embed, feed_name=nil, type_name=nil)
+    def can_create_service?(hub, feed_name=nil, type_name=nil)
       if feed_name && type_name
         key   = "#{feed_name}_#{type_name}"
-        count = embed.services.where(feed_name: feed_name, type_name: type_name).count
+        count = hub.services.where(feed_name: feed_name, type_name: type_name).count
 
-        check(key, count) && check('services_per_embed', embed.services.count)
+        check(key, count) && check('services_per_hub', hub.services.count)
       else
-        check 'services_per_embed', embed.services.count
+        check 'services_per_hub', hub.services.count
       end
     end
 

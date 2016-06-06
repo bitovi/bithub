@@ -2,7 +2,7 @@ require 'sidekiq/web'
 
 Bithub::Application.routes.draw do
 	namespace :api do
-		as :account do
+		as :user do
 		    post	"/users"				=>	"users#create"
 			get		"/users"				=>	"users#index"
 		    
@@ -23,7 +23,7 @@ Bithub::Application.routes.draw do
 	end
 
   get '/admin', to: 'kickstart#admin'
-  get '/embed', to: 'kickstart#embed'
+  get '/hub', to: 'kickstart#hub'
   get '/new_admin', to: 'kickstart#new_admin'
 
   resources :subscriptions, only: %i(show) do
@@ -35,7 +35,7 @@ Bithub::Application.routes.draw do
   end
 
   # Devise
-  devise_for :accounts,
+  devise_for :users,
     controllers: {
       sessions: 'auth/sessions',
       registrations: 'auth/registrations',
@@ -44,16 +44,16 @@ Bithub::Application.routes.draw do
       omniauth_callbacks: 'auth/omniauth_callbacks'
     }
 
-  as :account do
-    get '/account', to: redirect('/accounts/edit')
+  as :user do
+    get '/user', to: redirect('/users/edit')
 
-    get '/register', to: redirect('/accounts/sign_up')
-    get '/login', to: redirect('/accounts/sign_in')
-    get '/logout', to: redirect('/accounts/sign_out')
+    get '/register', to: redirect('/users/sign_up')
+    get '/login', to: redirect('/users/sign_in')
+    get '/logout', to: redirect('/users/sign_out')
 
-    get '/accounts/login', to: redirect('/accounts/sign_in')
-    get '/accounts/logout', to: redirect('/accounts/sign_out')
-    get '/accounts/register', to: redirect('/accounts/sign_up')
+    get '/users/login', to: redirect('/users/sign_in')
+    get '/users/logout', to: redirect('/users/sign_out')
+    get '/users/register', to: redirect('/users/sign_up')
   end
 
   # Stripe
@@ -66,8 +66,8 @@ Bithub::Application.routes.draw do
     namespace :v4 do
       root :to => 'v4#api_id'
 
-      resources :embeds, except: %i(new edit) do
-        resources :entities, controller: 'embed_entities', only: %i(index show) do
+      resources :hubs, except: %i(new edit) do
+        resources :bits, controller: 'moderations', only: %i(index show) do
           put :decide, on: :member
           get :stats, on: :collection
         end
@@ -77,12 +77,12 @@ Bithub::Application.routes.draw do
     namespace :v3 do
       root :to => 'v3#api_id'
 
-      resources :embeds, except: %i(new edit) do
+      resources :hubs, except: %i(new edit) do
         post :moderate, on: :member
         put :publish, on: :member
         put :unpublish, on: :member
 
-        resources :entities, controller: 'embed_entities', only: %i(index show destroy) do
+        resources :bits, controller: 'moderations', only: %i(index show destroy) do
           put :approve, on: :member
           put :disapprove, on: :member
           put :block, on: :member
@@ -96,7 +96,7 @@ Bithub::Application.routes.draw do
         resources :services, except: %i(new edit update)
       end
 
-      resources :presets, controller: 'embed_presets', except: %i(new edit)
+      resources :embeds, controller: 'hub_presets', except: %i(new edit)
 
       resources :services, except: %i(new edit) do
         get 'tree', on: :collection
@@ -107,31 +107,31 @@ Bithub::Application.routes.draw do
       resources :brands,  except: %i(new edit) do
         collection do
           get 'current/payments', to: 'payments#index'
-          get 'current/identities/:provider', to: 'brand_identities#index'
-          get 'current/identities', to: 'brand_identities#index'
-          get 'current/identities/:id', to: 'brand_identities#show'
-          delete 'current/identities/:id', to: 'brand_identities#destroy'
+          get 'current/identities/:provider', to: 'credentials#index'
+          get 'current/identities', to: 'credentials#index'
+          get 'current/identities/:id', to: 'credentials#show'
+          delete 'current/identities/:id', to: 'credentials#destroy'
         end
       end
 
       namespace :current do
-        resource :account do
-          resources :organizations, controller: 'account_organizations'
-          resources :invitations, controller: 'account_organizations'
+        resource :user do
+          resources :organizations, controller: 'user_organizations'
+          resources :invitations, controller: 'user_organizations'
         end
 
         resource :organization do
           put 'choose', on: :collection
-          resources :accounts, controller: 'organization_accounts'
-          resources :invitations, controller: 'organization_accounts', status: 'pending'
+          resources :users, controller: 'organization_users'
+          resources :invitations, controller: 'organization_users', status: 'pending'
         end
       
         resource :brand do
-          resources :identities, controller: 'brand_identities'
+          resources :identities, controller: 'credentials'
         end
       end
 
-      resources :brand_identities, path: 'identities', only: %i(index show destroy)
+      resources :credentials, path: 'identities', only: %i(index show destroy)
       resources :services, except: %i(new edit update)
       resources :subscriptions, only: %i(show) do
         collection do
@@ -144,7 +144,7 @@ Bithub::Application.routes.draw do
       resources :interactions, only: %i(index show create)
       resources :monthly_billings, only: %i(index)
       
-      get 'embeds_by_organization', to: 'account_organizations_embeds#index'
+      get 'hubs_by_organization', to: 'user_organizations_hubs#index'
       get 'analytics', to: 'analytics#show'
       get 'interactions', to: 'interactions#index'
     end

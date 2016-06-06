@@ -1,8 +1,8 @@
 class Brand < ActiveRecord::Base
-  has_many :identities, class_name: 'BrandIdentity', dependent: :destroy
+  has_many :identities, class_name: 'Credential', dependent: :destroy
 
-  has_many :embeds, dependent: :destroy
-  has_many :services, through: :embeds
+  has_many :hubs, dependent: :destroy
+  has_many :services, through: :hubs
 
   has_and_belongs_to_many :users
 
@@ -46,22 +46,22 @@ class Brand < ActiveRecord::Base
       FROM (
           SELECT
             organizations. ID,
-            COUNT (confirmed_at) AS confirmed_accounts,
-            MAX (accounts.last_sign_in_at) AS last_sign_in_at
+            COUNT (confirmed_at) AS confirmed_users,
+            MAX (users.last_sign_in_at) AS last_sign_in_at
           FROM
-            accounts,
-            account_organizations,
+            users,
+            user_organizations,
             organizations
           WHERE
-            accounts.id = account_organizations.account_id
-          AND organizations.id = account_organizations.organization_id
+            users.id = user_organizations.user_id
+          AND organizations.id = user_organizations.organization_id
           GROUP BY
             organizations.id
         ) AS org_data
       WHERE
         org_data.id = brands.organization_id
       AND org_data.last_sign_in_at < now() :: TIMESTAMP - '1 week' :: INTERVAL
-      AND org_data.confirmed_accounts = 0;
+      AND org_data.confirmed_users = 0;
 
       COMMIT;
     SQL

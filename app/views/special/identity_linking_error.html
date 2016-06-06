@@ -2,7 +2,7 @@
   if (window.opener && !window.opener.closed) {
     window.opener.postMessage({
       type    : 'userLinkError',
-      message : 'This identity is already linked to a different account!'
+      message : 'This identity is already linked to a different user!'
     }, "*");
     window.close();
   }

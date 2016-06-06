@@ -3,7 +3,7 @@ require 'net/http'
 
 module Bithub
   
-  class Entity
+  class Bit
     attr_accessor :id  
 
     def initialize(*args)
@@ -29,7 +29,7 @@ module Bithub
   end
 
   
-  class Event < Entity
+  class Event < Bit
 
     def initialize(*args)
       data = super
@@ -52,7 +52,7 @@ module Bithub
 
   end
 
-  class User < Entity
+  class User < Bit
 
     def initialize(endpoint, id=nil)
       data = super

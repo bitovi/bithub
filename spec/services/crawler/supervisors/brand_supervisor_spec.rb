@@ -8,7 +8,7 @@ describe Supervisors::Brand do
   after { Celluloid.shutdown }
   
   let(:config) do
-    JSON.parse(File.read('spec/support/responses/configurator/test_account_config.json'), symbolize_names: true)
+    JSON.parse(File.read('spec/support/responses/configurator/test_user_config.json'), symbolize_names: true)
   end
 
   let(:brand_sup_parent_node) do
@@ -21,12 +21,12 @@ describe Supervisors::Brand do
     SupervisionNode.from_message({
       main: { qua: 'wat' },
       brand: { id: 42, name: 'my_brand' },
-      embed: { id: 17, name: 'my_embed' }
+      hub: { id: 17, name: 'my_hub' }
     })
   end
 
-  describe '#stop_embed_supervisor' do
-    it 'starts the designated embed supervisor' do
+  describe '#stop_hub_supervisor' do
+    it 'starts the designated hub supervisor' do
       brand_sup = Supervisors::Brand.new(brand_sup_parent_node, NodeTypes::BrandInfo.new(42, 'foo'))
 
       expect do
@@ -34,7 +34,7 @@ describe Supervisors::Brand do
       end.to change { brand_sup.children.size }.from(0).to(1)
     end
 
-    it 'stops the designated embed supervisor' do
+    it 'stops the designated hub supervisor' do
       brand_sup = Supervisors::Brand.new(brand_sup_parent_node, NodeTypes::BrandInfo.new(42, 'foo'))
       brand_sup.boot(config.fetch(:brands).first)
 

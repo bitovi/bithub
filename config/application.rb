@@ -13,7 +13,7 @@ module Bithub
 
     config.encoding = "utf-8"
     config.filter_parameters += [:password]
-    config.active_support.escape_html_entities_in_json = true
+    config.active_support.escape_html_bits_in_json = true
     config.active_record.schema_format = :sql
     config.i18n.enforce_available_locales = false
 

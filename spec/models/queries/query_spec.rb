@@ -2,7 +2,7 @@ require 'models/queries/spec_helper'
 
 RSpec.describe QueryLogic::Query, :type => :domain do
   let(:model) do
-    double("Entity", :has_an_attribute? => true )
+    double("Bit", :has_an_attribute? => true )
   end
 
   describe ".pluck_and_process_negated_attributes" do

@@ -26,7 +26,7 @@ module Services
 
     def humanized_config
       if @config.respond_to?(:'humanized_name=')
-        @config.humanized_name = @service.brand_identity.property_name_for_id(property_id)
+        @config.humanized_name = @service.credential.property_name_for_id(property_id)
       end
       @config.to_h
     end

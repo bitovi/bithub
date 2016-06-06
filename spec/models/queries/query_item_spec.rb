@@ -2,7 +2,7 @@ require 'models/queries/spec_helper'
 
 RSpec.describe QueryLogic::QueryItem, :type => :domain do
 
-  let(:model) { double("Entity", :has_an_attribute? => true )}
+  let(:model) { double("Bit", :has_an_attribute? => true )}
 
   describe "#value" do
     it "should cast query values to appropriate type (which it has to read from column info)"
@@ -26,7 +26,7 @@ RSpec.describe QueryLogic::QueryItem, :type => :domain do
 
   describe "#tag_based?" do
     let(:tag_model) do
-      double("Entity", :tag_based_attrs => %w(feed type category project))
+      double("Bit", :tag_based_attrs => %w(feed type category project))
     end
 
     it "confirms that attributes that are stored as tags are of the taggable type" do
@@ -48,7 +48,7 @@ RSpec.describe QueryLogic::QueryItem, :type => :domain do
     end
 
     it "denies that non existent query items are native" do
-      model = double("Entity", :has_an_attribute? => false)
+      model = double("Bit", :has_an_attribute? => false)
       expect(QueryLogic::QueryItem.new(model, ["not_existing", "non_existent_value"]).native?).to eq(false)
     end
   end
@@ -88,14 +88,14 @@ RSpec.describe QueryLogic::QueryItem, :type => :domain do
 
     it "constructs an integer range when given integers" do
       column_info = double("id", :type => :integer)
-      model = double("Entity", :columns_hash => {"id" => column_info})
+      model = double("Bit", :columns_hash => {"id" => column_info})
 
       expect(QueryLogic::QueryItem.new(model, ["id", "1:10"]).extract_range).to eq(1..10)
     end
 
     it "constructs a date range when given dates" do
       column_info = double("origin_date", :type => :datetime)
-      model = double("Entity", :columns_hash => {"origin_date" => column_info})
+      model = double("Bit", :columns_hash => {"origin_date" => column_info})
 
       expect(QueryLogic::QueryItem.new(model, ["origin_date", "#{lower_date_limit_str}:#{higher_date_limit_str}"]).extract_range).to eq(date_range)
     end

@@ -1,26 +1,26 @@
 module Messages
 
-  def self.push_entity_to_embed(entity, embed)
+  def self.push_bit_to_hub(bit, hub)
     view = ActionView::Base.new('app/views', {}, ActionController::Base.new)
-    decorated_entity = EntityDecorator.decorate(entity, context: { embed: embed })
+    decorated_bit = BitDecorator.decorate(bit, context: { hub: hub })
 
     {
-      meta: meta_msg(embed).merge({ is_public: entity.is_approved(embed) }),
-      payload: view.render('api/v4/embed_entities/entity', { entity: decorated_entity })
+      meta: meta_msg(hub).merge({ is_public: bit.is_approved(hub) }),
+      payload: view.render('api/v4/moderations/bit', { bit: decorated_bit })
     }
   end
 
-  def self.pop_entity_from_embed(entity, embed)
+  def self.pop_bit_from_hub(bit, hub)
     {
-      meta: meta_msg(embed).merge({ is_public: true }),
-      payload: { id: entity.id, is_approved: false }.to_json
+      meta: meta_msg(hub).merge({ is_public: true }),
+      payload: { id: bit.id, is_approved: false }.to_json
     }
   end
 
 
   def self.clear_service_errors(service)
     {
-      meta: meta_msg(service.embed),
+      meta: meta_msg(service.hub),
       payload: {
         service: {
           id: service.id,
@@ -32,7 +32,7 @@ module Messages
 
   def self.mark_service_as_errored(service)
     { 
-      meta: meta_msg(service.embed),
+      meta: meta_msg(service.hub),
       payload: {
         service: {
           id: service.id,
@@ -54,10 +54,10 @@ module Messages
     }
   end
 
-  def self.meta_msg(embed)
+  def self.meta_msg(hub)
     {
       brand_name: Apartment::Tenant.current,
-      embed_id: embed.id,
+      hub_id: hub.id,
     }
   end
 end

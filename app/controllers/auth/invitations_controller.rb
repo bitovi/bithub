@@ -1,11 +1,11 @@
 class Auth::InvitationsController < Devise::InvitationsController
-  before_filter :authenticate_account!
+  before_filter :authenticate_user!
 
   def create
     self.resource = invite_resource
     resource_invited = resource.errors.empty?
 
-    resource.account_organizations.create(
+    resource.user_organizations.create(
       organization: current_organization,
       invitation_created_at: DateTime.now,
       invitation_accepted_at: DateTime.now
@@ -19,10 +19,10 @@ class Auth::InvitationsController < Devise::InvitationsController
   end
 
   def update
-    super do |account|
-      account.name = params[:account][:name] if params[:account][:name]
-      session['organization_id'] = account.organizations.first.id
-      session['tenant_name'] = account.organizations.first.brands.first.tenant_name
+    super do |user|
+      user.name = params[:user][:name] if params[:user][:name]
+      session['organization_id'] = user.organizations.first.id
+      session['tenant_name'] = user.organizations.first.brands.first.tenant_name
     end
   end
 
@@ -31,7 +31,7 @@ class Auth::InvitationsController < Devise::InvitationsController
     devise_parameter_sanitizer.for(:accept_invitation).push(:name)
   end
 
-  def after_accept_path_for(account)
+  def after_accept_path_for(user)
     admin_path
   end
 

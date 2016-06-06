@@ -13,7 +13,7 @@ module Guzzler::Persistor
       handle_errors do
         Apartment::Tenant.switch(tenant_name) do
           if event = process_and_persist_packet(packet)
-            Guzzler.lpush('entity_q', {
+            Guzzler.lpush('bit_q', {
               tenant_name: tenant_name,
               event_id: event.instance.id
             })

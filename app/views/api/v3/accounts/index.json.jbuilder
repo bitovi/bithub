@@ -1,5 +1,0 @@
-json.set! :data do
-  json.array! @accounts do |a|
-    json.partial! "api/v3/accounts/account", account: a
-  end
-end

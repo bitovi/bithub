@@ -22,15 +22,15 @@ module Guzzler::Persistor
       Guzzler.logger.warn "[#{name_for_logs}] #{e.class.name} | #{e}"
       raise Guzzler::EventHandlingError.new(e)
 
-    rescue Entities::DeterminationError => e
+    rescue Bits::DeterminationError => e
       Guzzler.logger.warn "[#{name_for_logs}] #{e.class.name} | #{e} | #{e.context}"
-      raise Guzzler::EntityHandlingError.new(e)
-    rescue Entities::NormalizationError => e
+      raise Guzzler::BitHandlingError.new(e)
+    rescue Bits::NormalizationError => e
       Guzzler.logger.error "[#{name_for_logs}] #{e.class.name} | #{e.message} | missing tags: #{e.context.join(',')}"
-      raise Guzzler::EntityHandlingError.new(e)
-    rescue Entities::UpdatingError => e
+      raise Guzzler::BitHandlingError.new(e)
+    rescue Bits::UpdatingError => e
       Guzzler.logger.error "[#{name_for_logs}] #{e.class.name} | #{e.message} | updating: #{e.context.inspect}"
-      raise Guzzler::EntityHandlingError.new(e)
+      raise Guzzler::BitHandlingError.new(e)
 
     rescue ActiveRecord::RecordNotFound => e
       Guzzler.logger.warn "[#{name_for_logs}] #{e.class.name} | #{e}"

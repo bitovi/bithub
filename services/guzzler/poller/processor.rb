@@ -15,7 +15,7 @@ module Guzzler::Poller
         else
 
           Guzzler.lpush('liveservice:services', { 
-            meta: { tenant_name: service.tenant_name, embed_id: service.embed_id },
+            meta: { tenant_name: service.tenant_name, hub_id: service.hub_id },
             payload: { 
               service: { id: service.id, empty_results: true }
             }
