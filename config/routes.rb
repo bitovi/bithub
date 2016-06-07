@@ -19,6 +19,9 @@ Bithub::Application.routes.draw do
 			get		"/hubs/:id"				=>	"hubs#show"
 			put		"/hubs/:id"				=>	"hubs#update"
 			delete	"/hubs/:id"				=>	"hubs#destroy"
+
+			# get		"/credentials"			=> "credentials#index"
+			# delete	"/credentials/:id"		=> "credentials#destroy"
 		end
 	end
 

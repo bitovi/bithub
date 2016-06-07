@@ -16,7 +16,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 	end
 	
 	context "the User exists in the system" do
-		before(:example) do
+		before(:each) do
 			user = User.new(well_formed)
 			user.save!
 			

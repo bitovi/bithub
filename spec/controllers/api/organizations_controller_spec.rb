@@ -27,7 +27,7 @@ RSpec.describe Api::OrganizationsController, type: :controller do
 	end
 	
 	context "User is authenticated" do
-		before(:example) do
+		before(:each) do
 			@user = User.new(well_formed)
 			@user.save!
 		

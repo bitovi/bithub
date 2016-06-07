@@ -75,7 +75,7 @@ RSpec.describe Api::UsersController, type: :controller do
 		well_formed = { "email": "hello@example.com", "password": "UDontKnowJack" }
 		
 		context "User is signed in" do
-			before(:example) do
+			before(:each) do
 				@user = User.new(well_formed)
 				@user.save!
 			
