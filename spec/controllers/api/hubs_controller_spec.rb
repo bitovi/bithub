@@ -41,7 +41,7 @@ RSpec.describe Api::HubsController, type: :controller do
 	end
 	
 	context "User is authenticated" do
-		before(:example) do
+		before(:each) do
 			@user = User.new(well_formed)
 			@user.save!
 		
@@ -60,7 +60,7 @@ RSpec.describe Api::HubsController, type: :controller do
 				response.should have_http_status :bad_request
 			end
 			
-			it "should require generate a name if one is not provided" do
+			it "should generate a name if one is not provided" do
 				post :create, { organization_id: @organization.id }, @session
 				response.should have_http_status :created
 				body = JSON.parse(response.body)
@@ -74,6 +74,13 @@ RSpec.describe Api::HubsController, type: :controller do
 				body = JSON.parse(response.body)
 				
 				body["name"].should eq("HelloWorld")
+			end
+
+			it "should set approved_by_default to false if not provided" do
+				post :create, { organization_id: @organization.id }, @session
+				body = JSON.parse(response.body)
+				
+				body["approved_by_default"].should eq(false)
 			end
 		end
 		
@@ -111,9 +118,12 @@ RSpec.describe Api::HubsController, type: :controller do
 				post :create, { organization_id: @organization.id }, @session
 				id = JSON.parse(response.body)["id"]
 				
-				put :update, { id: id, hub: { name: "HelloWorld" }}, @session
+				put :update, { id: id, hub: { name: "HelloWorld", approved_by_default: true }}, @session
 				response.should have_http_status :ok
-				JSON.parse(response.body)["name"].should eq("HelloWorld")
+				body = JSON.parse(response.body)
+				
+				body["name"].should eq("HelloWorld")
+				body["approved_by_default"].should eq(true)
 			end
 		end
 		
