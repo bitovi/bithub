@@ -49,7 +49,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			organization = organization.build.save!
 			@organization = organization.organization
 			@tenant = organization.brand.tenant_name
-			@session = { organization_id: @organization_id, tenant_name: @tenant }
+			@session = { organization_id: @organization.id, tenant_name: @tenant }
 			
 			sign_in :user, @user
 		end
@@ -100,7 +100,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			end
 		end
 		
-		describe "PUT /hub/:id" do
+		describe "PUT /hubs/:id" do
 			it "returns Not Found if Hub requested is not found" do
 				put :update, { id: 999 }, @session
 				response.should have_http_status :not_found
@@ -127,7 +127,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			end
 		end
 		
-		describe "DELETE /hub/:id" do
+		describe "DELETE /hubs/:id" do
 			it "returns NotFound if the Hub request is not found" do
 				get :show, { id: 999 }, @session
 				response.should have_http_status :not_found
