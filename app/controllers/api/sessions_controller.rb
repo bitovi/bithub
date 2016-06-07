@@ -1,4 +1,6 @@
 class Api::SessionsController < Api::BaseController
+	include Api::Helpers::Common
+
     before_action :ensure_auth_params_exists,	only: [ :create ]
 	before_action :ensure_current_user,      	only: [ :index, :destroy ]
 

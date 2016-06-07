@@ -2,7 +2,8 @@ class Api::UsersController < Api::BaseController
 	include Api::Helpers::Filter
 	
 	before_action 	:sanitize_params
-	before_action 	:ensure_current_user, only: [:index]
+	before_action	:ensure_auth_params_exists, only: [ :create ]
+	before_action 	:ensure_current_user, only: [ :index ]
 	
 	def create
 		user = User.new params_to_user_arguments params

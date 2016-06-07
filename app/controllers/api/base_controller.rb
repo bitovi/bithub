@@ -15,6 +15,10 @@ class Api::BaseController < ActionController::Base
 	
 	def ensure_auth_params_exists
 		return unless params[:email].blank? || params[:password].blank?
+		invalid_login_attempt
+	end
+
+	def invalid_login_attempt
 		show_400 "We were unable to log you in. Please double-check your email and password."
 	end
 
