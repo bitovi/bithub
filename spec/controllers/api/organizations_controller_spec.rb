@@ -18,7 +18,7 @@ RSpec.describe Api::OrganizationsController, type: :controller do
 			end
 		end
 		
-		describe "PUT /hubs/:id" do
+		describe "PUT /organizations/:id" do
 			it "should require an authorized user to update an organization" do
 				put :update, { id: 1 }
 				response.should have_http_status :unauthorized
