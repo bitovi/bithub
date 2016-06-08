@@ -1,92 +1,83 @@
 class Api::HubsController < Api::BaseController
+	include Api::Helpers::Common
 	include Api::Helpers::Filter
 	
-	before_action :ensure_current_user
-	before_action :sanitize_params
-	before_action :ensure_organization_param_exists, only: [ :create ]
+	before_action 	:ensure_current_user
+	before_action 	:sanitize_params
+	before_action 	:ensure_organization_param_exists, only: [ :create ]
+	before_action	:ensure_organization_member, only: [ :create ]
+	before_action 	:switch_tenant
 	
 	def create
-		Apartment::Tenant.switch!(session[:tenant_name])
-	
 		brand = Brand.where(organization_id: params[:organization_id]).first
 		hub = brand.hubs.build(hub_params)
 		begin
-			ActiveRecord::Base.transaction do
-				hub.name = hub_params[:name]
-				hub.save!
-			end
+			ActiveRecord::Base.transaction { hub.save! }
 		rescue ActiveRecord::RecordInvalid => e
-			return render_error_message e, e, :unprocessable_bit
+			show_422 e
 		end
 		render json: hub, status: :created
 	ensure
-		Apartment::Tenant.switch!
+		switch_to_public_schema
 	end
 	
-	def index
-		Apartment::Tenant.switch!(session[:tenant_name])	
+	def index	
 		return render json: Hub.all, status: :ok
 	ensure
-		Apartment::Tenant.switch!
+		switch_to_public_schema
 	end
 	
 	def show
-		Apartment::Tenant.switch!(session[:tenant_name])
 		return render json: Hub.find(params[:id]), status: :ok
 	rescue ActiveRecord::RecordNotFound
-		return render json: {
-			message: "Hub, with id: '#{params[:id]}' was not found"
-		}, status: :not_found
+		show_404 hub_not_found_for_id
 	ensure
-		Apartment::Tenant.switch!
+		switch_to_public_schema
 	end
 	
 	def update
-		Apartment::Tenant.switch!(session[:tenant_name])
 		hub = Hub.find(params[:id])
-		hub.update(params[:hub])
+		hub.update!(params[:hub])
 		return render json: hub, status: :ok
 	rescue ActiveRecord::RecordNotFound
-		return render json: {
-			message: "Hub, with id: '#{params[:id]}' was not found"
-		}, status: :not_found
+		show_404 hub_not_found_for_id
 	rescue ActiveRecord::UnknownAttributeError => e
-		return render json: {
-			message: e.message
-		}, status: :bad_request
+		show_400 e
 	ensure
-		Apartment::Tenant.switch!
+		switch_to_public_schema
 	end
 	
 	def destroy
-		Apartment::Tenant.switch!(session[:tenant_name])
 		Hub.find(params[:id]).destroy!
-		
 		CleanOrphanedEntitiesJob.perform_later(Apartment::Tenant.current)
 
 		return render json: { }, status: :ok
 	rescue ActiveRecord::RecordNotFound
-		return render json: {
-			message: "Hub, with id: '#{params[:id]}' was not found"
-		}, status: :not_found
+		show_404 hub_not_found_for_id
 	ensure
-		Apartment::Tenant.switch!
+		switch_to_public_schema
 	end
 	
 	protected
 	
 	def ensure_organization_param_exists
 		return unless params[:organization_id].blank?
-		return render json: { 
-			message: "You must provide an organization_id when creating a hub"
-		}, status: :bad_request
+		show_400 "You must provide an organization_id when creating a hub"
+	end
+
+	def ensure_organization_member
+		return if current_user.is_member_of_organization params[:organization_id]
+		show_401 "You are not a member of the provided organization"
 	end
 	
 	def hub_params
-		{ name: params[:name] || Bazaar.heroku }
+		{ 
+			name: params.fetch(:name, Bazaar.heroku),
+			approved_by_default: params.fetch(:approved_by_default, false)
+		}
 	end
-	
-	def sanitize_params
-		sanitize params
+
+	def hub_not_found_for_id 
+		"Hub, with id: '#{params[:id]}', was not found"
 	end
 end
