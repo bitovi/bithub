@@ -22,6 +22,11 @@ Bithub::Application.routes.draw do
 
 			get		"/credentials"			=> "credentials#index"
 			delete	"/credentials/:id"		=> "credentials#destroy"
+
+			post	"/services"				=> "services#create"
+			get		"/services"				=> "services#index"
+			put		"/services/:id"			=> "services#update"
+			delete	"/services/:id"			=> "services#destroy"
 		end
 	end
 
