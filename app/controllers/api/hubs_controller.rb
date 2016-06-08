@@ -4,8 +4,8 @@ class Api::HubsController < Api::BaseController
 	
 	before_action 	:ensure_current_user
 	before_action 	:sanitize_params
-	before_action 	:ensure_organization_param_exists, only: [ :create ]
-	before_action	:ensure_organization_member, only: [ :create ]
+	before_action 	:ensure_organization_param_exists, 	only: [ :create ]
+	before_action	:ensure_organization_member, 		only: [ :create ]
 	before_action 	:switch_tenant
 	
 	def create
@@ -22,7 +22,7 @@ class Api::HubsController < Api::BaseController
 	end
 	
 	def index	
-		return render json: Hub.all, status: :ok
+		return render json: filter(Hub, params), status: :ok
 	ensure
 		switch_to_public_schema
 	end
