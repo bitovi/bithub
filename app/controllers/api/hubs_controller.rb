@@ -4,8 +4,8 @@ class Api::HubsController < Api::BaseController
 	
 	before_action 	:ensure_current_user
 	before_action 	:sanitize_params
-	before_action 	:ensure_organization_param_exists, 	only: [ :create ]
-	before_action	:ensure_organization_member, 		only: [ :create ]
+	before_action 	:ensure_organization_param_exists
+	before_action	:ensure_organization_member, only: [ :create ]
 	before_action 	:switch_tenant
 	
 	def create
@@ -22,13 +22,13 @@ class Api::HubsController < Api::BaseController
 	end
 	
 	def index	
-		return render json: filter(Hub, params), status: :ok
+		return render json: { data: filter(Hub, params) }, status: :ok
 	ensure
 		switch_to_public_schema
 	end
 	
 	def show
-		return render json: Hub.find(params[:id]), status: :ok
+		return render json: { data: Hub.find(params[:id]) }, status: :ok
 	rescue ActiveRecord::RecordNotFound
 		show_404 hub_not_found_for_id
 	ensure
@@ -59,16 +59,6 @@ class Api::HubsController < Api::BaseController
 	end
 	
 	protected
-	
-	def ensure_organization_param_exists
-		return unless params[:organization_id].blank?
-		show_400 "You must provide an organization_id when creating a hub"
-	end
-
-	def ensure_organization_member
-		return if current_user.is_member_of_organization params[:organization_id]
-		show_401 "You are not a member of the provided organization"
-	end
 	
 	def hub_params
 		{ 
