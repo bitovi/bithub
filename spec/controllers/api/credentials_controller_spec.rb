@@ -27,8 +27,6 @@ RSpec.describe Api::CredentialsController, type: :controller do
 			organization = Organizations::OrganizationBuilder.new @user, {}
 			organization = organization.build.save!
 			@organization = organization.organization
-			@tenant = organization.brand.tenant_name
-			@session = { organization_id: @organization.id, tenant_name: @tenant }
 			
 			sign_in :user, @user
 		end
@@ -36,15 +34,15 @@ RSpec.describe Api::CredentialsController, type: :controller do
 		context "No credentials have been created" do
 			describe "GET /credentials" do
 				it "returns a 200 and an empty array" do
-					get :index, {}, @session
+					get :index, { organization_id: @organization.id }
 					response.should have_http_status 200
-					JSON.parse(response.body).should eq []
+					JSON.parse(response.body)["data"].should eq []
 				end
 			end
 
 			describe "DELETE /credentials/:id" do
 				it "returns a 404 when trying to delete" do
-					delete :destroy, { id: 999 }, @session
+					delete :destroy, { id: 999, organization_id: @organization.id }
 					response.should have_http_status 404
 				end
 			end
@@ -57,19 +55,19 @@ RSpec.describe Api::CredentialsController, type: :controller do
 
 			describe "GET /credentials" do
 				it "returns a 200 and a populated array" do
-					get :index, {}, @session
+					get :index, { organization_id: @organization.id }
 					response.should have_http_status 200
-					JSON.parse(response.body).length.should be >= 0
+					JSON.parse(response.body)["data"].length.should be >= 0
 				end
 			end
 
 			describe "DELETE /credentials/:id" do
 				it "returns a 200 when successfully deleted" do
-					delete :destroy, { id: Credential.all.first.id }, @session
+					delete :destroy, { id: Credential.all.first.id, organization_id: @organization.id }
 					response.should have_http_status 200
 
-					get :index, {}, @session
-					JSON.parse(response.body).length.should eq 0
+					get :index, { organization_id: @organization.id }
+					JSON.parse(response.body)["data"].length.should eq 0
 				end
 			end
 		end

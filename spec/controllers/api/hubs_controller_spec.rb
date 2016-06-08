@@ -48,8 +48,6 @@ RSpec.describe Api::HubsController, type: :controller do
 			organization = Organizations::OrganizationBuilder.new @user, {}
 			organization = organization.build.save!
 			@organization = organization.organization
-			@tenant = organization.brand.tenant_name
-			@session = { organization_id: @organization.id, tenant_name: @tenant }
 			
 			sign_in :user, @user
 		end
@@ -61,7 +59,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			end
 			
 			it "should generate a name if one is not provided" do
-				post :create, { organization_id: @organization.id }, @session
+				post :create, { organization_id: @organization.id }
 				response.should have_http_status :created
 				body = JSON.parse(response.body)
 				
@@ -69,7 +67,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			end
 			
 			it "should assign the provided name to the hub" do
-				post :create, { organization_id: @organization.id, name: "HelloWorld" }, @session
+				post :create, { organization_id: @organization.id, name: "HelloWorld" }
 				response.should have_http_status :created
 				body = JSON.parse(response.body)
 				
@@ -77,7 +75,7 @@ RSpec.describe Api::HubsController, type: :controller do
 			end
 
 			it "should set approved_by_default to false if not provided" do
-				post :create, { organization_id: @organization.id }, @session
+				post :create, { organization_id: @organization.id }
 				body = JSON.parse(response.body)
 				
 				body["approved_by_default"].should eq(false)
@@ -86,39 +84,40 @@ RSpec.describe Api::HubsController, type: :controller do
 		
 		describe "GET /hubs/:id" do
 			it "returns Not Found if the Hub requested is not found" do
-				get :show, { id: 999 }
+				get :show, { id: 999, organization_id: @organization.id }
 				response.should have_http_status :not_found
 			end
 			
 			it "should return an Hub if the id provided is valid" do
-				post :create, { organization_id: @organization.id, name: "HelloWorld" }, @session
+				post :create, { organization_id: @organization.id, name: "HelloWorld" }
 				id = JSON.parse(response.body)["id"]
 				
-				get :show, { id: id }, @session
+				get :show, { id: id, organization_id: @organization.id }
 				response.should have_http_status :ok
-				JSON.parse(response.body)["name"].should eq("HelloWorld")
+
+				JSON.parse(response.body)["data"]["name"].should eq("HelloWorld")
 			end
 		end
 		
 		describe "PUT /hubs/:id" do
 			it "returns Not Found if Hub requested is not found" do
-				put :update, { id: 999 }, @session
+				put :update, { id: 999, organization_id: @organization.id }
 				response.should have_http_status :not_found
 			end
 			
 			it "returns Bad Request if the body contains an unknown attribute" do
-				post :create, { organization_id: @organization.id }, @session
+				post :create, { organization_id: @organization.id }
 				id = JSON.parse(response.body)["id"]
 				
-				put :update, { id: id, hub: { bad_attr: "OH NO!" }}, @session
+				put :update, { id: id, hub: { bad_attr: "OH NO!" }}
 				response.should have_http_status :bad_request
 			end
 			
 			it "should update the attributes" do
-				post :create, { organization_id: @organization.id }, @session
+				post :create, { organization_id: @organization.id }
 				id = JSON.parse(response.body)["id"]
 				
-				put :update, { id: id, hub: { name: "HelloWorld", approved_by_default: true }}, @session
+				put :update, { id: id, hub: { name: "HelloWorld", approved_by_default: true }, organization_id: @organization.id}
 				response.should have_http_status :ok
 				body = JSON.parse(response.body)
 				
@@ -129,15 +128,15 @@ RSpec.describe Api::HubsController, type: :controller do
 		
 		describe "DELETE /hubs/:id" do
 			it "returns NotFound if the Hub request is not found" do
-				get :show, { id: 999 }, @session
+				get :show, { id: 999, organization_id: @organization.id }
 				response.should have_http_status :not_found
 			end
 			
 			it "should remove hub when found" do
-				post :create, { organization_id: @organization.id }, @session
+				post :create, { organization_id: @organization.id }
 				id = JSON.parse(response.body)["id"]
 				
-				delete :destroy, { id: id }, @session
+				delete :destroy, { id: id, organization_id: @organization.id }
 				response.should have_http_status :ok
 			end
 		end
