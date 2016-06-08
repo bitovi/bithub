@@ -23,15 +23,15 @@ class Api::UsersController < Api::BaseController
 		rescue ActiveRecord::RecordInvalid => e
 			show_422 e
 		end
-
-		sign_in :user, user
+		
 		return render json: user, status: :created
 	rescue => e
 		show_400 e
     end
 		
 	def index
-		return render json: filter(User, params), status: :ok
+		result = filter(User, params)
+		return render json: { data: result, count: result.length }, status: :ok
 	rescue => e
 		show_400 e
 	end

@@ -28,7 +28,8 @@ RSpec.describe Api::SessionsController, type: :controller do
 			it "should log an User in given an email and password" do
 				post :create, well_formed
 				response.should have_http_status 201
-				assigns[:current_user][:email].should eq("hello@example.com")
+				get :index
+				assigns[:current_user].email.should eq(well_formed[:email])
 			end
 		end
 		
