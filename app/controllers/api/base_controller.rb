@@ -1,27 +1,36 @@
 class Api::BaseController < ActionController::Base	
+	include Api::Helpers::Common
 	include Devise::Controllers::Helpers
 	
 	respond_to :json
 	
-	rescue_from ActiveRecord::AssociationNotFoundError do |exception|
-		render json: exception, status: :bad_request
+	rescue_from ActiveRecord::AssociationNotFoundError do |e|
+		show_400 e
 	end
 	
 	def ensure_current_user
 		return if current_user
-		return render json: {
-			message: "You must authenticate prior to requesting this resource"
-		}, status: :unauthorized
+		show_401 "You must authenticate prior to requesting this resource"
 	end
 	
 	def ensure_auth_params_exists
 		return unless params[:email].blank? || params[:password].blank?
-		return render json: { 
-			message: "We were unable to log you in. Please double-check your email and password."
-		}, status: :bad_request
+		invalid_login_attempt
+	end
+
+	def invalid_login_attempt
+		show_400 "We were unable to log you in. Please double-check your email and password."
+	end
+
+	def switch_tenant
+		Apartment::Tenant.switch!(session[:tenant_name])
+	end
+
+	def switch_to_public_schema
+		Apartment::Tenant.switch!
 	end
     
-    def sanitize params
-        params.permit!
-    end
+	def sanitize_params
+		params.permit!
+	end
 end

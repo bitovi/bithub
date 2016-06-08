@@ -10,6 +10,10 @@ class User < ActiveRecord::Base
 
 	attr_accessor :current_password
 
+	def is_member_of_organization(organization_id)
+		return organizations.where({id: organization_id}).length > 0	
+	end
+
 	def brand_ids
 		organizations.map do |o|
 		  o.brand_ids
