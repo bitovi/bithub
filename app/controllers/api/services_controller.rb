@@ -26,7 +26,7 @@ class Api::ServicesController < Api::BaseController
 	end
 
 	def update
-		Service.find(params[:id]).update!(params[:service])
+		service = Service.find(params[:id]).update!(params[:service])
 		return render json: service, status: :ok
 	rescue ActiveRecord::RecordNotFound
 		show_404 service_not_found_for_id
