@@ -23,7 +23,7 @@ class Api::EmbedsController < Api::BaseController
 	end
 
 	def show
-		return render json: { data: HubEmbed.find(params[:id]) }, status: :ok
+		return render json: HubEmbed.find(params[:id]), status: :ok
 	rescue ActiveRecord::RecordNotFound
 		show_404 embed_not_found_for_id
 	ensure

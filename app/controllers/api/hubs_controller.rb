@@ -28,7 +28,7 @@ class Api::HubsController < Api::BaseController
 	end
 	
 	def show
-		return render json: { data: Hub.find(params[:id]) }, status: :ok
+		return render json: Hub.find(params[:id]), status: :ok
 	rescue ActiveRecord::RecordNotFound
 		show_404 hub_not_found_for_id
 	ensure
