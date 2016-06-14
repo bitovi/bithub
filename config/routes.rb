@@ -33,6 +33,12 @@ Bithub::Application.routes.draw do
 			get		"/embeds/:id"			=> "embeds#show"
 			put		"/embeds/:id"			=> "embeds#update"
 			delete	"/embeds/:id"			=> "embeds#destroy"
+
+			post	"/filters"				=> "filters#create"
+			get		"/filters"				=> "filters#index"
+			get		"/filters/:id"			=> "filters#show"
+			put		"/filters/:id"			=> "filters#update"
+			delete	"/filters/:id"			=> "filters#destroy"
 		end
 	end
 

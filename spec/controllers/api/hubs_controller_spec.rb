@@ -95,7 +95,7 @@ RSpec.describe Api::HubsController, type: :controller do
 				get :show, { id: id, organization_id: @organization.id }
 				response.should have_http_status :ok
 
-				JSON.parse(response.body)["data"]["name"].should eq("HelloWorld")
+				JSON.parse(response.body)["name"].should eq("HelloWorld")
 			end
 		end
 		

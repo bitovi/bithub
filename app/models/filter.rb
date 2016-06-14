@@ -3,9 +3,16 @@ class Filter < ActiveRecord::Base
   belongs_to :hub
   has_many :natlang_queries, :dependent => :destroy
 
+  accepts_nested_attributes_for :natlang_queries
+
   VALID_ACTIONS = %w(approve block)
 
   validate :validate_action_value
+
+  def as_json options = {}
+      filter = super options
+      filter.tap {|hash| hash["moderate"] = hash.delete "action"}
+  end
 
   def self.sorted_in_application_order
     order("(case when action = 'approve' then 1 when action = 'block' then 2 end)")
