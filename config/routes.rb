@@ -27,6 +27,12 @@ Bithub::Application.routes.draw do
 			get		"/services"				=> "services#index"
 			put		"/services/:id"			=> "services#update"
 			delete	"/services/:id"			=> "services#destroy"
+
+			post	"/embeds"				=> "embeds#create"
+			get		"/embeds"				=> "embeds#index"
+			get		"/embeds/:id"			=> "embeds#show"
+			put		"/embeds/:id"			=> "embeds#update"
+			delete	"/embeds/:id"			=> "embeds#destroy"
 		end
 	end
 
