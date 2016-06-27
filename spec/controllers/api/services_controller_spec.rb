@@ -100,6 +100,18 @@ RSpec.describe Api::ServicesController, type: :controller do
 		end
 
 		describe "PUT /services/:id" do
+			before(:each) do
+				post :create, { 
+					organization_id: @organization.id,
+					hub_id: 1, 
+					type_name: "site", 
+					feed_name: "rss",
+					config: {
+						url: "http://pltconfusion.com/rss.xml"
+					}
+				}
+			end
+
 			it "should return 400 if missing organization_id" do
 				put :update, { id: 1 }
 				response.should have_http_status :bad_request
@@ -108,6 +120,18 @@ RSpec.describe Api::ServicesController, type: :controller do
 			it "should return 404 if service id is not found" do
 				put :update,  { id: 999, organization_id: @organization.id }
 				response.should have_http_status :not_found
+			end
+
+			it "should update service configuration" do
+				updated_url = "http://example.com/rss.xml"
+				put :update, {
+					id: 1,
+					organization_id: @organization.id,
+					config: { 
+						url: updated_url 
+					}
+				}
+				JSON.parse(response.body)["config"]["url"].should eq(updated_url)
 			end
 		end
 	end
