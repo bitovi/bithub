@@ -77,7 +77,9 @@ module Guzzler
 
       class InstagramTag < InstagramBase
         def create_subscription
-          client.create_subscription object: "tag", callback_url: callback_url, aspect: "media", object_id: @service.config.fetch(:tag)
+          if @service.config["tag"]
+            client.create_subscription object: "tag", callback_url: callback_url, aspect: "media", object_id: @service.config.fetch(:tag)
+          end
         end
 
         def delete_subscription

@@ -28,8 +28,12 @@ module Guzzler
         Guzzler.logger.info "Subscribing all services."
 
         Guzzler.smembers('services:listening').each do |sk|
-          service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
-          manage_subscription(service, :subscribe)
+          begin
+            service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
+            manage_subscription(service, :subscribe)
+          rescue => e
+            Guzzler.lpush('error_q', [ sk ])
+          end
         end
       end
 
@@ -44,9 +48,13 @@ module Guzzler
       
       def refresh
         Guzzler.sdiff('services:listening', 'services:listening:subscribed').each do |sk|
-          service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
-          Guzzler.logger.info "New service: #{service}. Subscribing ..."
-          manage_subscription(service, :subscribe)
+          begin
+            service = Guzzler::Service.new(sk, sc = Guzzler.service_config(sk))
+            Guzzler.logger.info "New service: #{service}. Subscribing ..."
+            manage_subscription(service, :subscribe)
+          rescue => e
+            Guzzler.lpush('error_q', [ sk ])
+          end
         end
       end
 
