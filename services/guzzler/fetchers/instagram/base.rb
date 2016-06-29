@@ -61,9 +61,9 @@ module Guzzler::Fetchers
 
       def create_client
         if @access_token
-          ::Instagram.client access_token: @access_token, scope: "public_content"
+          ::Instagram.client access_token: @access_token
         else
-          ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET'], scope: "public_content"
+          ::Instagram.client client_id: ENV['INSTAGRAM_CLIENT_ID'], client_secret: ENV['INSTAGRAM_CLIENT_SECRET']
         end
       end
 
