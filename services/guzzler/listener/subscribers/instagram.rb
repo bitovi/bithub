@@ -9,10 +9,13 @@ module Guzzler
         VALID_OBJECTS = %w(user tag location geography)
 
         def subscribe
+          Guzzler.logger.info "Subscribing Guzzler as Instagram App"
           create_subscription
           @registry.subscribe 'instagram', 'media', instagram_object_id, @service
         rescue ::Instagram::Error => e
           raise Guzzler::SubscriptionError.new(e)
+        rescue JSON::ParserError => e
+          Guzzler.logger.error "JSON Parse Error during subscription"
         end
 
         def unsubscribe
