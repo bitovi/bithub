@@ -55,6 +55,9 @@ class InstagramUpdater < BaseUpdater
   rescue Instagram::BadRequest => e
     Celluloid.logger.error "#{log_sig} Bad request #{e}"
     nil
+  rescue JSON::ParserError => e
+    Celluloid.logger.error "#{log_sig} Parse Error: Error parsing raw response (most likely HTML)"
+    nil
   end
   
   private
