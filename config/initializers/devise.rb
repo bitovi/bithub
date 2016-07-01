@@ -48,7 +48,8 @@ Devise.setup do |config|
 
   config.omniauth :instagram,
     ENV.fetch('INSTAGRAM_CLIENT_ID'),
-    ENV.fetch('INSTAGRAM_CLIENT_SECRET')
+    ENV.fetch('INSTAGRAM_CLIENT_SECRET'),
+    scope: "basic public_content"
 
   config.omniauth :tumblr,
     ENV.fetch('TUMBLR_CLIENT_ID'),

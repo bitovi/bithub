@@ -7,7 +7,7 @@ module Guzzler::Poller
   class Processor < Guzzler::Worker
 
     def process(service)
-      if fetcher = Guzzler::Fetchers::Mapper.new(service).fetcher
+      if fetcher = Guzzler::Fetchers::Mapper.new.fetcher(service)
         if events = fetcher.fetch
           Guzzler.processing_chain.invoke(events, service).each do |event|
             Guzzler.lpush('event_q', event)

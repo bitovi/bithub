@@ -28,13 +28,11 @@ class GuzzlerServiceDecorator < Draper::Decorator
   def data
     {
       'config' => source.config_with_credentials,
-      'interval' => source.interval,
       'feed_name' => source.feed_name,
       'type_name' => source.type_name,
       'brand_id' => brand_id,
       'embed_id' => embed_id,
       'service_id' => service_id
-
     }
   end
 end

@@ -10,11 +10,12 @@ module Guzzler::Fetchers
 
       attr_reader :result, :client, :count
 
-      def initialize(object_id, opts={})
-        @object_id    = object_id
-        @count        = opts[:count] || COUNT
-        @access_token = opts[:access_token]
+      def initialize(service, opts={})
+        @service = service
+
+        @access_token = @service.config.fetch(:access_token)
         @client       = create_client
+        @count        = COUNT
       end
 
       def fetch
@@ -51,10 +52,6 @@ module Guzzler::Fetchers
 
       def reset
         @result = nil
-      end
-
-      def self.fetch(object_id, opts={})
-        self.new(object_id, opts).fetch
       end
 
       private
