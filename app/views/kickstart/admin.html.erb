@@ -3,17 +3,10 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BitHub</title>
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-  //<![CDATA[
-    (function() {var s=document.createElement('script');
-      s.type='text/javascript';s.async=true;
-      s.src=('https:'==document.location.protocol?'https':'http') +
-      '://bithub.groovehq.com/widgets/8fcafa0d-5fb3-4df1-a84d-cd2f8204a48c/ticket.js'; var q = document.getElementsByTagName('script')[0];q.parentNode.insertBefore(s, q);})();
-  //]]>
-</script>
 <%= stripe_javascript_tag %>
 </head>
 <body>
@@ -24,19 +17,5 @@
 
 <div id="app"></div>
 
-<!-- Drip -->
-<script type="text/javascript">
-  var _dcq = _dcq || [];
-  var _dcs = _dcs || {}; 
-  _dcs.account = '5649509';
-  
-  (function() {
-    var dc = document.createElement('script');
-    dc.type = 'text/javascript'; dc.async = true; 
-    dc.src = '//tag.getdrip.com/5649509.js';
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(dc, s);
-  })();
-</script>
 </body>
 </html>

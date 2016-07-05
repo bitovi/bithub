@@ -6,7 +6,8 @@ module Guzzler::Fetchers
     class TagRecentMedia < Base
       def fetch_once(opts={})
         log_fetch
-        @client.tag_recent_media @object_id, opts
+
+        @client.tag_recent_media @service.config.fetch(:tag), opts
       end
     end
   end

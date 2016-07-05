@@ -62,13 +62,15 @@ class Api::V3::ServicesController < Api::V3::ApiController
   def suggestions
     authorize! :suggest, Service
 
+    feed = params[:feed_name]
+    bi = current_brand.identities.where(provider: feed).first
     if feed_name = params[:feed_name]
       suggestions = []
-      if params[:feed_name] == 'instagram' && (username = params[:username])
-        suggestions += api_adapter.user_from_instagram(params[:username])
+      if feed == 'instagram' && (username = params[:username])
+        suggestions += api_adapter.user_from_instagram(params[:username], bi)
 
       # VISE IDENTITETA
-      elsif bi = current_brand.identities.where(id: brand_identity_id, provider: feed_name).first
+      elsif bi
         suggestions += bi.property_id_name_pairs(params[:feed_type])
       end
 

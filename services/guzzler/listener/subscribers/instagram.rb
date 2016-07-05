@@ -61,34 +61,6 @@ module Guzzler
         # end
       end
 
-      class InstagramLocation < InstagramBase
-        def create_subscription
-          client.create_subscription object: "location", callback_url: callback_url, aspect: "media", object_id: @service.config.fetch(:location_id)
-        end
-
-        def delete_subscription
-          # client.delete_subscription subscription_id
-        end
-
-        def preload_items
-          Fetchers::Instagram::LocationRecentMedia.fetch @service.config.fetch(:id), count: 100
-        end
-      end
-
-      class InstagramTag < InstagramBase
-        def create_subscription
-          client.create_subscription object: "tag", callback_url: callback_url, aspect: "media", object_id: @service.config.fetch(:tag)
-        end
-
-        def delete_subscription
-          # client.delete_subscription subscription_id
-        end
-
-        def preload_items
-          Fetchers::Instagram::TagRecentMedia.fetch @service.config.fetch(:tag), count: 100
-        end
-      end
-
       class InstagramUser < InstagramBase
         def create_subscription
           client.create_subscription object: "user", callback_url: callback_url, aspect: "media"

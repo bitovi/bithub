@@ -23,12 +23,12 @@ class Service < ActiveRecord::Base
   scope :type, ->(tn) { where(type_name: tn) }
 
   QUERIES_FOR_LISTENING_SERVICES = [
-    Service.joins(:embed => :brand).where(feed_name: %w(instagram foursquare)),
+    Service.joins(:embed => :brand).where(feed_name: %w(foursquare)),
     Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'page')
   ]
 
   QUERIES_FOR_POLLING_SERVICES = [
-    Service.joins(:embed => :brand).where(feed_name: %w(github meetup twitter rss disqus stackexchange tumblr youtube)),
+    Service.joins(:embed => :brand).where(feed_name: %w(instagram github meetup twitter rss disqus stackexchange tumblr youtube)),
     Service.joins(:embed => :brand).where(feed_name: 'facebook', type_name: 'public_page')
   ]
 
@@ -108,12 +108,8 @@ class Service < ActiveRecord::Base
     end
   end
 
-  def interval
-    60
-  end
-
   def listens?
-    feed_name == 'instagram' || feed_name == 'foursquare' || (feed_name == 'facebook' && type_name == 'page')
+    feed_name == 'foursquare' || (feed_name == 'facebook' && type_name == 'page')
   end
 
   def polls?

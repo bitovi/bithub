@@ -4,24 +4,21 @@ module Guzzler::Fetchers
 
   class Mapper
 
-    def initialize(service)
-      @service = service
-    end
-
-    def fetcher
-      camelized_feed = @service.feed_name.camel_case
-      camelized_type = @service.type_name.camel_case
+    def fetcher(service)
+      camelized_feed = service.feed_name.camel_case
+      camelized_type = service.type_name.camel_case
 
       fetcher_thing = if native_fetcher_exists?(camelized_feed.to_sym, camelized_type.to_sym)
                         "Guzzler::Fetchers::#{camelized_feed}::#{camelized_type}".constantize
                       else
-                        mappings[camelized_feed.to_sym][camelized_type.to_sym]
+                        platform_service = Marshal.load(Marshal.dump(service))
+                        mappings(platform_service)[camelized_feed.to_sym][camelized_type.to_sym]
                       end
 
       if fetcher_thing && fetcher_thing.respond_to?(:fetch)
         fetcher_thing
       elsif fetcher_thing
-        fetcher_thing.new(@service)
+        fetcher_thing.new(service)
       else
         nil
       end
@@ -32,17 +29,22 @@ module Guzzler::Fetchers
     end
 
     private
-    def mappings
+    def mappings(service)
       {
         :Github => {
           :Repo => Guzzler::Fetchers::Github::RepoActivity,
           :Org => Guzzler::Fetchers::Github::OrgActivity
         },
 
+        :Instagram => {
+          :Tag => Guzzler::Fetchers::Instagram::TagRecentMedia,
+          :User => Guzzler::Fetchers::Instagram::UserRecentMedia
+        },
+
         :Facebook => {
           :PublicPage => Guzzler::Fetchers::Facebook::GetFeed.new { 
-            @service.config[:access_token] = "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"
-            @service
+            service.config[:access_token] = "#{ENV['FACEBOOK_CLIENT_ID']}|#{ENV['FACEBOOK_CLIENT_SECRET']}"
+            service
           }
         },
 
@@ -64,8 +66,8 @@ module Guzzler::Fetchers
         },
 
         :Twitter => {
-          :Term => Guzzler::Fetchers::Twitter::Search.new(@service) { |c| c.fetch(:term) },
-          :Hashtag => Guzzler::Fetchers::Twitter::Search.new(@service) { |c| '#' + @service.config.fetch(:hashtag) }
+          :Term => Guzzler::Fetchers::Twitter::Search.new(service) { |c| c.fetch(:term) },
+          :Hashtag => Guzzler::Fetchers::Twitter::Search.new(service) { |c| '#' + service.config.fetch(:hashtag) }
         }
       }
     end
