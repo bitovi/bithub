@@ -41,6 +41,3 @@ set :log_path, File.join([fetch(:shared_path), 'log'])
 # 'foreman' command should be prefixed with 'bundle exec'
 set :bundle_bins, fetch(:bundle_bins, []).push('foreman')
 set :bundle_binstubs, -> { shared_path.join('bin') }            # default: nil
-
-
-after 'deploy:updated', 'newrelic:notice_deployment'

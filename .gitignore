@@ -18,7 +18,6 @@ stripe-mock-server.log
 node_modules
 npm-debug.log
 public/dist
-newrelic_agent.log
 .idea
 .envrc
 public/new-bithub-client/dist

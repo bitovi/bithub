@@ -123,7 +123,6 @@ gem 'connection_pool'
 
 gem 'nokogiri', '~> 1.6'
 gem 'nori', '~> 2.3'
-gem 'newrelic_rpm'
 gem 'sequel'
 gem 'dotenv'
 gem 'colorize'

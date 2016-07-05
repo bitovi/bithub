@@ -108,10 +108,6 @@ class Service < ActiveRecord::Base
     end
   end
 
-  # def interval
-  #   60
-  # end
-
   def listens?
     feed_name == 'foursquare' || (feed_name == 'facebook' && type_name == 'page')
   end
