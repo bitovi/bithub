@@ -23,16 +23,11 @@ module Support
         config.auto_pagination = true
       end
     end
-    
-    def instagram
-      @instagram ||= Instagram.configure do |config|
-        config.client_id = ENV.fetch('INSTAGRAM_CLIENT_ID')
-        config.client_secret = ENV.fetch('INSTAGRAM_CLIENT_SECRET')
-      end
-    end
 
-    def user_from_instagram(q)
-      instagram && Instagram.user_search(q)
+    def user_from_instagram(q, brand_identity)
+      Instagram.user_search(q, {
+        access_token: brand_identity.credentials.fetch(:access_token)
+      })
     end
 
     def user_from_twitter(q)
