@@ -7,7 +7,7 @@ module Guzzler::Fetchers
     class BaseFetcher
       include Protocol
 
-      LIMIT  = 250
+      LIMIT  = 99
       FIELDS = 'attachments,from,message,picture,link,object_id,updated_time,type,status_type'
 
       def initialize(service = nil)
