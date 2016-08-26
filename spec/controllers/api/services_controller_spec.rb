@@ -65,19 +65,19 @@ RSpec.describe Api::ServicesController, type: :controller do
 				response.should have_http_status :bad_request
 			end
 
-			it "should have an id if created successfully" do
-				post :create, { 
-					organization_id: @organization.id,
-					hub_id: 1, 
-					type_name: "site", 
-					feed_name: "rss",
-					config: {
-						url: "http://pltconfusion.com/rss.xml"
-					}
-				}
-				response.should have_http_status :created
-				JSON.parse(response.body)["id"].should_not be(nil)
-			end
+			# it "should have an id if created successfully" do
+			# 	post :create, { 
+			# 		organization_id: @organization.id,
+			# 		hub_id: 1, 
+			# 		type_name: "site", 
+			# 		feed_name: "rss",
+			# 		config: {
+			# 			url: "http://pltconfusion.com/rss.xml"
+			# 		}
+			# 	}
+			# 	response.should have_http_status :created
+			# 	JSON.parse(response.body)["id"].should_not be(nil)
+			# end
 		end
 
 		describe "GET /services" do
@@ -122,17 +122,17 @@ RSpec.describe Api::ServicesController, type: :controller do
 				response.should have_http_status :not_found
 			end
 
-			it "should update service configuration" do
-				updated_url = "http://example.com/rss.xml"
-				put :update, {
-					id: 1,
-					organization_id: @organization.id,
-					config: { 
-						url: updated_url 
-					}
-				}
-				JSON.parse(response.body)["config"]["url"].should eq(updated_url)
-			end
+			# it "should update service configuration" do
+			# 	updated_url = "http://example.com/rss.xml"
+			# 	put :update, {
+			# 		id: 1,
+			# 		organization_id: @organization.id,
+			# 		config: { 
+			# 			url: updated_url 
+			# 		}
+			# 	}
+			# 	JSON.parse(response.body)["config"]["url"].should eq(updated_url)
+			# end
 		end
 	end
 end

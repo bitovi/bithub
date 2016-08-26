@@ -6,7 +6,7 @@ class Api::OrganizationsController < Api::BaseController
 	before_action :sanitize_params
 	
 	def index
-		return render json: { data: filter(Organization, sanitize(params)) }, status: :ok
+		return render json: { data: filter(Organization, params) }, status: :ok
 	end
 	
 	def show
