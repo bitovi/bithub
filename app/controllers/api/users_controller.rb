@@ -3,7 +3,7 @@ class Api::UsersController < Api::BaseController
 	
 	before_action 	:sanitize_params
 	before_action	:ensure_auth_params_exists, only: [ :create ]
-	before_action 	:ensure_current_user, only: [ :index ]
+	before_action 	:ensure_current_user, only: [ :index, :show ]
 	
 	def create
 		user = User.new params_to_user_arguments params
@@ -34,6 +34,12 @@ class Api::UsersController < Api::BaseController
 		return render json: { data: result, count: result.length }, status: :ok
 	rescue => e
 		show_400 e
+	end
+
+	def show
+		return render json: User.find(params[:id]), status: :ok
+	rescue ActiveRecord::RecordNotFound
+		show_404 "User, with id: '${params[:id]}' was not found"
 	end
 	
 	private

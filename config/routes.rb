@@ -3,17 +3,18 @@ require 'sidekiq/web'
 Bithub::Application.routes.draw do
 	namespace :api, defaults: { format: 'json' } do
 		as :user do
-		    post	"/users"				=>	"users#create"
+			post	"/users"				=>	"users#create"
 			get		"/users"				=>	"users#index"
-		    
+			get		"/users/:id"			=>  "users#show"
+
 			post	"/session"				=>	"sessions#create"
-		    get		"/session"				=>	"sessions#index"
-		    delete	"/session"				=>	"sessions#destroy"
-			
+			get		"/session"				=>	"sessions#index"
+			delete	"/session"				=>	"sessions#destroy"
+
 			get		"/organizations" 		=>	"organizations#index"
 			get		"/organizations/:id"	=>	"organizations#show"
 			put		"/organizations/:id"	=>	"organizations#update"
-			
+
 			post	"/hubs"					=>	"hubs#create"
 			get		"/hubs"					=>	"hubs#index"
 			get		"/hubs/:id"				=>	"hubs#show"
@@ -144,7 +145,7 @@ Bithub::Application.routes.draw do
 				resources :users, controller: 'organization_users'
 				resources :invitations, controller: 'organization_users', status: 'pending'
 			end
-		
+
 			resource :brand do
 				resources :identities, controller: 'credentials'
 			end
@@ -162,7 +163,7 @@ Bithub::Application.routes.draw do
 		resources :tags, except: %i(new edit)
 		resources :interactions, only: %i(index show create)
 		resources :monthly_billings, only: %i(index)
-		
+
 		get 'hubs_by_organization', to: 'user_organizations_hubs#index'
 		get 'analytics', to: 'analytics#show'
 		get 'interactions', to: 'interactions#index'

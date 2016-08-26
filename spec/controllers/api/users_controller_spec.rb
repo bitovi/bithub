@@ -66,13 +66,13 @@ RSpec.describe Api::UsersController, type: :controller do
 		end
 	end
 	
+	well_formed = { "email": "hello@example.com", "password": "UDontKnowJack" }
+
 	describe "GET /users" do
 		it "should require authentication to request users" do
 			get :index
 			response.should have_http_status 401
 		end
-		
-		well_formed = { "email": "hello@example.com", "password": "UDontKnowJack" }
 		
 		context "User is signed in" do
 			before(:each) do
@@ -89,6 +89,37 @@ RSpec.describe Api::UsersController, type: :controller do
 				get :index
 				response.should have_http_status 200
 				assigns(:current_user).should eq(@user)
+			end
+		end
+	end
+
+	describe "GET /users/:id" do
+		context "User is not authenticated" do
+			it "should require authentication to request a user" do
+				get :show, { id: 1 }
+				response.should have_http_status 401
+			end 
+		end
+
+		context "User is authenticated" do
+			before(:each) do
+				@user = User.new(well_formed)
+				@user.save!
+			
+				organization = Organizations::OrganizationBuilder.new @user, {}
+				organization.build.save!
+				
+				sign_in :user, @user
+			end
+
+			it "return a 200 if User is found" do
+				get :show, { id: @user.id }
+				response.should have_http_status 200
+			end
+
+			it "should return a 404 if User is not found" do
+				get :show, { id: 999 }
+				response.should have_http_status 404
 			end
 		end
 	end
